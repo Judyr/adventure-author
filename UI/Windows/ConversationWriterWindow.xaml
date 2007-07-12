@@ -1,0 +1,100 @@
+﻿<!--
+    This file is part of Adventure Author.
+ 
+    Adventure Author is copyright Heriot-Watt University 2006-2007.
+ 
+    This copyright and licence apply to all source code, compiled code,
+    documentation, graphics and auxiliary files, except where otherwise stated.
+ 
+    Adventure Author is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    Adventure Author is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<Window x:Class="AdventureAuthor.UI.Windows.ConversationWriterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:AdventureAuthor.ConversationWriter"
+    Name="WriterWindow" Title="Conversation Writer" Width="1600" Height="1000" Background="LightYellow" Closing="OnClosing">
+	<Grid Name="WriterWindowGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition MinWidth="350" Width="*"/>
+			<ColumnDefinition Width="400"/>
+		</Grid.ColumnDefinitions>
+		<Menu VerticalAlignment="Top" HorizontalAlignment="Left">
+			<MenuItem Header="File">
+				<MenuItem Header="New" Click="OnClick_New"/>
+				<MenuItem Header="Open" Click="OnClick_Open"/>
+				<MenuItem Header="Save" Click="OnClick_Save"/>
+				<MenuItem Header="Close" Click="OnClick_Close"/>
+				<MenuItem Header="Exit" Click="OnClick_Exit"/>
+			</MenuItem>
+			<MenuItem Header="Options">
+				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers"/>
+			</MenuItem>
+		</Menu>
+		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
+			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow">
+				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
+					<Button Margin="2" Click="OnClick_CreateBranchAtEndOfPage" IsEnabled="False">
+						<TextBlock>
+							<TextBlock FontSize="22" Foreground="Black" Text="Create a "/>
+							<TextBlock FontSize="22" Foreground="Purple" Text="BRANCH"/>
+							<TextBlock FontSize="22" Foreground="Black" Text=" at end of page"/>
+						</TextBlock>
+					</Button>	
+					<Button Margin="2" Click="OnClick_MakeSelectedLineIntoBranch" IsEnabled="False">
+						<TextBlock>
+							<TextBlock FontSize="22" Foreground="Black" Text="Make selected line into "/>
+							<TextBlock FontSize="22" Foreground="Purple" Text="BRANCH"/>
+						</TextBlock>
+					</Button>			
+					<Button Margin="2" Click="OnClick_AddAction" IsEnabled="False">
+						<TextBlock>
+							<TextBlock FontSize="22" Foreground="Black" Text="An "/>
+							<TextBlock FontSize="22" Foreground="Orange" Text="ACTION"/>
+							<TextBlock FontSize="22" Foreground="Black" Text=" takes place"/>
+						</TextBlock>
+					</Button>	
+				</StackPanel>
+				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
+				</StackPanel>
+			</StackPanel>
+		</Border>
+		<Border Name="GraphBorder" Grid.Row="1" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Black" Grid.ZIndex="-1">
+				<Grid ClipToBounds="true">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition Height="100"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+					<Canvas x:Name="GraphCanvas" Grid.Row="0" Grid.Column="0" RenderTransformOrigin="0.5,0.5" Width="800" Height="800">
+						<Canvas.RenderTransform>
+							<ScaleTransform ScaleX="{Binding ElementName=zoomSlider, Path=Value}" ScaleY="{Binding ElementName=zoomSlider, Path=Value}"/>
+						</Canvas.RenderTransform>
+					</Canvas>
+					<StackPanel Grid.Row="1" Grid.Column="0">
+						<Slider x:Name="zoomSlider" Orientation="Horizontal" Width="200" Height="40" Minimum="0.25" Maximum="4" Value="0.5" />
+					</StackPanel>	
+				</Grid>
+		</Border>
+		<Border Name="LinesPanelBorder" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1">
+	    	<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10"/>
+	    </Border>
+	</Grid>
+</Window>

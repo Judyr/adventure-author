@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+# SharpDevelop 2.1.0.2429
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureAuthor", "AdventureAuthor.csproj", "{6C3192D1-C3CC-499B-B443-24AE5FC16914}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AATest", "..\..\Checkout\AATest\AATest.csproj", "{5DADF4D5-B798-402F-89AB-6A7F6D2CF704}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C3192D1-C3CC-499B-B443-24AE5FC16914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C3192D1-C3CC-499B-B443-24AE5FC16914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C3192D1-C3CC-499B-B443-24AE5FC16914}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C3192D1-C3CC-499B-B443-24AE5FC16914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A55E32F-3856-468F-95BE-92BEBF5848F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A55E32F-3856-468F-95BE-92BEBF5848F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A55E32F-3856-468F-95BE-92BEBF5848F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A55E32F-3856-468F-95BE-92BEBF5848F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DADF4D5-B798-402F-89AB-6A7F6D2CF704}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DADF4D5-B798-402F-89AB-6A7F6D2CF704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DADF4D5-B798-402F-89AB-6A7F6D2CF704}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DADF4D5-B798-402F-89AB-6A7F6D2CF704}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal
