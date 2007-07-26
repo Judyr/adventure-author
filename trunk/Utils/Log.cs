@@ -22,10 +22,11 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 
-namespace AdventureAuthor
+namespace AdventureAuthor.Utils
 {
 	public static class Log
 	{	
@@ -191,6 +192,22 @@ namespace AdventureAuthor
 			}
 		}
 		
+		/// <summary>
+		/// Writes a log message in the form: '16:24:47:(message)'
+		/// </summary>
+		/// <param name="message">The message to log</param>
+		public static void Write(string message)
+		{
+			try	{
+				writer.WriteLine(GetTime() + message);
+				writer.Flush();
+			}
+			catch (NullReferenceException e) {
+				Debug.WriteLine("Log writer was not open.");
+				Debug.WriteLine(e.ToString());
+			}			
+		}
+		
 		public static String GetDate()
 		{
 			DateTime now = DateTime.Now;
@@ -200,20 +217,31 @@ namespace AdventureAuthor
 		public static String GetTime()
 		{
 			DateTime d = DateTime.Now;		
-			string hour = d.Hour.ToString();
-			string minute = d.Minute.ToString();
-			string second = d.Second.ToString();
-			if (hour.Length == 1) {
-				hour = "0" + hour;
-			}
-			if (minute.Length == 1) {
-				minute = "0" + minute;
-			}
-			if (second.Length == 1) {
-				second = "0" + second;
-			}			
+			StringBuilder timestamp = new StringBuilder();
 			
-			return hour + ":" + minute + ":" + second + ":";
+			string hour = d.Hour.ToString();
+			if (hour.Length == 1) {
+				timestamp.Append("0" + hour + ":");
+			}
+			else {
+				timestamp.Append(hour + ":");
+			}			
+			string minute = d.Minute.ToString();
+			if (minute.Length == 1) {
+				timestamp.Append("0" + minute + ":");
+			}
+			else {
+				timestamp.Append(minute + ":");
+			}						
+			string second = d.Second.ToString();
+			if (second.Length == 1) {
+				timestamp.Append("0" + second + ":");
+			}
+			else {
+				timestamp.Append(second + ":");
+			}
+				
+			return timestamp.ToString();
 		}
 	}
 }

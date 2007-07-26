@@ -21,18 +21,10 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.ConversationWriter;
+using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -54,15 +46,8 @@ namespace AdventureAuthor.UI.Windows
         		Say.Information("Select a speaker.");
         	}
         	else {
-        		NWN2ConversationConnector parent;
-        		if (ConversationWriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
-        			parent = ConversationWriterWindow.Instance.CurrentPage.LineControls[ConversationWriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
-				}
-				else {
-        			parent = ConversationWriterWindow.Instance.CurrentPage.LeadInLine; // LeadInline may be null i.e. root
-				}	
         		string speakerTag = ((Speaker)SpeakersList.SelectedItem).Tag;   
-				ConversationWriterWindow.Instance.MakeBranchAtEndOfPage(parent,speakerTag);
+				ConversationWriterWindow.Instance.MakeBranchAtEndOfPage(speakerTag);
 				this.Close();
         	}
         }

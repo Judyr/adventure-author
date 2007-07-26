@@ -36,6 +36,7 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -61,6 +62,7 @@ namespace AdventureAuthor.UI.Controls
         private void OnClick_EditAction(object sender, EventArgs ea)
         {
         	Say.Information("Not implemented. yet.");
+        	// TODO: On returning an OK result from ScriptCards/ScriptWizard, Conversation.CurrentConversation.Dirty = true;
         }
         
         private void OnMouseDown(object sender, EventArgs ea)

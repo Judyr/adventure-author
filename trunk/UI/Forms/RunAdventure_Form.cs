@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.UI.Forms
 {

@@ -32,9 +32,9 @@ using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Views;
 using System.Xml.Serialization;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 
-namespace AdventureAuthor.AdventureData
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Description of GameArea.
@@ -140,7 +140,7 @@ namespace AdventureAuthor.AdventureData
 				return false;
 			}
 			else if (numberOfTagsFound > 1) {
-				throw new DuplicatedTagException();
+				throw new ArgumentException("The tag was not unique - more than one object in this area has the tag '" + tag + "'.");
 			}
 			else {
 				return true;

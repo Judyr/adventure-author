@@ -23,8 +23,9 @@
 using System;
 using System.Windows;
 using AdventureAuthor;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Windows
 {

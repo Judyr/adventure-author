@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
  *   This file is part of Adventure Author.
  *
  *   Adventure Author is copyright Heriot-Watt University 2006-2007.
@@ -22,61 +23,51 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Controls;
+using AdventureAuthor.UI.Windows;
+using NWN2Toolset.NWN2.Data.ConversationData;
 
-namespace AdventureAuthor.UI.Controls
+namespace AdventureAuthor.ConversationWriter
 {
     /// <summary>
-    /// Interaction logic for PageControl.xaml
+    /// Interaction logic for CPage.xaml
     /// </summary>
 
-    public partial class PageControl : Button
+    public partial class CPage
     {
     	#region Fields
     	
-    	private static DependencyProperty isSelectedProperty = DependencyProperty.Register("IsSelected",typeof(bool),typeof(PageControl));
-    	public bool IsSelected {
-    		get { return (bool)GetValue(isSelectedProperty); }
-    		set { SetValue(isSelectedProperty, value); }
-    	}
+    	private bool isSelected; 
+		public bool IsSelected {
+			get { return isSelected; }
+			set { isSelected = value; }
+		}
     	
-    	private static DependencyProperty isPartOfPathProperty = DependencyProperty.Register("IsPartOfPath",typeof(bool),typeof(PageControl));
-    	public bool IsPartOfPath {
-    		get { return (bool)GetValue(isPartOfPathProperty); }
-    		set { SetValue(isPartOfPathProperty, value); }
-    	}
+    	private bool isInRoute;    	
+		public bool IsInRoute {
+			get { return isInRoute; }
+			set { isInRoute = value; }
+		}
     	
-    	private PageControl parentPage;		
-		public PageControl ParentPage {
+    	private CPage parentPage;		
+		public CPage ParentPage {
 			get { return parentPage; }
 		}		
 		
+		private List<CPage> children;		
+		public List<CPage> Children {
+			get { return children; }
+		}
+		    	    	
 		private NWN2ConversationConnector leadInLine; // the line in the parent Page that leads to this Page
 		public NWN2ConversationConnector LeadInLine {
 			get { return leadInLine; }
 		}
 		
-		private List<PageControl> children;		
-		public List<PageControl> Children {
-			get { return children; }
-		}
-		
-		private int? numberOfEndNodes;		
-		public Nullable<int> NumberOfEndNodes {
-			get { return numberOfEndNodes; }
-		}
-		    	    	
     	private List<LineControl> lineControls;  	
 		public List<LineControl> LineControls {
 			get { return lineControls; }
@@ -90,42 +81,28 @@ namespace AdventureAuthor.UI.Controls
     	
     	#endregion Fields
     	
-		public PageControl(NWN2ConversationConnector leadsFrom, PageControl parent)
+		public CPage(NWN2ConversationConnector leadsFrom, CPage parent)
 		{
-			InitializeComponent();
 			this.leadInLine = leadsFrom;
 			this.parentPage = parent;
-			this.children = new List<PageControl>();
-			this.numberOfEndNodes = null;
+			this.children = new List<CPage>();
 			this.lineControls = new List<LineControl>();
 			this.finalControl = null;
-			Canvas.SetZIndex(this,2);
-		}
-		
-		public int CalculateNumberOfEndNodes()
-		{
-			if (numberOfEndNodes != null) {
-				return (int)numberOfEndNodes; // already calculated, so just return the value
-			}		
-			else {
-				int count = 0;		
-				foreach (PageControl child in children) {
-					if (child.IsEndNode()) {
-						count++;
-					}
-					else {
-						count+= child.CalculateNumberOfEndNodes();
-					}
-				}				
-				numberOfEndNodes = (int?)count;
-				return (int)numberOfEndNodes;
-			}
-		}
-		
-		public bool IsEndNode()
+			if (parent != null) {
+				parent.children.Add(this);
+			}			
+		}		
+
+		public bool IsEndPage()
 		{
 			return children.Count == 0;
 		}
+		
+		private void OnClickNode(object sender, EventArgs ea)
+		{
+			Conversation.CurrentConversation.SaveToWorkingCopy();
+			ConversationWriterWindow.Instance.DisplayPage(this);
+		}		
 		
 		public override string ToString()
 		{

@@ -29,9 +29,10 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.UI;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.AdventureData
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Description of Chapter.
@@ -130,16 +131,16 @@ namespace AdventureAuthor.AdventureData
 		{	
 			try {
 				if (this.area == null) {
-					throw new MissingModuleResourceException();
+					throw new InvalidOperationException("This chapter has no area.");
 				}
 				else if (form.App.GetViewerForResource(this.Area) != null) { // if the area is already open
 					return true; 
 				}
 				else if (Adventure.CurrentAdventure != this.owningAdventure) {
-					throw new TriedToOpenChapterInClosedAdventure();
+					throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 				}
 				else if (!(Adventure.CurrentAdventure.Module.Areas.Contains(this.Area))) { // if module is mysteriously missing area
-					throw new MissingModuleResourceException();
+					throw new InvalidOperationException("The area you tried to open is not contained within this module.");
 				}
 				else {
 					int numberOfAreasOpen = form.App.GetAllAreaViewers().Count;
