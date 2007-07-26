@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using Orbifold.Unfold.ShapeLibrary;
 using Orbifold.Unfold.Core;
@@ -57,7 +57,7 @@ namespace AdventureAuthor.UI.Windows
         
         public void RefreshSelectedNode()
         {
-        	CPage page = ConversationWriterWindow.Instance.CurrentPage;
+        	ConversationPage page = ConversationWriterWindow.Instance.CurrentPage;
         	
         	if (page == null) {
         		return;
@@ -99,7 +99,7 @@ namespace AdventureAuthor.UI.Windows
 //		    }
 		}
 		
-		public static CPage GetPageForNode()
+		public static ConversationPage GetPageForNode()
 		{
 			try {
 				return null;// ConversationWriterWindow.Instance.Pages[int.Parse(node.Id)];
@@ -109,7 +109,7 @@ namespace AdventureAuthor.UI.Windows
 			}
 		}
 		
-		private void CreateGraph(List<CPage> pages)
+		private void CreateGraph(List<ConversationPage> pages)
 		{
 			//Graph graph = new Graph("Conversation Tree");
 			

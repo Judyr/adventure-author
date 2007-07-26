@@ -442,17 +442,20 @@ namespace AdventureAuthor.UI
 							SetupFileMenu(menuBarItem);
 						}
 					}
-					else if (menuBarItem.Text == "&Edit") {
-						
-					}
-					else if (menuBarItem.Text == "&View") {
-						
-					}
-					else if (menuBarItem.Text == "&Window") {
-						
-					}
-					else if (menuBarItem.Text == "&Help") {
-						
+//					else if (menuBarItem.Text == "&Edit") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&View") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&Window") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&Help") {
+//						
+//					}
+					else if (menuBarItem.Text == "&Plugins" || menuBarItem.Text == "Plugins") {
+						Say.Information("Found plugins menu. In future hide this.");
 					}
 				}
 			}

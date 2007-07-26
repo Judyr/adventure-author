@@ -90,14 +90,13 @@
   <ItemGroup>
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
+    <Compile Include="Core\Conversation.cs" />
+    <Compile Include="Core\ConversationPage.cs" />
     <Compile Include="Core\GameArea.cs" />
     <Compile Include="Core\Scratchpad.cs" />
-    <Compile Include="Core\SerializableDictionary.cs" />
+    <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ConversationWriter\Conversation.cs" />
-    <Compile Include="ConversationWriter\CPage.cs" />
-    <Compile Include="ConversationWriter\Speaker.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="UI\Controls\ActionControl.xaml.cs">
       <SubType>Code</SubType>
@@ -164,6 +163,7 @@
     </Compile>
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
+    <Compile Include="Utils\SerializableDictionary.cs" />
     <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>
@@ -189,7 +189,6 @@
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
     <Page Include="UI\Windows\SoundWindow.xaml" />
     <Folder Include="Core" />
-    <Folder Include="ConversationWriter" />
     <Folder Include="Utils" />
     <Folder Include="Setup" />
     <Folder Include="UI" />

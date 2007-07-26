@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace AdventureAuthor.ConversationWriter
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Description of Speaker.

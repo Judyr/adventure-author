@@ -33,7 +33,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NWN2Toolset.NWN2.Data.ConversationData;
-using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI.Windows;
 
 namespace AdventureAuthor.UI.Controls

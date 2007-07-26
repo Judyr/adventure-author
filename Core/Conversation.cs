@@ -32,7 +32,6 @@ using NWN2Toolset.NWN2.Data.TypedCollections;
 using OEIShared.Utils;
 using AdventureAuthor;
 using AdventureAuthor.Core;
-using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.Utils;
@@ -40,7 +39,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
-namespace AdventureAuthor.ConversationWriter
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Conversation wraps a NWN2GameConversation with some additional information for the Adventure Author Conversation Writer.

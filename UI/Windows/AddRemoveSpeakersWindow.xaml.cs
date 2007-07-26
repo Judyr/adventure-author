@@ -23,7 +23,7 @@
 using System;
 using System.Windows;
 using AdventureAuthor;
-using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Windows
@@ -37,6 +37,7 @@ namespace AdventureAuthor.UI.Windows
         public AddRemoveSpeakersWindow()
         {
             InitializeComponent();
+            
         }
 
         private void OnClick_AddSpeaker(object sender, EventArgs ea)

@@ -34,8 +34,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI.Controls;
-using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls

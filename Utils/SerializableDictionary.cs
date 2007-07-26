@@ -27,10 +27,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace AdventureAuthor.Core
+namespace AdventureAuthor.Utils
 {
     [XmlRoot("dictionary")]
-    public class SerializableDictionary<TKey,TValue> : Dictionary<TKey, TValue>, IXmlSerializable
+    public class SerializableDictionary<TKey,TValue> : Dictionary<TKey,TValue>, IXmlSerializable
     {
         #region IXmlSerializable Members
         public System.Xml.Schema.XmlSchema GetSchema()
