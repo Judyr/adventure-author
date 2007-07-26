@@ -23,8 +23,9 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Forms
 {
@@ -56,8 +57,8 @@ namespace AdventureAuthor.UI.Forms
 			try {
 				Adventure.CurrentAdventure.AddChapter(name,intro,exterior,width,height);
 			}
-			catch (InvalidNameException ie) {
-				Say.Error("The name '" + name + "' is not valid - try something else.",ie);
+			catch (ArgumentException ae) {
+				Say.Error(ae);
 				return;
 			}
 			

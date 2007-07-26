@@ -28,9 +28,9 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.UI;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 
-namespace AdventureAuthor.AdventureData
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Description of Scratchpad.
@@ -86,13 +86,13 @@ namespace AdventureAuthor.AdventureData
 		public override bool Open()		
 		{
 			if (this.area == null) {
-				throw new MissingModuleResourceException();
+				throw new InvalidOperationException("This chapter has no area.");
 			}
 			else if (Adventure.CurrentAdventure != this.owningAdventure) {
-				throw new TriedToOpenChapterInClosedAdventure();
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
-			else if (!(form.App.Module.Areas.Contains(this.Area))) { // if module is mysteriously missing area
-				throw new MissingModuleResourceException();
+			else if (!(Adventure.CurrentAdventure.Module.Areas.Contains(this.Area))) { // if module is mysteriously missing area
+				throw new InvalidOperationException("The area you tried to open is not contained within this module.");
 			}
 			else {			
 				if (form.App.GetViewerForResource(this.OwningAdventure.Scratch.Area) == null) { // if Scratchpad is not already open
@@ -103,7 +103,8 @@ namespace AdventureAuthor.AdventureData
 						return true;							
 					}
 					else {
-						throw new ScratchpadCouldNotBeOpenedException();
+						throw new InvalidOperationException("It was not possible to open the Scratchpad, as there were already 3 " +
+						                                    "areas open - this should not have been possible.");
 					}
 				}
 				else {

@@ -27,6 +27,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using AdventureAuthor.UI;
+using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
@@ -36,7 +37,7 @@ using NWN2Toolset.NWN2.Views;
 using OEIShared.UI;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
-namespace AdventureAuthor.AdventureData
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// Description of Adventure.
@@ -72,7 +73,7 @@ namespace AdventureAuthor.AdventureData
 		}
 		
 		public static bool BeQuiet {
-			get	{ return beQuiet;	}
+			get	{ return beQuiet; }
 			set	{ beQuiet = value; } 
 		}
 		
@@ -117,9 +118,9 @@ namespace AdventureAuthor.AdventureData
 			get { return scratch; }
 			set { scratch = value; }
 		}
-		
-		[XmlArray]
-		public List<Chapter> Chapters;	
+				
+		[XmlElement]		
+		public SerializableDictionary<string,Chapter> Chapters;
 				
 		[XmlElement]
 		public string Name {
@@ -149,7 +150,8 @@ namespace AdventureAuthor.AdventureData
 			get { return module; }
 			set { 
 				if (value.LocationType != ModuleLocationType.Directory) {
-					throw new InvalidModuleLocationTypeException(value.LocationType);
+					throw new InvalidOperationException("An Adventure's module must be directory-based - tried to assign a module " +
+					                                    "of type " + value.LocationType.ToString() + ".");
 				}
 				else {				
 					module = value; 
@@ -174,47 +176,40 @@ namespace AdventureAuthor.AdventureData
 		/// <param name="name">The Adventure name</param>
 		public Adventure(string name)
 		{
-			try	{
-				NWN2GameModule mod = new NWN2GameModule();
-				mod.Name = name;
-				mod.LocationType = ModuleLocationType.Directory;
-				mod.FileName = Path.Combine(form.ModulesDirectory,mod.Name);	
-				mod.ModuleInfo.XPScale = 0; // player will gain no experience
+			NWN2GameModule mod = new NWN2GameModule();
+			mod.Name = name;
+			mod.LocationType = ModuleLocationType.Directory;
+			mod.FileName = Path.Combine(form.ModulesDirectory,mod.Name);	
+			mod.ModuleInfo.XPScale = 0; // player will gain no experience
+			
+			this.module = mod;
+			this.name = mod.Name;
+			this.modulePath = mod.FileName;
+			this.owningUser = Adventure.CurrentUser;
+			this.Chapters = new SerializableDictionary<string,Chapter>();
+			this.scratch = new Scratchpad(this);
 				
-				if (mod.LocationType != ModuleLocationType.Directory) {
-					throw new InvalidModuleLocationTypeException(mod.LocationType);
-				}
-				this.module = mod;
-				this.name = mod.Name;
-				this.modulePath = mod.FileName;
-				this.owningUser = Adventure.CurrentUser;
-				this.Chapters = new List<Chapter>();
-				this.scratch = new Scratchpad(this);
-					
-				this.Serialize();
-			}
-			catch (InvalidModuleLocationTypeException e)	{ 
-				Say.Error("Construction of Adventure went wrong - Adventure was given a non-directory based module.",e);
-			}
+			this.Serialize();
 		}	
 		
 		#endregion Constructors
 		
 		#region Open and delete adventures (static)
 				
+		//TODO: Returns a bool, not an Adventure
 		/// <summary>
 		/// Open an Adventure in the toolset.
 		/// </summary>
 		/// <param name="name">Name of the Adventure to open.</param>
 		public static Adventure Open(string name)
 		{
+			if (currentAdventure != null) {
+				currentAdventure.Close();
+			}
 			try {
-				if (currentAdventure != null) {
-					currentAdventure.Close();
-				}
 				Adventure a = new Adventure();
-				if (!a.Deserialize(name)) { // if opening the Adventure fails
-					Say.Error("Could not find an Adventure called '" + name + "'.");
+				bool deserialized = a.Deserialize(name);				
+				if (!deserialized) {
 					return null;
 				}
 				else {
@@ -224,18 +219,10 @@ namespace AdventureAuthor.AdventureData
 					return a;
 				}
 			}
-			catch (AdventureIsMissingModuleDirectoryException e) {
-				Say.Error("Could not find module for this Adventure, or module was of wrong location type - unable to open.\n\n",e);
+			catch (FileNotFoundException e) {
+				Say.Error("Adventure '" + name + "' contained an area which did not form part of a Chapter or Scratchpad.",e);
 				return null;
-			}
-			catch (MissingAdventureSerializedDataException e) {
-				Say.Error("Could not find Adventure data - unable to open.\n\n",e);
-				return null;
-			}
-			catch (InvalidDataException e) {
-				Say.Error("Adventure data was invalid - unable to open.\n\n",e);
-				return null;
-			}
+			}				
 		}			
 		
 		//TODO: IMPLEMENT
@@ -290,11 +277,11 @@ namespace AdventureAuthor.AdventureData
 		public void Save()
 		{
 			if (this.module.LocationType != ModuleLocationType.Directory) {
-				throw new InvalidModuleLocationTypeException(this.module.LocationType);
+				throw new InvalidOperationException("An Adventure's module must be directory-based - tried to save a module " +
+					                                "of type " + module.LocationType.ToString() + ".");
 			}
 			else if (this != currentAdventure) {
-				Say.Error("This adventure is not currently open in the toolset.");		
-				return;
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}	
 					     
 			// Save the Adventure data:
@@ -417,8 +404,8 @@ namespace AdventureAuthor.AdventureData
 		public void Serialize()
 		{			
 			this.module.OEISerialize(this.name);				
-				
-			foreach (Chapter c in this.Chapters) {
+						
+			foreach (Chapter c in this.Chapters.Values) {
 				c.Area.OEISerialize();
 			}			
 			this.scratch.Area.OEISerialize();
@@ -433,6 +420,7 @@ namespace AdventureAuthor.AdventureData
 		/// <summary>
 		/// Used to retrieve an Adventure from disk.
 		/// </summary>
+		/// <exception cref="FileNotFoundException">Thrown if an area was found in this module which did not form part of either a Chapter or a Scratchpad.</exception>
 		private bool Deserialize(string nameOfAdventure)
 		{
 			// Deserialize the Adventure data:
@@ -440,8 +428,9 @@ namespace AdventureAuthor.AdventureData
 			try	{
 				FileInfo f = new FileInfo(Path.Combine(Adventure.SerializedDir,nameOfAdventure+".xml"));
 				s = f.Open(FileMode.Open); // throws an exception if serialized data is missing			
-				XmlSerializer xml = new XmlSerializer(typeof(Adventure));				
+				XmlSerializer xml = new XmlSerializer(typeof(Adventure));			
 				Adventure adventure = (Adventure)xml.Deserialize(s);
+
 				this.blurb = adventure.Blurb;
 				this.Chapters = adventure.Chapters;
 				this.modulePath = adventure.ModulePath;
@@ -449,8 +438,9 @@ namespace AdventureAuthor.AdventureData
 				this.scratch = adventure.Scratch;
 				this.owningUser = adventure.OwningUser;				
 			}
-			catch (FileNotFoundException) {
-				throw new MissingAdventureSerializedDataException();
+			catch (FileNotFoundException e) {
+				Say.Error("AdventureAuthor data for '" + nameOfAdventure + "' could not be found.",e);
+				return false;
 			}
 			finally {
 				if (s != null) {
@@ -459,34 +449,39 @@ namespace AdventureAuthor.AdventureData
 			}
 			
 			// Deserialize the module data and open the module in the toolset:
+			ThreadedOpenHelper toh = null;
 			try {
-				ThreadedOpenHelper toh = new ThreadedOpenHelper(form.App,this.name,ModuleLocationType.Directory);
+				toh = new ThreadedOpenHelper(form.App,this.name,ModuleLocationType.Directory);
 				toh.Go();
 				form.App.SetupHandlersForGameResourceContainer(form.App.Module);								
 				Toolset.UpdateTitleBar();					
 			}
-			catch (FileNotFoundException) {
-				throw new AdventureIsMissingModuleDirectoryException();
+			catch (DirectoryNotFoundException e) {
+				Say.Error("Directory-based module '" + this.name + "' could not be found.",e);
+				return false;
+			}
+			finally {
+				toh = null;
 			}
 							
 			// Set up the Adventure and module to refer to each other again:
 			this.module = form.App.Module;
 			this.module.LocationType = ModuleLocationType.Directory;	
-				
-			foreach (NWN2GameArea area in this.module.Areas.Values) {
-				if (area.Name == this.scratch.Name) {
-					area.Demand();
-					this.scratch.Area = area;
-					this.scratch.OwningAdventure = this;
+							
+			foreach (NWN2GameArea area in this.module.Areas.Values) {	
+				if (Chapters.ContainsKey(area.Name)) {
+					Chapter chapter = Chapters[area.Name];
+					area.Demand(); // TODO: Do I need to do this?
+					chapter.Area = area;
+					chapter.OwningAdventure = this;
+				}
+				else if (area.Name == scratch.Name) {
+					area.Demand(); // TODO: Do I need to do this?
+					scratch.Area = area;
+					scratch.OwningAdventure = this;
 				}
 				else {
-					foreach (Chapter chapter in this.Chapters) {
-						if (chapter.Name == area.Name) {
-							area.Demand();
-							chapter.Area = area;
-							chapter.OwningAdventure = this;
-						}
-					}
+					throw new FileNotFoundException("Area '" + area.Name + "' in this Adventure is not part of a Chapter or Scratchpad.");
 				}
 			}
 							    
@@ -500,8 +495,7 @@ namespace AdventureAuthor.AdventureData
 		public void Close()
 		{
 			if (this != currentAdventure) {
-				Say.Error("This adventure is not currently open in the toolset.");		
-				return;
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
 			
 			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {				
@@ -527,8 +521,7 @@ namespace AdventureAuthor.AdventureData
 		public void Run(string waypoint, bool debugOn, bool playerIsInvincible)
 		{
 			if (this != currentAdventure) {
-				Say.Error("This adventure is not currently open in the toolset.");		
-				return;
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
 			
 			if (waypoint != string.Empty) {				
@@ -590,7 +583,7 @@ namespace AdventureAuthor.AdventureData
 //				filename = script.Resource.FullName;
 //			}
 //			else {
-//				// TODO: throw InvalidResource exception
+//				//throw InvalidResource exception
 //				return;
 //			}
 //			
@@ -655,8 +648,7 @@ namespace AdventureAuthor.AdventureData
 		public Chapter AddChapter(string name, string introduction, bool exterior, int width, int height)
 		{		
 			if (this != currentAdventure) {
-				Say.Error("This adventure is not currently open in the toolset.");		
-				return null;
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
 			
 			if (name.ToLower() == NAME_OF_SCRATCHPAD_AREA) {
@@ -664,7 +656,8 @@ namespace AdventureAuthor.AdventureData
 				return null;
 			}		
 			else if (!IsValidName(name)){
-				throw new InvalidNameException(name);
+				throw new ArgumentException("'" + name + "' is an invalid chapter name - the name you enter must be between " + 
+				                            "1 and 32 characters long, and must not contain the following characters:  < > : \\ \" / | .");
 			}								
 			else if (module.IsNameOccupied(ModuleResourceType.Area,name)) {
 				Say.Error("Could not add chapter named '" + name + "' - that name is already taken.");
@@ -675,7 +668,7 @@ namespace AdventureAuthor.AdventureData
 			
 			Chapter c = new Chapter(this,name,introduction,exterior,validSize);
 			module.AddResource(c.Area);
-			Chapters.Add(c);
+			Chapters.Add(c.Name,c);
 			Serialize();
 			Toolset.UpdateChapterList();
 			return c;
@@ -684,8 +677,7 @@ namespace AdventureAuthor.AdventureData
 		public bool DeleteChapter(Chapter chapter)
 		{
 			if (this != currentAdventure) {
-				Say.Error("This adventure is not currently open in the toolset.");		
-				return false;
+				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
 			
 			// If the Chapter is currently open, close it silently:
@@ -708,7 +700,7 @@ namespace AdventureAuthor.AdventureData
 			}
 			
 			// Delete the chapter:
-			Chapters.Remove(chapter);
+			Chapters.Remove(chapter.Name);
 			Serialize(); // remove references to chapter from serialized data
 			
 			// Refresh user interface:
@@ -751,17 +743,25 @@ namespace AdventureAuthor.AdventureData
 		/// </summary>
 		/// <param name="type">The type of resource to check - adventure, conversation or script</param>
 		/// <param name="name">The name to check for</param>
+		/// <exception cref="IOException">Thrown if AdventureAuthor data is found without a module, or vice versa.</exception>
 		/// <returns>Returns false if a resource of the given type already exists with this name, true otherwise</returns>
 		public static bool IsAvailableAdventureName(string name)
 		{
-			DirectoryInfo moduleDir = new DirectoryInfo(Path.Combine(form.ModulesDirectory,name));
+			DirectoryInfo moduleDir = new DirectoryInfo(Path.Combine(form.ModulesDirectory,name));			
+			string serializedDataPath = Path.Combine(SerializedDir,name+".xml");
 			if (moduleDir.Exists) {
-				return false;
-			}				
-			else {
-				string serializedDataPath = Path.Combine(SerializedDir,name+".xml");
 				if (File.Exists(serializedDataPath)) {
-					throw new AdventureIsMissingModuleDirectoryException();
+					return false;
+				}
+				else {
+					throw new IOException("A module exists with the name '" + name + "', but there is no AdventureAuthor data associated " +
+					                      "with it - i.e. a standard Neverwinter Nights 2 module was found.");
+				}
+			}
+			else {
+				if (File.Exists(serializedDataPath)) {
+					throw new IOException("No module exists with the name '" + name + "', but there is AdventureAuthor data associated " +
+					                      "with an Adventure of that name at " + serializedDataPath + ".");				
 				}
 				else {
 					return true;

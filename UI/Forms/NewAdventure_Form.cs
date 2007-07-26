@@ -22,9 +22,11 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Forms
 {
@@ -62,14 +64,19 @@ namespace AdventureAuthor.UI.Forms
 					}
 					
 					new Adventure(textBox_NameOfNewAdventure.Text);
-					Adventure.Open(textBox_NameOfNewAdventure.Text);
-					Adventure.CurrentAdventure.Scratch.Open();
-					this.Close();
+					Adventure adventure = Adventure.Open(textBox_NameOfNewAdventure.Text);
+					if (adventure == null) {
+						Say.Error("Failed to open Adventure.");
+						return;
+					}
+					else {
+						Adventure.CurrentAdventure.Scratch.Open();
+						this.Close();
+					};
 				}
 			}
-			catch (AdventureIsMissingModuleDirectoryException ae) {
-				Say.Error("Serialized data for an adventure called '" + textBox_NameOfNewAdventure.Text + 
-				          "' was found, but no game module was found to accompany it.\n\n",ae);
+			catch (IOException ioe) {
+				Say.Error(ioe);
 			}
 		}
 	}

@@ -22,16 +22,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using AdventureAuthor.AdventureData;
-using AdventureAuthor.ConversationWriter;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI.Forms;
 using AdventureAuthor.UI.Windows;
+using AdventureAuthor.Utils;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
 using NWN2Toolset;
@@ -81,35 +80,30 @@ namespace AdventureAuthor.UI
 				
 		public static void UpdateChapterList()
 		{
-			if (chapterListContent != null) {
-				// Clear the current list of chapters:
-				ListView listView = (ListView)chapterListContent.Control;
-				listView.Clear();
+			// Clear the current list of chapters:
+			ListView listView = (ListView)chapterListContent.Control;
+			listView.Clear();
+			
+			if (Adventure.CurrentAdventure == null) {
+				// Disable the chapter list context menu:
+				foreach (MenuItem mi in chapterListContent.Control.ContextMenu.MenuItems) {
+					mi.Enabled = false;
+				}				
+			}
+			else {
+				ListViewItem scratchpad = listView.Items.Add(Adventure.NAME_OF_SCRATCHPAD_AREA);
+				scratchpad.ForeColor = Color.Maroon;			
+				foreach (Chapter chapter in Adventure.CurrentAdventure.Chapters.Values) {
+					listView.Items.Add(chapter.Name);					
+				}				
 				
-				if (Adventure.CurrentAdventure == null) {
-					// Disable the chapter list context menu:
-					foreach (MenuItem mi in chapterListContent.Control.ContextMenu.MenuItems) {
-						mi.Enabled = false;
-					}				
-				}
-				else {
-					// Add the scratchpad first, then everything else:
-					ListViewItem scratchpadItem = new ListViewItem(Adventure.CurrentAdventure.Scratch.Name);
-					scratchpadItem.ForeColor = Color.Maroon;
-					listView.Items.Add(scratchpadItem);
-					
-					foreach (Chapter c in Adventure.CurrentAdventure.Chapters) {
-						ListViewItem chapterItem = new ListViewItem(c.Name);
-						listView.Items.Add(chapterItem);					
-					}				
-					
-					// Enable the chapter list context menu:
-					foreach (MenuItem mi in chapterListContent.Control.ContextMenu.MenuItems) {
-						if (mi.Text == "Add") {
-							mi.Enabled = true;
-						}
+				// Enable the chapter list context menu:
+				foreach (MenuItem mi in chapterListContent.Control.ContextMenu.MenuItems) {
+					if (mi.Text == "Add") {
+						mi.Enabled = true;
+						break;
 					}
-				}
+				}		
 			}
 		}
 			
@@ -291,7 +285,6 @@ namespace AdventureAuthor.UI
 			gfx.FarPlane = 1000.0F;
 			gfx.Fog = false;
 			gfx.UseAreaFarPlane = false;
-			//..etc
 			
 			// Get every field of NWN2ToolsetMainForm.App:
 			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
@@ -565,49 +558,35 @@ namespace AdventureAuthor.UI
 			}
 		}
 		
-		//TODO: Refactor to only display a listbox of Adventures (those that appear both in
-		//the modules list and the serialized data folder. Get rid of the trimming path bit
-		//since it only needs the name.
-		/// <summary>
-		/// Opens an Adventure chosen by the user through a dialog.
-		/// </summary>
 		private static void OpenAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure != null && !CloseAdventureDialog()) {
 				return; // if they change their mind when prompted to close the current adventure
 			}
 			
-			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-			folderBrowser.SelectedPath = form.ModulesDirectory.ToString();
-			folderBrowser.ShowNewFolderButton = false;
-			folderBrowser.Description = "Choose an Adventure to open...";
-
-			DialogResult result = folderBrowser.ShowDialog(form.App);			
-			if (result == DialogResult.OK) {
-				string directoryName = Path.GetFileNameWithoutExtension(folderBrowser.SelectedPath);
-				Adventure.Open(directoryName);
-			}			
+			OpenAdventureWindow window = new OpenAdventureWindow();
+			window.ShowDialog();
 		}
 		
 		private static void SaveAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
+				Say.Error("No Adventure is open to be saved.");
 				return;
 			}
 			
 			try {
 				Adventure.CurrentAdventure.Save();
 			}
-			catch (InvalidModuleLocationTypeException) {
-				Say.Error("Tried to save a temporary or file-based module - failed.");
+			catch (InvalidOperationException e) {
+				Say.Error(e);
 			}
 		}
 		
 		private static void SaveAdventureAsDialog()
 		{		
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
+				Say.Error("No Adventure is open to be saved.");
 				return;
 			}
 			
@@ -617,16 +596,15 @@ namespace AdventureAuthor.UI
 					Adventure.CurrentAdventure.SaveAs(dialog.DirectoryName);
 				}
 			}
-			catch (InvalidModuleLocationTypeException) {
-				Say.Error("Tried to save a temporary or file-based module - failed.");
+			catch (InvalidOperationException e) {
+				Say.Error(e);
 			}
 		}
 		
 		private static void RunAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
-				return;
+				Say.Error("No Adventure is open to be run.");
 			}
 			
 			RunAdventure_Form runAdventureForm = new RunAdventure_Form();
@@ -635,34 +613,31 @@ namespace AdventureAuthor.UI
 		
 		internal static bool CloseAdventureDialog()
 		{
-			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
-				return false;
-			}
-			
-			if (!Adventure.BeQuiet) {
-				if (Adventure.CurrentAdventure != null) {
-					switch (MessageBox.Show("Do you want to save the current Adventure?", 
-					                        "Save?",
-					                        MessageBoxButtons.YesNoCancel, 
-					                        MessageBoxIcon.Exclamation)) {
-						case DialogResult.Cancel:
-							return false;		
-							
-						case DialogResult.Yes:
-							Adventure.CurrentAdventure.Save();
-							break;
+			if (Adventure.CurrentAdventure != null) {
+				if (!Adventure.BeQuiet) {
+					if (Adventure.CurrentAdventure != null) {
+						switch (MessageBox.Show("Do you want to save the current Adventure?", 
+						                        "Save?",
+						                        MessageBoxButtons.YesNoCancel, 
+						                        MessageBoxIcon.Exclamation)) {
+							case DialogResult.Cancel:
+								return false;		
+								
+							case DialogResult.Yes:
+								Adventure.CurrentAdventure.Save();
+								break;
+						}
 					}
 				}
+				Adventure.CurrentAdventure.Close();
 			}
-			Adventure.CurrentAdventure.Close();
 			return true;
 		}
 		
 		private static void NewChapterDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
+				Say.Error("Open or create an Adventure before trying to add a new Chapter.");
 				return;
 			}
 			
@@ -673,13 +648,14 @@ namespace AdventureAuthor.UI
 		private static void NewConversationDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No adventure is currently open in the toolset.");
+				Say.Error("Open or create an Adventure before trying to add a new conversation.");
 				return;
 			}
 			
-			ConversationWriterWindow.Instance = new ConversationWriterWindow();
+			if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
+				ConversationWriterWindow.Instance = new ConversationWriterWindow();
+			}
 			ConversationWriterWindow.Instance.ShowDialog();
-//			ConversationWriterWindow.Instance.ShowDialog();
 		}
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)
@@ -694,53 +670,38 @@ namespace AdventureAuthor.UI
 				Adventure.CurrentAdventure.DeleteChapter(chapterToDelete);
 			}
 		}
-		
+				
 		private static void ChapterList_Open(object sender, EventArgs ea)
 		{	
-			Log.Write(Log.Action.Opened,Log.Subject.Chapter);
+			Log.Write(Log.Action.Opened,Log.Subject.Chapter);			
 			
 			try {
-				string nameOfSelectedArea = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
+				string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
 				
-				if (nameOfSelectedArea == Adventure.NAME_OF_SCRATCHPAD_AREA) {
+				Chapter chapter = Adventure.CurrentAdventure.Chapters[name];
+				if (chapter != null) {
+					chapter.Open();
+				}
+				else if (name == Adventure.NAME_OF_SCRATCHPAD_AREA) {
 					Adventure.CurrentAdventure.Scratch.Open();
 				}
-				else {			
-					//TODO: Refactor to use .Find() - don't know what a predicate is
-					foreach (Chapter c in Adventure.CurrentAdventure.Chapters) {
-						if (c.Name == nameOfSelectedArea) {
-							c.Open();
-							return;
-						}
-					}
-					// If we get this far, we haven't found a Chapter to go along with the Area:
-					throw new MissingAdventureSerializedDataException();
+				else {	
+					throw new KeyNotFoundException("'" + name + "' was not found in this Adventure.");				
 				}
 			}
-			catch (TriedToOpenChapterInClosedAdventure e) {
-				Say.Error("The chapter that you tried to open is not part of this adventure: something has gone wrong.\n\n",e);
+			catch (KeyNotFoundException e) {
+				Say.Error(e.Message,e);
 			}
-			catch (MissingModuleResourceException e) {
-				Say.Error("The area that you tried to open is not part of this module: something has gone wrong.\n\n",e);
-			}
-			catch (MissingAdventureSerializedDataException e) {
-				Say.Error("Couldn't find chapter information to accompany the area you tried to open.\n\n",e);
-			}
-			
 		}		
 				
 		private static void ChapterList_Delete(object sender, EventArgs ea)
 		{	
 			Log.Write(Log.Action.Deleted,Log.Subject.Chapter);
 			
-			ListView listView = chapterListContent.Control as ListView;
-			string chapterName = listView.SelectedItems[0].Text;
-			//TODO: Refactor once Chapters are in Dictionary form.
-			foreach (Chapter c in Adventure.CurrentAdventure.Chapters) {
-				if (c.Name == chapterName) {
-					DeleteChapterDialog(c);
-					return;
-				}
+			string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
+			Chapter chapter = Adventure.CurrentAdventure.Chapters[name];
+			if (chapter != null) {
+				DeleteChapterDialog(chapter);
 			}
 		}			
 		
@@ -749,64 +710,54 @@ namespace AdventureAuthor.UI
 			if (!Adventure.BeQuiet && Adventure.CurrentAdventure != null && !CloseAdventureDialog()) {
 				return; // cancel shutdown if they change their mind when asked to save the current adventure
 			}
+			
 			ShutdownToolset();
+			
+			// TODO: should be adding event handling stuff to the OnClose(?) event, and then raising that event from here.
 		}
 		
 		#endregion Event handlers
 		
 		private static void ShutdownToolset()
-		{			
-			try {
-				IScriptCompiler scriptCompiler = null;
-				Int32 threadID = 6666;
-				NWN2PluginHost host = null;
-				
-				FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.NonPublic |
-				                                                  BindingFlags.Instance |
-				                                                  BindingFlags.Static);
-				
-				// Get the script compiler and thread ID through reflection 
-				// (there is only one field of either type):
-				foreach (FieldInfo fi in fields) {
-					if (fi.FieldType == typeof(IScriptCompiler)) {
-						scriptCompiler = fi.GetValue(form.App) as IScriptCompiler;
-					}
-					else if (fi.FieldType == typeof(Int32)) {
-						threadID = (Int32)fi.GetValue(form.App);
-					}
-					else if (fi.FieldType == typeof(NWN2PluginHost)) {
-						host = fi.GetValue(form.App) as NWN2PluginHost;
-					}
-				}			
-				
-				if (threadID == 6666) {
-					Say.Error("failed to find correct value for thread ID, returning");
-					return;
+		{	
+			IScriptCompiler scriptCompiler = null;
+			int? threadID = null;
+			NWN2PluginHost host = null;
+			
+			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.NonPublic |
+			                                                  BindingFlags.Instance |
+			                                                  BindingFlags.Static);
+			
+			// Get the script compiler and thread ID through reflection 
+			// (there is only one field of either type):
+			foreach (FieldInfo fi in fields) {
+				if (fi.FieldType == typeof(IScriptCompiler)) {
+					scriptCompiler = fi.GetValue(form.App) as IScriptCompiler;
 				}
-				if (host == null) {
-					Say.Error("couldn't find plugin host, returning");
-					return;
+				else if (fi.FieldType == typeof(Int32)) {
+					threadID = (Int32)fi.GetValue(form.App);
 				}
-					
-				if (Thread.CurrentThread.ManagedThreadId == threadID) {
-					form.App.Module.CloseModule();
-					
-					if (scriptCompiler != null) {
-						scriptCompiler.Dispose();
-						scriptCompiler = null;
-					}
-					NWN2NetDisplayManager.Instance.Shutdown();
-					host.UnloadPlugins();
-					OEIShared.IO.TalkTable.TalkTable.Instance.Dispose();
-					form.App.Module.Dispose(true);
-					host.ShutdownPlugins();
-					
-					form.App.Close();
-					form.App.Dispose();
+				else if (fi.FieldType == typeof(NWN2PluginHost)) {
+					host = fi.GetValue(form.App) as NWN2PluginHost;
 				}
-			}
-			catch (Exception e) {
-				Say.Error("Something went wrong when shutting down the toolset.",e); // TODO: Seems to crash AFTER this method (?)
+			}	
+				
+			if (Thread.CurrentThread.ManagedThreadId == threadID) {
+				form.App.Module.CloseModule();
+				
+				if (scriptCompiler != null) {
+					scriptCompiler.Dispose();
+					scriptCompiler = null;
+				}
+				//NWN2NetDisplayManager.Instance.Shutdown();
+				host.UnloadPlugins();
+				OEIShared.IO.TalkTable.TalkTable.Instance.Dispose();
+				form.App.Module.Dispose(true);
+				host.ShutdownPlugins();
+				
+				//Application.Exit();
+				form.App.Close();
+				form.App.Dispose();
 			}
 		}
 	}

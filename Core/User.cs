@@ -24,7 +24,7 @@ using System;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 
-namespace AdventureAuthor.AdventureData
+namespace AdventureAuthor.Core
 {
 	/// <summary>
 	/// An Adventure Author user.

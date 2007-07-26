@@ -21,11 +21,13 @@
  */
 
 using System;
+using System.Text;
 using System.Windows.Forms;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 
-namespace AdventureAuthor
+namespace AdventureAuthor.Utils
 {
+	// TODO: Create pretty forms with readable text (base text size on user age settings?) instead of message boxes.
 	public static class Say
 	{		
 		public static void Error(string message) {
@@ -41,16 +43,22 @@ namespace AdventureAuthor
 				
 				MessageBox.Show("ERROR: \n\n " + message);
 			}
-			
-			// TODO: Create a pretty form with readable text (base text size on user age settings?) instead of a message box.
-			// TODO: Log a message about this error.
+						
+			StringBuilder logMessage = new StringBuilder("- error: " + message);
+			if (e != null) {
+				logMessage.Append("   > " + e.ToString());
+			}
+			Log.Write(logMessage.ToString());
+		}
+		
+		public static void Error(Exception e)
+		{
+			Error(String.Empty,e);
 		}
 		
 		public static void Hint(string message)
 		{
 			MessageBox.Show("HINT: \n\n " + message);
-			
-			// TODO: Create a pretty form with readable text (base text size on user age settings?) instead of a message box.
 		}
 		
 		public static void Information(string message)
@@ -58,20 +66,25 @@ namespace AdventureAuthor
 			if (!Adventure.BeQuiet) {
 				MessageBox.Show(message);
 			}
-			
-			// TODO: Create a pretty form with readable text (base text size on user age settings?) instead of a message box.
 		}
 		
-		public static bool Question(string message, MessageBoxButtons buttons)
+		public static bool? Question(string text, MessageBoxButtons buttons)
 		{
-			// TODO: Fix or delete (doesn't take account of the difference between No and Cancel)
+			return Say.Question(text, String.Empty, buttons);
+		}
+		
+		public static bool? Question(string message, string caption, MessageBoxButtons buttons)
+		{
 			if (buttons == MessageBoxButtons.AbortRetryIgnore || buttons == MessageBoxButtons.RetryCancel) {
 				throw new NotImplementedException();
 			}
 			
 			if (!Adventure.BeQuiet) {
-				DialogResult result = MessageBox.Show(message,String.Empty,buttons);
-				if (result == DialogResult.Yes || result == DialogResult.OK) {
+				DialogResult result = MessageBox.Show(message,caption,buttons);
+				if (result == DialogResult.Cancel) {
+					return null;
+				}
+				else if (result == DialogResult.Yes || result == DialogResult.OK) {
 					return true;
 				}
 				else {
@@ -81,8 +94,6 @@ namespace AdventureAuthor
 			else {
 				return true;
 			}
-			// TODO: Create a pretty form with readable text (base text size on user age settings?) instead of a message box.
-			// TODO: Log a message about this error.
 		}
 		
 		public static void Warning(string message)
@@ -91,8 +102,7 @@ namespace AdventureAuthor
 				MessageBox.Show("WARNING: \n\n " + message);
 			}
 			
-			// TODO: Create a pretty form with readable text (base text size on user age settings?) instead of a message box.
-			// TODO: Log a message about this warning.
+			Log.Write("- warned: " + message);
 		}
 	}
 }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 using System.IO;
 using NWN2Toolset.NWN2.Data;
@@ -30,17 +31,21 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.Data.TypedCollections;
 using OEIShared.Utils;
 using AdventureAuthor;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.UI.Controls;
+using AdventureAuthor.Utils;
+using System.Windows.Controls;
+using Microsoft.Win32;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.ConversationWriter
 {
 	/// <summary>
 	/// Conversation wraps a NWN2GameConversation with some additional information for the Adventure Author Conversation Writer.
 	/// </summary>
-	public class Conversation
+	public class Conversation : DependencyObject
 	{
 		#region Classes
 		
@@ -79,28 +84,14 @@ namespace AdventureAuthor.ConversationWriter
 		
 		#endregion Constants
 		
-		#region Global variables
-//		
-//		private static ConversationWriterWindow writerWindow;		
-//		public static ConversationWriterWindow WriterWindow {
-//			get { return writerWindow; }
-//			set { writerWindow = value; }
-//		}
+		#region Fields
 		
 		private static Conversation currentConversation;		
 		public static Conversation CurrentConversation {
 			get { return currentConversation; }
 			set { currentConversation = value; }
 		}
-		
-		private static string conversationWriterDir = @"C:\ConversationWriter";		
-		public static string ConversationWriterDir {
-			get { return conversationWriterDir; }
-		}		
-		
-		#endregion Global variables
-				
-		#region Fields
+		private static object padlock = new object();
 		
 		private NWN2GameConversation nwnConv;		
 		public NWN2GameConversation NwnConv {
@@ -111,6 +102,19 @@ namespace AdventureAuthor.ConversationWriter
 		public List<Speaker> Speakers {
 			get { return speakers; }
 		}
+		
+		private bool isDirty;		
+		public bool IsDirty {
+			get { return isDirty; }
+		}
+		
+		
+//		private DependencyProperty isDirtyProperty = DependencyProperty.Register("IsDirty",typeof(bool),typeof(Conversation));
+//		public bool IsDirty {
+//			get { return (bool)GetValue(isDirtyProperty); }
+//			private set { SetValue(isDirtyProperty,value); }			
+//		}
+		
 		
 		//TODO: Currently no way to store this information below. Use NwnConv.Comments somehow?
 		//TODO: If this gets reinstated, use the Chapter.ContainsObject, Chapter.ContainsSpeakingObject stuff etc. Otherwise use them when attaching convo to an instance.
@@ -141,6 +145,7 @@ namespace AdventureAuthor.ConversationWriter
 			this.unassignedColours.Add(Brushes.Red); 
 			this.unassignedColours.Add(Brushes.DarkGreen); 
 			this.unassignedColours.Add(Brushes.Brown);
+			isDirty = false;
 		}
 		
 		#endregion Constructors
@@ -196,25 +201,30 @@ namespace AdventureAuthor.ConversationWriter
 		
 		#region Editing the conversation
 
-		internal NWN2ConversationConnector InsertNewLine(NWN2ConversationConnector parentLine, string speakerTag)
+		internal NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
 		{
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			newLine.Comment = Conversation.NOT_FILLER;
 			newLine.Speaker = speakerTag;
+			SaveToWorkingCopy();
 			return newLine;
 		}
 
-		internal NWN2ConversationConnector InsertFillerLine(NWN2ConversationConnector parentLine)
+		internal NWN2ConversationConnector InsertFillerLineWithoutReparenting(NWN2ConversationConnector parentLine)
 		{
 			NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			fillerLine.Comment = Conversation.FILLER;
 			fillerLine.Speaker = String.Empty;
+			SaveToWorkingCopy();
 			return fillerLine;
 		}
 		
 		public static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
 		{
-			if (line != null && line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
+			if (line == null) {
+				return typeOfFollowingLine == NWN2ConversationConnectorType.StartingEntry;
+			}
+			else if (line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
 				return typeOfFollowingLine == NWN2ConversationConnectorType.Reply;
 			}
 			else {
@@ -224,6 +234,10 @@ namespace AdventureAuthor.ConversationWriter
 					
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speakerTag, bool reparentChildren)
 		{			
+			if (this != currentConversation) {
+				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
+			}
+			
 			NWN2ConversationConnectorType newLineType;	
 			NWN2ConversationConnector newLine = null;
 			
@@ -245,16 +259,17 @@ namespace AdventureAuthor.ConversationWriter
 					newLine = AddLine(parent,speakerTag,false,reparentChildren); // can add an NPC line directly to root without adding a filler line first
 				}
 			}
-			else { // adding to an existing line			
-				if (AreSameType(parent.Type,newLineType)) { 
-					newLine = AddLine(parent,speakerTag,true,reparentChildren); // adding a line of one type to a line of the same type is only possible by adding a filler line first
+			else { // adding to an existing line	
+				if (!CanFollow(parent,newLineType)) { // if the new line can't be directly added, put in a filler line first
+					newLine = AddLine(parent,speakerTag,true,reparentChildren);
 				}
 				else { // add the new line to the parent	
-					newLine = AddLine(parent,speakerTag,false,reparentChildren); // can add a line of one type directly to a line of the opposite type without adding a filler line first
+					newLine = AddLine(parent,speakerTag,false,reparentChildren); 
 				}
 			}
 			
-			newLine.Comment = Conversation.NOT_FILLER;			
+			newLine.Comment = Conversation.NOT_FILLER;	
+			SaveToWorkingCopy();
 			return newLine;
 		}			
 		
@@ -285,8 +300,7 @@ namespace AdventureAuthor.ConversationWriter
 			}
 			
 			return newLine;
-		}
-						
+		}						
 		
 		private void ReparentChildren(NWN2ConversationConnector newLine, NWN2ConversationConnector fillerLine, NWN2ConversationConnectorCollection children)
 		{						
@@ -329,18 +343,19 @@ namespace AdventureAuthor.ConversationWriter
 			else {
 				if (Nwn2Line.Parent == null) {
 					if (nwnConv.StartingList.Count < 2) {
-						throw new BadBranchException("Tried to delete a line from a branch that had less than 2 options.");
+						throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
 					}
 				}
 				else if (Nwn2Line.Parent.Line.Children.Count < 2) {
-					throw new BadBranchException("Tried to delete a line from a branch that had less than 2 options.");
+					throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
 				}
 			}
 			
 			// Remove and refresh display, and return the children of the deleted line:
 			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
 			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			ConversationWriterWindow.Instance.RefreshDisplay(true);			
+			ConversationWriterWindow.Instance.RefreshDisplay(true);
+			SaveToWorkingCopy();
 			return children;
 		}
 		
@@ -363,7 +378,7 @@ namespace AdventureAuthor.ConversationWriter
 					NWN2ConversationConnector child = Nwn2Line.Line.Children[0];
 					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:		
 						if (Nwn2Line.Line.Children.Count > 1) {
-							throw new BadFillerLineException("A filler line formed part of a choice/check.");
+							throw new InvalidDataException("A filler line formed part of a choice/check.");
 						}
 						else {
 							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
@@ -410,11 +425,11 @@ namespace AdventureAuthor.ConversationWriter
 			
 			// Refresh display:
 			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
+			SaveToWorkingCopy();
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}	
 		
-		#endregion Editing the conversation
-		
+		#endregion Editing the conversation		
 		
 		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector branchParent)
 		{
@@ -424,28 +439,17 @@ namespace AdventureAuthor.ConversationWriter
 					speakerTag = option.Speaker;
 				}
 				else if (speakerTag != option.Speaker) {
-					throw new BadBranchException("Found different speakers in the same branch.");
+					throw new ArgumentException("Found different speakers in the same branch.");
 				}
 			}
 			return AddLine(branchParent,speakerTag,false);
-		}
-				
-		public static bool AreSameType(NWN2ConversationConnectorType a, NWN2ConversationConnectorType b)
-		{
-			// TODO: Replace uses of this with uses of CanFollow
-			if (a == NWN2ConversationConnectorType.Reply) {
-				return b == NWN2ConversationConnectorType.Reply;
-			}
-			else {
-				return b == NWN2ConversationConnectorType.Entry || b == NWN2ConversationConnectorType.StartingEntry;
-			}
 		}
 						
 		public static bool IsFiller(NWN2ConversationConnector line)
 		{
 			if (line.Comment == Conversation.FILLER) {
 				if (line.Text.Strings.Count > 0 && line.Text.Strings[0].Value.Length > 0) {
-					throw new BadFillerLineException("Line is marked as 'filler', but contains text and will therefore be displayed.");
+					throw new InvalidDataException("Line is marked as 'filler', but contains text and will therefore be displayed.");
 				}
 				else {
 					return true;
@@ -555,29 +559,36 @@ namespace AdventureAuthor.ConversationWriter
 		
 		public void SaveToOriginal()
 		{
-			// Changes to lines are only saved when the control loses focus, so make sure you save changes to a currently selected line:
-			if (ConversationWriterWindow.Instance.CurrentlySelectedControl != null) {
-				LineControl lc = ConversationWriterWindow.Instance.CurrentlySelectedControl as LineControl;
-				if (lc != null) {
-					lc.Nwn2Line.Line.Text = StringToOEIExoLocString(lc.Dialogue.Text);
-				}
+			if (this != CurrentConversation) {
+				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
 			
-			SaveToWorkingCopy();
-			string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.OriginalFilename+".dlg");
-			string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.WorkingFilename+".dlg");
-			File.Copy(workingPath,originalPath,true);			
+			lock (padlock) {
+				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
+				if (ConversationWriterWindow.Instance.CurrentlySelectedControl != null) {
+					LineControl lc = ConversationWriterWindow.Instance.CurrentlySelectedControl as LineControl;
+					if (lc != null) {
+						lc.Nwn2Line.Line.Text = StringToOEIExoLocString(lc.Dialogue.Text);
+					}
+				}
+				
+				NwnConv.OEISerialize(false);
+				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.OriginalFilename+".dlg");
+				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.WorkingFilename+".dlg");
+				File.Copy(workingPath,originalPath,true);
+				isDirty = false;
+			}
 		}
 				
 		public void SaveToWorkingCopy() 
 		{
-			try {
-				if (Conversation.CurrentConversation != null) {
-					Conversation.CurrentConversation.NwnConv.OEISerialize(false);
-				}
+			if (this != CurrentConversation) {
+				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
-			catch (Exception e) {// TODO: got an error here before
-				Say.Error("Something went wrong when trying to save to the working copy of the conversation",e); 
+			
+			lock (padlock) {
+				NwnConv.OEISerialize(false);
+				isDirty = true;
 			}
 		}
 		

@@ -26,10 +26,11 @@ using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AdventureAuthor;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Windows;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -63,7 +64,7 @@ namespace AdventureAuthor.UI.Controls
         	this.isPartOfBranch = lineIsPartOfBranch;
         	
         	if (this.nwn2Line.Text.Strings.Count == 0) {
-        		this.nwn2Line.Text = Conversation.StringToOEIExoLocString(String.Empty); // bit dodgy?
+        		this.nwn2Line.Text = Conversation.StringToOEIExoLocString(String.Empty);
         		// TODO: Could just do this to an entire conversation upon opening it to avoid problems?
         	}
         	
@@ -97,7 +98,7 @@ namespace AdventureAuthor.UI.Controls
         	// If there are conditions on this line appearing, represent them with an ActionControl:
         	if (line.Conditions.Count > 0) {
         		if (!lineIsPartOfBranch) {
-        			throw new BadBranchException("Conditional check appeared on a line that was not part of a branch.");
+        			Say.Error("Conditional check appeared on a line that was not part of a branch.");
         		}
         		ActionControl actionControl = new ActionControl(this);
         		this.textAppearsWhenControl = actionControl;
@@ -131,7 +132,7 @@ namespace AdventureAuthor.UI.Controls
         {
         	// If this line is part of a branch, double-clicking it should display the page it leads to:
         	if (this.isPartOfBranch) {
-        		foreach (PageControl p in ConversationWriterWindow.Instance.Pages) {
+        		foreach (CPage p in ConversationWriterWindow.Instance.Pages) {
         			if (p.LeadInLine == this.nwn2Line) {
         				ConversationWriterWindow.Instance.DisplayPage(p);
         				return;
@@ -249,7 +250,7 @@ namespace AdventureAuthor.UI.Controls
         					}
         				}
         				if (casualties.pages > 1) {
-        					warning += "Deleting the route to this page will also delete the " + casualties.pages + " pages it can lead to. ";
+        					warning += "Deleting this line will also delete the " + casualties.pages + " pages it can lead to. ";
         				}
         				warning += "A total of " + casualties.lines + " lines and " + casualties.words + " words will be deleted. " +
         						   "Are you sure you want to delete this line?";

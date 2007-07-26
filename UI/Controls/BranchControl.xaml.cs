@@ -64,10 +64,10 @@ namespace AdventureAuthor.UI.Controls
             this.lineControls = new List<LineControl>(2);
         	
         	if (lines == null) {
-        		throw new BadBranchException("Tried to form a branch with a null collection of lines.");
+        		throw new ArgumentNullException("lines","Tried to form a branch with a null collection of lines.");
         	}
         	else if (lines.Count < 2) {
-        		throw new BadBranchException("Tried to form a branch with less than 2 lines.");
+        		throw new ArgumentException("Tried to form a branch with less than 2 lines.");
         	}
         	else {
         		if (lines[0].Type == NWN2ConversationConnectorType.Reply) {
@@ -80,7 +80,7 @@ namespace AdventureAuthor.UI.Controls
         
         	foreach (NWN2ConversationConnector line in lines) {
             	if (Conversation.IsFiller(line)) {
-            		throw new BadBranchException("Tried to form a branch with a filler line.");
+            		throw new ArgumentException("Tried to form a branch with a filler line.");
             	}
             	
 				LineControl lineControl = new LineControl(line,true);				
@@ -95,12 +95,12 @@ namespace AdventureAuthor.UI.Controls
 						lineControl.SpeakerLabel.Foreground = Conversation.BRANCH_COLOUR;
        				}
        				else {
-       					throw new BadBranchException("Tried to form a Check using an PC line - Checks should only contain NPC lines.");
+       					throw new ArgumentException("Tried to form a Check using an PC line - Checks should only contain NPC lines.");
        				}
        			}
        			else {
        				if (branchType == BranchControlType.Choice) {
-       					throw new BadBranchException("Tried to form a Choice using an NPC line - Choices should only contain PC lines.");
+       					throw new ArgumentException("Tried to form a Choice using an NPC line - Choices should only contain PC lines.");
        				}
        				else { // NPC checks what to say based on conditions
 	  					Speaker speaker = Conversation.CurrentConversation.GetSpeaker(line.Speaker);
@@ -124,8 +124,6 @@ namespace AdventureAuthor.UI.Controls
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToBranch(parentLine);
 				
-			Conversation.CurrentConversation.SaveToWorkingCopy();
-			ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage);
 			ConversationWriterWindow.Instance.RefreshDisplay(true);
 					
 			if (newLine != null) {

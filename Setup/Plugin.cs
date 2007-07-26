@@ -30,9 +30,10 @@ using NWN2Toolset.Plugins;
 using TD.SandBar;
 using Crownwood.DotNetMagic.Docking;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using AdventureAuthor.AdventureData;
+using AdventureAuthor.Core;
 using AdventureAuthor.UI;
 using AdventureAuthor.UI.Windows;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Setup
 {
@@ -79,12 +80,12 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="cHost"></param>
 		{
-			if (!DirectoriesExist() && !Say.Question("Continue loading Neverwinter Nights 2 toolset?",MessageBoxButtons.YesNo)) {
+			if (!DirectoriesExist() && !(bool)Say.Question("Continue loading Neverwinter Nights 2 toolset?",MessageBoxButtons.YesNo)) {
 				CloseToolset();
 			}
 			else {
+				ConversationWriterWindow.Instance = new ConversationWriterWindow();
 				Toolset.SetupUI();
-				//ConversationWriterWindow.Instance;
 				Log.StartRecording();
 			}
 		}	
