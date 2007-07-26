@@ -28,7 +28,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using AdventureAuthor.Core;
-using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -68,13 +67,13 @@ namespace AdventureAuthor.UI.Windows
 		
     	#region Fields
     	
-    	private List<CPage> pages;
-    	public List<CPage> Pages {
+    	private List<ConversationPage> pages;
+    	public List<ConversationPage> Pages {
 			get { return pages; }
 		}
     	
-    	private CPage currentPage;    	
-		public CPage CurrentPage {
+    	private ConversationPage currentPage;    	
+		public ConversationPage CurrentPage {
 			get { return currentPage; }
 		}
     	
@@ -184,7 +183,7 @@ namespace AdventureAuthor.UI.Windows
 			this.currentPage.FinalControl = endOfConversation;
 		}
 		
-		public void DisplayPage(CPage page)
+		public void DisplayPage(ConversationPage page)
 		{
 			// Clear the current page:	
 			currentPage = page;		
@@ -231,10 +230,10 @@ namespace AdventureAuthor.UI.Windows
 		/// </summary>
 		/// <param name="conversation">The conversation to traverse to create pages for</param>
 		/// <returns>a list of all Pages in the tree, the first entry being the root Page which owns all other Pages</returns>
-		private List<CPage> CreatePages(Conversation conversation)
+		private List<ConversationPage> CreatePages(Conversation conversation)
 		{
-			List<CPage> pages = new List<CPage>(1);			
-			CPage rootPage = new CPage(null,null);
+			List<ConversationPage> pages = new List<ConversationPage>(1);			
+			ConversationPage rootPage = new ConversationPage(null,null);
 			pages.Add(rootPage);
 			
 			// Identify every child of the root page:
@@ -243,7 +242,7 @@ namespace AdventureAuthor.UI.Windows
 			}
 			else if (conversation.NwnConv.StartingList.Count > 1) {
 				foreach (NWN2ConversationConnector line in conversation.NwnConv.StartingList) {
-					CPage page = new CPage(line,rootPage);
+					ConversationPage page = new ConversationPage(line,rootPage);
 					pages.Add(page);
 				}
 			}
@@ -254,23 +253,23 @@ namespace AdventureAuthor.UI.Windows
 					skippableLine = skippableLine.Line.Children[0];
 				}
 				foreach (NWN2ConversationConnector line in skippableLine.Line.Children) {
-					CPage page = new CPage(line,rootPage);
+					ConversationPage page = new ConversationPage(line,rootPage);
 					pages.Add(page);
 				}
 			}
 			
 			// Identify each Page that is a child of rootPage's children:
-			foreach (CPage child in rootPage.Children) {
+			foreach (ConversationPage child in rootPage.Children) {
 				pages.AddRange(CreatePages(child));
 			}
 						
 			return pages;
 		}
 		
-		private List<CPage> CreatePages(CPage parentPage)
+		private List<ConversationPage> CreatePages(ConversationPage parentPage)
 		{
-			List<CPage> pages = new List<CPage>();
-			List<CPage> pages2 = new List<CPage>();
+			List<ConversationPage> pages = new List<ConversationPage>();
+			List<ConversationPage> pages2 = new List<ConversationPage>();
 			
 			NWN2ConversationConnector skippableLine = parentPage.LeadInLine;			
 			while (skippableLine.Line.Children.Count == 1) {
@@ -278,11 +277,11 @@ namespace AdventureAuthor.UI.Windows
 			}
 			
 			foreach (NWN2ConversationConnector line in skippableLine.Line.Children) {
-				CPage child = new CPage(line,parentPage);
+				ConversationPage child = new ConversationPage(line,parentPage);
 				pages.Add(child);				
 			}
 			
-			foreach (CPage child in pages) {
+			foreach (ConversationPage child in pages) {
 				pages2.AddRange(CreatePages(child));
 			}
 			
@@ -319,10 +318,10 @@ namespace AdventureAuthor.UI.Windows
 			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
 			if (conversationStructureChanged) {
 				NWN2ConversationConnector parentLineOfCurrentPage = currentPage.LeadInLine;
-				CPage newVersionOfCurrentPage = null;
+				ConversationPage newVersionOfCurrentPage = null;
 						
 				pages = CreatePages(Conversation.CurrentConversation);
-				foreach (CPage p in this.pages) {					
+				foreach (ConversationPage p in this.pages) {					
 					if (p.LeadInLine == parentLineOfCurrentPage) {
 						newVersionOfCurrentPage = p;
 					}

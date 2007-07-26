@@ -28,7 +28,6 @@ using System.Windows.Media;
 using AdventureAuthor;
 using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Data.ConversationData;
-using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.Utils;
 
@@ -132,7 +131,7 @@ namespace AdventureAuthor.UI.Controls
         {
         	// If this line is part of a branch, double-clicking it should display the page it leads to:
         	if (this.isPartOfBranch) {
-        		foreach (CPage p in ConversationWriterWindow.Instance.Pages) {
+        		foreach (ConversationPage p in ConversationWriterWindow.Instance.Pages) {
         			if (p.LeadInLine == this.nwn2Line) {
         				ConversationWriterWindow.Instance.DisplayPage(p);
         				return;

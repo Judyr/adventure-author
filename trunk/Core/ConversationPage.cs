@@ -26,18 +26,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using AdventureAuthor.ConversationWriter;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.UI.Windows;
 using NWN2Toolset.NWN2.Data.ConversationData;
 
-namespace AdventureAuthor.ConversationWriter
+namespace AdventureAuthor.Core
 {
     /// <summary>
     /// Interaction logic for CPage.xaml
     /// </summary>
 
-    public partial class CPage
+    public partial class ConversationPage
     {
     	#region Fields
     	
@@ -53,13 +52,13 @@ namespace AdventureAuthor.ConversationWriter
 			set { isInRoute = value; }
 		}
     	
-    	private CPage parentPage;		
-		public CPage ParentPage {
+    	private ConversationPage parentPage;		
+		public ConversationPage ParentPage {
 			get { return parentPage; }
 		}		
 		
-		private List<CPage> children;		
-		public List<CPage> Children {
+		private List<ConversationPage> children;		
+		public List<ConversationPage> Children {
 			get { return children; }
 		}
 		    	    	
@@ -81,11 +80,11 @@ namespace AdventureAuthor.ConversationWriter
     	
     	#endregion Fields
     	
-		public CPage(NWN2ConversationConnector leadsFrom, CPage parent)
+		public ConversationPage(NWN2ConversationConnector leadsFrom, ConversationPage parent)
 		{
 			this.leadInLine = leadsFrom;
 			this.parentPage = parent;
-			this.children = new List<CPage>();
+			this.children = new List<ConversationPage>();
 			this.lineControls = new List<LineControl>();
 			this.finalControl = null;
 			if (parent != null) {

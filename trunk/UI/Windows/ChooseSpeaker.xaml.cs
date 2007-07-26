@@ -22,8 +22,8 @@
 
 using System;
 using System.Windows;
-using AdventureAuthor.ConversationWriter;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Windows
