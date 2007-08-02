@@ -26,6 +26,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using AdventureAuthor;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
@@ -40,8 +41,7 @@ namespace AdventureAuthor.UI.Windows
     {
         public AddRemoveSpeakersWindow()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
 
         private void OnClick_AddSpeaker(object sender, EventArgs ea)
@@ -55,7 +55,8 @@ namespace AdventureAuthor.UI.Windows
         		}
         		else {
         			Speaker speaker = Conversation.CurrentConversation.AddSpeaker(NewSpeakerName.Text);
-        			ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);	
+        			Button button = ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);	
+        			ConversationWriterWindow.Instance.SpeakersButtonsPanel.Children.Add(button);
         			Close();	
         		}
         	}

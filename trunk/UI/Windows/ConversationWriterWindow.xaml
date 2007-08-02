@@ -47,30 +47,25 @@
 			</MenuItem>
 		</Menu>
 		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
-			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow">
+			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false">
 				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
-					<Button Margin="2" Click="OnClick_CreateBranchAtEndOfPage" IsEnabled="False">
+					<Button Margin="2" Click="OnClick_CreateBranchAtEndOfPage">
 						<TextBlock>
-							<TextBlock FontSize="22" Foreground="Black" Text="Create a "/>
-							<TextBlock FontSize="22" Foreground="Purple" Text="BRANCH"/>
-							<TextBlock FontSize="22" Foreground="Black" Text=" at end of page"/>
+							<TextBlock FontSize="26" Foreground="Black" Text="Add a "/>
+							<TextBlock FontSize="26" Foreground="Purple" Text="CHOICE"/>
 						</TextBlock>
 					</Button>	
-					<Button Margin="2" Click="OnClick_MakeSelectedLineIntoBranch" IsEnabled="False">
+					<Button Margin="2" Click="OnClick_AddAction">
 						<TextBlock>
-							<TextBlock FontSize="22" Foreground="Black" Text="Make selected line into "/>
-							<TextBlock FontSize="22" Foreground="Purple" Text="BRANCH"/>
-						</TextBlock>
-					</Button>			
-					<Button Margin="2" Click="OnClick_AddAction" IsEnabled="False">
-						<TextBlock>
-							<TextBlock FontSize="22" Foreground="Black" Text="An "/>
-							<TextBlock FontSize="22" Foreground="Orange" Text="ACTION"/>
-							<TextBlock FontSize="22" Foreground="Black" Text=" takes place"/>
+							<TextBlock FontSize="26" Foreground="Black" Text="Add an "/>
+							<TextBlock FontSize="26" Foreground="Brown" Text="ACTION"/>
 						</TextBlock>
 					</Button>	
 				</StackPanel>
 				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
+					<Button Name="AddSpeakersButton" Margin="2" Click="OnClick_AddRemoveSpeakers">
+						<TextBlock FontSize="26" Foreground="Black" Text="Add another speaker"/>
+					</Button>						
 				</StackPanel>
 			</StackPanel>
 		</Border>

@@ -25,7 +25,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uic="clr-namespace:AdventureAuthor.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
-	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" MouseDoubleClick="OnMouseDoubleClick" Padding="6">  
+	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" MouseDoubleClick="OnClick_GoToPage" Padding="6">  
 	<UserControl.Style>
 		<Style TargetType="{x:Type uic:LineControl}">
 		<Style.Triggers>
@@ -56,14 +56,23 @@
     		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/>
     	</Grid.ColumnDefinitions>
     	    	
-    	<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
-	    	<Button x:Name="SoundButton" Margin="6" Width="20" Height="20" IsEnabled="False" Opacity="0.0" Click="OnSoundClick">
+    	<StackPanel Name="LineControlButtonsPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
+	    	<Button x:Name="SoundButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_SetSound">
+    			<Button.ToolTip>
+    				<ToolTip>Add a sound clip to this line (doesn't work yet)</ToolTip>
+    			</Button.ToolTip>
 	    		<Image Source="C:\ConversationWriter\speakericon.jpg" />
 	    	</Button>
- 	    	<Button x:Name="AnimationButton" Margin="6" Width="20" Height="20" IsEnabled="False" Opacity="0.0" Click="OnAnimationClick">
+ 	    	<Button x:Name="AnimationButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_SetAnimation">
+    			<Button.ToolTip>
+    				<ToolTip>Add an animation to the speaker for this line (doesn't work yet)</ToolTip>
+    			</Button.ToolTip>
     			<Image Source="C:\ConversationWriter\animationicon.jpg"/>
 	    	</Button>	    	
-    		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="False" Opacity="0.0" Click="OnDeleteClick">
+    		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_Delete">
+    			<Button.ToolTip>
+    				<ToolTip>Delete this line</ToolTip>
+    			</Button.ToolTip>
 	    		<Image Source="C:\ConversationWriter\deleteicon.jpg" />
 	    	</Button>   	
     	</StackPanel>
