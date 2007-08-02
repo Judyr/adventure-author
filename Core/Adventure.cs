@@ -776,7 +776,7 @@ namespace AdventureAuthor.Core
 		#endregion Name checks
 		
 		public override string ToString()
-		{
+		{			
 			return this.name;
 		}
 	}

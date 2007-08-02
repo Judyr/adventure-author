@@ -311,48 +311,48 @@ namespace AdventureAuthor.UI
 					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
 					
 					// Lock the interface:
-					dockingManager.AllowFloating = false;
-					dockingManager.AllowRedocking = false;
-					dockingManager.AllowResize = false;
+//					dockingManager.AllowFloating = false;
+//					dockingManager.AllowRedocking = false;
+//					dockingManager.AllowResize = false;
 			
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
-					dockingManager.HideAllContents();	
+					dockingManager.ShowAllContents();
 					
 					// Hide everything except for the area contents and blueprints list:
-					foreach (Content c in dockingManager.Contents) {
-												
-						// Lock the interface:
-						c.HideButton = false;
-						c.CloseButton = false;
-						
-						if (d == DialogResult.Yes) {
-							dockingManager.ShowContent(c);
-						}
-						
-						if (c.Control is NWN2AreaContentsView) {
-							c.FullTitle = "Chapter Contents";
-							if (!c.Visible) {
-								dockingManager.ShowContent(c);
-								leftZone = c.ParentWindowContent.ParentZone;
-							}			
-						}
-						else if (c.Control is NWN2BlueprintView) {
-							if (!c.Visible) {
-								dockingManager.ShowContent(c);
-							}
-						}
-						else if (c.Control is NWN2TerrainEditorForm) {
-							if (!c.Visible) {
-								dockingManager.ShowContent(c);
-							}
-						}
-						else if (c.Control is NWN2TileView) {
-							if (!c.Visible) {
-								dockingManager.ShowContent(c);
-							}
-						}
-					}					
+//					foreach (Content c in dockingManager.Contents) {
+//												
+//						// Lock the interface:
+//						c.HideButton = false;
+//						c.CloseButton = false;
+//						
+//						if (d == DialogResult.Yes) {
+//							dockingManager.ShowContent(c);
+//						}
+//						
+//						if (c.Control is NWN2AreaContentsView) {
+//							c.FullTitle = "Chapter Contents";
+//							if (!c.Visible) {
+//								dockingManager.ShowContent(c);
+//								leftZone = c.ParentWindowContent.ParentZone;
+//							}			
+//						}
+//						else if (c.Control is NWN2BlueprintView) {
+//							if (!c.Visible) {
+//								dockingManager.ShowContent(c);
+//							}
+//						}
+//						else if (c.Control is NWN2TerrainEditorForm) {
+//							if (!c.Visible) {
+//								dockingManager.ShowContent(c);
+//							}
+//						}
+//						else if (c.Control is NWN2TileView) {
+//							if (!c.Visible) {
+//								dockingManager.ShowContent(c);
+//							}
+//						}
+//					}					
 				
 					// If the Properties or Verify window is displayed, hide it again immediately:
 					dockingManager.ContentShown += new DockingManager.ContentHandler(HideContent);

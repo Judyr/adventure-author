@@ -102,19 +102,38 @@ namespace AdventureAuthor.UI.Windows
     	        
         #region UI
         
-		public void CreateButtonForSpeaker(string displayName, string tag, Brush colour)
+        private bool StartsWithVowel(string word)
+        {
+        	if (word == null || word.Length == 0) {
+        		throw new InvalidOperationException("Was passed an empty or null word.");
+        	}
+        	char c = word.ToLower()[0];
+        	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        }
+        
+		public Button CreateButtonForSpeaker(string displayName, string tag, Brush colour)
 		{
 			Button button = new Button();
 			button.Margin = new Thickness(2);
 			TextBlock textBlock = new TextBlock();
+			TextBlock tb0 = new TextBlock();
 			TextBlock tb1 = new TextBlock();
 			TextBlock tb2 = new TextBlock();
+			tb0.FontSize = 26;
 			tb1.FontSize = 26;
 			tb2.FontSize = 26;
+			tb0.Foreground = Brushes.Black;
 			tb1.Foreground = colour;
 			tb2.Foreground = Brushes.Black;
+			if (displayName.Length > 0 && StartsWithVowel(displayName)) {
+				tb0.Text = "Add an ";
+			}
+			else {
+				tb0.Text = "Add a ";
+			}
 			tb1.Text = displayName.ToUpper();
-			tb2.Text = " speaks";
+			tb2.Text = " line";
+			textBlock.Inlines.Add(tb0);
 			textBlock.Inlines.Add(tb1);
 			textBlock.Inlines.Add(tb2);
 			button.Content = textBlock;
@@ -148,7 +167,7 @@ namespace AdventureAuthor.UI.Windows
 					}				
 				}
 			};
-			this.SpeakersButtonsPanel.Children.Add(button);
+			return button;
 		}	
 								
 		private void DisplayLine(NWN2ConversationConnector line)
@@ -468,12 +487,14 @@ namespace AdventureAuthor.UI.Windows
 				}					
 			}
 			foreach (Speaker speaker in Conversation.CurrentConversation.Speakers) {
-				CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);
+				Button button = CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);
+        		ConversationWriterWindow.Instance.SpeakersButtonsPanel.Children.Add(button);
 			}
-						
-			foreach (Button b in OtherActionsButtonsPanel.Children) {
-				b.IsEnabled = true;
-			}
+					
+			ButtonsPanel.IsEnabled = true;
+//			foreach (Button b in OtherActionsButtonsPanel.Children) {
+//				b.IsEnabled = true;
+//			}
 			
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);			
@@ -564,7 +585,8 @@ namespace AdventureAuthor.UI.Windows
 			}
 		}
 		
-		private void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
+		//TODO: Move to Conversation
+		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
 			Conversation.CurrentConversation.SaveToWorkingCopy();
@@ -572,6 +594,7 @@ namespace AdventureAuthor.UI.Windows
 			RefreshDisplay(true);			
 		}
 		
+		//TODO: Move to Conversation
 		internal void MakeBranchAtEndOfPage(string speakerTag)
 		{
 			if (!CurrentPage.IsEndPage()) {
@@ -705,10 +728,14 @@ namespace AdventureAuthor.UI.Windows
 				ExpandedGraphViewer.RefreshGraph();
 			}
 			
-			this.SpeakersButtonsPanel.Children.Clear();
-			foreach (Button b in OtherActionsButtonsPanel.Children) {
-				b.IsEnabled = false;
-			}
+			Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
+			SpeakersButtonsPanel.Children.Clear();
+			SpeakersButtonsPanel.Children.Add(addSpeakersButton);
+		
+			this.ButtonsPanel.IsEnabled = false;
+//			foreach (Button b in OtherActionsButtonsPanel.Children) {
+//				b.IsEnabled = false;//TODO: do better way
+//			}
 			this.LinesPanel.Children.Clear();
 
 		}

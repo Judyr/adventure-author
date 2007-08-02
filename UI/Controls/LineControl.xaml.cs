@@ -113,82 +113,107 @@ namespace AdventureAuthor.UI.Controls
         	else {
         		this.textAppearsWhenControl = null;
         	}
+        	
+        	ContextMenu = new ContextMenu();
+        	MenuItem m0 = new MenuItem();
+        	m0.Header = "Go back";
+        	m0.IsEnabled = false;
+        	m0.Click += new RoutedEventHandler(OnClick_GoBack);
+        	ContextMenu.Items.Add(m0);
+        	MenuItem m1 = new MenuItem();
+        	m1.Header = "Set animation";
+        	m1.IsEnabled = false;
+        	m1.Click += new RoutedEventHandler(OnClick_SetAnimation);
+        	ContextMenu.Items.Add(m1);
+        	MenuItem m2 = new MenuItem();
+        	m2.Header = "Set camera angle";
+        	m2.IsEnabled = false;
+        	m2.Click += new RoutedEventHandler(OnClick_SetCamera);
+        	ContextMenu.Items.Add(m2);
+        	MenuItem m3 = new MenuItem();
+        	m3.Header = "Set sound clip";
+        	m3.IsEnabled = false;
+        	m3.Click += new RoutedEventHandler(OnClick_SetSound);
+        	ContextMenu.Items.Add(m3);
+        	
+        	if (isPartOfBranch) {
+        		MenuItem m3a = new MenuItem();
+        		m3a.Header = "Set a condition";
+        		m3a.IsEnabled = false;
+        		m3a.Click += new RoutedEventHandler(OnClick_SetCondition);
+        		ContextMenu.Items.Add(m3a);
+        	}
+        	
+        	MenuItem m4 = new MenuItem();
+        	m4.Header = "Delete line";
+        	m4.Click += new RoutedEventHandler(OnClick_Delete);
+        	ContextMenu.Items.Add(m4);        	
+        	
+        	MenuItem m5 = new MenuItem();
+        	if (isPartOfBranch) {
+        		m5.Header = "Go to page";
+        		m5.Click += new RoutedEventHandler(OnClick_GoToPage);
+        	}
+        	else {
+        		m5.Header = "Make into choice";
+        		m5.Click += new RoutedEventHandler(OnClick_MakeIntoBranch);
+        	}
+        	ContextMenu.Items.Add(m5);
         }
                 
-        private void OnMouseDown(object sender, EventArgs ea)
+        #region Event handlers
+		
+        private void OnClick_GoBack(object sender, EventArgs ea)
         {
-        	Focus();        	
+        	
         }
         
-        private void OnGotFocus(object sender, EventArgs ea)
+        private void OnClick_SetAnimation(object sender, EventArgs ea)
         {
-        	ConversationWriterWindow.Instance.CurrentlySelectedControl = this;
-        	SelectLine();
+//        	AnimationWindow window = new AnimationWindow();
+//        	window.ShowDialog();
         }
         
-        private void OnLostFocus(object sender, EventArgs ea)
+		private void OnClick_SetCamera(object sender, EventArgs ea)
         {
-        	DeselectLine();
+        	
         }
+		
+		private void OnClick_SetSound(object sender, EventArgs ea)
+        {                	
+//        	SoundWindow window = new SoundWindow();
+//        	window.ShowDialog();
+        }
+		
+		private void OnClick_SetCondition(object sender, EventArgs ea)
+		{
+			
+		}        
         
-        private void OnMouseDoubleClick(object sender, EventArgs ea)
+        private void OnClick_GoToPage(object sender, EventArgs ea)
         {
         	// If this line is part of a branch, double-clicking it should display the page it leads to:
         	if (this.isPartOfBranch) {
-        		foreach (ConversationPage p in ConversationWriterWindow.Instance.Pages) {
-        			if (p.LeadInLine == this.nwn2Line) {
-        				ConversationWriterWindow.Instance.DisplayPage(p);
+        		foreach (ConversationPage page in ConversationWriterWindow.Instance.Pages) {
+        			if (page.LeadInLine == this.nwn2Line) {
+        				ConversationWriterWindow.Instance.DisplayPage(page);
         				return;
         			}
         		}
         	}
-        }
+        }        
         
-        private void SelectLine()
-        {
-        	this.Dialogue.Background = Brushes.White;
-        	this.Dialogue.BorderBrush = Brushes.Black;
-        	this.SoundButton.IsEnabled = true;
-        	this.SoundButton.Opacity = 1.0;
-        	this.AnimationButton.IsEnabled = true;
-        	this.AnimationButton.Opacity = 1.0;
-        	this.DeleteLineButton.IsEnabled = true;
-        	this.DeleteLineButton.Opacity = 1.0;
-        	if (this.textAppearsWhenControl != null) {
-	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = true;
-	        	this.textAppearsWhenControl.EditActionButton.Opacity = 1.0;    
-        	}
-        }
+		private void OnClick_MakeIntoBranch(object sender, EventArgs ea)
+		{
+			if (isPartOfBranch) {
+				Say.Information("The line you have selected is already part of a choice.");
+			}
+			else {
+				ConversationWriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
+			}
+		}
         
-        private void DeselectLine()
-        {
-        	this.Dialogue.Background = Brushes.Transparent;	
-        	this.Dialogue.BorderBrush = Brushes.Transparent;
-        	this.SoundButton.IsEnabled = false;
-        	this.SoundButton.Opacity = 0.0;
-        	this.AnimationButton.IsEnabled = false;
-        	this.AnimationButton.Opacity = 0.0;
-        	this.DeleteLineButton.IsEnabled = false;
-        	this.DeleteLineButton.Opacity = 0.0;
-        	if (this.textAppearsWhenControl != null) {
-	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = false;
-	        	this.textAppearsWhenControl.EditActionButton.Opacity = 0.0;    
-        	} 
-        }
-        
-        private void OnSoundClick(object sender, EventArgs ea)
-        {        
-        	SoundWindow window = new SoundWindow();
-        	window.ShowDialog();
-        }
-        
-        private void OnAnimationClick(object sender, EventArgs ea)
-        {
-        	AnimationWindow window = new AnimationWindow();
-        	window.ShowDialog();
-        }
-        
-        private void OnDeleteClick(object sender, EventArgs ea)
+        private void OnClick_Delete(object sender, EventArgs ea)
         { 	
         	if (isPartOfBranch) {
         		if (!Adventure.BeQuiet) {   
@@ -306,5 +331,59 @@ namespace AdventureAuthor.UI.Controls
 //        		this.Background = Brushes.Blue;
 //        	}
         }
+               
+        private void OnMouseDown(object sender, EventArgs ea)
+        {
+        	Focus();        	
+        }
+        
+        private void OnGotFocus(object sender, EventArgs ea)
+        {
+        	ConversationWriterWindow.Instance.CurrentlySelectedControl = this;
+        	SelectLine();
+        }
+        
+        private void OnLostFocus(object sender, EventArgs ea)
+        {
+        	DeselectLine();
+        }
+        
+        #endregion
+        
+        #region Selecting lines
+        
+        private void SelectLine()
+        {
+        	this.Dialogue.Background = Brushes.White;
+        	this.Dialogue.BorderBrush = Brushes.Black;
+        	this.SoundButton.IsEnabled = true;
+        	this.SoundButton.Opacity = 1.0;
+        	this.AnimationButton.IsEnabled = true;
+        	this.AnimationButton.Opacity = 1.0;
+        	this.DeleteLineButton.IsEnabled = true;
+        	this.DeleteLineButton.Opacity = 1.0;
+        	if (this.textAppearsWhenControl != null) {
+	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = true;
+	        	this.textAppearsWhenControl.EditActionButton.Opacity = 1.0;    
+        	}
+        }
+        
+        private void DeselectLine()
+        {
+        	this.Dialogue.Background = Brushes.Transparent;	
+        	this.Dialogue.BorderBrush = Brushes.Transparent;
+        	this.SoundButton.IsEnabled = false;
+        	this.SoundButton.Opacity = 0.0;
+        	this.AnimationButton.IsEnabled = false;
+        	this.AnimationButton.Opacity = 0.0;
+        	this.DeleteLineButton.IsEnabled = false;
+        	this.DeleteLineButton.Opacity = 0.0;
+        	if (this.textAppearsWhenControl != null) {
+	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = false;
+	        	this.textAppearsWhenControl.EditActionButton.Opacity = 0.0;    
+        	} 
+        }
+        
+        #endregion
     }
 }
