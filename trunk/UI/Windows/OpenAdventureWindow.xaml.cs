@@ -26,19 +26,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows;
 using AdventureAuthor.Core;
-using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -52,17 +44,18 @@ namespace AdventureAuthor.UI.Windows
         {
         	try {
 	        	string[] adventureData = Directory.GetFiles(Adventure.SerializedDir,"*.xml",SearchOption.TopDirectoryOnly);
-	        	string[] moduleData = Directory.GetDirectories(form.ModulesDirectory,"*",SearchOption.TopDirectoryOnly);
-				List<string> adventures = new List<string>(adventureData.Length);
-				foreach (string name in adventureData) {
-					foreach (string name2 in moduleData) {
-						if (name == name2) {
-							adventures.Add(name);
-							break;
-						}
-					}
-				}
-				this.Resources.Add("adventurenames",adventuresList);			
+	        	string[] moduleData = Directory.GetDirectories(form.ModulesDirectory,"*", SearchOption.TopDirectoryOnly);
+				List<string> adventures = new List<string>(adventureData.Length);				
+	        	foreach (string s in adventureData) {
+	        		string name = Path.GetFileNameWithoutExtension(s);
+	        		foreach (string p in moduleData) {
+	        			if (name == Path.GetFileNameWithoutExtension(p)) {
+	        				adventures.Add(name);
+	        				break;
+	        			}
+	        		}
+	        	}
+				this.Resources.Add("adventurenames",adventures);			
 	            InitializeComponent();
         	}
         	catch (DirectoryNotFoundException e) {
@@ -77,7 +70,10 @@ namespace AdventureAuthor.UI.Windows
         
         private void OnClickOK(object sender, EventArgs ea)
         {
-        	if (Adventure.Open((string)adventuresList.SelectedItem) == null) {
+        	if (adventuresList.SelectedItem == null) {
+        		Say.Warning("Select an adventure, and then click OK.");
+        	}
+        	else if (Adventure.Open((string)adventuresList.SelectedItem) == null) {
         		Say.Error("Could not find a well-formed Adventure with the name '" + adventuresList.SelectedItem + "'.");
         	}
         	else {

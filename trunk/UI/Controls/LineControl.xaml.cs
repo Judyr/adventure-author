@@ -117,7 +117,9 @@ namespace AdventureAuthor.UI.Controls
         	ContextMenu = new ContextMenu();
         	MenuItem m0 = new MenuItem();
         	m0.Header = "Go back";
-        	m0.IsEnabled = false;
+        	if (ConversationWriterWindow.Instance.PreviousPage == null) {
+        		m0.IsEnabled = false;
+        	}
         	m0.Click += new RoutedEventHandler(OnClick_GoBack);
         	ContextMenu.Items.Add(m0);
         	MenuItem m1 = new MenuItem();
@@ -165,7 +167,10 @@ namespace AdventureAuthor.UI.Controls
 		
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
-        	
+        	if (Conversation.CurrentConversation != null && ConversationWriterWindow.Instance.PreviousPage != null) {
+//        		Conversation.CurrentConversation.SaveToWorkingCopy();
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage);
+        	}
         }
         
         private void OnClick_SetAnimation(object sender, EventArgs ea)
@@ -304,6 +309,14 @@ namespace AdventureAuthor.UI.Controls
 	        	else { 
 	        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
 	        	}        		
+        	}
+        }
+        
+        private void GoUp(object sender, EventArgs ea)
+        {
+        	if (ConversationWriterWindow.Instance.CurrentPage.ParentPage != null) {
+//        		Conversation.CurrentConversation.SaveToWorkingCopy();
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.ParentPage);
         	}
         }
         

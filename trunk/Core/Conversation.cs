@@ -209,7 +209,7 @@ namespace AdventureAuthor.Core
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			newLine.Comment = Conversation.NOT_FILLER;
 			newLine.Speaker = speakerTag;
-			SaveToWorkingCopy();
+//			SaveToWorkingCopy();
 			return newLine;
 		}
 
@@ -218,7 +218,7 @@ namespace AdventureAuthor.Core
 			NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			fillerLine.Comment = Conversation.FILLER;
 			fillerLine.Speaker = String.Empty;
-			SaveToWorkingCopy();
+//			SaveToWorkingCopy();
 			return fillerLine;
 		}
 		

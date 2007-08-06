@@ -25,10 +25,12 @@
  */
 
 using System;
+using System.IO;
 using System.Windows;
 using AdventureAuthor;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -43,15 +45,16 @@ namespace AdventureAuthor.UI.Windows
         }
 
         private void OnClickOK(object sender, EventArgs ea)
-        {
+        {        	
         	string name = ConversationName.Text;
-//        	if () {
-//        		// TODO: Check whether conversation of this name already exists
-//        	}
-        	if (!Adventure.IsValidName(name)) {
+        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,Adventure.CurrentAdventure.Module.Repository.DirectoryName),name))) {
+        		Say.Warning("A conversation called '" + name + "' already exists in the Adventure '" + 
+        		            Adventure.CurrentAdventure.Name + "' - try another name.");
+        	}
+        	else if (!Adventure.IsValidName(name)) {
 				Say.Information("The name '" + name + "' is invalid. Adventure names " + 
 				        	    "must not contain the following characters ('<', '>', ':', '\', '\"', '/', '|', '.') " +
-				          		"and must be between 1 and 32 characters in length.");
+				          		"and must be between 1 and 32 characters in length. Try another name.");
         	}
         	else {        		
         		ConversationWriterWindow.Instance.OpenConversation(name,true);
