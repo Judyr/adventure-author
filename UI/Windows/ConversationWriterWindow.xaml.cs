@@ -49,6 +49,17 @@ namespace AdventureAuthor.UI.Windows
 
     public sealed partial class ConversationWriterWindow : Window
     {    
+    	#region Constructors 
+    
+		public ConversationWriterWindow()
+		{
+        	InitializeComponent();
+		}
+		
+		#endregion
+    	
+    	#region Fields
+    	
     	private static ConversationWriterWindow instance;    	
 		public static ConversationWriterWindow Instance {
 			get { return instance; }
@@ -64,12 +75,6 @@ namespace AdventureAuthor.UI.Windows
 			get { return expandedGraphViewer; }
 		}
     	    	
-		public ConversationWriterWindow()
-		{
-        	InitializeComponent();
-		}
-		
-    	#region Fields
     	
     	private List<ConversationPage> pages;
     	public List<ConversationPage> Pages {
@@ -80,6 +85,11 @@ namespace AdventureAuthor.UI.Windows
 		public ConversationPage CurrentPage {
 			get { return currentPage; }
 		}
+    	
+    	private ConversationPage previousPage;    	
+		public ConversationPage PreviousPage {
+			get { return previousPage; }
+		}    	
     	
     	private UserControl currentlySelectedControl;
 		public UserControl CurrentlySelectedControl {
@@ -95,8 +105,7 @@ namespace AdventureAuthor.UI.Windows
     	private string workingFilename;    	
 		public string WorkingFilename {
 			get { return workingFilename; }
-		}
-    	
+		}    	
     	
     	#endregion Fields
     	        
@@ -153,7 +162,7 @@ namespace AdventureAuthor.UI.Windows
 					}
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,tag,true);
 					
-					Conversation.CurrentConversation.SaveToWorkingCopy();
+//					Conversation.CurrentConversation.SaveToWorkingCopy();
 					DisplayPage(currentPage);
 					RefreshDisplay(false);
 					
@@ -208,7 +217,11 @@ namespace AdventureAuthor.UI.Windows
 		
 		public void DisplayPage(ConversationPage page)
 		{
-			// Clear the current page:	
+			// Save any changes that have been made to on-screen controls, since we're about to replace them:
+			Conversation.CurrentConversation.SaveToWorkingCopy();
+			
+			// Clear the current page:
+			previousPage = currentPage;
 			currentPage = page;		
 			currentlySelectedControl = null;		
 			LinesPanel.Children.Clear();
@@ -336,27 +349,39 @@ namespace AdventureAuthor.UI.Windows
 				
 		public void RefreshDisplay(bool conversationStructureChanged)
 		{						
-			Conversation.CurrentConversation.SaveToWorkingCopy();
+//			Conversation.CurrentConversation.SaveToWorkingCopy();
 			
 			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
 			if (conversationStructureChanged) {
-				NWN2ConversationConnector parentLineOfCurrentPage = currentPage.LeadInLine;
 				ConversationPage newVersionOfCurrentPage = null;
+				ConversationPage newVersionOfPreviousPage = null;
 						
 				pages = CreatePages(Conversation.CurrentConversation);
-				foreach (ConversationPage p in this.pages) {					
-					if (p.LeadInLine == parentLineOfCurrentPage) {
+				foreach (ConversationPage p in pages) {					
+					if (p.LeadInLine == currentPage.LeadInLine) {
 						newVersionOfCurrentPage = p;
+						break;
 					}
-				}			
-						
+				}
+				
+				if (previousPage != null) {
+					foreach (ConversationPage p in pages) {
+						if (p.LeadInLine == previousPage.LeadInLine) {
+							newVersionOfPreviousPage = p;
+							break;
+						}
+					}
+				}
+										
 				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
 				if (newVersionOfCurrentPage != null) {
 					DisplayPage(newVersionOfCurrentPage);
+					previousPage = newVersionOfPreviousPage;
 				}
 				else {
 					DisplayPage(pages[0]);
-				}	
+					previousPage = null;
+				}					
 				
 				MainGraphViewer.RefreshGraph();
 				if (ExpandedGraphViewer != null) {
@@ -444,7 +469,8 @@ namespace AdventureAuthor.UI.Windows
 				this.workingFilename = MakeWorkingCopy(originalFilename);
 				conv = new NWN2GameConversation(workingFilename,
 				                                Adventure.CurrentAdventure.Module.Repository.DirectoryName,
-					                            Adventure.CurrentAdventure.Module.Repository);				
+					                            Adventure.CurrentAdventure.Module.Repository);		
+				
 				conv.Demand();
 				
 				foreach (NWN2ConversationConnector line in conv.AllConnectors) {
@@ -492,9 +518,6 @@ namespace AdventureAuthor.UI.Windows
 			}
 					
 			ButtonsPanel.IsEnabled = true;
-//			foreach (Button b in OtherActionsButtonsPanel.Children) {
-//				b.IsEnabled = true;
-//			}
 			
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);			
@@ -519,14 +542,17 @@ namespace AdventureAuthor.UI.Windows
 		
 		private string MakeWorkingCopy(string originalFilenameWithoutExtension)
 		{
+			string tempPath, tempFileName;
 			Random randomNumberGenerator = new Random();
-			int randomNumber = randomNumberGenerator.Next();
-			string tempFileNameWithoutExtension = originalFilenameWithoutExtension + "_" + randomNumber;
-			string tempFileName = tempFileNameWithoutExtension + ".dlg";
-			string tempPath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,tempFileName);
+			do {
+				tempFileName = originalFilenameWithoutExtension + "_" + randomNumberGenerator.Next();
+				tempPath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,tempFileName+".dlg");
+			}
+			while (File.Exists(tempPath));				
+				
 			string originalPath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,originalFilenameWithoutExtension+".dlg");
 			File.Copy(originalPath,tempPath);
-			return tempFileNameWithoutExtension;
+			return tempFileName;			
 		}		
 		
 		private void OnClick_Save(object sender, EventArgs ea)
@@ -589,7 +615,7 @@ namespace AdventureAuthor.UI.Windows
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			Conversation.CurrentConversation.SaveToWorkingCopy();
+//			Conversation.CurrentConversation.SaveToWorkingCopy();
 			DisplayPage(CurrentPage);
 			RefreshDisplay(true);			
 		}
@@ -654,7 +680,7 @@ namespace AdventureAuthor.UI.Windows
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-				Conversation.CurrentConversation.SaveToWorkingCopy();
+//				Conversation.CurrentConversation.SaveToWorkingCopy();
 				DisplayPage(CurrentPage);
 				RefreshDisplay(true);
         	}

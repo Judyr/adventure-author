@@ -659,10 +659,15 @@ namespace AdventureAuthor.UI
 				return;
 			}
 			
-			if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
-				ConversationWriterWindow.Instance = new ConversationWriterWindow();
+			try {
+				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
+					ConversationWriterWindow.Instance = new ConversationWriterWindow();
+				}
+				ConversationWriterWindow.Instance.ShowDialog();
 			}
-			ConversationWriterWindow.Instance.ShowDialog();
+			catch (ExecutionEngineException e) {
+				Say.Error("ExecutionEngineException was thrown when running the ConversationWriterWindow.",e);
+			}
 		}
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)

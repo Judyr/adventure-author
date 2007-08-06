@@ -102,7 +102,7 @@ namespace AdventureAuthor.Core
 		
 		private void OnClickNode(object sender, EventArgs ea)
 		{
-			Conversation.CurrentConversation.SaveToWorkingCopy();
+//			Conversation.CurrentConversation.SaveToWorkingCopy();
 			ConversationWriterWindow.Instance.DisplayPage(this);
 		}		
 		
