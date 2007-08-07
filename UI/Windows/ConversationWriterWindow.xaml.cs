@@ -40,6 +40,7 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using winforms = System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using Samples.DragDrop;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -53,7 +54,12 @@ namespace AdventureAuthor.UI.Windows
     
 		public ConversationWriterWindow()
 		{
-        	InitializeComponent();
+			try {
+        		InitializeComponent();
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
 		}
 		
 		#endregion
@@ -111,6 +117,23 @@ namespace AdventureAuthor.UI.Windows
     	        
         #region UI
         
+        
+        
+//        private void TEMPDROPHANDLER(object sender, DragEventArgs e)
+//        {
+//        	
+//        	
+//        	if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+//        		string[] fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+//        		Conversation.CurrentConversation.AddSpeaker(fileNames[0]);
+//        		
+//        	}
+//        	e.Handled = true;
+//        }
+        
+        
+        
+        
         private bool StartsWithVowel(string word)
         {
         	if (word == null || word.Length == 0) {
@@ -120,7 +143,13 @@ namespace AdventureAuthor.UI.Windows
         	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
         }
         
-		public Button CreateButtonForSpeaker(string displayName, string tag, Brush colour)
+        internal void CreateButtonForSpeaker(Speaker speaker)
+        {
+        	Button button = CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);
+        	SpeakersButtonsPanel.Children.Add(button);
+        }
+        
+		private Button CreateButtonForSpeaker(string displayName, string tag, Brush colour)
 		{
 			Button button = new Button();
 			button.Margin = new Thickness(2);
@@ -162,7 +191,6 @@ namespace AdventureAuthor.UI.Windows
 					}
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,tag,true);
 					
-//					Conversation.CurrentConversation.SaveToWorkingCopy();
 					DisplayPage(currentPage);
 					RefreshDisplay(false);
 					
@@ -508,13 +536,9 @@ namespace AdventureAuthor.UI.Windows
 			foreach (NWN2ConversationConnector line in Conversation.CurrentConversation.NwnConv.AllConnectors) {
 				if (line.Speaker.Length > 0) {
 					if (Conversation.CurrentConversation.GetSpeaker(line.Speaker) == null) { // note that line.Speaker is just a tag, not a Speaker object
-						Speaker speaker = Conversation.CurrentConversation.AddSpeaker(line.Speaker);						
+						Conversation.CurrentConversation.AddSpeaker(line.Speaker);					
 					}
 				}					
-			}
-			foreach (Speaker speaker in Conversation.CurrentConversation.Speakers) {
-				Button button = CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);
-        		ConversationWriterWindow.Instance.SpeakersButtonsPanel.Children.Add(button);
 			}
 					
 			ButtonsPanel.IsEnabled = true;

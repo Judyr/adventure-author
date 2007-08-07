@@ -59,6 +59,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ReachFramework" />
+    <Reference Include="Samples.DragDrop">
+      <HintPath>..\Libraries\DragDrop\DragDrop\bin\Debug\Samples.DragDrop.exe</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="SandBar">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -75,14 +79,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
-    <Reference Include="Unfold.Core">
-      <HintPath>..\Libraries\UnfoldFree\Main\bin\Debug\Unfold.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Unfold.ShapeLibrary">
-      <HintPath>..\Libraries\UnfoldFree\Main\bin\Debug\Unfold.ShapeLibrary.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
@@ -198,14 +194,17 @@
     <ProjectReference Include="..\Libraries\UnfoldFree\Core\Unfold.Core.csproj">
       <Project>{42294AB0-70F8-4AC6-8B53-DE5ED365BC0F}</Project>
       <Name>Unfold.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UnfoldFree\Main\Unfold.Main.csproj">
       <Project>{306D4408-121F-4899-9251-25E2683734B2}</Project>
       <Name>Unfold.Main</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UnfoldFree\ShapeLibrary\Unfold.ShapeLibrary.csproj">
       <Project>{332004FF-BCD7-4A9D-B2AB-F49216E004F4}</Project>
       <Name>Unfold.ShapeLibrary</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>

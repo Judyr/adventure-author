@@ -167,6 +167,7 @@ namespace AdventureAuthor.Core
 				Speaker speaker = new Speaker(tag,displayName);
 				speakers.Add(speaker);
 				AssignColour(speaker);
+				ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker);
 				return speaker;
 			}
 			else {

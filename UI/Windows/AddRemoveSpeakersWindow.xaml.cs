@@ -53,10 +53,11 @@ namespace AdventureAuthor.UI.Windows
         		else if (Conversation.CurrentConversation.GetSpeaker(NewSpeakerName.Text) != null) {
         			Say.Error("'" + NewSpeakerName.Text + "' is already a part of this conversation.");
         		}
+        		else if (NewSpeakerName.Text.ToLower() == "player") {
+        			Say.Error("You can't add a character called 'Player', since the real Player is already a part of the conversation.");
+        		}
         		else {
-        			Speaker speaker = Conversation.CurrentConversation.AddSpeaker(NewSpeakerName.Text);
-        			Button button = ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);	
-        			ConversationWriterWindow.Instance.SpeakersButtonsPanel.Children.Add(button);
+        			Conversation.CurrentConversation.AddSpeaker(NewSpeakerName.Text);	
         			Close();	
         		}
         	}
