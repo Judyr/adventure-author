@@ -4,8 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # SharpDevelop 2.1.0.2429
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureAuthor", "AdventureAuthor.csproj", "{6C3192D1-C3CC-499B-B443-24AE5FC16914}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rarg", "..\Users\Kirn\Documents\SharpDevelop Projects\rarg\rarg.csproj", "{653CC409-4352-472E-9EFA-D628905A7359}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +46,9 @@ Global
 		{653CC409-4352-472E-9EFA-D628905A7359}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{653CC409-4352-472E-9EFA-D628905A7359}.Release|Any CPU.Build.0 = Release|Any CPU
 		{653CC409-4352-472E-9EFA-D628905A7359}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6CA767-AEDB-4851-9B61-F4C00E8F868A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6CA767-AEDB-4851-9B61-F4C00E8F868A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6CA767-AEDB-4851-9B61-F4C00E8F868A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F6CA767-AEDB-4851-9B61-F4C00E8F868A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal
