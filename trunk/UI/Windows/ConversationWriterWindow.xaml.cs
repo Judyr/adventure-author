@@ -40,7 +40,8 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using winforms = System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using Samples.DragDrop;
+using OEIShared.IO;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -52,6 +53,30 @@ namespace AdventureAuthor.UI.Windows
     {    
     	#region Constructors 
     
+    	private void ONTEMPCLICK(object sender, EventArgs ea)
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		
+	    		NWN2ScriptFunctor scriptFunctor = new NWN2ScriptFunctor();
+	    		
+	    		NWN2GameScript attackScript = AdventureAuthor.Utils.ScriptLibrary.GetScript("ga_attack");	    		
+	    		scriptFunctor.Script = attackScript.Resource;
+	    		
+	    		NWN2ScriptParameter scriptParameter = new NWN2ScriptParameter();
+	    		scriptParameter.ParameterType = NWN2ScriptParameterType.String;
+	    		scriptParameter.ValueString = connector.Speaker;
+	    		scriptFunctor.Parameters.Add(scriptParameter);
+	    		
+	    		connector.Actions.Add(scriptFunctor);   
+	    		
+	    		attackScript.Release();
+    		}
+    		else {
+    			Say.Error("Select a line to add an attack.");
+    		}
+    	}
+    	
 		public ConversationWriterWindow()
 		{
 			try {

@@ -24,7 +24,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uiw="clr-namespace:AdventureAuthor.UI.Windows"
-    xmlns:dd="clr-namespace:Samples.DragDrop;assembly=Samples.DragDrop"
     Name="WriterWindow" Title="Conversation Writer" Width="1600" Height="1000" Background="LightYellow" Closing="OnClosing">
 	<Grid Name="WriterWindowGrid">
 		<Grid.RowDefinitions>
@@ -62,6 +61,7 @@
 							<TextBlock FontSize="26" Foreground="Brown" Text="ACTION"/>
 						</TextBlock>
 					</Button>	
+					<Button Click="ONTEMPCLICK">Attack on this line</Button>
 				</StackPanel>
 				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
 					<Button Name="AddSpeakersButton" Margin="2" Click="OnClick_AddRemoveSpeakers">

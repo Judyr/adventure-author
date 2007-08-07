@@ -1,4 +1,4 @@
-/*
+﻿/*
  *   This file is part of Adventure Author.
  *
  *   Adventure Author is copyright Heriot-Watt University 2006-2007.
@@ -25,50 +25,42 @@
  */
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.IO;
 using AdventureAuthor.Core;
+using NWN2Toolset.NWN2.Data;
+using OEIShared.IO;
+using OEIShared.Utils;
 
-namespace AdventureAuthor.UI.Forms
+namespace AdventureAuthor.Utils
 {
 	/// <summary>
-	/// Description of RunAdventure_Form.
+	/// Description of ScriptLibrary
 	/// </summary>
-	public partial class RunAdventure_Form : Form
-	{
-		public RunAdventure_Form()
+	public static class ScriptLibrary
+	{		
+		/// <summary>
+		/// Retrieves a compiled (.NCS) script of a given name/resref.
+		/// </summary>
+		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
+		/// <returns>Returns the compiled script, or null if no script was found.</returns>
+		public static NWN2GameScript GetScript(string name)
 		{
-			InitializeComponent();
-			//TODO: Populate combobox with all waypoints in module
-		}
-		
-		void Button_CancelRunAdventureClick(object sender, EventArgs e)
-		{
-			this.Close();
-		}
-		
-		void Button_RunAdventureClick(object sender, EventArgs e)
-		{
-			string waypoint;
-			if (this.radioButton_RunFromWaypoint.Checked) {
-				waypoint = this.comboBox_WaypointsToRunAdventureFrom.SelectedText;
+			try {
+				string scriptsPath = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
+				ResourceRepository scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(scriptsPath);
+				ushort ncs1 = BWResourceTypes.GetResourceType("ncs");
+				OEIResRef resRef = new OEIResRef(name);
+				IResourceEntry entry = scripts.FindResource(resRef,ncs1);
+				NWN2GameScript scrp = new NWN2GameScript(entry);			
+				scrp.Demand();
+				return scrp;
 			}
-			else {
-				waypoint = string.Empty;
-			}			
-			
-			Adventure.CurrentAdventure.Run(waypoint,checkBox_CanLaunchDebugWindow.Checked,checkBox_PlayerIsInvincible.Checked);
-			this.Close();
-		}
-		
-		void RadioButton_RunFromWaypointCheckedChanged(object sender, EventArgs e)
-		{
-			this.comboBox_WaypointsToRunAdventureFrom.Enabled = true;
-		}
-		
-		void RadioButton_RunFromStartCheckedChanged(object sender, EventArgs e)
-		{
-			this.comboBox_WaypointsToRunAdventureFrom.Enabled = false;
+			catch (NullReferenceException e) {
+				Say.Error("Was unable to retrieve script named '" + name + "'.",e);
+				return null;
+			}
 		}
 	}
 }
+
+
