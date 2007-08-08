@@ -93,6 +93,9 @@
     <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Scripts\Actions.cs" />
+    <Compile Include="Scripts\Conditions.cs" />
+    <Compile Include="Scripts\ScriptLibrary.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="UI\Controls\ActionControl.xaml.cs">
       <SubType>Code</SubType>
@@ -101,6 +104,10 @@
     <Compile Include="UI\Controls\BranchControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>BranchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ConditionControl.xaml.cs">
+      <DependentUpon>ConditionControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Controls\EndConversationControl.xaml.cs">
       <SubType>Code</SubType>
@@ -159,7 +166,6 @@
     </Compile>
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
-    <Compile Include="Utils\ScriptLibrary.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
@@ -175,6 +181,7 @@
   <ItemGroup>
     <Page Include="UI\Controls\ActionControl.xaml" />
     <Page Include="UI\Controls\BranchControl.xaml" />
+    <Page Include="UI\Controls\ConditionControl.xaml" />
     <Page Include="UI\Controls\EndConversationControl.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
     <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
@@ -186,6 +193,7 @@
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
     <Page Include="UI\Windows\SoundWindow.xaml" />
     <Folder Include="Core" />
+    <Folder Include="Scripts" />
     <Folder Include="Utils" />
     <Folder Include="Setup" />
     <Folder Include="UI" />

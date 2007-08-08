@@ -38,6 +38,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using NWN2Toolset.NWN2.Data.TypedCollections;
 using AdventureAuthor.Core;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.UI.Controls;
@@ -46,10 +47,10 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.UI.Controls
 {
     /// <summary>
-    /// Interaction logic for ActionControl.xaml
+    /// Interaction logic for ConditionControl.xaml
     /// </summary>
 
-    public partial class ActionControl : UserControl
+    public partial class ConditionControl : UserControl
     {
     	private LineControl attachedTo;    	
 		public LineControl AttachedTo {
@@ -57,14 +58,14 @@ namespace AdventureAuthor.UI.Controls
 			set { attachedTo = value; }
 		}
     	
-        internal ActionControl(NWN2ScriptFunctor action, LineControl attachedTo)
+        internal ConditionControl(LineControl attachedTo)
         {
-            InitializeComponent();
+        	InitializeComponent();
             this.attachedTo = attachedTo;
-            this.Description.Text = ScriptLibrary.GetDescription(action);
+            this.Description.Text = ScriptLibrary.GetDescription(attachedTo.Nwn2Line.Conditions);
         }
 
-        private void OnClick_EditAction(object sender, EventArgs ea)
+        private void OnClick_EditConditions(object sender, EventArgs ea)
         {
         	Say.Information("Not implemented. yet.");
         	// TODO: On returning an OK result from ScriptCards/ScriptWizard, Conversation.CurrentConversation.Dirty = true;
