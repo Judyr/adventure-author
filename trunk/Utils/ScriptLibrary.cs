@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.UI;
@@ -39,6 +40,8 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class ScriptLibrary
 	{		
+		private static string ownerName = "[OWNER]";
+		
 		/// <summary>
 		/// Returns a script functor given a script name and an array of parameter arguments.
 		/// </summary>
@@ -100,6 +103,66 @@ namespace AdventureAuthor.Utils
 			catch (NullReferenceException e) {
 				Say.Error("Was unable to retrieve script named '" + name + "'.",e);
 				return null;
+			}
+		}
+		
+		public static string GetStageDirection(NWN2ScriptFunctor action)
+		{
+			if (action.Script.ResRef.Value == "ga_henchman_add") {
+				string sTarget = action.Parameters[0].ValueString;
+				string sMaster = action.Parameters[2].ValueString;
+				return GetOwnerIfBlank(sTarget) + " BECOMES A FOLLOWER OF " + GetPlayerIfBlank(sMaster) + ".";
+			}
+			else if (action.Script.ResRef.Value == "ga_attack") {
+				string sAttacker = action.Parameters[0].ValueString;
+				return GetOwnerIfBlank(sAttacker) + " ATTACKS THE PLAYER.";
+			}
+			else if (action.Script.ResRef.Value == "ga_destroy") {
+				string sTagString = action.Parameters[0].ValueString;
+				int iInstance = action.Parameters[1].ValueInt;
+				float fDelay = action.Parameters[2].ValueFloat;
+				
+				StringBuilder s = new StringBuilder();
+				if (fDelay > 0.0f) {
+					s.Append(fDelay.ToString() + " SECONDS LATER, ");
+				}				
+				if (sTagString == String.Empty) {
+					s.Append(ownerName + " IS REMOVED.");
+				}
+				else {
+					if (iInstance == -1) {
+						s.Append("EVERYTHING NAMED ");
+					}
+					s.Append(GetOwnerIfBlank(sTagString) + " IS REMOVED.");
+				}
+				return s.ToString();
+			}
+			else if (action.Script.ResRef.Value == "ga_give_gold") {
+				int nGP = action.Parameters[0].ValueInt;
+				return "PLAYER RECEIVES " + nGP + " PIECES OF GOLD.";
+			}
+			else {
+				return "(Missing stage direction.)";
+			}
+		}
+		
+		private static string GetOwnerIfBlank(string tag)
+		{
+			if (tag == String.Empty) {
+				return ownerName;
+			}
+			else {
+				return tag.ToUpper();
+			}
+		}
+		
+		private static string GetPlayerIfBlank(string tag)
+		{
+			if (tag == String.Empty) {
+				return "PLAYER";
+			}
+			else {
+				return tag.ToUpper();
 			}
 		}
 	}
