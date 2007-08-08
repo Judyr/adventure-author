@@ -61,32 +61,30 @@ namespace AdventureAuthor.Scripts
 					Say.Error("Couldn't find a script named '" + scriptName + "'.");
 					return null;
 				}		
-				
+								
 				NWN2ScriptFunctor scriptFunctor = new NWN2ScriptFunctor();
 				scriptFunctor.Script = script.Resource;
 				
 				foreach (object o in args) { // float, int, string or tag(?)
-					Type type = o.GetType();
-					NWN2ScriptParameter param = new NWN2ScriptParameter();
-					if (type == typeof(string)) {
+					NWN2ScriptParameter param = new NWN2ScriptParameter();					
+					if (o is string) {
 						param.ParameterType = NWN2ScriptParameterType.String;
 						param.ValueString = (string)o;
 					}
-					else if (type == typeof(int)) {
+					else if (o is int) {
 						param.ParameterType = NWN2ScriptParameterType.Int;
-						param.ValueInt = (int)o;
+						param.ValueInt = (int)o;				
 					}
-					else if (type == typeof(float)) {
+					else if (o is float) {
 						param.ParameterType = NWN2ScriptParameterType.Float;
 						param.ValueFloat = (float)o;
 					}
 					else {
 						throw new ArgumentException("Was passed an argument of type " + o.GetType().ToString() + 
 						                            " which is not valid as a script parameter.");
-					}
+					}	
 					scriptFunctor.Parameters.Add(param);
-				}
-				
+				}				
 				return scriptFunctor;
 			}
 			catch (ArgumentException e) {
@@ -124,46 +122,143 @@ namespace AdventureAuthor.Scripts
 					string sAttacker = action.Parameters[0].ValueString;
 					return GetOwnerIfBlank(sAttacker) + " ATTACKS THE PLAYER.";					
 					
+				case "ga_attack_target":
+					string sAttacker1 = action.Parameters[0].ValueString;
+					string sTarget = action.Parameters[0].ValueString;
+					return GetOwnerIfBlank(sAttacker1) + " ATTACKS " + sTarget + ".";
+										
+				case "ga_create_obj":
+					string sLocationTag = action.Parameters[2].ValueString;
+					string sNewTag = action.Parameters[4].ValueString;
+					float fDelay = action.Parameters[5].ValueFloat;
+					
+					StringBuilder s0 = new StringBuilder();
+					if (fDelay > 0.0f) {
+						s0.Append(fDelay.ToString() + " SECONDS LATER, ");
+					}
+					s0.Append("'" + sNewTag + "' APPEARS AT LOCATION '" + sLocationTag + "'.");
+					return s0.ToString();
+					
+				case "ga_death":
+					string deathtag = action.Parameters[0].ValueString;
+					int deathinstance = action.Parameters[1].ValueInt;
+					if (deathinstance > 0) {
+						return "EVERYTHING CALLED '" + deathtag + "' IS KILLED.";
+					}
+					else {
+						return deathtag.ToUpper() + " IS KILLED.";
+					}
+					
 				case "ga_destroy":
 					string sTagString = action.Parameters[0].ValueString;
 					int iInstance = action.Parameters[1].ValueInt;
-					float fDelay = action.Parameters[2].ValueFloat;
+					float fDelay1 = action.Parameters[2].ValueFloat;
 					
-					StringBuilder s = new StringBuilder();
-					if (fDelay > 0.0f) {
-						s.Append(fDelay.ToString() + " SECONDS LATER, ");
+					StringBuilder s1 = new StringBuilder();
+					if (fDelay1 > 0.0f) {
+						s1.Append(fDelay1.ToString() + " SECONDS LATER, ");
 					}				
 					if (sTagString == String.Empty) {
-						s.Append(ownerName + " DISAPPEARS FROM THE AREA.");
+						s1.Append(ownerName + " IS REMOVED FROM THE AREA.");
 					}
 					else {
 						if (iInstance == -1) { 
-							s.Append("EVERYTHING NAMED ");
+							s1.Append("EVERYTHING NAMED ");
 						}
-						s.Append(GetOwnerIfBlank(sTagString) + " IS REMOVED FROM THE AREA.");
+						s1.Append(GetOwnerIfBlank(sTagString) + " IS REMOVED FROM THE AREA.");
 					}
-					return s.ToString();					
+					return s1.ToString();					
+					
+				case "ga_destroy_item":
+					string destroyitemtag = action.Parameters[0].ValueString;
+					int destroyiteminstances = action.Parameters[1].ValueInt;
+					if (destroyiteminstances == -1) {
+						return "EVERY ITEM CALLED '" + destroyitemtag + "' IS REMOVED FROM INVENTORY.";
+					}
+					else if (destroyiteminstances == 1) {
+						return destroyitemtag + " IS REMOVED FROM INVENTORY.";
+					}
+					else {
+						return destroyiteminstances.ToString() + " ITEMS CALLED '" + destroyitemtag + "' ARE REMOVED FROM INVENTORY.";
+					}
+					
+				case "ga_destroy_party_henchmen":
+					return "ALL THE PLAYER'S HENCHMEN ARE REMOVED FROM THE AREA.";
+					
+				case "ga_door_close":
+					string sTag = action.Parameters[0].ValueString;
+					return "DOOR '" + sTag + "' IS CLOSED.";
+										
+				case "ga_door_open":
+					string sTag1 = action.Parameters[0].ValueString;
+					return "DOOR '" + sTag1 + "' IS OPENED.";
+					
+				case "ga_lock":
+					string locktag = action.Parameters[0].ValueString;
+					int lockstatus = action.Parameters[1].ValueInt;
+					if (lockstatus == 1) {
+						return "DOOR '" + locktag + "' IS LOCKED.";
+					}
+					else {
+						return "DOOR '" + locktag + "' IS UNLOCKED.";
+					}
 					
 				case "ga_give_gold":
 					int nGP = action.Parameters[0].ValueInt;
 					return "PLAYER RECEIVES " + nGP + " PIECES OF GOLD.";					
 					
-				// ga_give_item( string sTemplate, int nQuantity, int bAllPCs )
 				case "ga_give_item":
-					string sTemplate = action.Parameters[0].ValueString;
-					int nQuantity = action.Parameters[0].ValueInt;
+					string sTemplate1 = action.Parameters[0].ValueString;
+					int nQuantity = action.Parameters[1].ValueInt;
 					if (nQuantity != 1) {
-						return "PLAYER RECEIVES " + nQuantity + " COPIES OF '" + sTemplate + ".";
+						return "PLAYER RECEIVES " + nQuantity + " COPIES OF '" + sTemplate1 + ".";
 					}
 					else {
-						return "PLAYER RECEIVES A " + sTemplate + ".";
+						return "PLAYER RECEIVES A " + sTemplate1 + ".";
 					}
 					
 				case "ga_henchman_add": 
-					string sTarget = action.Parameters[0].ValueString;
+					string sTarget1 = action.Parameters[0].ValueString;
 					string sMaster = action.Parameters[2].ValueString;
-					return GetOwnerIfBlank(sTarget) + " BECOMES A FOLLOWER OF " + GetPlayerIfBlank(sMaster) + ".";
-									
+					return GetOwnerIfBlank(sTarget1) + " BECOMES A HENCHMAN OF " + GetPlayerIfBlank(sMaster) + ".";
+						
+				case "ga_henchman_remove":
+					string henchman = action.Parameters[0].ValueString;
+					return henchman.ToUpper() + " IS REMOVED AS A HENCHMAN.";
+					
+				case "ga_jump":
+					string jumpdestination = action.Parameters[0].ValueString;
+					string thingthatjumps = action.Parameters[1].ValueString;
+					float timetowait = action.Parameters[2].ValueFloat;					
+					if (timetowait != 0.0) {
+						return timetowait.ToString() + " SECONDS LATER, '" + 
+							thingthatjumps.ToUpper() + "' JUMPS TO '" + jumpdestination.ToUpper() + "'.";
+					}
+					else {
+						return "'" + thingthatjumps.ToUpper() + "' JUMPS TO '" + jumpdestination.ToUpper() + "'.";
+					}
+					
+				case "ga_jump_players":
+					string locationtojumpto = action.Parameters[0].ValueString;
+					return "PLAYER JUMPS TO LOCATION '" + locationtojumpto + "'.";
+					
+				case "ga_take_gold":
+					int goldtotake = action.Parameters[0].ValueInt;
+					return "PLAYER LOSES " + goldtotake + " PIECES OF GOLD.";
+					
+				case "ga_take_item":
+					string tagofitem = action.Parameters[0].ValueString;
+					int numberofitems = action.Parameters[0].ValueInt;
+					if (numberofitems == 1) {
+						return "PLAYER LOSES '" + tagofitem + "'.";
+					}
+					else if (numberofitems == -1) {
+						return "PLAYER LOSES ALL ITEMS WITH TAG '" + tagofitem + "'.";
+					}
+					else {
+						return "PLAYER LOSES " + numberofitems + " ITEMS WITH TAG '" + tagofitem + "'.";
+					}
+					
 				default:
 					return "No description available (" + action.Script.ResRef.Value + ")";
 			}
