@@ -53,27 +53,39 @@ namespace AdventureAuthor.UI.Windows
     {    
     	#region Constructors 
     
-    	private void ONTEMPCLICK(object sender, EventArgs ea)
+    	private void OnClick_AddAsHenchman(object sender, EventArgs ea)
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		
-	    		NWN2ScriptFunctor scriptFunctor = new NWN2ScriptFunctor();
-	    		
-	    		NWN2GameScript attackScript = AdventureAuthor.Utils.ScriptLibrary.GetScript("ga_attack");	    		
-	    		scriptFunctor.Script = attackScript.Resource;
-	    		
-	    		NWN2ScriptParameter scriptParameter = new NWN2ScriptParameter();
-	    		scriptParameter.ParameterType = NWN2ScriptParameterType.String;
-	    		scriptParameter.ValueString = connector.Speaker;
-	    		scriptFunctor.Parameters.Add(scriptParameter);
-	    		
-	    		connector.Actions.Add(scriptFunctor);   
-	    		
-	    		attackScript.Release();
+	    		object[] args = new object[]{String.Empty,1,String.Empty,1};
+	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_henchman_add",args));
     		}
     		else {
-    			Say.Error("Select a line to add an attack.");
+    			Say.Error("Select a line to add the speaker as a henchman.");
+    		}
+    	}    	
+    	
+    	private void OnClick_Attack(object sender, EventArgs ea)
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		object[] args = new object[]{String.Empty};
+	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_attack",args));
+    		}
+    		else {
+    			Say.Error("Select a line to make the speaker attack.");
+    		}
+    	}
+    	
+    	private void OnClick_Destroy(object sender, EventArgs ea)
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		object[] args = new object[]{connector.Speaker,-1,5.0f};
+	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_destroy",args));
+    		}
+    		else {
+    			Say.Error("Select a line to destroy the speaker.");
     		}
     	}
     	

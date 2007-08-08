@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.UI;
 using OEIShared.IO;
 using OEIShared.Utils;
 
@@ -39,20 +40,61 @@ namespace AdventureAuthor.Utils
 	public static class ScriptLibrary
 	{		
 		/// <summary>
+		/// Returns a script functor given a script name and an array of parameter arguments.
+		/// </summary>
+		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
+		/// <param name="args">The arguments to pass into the script method.</param>
+		/// <returns>Returns a script functor, or null if failed.</returns>
+		public static NWN2ScriptFunctor GetAction(string scriptName, object[] args)
+		{
+			NWN2GameScript script = GetScript(scriptName);
+			if (script == null) {
+				Say.Error("Couldn't find a script named '" + scriptName + "'.");
+				return null;
+			}		
+			
+			NWN2ScriptFunctor scriptFunctor = new NWN2ScriptFunctor();
+			scriptFunctor.Script = script.Resource;
+			
+			foreach (object o in args) { // float, int, string or tag(?)
+				Type type = o.GetType();
+				NWN2ScriptParameter param = new NWN2ScriptParameter();
+				if (type == typeof(string)) {
+					param.ParameterType = NWN2ScriptParameterType.String;
+					param.ValueString = (string)o;
+				}
+				else if (type == typeof(int)) {
+					param.ParameterType = NWN2ScriptParameterType.Int;
+					param.ValueInt = (int)o;
+				}
+				else if (type == typeof(float)) {
+					param.ParameterType = NWN2ScriptParameterType.Float;
+					param.ValueFloat = (float)o;
+				}
+				else {
+					throw new ArgumentException("Was passed an argument of type " + o.GetType().ToString() + 
+					                            " which is not valid as a script parameter.");
+				}
+				scriptFunctor.Parameters.Add(param);
+			}
+			
+			return scriptFunctor;
+		}	
+		
+		/// <summary>
 		/// Retrieves a compiled (.NCS) script of a given name/resref.
 		/// </summary>
 		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <returns>Returns the compiled script, or null if no script was found.</returns>
-		public static NWN2GameScript GetScript(string name)
+		private static NWN2GameScript GetScript(string name)
 		{
 			try {
 				string scriptsPath = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
 				ResourceRepository scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(scriptsPath);
-				ushort ncs1 = BWResourceTypes.GetResourceType("ncs");
+				ushort ncs = BWResourceTypes.GetResourceType("ncs");
 				OEIResRef resRef = new OEIResRef(name);
-				IResourceEntry entry = scripts.FindResource(resRef,ncs1);
-				NWN2GameScript scrp = new NWN2GameScript(entry);			
-				scrp.Demand();
+				IResourceEntry entry = scripts.FindResource(resRef,ncs);
+				NWN2GameScript scrp = new NWN2GameScript(entry);	
 				return scrp;
 			}
 			catch (NullReferenceException e) {
