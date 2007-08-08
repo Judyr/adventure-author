@@ -26,11 +26,13 @@
 
 using System;
 using System.Windows;
+using System.Collections.Generic;
 using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AdventureAuthor;
 using AdventureAuthor.Core;
+using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.Utils;
@@ -54,9 +56,14 @@ namespace AdventureAuthor.UI.Controls
 			set { isPartOfBranch = value; }
 		}    
     	
-    	private ActionControl textAppearsWhenControl;    	
-		public ActionControl TextAppearsWhenControl {
-			get { return textAppearsWhenControl; }
+    	private ConditionControl conditionalControl; // conditions are co-dependent, e.g. "IF (x) AND (y) THEN...", so they share a control 	
+		public ConditionControl ConditionalControl {
+			get { return conditionalControl; }
+		}
+    	
+    	private List<ActionControl> actionControls; // actions are independent, e.g. "HIRO GIVES THE PLAYER 100 GOLD. 
+		public List<ActionControl> ActionControls { // HIRO JOINS THE PLAYER'S PARTY", so they each have their own control.
+			get { return actionControls; }
 		}
     	
     	private const int MAX_LENGTH_OF_LINE_TO_DISPLAY = 70;
@@ -98,20 +105,32 @@ namespace AdventureAuthor.UI.Controls
         		}
         	};            
         	
-        	// If there are conditions on this line appearing, represent them with an ActionControl:
+        	// Check if there are conditions for this line to be spoken, and if so represent *all* of them with a single control:
         	if (line.Conditions.Count > 0) {
         		if (!lineIsPartOfBranch) {
         			Say.Error("Conditional check appeared on a line that was not part of a branch.");
         		}
-        		ActionControl actionControl = new ActionControl(this);
-        		this.textAppearsWhenControl = actionControl;
-        		this.LineControlGrid.Children.Add(actionControl);
-        		Grid.SetRow(this.textAppearsWhenControl,0);
-        		Grid.SetColumn(this.textAppearsWhenControl,0);
-        		Grid.SetColumnSpan(this.textAppearsWhenControl,3);
+        		conditionalControl = new ConditionControl(this);
+        		Grid.SetRow(conditionalControl,0);
+        		Grid.SetColumn(conditionalControl,0);
+        		Grid.SetColumnSpan(conditionalControl,3);
+        		LineControlGrid.Children.Add(conditionalControl);
         	}   
         	else {
-        		this.textAppearsWhenControl = null;
+        		conditionalControl = null;
+        	}        	        	       
+        	
+        	// Check if there are actions to occur when this line is spoken, and if so represent *each* of them with a control:
+        	if (line.Actions.Count > 0) {
+        		actionControls = new List<ActionControl>(line.Actions.Count);
+        		foreach (NWN2ScriptFunctor action in line.Actions) {
+        			ActionControl actionControl = new ActionControl(action,this);
+        			actionControls.Add(actionControl);
+        			ActionsPanel.Children.Add(actionControl);
+        		}
+        	}   
+        	else {
+        		actionControls = new List<ActionControl>();
         	}
         	
         	ContextMenu = new ContextMenu();
@@ -375,9 +394,9 @@ namespace AdventureAuthor.UI.Controls
         	this.AnimationButton.Opacity = 1.0;
         	this.DeleteLineButton.IsEnabled = true;
         	this.DeleteLineButton.Opacity = 1.0;
-        	if (this.textAppearsWhenControl != null) {
-	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = true;
-	        	this.textAppearsWhenControl.EditActionButton.Opacity = 1.0;    
+        	if (this.conditionalControl != null) {
+	        	this.conditionalControl.EditConditionsButton.IsEnabled = true;
+	        	this.conditionalControl.EditConditionsButton.Opacity = 1.0;    
         	}
         }
         
@@ -391,9 +410,9 @@ namespace AdventureAuthor.UI.Controls
         	this.AnimationButton.Opacity = 0.0;
         	this.DeleteLineButton.IsEnabled = false;
         	this.DeleteLineButton.Opacity = 0.0;
-        	if (this.textAppearsWhenControl != null) {
-	        	this.textAppearsWhenControl.EditActionButton.IsEnabled = false;
-	        	this.textAppearsWhenControl.EditActionButton.Opacity = 0.0;    
+        	if (this.conditionalControl != null) {
+	        	this.conditionalControl.EditConditionsButton.IsEnabled = false;
+	        	this.conditionalControl.EditConditionsButton.Opacity = 0.0;    
         	} 
         }
         

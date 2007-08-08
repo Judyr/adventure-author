@@ -46,14 +46,15 @@
 	
     <Grid x:Name="LineControlGrid">		
 		<Grid.RowDefinitions>
-    		<RowDefinition MinHeight="0"/>
-    		<RowDefinition MinHeight="34" MaxHeight="34"/>
-    		<RowDefinition MinHeight="0" Height="*"/>
+    		<RowDefinition MinHeight="0"/> <!--Condition control-->
+    		<RowDefinition MinHeight="34" MaxHeight="34"/> <!--Speaker and first line of dialogue-->
+    		<RowDefinition MinHeight="0" Height="*"/> <!--Any subsequent lines of dialogue-->
+    		<RowDefinition MinHeight="0"/> <!--Action controls-->
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="100"/>
-    		<ColumnDefinition Width="200"/>
-    		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/>
+    		<ColumnDefinition Width="100"/> <!--Buttons-->
+    		<ColumnDefinition Width="200"/> <!--Speaker-->
+    		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/> <!--Dialogue-->
     	</Grid.ColumnDefinitions>
     	    	
     	<StackPanel Name="LineControlButtonsPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
@@ -87,6 +88,9 @@
     		</TextBox.Text>
     
     	</TextBox>
+	
+		<StackPanel x:Name="ActionsPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
+	
 	</Grid>
 
 </UserControl>

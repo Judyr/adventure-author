@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using AdventureAuthor.Core;
+using AdventureAuthor.Scripts;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -52,14 +53,14 @@ namespace AdventureAuthor.UI.Windows
     public sealed partial class ConversationWriterWindow : Window
     {    
     	#region Constructors 
-    
+    	
     	private void OnClick_AddAsHenchman(object sender, EventArgs ea)
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{connector.Speaker,1,String.Empty,1};
-	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_henchman_add",args));
-	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
+	    		NWN2ScriptFunctor action = Actions.AddHenchman(connector.Speaker,1,String.Empty,1);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
     		}
     		else {
     			Say.Error("Select a line to add the speaker as a henchman.");
@@ -70,9 +71,9 @@ namespace AdventureAuthor.UI.Windows
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{connector.Speaker};
-	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_attack",args));
-	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
+	    		NWN2ScriptFunctor action = Actions.Attack(connector.Speaker);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
     		}
     		else {
     			Say.Error("Select a line to make the speaker attack.");
@@ -83,9 +84,9 @@ namespace AdventureAuthor.UI.Windows
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{connector.Speaker,0,0.0f};
-	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_destroy",args));
-	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
+	    		NWN2ScriptFunctor action = Actions.Destroy(connector.Speaker,0,0.0f);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
     		}
     		else {
     			Say.Error("Select a line to destroy the speaker.");
@@ -96,13 +97,26 @@ namespace AdventureAuthor.UI.Windows
     	{
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{200,0};
-	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_give_gold",args));
-	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
+	    		NWN2ScriptFunctor action = Actions.GiveGold(200,0);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
     		}
     		else {
     			Say.Error("Select a line to give the player gold at this point.");
     		}
+    	}
+    	
+    	private void OnClick_GiveItemFromBlueprint(object sender, EventArgs ea)
+    	{
+     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1,0);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
+    		}
+    		else {
+    			Say.Error("Select a line to give the player gold at this point.");
+    		}   		
     	}
     	
 		public ConversationWriterWindow()
@@ -349,9 +363,11 @@ namespace AdventureAuthor.UI.Windows
 		/// <returns>a list of all Pages in the tree, the first entry being the root Page which owns all other Pages</returns>
 		private List<ConversationPage> CreatePages(Conversation conversation)
 		{
-			List<ConversationPage> pages = new List<ConversationPage>(1);			
+			List<ConversationPage> pages = new List<ConversationPage>(10);			
 			ConversationPage rootPage = new ConversationPage(null,null);
 			pages.Add(rootPage);
+			
+			// TODO: Crashes on conversation.NwnConv null reference if it failed to create pages, unhandled
 			
 			// Identify every child of the root page:
 			if (conversation.NwnConv.StartingList.Count == 0) {
@@ -552,17 +568,10 @@ namespace AdventureAuthor.UI.Windows
 				                                Adventure.CurrentAdventure.Module.Repository.DirectoryName,
 					                            Adventure.CurrentAdventure.Module.Repository);		
 				
-				conv.Demand();
-				
-				foreach (NWN2ConversationConnector line in conv.AllConnectors) {
-					if (line.Link) {
-						throw new InvalidDataException(); // Adventure Author doesn't support links in conversations (currently)
-					}
-				}
-				
+				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
 			}
-			catch (InvalidDataException e) {			
+			catch (Exception e) {			
 				if (conv != null) {
 					conv.Release();
 				}
@@ -574,7 +583,7 @@ namespace AdventureAuthor.UI.Windows
 				if (File.Exists(workingPath)) {
 					File.Delete(workingPath);
 				}	
-				Say.Error("This conversation was not created using Adventure Author, and cannot be opened, as it contains links.",e);
+				Say.Error("Failed to open conversation.",e);
 			}
 						
 			// Build a graph based on the list of Pages:
