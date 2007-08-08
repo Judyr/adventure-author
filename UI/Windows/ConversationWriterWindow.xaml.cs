@@ -57,8 +57,9 @@ namespace AdventureAuthor.UI.Windows
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{String.Empty,1,String.Empty,1};
+	    		object[] args = new object[]{connector.Speaker,1,String.Empty,1};
 	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_henchman_add",args));
+	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
     		}
     		else {
     			Say.Error("Select a line to add the speaker as a henchman.");
@@ -69,8 +70,9 @@ namespace AdventureAuthor.UI.Windows
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{String.Empty};
+	    		object[] args = new object[]{connector.Speaker};
 	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_attack",args));
+	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
     		}
     		else {
     			Say.Error("Select a line to make the speaker attack.");
@@ -81,11 +83,25 @@ namespace AdventureAuthor.UI.Windows
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		object[] args = new object[]{connector.Speaker,-1,5.0f};
+	    		object[] args = new object[]{connector.Speaker,0,0.0f};
 	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_destroy",args));
+	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
     		}
     		else {
     			Say.Error("Select a line to destroy the speaker.");
+    		}
+    	}
+    	
+    	private void OnClick_GiveGold(object sender, EventArgs ea)
+    	{
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		object[] args = new object[]{200,0};
+	    		connector.Actions.Add(ScriptLibrary.GetAction("ga_give_gold",args));
+	    		Say.Information(ScriptLibrary.GetStageDirection(connector.Actions[0]));
+    		}
+    		else {
+    			Say.Error("Select a line to give the player gold at this point.");
     		}
     	}
     	
