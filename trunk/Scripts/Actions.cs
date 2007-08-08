@@ -25,6 +25,7 @@
  */
 
 using System;
+using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 
 namespace AdventureAuthor.Scripts
@@ -34,6 +35,8 @@ namespace AdventureAuthor.Scripts
 	/// </summary>
 	public static class Actions
 	{	
+		// TODO: up to ga_effect in list of action scripts
+		
 		/// <summary>
 		/// Add a target creature to your party as a henchman.
 		/// </summary>
@@ -52,13 +55,55 @@ namespace AdventureAuthor.Scripts
 		/// Make the specified NPC attack the PC.
 		/// </summary>
 		/// <description>ga_attack</description>
-		/// <param name="sAttacker">Tag of attacker who will attack the PC.</param>
+		/// <param name="sAttacker">Tag of attacker</param>
 		/// <returns></returns>
 		public static NWN2ScriptFunctor Attack(string sAttacker)
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_attack",new object[]{sAttacker});
 		}
-		       
+		
+		/// <summary>
+		/// Make the specified NPC attack the specified target
+		/// </summary>
+		/// <description>ga_attack_target</description>
+		/// <param name="sAttacker">Tag of attacker</param>
+		/// <param name="sTarget">Tag of target</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor AttackTarget(string sAttacker, string sTarget)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_attack_target",new object[]{sAttacker,sTarget});
+		}
+		
+		/// <summary>
+		/// Close a door.
+		/// </summary>
+		/// <description>ga_door_close</description>
+		/// <param name="sTag">Tag of door to close</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor CloseDoor(string sTag)
+		{
+			int nLock = 0; // not useful - just call SetDoorLock after this
+			return ScriptLibrary.GetScriptFunctor("ga_door_close",new object[]{sTag,nLock});
+		}
+				       
+		/// <summary>
+		/// Create an object.
+		/// </summary>
+		/// <description>ga_create_obj</description>
+		/// <param name="sObjectType">C for creature, P for placeable, I for item, W for waypoint or S for store</param>
+		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
+		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
+		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor CreateObject(string sObjectType, string sTemplate, string sLocationTag, 
+		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_create_obj",
+			                                      new object[]{sObjectType,sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay});
+		}
+		
 		/// <summary>
 		/// Destroy an object.
 		/// </summary>
@@ -71,17 +116,27 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor Destroy(string sTagString, int iInstance, float fDelay)
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_destroy",new object[]{sTagString,iInstance,fDelay});
-		}					
+		}				
+		
+		/// <summary>
+		/// Destroys all the henchmen in the party. If you just want to remove them, use RemoveHenchman().
+		/// </summary>
+		/// <description>ga_destroy_party_henchmen</description>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor DestroyAllHenchmen()
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_destroy_party_henchmen",new object[]{});
+		}
 		
     	/// <summary>
     	/// Give the player some gold.
     	/// </summary>
     	/// <description>ga_give_gold</description>
     	/// <param name="nGP">The amount of gold coins given to the PC</param>
-    	/// <param name="bAllPartyMembers">If set to 1 it gives gold to all the PCs in the party (MP only)</param>
     	/// <returns></returns>
-    	public static NWN2ScriptFunctor GiveGold(int nGP, int bAllPartyMembers)
+    	public static NWN2ScriptFunctor GiveGold(int nGP)
 		{
+    		int bAllPartyMembers = 0; // not useful
     		return ScriptLibrary.GetScriptFunctor("ga_give_gold",new object[]{nGP,bAllPartyMembers});
 		}		     
 		
@@ -93,8 +148,9 @@ namespace AdventureAuthor.Scripts
 		/// <param name="nQuantity">Stack size for item</param>
 		/// <param name="bAllPartyMembers">If set to 1, create item on all player characters in party (MP)</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor GiveItem(string sTemplate, int nQuantity, int bAllPartyMembers)
+		public static NWN2ScriptFunctor GiveItem(string sTemplate, int nQuantity)
 		{
+			int bAllPartyMembers = 0; // not useful
 			return ScriptLibrary.GetScriptFunctor("ga_give_item",new object[]{sTemplate,nQuantity,bAllPartyMembers});
 		}	
 		
@@ -116,13 +172,36 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_jump_players</description>
 		/// <param name="sDestTag">Tag of waypoint or object to jump to</param>
-		/// <param name="bWholeParty">DOES NOTHING IN CAMPAIGN.  If set to 0 then jump the PC only, else jump the PC's party</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor JumpPlayer(string sDestTag, int bWholeParty)
+		public static NWN2ScriptFunctor JumpPlayer(string sDestTag)
 		{
+			int bWholeParty = 1; // not useful
 			int bOnlyThisArea = 0; // deprecated parameter
     		return ScriptLibrary.GetScriptFunctor("ga_jump_players",new object[]{sDestTag,bWholeParty,bOnlyThisArea});
-		}		
+		}				
+		
+		/// <summary>
+		/// Make an object appear dead
+		/// </summary>
+		/// <description>ga_death</description>
+		/// <param name="sTag">The tag(s) of the object(s) to make dead (multiple tags can be separated by commas with no spaces)</param>
+		/// <param name="iInstance">The instance of the object(s) to make dead. Pass -1 to make all instances dead</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor Kill(string sTag, int iInstance)
+		{
+    		return ScriptLibrary.GetScriptFunctor("ga_death",new object[]{sTag,iInstance});
+		}	
+		
+		/// <summary>
+		/// Open a door.
+		/// </summary>
+		/// <description>ga_door_open</description>
+		/// <param name="sTag">Tag of door to open</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor OpenDoor(string sTag)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_door_open",new object[]{sTag});
+		}
 		
 		/// <summary>
 		/// Remove a target henchman from the party.
@@ -137,6 +216,19 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
+		/// Take an item from the player.
+		/// </summary>
+		/// <description>ga_destroy_item</description>
+		/// <param name="sItemTag">Tag of the item to remove</param>
+		/// <param name="nQuantity">The number of items to destroy. -1 is all of the Player's items of that tag</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor RemoveItem(string sItemTag, int nQuantity)
+		{
+			int bPCFaction = 1; // not useful
+			return ScriptLibrary.GetScriptFunctor("ga_destroy_item",new object[]{sItemTag,nQuantity,bPCFaction});
+		}
+		
+		/// <summary>
 		/// Change the lock status of a door
 		/// </summary>
 		/// <description>ga_lock</description>
@@ -147,16 +239,16 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock});
 		}
-		
+				
 		/// <summary>
 		/// Take gold from the player
 		/// </summary>
 		/// <description>ga_take_gold</description>
 		/// <param name="nGold">The amount of gold to take</param>
-		/// <param name="bAllPartyMembers">If set to 1 it takes gold from all PCs in party (MP only)</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor TakeGold(int nGold, int bAllPartyMembers)
+		public static NWN2ScriptFunctor TakeGold(int nGold)
 		{
+			int bAllPartyMembers = 0; // not useful
 			return ScriptLibrary.GetScriptFunctor("ga_take_gold",new object[]{nGold,bAllPartyMembers});
 		}		
 		
@@ -166,10 +258,10 @@ namespace AdventureAuthor.Scripts
 		/// <description>ga_take_item</description>
 		/// <param name="sItemTag">This is the string name of the item's tag</param>
 		/// <param name="nQuantity">The number of items to take, set to -1 to take all of the Player's items of that tag</param>
-		/// <param name="bAllPartyMembers">If set to 1, take the item(s) from all party members</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor TakeItem(string sItemTag, int nQuantity, int bAllPartyMembers)
+		public static NWN2ScriptFunctor TakeItem(string sItemTag, int nQuantity)
 		{
+			int bAllPartyMembers = 0; // not useful
 			return ScriptLibrary.GetScriptFunctor("ga_take_item",new object[]{sItemTag,nQuantity,bAllPartyMembers});
 		}	
 	}

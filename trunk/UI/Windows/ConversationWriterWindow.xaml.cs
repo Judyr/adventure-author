@@ -97,7 +97,7 @@ namespace AdventureAuthor.UI.Windows
     	{
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.GiveGold(200,0);
+	    		NWN2ScriptFunctor action = Actions.GiveGold(200);
 	    		connector.Actions.Add(action);
 	    		RefreshDisplay(false);
     		}
@@ -110,7 +110,7 @@ namespace AdventureAuthor.UI.Windows
     	{
      		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1,0);
+	    		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1);
 	    		connector.Actions.Add(action);
 	    		RefreshDisplay(false);
     		}
