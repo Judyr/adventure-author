@@ -58,6 +58,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="QWhale.Syntax">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\QWhale.Syntax.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="SandBar">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
