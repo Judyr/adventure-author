@@ -67,6 +67,38 @@ namespace AdventureAuthor.UI.Windows
     		}
     	}    	
     	
+    	private void OnClick_TempCreateBuilding(object sender, EventArgs ea) 
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		NWN2ScriptFunctor action = Actions.CreateObject("P","plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
+    		}
+    		else {
+    			Say.Error("Select a line to to materialise the building.");
+    		}
+    	}    	
+    	
+    	private void OnClick_CheckPlayerHas4Items(object sender, EventArgs ea)
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl && ((LineControl)currentlySelectedControl).IsPartOfBranch) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		
+	    		NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">3");
+	    		NWN2ConditionalFunctor condition2 = Conditions.PlayerHasNumberOfItems("sword",">0");
+	    		condition.Condition = NWN2ConditionalType.Or;
+	    		condition2.Condition = NWN2ConditionalType.Or;
+	    		
+	    		connector.Conditions.Add(condition);
+	    		connector.Conditions.Add(condition2);
+	    		RefreshDisplay(false);
+    		}
+    		else {
+    			Say.Error("Select a branch line.");
+    		}
+    	}
+    	
     	private void OnClick_Attack(object sender, EventArgs ea)
     	{    		
     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
@@ -89,7 +121,7 @@ namespace AdventureAuthor.UI.Windows
 	    		RefreshDisplay(false);
     		}
     		else {
-    			Say.Error("Select a line to destroy the speaker.");
+    			Say.Error("Select a line to destroy the speaker."); 
     		}
     	}
     	

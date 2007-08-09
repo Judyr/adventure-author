@@ -61,11 +61,13 @@
 							<TextBlock Foreground="Brown" Text="ACTION"/>
 						</TextBlock>
 					</Button>	
-					<Button FontSize="26" Click="OnClick_Attack">Attack on this line</Button>
-					<Button FontSize="26" Click="OnClick_Destroy">Self-destruct on this line</Button>
-					<Button FontSize="26" Click="OnClick_AddAsHenchman">Join as henchman on this line</Button>
-					<Button FontSize="26" Click="OnClick_GiveGold">Give player 200 gold on this line</Button>
-					<Button FontSize="26" Click="OnClick_GiveItemFromBlueprint">Give the player a book</Button>
+					<Button Click="OnClick_Attack">Attack on this line</Button>
+					<Button Click="OnClick_Destroy">Self-destruct on this line</Button>
+					<Button Click="OnClick_AddAsHenchman">Join as henchman on this line</Button>
+					<Button Click="OnClick_GiveGold">Give player 200 gold on this line</Button>
+					<Button Click="OnClick_GiveItemFromBlueprint">Give the player a book</Button>
+					<Button Click="OnClick_TempCreateBuilding">Create a building from thin air</Button>
+					<Button Click="OnClick_CheckPlayerHas4Items">Check player has 4 items called gemstone</Button>
 				</StackPanel>
 				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
 					<Button Name="AddSpeakersButton" Margin="2" Click="OnClick_AddRemoveSpeakers">

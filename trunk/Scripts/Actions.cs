@@ -35,7 +35,34 @@ namespace AdventureAuthor.Scripts
 	/// </summary>
 	public static class Actions
 	{	
-		// TODO: up to ga_effect in list of action scripts
+		/* Actions to add:
+		 * ga_align_good_evil
+		 * ga_align_law_chaos?
+		 * ga_effect
+		 * ga_give_feat?
+		 * ga_give_xp?
+		 * ga_heal_pc
+		 * ga_journal
+		 * ga_move
+		 * the 10 music scripts to start/stop battle and background music
+		 * ga_party_add
+		 * ga_party_face_target
+		 * ga_play_animation? (if we can't access this functionality more easily in the same way Node does)
+		 * ga_play_sound
+		 * ga_remove_comp (should work on both henchmen and companions)
+		 * ga_remove_feat?
+		 * ga_reputation?
+		 * ga_roster_add_blueprint
+		 * ga_roster_add_object
+		 * ga_set_wwp_controller
+		 * ga_setimmortal
+		 * ga_sound_object_play
+		 * ga_sound_object_stop
+		 * ga_sound_object_setposition
+		 * ga_sound_object_setvolume
+		 * ga_time_advance
+		 * ga_time_set 
+		 * */
 		
 		/// <summary>
 		/// Add a target creature to your party as a henchman.
@@ -119,13 +146,24 @@ namespace AdventureAuthor.Scripts
 		}				
 		
 		/// <summary>
-		/// Destroys all the henchmen in the party. If you just want to remove them, use RemoveHenchman().
+		/// Destroy all the henchmen in the party. If you just want to remove them, use RemoveHenchman().
 		/// </summary>
 		/// <description>ga_destroy_party_henchmen</description>
 		/// <returns></returns>
 		public static NWN2ScriptFunctor DestroyAllHenchmen()
 		{
-			return ScriptLibrary.GetScriptFunctor("ga_destroy_party_henchmen",new object[]{});
+			return ScriptLibrary.GetScriptFunctor("ga_destroy_party_henchmen",null);
+		}
+		
+		/// <summary>
+		/// Make a creature walk/run to a location and then vanish (exeunt)
+		/// </summary>
+		/// <param name="sCreatureTag">The tag of the creature to move/vanish</param>
+		/// <param name="sWPTag">The tag of the location the creature will move to and then disappear at</param>
+		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
+		public static NWN2ScriptFunctor ForceCreatureMoveAndExit(string sCreatureTag, string sWPTag, int bRun)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun});
 		}
 		
     	/// <summary>
@@ -239,7 +277,56 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock});
 		}
-				
+		
+		/// <summary>
+		/// Set the value of a global float variable
+		/// </summary>
+		/// <param name="sVariable">The variable to set the value of</param>
+		/// <param name="sChange">The operation to perform on the variable, e.g.:
+		/// "5.1"    (Set to 5.1)
+		///	"=-2.1"  (Set to -2.1)
+		///	"+3.5"   (Add 3.5)
+		///	"+"    (Add 1.0)
+		///	"++"   (Add 1.0)
+		///	"-4.8"   (Subtract 4.8)
+		///	"-"    (Subtract 1.0)
+		///	"--"   (Subtract 1.0)</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor SetGlobalFloat(string sVariable, string sChange)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_global_float",new object[]{sVariable,sChange});
+		}
+		
+		/// <summary>
+		/// Set the value of a global int variable
+		/// </summary>
+		/// <param name="sVariable">The variable to set the value of</param>
+		/// <param name="sChange">The operation to perform on the variable, e.g.:
+		/// "5"    (Set to 5)
+		///	"=-2"  (Set to -2)
+		///	"+3"   (Add 3)
+		///	"+"    (Add 1)
+		///	"++"   (Add 1)
+		///	"-4"   (Subtract 4)
+		///	"-"    (Subtract 1)
+		///	"--"   (Subtract 1)</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor SetGlobalInt(string sVariable, string sChange)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_global_int",new object[]{sVariable,sChange});
+		}
+						
+		/// <summary>
+		/// Set the value of a global string variable
+		/// </summary>
+		/// <param name="sVariable">The variable to set the value of</param>
+		/// <param name="sChange">The new value of the variable</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor SetGlobalString(string sVariable, string sChange)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_global_string",new object[]{sVariable,sChange});
+		}
+		
 		/// <summary>
 		/// Take gold from the player
 		/// </summary>
