@@ -1,0 +1,9 @@
+﻿<Window x:Class="AdventureAuthor.UI.Windows.AddActionWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Add an Action" Height="600" Width="800"
+    >
+    <StackPanel>
+        
+    </StackPanel>
+</Window>

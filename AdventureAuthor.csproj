@@ -132,6 +132,10 @@
     <Compile Include="UI\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="UI\Windows\AddActionWindow.xaml.cs">
+      <DependentUpon>AddActionWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Windows\AddRemoveSpeakersWindow.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
@@ -184,6 +188,7 @@
     <Page Include="UI\Controls\ConditionControl.xaml" />
     <Page Include="UI\Controls\EndConversationControl.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
+    <Page Include="UI\Windows\AddActionWindow.xaml" />
     <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
     <Page Include="UI\Windows\AnimationWindow.xaml" />
     <Page Include="UI\Windows\ChooseSpeaker.xaml" />
