@@ -165,6 +165,9 @@ namespace AdventureAuthor.Scripts
 					string sAttacker1 = action.Parameters[0].ValueString;
 					string sTarget = action.Parameters[0].ValueString;
 					return GetOwnerIfBlank(sAttacker1) + " ATTACKS " + sTarget + ".";
+					
+				case "ga_blackout":
+					return "THE SCREEN TURNS BLACK.";
 										
 				case "ga_create_obj":
 					string sLocationTag = action.Parameters[2].ValueString;
@@ -232,6 +235,39 @@ namespace AdventureAuthor.Scripts
 					string sTag1 = action.Parameters[0].ValueString;
 					return "DOOR " + sTag1 + " IS OPENED.";
 						
+				case "ga_fade_from_black":
+					if (action.Parameters[0].ValueFloat == 0.0f) {
+						return "FADE IN (INSTANTLY).";
+					}
+					else {
+						return "FADE IN (OVER " + action.Parameters[0].ValueFloat + " SECONDS).";
+					}
+					
+				case "ga_fade_to_black":
+					StringBuilder sb = new StringBuilder("FADE ");
+					switch (action.Parameters[2].ValueInt)
+					{
+						case 0:
+							sb.Append("TO BLACK (");
+							break;
+						case 16777215:
+							sb.Append("TO WHITE (");
+							break;
+						case 16711680:
+							sb.Append("TO RED (");
+							break;
+						default:
+							sb.Append("OUT (");
+							break;
+					}
+					if (action.Parameters[0].ValueFloat == 0.0f) {
+						sb.Append("INSTANTLY).");
+					}
+					else {
+						sb.Append("OVER " + action.Parameters[0].ValueFloat + " SECONDS).");
+					}					
+					return sb.ToString();
+					
 				case "ga_force_exit":
 					string moves;
 					if (action.Parameters[2].ValueInt == 1) {
@@ -267,6 +303,14 @@ namespace AdventureAuthor.Scripts
 				case "ga_global_string":
 					return "SET STRING VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 					
+				case "ga_heal_pc":
+					if (action.Parameters[0].ValueInt == 100) {
+						return "THE PLAYER (AND HIS COMPANIONS) HAVE ALL OF THEIR WOUNDS HEALED.";
+					}
+					else {
+						return "THE PLAYER (AND HIS COMPANIONS) HAVE " + action.Parameters[0].ValueInt + "% OF THEIR WOUNDS HEALED.";
+					}
+					
 				case "ga_henchman_add": 
 					string sTarget1 = action.Parameters[0].ValueString;
 					string sMaster = action.Parameters[2].ValueString;
@@ -301,7 +345,34 @@ namespace AdventureAuthor.Scripts
 					else {
 						return "DOOR " + locktag + " IS UNLOCKED.";
 					}
-									
+					
+				case "ga_move":
+					string moves2;
+					if (action.Parameters[1].ValueInt == 1) {
+						moves2 = "RUNS";
+					}
+					else {
+						moves2 = "WALKS";
+					}					
+					return action.Parameters[2].ValueString + " " + moves2 + " TO " + action.Parameters[0].ValueString;
+						
+				case "ga_play_sound":
+					StringBuilder ga_play_sound = new StringBuilder();
+					if (action.Parameters[2].ValueFloat != 0.0f) {
+						ga_play_sound.Append(action.Parameters[2].ValueFloat.ToString() + " SECONDS LATER, ");
+					}
+					ga_play_sound.Append("THE SOUND " + action.Parameters[0].ValueString + 
+					                     " PLAYS AT " + action.Parameters[1].ValueString + ".");
+					return ga_play_sound.ToString();
+					
+				case "ga_setimmortal":
+					if (action.Parameters[1].ValueInt == 0) {
+						return action.Parameters[0].ValueString + " BECOMES IMMORTAL.";
+					}
+					else {
+						return action.Parameters[0].ValueString + " BECOMES MORTAL.";
+					}
+					
 				case "ga_take_gold":
 					int goldtotake = action.Parameters[0].ValueInt;
 					return "PLAYER LOSES " + goldtotake + " PIECES OF GOLD.";
@@ -318,6 +389,12 @@ namespace AdventureAuthor.Scripts
 					else {
 						return "PLAYER LOSES " + numberofitems + " ITEMS WITH TAG " + tagofitem + ".";
 					}
+					
+				case "ga_time_advance":
+					return action.Parameters[0].ValueInt.ToString() + " HOURS AND " + action.Parameters[1].ValueInt + " MINUTES PASS.";
+					
+				case "ga_time_set":
+					return "TIME PASSES. THE TIME IS NOW " + action.Parameters[0].ValueInt + ":" + action.Parameters[1].ValueInt + ".";
 					
 				default:
 					return "No description available (" + action.Script.ResRef.Value + ")";

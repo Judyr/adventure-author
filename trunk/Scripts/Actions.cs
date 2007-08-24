@@ -41,28 +41,23 @@ namespace AdventureAuthor.Scripts
 		 * ga_effect
 		 * ga_give_feat?
 		 * ga_give_xp?
-		 * ga_heal_pc
 		 * ga_journal
-		 * ga_move
 		 * the 10 music scripts to start/stop battle and background music
 		 * ga_party_add
 		 * ga_party_face_target
 		 * ga_play_animation? (if we can't access this functionality more easily in the same way Node does)
-		 * ga_play_sound
 		 * ga_remove_comp (should work on both henchmen and companions)
 		 * ga_remove_feat?
-		 * ga_reputation?
 		 * ga_roster_add_blueprint
 		 * ga_roster_add_object
 		 * ga_set_wwp_controller
-		 * ga_setimmortal
 		 * ga_sound_object_play
 		 * ga_sound_object_stop
 		 * ga_sound_object_setposition
 		 * ga_sound_object_setvolume
-		 * ga_time_advance
-		 * ga_time_set 
 		 * */
+		
+		public enum FadeColour { Black = 0, White = 16777215, Red = 16711680 };
 		
 		/// <summary>
 		/// Add a target creature to your party as a henchman.
@@ -77,6 +72,18 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior});
 		}		
+		
+		/// <summary>
+		/// Advance time by a given amount
+		/// </summary>
+		/// <param name="nHour">Hours to advance</param>
+		/// <param name="nMinute">Minutes to advance</param>
+		/// <param name="nSecond">Seconds to advance</param>
+		/// <param name="nMillisecond">Milliseconds to advance</param>
+		public static NWN2ScriptFunctor AdvanceTimeBy(int nHour, int nMinute, int nSecond, int nMillisecond)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_time_advance",new object[]{nHour,nMinute,nSecond,nMillisecond});
+		}
 		
 		/// <summary>
 		/// Make the specified NPC attack the PC.
@@ -129,6 +136,29 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{sObjectType,sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay});
+		}		
+		
+		/// <summary>
+		/// Make a creature walk/run to a location
+		/// </summary>
+		/// <param name="sCreatureTag">The tag of the creature to move</param>
+		/// <param name="sWPTag">The tag of the location the creature will move to</param>
+		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
+		public static NWN2ScriptFunctor CreatureMoves(string sCreatureTag, string sWPTag, int bRun)
+		{
+			// parameters are in a different order from the function call, to be consistent with CreatureMovesAndExits:
+			return ScriptLibrary.GetScriptFunctor("ga_move",new object[]{sWPTag,bRun,sCreatureTag});
+		}
+		
+		/// <summary>
+		/// Make a creature walk/run to a location and then vanish (exit stage left)
+		/// </summary>
+		/// <param name="sCreatureTag">The tag of the creature to move/vanish</param>
+		/// <param name="sWPTag">The tag of the location the creature will move to and then disappear at</param>
+		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
+		public static NWN2ScriptFunctor CreatureMovesAndDisappears(string sCreatureTag, string sWPTag, int bRun)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun});
 		}
 		
 		/// <summary>
@@ -156,16 +186,34 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Make a creature walk/run to a location and then vanish (exeunt)
+		/// If the screen has faded to black (or another colour), fade out from that colour over a number of seconds.
 		/// </summary>
-		/// <param name="sCreatureTag">The tag of the creature to move/vanish</param>
-		/// <param name="sWPTag">The tag of the location the creature will move to and then disappear at</param>
-		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
-		public static NWN2ScriptFunctor ForceCreatureMoveAndExit(string sCreatureTag, string sWPTag, int bRun)
+		/// <param name="fSpeed">Number of seconds to fade in over (0.0 for instantly).</param>
+		public static NWN2ScriptFunctor FadeIn(float fSpeed)
 		{
-			return ScriptLibrary.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun});
+			return ScriptLibrary.GetScriptFunctor("ga_fade_from_black",new object[]{fSpeed});
 		}
 		
+		/// <summary>
+		/// Fade the screen to black (or another colour).
+		/// </summary>
+		/// <param name="fSpeed">Number of seconds to fade out over (0.0 for instantly).</param>
+		/// <param name="fFailsafe">Maximum length of time to allow fade-out for before automatically fading back in 
+		/// (passing 0.0 results in the default value of 15 seconds)</param>
+		/// <param name="fadeColour">The colour to fade to - either black, white or red.</param>
+		public static NWN2ScriptFunctor FadeOut(float fSpeed, float fFailsafe, FadeColour fadeColour)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_fade_to_black",new object[]{fSpeed,fFailsafe,(int)fadeColour});
+		}
+		
+		/// <summary>
+		/// Instantly make screen black (useful if you want to then 'fade in')
+		/// </summary>
+		public static NWN2ScriptFunctor FadeOutInstantly()
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_blackout",null);
+		}
+				
     	/// <summary>
     	/// Give the player some gold.
     	/// </summary>
@@ -190,7 +238,17 @@ namespace AdventureAuthor.Scripts
 		{
 			int bAllPartyMembers = 0; // not useful
 			return ScriptLibrary.GetScriptFunctor("ga_give_item",new object[]{sTemplate,nQuantity,bAllPartyMembers});
-		}	
+		}					
+		
+		/// <summary>
+		/// Heal the player and his companions.
+		/// </summary>
+		/// <param name="nHealPercent">The percentage damage to heal, from 0 to 100, 100 being the most.</param>
+		public static NWN2ScriptFunctor HealPC(int nHealPercent)
+		{
+			int bAllPartyMembers = 1; // not useful
+			return ScriptLibrary.GetScriptFunctor("ga_heal_pc",new object[]{nHealPercent,bAllPartyMembers});
+		}
 		
 		/// <summary>
 		/// Jump an object to a waypoint or another object.
@@ -239,6 +297,18 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor OpenDoor(string sTag)
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_door_open",new object[]{sTag});
+		}
+		
+		/// <summary>
+		/// Play a sound file on an object.
+		/// </summary>
+		/// <param name="sSound">The filename (without extension or directory) of the sound to play</param>
+		/// <param name="sTarget">The object to play the sound on - it is recommended to only play sounds on creature objects</param>
+		/// <param name="fDelay">The delay before playing the sound, in seconds</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor PlaySound(string sSound, string sTarget, float fDelay)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_play_sound",new object[]{sSound,sTarget,fDelay});
 		}
 		
 		/// <summary>
@@ -310,7 +380,6 @@ namespace AdventureAuthor.Scripts
 		///	"-4"   (Subtract 4)
 		///	"-"    (Subtract 1)
 		///	"--"   (Subtract 1)</param>
-		/// <returns></returns>
 		public static NWN2ScriptFunctor SetGlobalInt(string sVariable, string sChange)
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_global_int",new object[]{sVariable,sChange});
@@ -325,7 +394,29 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor SetGlobalString(string sVariable, string sChange)
 		{
 			return ScriptLibrary.GetScriptFunctor("ga_global_string",new object[]{sVariable,sChange});
+		}		
+		
+		/// <summary>
+		/// Set a creature to be immortal or not immortal
+		/// </summary>
+		/// <param name="sTarget">Tag of target creature, if blank use OWNER</param>
+		/// <param name="bImmortal">0 for FALSE, else for TRUE</param>
+		public static NWN2ScriptFunctor SetImmortal(string sTarget, int bImmortal)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal});
 		}
+				
+		/// <summary>
+		/// Advance time to a particular time of day
+		/// </summary>
+		/// <param name="nHour">Hour</param>
+		/// <param name="nMinute">Minute</param>
+		/// <param name="nSecond">Second</param>
+		/// <param name="nMillisecond">Milliseconds</param>
+		public static NWN2ScriptFunctor SetTime(int nHour, int nMinute, int nSecond, int nMillisecond)
+		{
+			return ScriptLibrary.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond});
+		}		
 		
 		/// <summary>
 		/// Take gold from the player
