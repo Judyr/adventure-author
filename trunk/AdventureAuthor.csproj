@@ -93,9 +93,9 @@
     <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Scripts\Action.cs" />
-    <Compile Include="Scripts\Condition.cs" />
-    <Compile Include="Scripts\Script.cs" />
+    <Compile Include="Scripts\Actions.cs" />
+    <Compile Include="Scripts\Conditions.cs" />
+    <Compile Include="Scripts\ScriptHelper.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="UI\Controls\ActionControl.xaml.cs">
       <SubType>Code</SubType>
