@@ -61,7 +61,7 @@ namespace AdventureAuthor.UI.Controls
         {
             InitializeComponent();
             this.attachedTo = attachedTo;
-            this.Description.Text = ScriptLibrary.GetDescription(action);
+            this.Description.Text = ScriptHelper.GetDescription(action);
         }
 
         private void OnClick_EditAction(object sender, EventArgs ea)

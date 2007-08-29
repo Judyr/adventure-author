@@ -93,9 +93,9 @@
     <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Scripts\Actions.cs" />
-    <Compile Include="Scripts\Conditions.cs" />
-    <Compile Include="Scripts\ScriptLibrary.cs" />
+    <Compile Include="Scripts\Action.cs" />
+    <Compile Include="Scripts\Condition.cs" />
+    <Compile Include="Scripts\Script.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="UI\Controls\ActionControl.xaml.cs">
       <SubType>Code</SubType>
@@ -205,20 +205,5 @@
     <Folder Include="UI\Controls" />
     <Folder Include="UI\Forms" />
     <Folder Include="UI\Windows" />
-    <ProjectReference Include="..\Libraries\UnfoldFree\Core\Unfold.Core.csproj">
-      <Project>{42294AB0-70F8-4AC6-8B53-DE5ED365BC0F}</Project>
-      <Name>Unfold.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\UnfoldFree\Main\Unfold.Main.csproj">
-      <Project>{306D4408-121F-4899-9251-25E2683734B2}</Project>
-      <Name>Unfold.Main</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\UnfoldFree\ShapeLibrary\Unfold.ShapeLibrary.csproj">
-      <Project>{332004FF-BCD7-4A9D-B2AB-F49216E004F4}</Project>
-      <Name>Unfold.ShapeLibrary</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
 </Project>
