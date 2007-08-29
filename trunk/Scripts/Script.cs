@@ -42,16 +42,136 @@ using OEIShared.Utils;
 namespace AdventureAuthor.Scripts
 {
 	/// <summary>
-	/// Description of ScriptLibrary
+	/// Description of Script
 	/// </summary>
-	public static class ScriptLibrary
+	public static class ScriptHelper
 	{		
-		private static string ownerName = "[OWNER]";
-			
+		private static string ownerName = "[OWNER]";			
 		
-		//TODO: do GetConditionalFunctor by calling and casting GetScriptFunctor and doing a bit more
 		//TODO: write a script to give player all feats and massive lore and automatically attach it upon the creation
 		//of a new adventure
+				
+		#region Enums
+		
+		public enum FadeColour { 
+			Black = 0, 
+			White = 16777215, 
+			Blue = 255,
+			Red = 16711680,
+			Yellow = 16776960,
+			Green = 32768,
+			Orange = 16753920,
+			Purple = 8388736,
+			Pink = 16761035,
+			Gold = 16766720,
+			Silver = 12632256,
+			Brown = 10824234,
+			Grey = 8421504,
+		};
+		
+		public enum Feat { 
+			Cleave = 6, 
+			Knockdown = 23, 
+			PowerAttack = 28 
+		};
+		
+		public enum LoopingAnimation { 
+			Pause = 0,
+			Pause2 = 1,
+			Listen = 2,
+			Meditate = 3, 
+			Worship = 4, 
+			LookFar = 5,
+//			SitInChair = 6,
+			SitCrossLegged = 7,
+			TalkNormal = 8,
+			TalkPleading = 9,
+			TalkForceful = 10,
+			TalkLaughing = 11,
+			GetLow = 12,
+			GetMid = 13,
+			PauseTired = 14,
+			PauseDrunk = 15,
+			DeadFront = 16,
+			DeadBack = 17,
+			Conjure1 = 18,
+			Conjure2 = 19,
+			Spasm = 20,
+//			Custom1 = 21,
+//			Custom2 = 22,
+			Cast1 = 23,
+			Prone = 24,
+			Kneel = 25,			
+			Dance1 = 26, 
+			Dance2 = 27, 
+			Dance3 = 28,
+			PlayGuitar = 29,
+			IdleGuitar = 30,
+			PlayFlute = 31,
+			IdleFlute = 32,
+			PlayDrum = 33,
+			IdleDrum = 34,
+			Cook1 = 35,
+			Cook2 = 36,
+			Craft = 37,
+			Forge = 38,
+			BoxCarry = 39,
+			BoxIdle = 40,
+			BoxHurried = 41,
+			Lookown = 42,
+			LookUp = 43,
+			LookLeft = 44,
+			LookRight = 45,
+			Shoveling = 46,
+			Injured = 47
+		};
+				
+		public enum OneTimeAnimation { 
+			TurnHeadLeft = 100,
+			TurnHeadRight = 101,
+			PauseScratchHead = 102,
+			PauseBored = 103,
+			Salute = 104,
+			Bow = 105,
+			Steal = 106,
+			Greeting = 107,
+			Taunt = 108,
+			Victory1 = 109,
+			Victory2 = 110,
+			Victory3 = 111,
+			Read = 112,
+			Drink = 113,
+			DodgeToSide = 114,
+			Duck = 115,
+			Spasm = 116,
+			Collapse = 117,
+			LieDown = 118,
+			StandUp = 119,
+			Activate = 120,
+			UseItem = 121,
+			KneelFidget = 122,
+			KneelTalk = 123,
+			KneelDamage = 124,
+			KneelDeath = 125,
+			Sing = 126,
+			FidgetWithGuitar = 127,
+			FidgetWithFlute = 128,
+			FidgetWithDrum = 129,
+			Wildshape = 130,
+			Search = 131,
+			Intimidate = 132,
+			Chuckle = 133
+		};
+		
+		public enum ObjectType {
+			Creature,
+			Placeable,
+			Item,
+			Waypoint,
+			Store
+		}
+		
+		#endregion
 		
 		/// <summary>
 		/// Returns a conditional functor given a script name and an array of parameter arguments.
@@ -280,6 +400,13 @@ namespace AdventureAuthor.Scripts
 					return action.Parameters[0].ValueString + " " + moves + " TO " + action.Parameters[1].ValueString
 						+ " AND DISAPPEARS.";
 					
+				case "ga_give_feat":
+					switch (action.Parameters[1].ValueInt) {
+						default:
+							return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
+								" RECEIVES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+					}
+					
 				case "ga_give_gold":
 					int nGP = action.Parameters[0].ValueInt;
 					return "PLAYER RECEIVES " + nGP + " PIECES OF GOLD.";					
@@ -293,6 +420,9 @@ namespace AdventureAuthor.Scripts
 					else {
 						return "PLAYER RECEIVES A " + sTemplate1 + ".";
 					}
+					
+				case "ga_give_xp":
+					return "PLAYER RECEIVES " + action.Parameters[0].ValueInt + " EXPERIENCE POINTS.";
 					
 				case "ga_global_float":
 					return "SET FLOAT VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
@@ -356,6 +486,36 @@ namespace AdventureAuthor.Scripts
 					}					
 					return action.Parameters[2].ValueString + " " + moves2 + " TO " + action.Parameters[0].ValueString;
 						
+				case "ga_party_face_target":
+					return "PARTY TURNS TO FACE " + action.Parameters[1].ValueString + ".";
+					
+				case "ga_play_animation":
+					string animName;
+					string loopname = Enum.GetName(typeof(ScriptHelper.LoopingAnimation),action.Parameters[1].ValueInt);
+					string oncename = Enum.GetName(typeof(ScriptHelper.OneTimeAnimation),action.Parameters[1].ValueInt);
+					if (oncename != null) {
+						animName = oncename;
+					}
+					else if (loopname != null) {
+						animName = loopname;
+					}
+					else {
+						animName = "unidentified animation";
+					}
+					StringBuilder ga_play_animation = new StringBuilder();
+					if (action.Parameters[4].ValueFloat != 0.0f) {
+						ga_play_animation.Append(action.Parameters[4].ValueFloat.ToString() + " SECONDS LATER, ");
+					}
+					ga_play_animation.Append(GetPlayerIfBlank(action.Parameters[0].ValueString) + " PLAYS ANIMATION " + animName);
+					if (action.Parameters[2].ValueFloat > 1.0f) {
+						ga_play_animation.Append(" QUICKLY");
+					}
+					else if (action.Parameters[2].ValueFloat < 1.0f) {
+						ga_play_animation.Append(" SLOWLY");
+					}			
+					ga_play_animation.Append(".");
+					return ga_play_animation.ToString();
+					
 				case "ga_play_sound":
 					StringBuilder ga_play_sound = new StringBuilder();
 					if (action.Parameters[2].ValueFloat != 0.0f) {

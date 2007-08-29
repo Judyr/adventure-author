@@ -68,6 +68,7 @@
 					<Button Click="OnClick_GiveItemFromBlueprint">Give the player a book</Button>
 					<Button Click="OnClick_TempCreateBuilding">Create a building from thin air</Button>
 					<Button Click="OnClick_CheckPlayerHas4Items">Check player has 4 items called gemstone</Button>
+					<Button Click="OnClick_TempPlayAnimation">Make this character bow on saying line</Button>
 				</StackPanel>
 				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
 					<Button Name="AddSpeakersButton" Margin="2" Click="OnClick_AddRemoveSpeakers">

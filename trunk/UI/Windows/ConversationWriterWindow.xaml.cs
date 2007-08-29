@@ -67,16 +67,29 @@ namespace AdventureAuthor.UI.Windows
     		}
     	}    	
     	
-    	private void OnClick_TempCreateBuilding(object sender, EventArgs ea) 
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+    	private void OnClick_TempPlayAnimation(object sender, EventArgs ea)
+    	{
+     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
 	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.CreateObject("P","plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
+	    		NWN2ScriptFunctor action = Actions.PlayAnimationOnce(connector.Speaker,ScriptHelper.OneTimeAnimation.Bow,1.0f,0.0f);
 	    		connector.Actions.Add(action);
 	    		RefreshDisplay(false);
     		}
     		else {
-    			Say.Error("Select a line to to materialise the building.");
+    			Say.Error("Select a line to add an animation.");
+    		}   		
+    	}
+    	
+    	private void OnClick_TempCreateBuilding(object sender, EventArgs ea) 
+    	{    		
+    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
+	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
+	    		NWN2ScriptFunctor action = Actions.CreateObject(ScriptHelper.ObjectType.Placeable,"plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
+	    		connector.Actions.Add(action);
+	    		RefreshDisplay(false);
+    		}
+    		else {
+    			Say.Error("Select a line to materialise the building.");
     		}
     	}    	
     	

@@ -38,8 +38,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
-using Orbifold.Unfold.ShapeLibrary;
-using Orbifold.Unfold.Core;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -53,26 +51,26 @@ namespace AdventureAuthor.UI.Windows
         {
             InitializeComponent(); 
             
-           // Orbifold.Unfold.Core.
-            
-           // Orbifold.Unfold.Core.
-           
-           SimpleEllipse ellipse = new SimpleEllipse();
-           ellipse.Text = "my ellipse";
-           ellipse.ShapeColor = Colors.ForestGreen;
-           DefaultConnection connection = new DefaultConnection();
-           connection.EndPoint = new Point(60,60);
-                     
-           ellipse.BindConnection(connection,Connection.StartProperty, ConnectorLocation.Bottom);
-     	   
-           
-           SimpleRectangle rectangle = new SimpleRectangle();
-           rectangle.Text = "my rect";
-           rectangle.ShapeColor = Colors.SeaGreen;
-           rectangle.BindConnection(connection,Connection.EndProperty, ConnectorLocation.Top);
-           myCanvas.Children.Add(ellipse);
-           myCanvas.Children.Add(rectangle);
-           myCanvas.Children.Add(connection);
+//           // Orbifold.Unfold.Core.
+//            
+//           // Orbifold.Unfold.Core.
+//           
+//           SimpleEllipse ellipse = new SimpleEllipse();
+//           ellipse.Text = "my ellipse";
+//           ellipse.ShapeColor = Colors.ForestGreen;
+//           DefaultConnection connection = new DefaultConnection();
+//           connection.EndPoint = new Point(60,60);
+//                     
+//           ellipse.BindConnection(connection,Connection.StartProperty, ConnectorLocation.Bottom);
+//     	   
+//           
+//           SimpleRectangle rectangle = new SimpleRectangle();
+//           rectangle.Text = "my rect";
+//           rectangle.ShapeColor = Colors.SeaGreen;
+//           rectangle.BindConnection(connection,Connection.EndProperty, ConnectorLocation.Top);
+//           myCanvas.Children.Add(ellipse);
+//           myCanvas.Children.Add(rectangle);
+//           myCanvas.Children.Add(connection);
         }
 
         public void RefreshGraph()

@@ -62,7 +62,7 @@ namespace AdventureAuthor.UI.Controls
         {
         	InitializeComponent();
             this.attachedTo = attachedTo;
-            this.Description.Text = ScriptLibrary.GetDescription(attachedTo.Nwn2Line.Conditions);
+            this.Description.Text = ScriptHelper.GetDescription(attachedTo.Nwn2Line.Conditions);
         }
 
         private void OnClick_EditConditions(object sender, EventArgs ea)
