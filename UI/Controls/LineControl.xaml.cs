@@ -384,6 +384,13 @@ namespace AdventureAuthor.UI.Controls
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
     	}
     	
+    	private void OnClick_FadeToBlack(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.FadeOut(3.0f,8.0f,ScriptHelper.FadeColour.Black);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);    		
+    	}
+    	
     	private void OnClick_GiveGold(object sender, EventArgs ea)
     	{
     		NWN2ScriptFunctor action = Actions.GiveGold(250);
@@ -394,6 +401,20 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_GiveItem(object sender, EventArgs ea)
     	{
     		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_HealPlayer(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.HealPC(100);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_Kill(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.Kill("golem");
     		nwn2Line.Actions.Add(action);
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
     	}
@@ -442,17 +463,6 @@ namespace AdventureAuthor.UI.Controls
 			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-		
-		private void OnClick_Temp_PlayerHas3GemstonesAndPlayerHasKilledWolf(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
-			condition.Condition = NWN2ConditionalType.And;
-			nwn2Line.Conditions.Add(condition);
-			NWN2ConditionalFunctor condition2 = Conditions.CreatureIsDead("wolf");
-			condition2.Condition = NWN2ConditionalType.And;
-			nwn2Line.Conditions.Add(condition2);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);				
 		}
 		
 		#endregion		
