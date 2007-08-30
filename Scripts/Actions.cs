@@ -25,8 +25,10 @@
  */
 
 using System;
+using System.Collections.Generic;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
+using OEIShared.IO.GFF;
 
 namespace AdventureAuthor.Scripts
 {
@@ -36,23 +38,17 @@ namespace AdventureAuthor.Scripts
 	public static class Actions
 	{			
 		/* Actions to add:
-		 * ga_align_good_evil
-		 * ga_align_law_chaos?
 		 * ga_effect
 		 * ga_journal
 		 * the 10 music scripts to start/stop battle and background music
 		 * ga_party_add
 		 * ga_remove_comp (should work on both henchmen and companions)
-		 * ga_remove_feat?
-		 * ga_roster_add_blueprint
-		 * ga_roster_add_object
 		 * ga_set_wwp_controller
 		 * ga_sound_object_play
 		 * ga_sound_object_stop
 		 * ga_sound_object_setposition
 		 * ga_sound_object_setvolume
 		 * */
-		
 		
 		/// <summary>
 		/// Add a target creature to your party as a henchman.
@@ -67,7 +63,31 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior});
 		}		
+				
+		/// <summary>
+		/// Add an existing NPC to the roster, so that they can then be added to the player's party.
+		/// </summary>
+		/// <remarks>The roster is the pool of NPCs from which you can add companions to the party</remarks>
+		/// <param name="sRosterName">The roster name of the companion, to refer to when adding and removing them from the party</param>
+		/// <param name="sTarget">The existing creature to add to the party roster</param>
+		public static NWN2ScriptFunctor AddObjectToRoster(string sRosterName, string sTarget)
+		{
+			// TODO: It may be sensible to only allow work with either henchmen or party members, but not both. 
+			return ScriptHelper.GetScriptFunctor("ga_roster_add_object",new object[]{sRosterName,sTarget});
+		}
 		
+		/// <summary>
+		/// Add a blueprint to the roster, so that an object created from that blueprint can then be added to the player's party.
+		/// </summary>
+		/// <remarks>The roster is the pool of NPCs from which you can add companions to the party</remarks>
+		/// <param name="sRosterName">The roster name of the companion, to refer to when adding and removing them from the party</param>
+		/// <param name="sTarget">The name of the blueprint/template to add to the party roster</param>
+		public static NWN2ScriptFunctor AddBlueprintToRoster(string sRosterName, string sTarget)
+		{
+			// TODO: It may be sensible to only allow work with either henchmen or party members, but not both. 
+			return ScriptHelper.GetScriptFunctor("ga_roster_add_blueprint",new object[]{sRosterName,sTarget});
+		}
+
 		/// <summary>
 		/// Advance time by a given amount
 		/// </summary>
@@ -242,16 +262,14 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Give the player or a creature some feat. 
+		/// Give the player or a creature a feat. 
 		/// </summary>
 		/// <remarks>A feat is a special ability, often relating to combat.</remarks>
-		/// <param name="sTarget">The creature to give the feat to. If blank, assign to PC.</param>
-		/// <param name="nFeat">The number of the feat. See nwscript.nss for a list of feats.</param>
-		public static NWN2ScriptFunctor GiveFeat(string sTarget, int nFeat)
+		/// <param name="sTarget">The creature to give the feat to. If blank, assign to the player.</param>
+		/// <param name="nFeat">The feat to give.</param>
+		public static NWN2ScriptFunctor GiveFeat(string sTarget, ScriptHelper.Feat feat)
 		{
-			// TODO: If we use this script method, make an enum (as with FadeColour) with 10-15 feats and their numbers.
-			// Take this as a parameter, and also use the names in GetDescription (is it possible to retrieve the name of 
-			// an enum entry which has a given integer value? If not just cycle through it to find out.)
+			int nFeat = (int)feat;
 			int bCheckReq = 0; // not useful
 			int bAllPartyMembers = 0; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers});
@@ -395,6 +413,18 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
+		/// Remove a feat from a player or creature.
+		/// </summary>
+		/// <param name="sTarget">The creature to remove the feat from. If blank, remove from the player.</param>
+		/// <param name="feat">The feat to remove.</param>
+		public static NWN2ScriptFunctor RemoveFeat(string sTarget, ScriptHelper.Feat feat)
+		{
+			int bAllPartyMembers = 0; // not useful
+			int nFeat = (int)feat;
+			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers});
+		}	
+		
+		/// <summary>
 		/// Remove a target henchman from the party.
 		/// </summary>
 		/// <description>ga_henchman_remove</description>
@@ -499,7 +529,32 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor SetTime(int nHour, int nMinute, int nSecond, int nMillisecond)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond});
-		}		
+		}	
+		
+		/// <summary>
+		/// Shift the player's alignment towards good or evil (because he has committed a good or evil act).
+		/// </summary>
+		/// <param name="amountToChangeBy">The amount to change alignment by, from 3 (a very good act) to -3 (a very evil act).</param>
+		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
+		public static NWN2ScriptFunctor PlayerBecomesMoreGoodOrMoreEvil(int degreeOfChange)
+		{
+			int bLawChaosAxis = 0; // adjust on the Good/Evil axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,bLawChaosAxis});
+		}
+		
+		/// <summary>
+		/// Shift the player's alignment towards law or chaos (because he has committed a lawful or chaotic act).
+		/// </summary>
+		/// <param name="amountToChangeBy">The amount to change alignment by, from 3 (a very lawful act) to -3 (a very chaotic act).</param>
+		/// <remarks>The player's law/chaos alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
+		/// <remarks>A lawful act is one in which you keep a vow, obey the law, obey orders etc. A chaotic act is one in which you break
+		/// a promise, break the law or simply act unexpectedly. They don't equate to good and evil - for example a cruel king or contract
+		/// killer would be Lawful Evil, while somebody who robs the rich to feed the poor would be Chaotic Good.</remarks>
+		public static NWN2ScriptFunctor PlayerBecomesMoreLawfulOrMoreChaotic(int degreeOfChange)
+		{
+			int bLawChaosAxis = 1; // adjust on the Law/Chaos axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,bLawChaosAxis});			
+		}
 		
 		/// <summary>
 		/// Take gold from the player

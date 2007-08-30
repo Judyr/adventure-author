@@ -49,13 +49,13 @@
 		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
 			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false">
 				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
-					<Button Margin="2" Click="OnClick_CreateBranchAtEndOfPage" FontSize="26">
+					<Button Click="OnClick_CreateBranchAtEndOfPage" FontSize="26">
 						<TextBlock>
 							<TextBlock Foreground="Black" Text="Add a "/>
 							<TextBlock Foreground="Purple" Text="CHOICE"/>
 						</TextBlock>
 					</Button>	
-					<Button Margin="2" Click="OnClick_AddAction" FontSize="26">
+					<Button Click="OnClick_AddAction" FontSize="26">
 						<TextBlock>
 							<TextBlock Foreground="Black" Text="Add an "/>
 							<TextBlock Foreground="Brown" Text="ACTION"/>
