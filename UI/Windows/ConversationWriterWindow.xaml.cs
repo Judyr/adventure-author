@@ -54,116 +54,6 @@ namespace AdventureAuthor.UI.Windows
     {    
     	#region Constructors 
     	
-    	private void OnClick_AddAsHenchman(object sender, EventArgs ea)
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.AddHenchman(connector.Speaker,1,String.Empty,1);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to add the speaker as a henchman.");
-    		}
-    	}    	
-    	
-    	private void OnClick_TempPlayAnimation(object sender, EventArgs ea)
-    	{
-     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.PlayAnimationOnce(connector.Speaker,ScriptHelper.OneTimeAnimation.Bow,1.0f,0.0f);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to add an animation.");
-    		}   		
-    	}
-    	
-    	private void OnClick_TempCreateBuilding(object sender, EventArgs ea) 
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.CreateObject(ScriptHelper.ObjectType.Placeable,"plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to materialise the building.");
-    		}
-    	}    	
-    	
-    	private void OnClick_CheckPlayerHas4Items(object sender, EventArgs ea)
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl && ((LineControl)currentlySelectedControl).IsPartOfBranch) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		
-	    		NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">3");
-	    		NWN2ConditionalFunctor condition2 = Conditions.PlayerHasNumberOfItems("sword",">0");
-	    		condition.Condition = NWN2ConditionalType.Or;
-	    		condition2.Condition = NWN2ConditionalType.Or;
-	    		
-	    		connector.Conditions.Add(condition);
-	    		connector.Conditions.Add(condition2);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a branch line.");
-    		}
-    	}
-    	
-    	private void OnClick_Attack(object sender, EventArgs ea)
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.Attack(connector.Speaker);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to make the speaker attack.");
-    		}
-    	}
-    	
-    	private void OnClick_Destroy(object sender, EventArgs ea)
-    	{    		
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.Destroy(connector.Speaker,0,0.0f);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to destroy the speaker."); 
-    		}
-    	}
-    	
-    	private void OnClick_GiveGold(object sender, EventArgs ea)
-    	{
-    		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.GiveGold(200);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to give the player gold at this point.");
-    		}
-    	}
-    	
-    	private void OnClick_GiveItemFromBlueprint(object sender, EventArgs ea)
-    	{
-     		if (currentlySelectedControl != null && currentlySelectedControl is LineControl) {
-	    		NWN2ConversationConnector connector = ((LineControl)currentlySelectedControl).Nwn2Line;
-	    		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1);
-	    		connector.Actions.Add(action);
-	    		RefreshDisplay(false);
-    		}
-    		else {
-    			Say.Error("Select a line to give the player gold at this point.");
-    		}   		
-    	}
-    	
 		public ConversationWriterWindow()
 		{
 			try {
@@ -176,7 +66,7 @@ namespace AdventureAuthor.UI.Windows
 		
 		#endregion
     	
-    	#region Fields
+    	#region Fields    	
     	
     	private static ConversationWriterWindow instance;    	
 		public static ConversationWriterWindow Instance {
@@ -191,8 +81,7 @@ namespace AdventureAuthor.UI.Windows
     	private GraphWindow expandedGraphViewer;    	
 		public GraphWindow ExpandedGraphViewer {
 			get { return expandedGraphViewer; }
-		}
-    	    	
+		}    	    	
     	
     	private List<ConversationPage> pages;
     	public List<ConversationPage> Pages {
@@ -224,6 +113,8 @@ namespace AdventureAuthor.UI.Windows
 		public string WorkingFilename {
 			get { return workingFilename; }
 		}    	
+    	
+    	internal static MenuItem[] ActionsMenu = new MenuItem[5]; // static context menu used by all LineControls
     	
     	#endregion Fields
     	        

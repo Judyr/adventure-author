@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using AdventureAuthor;
 using AdventureAuthor.Core;
+using AdventureAuthor.Scripts;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.UI.Windows;
@@ -67,7 +68,7 @@ namespace AdventureAuthor.UI.Controls
 		}
     	
     	private const int MAX_LENGTH_OF_LINE_TO_DISPLAY = 70;
-				
+    					
         public LineControl(NWN2ConversationConnector line, bool lineIsPartOfBranch)
         {        
         	this.nwn2Line = line;
@@ -133,56 +134,27 @@ namespace AdventureAuthor.UI.Controls
         		actionControls = new List<ActionControl>();
         	}
         	
-        	ContextMenu = new ContextMenu();
-        	MenuItem m0 = new MenuItem();
-        	m0.Header = "Go back";
+        	// Fine-tune context menu based on current circumstances:
         	if (ConversationWriterWindow.Instance.PreviousPage == null) {
-        		m0.IsEnabled = false;
+        		MenuItem MenuItem_GoBack = (MenuItem)FindName("MenuItem_GoBack");
+        		MenuItem_GoBack.IsEnabled = false;
         	}
-        	m0.Click += new RoutedEventHandler(OnClick_GoBack);
-        	ContextMenu.Items.Add(m0);
-        	MenuItem m1 = new MenuItem();
-        	m1.Header = "Set animation";
-        	m1.IsEnabled = false;
-        	m1.Click += new RoutedEventHandler(OnClick_SetAnimation);
-        	ContextMenu.Items.Add(m1);
-        	MenuItem m2 = new MenuItem();
-        	m2.Header = "Set camera angle";
-        	m2.IsEnabled = false;
-        	m2.Click += new RoutedEventHandler(OnClick_SetCamera);
-        	ContextMenu.Items.Add(m2);
-        	MenuItem m3 = new MenuItem();
-        	m3.Header = "Set sound clip";
-        	m3.IsEnabled = false;
-        	m3.Click += new RoutedEventHandler(OnClick_SetSound);
-        	ContextMenu.Items.Add(m3);
-        	
-        	if (isPartOfBranch) {
-        		MenuItem m3a = new MenuItem();
-        		m3a.Header = "Set a condition";
-        		m3a.IsEnabled = false;
-        		m3a.Click += new RoutedEventHandler(OnClick_SetCondition);
-        		ContextMenu.Items.Add(m3a);
-        	}
-        	
-        	MenuItem m4 = new MenuItem();
-        	m4.Header = "Delete line";
-        	m4.Click += new RoutedEventHandler(OnClick_Delete);
-        	ContextMenu.Items.Add(m4);        	
-        	
-        	MenuItem m5 = new MenuItem();
-        	if (isPartOfBranch) {
-        		m5.Header = "Go to page";
-        		m5.Click += new RoutedEventHandler(OnClick_GoToPage);
+        	if (!isPartOfBranch) {
+        		MenuItem MenuItem_AddCondition = (MenuItem)FindName("MenuItem_AddCondition");        		
+        		MenuItem MenuItem_GoToPage = (MenuItem)FindName("MenuItem_GoToPage");
+        		MenuItem_AddCondition.IsEnabled = false;
+        		MenuItem_AddCondition.Visibility = Visibility.Collapsed;
+        		MenuItem_GoToPage.IsEnabled = false;
+        		MenuItem_GoToPage.Visibility = Visibility.Collapsed;
         	}
         	else {
-        		m5.Header = "Make into choice";
-        		m5.Click += new RoutedEventHandler(OnClick_MakeIntoBranch);
-        	}
-        	ContextMenu.Items.Add(m5);
+        		MenuItem MenuItem_MakeIntoChoice = (MenuItem)FindName("MenuItem_MakeIntoChoice");
+        		MenuItem_MakeIntoChoice.IsEnabled = false;
+        		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
+        	}        	
         }
                 
-        #region Event handlers
+        #region LineControl event handlers
 		
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
@@ -381,6 +353,109 @@ namespace AdventureAuthor.UI.Controls
         }
         
         #endregion
+        
+        #region Add an Action event handlers        
+    	    	
+    	private void OnClick_Attack(object sender, EventArgs ea)
+    	{    		
+    		NWN2ScriptFunctor action = Actions.Attack(nwn2Line.Speaker);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+        
+    	private void OnClick_AddHenchman(object sender, EventArgs ea)
+    	{    	
+    		NWN2ScriptFunctor action = Actions.AddHenchman(nwn2Line.Speaker,String.Empty,1);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}    	
+    	    	
+    	private void OnClick_CreateObject(object sender, EventArgs ea)
+    	{    	
+    		NWN2ScriptFunctor action = Actions.CreateObject(ScriptHelper.ObjectType.Placeable,"plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}    	
+    	
+    	private void OnClick_DestroyObject(object sender, EventArgs ea)
+    	{    		
+    		NWN2ScriptFunctor action = Actions.Destroy(nwn2Line.Speaker,0,0.0f);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_GiveGold(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.GiveGold(250);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}   
+    	
+    	private void OnClick_GiveItem(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.GiveItem("NW_IT_BOOK014",1);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_PlayAnimation(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.PlayAnimationOnce(nwn2Line.Speaker,ScriptHelper.OneTimeAnimation.Bow,1.0f,0.0f);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+		#endregion   
+		
+		#region Add a Condition event handlers
+		
+		private void OnClick_CreatureIsDead(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.CreatureIsDead("wolf");
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+		
+		private void OnClick_EnemyIsNearPlayer(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer(20.0f);
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+		
+		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearPlayer("treasure","<5.0");
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}		
+		
+		private void OnClick_PlayerHasGold(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerHasGold(120);
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+		
+		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+		
+		private void OnClick_Temp_PlayerHas3GemstonesAndPlayerHasKilledWolf(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
+			condition.Condition = NWN2ConditionalType.And;
+			nwn2Line.Conditions.Add(condition);
+			NWN2ConditionalFunctor condition2 = Conditions.CreatureIsDead("wolf");
+			condition2.Condition = NWN2ConditionalType.And;
+			nwn2Line.Conditions.Add(condition2);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);				
+		}
+		
+		#endregion		
         
         #region Selecting lines
         
