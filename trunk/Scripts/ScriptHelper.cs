@@ -42,16 +42,16 @@ using OEIShared.Utils;
 namespace AdventureAuthor.Scripts
 {
 	/// <summary>
-	/// Description of Script
+	/// Generates script objects, descriptions for scripts, lists of tags and other useful functions.
 	/// </summary>
 	public static class ScriptHelper
 	{		
-		private static string ownerName = "[OWNER]";			
-		
 		//TODO: write a script to give player all feats and massive lore and automatically attach it upon the creation
 		//of a new adventure
 				
-		#region Enums
+		#region Constants
+		
+		private static string ownerName = "[OWNER]";		
 		
 		public enum FadeColour { 
 			Black = 0, 
@@ -173,6 +173,8 @@ namespace AdventureAuthor.Scripts
 		
 		#endregion
 		
+		#region Creating scripts
+		
 		/// <summary>
 		/// Returns a conditional functor given a script name and an array of parameter arguments.
 		/// </summary>
@@ -220,7 +222,7 @@ namespace AdventureAuthor.Scripts
 				
 				if (args != null) {
 					foreach (object o in args) { // float, int, string or tag(?)
-						NWN2ScriptParameter param = new NWN2ScriptParameter();					
+						NWN2ScriptParameter param = new NWN2ScriptParameter();		
 						if (o is string) {
 							param.ParameterType = NWN2ScriptParameterType.String;
 							param.ValueString = (string)o;
@@ -270,6 +272,73 @@ namespace AdventureAuthor.Scripts
 			}
 		}
 		
+		public static bool WriteScript(NWN2ScriptFunctor scriptFunctor, string filename)
+		{
+			List<string> parameterNames = new List<string>(scriptFunctor.Parameters.Count);
+			
+			// TODO: Big issue, can I actually access stuff inside the Scripts.zip file from code? Would it take forever?
+			// can I use scriptFunctor.Script.GetStream(..)?
+			
+			return false;
+		}
+		
+		
+		
+		
+//		List<string> parameters = new List<string>(parameterscount);
+//
+//0. Copy NWN2ScriptFunctor.Script to its new location, given the filename 'filename'. 
+//1. Is this an action or a conditional?
+//2a. If it's an action, search for "void main" and retrieve the rest of that line.
+//2b. If it's a conditional, search for "int StartingConditional" and retrieve the rest of that line.
+//3. Either replace everything after this point with "()", or replace the whole line with "void main()"/"int StartingConditional()", whichever's easiest.
+//4. While you haven't reached the end of the retrieved line
+//	- Fetch a word
+//	- If the word is 'string' 'int' or 'float' {
+//		- Fetch the next word
+//		- parameters.Add(new Parameter(firstfetched,secondfetched));
+//	}
+//}
+//5. Read through the file from the beginning.
+//6. While you haven't reached the end of the file
+//{
+//	Fetch a word. 
+//	If the word is one of those contained in parameters {
+//		Delete the word.
+//		int parameterIndex = the point in parameters that the word came.
+//		Fetch the NWN2ScriptParameter param at functor.Parameters[parameterIndex].
+//		switch (param.ParameterType)
+//		{
+//			case ParameterType.String:
+//				Write "\"" + param.ValueString + "\"";
+//				break;
+//
+//			case ParameterType.Tag:
+//				Write "\"" + param.ValueString + "\"";
+//				break;
+//
+//			case ParameterType.Int:
+//				Write param.ValueInt.ToString();
+//				break;
+//
+//			case ParameterType.Float:
+//				Write param.ValueFloat.ToString() + "f";
+//
+//			default:
+//				Say.Error("Invalid parameter data.");
+//				return;
+//		}
+//	}
+//}
+		
+		
+		
+		
+		
+		#endregion 
+		
+		#region Describing scripts
+		
 		public static string GetDescription(NWN2ScriptFunctor action)
 		{
 			if (action == null) {
@@ -277,6 +346,28 @@ namespace AdventureAuthor.Scripts
 			}
 			
 			switch (action.Script.ResRef.Value) {
+					
+				case "ga_alignment":					
+					if (action.Parameters[0].ValueInt > 0) {
+						if (action.Parameters[1].ValueInt == 0) {
+							return "PLAYER PERFORMS A NOBLE ACT (+" + action.Parameters[0].ValueInt + " POINTS ON GOOD/EVIL ALIGNMENT).";
+						}
+						else {
+							return "PLAYER PERFORMS A LAWFUL ACT (+" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
+						}
+					}
+					else if (action.Parameters[0].ValueInt < 0) {
+						if (action.Parameters[1].ValueInt == 0) {
+							return "PLAYER PERFORMS AN EVIL ACT (" + action.Parameters[0].ValueInt + " POINTS ON GOOD/EVIL ALIGNMENT).";
+						}
+						else {
+							return "PLAYER PERFORMS A CHAOTIC ACT (+" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
+						}						
+					}
+					else {
+						throw new InvalidDataException("Tried to shift player's alignment by 0 points, which shouldn't have been possible.");
+					}
+					
 				case "ga_attack":
 					string sAttacker = action.Parameters[0].ValueString;
 					return GetOwnerIfBlank(sAttacker) + " ATTACKS THE PLAYER.";					
@@ -365,20 +456,12 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_fade_to_black":
 					StringBuilder sb = new StringBuilder("FADE ");
-					switch (action.Parameters[2].ValueInt)
-					{
-						case 0:
-							sb.Append("TO BLACK (");
-							break;
-						case 16777215:
-							sb.Append("TO WHITE (");
-							break;
-						case 16711680:
-							sb.Append("TO RED (");
-							break;
-						default:
-							sb.Append("OUT (");
-							break;
+					string colour = Enum.GetName(typeof(ScriptHelper.FadeColour),action.Parameters[2].ValueInt);
+					if (colour == null) {
+						sb.Append("OUT (");
+					}
+					else {
+						sb.Append("TO " + colour + " (");
 					}
 					if (action.Parameters[0].ValueFloat == 0.0f) {
 						sb.Append("INSTANTLY).");
@@ -401,10 +484,13 @@ namespace AdventureAuthor.Scripts
 						+ " AND DISAPPEARS.";
 					
 				case "ga_give_feat":
-					switch (action.Parameters[1].ValueInt) {
-						default:
-							return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
-								" RECEIVES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+					string featgiven = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
+					if (featgiven == null) {
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
+							" RECEIVES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+					}
+					else {
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " RECEIVES THE " + featgiven + " FEAT.";
 					}
 					
 				case "ga_give_gold":
@@ -524,6 +610,24 @@ namespace AdventureAuthor.Scripts
 					ga_play_sound.Append("THE SOUND " + action.Parameters[0].ValueString + 
 					                     " PLAYS AT " + action.Parameters[1].ValueString + ".");
 					return ga_play_sound.ToString();
+					
+				case "ga_remove_feat":
+					string featremoved = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
+					if (featremoved == null) {
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
+							" LOSES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+					}
+					else {
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " LOSES THE " + featremoved + " FEAT.";
+					}
+					
+				case "ga_roster_add_blueprint":
+					return "BLUEPRINT " + action.Parameters[1].ValueString + " IS ADDED TO THE ROSTER UNDER THE NAME " 
+						+ action.Parameters[0].ValueString + ".";
+					
+				case "ga_roster_add_object":
+					return action.Parameters[1].ValueString + " IS ADDED TO THE ROSTER UNDER THE NAME " 
+						+ action.Parameters[0].ValueString + ".";
 					
 				case "ga_setimmortal":
 					if (action.Parameters[1].ValueInt == 0) {
@@ -670,6 +774,10 @@ namespace AdventureAuthor.Scripts
 			}
 		}
 		
+		#endregion 
+		
+		#region Useful stuff
+		
 		public static List<string> GetTags(NWN2InstanceCollection instances)
 		{
 			List<string> tags = new List<string>(instances.Count);
@@ -681,6 +789,8 @@ namespace AdventureAuthor.Scripts
 			}
 			return tags;
 		}
+		
+		#endregion
 	}
 }
 
