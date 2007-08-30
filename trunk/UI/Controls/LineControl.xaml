@@ -25,7 +25,56 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uic="clr-namespace:AdventureAuthor.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
-	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" MouseDoubleClick="OnClick_GoToPage" Padding="6">  
+	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" 
+    MouseDoubleClick="OnClick_GoToPage" Padding="6">
+	
+	<UserControl.Resources>
+		
+		<x:Array x:Key="ActionsMenu" Type="MenuItem">
+			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
+			<MenuItem Header="Add a henchman" Click="OnClick_AddHenchman"/>
+			<MenuItem Header="Create an object" Click="OnClick_CreateObject"/>
+			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
+			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
+			<MenuItem Header="Give the player an item" Click="OnClick_GiveItem"/>
+			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
+		</x:Array>
+		
+		<x:Array x:Key="ConditionsMenu" Type="MenuItem">
+			<MenuItem Header="If a certain creature is dead" Click="OnClick_CreatureIsDead"/>
+			<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
+			<MenuItem Header="If a particular object is nearby" Click="OnClick_ObjectIsNearPlayer"/>
+			<MenuItem Header="If the player has a certain amount of gold" Click="OnClick_PlayerHasGold"/>
+			<MenuItem Header="If the player has a certain number of items" Click="OnClick_PlayerHasNumberOfItems"/>
+			<MenuItem Header="If the player has both collected 3 gemstones, and killed the wolf" Click="OnClick_Temp_PlayerHas3GemstonesAndPlayerHasKilledWolf"/>
+		</x:Array>		
+		
+		<ContextMenu x:Key="LineControlContextMenu">
+			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> <!--Broken-->
+			<MenuItem Header="Set animation" Click="OnClick_SetAnimation" IsEnabled="false"/>
+			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" IsEnabled="false"/>
+			<MenuItem Header="Set sound clip" Click="OnClick_SetSound" IsEnabled="false"/>
+			<MenuItem Header="Add an action">
+			<MenuItem.ItemsSource>
+				<StaticResource ResourceKey="ActionsMenu"/>
+			</MenuItem.ItemsSource>
+			</MenuItem>
+			<MenuItem Header="Add a condition" Name="MenuItem_AddCondition">
+			<MenuItem.ItemsSource>
+				<StaticResource ResourceKey="ConditionsMenu"/>
+			</MenuItem.ItemsSource>
+			</MenuItem>
+			<MenuItem Header="Delete line" Click="OnClick_Delete"/>
+			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
+			<MenuItem Header="Make into choice" Click="OnClick_MakeIntoBranch" Name="MenuItem_MakeIntoChoice"/>
+		</ContextMenu>
+	
+	</UserControl.Resources>
+	
+	<UserControl.ContextMenu>		
+		<StaticResource ResourceKey="LineControlContextMenu"/>
+	</UserControl.ContextMenu>
+	
 	<UserControl.Style>
 		<Style TargetType="{x:Type uic:LineControl}">
 		<Style.Triggers>

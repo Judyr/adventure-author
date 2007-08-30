@@ -655,7 +655,12 @@ namespace AdventureAuthor.Scripts
 					}
 					
 				case "ga_time_advance":
-					return action.Parameters[0].ValueInt.ToString() + " HOURS AND " + action.Parameters[1].ValueInt + " MINUTES PASS.";
+					if (action.Parameters[0].ValueInt > 0 || action.Parameters[1].ValueInt > 0) {						
+						return action.Parameters[0].ValueInt.ToString() + " HOURS AND " + action.Parameters[1].ValueInt + " MINUTES PASS.";
+					}
+					else {
+						return action.Parameters[2].ValueInt.ToString() + " SECONDS AND " + action.Parameters[3].ValueInt + " MILLISECONDS PASS.";
+					}
 					
 				case "ga_time_set":
 					return "TIME PASSES. THE TIME IS NOW " + action.Parameters[0].ValueInt + ":" + action.Parameters[1].ValueInt + ".";
@@ -671,7 +676,7 @@ namespace AdventureAuthor.Scripts
 				return "Was given a blank set of conditions.";
 			}
 			if (conditions.Count > 1) {
-				Say.Warning("Only the first condition you have set will be described.");
+				// only the first condition will currently be described
 			}
 			
 			NWN2ConditionalFunctor condition = conditions[0];

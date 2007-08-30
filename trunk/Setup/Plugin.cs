@@ -91,6 +91,7 @@ namespace AdventureAuthor.Setup
 				ConversationWriterWindow.Instance = new ConversationWriterWindow();
 				Toolset.SetupUI();
 				Log.StartRecording();
+				Adventure.Open("francesca");
 			}
 		}	
 		

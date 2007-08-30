@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using OEIShared.IO.GFF;
@@ -54,13 +55,13 @@ namespace AdventureAuthor.Scripts
 		/// Add a target creature to your party as a henchman.
 		/// </summary>
 		/// <description>ga_henchman_add</description>
-		/// <param name="sTarget"> tag of the creature you want to add</param>
-		/// <param name="bForce">if set to 1, sTarget will be added even if player already has maximum henchman</param>
+		/// <param name="sTarget">Tag of the creature you want to add</param>
 		/// <param name="sMaster">The creature you are adding the henchman to</param>
 		/// <param name="bOverrideBehavior">if set to 1, sTarget's event handlers (scripts) will be replaced with henchman scripts</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor AddHenchman(string sTarget, int bForce, string sMaster, int bOverrideBehavior)
+		public static NWN2ScriptFunctor AddHenchman(string sTarget, string sMaster, int bOverrideBehavior)
 		{
+			int bForce = 1; // always add henchman even if the player has max henchmen
 			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior});
 		}		
 				
