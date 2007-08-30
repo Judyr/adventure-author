@@ -35,8 +35,11 @@
 			<MenuItem Header="Add a henchman" Click="OnClick_AddHenchman"/>
 			<MenuItem Header="Create an object" Click="OnClick_CreateObject"/>
 			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
+			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
 			<MenuItem Header="Give the player an item" Click="OnClick_GiveItem"/>
+			<MenuItem Header="Heal the player" Click="OnClick_HealPlayer"/>
+			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
 			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
 		</x:Array>
 		
@@ -46,7 +49,6 @@
 			<MenuItem Header="If a particular object is nearby" Click="OnClick_ObjectIsNearPlayer"/>
 			<MenuItem Header="If the player has a certain amount of gold" Click="OnClick_PlayerHasGold"/>
 			<MenuItem Header="If the player has a certain number of items" Click="OnClick_PlayerHasNumberOfItems"/>
-			<MenuItem Header="If the player has both collected 3 gemstones, and killed the wolf" Click="OnClick_Temp_PlayerHas3GemstonesAndPlayerHasKilledWolf"/>
 		</x:Array>		
 		
 		<ContextMenu x:Key="LineControlContextMenu">

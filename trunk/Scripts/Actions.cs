@@ -354,10 +354,10 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_death</description>
 		/// <param name="sTag">The tag(s) of the object(s) to make dead (multiple tags can be separated by commas with no spaces)</param>
-		/// <param name="iInstance">The instance of the object(s) to make dead. Pass -1 to make all instances dead</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor Kill(string sTag, int iInstance)
+		public static NWN2ScriptFunctor Kill(string sTag)
 		{
+			int iInstance = -1; // not useful
     		return ScriptHelper.GetScriptFunctor("ga_death",new object[]{sTag,iInstance});
 		}	
 		

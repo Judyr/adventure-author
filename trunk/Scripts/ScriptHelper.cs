@@ -393,14 +393,7 @@ namespace AdventureAuthor.Scripts
 					return s0.ToString();
 					
 				case "ga_death":
-					string deathtag = action.Parameters[0].ValueString;
-					int deathinstance = action.Parameters[1].ValueInt;
-					if (deathinstance > 0) {
-						return "EVERYTHING CALLED " + deathtag + " IS KILLED.";
-					}
-					else {
-						return deathtag.ToUpper() + " IS KILLED.";
-					}
+					return action.Parameters[0].ValueString + " IS KILLED.";
 					
 				case "ga_destroy":
 					string sTagString = action.Parameters[0].ValueString;
@@ -461,7 +454,7 @@ namespace AdventureAuthor.Scripts
 						sb.Append("OUT (");
 					}
 					else {
-						sb.Append("TO " + colour + " (");
+						sb.Append("TO " + colour.ToUpper() + " (");
 					}
 					if (action.Parameters[0].ValueFloat == 0.0f) {
 						sb.Append("INSTANTLY).");
