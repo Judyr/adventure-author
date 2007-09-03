@@ -101,6 +101,10 @@
       <SubType>Code</SubType>
       <DependentUpon>ActionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\BooleanQuestionPanel.xaml.cs">
+      <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\BranchControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>BranchControl.xaml</DependentUpon>
@@ -113,9 +117,22 @@
       <SubType>Code</SubType>
       <DependentUpon>EndConversationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\IntegerQuestionPanel.xaml.cs">
+      <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\LineControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>LineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\QuestionPanel.cs" />
+    <Compile Include="UI\Controls\StringQuestionPanel.xaml.cs">
+      <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\TagQuestionPanel.xaml.cs">
+      <DependentUpon>TagQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Forms\CreateChapter_Form.cs" />
     <Compile Include="UI\Forms\CreateChapter_Form.Designer.cs">
@@ -152,6 +169,10 @@
       <SubType>Code</SubType>
       <DependentUpon>ConversationWriterWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\ScriptParametersWindow.cs">
+      <DependentUpon>ScriptParametersWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Windows\GraphWindow.xaml.cs">
       <DependentUpon>GraphWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -171,6 +192,7 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
+    <Compile Include="Utils\TagHelper.cs" />
     <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>
@@ -184,15 +206,20 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="UI\Controls\ActionControl.xaml" />
+    <Page Include="UI\Controls\BooleanQuestionPanel.xaml" />
     <Page Include="UI\Controls\BranchControl.xaml" />
     <Page Include="UI\Controls\ConditionControl.xaml" />
     <Page Include="UI\Controls\EndConversationControl.xaml" />
+    <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
+    <Page Include="UI\Controls\StringQuestionPanel.xaml" />
+    <Page Include="UI\Controls\TagQuestionPanel.xaml" />
     <Page Include="UI\Windows\AddActionWindow.xaml" />
     <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
     <Page Include="UI\Windows\AnimationWindow.xaml" />
     <Page Include="UI\Windows\ChooseSpeaker.xaml" />
     <Page Include="UI\Windows\ConversationWriterWindow.xaml" />
+    <Page Include="UI\Windows\ScriptParametersWindow.xaml" />
     <Page Include="UI\Windows\GraphWindow.xaml" />
     <Page Include="UI\Windows\NewConversation.xaml" />
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />

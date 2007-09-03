@@ -57,7 +57,7 @@ namespace AdventureAuthor.UI.Windows
 		public ConversationWriterWindow()
 		{
 			try {
-        		InitializeComponent();
+				InitializeComponent();
 			}
 			catch (Exception e) {
 				Say.Error(e);
@@ -143,7 +143,7 @@ namespace AdventureAuthor.UI.Windows
         		throw new InvalidOperationException("Was passed an empty or null word.");
         	}
         	char c = word.ToLower()[0];
-        	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; 
         }
         
         internal void CreateButtonForSpeaker(Speaker speaker)

@@ -28,9 +28,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts;
+using AdventureAuthor.UI.Windows;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
@@ -361,11 +364,11 @@ namespace AdventureAuthor.Scripts
 							return "PLAYER PERFORMS AN EVIL ACT (" + action.Parameters[0].ValueInt + " POINTS ON GOOD/EVIL ALIGNMENT).";
 						}
 						else {
-							return "PLAYER PERFORMS A CHAOTIC ACT (+" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
+							return "PLAYER PERFORMS A CHAOTIC ACT (" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
 						}						
 					}
 					else {
-						throw new InvalidDataException("Tried to shift player's alignment by 0 points, which shouldn't have been possible.");
+						return "NO CHANGE TO ALIGNMENT.";
 					}
 					
 				case "ga_attack":
@@ -526,19 +529,17 @@ namespace AdventureAuthor.Scripts
 					return GetOwnerIfBlank(sTarget1) + " BECOMES A HENCHMAN OF " + GetPlayerIfBlank(sMaster) + ".";
 						
 				case "ga_henchman_remove":
-					string henchman = action.Parameters[0].ValueString;
-					return henchman.ToUpper() + " IS REMOVED AS A HENCHMAN.";
+					return action.Parameters[0].ValueString + " IS REMOVED AS A HENCHMAN.";
 					
 				case "ga_jump":
 					string jumpdestination = action.Parameters[0].ValueString;
 					string thingthatjumps = action.Parameters[1].ValueString;
 					float timetowait = action.Parameters[2].ValueFloat;					
 					if (timetowait != 0.0) {
-						return timetowait.ToString() + " SECONDS LATER, " + 
-							thingthatjumps.ToUpper() + " JUMPS TO " + jumpdestination.ToUpper() + ".";
+						return timetowait.ToString() + " SECONDS LATER, " + thingthatjumps + " JUMPS TO " + jumpdestination + ".";
 					}
 					else {
-						return "" + thingthatjumps.ToUpper() + " JUMPS TO " + jumpdestination.ToUpper() + ".";
+						return "" + thingthatjumps + " JUMPS TO " + jumpdestination + ".";
 					}
 					
 				case "ga_jump_players":
@@ -774,21 +775,6 @@ namespace AdventureAuthor.Scripts
 		
 		#endregion 
 		
-		#region Useful stuff
-		
-		public static List<string> GetTags(NWN2InstanceCollection instances)
-		{
-			List<string> tags = new List<string>(instances.Count);
-			foreach (INWN2Instance instance in instances) {
-				string tag = ((INWN2Object)instance).Tag;
-				if (!tags.Contains(tag)) {
-					tags.Add(tag);
-				}
-			}
-			return tags;
-		}
-		
-		#endregion
 	}
 }
 

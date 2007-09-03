@@ -67,7 +67,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <param name="sVariable">The variable to check</param>
 		/// <param name="sCheck">The value to check for, can use operators e.g. <5.0, >10.0, !0.0</param>
-		public static NWN2ConditionalFunctor GlobalFloatHasValue(string sVariable, string sCheck)
+		public static NWN2ConditionalFunctor FloatHasValue(string sVariable, string sCheck)
 		{
 			return ScriptHelper.GetConditionalFunctor("gc_global_float",new object[]{sVariable,sCheck});
 		}
@@ -77,7 +77,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <param name="sVariable">The variable to check</param>
 		/// <param name="sCheck">The value to check for, can use operators e.g. <5, >10, !0</param>
-		public static NWN2ConditionalFunctor GlobalIntHasValue(string sVariable, string sCheck)
+		public static NWN2ConditionalFunctor IntHasValue(string sVariable, string sCheck)
 		{
 			return ScriptHelper.GetConditionalFunctor("gc_global_int",new object[]{sVariable,sCheck});
 		}
@@ -87,7 +87,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <param name="sVariable">The variable to check</param>
 		/// <param name="sCheck">The value to check for</param>
-		public static NWN2ConditionalFunctor GlobalStringHasValue(string sVariable, string sCheck)
+		public static NWN2ConditionalFunctor StringHasValue(string sVariable, string sCheck)
 		{
 			return ScriptHelper.GetConditionalFunctor("gc_global_string",new object[]{sVariable,sCheck});
 		}
