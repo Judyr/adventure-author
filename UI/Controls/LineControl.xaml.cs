@@ -37,6 +37,7 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.Utils;
+using NWN2Toolset.NWN2.Data.Templates;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -355,7 +356,14 @@ namespace AdventureAuthor.UI.Controls
         #endregion
         
         #region Add an Action event handlers        
-    	    	
+    	    	    	    	
+    	private void OnClick_AdvanceTime(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.AdvanceTimeBy(12,0,0,0);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
     	private void OnClick_Attack(object sender, EventArgs ea)
     	{    		
     		NWN2ScriptFunctor action = Actions.Attack(nwn2Line.Speaker);
@@ -393,9 +401,17 @@ namespace AdventureAuthor.UI.Controls
     	
     	private void OnClick_GiveGold(object sender, EventArgs ea)
     	{
-    		NWN2ScriptFunctor action = Actions.GiveGold(250);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		object[] parameters = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		window.AddIntegerQuestion("How much gold does the player receive?",0,null);
+    		if (!(bool)window.ShowDialog()) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ScriptFunctor action = Actions.GiveGold((int)parameters[0]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
     	}   
     	
     	private void OnClick_GiveItem(object sender, EventArgs ea)
@@ -426,6 +442,55 @@ namespace AdventureAuthor.UI.Controls
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
     	}
     	
+    	private void OnClick_ShiftAlignmentTowardsGood(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.PlayerBecomesMoreGoodOrMoreEvil(3);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_ShiftAlignmentTowardsEvil(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.PlayerBecomesMoreGoodOrMoreEvil(-3);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_ShiftAlignmentTowardsLaw(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.PlayerBecomesMoreLawfulOrMoreChaotic(3);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_ShiftAlignmentTowardsChaos(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.PlayerBecomesMoreLawfulOrMoreChaotic(-3);
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_SetFloatVariable(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.SetFloat("timeremaining","5.1");
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_SetIntVariable(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.SetInt("numberofchancesleft","3");
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
+    	private void OnClick_SetStringVariable(object sender, EventArgs ea)
+    	{
+    		NWN2ScriptFunctor action = Actions.SetString("hasplayerfoundamulet","yes");
+    		nwn2Line.Actions.Add(action);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    	}
+    	
 		#endregion   
 		
 		#region Add a Condition event handlers
@@ -444,6 +509,27 @@ namespace AdventureAuthor.UI.Controls
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}
 		
+		private void OnClick_FloatHasValue(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.FloatHasValue("timeremaining",">0.0");
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
+		private void OnClick_IntHasValue(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.IntHasValue("numberofchancesleft",">0");
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
+		private void OnClick_StringHasValue(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.StringHasValue("hasplayerfoundamulet","yes");
+			nwn2Line.Conditions.Add(condition);
+    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
 		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
 		{
 			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearPlayer("treasure","<5.0");
@@ -458,13 +544,55 @@ namespace AdventureAuthor.UI.Controls
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}
 		
+		private void OnClick_PlayerIsMale(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
+		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
+		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+			
+		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}		
+		
+		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}
+				
+		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
+		{
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
+			nwn2Line.Conditions.Add(condition);
+			ConversationWriterWindow.Instance.RefreshDisplay(false);
+		}			
+				
 		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
 		{
 			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}
-		
+				
 		#endregion		
         
         #region Selecting lines

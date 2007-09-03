@@ -476,7 +476,7 @@ namespace AdventureAuthor.Scripts
 		///	"-"    (Subtract 1.0)
 		///	"--"   (Subtract 1.0)</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor SetGlobalFloat(string sVariable, string sChange)
+		public static NWN2ScriptFunctor SetFloat(string sVariable, string sChange)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_global_float",new object[]{sVariable,sChange});
 		}
@@ -494,7 +494,7 @@ namespace AdventureAuthor.Scripts
 		///	"-4"   (Subtract 4)
 		///	"-"    (Subtract 1)
 		///	"--"   (Subtract 1)</param>
-		public static NWN2ScriptFunctor SetGlobalInt(string sVariable, string sChange)
+		public static NWN2ScriptFunctor SetInt(string sVariable, string sChange)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_global_int",new object[]{sVariable,sChange});
 		}
@@ -505,7 +505,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sVariable">The variable to set the value of</param>
 		/// <param name="sChange">The new value of the variable</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor SetGlobalString(string sVariable, string sChange)
+		public static NWN2ScriptFunctor SetString(string sVariable, string sChange)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_global_string",new object[]{sVariable,sChange});
 		}		
@@ -527,8 +527,10 @@ namespace AdventureAuthor.Scripts
 		/// <param name="nMinute">Minute</param>
 		/// <param name="nSecond">Second</param>
 		/// <param name="nMillisecond">Milliseconds</param>
-		public static NWN2ScriptFunctor SetTime(int nHour, int nMinute, int nSecond, int nMillisecond)
+		public static NWN2ScriptFunctor SetTime(int nHour, int nMinute)
 		{
+			int nSecond = 0; // not useful
+			int nMillisecond = 0; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond});
 		}	
 		
@@ -539,8 +541,8 @@ namespace AdventureAuthor.Scripts
 		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreGoodOrMoreEvil(int degreeOfChange)
 		{
-			int bLawChaosAxis = 0; // adjust on the Good/Evil axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,bLawChaosAxis});
+			int axis = 0; // adjust on the Good/Evil axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis});
 		}
 		
 		/// <summary>
@@ -553,8 +555,8 @@ namespace AdventureAuthor.Scripts
 		/// killer would be Lawful Evil, while somebody who robs the rich to feed the poor would be Chaotic Good.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreLawfulOrMoreChaotic(int degreeOfChange)
 		{
-			int bLawChaosAxis = 1; // adjust on the Law/Chaos axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,bLawChaosAxis});			
+			int axis = 1; // adjust on the Law/Chaos axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis});			
 		}
 		
 		/// <summary>

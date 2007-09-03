@@ -31,6 +31,7 @@
 	<UserControl.Resources>
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
+			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
 			<MenuItem Header="Add a henchman" Click="OnClick_AddHenchman"/>
 			<MenuItem Header="Create an object" Click="OnClick_CreateObject"/>
@@ -41,14 +42,30 @@
 			<MenuItem Header="Heal the player" Click="OnClick_HealPlayer"/>
 			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
 			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
+			<MenuItem Header="Player becomes more evil" Click="OnClick_ShiftAlignmentTowardsEvil"/>
+			<MenuItem Header="Player becomes more good" Click="OnClick_ShiftAlignmentTowardsGood"/>
+			<MenuItem Header="Player becomes more lawful" Click="OnClick_ShiftAlignmentTowardsLaw"/>
+			<MenuItem Header="Player becomes more chaotic" Click="OnClick_ShiftAlignmentTowardsChaos"/>
+			<MenuItem Header="Set a float variable" Click="OnClick_SetFloatVariable"/>
+			<MenuItem Header="Set an int variable" Click="OnClick_SetIntVariable"/>
+			<MenuItem Header="Set a string variable" Click="OnClick_SetStringVariable"/>
 		</x:Array>
 		
 		<x:Array x:Key="ConditionsMenu" Type="MenuItem">
 			<MenuItem Header="If a certain creature is dead" Click="OnClick_CreatureIsDead"/>
-			<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
 			<MenuItem Header="If a particular object is nearby" Click="OnClick_ObjectIsNearPlayer"/>
+			<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
 			<MenuItem Header="If the player has a certain amount of gold" Click="OnClick_PlayerHasGold"/>
 			<MenuItem Header="If the player has a certain number of items" Click="OnClick_PlayerHasNumberOfItems"/>
+			<MenuItem Header="If the player is male" Click="OnClick_PlayerIsMale"/>
+			<MenuItem Header="If the player is female" Click="OnClick_PlayerIsFemale"/>
+			<MenuItem Header="If the player is good" Click="OnClick_PlayerIsGood"/>
+			<MenuItem Header="If the player is evil" Click="OnClick_PlayerIsEvil"/>
+			<MenuItem Header="If the player is lawful" Click="OnClick_PlayerIsLawful"/>
+			<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>		
+			<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/>
+			<MenuItem Header="If an int variable has a certain value" Click="OnClick_IntHasValue"/>
+			<MenuItem Header="If a string variable has a certain value" Click="OnClick_StringHasValue"/>
 		</x:Array>		
 		
 		<ContextMenu x:Key="LineControlContextMenu">
