@@ -93,6 +93,20 @@
     <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Notebook\Balloon.xaml.cs">
+      <DependentUpon>Balloon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Notebook\Comment.cs" />
+    <Compile Include="Notebook\Idea.cs" />
+    <Compile Include="Notebook\MyIdeasWindow.xaml.cs">
+      <DependentUpon>MyIdeasWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Notebook\Sky.xaml.cs">
+      <DependentUpon>Sky.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Scripts\Actions.cs" />
     <Compile Include="Scripts\Conditions.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
@@ -206,6 +220,9 @@
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Notebook\Balloon.xaml" />
+    <Page Include="Notebook\MyIdeasWindow.xaml" />
+    <Page Include="Notebook\Sky.xaml" />
     <Page Include="UI\Controls\ActionControl.xaml" />
     <Page Include="UI\Controls\BooleanQuestionPanel.xaml" />
     <Page Include="UI\Controls\BranchControl.xaml" />
@@ -226,6 +243,7 @@
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
     <Page Include="UI\Windows\SoundWindow.xaml" />
     <Folder Include="Core" />
+    <Folder Include="Notebook" />
     <Folder Include="Scripts" />
     <Folder Include="Utils" />
     <Folder Include="Setup" />
