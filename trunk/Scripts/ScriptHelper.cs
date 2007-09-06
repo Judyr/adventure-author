@@ -442,6 +442,28 @@ namespace AdventureAuthor.Scripts
 					string sTag1 = action.Parameters[0].ValueString;
 					return "DOOR " + sTag1 + " IS OPENED.";
 						
+				case "ga_end_game":
+					if (action.Parameters[0].ValueString != String.Empty) {
+						return "GAME OVER - PLAY END MOVIE " + action.Parameters[0].ValueString + ".";
+					}
+					else {
+						return "GAME OVER.";
+					}
+					
+				case "ga_faction_join":
+					switch (action.Parameters[1].ValueString) {
+						case "$COMMONER":
+							return action.Parameters[0].ValueString + " BECOMES A COMMONER.";
+						case "$DEFENDER":
+							return action.Parameters[0].ValueString + " BECOMES A DEFENDER.";
+						case "$HOSTILE":
+							return action.Parameters[0].ValueString + " BECOMES A HOSTILE.";
+						case "$MERCHANT":
+							return action.Parameters[0].ValueString + " BECOMES A MERCHANT.";
+						default:
+							return action.Parameters[0].ValueString + " JOINS " + action.Parameters[1].ValueString + "'S FACTION.";
+					}
+					
 				case "ga_fade_from_black":
 					if (action.Parameters[0].ValueFloat == 0.0f) {
 						return "FADE IN (INSTANTLY).";
@@ -566,6 +588,37 @@ namespace AdventureAuthor.Scripts
 					}					
 					return action.Parameters[2].ValueString + " " + moves2 + " TO " + action.Parameters[0].ValueString;
 						
+				case "ga_open_store":
+					switch (action.Parameters[1].ValueInt) {
+						case 0:
+							switch (action.Parameters[2].ValueInt) {
+								case 0:
+									return "OPEN STORE " + action.Parameters[0].ValueString + ".";
+								default:
+									return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES REDUCED BY " +
+										action.Parameters[2].ValueInt + " PERCENT.";
+							}
+						default:
+							switch (action.Parameters[2].ValueInt) {
+								case 0:
+									return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES INCREASED BY " +
+										action.Parameters[1].ValueInt + " PERCENT.";
+								default:
+									int overall = action.Parameters[1].ValueInt - action.Parameters[2].ValueInt;
+									if (overall == 0) {
+										return "OPEN STORE " + action.Parameters[0].ValueString + ".";
+									}
+									else if (overall > 0) {
+										return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES INCREASED BY " +
+											action.Parameters[1].ValueInt + " PERCENT.";
+									}
+									else {
+										return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES REDUCED BY " +
+											action.Parameters[2].ValueInt + " PERCENT.";										
+									}
+							}
+					}
+					
 				case "ga_party_face_target":
 					return "PARTY TURNS TO FACE " + action.Parameters[1].ValueString + ".";
 					

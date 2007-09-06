@@ -17,7 +17,7 @@ namespace AdventureAuthor.UI.Controls
     /// Interaction logic for StringQuestionPanel.xaml
     /// </summary>
 
-    public partial class StringQuestionPanel : UserControl, QuestionPanel
+    public partial class StringQuestionPanel : UserControl, IQuestionPanel
     {
         public StringQuestionPanel(string question)
         {

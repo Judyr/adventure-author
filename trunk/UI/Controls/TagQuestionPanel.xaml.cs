@@ -18,7 +18,7 @@ namespace AdventureAuthor.UI.Controls
     /// Interaction logic for TagQuestionPanel.xaml
     /// </summary>
 
-    public partial class TagQuestionPanel : UserControl, QuestionPanel
+    public partial class TagQuestionPanel : UserControl, IQuestionPanel
     {
         public TagQuestionPanel(string question, TagHelper.TagType[] tagTypes)
         {

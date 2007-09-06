@@ -45,6 +45,12 @@ namespace AdventureAuthor.UI.Windows
         	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
         }
         
+        public void AddBooleanQuestion(string question, string trueText, string falseText)
+        {
+        	BooleanQuestionPanel panel = new BooleanQuestionPanel(question,trueText,falseText);
+        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        }
+        
         public void AddIntegerQuestion(string question)
         {
         	IntegerQuestionPanel panel = new IntegerQuestionPanel(question);
@@ -63,6 +69,12 @@ namespace AdventureAuthor.UI.Windows
         	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
         }
         
+        public void AddTagQuestion(string question, TagHelper.TagType tagType)
+        {
+        	TagHelper.TagType[] tagTypes = new TagHelper.TagType[]{tagType};
+        	AddTagQuestion(question,tagTypes);
+        }
+        
         public void AddTagQuestion(string question, TagHelper.TagType[] tagTypes)
         {
         	TagQuestionPanel panel = new TagQuestionPanel(question,tagTypes);
@@ -78,7 +90,7 @@ namespace AdventureAuthor.UI.Windows
         	
         	bool incomplete = false;
         	for (int i = 0; i < MainPanel.Children.Count - 1; i++) {
-        		QuestionPanel panel = (QuestionPanel)MainPanel.Children[i];
+        		IQuestionPanel panel = (IQuestionPanel)MainPanel.Children[i];
          		if (panel.Answer == null) {        			
         			incomplete = true;
         			break;

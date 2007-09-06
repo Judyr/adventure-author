@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uic="clr-namespace:AdventureAuthor.UI.Controls">
     <Canvas>
-		<Label Name="QuestionLabel" Canvas.Top="25" Canvas.Left="25"/>
+		<Label Name="QuestionLabel" Canvas.Top="25" Canvas.Left="25" Height="40" Width="250"/>
 		<TextBox Name="AnswerBox" Canvas.Top="150" Canvas.Left="25" Height="40" Width="120"/>
 	</Canvas>
 </UserControl>

@@ -18,7 +18,7 @@ namespace AdventureAuthor.UI.Controls
     /// Interaction logic for IntegerQuestionPanel.xaml
     /// </summary>
 
-    public partial class IntegerQuestionPanel : UserControl, QuestionPanel
+    public partial class IntegerQuestionPanel : UserControl, IQuestionPanel
     {
     	int? min, max;
     	
