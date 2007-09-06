@@ -36,11 +36,13 @@
 			<MenuItem Header="Add a henchman" Click="OnClick_AddHenchman"/>
 			<MenuItem Header="Create an object" Click="OnClick_CreateObject"/>
 			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
+			<MenuItem Header="End the game" Click="OnClick_EndGame"/>
 			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
 			<MenuItem Header="Give the player an item" Click="OnClick_GiveItem"/>
 			<MenuItem Header="Heal the player" Click="OnClick_HealPlayer"/>
 			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
+			<MenuItem Header="Open a store" Click="OnClick_OpenStore"/>
 			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
 			<MenuItem Header="Player becomes more evil" Click="OnClick_ShiftAlignmentTowardsEvil"/>
 			<MenuItem Header="Player becomes more good" Click="OnClick_ShiftAlignmentTowardsGood"/>
@@ -153,8 +155,7 @@
     		<TextBox.Text>
     			<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>    		
     			<!--<Binding ElementName="SpeakerLabel" Path="Text"></Binding> (works) -->
-    		</TextBox.Text>
-    
+    		</TextBox.Text>    
     	</TextBox>
 	
 		<StackPanel x:Name="ActionsPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>

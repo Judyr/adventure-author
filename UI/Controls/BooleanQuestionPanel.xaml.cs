@@ -17,12 +17,22 @@ namespace AdventureAuthor.UI.Controls
     /// Interaction logic for BooleanQuestionPanel.xaml
     /// </summary>
 
-    public partial class BooleanQuestionPanel : UserControl, QuestionPanel
+    public partial class BooleanQuestionPanel : UserControl, IQuestionPanel
     {
         public BooleanQuestionPanel(string question)
         {
         	InitializeComponent();
         	QuestionLabel.Content = question;
+        	YesButton.Content = "Yes";
+        	YesButton.Content = "No";
+        }
+        
+        public BooleanQuestionPanel(string question, string trueText, string falseText)
+        {
+        	InitializeComponent();
+        	QuestionLabel.Content = question;  
+        	YesButton.Content = trueText;
+        	YesButton.Content = falseText;
         }
         
         public object Answer    // have to convert bool into an int for use with scripts

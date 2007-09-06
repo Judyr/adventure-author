@@ -121,11 +121,12 @@
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\IQuestionPanel.cs" />
     <Compile Include="UI\Controls\LineControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>LineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\QuestionPanel.cs" />
+    <Compile Include="UI\Controls\LineControlContextMenu.cs" />
     <Compile Include="UI\Controls\StringQuestionPanel.xaml.cs">
       <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>

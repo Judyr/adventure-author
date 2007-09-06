@@ -205,10 +205,10 @@ namespace AdventureAuthor.Scripts
 		/// <description>ga_destroy</description>
 		/// <param name="sTagString">The tag(s) of the object(s) to destroy. You can pass multiple 
 		/// tags, seperated by commas (NO SPACES) to destroy multiple objects (ie. "Object1,Object2,Object3")</param>
-		/// <param name="iInstance">The instance of the object to destroy. Pass -1 to destroy all instances, pass 0 to destroy the first instance</param>
 		/// <param name="fDelay">The delay before destroying the object(s)</param>
-		public static NWN2ScriptFunctor Destroy(string sTagString, int iInstance, float fDelay)
+		public static NWN2ScriptFunctor Destroy(string sTagString, float fDelay)
 		{
+			int iInstance = -1; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_destroy",new object[]{sTagString,iInstance,fDelay});
 		}				
 		
@@ -220,6 +220,15 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor DestroyAllHenchmen()
 		{
 			return ScriptHelper.GetScriptFunctor("ga_destroy_party_henchmen",null);
+		}
+		
+		/// <summary>
+		/// End the game, play a movie, and return the player to the main menu. 
+		/// </summary>
+		/// <param name="sEndMovie">The end movie to play</param>
+		public static NWN2ScriptFunctor EndGame(string sEndMovie)
+		{
+			return ScriptHelper.GetScriptFunctor("ga_end_game",new object[]{sEndMovie});
 		}
 		    
     	/// <summary>
@@ -322,7 +331,18 @@ namespace AdventureAuthor.Scripts
 			int bAllPartyMembers = 1; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_heal_pc",new object[]{nHealPercent,bAllPartyMembers});
 		}
-		
+			
+		/// <summary>
+		/// Make a creature join a new faction.
+		/// </summary>
+		/// <param name="sTarget">The target whose faction will change.</param>
+		/// <param name="sTargetFaction">Either one of the 4 standard factions $COMMONER, $DEFENDER, $HOSTILE, $MERCHANT or
+		/// a target who's faction is to be joined (must be a creature)</param>
+		public static NWN2ScriptFunctor JoinFaction(string sTarget, string sTargetFaction)
+		{
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction});
+		}
+	
 		/// <summary>
 		/// Jump an object to a waypoint or another object.
 		/// </summary>
@@ -366,10 +386,20 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_door_open</description>
 		/// <param name="sTag">Tag of door to open</param>
-		/// <returns></returns>
 		public static NWN2ScriptFunctor OpenDoor(string sTag)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_door_open",new object[]{sTag});
+		}
+				
+		/// <summary>
+		/// Open an existing store.
+		/// </summary>
+		/// <param name="sTag">The tag of the store to open.</param>
+		/// <param name="nMarkUp">The percentage amount to increase all prices by (from regular prices).</param>
+		/// <param name="nMarkDown">The percentage amount to reduce all prices by (from regular prices).</param>
+		public static NWN2ScriptFunctor OpenStore(string sTag, int nMarkUp, int nMarkDown)
+		{
+			return ScriptHelper.GetScriptFunctor("ga_open_store",new object[]{sTag,nMarkUp,nMarkDown});
 		}
 		
 		/// <summary>

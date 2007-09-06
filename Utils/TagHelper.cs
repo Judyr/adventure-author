@@ -49,8 +49,8 @@ namespace AdventureAuthor.Utils
 			}
 			
 			List<string> tags = new List<string>();
-			
-			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas) {
+						
+			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
 				switch (type) {
 					case TagType.Any:
 						foreach (NWN2InstanceCollection coll in area.AllInstances) {

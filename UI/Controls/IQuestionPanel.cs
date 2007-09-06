@@ -31,7 +31,7 @@ namespace AdventureAuthor.UI.Controls
 	/// <summary>
 	/// Description of QuestionPanel.
 	/// </summary>
-	public interface QuestionPanel
+	public interface IQuestionPanel
 	{
 		object Answer { get; }
 	}
