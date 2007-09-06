@@ -92,6 +92,8 @@ namespace AdventureAuthor.Setup
 				Toolset.SetupUI();
 				Log.StartRecording();
 				Adventure.Open("francesca");
+				AdventureAuthor.Notebook.MyIdeasWindow win = new AdventureAuthor.Notebook.MyIdeasWindow();
+				win.ShowDialog();
 			}
 		}	
 		
