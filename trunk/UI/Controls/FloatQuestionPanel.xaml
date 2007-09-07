@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AdventureAuthor.UI.Controls.IntegerQuestionPanel"
+﻿<UserControl x:Class="AdventureAuthor.UI.Controls.FloatQuestionPanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Height="120" Width="500" Background="LightGreen">

@@ -135,6 +135,10 @@
       <DependentUpon>EnumQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\FloatQuestionPanel.xaml.cs">
+      <DependentUpon>FloatQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\IntegerQuestionPanel.xaml.cs">
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -145,6 +149,10 @@
       <DependentUpon>LineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\LineControlContextMenu.cs" />
+    <Compile Include="UI\Controls\ResRefQuestionPanel.xaml.cs">
+      <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\StringQuestionPanel.xaml.cs">
       <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -233,8 +241,10 @@
     <Page Include="UI\Controls\ConditionControl.xaml" />
     <Page Include="UI\Controls\EndConversationControl.xaml" />
     <Page Include="UI\Controls\EnumQuestionPanel.xaml" />
+    <Page Include="UI\Controls\FloatQuestionPanel.xaml" />
     <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
+    <Page Include="UI\Controls\ResRefQuestionPanel.xaml" />
     <Page Include="UI\Controls\StringQuestionPanel.xaml" />
     <Page Include="UI\Controls\TagQuestionPanel.xaml" />
     <Page Include="UI\Windows\AddActionWindow.xaml" />

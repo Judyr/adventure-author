@@ -44,6 +44,18 @@ namespace AdventureAuthor.UI.Windows
         {
         	EnumQuestionPanel panel = new EnumQuestionPanel(question,enumType);
         	QuestionsPanel.Children.Add(panel);
+        }        
+        
+        public void AddFloatQuestion(string question)
+        {
+        	FloatQuestionPanel panel = new FloatQuestionPanel(question);
+        	QuestionsPanel.Children.Add(panel);
+        }
+        
+        public void AddFloatQuestion(string question, int? min, int? max) // int min/max because we are hiding float representation
+        {
+        	FloatQuestionPanel panel = new FloatQuestionPanel(question,min,max);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddIntegerQuestion(string question)
@@ -64,15 +76,27 @@ namespace AdventureAuthor.UI.Windows
         	QuestionsPanel.Children.Add(panel);
         }
         
-        public void AddTagQuestion(string question, TagHelper.TagType tagType)
+        public void AddTagQuestion(string question, TagHelper.ObjectType tagType)
         {
-        	TagHelper.TagType[] tagTypes = new TagHelper.TagType[]{tagType};
+        	TagHelper.ObjectType[] tagTypes = new TagHelper.ObjectType[]{tagType};
         	AddTagQuestion(question,tagTypes);
         }
         
-        public void AddTagQuestion(string question, TagHelper.TagType[] tagTypes)
+        public void AddTagQuestion(string question, TagHelper.ObjectType[] tagTypes)
         {
         	TagQuestionPanel panel = new TagQuestionPanel(question,tagTypes);
+        	QuestionsPanel.Children.Add(panel);
+        }
+        
+        public void AddResRefQuestion(string question, TagHelper.ObjectType resrefType)
+        {
+        	TagHelper.ObjectType[] resrefTypes = new TagHelper.ObjectType[]{resrefType};
+        	AddResRefQuestion(question,resrefTypes);
+        }
+        
+        public void AddResRefQuestion(string question, TagHelper.ObjectType[] resrefTypes)
+        {
+        	ResRefQuestionPanel panel = new ResRefQuestionPanel(question,resrefTypes);
         	QuestionsPanel.Children.Add(panel);
         }
         
