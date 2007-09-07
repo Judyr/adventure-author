@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Data.TypedCollections;
@@ -39,10 +40,81 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class TagHelper
 	{		
-    	public enum TagType { Any, Creature, Door, Encounter, Item, Light, Placeable, 
+    	public enum ObjectType { Any, Creature, Door, Encounter, Item, Light, Placeable, 
 							  PlacedEffect, Sound, StaticCamera, Store, Tree, Trigger, Waypoint };   
 		
-		public static List<String> GetTags(TagType type)
+		public static List<String> GetResRefs(ObjectType type)
+		{
+			if (Adventure.CurrentAdventure == null) {
+				return null;
+			}
+			
+			List<string> resrefs = new List<string>();
+						
+			switch (type) {
+				case ObjectType.Any:
+//					foreach (NWN2InstanceCollection coll in Adventure.CurrentAdventure.Module.BlueprintCollecti) {
+//						tags.AddRange(GetTags(coll));TODO
+//					}
+//					break;
+				case ObjectType.Creature:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Creatures));
+					break;
+				case ObjectType.Door:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Doors));
+					break;
+				case ObjectType.Encounter:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Encounters));
+					break;
+				case ObjectType.Item:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Items));
+					break;
+				case ObjectType.Light:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Lights));
+					break;
+				case ObjectType.Placeable:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Placeables));
+					break;
+				case ObjectType.PlacedEffect:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.PlacedEffects));
+					break;
+				case ObjectType.Sound:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Sounds));
+					break;
+				case ObjectType.StaticCamera:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.StaticCameras));
+					break;
+				case ObjectType.Store:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Stores));
+					break;
+				case ObjectType.Tree:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Trees));
+					break;
+				case ObjectType.Trigger:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Triggers));
+					break;
+				case ObjectType.Waypoint:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Waypoints));
+					break;
+				default:
+					return null;
+			}
+			return resrefs;
+		}	
+				
+		public static List<string> GetResRefs(NWN2BlueprintCollection blueprints)
+		{
+			List<string> resrefs = new List<string>(blueprints.Count);
+			foreach (INWN2Blueprint blueprint in blueprints) {
+				string resref = blueprint.TemplateResRef.Value;				
+				if (resref != String.Empty && !resrefs.Contains(resref)) {
+					resrefs.Add(resref);
+				}
+			}
+			return resrefs;
+		}
+		
+		public static List<String> GetTags(ObjectType type)
 		{
 			if (Adventure.CurrentAdventure == null) {
 				return null;
@@ -52,48 +124,48 @@ namespace AdventureAuthor.Utils
 						
 			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
 				switch (type) {
-					case TagType.Any:
+					case ObjectType.Any:
 						foreach (NWN2InstanceCollection coll in area.AllInstances) {
 							tags.AddRange(GetTags(coll));
 						}
 						break;
-					case TagType.Creature:
+					case ObjectType.Creature:
 						tags.AddRange(GetTags(area.Creatures));
 						break;
-					case TagType.Door:
+					case ObjectType.Door:
 						tags.AddRange(GetTags(area.Doors));
 						break;
-					case TagType.Encounter:
+					case ObjectType.Encounter:
 						tags.AddRange(GetTags(area.Encounters));
 						break;
-					case TagType.Item:
+					case ObjectType.Item:
 						tags.AddRange(GetTags(area.Items));
 						break;
-					case TagType.Light:
+					case ObjectType.Light:
 						tags.AddRange(GetTags(area.Lights));
 						break;
-					case TagType.Placeable:
+					case ObjectType.Placeable:
 						tags.AddRange(GetTags(area.Placeables));
 						break;
-					case TagType.PlacedEffect:
+					case ObjectType.PlacedEffect:
 						tags.AddRange(GetTags(area.PlacedEffects));
 						break;
-					case TagType.Sound:
+					case ObjectType.Sound:
 						tags.AddRange(GetTags(area.Sounds));
 						break;
-					case TagType.StaticCamera:
+					case ObjectType.StaticCamera:
 						tags.AddRange(GetTags(area.StaticCameras));
 						break;
-					case TagType.Store:
+					case ObjectType.Store:
 						tags.AddRange(GetTags(area.Stores));
 						break;
-					case TagType.Tree:
+					case ObjectType.Tree:
 						tags.AddRange(GetTags(area.Trees));
 						break;
-					case TagType.Trigger:
+					case ObjectType.Trigger:
 						tags.AddRange(GetTags(area.Triggers));
 						break;
-					case TagType.Waypoint:
+					case ObjectType.Waypoint:
 						tags.AddRange(GetTags(area.Waypoints));
 						break;
 					default:
@@ -108,7 +180,7 @@ namespace AdventureAuthor.Utils
 			List<string> tags = new List<string>(instances.Count);
 			foreach (INWN2Instance instance in instances) {
 				string tag = ((INWN2Object)instance).Tag;
-				if (!tags.Contains(tag)) {
+				if (tag != String.Empty && !tags.Contains(tag)) {
 					tags.Add(tag);
 				}
 			}

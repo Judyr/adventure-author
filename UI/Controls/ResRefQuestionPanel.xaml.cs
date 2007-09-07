@@ -14,22 +14,18 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
-    /// <summary>
-    /// Interaction logic for TagQuestionPanel.xaml
-    /// </summary>
-
-    public partial class TagQuestionPanel : UserControl, IQuestionPanel
+    public partial class ResRefQuestionPanel : UserControl, IQuestionPanel
     {
-        public TagQuestionPanel(string question, TagHelper.ObjectType[] objectTypes)
+        public ResRefQuestionPanel(string question, TagHelper.ObjectType[] objectTypes)
         {
             InitializeComponent();
             QuestionLabel.Text = question;
             
-            List<string> tags = new List<string>();
+            List<string> resrefs = new List<string>();
             foreach (TagHelper.ObjectType type in objectTypes) {
-            	tags.AddRange(TagHelper.GetTags(type));
+            	resrefs.AddRange(TagHelper.GetResRefs(type));
             }
-            AnswerBox.ItemsSource = tags;
+            AnswerBox.ItemsSource = resrefs;
         }
         
         public object Answer

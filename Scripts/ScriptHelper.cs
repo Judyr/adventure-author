@@ -128,6 +128,16 @@ namespace AdventureAuthor.Scripts
 			Shoveling = 46,
 			Injured = 47
 		};
+		
+		public enum Movie { //.bik
+			AtariLogo,
+			Credits,
+			Intro,
+			Legal,
+			NvidiaLogo,
+			OEIlogo,
+			WOTCLogo
+		}
 				
 		public enum OneTimeAnimation { 
 			TurnHeadLeft = 100,
@@ -165,14 +175,6 @@ namespace AdventureAuthor.Scripts
 			Intimidate = 132,
 			Chuckle = 133
 		};
-		
-		public enum ObjectType {
-			Creature,
-			Placeable,
-			Item,
-			Waypoint,
-			Store
-		}
 		
 		#endregion
 		
@@ -411,15 +413,7 @@ namespace AdventureAuthor.Scripts
 					if (fDelay1 > 0.0f) {
 						s1.Append(fDelay1.ToString() + " SECONDS LATER, ");
 					}				
-					if (sTagString == String.Empty) {
-						s1.Append(ownerName + " IS REMOVED FROM THE AREA.");
-					}
-					else {
-						if (iInstance == -1) { 
-							s1.Append("EVERYTHING NAMED ");
-						}
-						s1.Append(GetOwnerIfBlank(sTagString) + " IS REMOVED FROM THE AREA.");
-					}
+					s1.Append(GetOwnerIfBlank(sTagString) + " IS REMOVED FROM THE AREA.");
 					return s1.ToString();					
 					
 				case "ga_destroy_item":
