@@ -131,6 +131,10 @@
       <SubType>Code</SubType>
       <DependentUpon>EndConversationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\EnumQuestionPanel.xaml.cs">
+      <DependentUpon>EnumQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\IntegerQuestionPanel.xaml.cs">
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -228,6 +232,7 @@
     <Page Include="UI\Controls\BranchControl.xaml" />
     <Page Include="UI\Controls\ConditionControl.xaml" />
     <Page Include="UI\Controls\EndConversationControl.xaml" />
+    <Page Include="UI\Controls\EnumQuestionPanel.xaml" />
     <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
     <Page Include="UI\Controls\StringQuestionPanel.xaml" />

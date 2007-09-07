@@ -225,8 +225,12 @@ namespace AdventureAuthor.Scripts
 				
 				if (args != null) {
 					foreach (object o in args) { // float, int, string or tag(?)
-						NWN2ScriptParameter param = new NWN2ScriptParameter();		
-						if (o is string) {
+						NWN2ScriptParameter param = new NWN2ScriptParameter();
+						if (o == null) {
+							Say.Error("Was passed a null parameter for the script - returning.");
+							return null;
+						}
+						else if (o is string) {
 							param.ParameterType = NWN2ScriptParameterType.String;
 							param.ValueString = (string)o;
 						}
@@ -237,7 +241,7 @@ namespace AdventureAuthor.Scripts
 						else if (o is float) {
 							param.ParameterType = NWN2ScriptParameterType.Float;
 							param.ValueFloat = (float)o;
-						}
+						}						
 						else {
 							throw new ArgumentException("Was passed an argument of type " + o.GetType().ToString() + 
 							                            " which is not valid as a script parameter.");
@@ -610,11 +614,11 @@ namespace AdventureAuthor.Scripts
 									}
 									else if (overall > 0) {
 										return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES INCREASED BY " +
-											action.Parameters[1].ValueInt + " PERCENT.";
+											overall + " PERCENT.";
 									}
 									else {
 										return "OPEN STORE " + action.Parameters[0].ValueString + " WITH PRICES REDUCED BY " +
-											action.Parameters[2].ValueInt + " PERCENT.";										
+											(0-overall) + " PERCENT.";
 									}
 							}
 					}
@@ -812,7 +816,7 @@ namespace AdventureAuthor.Scripts
 				return ownerName;
 			}
 			else {
-				return tag.ToUpper();
+				return tag;
 			}
 		}
 		
@@ -822,7 +826,7 @@ namespace AdventureAuthor.Scripts
 				return "PLAYER";
 			}
 			else {
-				return tag.ToUpper();
+				return tag;
 			}
 		}
 		
