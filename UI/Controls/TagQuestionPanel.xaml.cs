@@ -23,7 +23,7 @@ namespace AdventureAuthor.UI.Controls
         public TagQuestionPanel(string question, TagHelper.TagType[] tagTypes)
         {
             InitializeComponent();
-            QuestionLabel.Content = question;
+            QuestionLabel.Text = question;
             
             List<string> tags = new List<string>();
             foreach (TagHelper.TagType type in tagTypes) {

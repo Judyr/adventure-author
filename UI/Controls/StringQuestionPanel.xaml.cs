@@ -22,7 +22,7 @@ namespace AdventureAuthor.UI.Controls
         public StringQuestionPanel(string question)
         {
             InitializeComponent();
-        	QuestionLabel.Content = question;
+        	QuestionLabel.Text = question;
         }
 
         public object Answer

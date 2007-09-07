@@ -25,7 +25,7 @@ namespace AdventureAuthor.UI.Controls
         public IntegerQuestionPanel(string question)
         {
             InitializeComponent();
-        	QuestionLabel.Content = question;
+        	QuestionLabel.Text = question;
         }
 
         public IntegerQuestionPanel(string question, int? min, int? max) : this(question)
@@ -38,7 +38,7 @@ namespace AdventureAuthor.UI.Controls
         {
 			get { 
         		try {
-        			int result = int.Parse(AnswerBox.Text);        			
+        			int result = int.Parse(AnswerBox.Text);
         			if (min != null && result < min || max != null && result > max) {
         				if (min != null && max != null) {
         					Say.Warning("Enter a number between " + min + " and " + max + ".");
@@ -56,7 +56,20 @@ namespace AdventureAuthor.UI.Controls
         			}        			
         		}
         		catch (FormatException) {
-        			Say.Error(AnswerBox.Text + " is not a valid number.");
+        			if (AnswerBox.Text == String.Empty) {
+        				Say.Error("You didn't enter a number.");
+        			}
+	        		else {
+	        			Say.Error(AnswerBox.Text + " is not a valid number.");
+        			}
+        			return null;
+        		}
+        		catch (ArgumentNullException) {
+        			Say.Error("You didn't enter a number.");
+        			return null;
+        		}
+        		catch (OverflowException) {
+        			Say.Error("Your number was too big! Try entering a smaller number.");
         			return null;
         		}
         	}

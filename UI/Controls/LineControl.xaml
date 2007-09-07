@@ -33,13 +33,14 @@
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
 			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
-			<MenuItem Header="Add a henchman" Click="OnClick_AddHenchman"/>
 			<MenuItem Header="Create an object" Click="OnClick_CreateObject"/>
 			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
 			<MenuItem Header="End the game" Click="OnClick_EndGame"/>
 			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
 			<MenuItem Header="Give the player an item" Click="OnClick_GiveItem"/>
+			<MenuItem Header="Give the player a henchman" Click="OnClick_AddHenchmanForPlayer"/>
+			<MenuItem Header="Give someone else a henchman" Click="OnClick_AddHenchmanForCreature"/>
 			<MenuItem Header="Heal the player" Click="OnClick_HealPlayer"/>
 			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
 			<MenuItem Header="Open a store" Click="OnClick_OpenStore"/>
@@ -48,8 +49,7 @@
 			<MenuItem Header="Player becomes more good" Click="OnClick_ShiftAlignmentTowardsGood"/>
 			<MenuItem Header="Player becomes more lawful" Click="OnClick_ShiftAlignmentTowardsLaw"/>
 			<MenuItem Header="Player becomes more chaotic" Click="OnClick_ShiftAlignmentTowardsChaos"/>
-			<MenuItem Header="Set a float variable" Click="OnClick_SetFloatVariable"/>
-			<MenuItem Header="Set an int variable" Click="OnClick_SetIntVariable"/>
+			<MenuItem Header="Set a number variable" Click="OnClick_SetIntVariable"/>
 			<MenuItem Header="Set a string variable" Click="OnClick_SetStringVariable"/>
 		</x:Array>
 		
@@ -65,8 +65,7 @@
 			<MenuItem Header="If the player is evil" Click="OnClick_PlayerIsEvil"/>
 			<MenuItem Header="If the player is lawful" Click="OnClick_PlayerIsLawful"/>
 			<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>		
-			<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/>
-			<MenuItem Header="If an int variable has a certain value" Click="OnClick_IntHasValue"/>
+			<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
 			<MenuItem Header="If a string variable has a certain value" Click="OnClick_StringHasValue"/>
 		</x:Array>		
 		

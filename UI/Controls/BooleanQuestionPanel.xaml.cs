@@ -22,15 +22,15 @@ namespace AdventureAuthor.UI.Controls
         public BooleanQuestionPanel(string question)
         {
         	InitializeComponent();
-        	QuestionLabel.Content = question;
+        	QuestionLabel.Text = question;
         	YesButton.Content = "Yes";
-        	YesButton.Content = "No";
+        	NoButton.Content = "No";
         }
         
         public BooleanQuestionPanel(string question, string trueText, string falseText)
         {
         	InitializeComponent();
-        	QuestionLabel.Content = question;  
+        	QuestionLabel.Text = question;  
         	YesButton.Content = trueText;
         	YesButton.Content = falseText;
         }

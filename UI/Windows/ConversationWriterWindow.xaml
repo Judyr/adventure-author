@@ -52,14 +52,8 @@
 				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
 					<Button Click="OnClick_CreateBranchAtEndOfPage" FontSize="26">
 						<TextBlock>
-							<TextBlock Foreground="Black" Text="Add a "/>
+							<TextBlock Foreground="Black" Text="Add a"/>
 							<TextBlock Foreground="Purple" Text="CHOICE"/>
-						</TextBlock>
-					</Button>	
-					<Button Click="OnClick_AddAction" FontSize="26">
-						<TextBlock>
-							<TextBlock Foreground="Black" Text="Add an "/>
-							<TextBlock Foreground="Brown" Text="ACTION"/>
 						</TextBlock>
 					</Button>	
 				</StackPanel>

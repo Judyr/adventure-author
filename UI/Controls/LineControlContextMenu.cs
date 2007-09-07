@@ -39,36 +39,104 @@ namespace AdventureAuthor.UI.Controls
     	    	    	    	
     	private void OnClick_AdvanceTime(object sender, EventArgs ea)
     	{
-    		NWN2ScriptFunctor action = Actions.AdvanceTimeBy(12,0,0,0);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		object[] parameters = new object[2];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters, "Advance time");
+    		window.AddIntegerQuestion("Advance time by how many hours?",0,null);
+    		window.AddIntegerQuestion("...and how many minutes?",0,59);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ScriptFunctor action = Actions.AdvanceTimeBy((int)parameters[0],(int)parameters[1],0,0);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
     	}
     	
     	private void OnClick_Attack(object sender, EventArgs ea)
     	{    		
-    		NWN2ScriptFunctor action = Actions.Attack(nwn2Line.Speaker);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		object[] parameters = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters, "Attack the player");
+    		window.AddTagQuestion("Who should attack the player?",TagHelper.TagType.Creature);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ScriptFunctor action = Actions.Attack((string)parameters[0]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
     	}
         
-    	private void OnClick_AddHenchman(object sender, EventArgs ea)
+    	private void OnClick_AddHenchmanForPlayer(object sender, EventArgs ea)
     	{    	
-    		NWN2ScriptFunctor action = Actions.AddHenchman(nwn2Line.Speaker,String.Empty,1);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-    	}    	
+    		object[] parameters = new object[2];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Give the player a henchman");
+    		window.AddTagQuestion("Who should become the player's henchman?",TagHelper.TagType.Creature);
+    		window.AddBooleanQuestion("Should they follow the player around and fight for him?");
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ScriptFunctor action = Actions.AddHenchman((string)parameters[0],String.Empty,(int)parameters[1]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
+    	}  
+    	    	
+    	private void OnClick_AddHenchmanForCreature(object sender, EventArgs ea)
+    	{    	
+    		object[] parameters = new object[3];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Give someone else a henchman");
+    		window.AddTagQuestion("Who should become the henchman?",TagHelper.TagType.Creature);
+    		window.AddTagQuestion("Whose henchman should they become?",TagHelper.TagType.Creature);
+    		window.AddBooleanQuestion("Should they follow their master around and fight for them?");
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    		
+    			NWN2ScriptFunctor action = Actions.AddHenchman((string)parameters[0],(string)parameters[1],(int)parameters[2]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
+    	}    
     	    	
     	private void OnClick_CreateObject(object sender, EventArgs ea)
     	{    	
-    		NWN2ScriptFunctor action = Actions.CreateObject(ScriptHelper.ObjectType.Placeable,"plc_bc_templee01","buildingwaypoint",1,"ghostlybuilding",5.0f);
+    		NWN2ScriptFunctor action = Actions.CreateObject(ScriptHelper.ObjectType.Placeable,
+    		                                                "plc_bc_templee01",
+    		                                                "buildingwaypoint",
+    		                                                1,
+    		                                                "ghostlybuilding",
+    		                                                5.0f);
     		nwn2Line.Actions.Add(action);
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		
+    		
+//    		object[] parameters = new object[6];
+//    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+//    		window.AddTagQuestion("Who should become the henchman?",TagHelper.TagType.Creature);
+//    		window.AddTagQuestion("Whose henchman should they become?",TagHelper.TagType.Creature);
+//    		window.AddBooleanQuestion("Should they follow their master around and fight for them?");
+//    		bool? result = window.ShowDialog();
+//    		if (result == null || !(bool)result) { // cancelled or failed
+//    			return;
+//    		}
+//    		else {    		
+//    			NWN2ScriptFunctor action = Actions.AddHenchman((string)parameters[0],(string)parameters[1],(int)parameters[2]);
+//	    		nwn2Line.Actions.Add(action);
+//	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+//    		}
     	}    	
     	
     	private void OnClick_DestroyObject(object sender, EventArgs ea)
     	{    		
     		object[] parameters = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Destroy an object");
     		window.AddTagQuestion("What object should be destroyed?",TagHelper.TagType.Any);
     		window.AddIntegerQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		
@@ -76,8 +144,8 @@ namespace AdventureAuthor.UI.Controls
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
-    		else {    			
-    			NWN2ScriptFunctor action = Actions.Destroy((string)parameters[0],(float)parameters[1]);
+    		else {    		
+    			NWN2ScriptFunctor action = Actions.Destroy((string)parameters[0],(float)(int)parameters[1]); // unbox first
 	    		nwn2Line.Actions.Add(action);
 	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
     		}
@@ -89,7 +157,7 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_EndGame(object sender, EventArgs ea)
     	{
     		object[] parameters = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"End the game");
     		window.AddStringQuestion("What movie should play when the game ends? (Leave blank for nothing.)");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -112,7 +180,7 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_GiveGold(object sender, EventArgs ea)
     	{
     		object[] parameters = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Give the player gold");
     		window.AddIntegerQuestion("How much gold does the player receive?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -128,7 +196,7 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_GiveItem(object sender, EventArgs ea)
     	{
     		object[] parameters = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Give the player an item");
     		window.AddTagQuestion("Which item should the player receive?",TagHelper.TagType.Item);
     		window.AddIntegerQuestion("How many copies of the item should the player receive?",0,null); // TODO split into GiveItem, GiveSeveralItems
     		bool? result = window.ShowDialog();
@@ -144,8 +212,8 @@ namespace AdventureAuthor.UI.Controls
     	
     	private void OnClick_HealPlayer(object sender, EventArgs ea)
     	{
-        	object[] parameters = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+        	object[] parameters = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Heal the player");
     		window.AddIntegerQuestion("What percentage healing should the player receive? (enter 0 for no healing, 100 for full healing)",0,100);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -161,7 +229,7 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_Kill(object sender, EventArgs ea)
     	{
     		object[] parameters = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Kill a creature");
     		window.AddTagQuestion("Which creature should be killed?",TagHelper.TagType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -177,7 +245,7 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_OpenStore(object sender, EventArgs ea)
     	{
     		object[] parameters = new object[3];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Open a store");
     		window.AddTagQuestion("Which store should be opened?",TagHelper.TagType.Store);
     		window.AddIntegerQuestion("How much more expensive than normal should it be? (0-100%)",0,100);
     		window.AddIntegerQuestion("Or - how much cheaper than normal should it be? (0-100%)",0,100);
@@ -194,9 +262,21 @@ namespace AdventureAuthor.UI.Controls
     	
     	private void OnClick_PlayAnimation(object sender, EventArgs ea)
     	{
-    		NWN2ScriptFunctor action = Actions.PlayAnimationOnce(nwn2Line.Speaker,ScriptHelper.OneTimeAnimation.Bow,1.0f,0.0f);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		object[] parameters = new object[3];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref parameters,"Play an animation");
+    		window.AddTagQuestion("Who should perform the animation?",TagHelper.TagType.Creature);
+    		window.AddEnumQuestion("What animation should they perform?",typeof(ScriptHelper.OneTimeAnimation));
+    		window.AddIntegerQuestion("How long should they wait before performing it (in seconds)?",0,null);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ScriptFunctor action = Actions.PlayAnimationOnce((string)parameters[0],(ScriptHelper.OneTimeAnimation)parameters[1]
+    			                                                     ,1.0f,(float)(int)parameters[2]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
     	}
     	
     	private void OnClick_ShiftAlignmentTowardsGood(object sender, EventArgs ea)
@@ -223,13 +303,6 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_ShiftAlignmentTowardsChaos(object sender, EventArgs ea)
     	{
     		NWN2ScriptFunctor action = Actions.PlayerBecomesMoreLawfulOrMoreChaotic(-3);
-    		nwn2Line.Actions.Add(action);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-    	}
-    	
-    	private void OnClick_SetFloatVariable(object sender, EventArgs ea)
-    	{
-    		NWN2ScriptFunctor action = Actions.SetFloat("timeremaining","5.1");
     		nwn2Line.Actions.Add(action);
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
     	}
@@ -262,13 +335,6 @@ namespace AdventureAuthor.UI.Controls
 		private void OnClick_EnemyIsNearPlayer(object sender, EventArgs ea)
 		{
 			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer(20.0f);
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-		
-		private void OnClick_FloatHasValue(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.FloatHasValue("timeremaining",">0.0");
 			nwn2Line.Conditions.Add(condition);
     		ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}

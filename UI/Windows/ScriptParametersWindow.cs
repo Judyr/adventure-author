@@ -21,52 +21,47 @@ namespace AdventureAuthor.UI.Windows
     {    	
     	private object[] parameters;
     	
-    	public ScriptParametersWindow(ref object[] parameters)
+    	public ScriptParametersWindow(ref object[] parameters, string title)
         {
-    		this.parameters = parameters;
-    		
+    		this.parameters = parameters;    		
             InitializeComponent();
-            
-            StackPanel OKCancelPanel = new StackPanel();
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
-            OKButton.Click += new RoutedEventHandler(OnClick_OK);
-            Button CancelButton = new Button();
-            CancelButton.Content = "Cancel";
-            CancelButton.Click += new RoutedEventHandler(OnClick_Cancel);
-            OKCancelPanel.Children.Add(OKButton);
-            OKCancelPanel.Children.Add(CancelButton);            
-            MainPanel.Children.Add(OKCancelPanel);
+    		this.Title = title;
         }        
 
         public void AddBooleanQuestion(string question)
         {
         	BooleanQuestionPanel panel = new BooleanQuestionPanel(question);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddBooleanQuestion(string question, string trueText, string falseText)
         {
         	BooleanQuestionPanel panel = new BooleanQuestionPanel(question,trueText,falseText);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
+        }
+        
+        public void AddEnumQuestion(string question, Type enumType)
+        {
+        	EnumQuestionPanel panel = new EnumQuestionPanel(question,enumType);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddIntegerQuestion(string question)
         {
         	IntegerQuestionPanel panel = new IntegerQuestionPanel(question);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddIntegerQuestion(string question, int? min, int? max)
         {
         	IntegerQuestionPanel panel = new IntegerQuestionPanel(question,min,max);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddStringQuestion(string question)
         {
         	StringQuestionPanel panel = new StringQuestionPanel(question);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         public void AddTagQuestion(string question, TagHelper.TagType tagType)
@@ -78,19 +73,19 @@ namespace AdventureAuthor.UI.Windows
         public void AddTagQuestion(string question, TagHelper.TagType[] tagTypes)
         {
         	TagQuestionPanel panel = new TagQuestionPanel(question,tagTypes);
-        	MainPanel.Children.Insert(MainPanel.Children.Count-1,panel);
+        	QuestionsPanel.Children.Add(panel);
         }
         
         private void OnClick_OK(object sender, RoutedEventArgs rea)
         {
-        	int paramsCount = MainPanel.Children.Count - 1; // (ignore the OK/Cancel button panel)
-        	if (paramsCount != parameters.Length) {
-        		throw new ArgumentOutOfRangeException("The number of question panels doesn't equal the number of parameters to return.");
+        	if (QuestionsPanel.Children.Count != parameters.Length) {
+        		throw new ArgumentOutOfRangeException("Found " + QuestionsPanel.Children.Count + 
+        		                                      " panels and " + parameters.Length + " parameters.");
         	}
         	
         	bool incomplete = false;
-        	for (int i = 0; i < MainPanel.Children.Count - 1; i++) {
-        		IQuestionPanel panel = (IQuestionPanel)MainPanel.Children[i];
+        	for (int i = 0; i < QuestionsPanel.Children.Count; i++) {
+        		IQuestionPanel panel = (IQuestionPanel)QuestionsPanel.Children[i];
          		if (panel.Answer == null) {        			
         			incomplete = true;
         			break;
