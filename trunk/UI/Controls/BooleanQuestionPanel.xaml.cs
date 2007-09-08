@@ -32,10 +32,10 @@ namespace AdventureAuthor.UI.Controls
         	InitializeComponent();
         	QuestionLabel.Text = question;  
         	YesButton.Content = trueText;
-        	YesButton.Content = falseText;
+        	NoButton.Content = falseText;
         }
         
-        public object Answer    // have to convert bool into an int for use with scripts
+        public object Answer  // have to convert bool into an int for use with scripts
         {
 			get { 
         		if ((bool)YesButton.IsChecked) {

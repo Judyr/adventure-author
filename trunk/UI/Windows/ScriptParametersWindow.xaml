@@ -1,19 +1,12 @@
 ﻿<Window x:Class="AdventureAuthor.UI.Windows.ScriptParametersWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="AdventureAuthor.UI.Windows" MinHeight="800" MaxHeight="800" MinWidth="500" MaxWidth="500">
-    <Grid>
-		<Grid.RowDefinitions>
-    		<RowDefinition Height="720"/>
-    		<RowDefinition Height="80"/>
-    	</Grid.RowDefinitions>
-    	<Grid.ColumnDefinitions>
-    		<ColumnDefinition/>
-    	</Grid.ColumnDefinitions>
-        <StackPanel Name="QuestionsPanel" Orientation="Vertical" Grid.Row="0" Grid.Column="0" Height="720" Width="500"/>
-    	<Canvas Grid.Row="1" Grid.Column="0" Height="80" Width="500" Background="SlateGray">
-    		<Button Canvas.Top="20" Canvas.Right="135" Content="OK" Click="OnClick_OK" Height="40" Width="100"/>
-    		<Button Canvas.Top="20" Canvas.Right="20" Content="Cancel" Click="OnClick_Cancel" Height="40" Width="100"/>
-    	</Canvas>
-    </Grid>
+    Title="Enter script parameters..." MinWidth="500" MaxWidth="500">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Name="QuestionsPanel" Orientation="Vertical" />
+    	<StackPanel Name="OKCancelPanel" Orientation="Horizontal" FlowDirection="RightToLeft" Background="SlateGray">    		
+    		<Button Content="OK" Click="OnClick_OK" Width="100" Margin="10"/>
+    		<Button Content="Cancel" Click="OnClick_Cancel" Height="40" Width="100" Margin="0,10,10,10"/>
+    	</StackPanel>
+    </StackPanel>
 </Window>
