@@ -127,6 +127,7 @@
       <DependentUpon>ConditionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\ConditionsContextMenu.cs" />
     <Compile Include="UI\Controls\EndConversationControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>EndConversationControl.xaml</DependentUpon>
@@ -148,7 +149,7 @@
       <SubType>Code</SubType>
       <DependentUpon>LineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\LineControlContextMenu.cs" />
+    <Compile Include="UI\Controls\ActionsContextMenu.cs" />
     <Compile Include="UI\Controls\ResRefQuestionPanel.xaml.cs">
       <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>

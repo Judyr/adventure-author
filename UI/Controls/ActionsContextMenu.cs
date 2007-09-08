@@ -38,8 +38,6 @@ namespace AdventureAuthor.UI.Controls
 {
     public partial class LineControl : UserControl
     {    	
-        #region Add an Action event handlers        
-    	    	    	    	
     	private void OnClick_AdvanceTime(object sender, EventArgs ea)
     	{
     		object[] prms = new object[2];
@@ -328,7 +326,7 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Change good/evil alignment");
     		window.AddBooleanQuestion("Should the player become more good, or more evil?","Good","Evil");
-    		window.AddIntegerQuestion("By how much? (1-3, 1 meaning a bit more good/evil, 3 meaning a lot more good/evil",1,3);    		
+    		window.AddIntegerQuestion("By how much? (1 = slight change, 3 = big change)",1,3);    		  		
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -352,7 +350,7 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Change law/chaos alignment");
     		window.AddBooleanQuestion("Should the player become more lawful, or more chaotic?","Lawful","Chaotic");
-    		window.AddIntegerQuestion("By how much? (enter 1-3, 1 meaning change a bit, 3 meaning change a lot",1,3);    		
+    		window.AddIntegerQuestion("By how much? (1 = slight change, 3 = big change)",1,3);    		
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -376,14 +374,7 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Set an integer variable");
     		
-    		// crashes without message:
-//    		foreach (NWN2GameArea area in NWN2Toolset.NWN2ToolsetMainForm.App.Module.Areas) {
-//    			foreach (NWN2ScriptVariable var in area.Variables) {
-//    				Say.Information(var.Name + " (" + var.VariableType.ToString() + ")");
-//    			}
-//    		}
-    		
-    		// TODO: In future this should become an AddEnumQuestion, and the user should have to create a variable in a separate
+    		// TODO: In future this should become an AddVariableQuestion, and the user should have to create a variable in a separate
     		// VariableManager window (giving the name, type, and what it will be used for), and then be able to select what
     		// variable they want to check here.
     		
@@ -406,7 +397,7 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Set a string variable");
     		
-    		// TODO: In future this should become an AddEnumQuestion, and the user should have to create a variable in a separate
+    		// TODO: In future this should become an AddVariableQuestion, and the user should have to create a variable in a separate
     		// VariableManager window (giving the name, type, and what it will be used for), and then be able to select what
     		// variable they want to check here.
     		
@@ -423,104 +414,6 @@ namespace AdventureAuthor.UI.Controls
     		}
     	}
     	
-		#endregion   
-		
-		#region Add a Condition event handlers
-		
-		private void OnClick_CreatureIsDead(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.CreatureIsDead("wolf");
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-		
-		private void OnClick_EnemyIsNearPlayer(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer(20.0f);
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_IntHasValue(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.IntHasValue("numberofchancesleft",">0");
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_StringHasValue(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.StringHasValue("hasplayerfoundamulet","yes");
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearPlayer("treasure","<5.0");
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}		
-		
-		private void OnClick_PlayerHasGold(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerHasGold(120);
-			nwn2Line.Conditions.Add(condition);
-    		ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-		
-		private void OnClick_PlayerIsMale(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-			
-		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}		
-		
-		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}			
-				
-		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
-		{
-			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems("gemstone",">2");
-			nwn2Line.Conditions.Add(condition);
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
-		}
-				
-		#endregion		
-		
-		
 		
 		
 		public void JournalTest(object sender, EventArgs ea)

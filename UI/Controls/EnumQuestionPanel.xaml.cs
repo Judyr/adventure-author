@@ -29,7 +29,6 @@ namespace AdventureAuthor.UI.Controls
         		throw new ArgumentException("Tried to create an EnumQuestionPanel with a type that was not an enum (type was " +
         		                            enumType.GetType().ToString() + ").");
         	}
-        	
             InitializeComponent();
             QuestionLabel.Text = question;  
             this.enumType = enumType;
