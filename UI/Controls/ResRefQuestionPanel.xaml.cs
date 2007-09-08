@@ -11,19 +11,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.UI.Controls
 {
     public partial class ResRefQuestionPanel : UserControl, IQuestionPanel
     {
-        public ResRefQuestionPanel(string question, TagHelper.ObjectType[] objectTypes)
+        public ResRefQuestionPanel(string question, ScriptHelper.ObjectType[] objectTypes)
         {
             InitializeComponent();
             QuestionLabel.Text = question;
             
             List<string> resrefs = new List<string>();
-            foreach (TagHelper.ObjectType type in objectTypes) {
-            	resrefs.AddRange(TagHelper.GetResRefs(type));
+            foreach (ScriptHelper.ObjectType type in objectTypes) {
+            	resrefs.AddRange(ScriptHelper.GetResRefs(type));
             }
             AnswerBox.ItemsSource = resrefs;
         }

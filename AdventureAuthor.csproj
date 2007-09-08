@@ -219,7 +219,6 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
-    <Compile Include="Utils\TagHelper.cs" />
     <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>

@@ -11,9 +11,9 @@
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
         <StackPanel Name="QuestionsPanel" Orientation="Vertical" Grid.Row="0" Grid.Column="0" Height="720" Width="500"/>
-    	<Canvas Grid.Row="1" Grid.Column="0" Height="80" Width="500">
-    		<Button Canvas.Top="10" Canvas.Right="240" Content="OK" Click="OnClick_OK" Height="40" Width="100"/>
-    		<Button Canvas.Top="10" Canvas.Right="120" Content="Cancel" Click="OnClick_Cancel" Height="40" Width="100"/>
+    	<Canvas Grid.Row="1" Grid.Column="0" Height="80" Width="500" Background="SlateGray">
+    		<Button Canvas.Top="20" Canvas.Right="135" Content="OK" Click="OnClick_OK" Height="40" Width="100"/>
+    		<Button Canvas.Top="20" Canvas.Right="20" Content="Cancel" Click="OnClick_Cancel" Height="40" Width="100"/>
     	</Canvas>
     </Grid>
 </Window>

@@ -35,6 +35,7 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.UI.Windows;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Data.TypedCollections;
@@ -129,7 +130,7 @@ namespace AdventureAuthor.Scripts
 			Injured = 47
 		};
 		
-		public enum Movie { //.bik
+		public enum Movie { //.bik files in Neverwinter Nights 2/Movies
 			AtariLogo,
 			Credits,
 			Intro,
@@ -138,6 +139,23 @@ namespace AdventureAuthor.Scripts
 			OEIlogo,
 			WOTCLogo
 		}
+		
+		public enum ObjectType { 
+			Any, 
+			Creature, 
+			Door, 
+			Encounter, 
+			Item, 
+			Light, 
+			Placeable,
+			PlacedEffect, 
+			Sound, 
+			StaticCamera, 
+			Store, 
+			Tree, 
+			Trigger, 
+			Waypoint 
+		};
 				
 		public enum OneTimeAnimation { 
 			TurnHeadLeft = 100,
@@ -825,6 +843,154 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		#endregion 
+		
+		#region Tags and blueprints
+				
+		public static List<String> GetResRefs(ObjectType type)
+		{
+			if (Adventure.CurrentAdventure == null) {
+				return null;
+			}
+			
+			List<string> resrefs = new List<string>();
+						
+			switch (type) {
+				case ObjectType.Any:
+					foreach (NWN2BlueprintCollection blueprintCollection in NWN2GlobalBlueprintManager.Instance.BlueprintCollections) {
+						resrefs.AddRange(GetResRefs(blueprintCollection));
+					}
+					break;					
+				case ObjectType.Creature:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Creatures));
+					break;
+				case ObjectType.Door:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Doors));
+					break;
+				case ObjectType.Encounter:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Encounters));
+					break;
+				case ObjectType.Item:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Items));
+					break;
+				case ObjectType.Light:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Lights));
+					break;
+				case ObjectType.Placeable:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Placeables));
+					break;
+				case ObjectType.PlacedEffect:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.PlacedEffects));
+					break;
+				case ObjectType.Sound:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Sounds));
+					break;
+				case ObjectType.StaticCamera:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.StaticCameras));
+					break;
+				case ObjectType.Store:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Stores));
+					break;
+				case ObjectType.Tree:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Trees));
+					break;
+				case ObjectType.Trigger:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Triggers));
+					break;
+				case ObjectType.Waypoint:
+					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Waypoints));
+					break;
+				default:
+					return null;
+			}
+			return resrefs;
+		}	
+				
+		public static List<string> GetResRefs(NWN2BlueprintCollection blueprints)
+		{
+			List<string> resrefs = new List<string>(blueprints.Count);
+			foreach (INWN2Blueprint blueprint in blueprints) {
+				string resref = blueprint.TemplateResRef.Value;				
+				if (resref != String.Empty && !resrefs.Contains(resref)) {
+					resrefs.Add(resref);
+				}
+			}
+			return resrefs;
+		}
+		
+		public static List<String> GetTags(ObjectType type)
+		{
+			if (Adventure.CurrentAdventure == null) {
+				return null;
+			}
+			
+			List<string> tags = new List<string>();
+						
+			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
+				switch (type) {
+					case ObjectType.Any:
+						foreach (NWN2InstanceCollection coll in area.AllInstances) {
+							tags.AddRange(GetTags(coll));
+						}
+						break;
+					case ObjectType.Creature:
+						tags.AddRange(GetTags(area.Creatures));
+						break;
+					case ObjectType.Door:
+						tags.AddRange(GetTags(area.Doors));
+						break;
+					case ObjectType.Encounter:
+						tags.AddRange(GetTags(area.Encounters));
+						break;
+					case ObjectType.Item:
+						tags.AddRange(GetTags(area.Items));
+						break;
+					case ObjectType.Light:
+						tags.AddRange(GetTags(area.Lights));
+						break;
+					case ObjectType.Placeable:
+						tags.AddRange(GetTags(area.Placeables));
+						break;
+					case ObjectType.PlacedEffect:
+						tags.AddRange(GetTags(area.PlacedEffects));
+						break;
+					case ObjectType.Sound:
+						tags.AddRange(GetTags(area.Sounds));
+						break;
+					case ObjectType.StaticCamera:
+						tags.AddRange(GetTags(area.StaticCameras));
+						break;
+					case ObjectType.Store:
+						tags.AddRange(GetTags(area.Stores));
+						break;
+					case ObjectType.Tree:
+						tags.AddRange(GetTags(area.Trees));
+						break;
+					case ObjectType.Trigger:
+						tags.AddRange(GetTags(area.Triggers));
+						break;
+					case ObjectType.Waypoint:
+						tags.AddRange(GetTags(area.Waypoints));
+						break;
+					default:
+						return null;
+				}
+			}			
+			return tags;
+		}
+		
+		public static List<string> GetTags(NWN2InstanceCollection instances)
+		{
+			List<string> tags = new List<string>(instances.Count);
+			foreach (INWN2Instance instance in instances) {
+				string tag = ((INWN2Object)instance).Tag;
+				if (tag != String.Empty && !tags.Contains(tag)) {
+					tags.Add(tag);
+				}
+			}
+			return tags;
+		}
+		
+		#endregion
 		
 	}
 }
