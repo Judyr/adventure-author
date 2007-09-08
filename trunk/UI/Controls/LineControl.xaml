@@ -31,6 +31,7 @@
 	<UserControl.Resources>
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
+			<MenuItem Header="SETUP JOURNAL" Click="JournalTest"/>
 			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
 			<MenuItem Header="Create a creature" Click="OnClick_CreateCreature"/>
@@ -47,12 +48,10 @@
 			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
 			<MenuItem Header="Open a store" Click="OnClick_OpenStore"/>
 			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
-			<MenuItem Header="Player becomes more evil" Click="OnClick_ShiftAlignmentTowardsEvil"/>
-			<MenuItem Header="Player becomes more good" Click="OnClick_ShiftAlignmentTowardsGood"/>
-			<MenuItem Header="Player becomes more lawful" Click="OnClick_ShiftAlignmentTowardsLaw"/>
-			<MenuItem Header="Player becomes more chaotic" Click="OnClick_ShiftAlignmentTowardsChaos"/>
 			<MenuItem Header="Set a number variable" Click="OnClick_SetIntVariable"/>
 			<MenuItem Header="Set a string variable" Click="OnClick_SetStringVariable"/>
+			<MenuItem Header="Shift good/evil alignment" Click="OnClick_ShiftGoodEvilAlignment"/>
+			<MenuItem Header="Shift law/chaos alignment" Click="OnClick_ShiftLawChaosAlignment"/>
 		</x:Array>
 		
 		<x:Array x:Key="ConditionsMenu" Type="MenuItem">

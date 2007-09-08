@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -20,14 +21,14 @@ namespace AdventureAuthor.UI.Controls
 
     public partial class TagQuestionPanel : UserControl, IQuestionPanel
     {
-        public TagQuestionPanel(string question, TagHelper.ObjectType[] objectTypes)
+        public TagQuestionPanel(string question, ScriptHelper.ObjectType[] objectTypes)
         {
             InitializeComponent();
             QuestionLabel.Text = question;
             
             List<string> tags = new List<string>();
-            foreach (TagHelper.ObjectType type in objectTypes) {
-            	tags.AddRange(TagHelper.GetTags(type));
+            foreach (ScriptHelper.ObjectType type in objectTypes) {
+            	tags.AddRange(ScriptHelper.GetTags(type));
             }
             AnswerBox.ItemsSource = tags;
         }

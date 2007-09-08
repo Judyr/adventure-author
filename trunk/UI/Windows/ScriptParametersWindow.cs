@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -76,25 +77,25 @@ namespace AdventureAuthor.UI.Windows
         	QuestionsPanel.Children.Add(panel);
         }
         
-        public void AddTagQuestion(string question, TagHelper.ObjectType tagType)
+        public void AddTagQuestion(string question, ScriptHelper.ObjectType tagType)
         {
-        	TagHelper.ObjectType[] tagTypes = new TagHelper.ObjectType[]{tagType};
+        	ScriptHelper.ObjectType[] tagTypes = new ScriptHelper.ObjectType[]{tagType};
         	AddTagQuestion(question,tagTypes);
         }
         
-        public void AddTagQuestion(string question, TagHelper.ObjectType[] tagTypes)
+        public void AddTagQuestion(string question, ScriptHelper.ObjectType[] tagTypes)
         {
         	TagQuestionPanel panel = new TagQuestionPanel(question,tagTypes);
         	QuestionsPanel.Children.Add(panel);
         }
         
-        public void AddResRefQuestion(string question, TagHelper.ObjectType resrefType)
+        public void AddResRefQuestion(string question, ScriptHelper.ObjectType resrefType)
         {
-        	TagHelper.ObjectType[] resrefTypes = new TagHelper.ObjectType[]{resrefType};
+        	ScriptHelper.ObjectType[] resrefTypes = new ScriptHelper.ObjectType[]{resrefType};
         	AddResRefQuestion(question,resrefTypes);
         }
         
-        public void AddResRefQuestion(string question, TagHelper.ObjectType[] resrefTypes)
+        public void AddResRefQuestion(string question, ScriptHelper.ObjectType[] resrefTypes)
         {
         	ResRefQuestionPanel panel = new ResRefQuestionPanel(question,resrefTypes);
         	QuestionsPanel.Children.Add(panel);
