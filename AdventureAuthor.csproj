@@ -93,17 +93,17 @@
     <Compile Include="Core\Speaker.cs" />
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Notebook\Balloon.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\Balloon.xaml.cs">
       <DependentUpon>Balloon.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Notebook\Comment.cs" />
-    <Compile Include="Notebook\Idea.cs" />
-    <Compile Include="Notebook\MyIdeasWindow.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\IdeaComment.cs" />
+    <Compile Include="Notebook\MyIdeas\Idea.cs" />
+    <Compile Include="Notebook\MyIdeas\MyIdeasWindow.xaml.cs">
       <DependentUpon>MyIdeasWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Notebook\Sky.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\Sky.xaml.cs">
       <DependentUpon>Sky.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -140,6 +140,10 @@
       <DependentUpon>FloatQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\IntegerAsStringQuestionPanel.xaml.cs">
+      <DependentUpon>IntegerAsStringQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\IntegerQuestionPanel.xaml.cs">
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -158,8 +162,16 @@
       <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\StringVariableControl.xaml.cs">
+      <DependentUpon>StringVariableControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\TagQuestionPanel.xaml.cs">
       <DependentUpon>TagQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\VariableQuestionPanel.xaml.cs">
+      <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Forms\CreateChapter_Form.cs" />
@@ -217,6 +229,10 @@
       <SubType>Code</SubType>
       <DependentUpon>SoundWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\VariablesWindow.xaml.cs">
+      <DependentUpon>VariablesWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
@@ -232,9 +248,9 @@
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Notebook\Balloon.xaml" />
-    <Page Include="Notebook\MyIdeasWindow.xaml" />
-    <Page Include="Notebook\Sky.xaml" />
+    <Page Include="Notebook\MyIdeas\Balloon.xaml" />
+    <Page Include="Notebook\MyIdeas\MyIdeasWindow.xaml" />
+    <Page Include="Notebook\MyIdeas\Sky.xaml" />
     <Page Include="UI\Controls\ActionControl.xaml" />
     <Page Include="UI\Controls\BooleanQuestionPanel.xaml" />
     <Page Include="UI\Controls\BranchControl.xaml" />
@@ -242,11 +258,14 @@
     <Page Include="UI\Controls\EndConversationControl.xaml" />
     <Page Include="UI\Controls\EnumQuestionPanel.xaml" />
     <Page Include="UI\Controls\FloatQuestionPanel.xaml" />
+    <Page Include="UI\Controls\IntegerAsStringQuestionPanel.xaml" />
     <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
     <Page Include="UI\Controls\ResRefQuestionPanel.xaml" />
     <Page Include="UI\Controls\StringQuestionPanel.xaml" />
+    <Page Include="UI\Controls\StringVariableControl.xaml" />
     <Page Include="UI\Controls\TagQuestionPanel.xaml" />
+    <Page Include="UI\Controls\VariableQuestionPanel.xaml" />
     <Page Include="UI\Windows\AddActionWindow.xaml" />
     <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
     <Page Include="UI\Windows\AnimationWindow.xaml" />
@@ -257,8 +276,13 @@
     <Page Include="UI\Windows\NewConversation.xaml" />
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
     <Page Include="UI\Windows\SoundWindow.xaml" />
+    <Page Include="UI\Windows\VariablesWindow.xaml" />
     <Folder Include="Core" />
     <Folder Include="Notebook" />
+    <Folder Include="Notebook\MyIdeas" />
+    <Folder Include="Notebook\MyNotes" />
+    <Folder Include="Notebook\MyAdvice" />
+    <Folder Include="Notebook\MyTasks" />
     <Folder Include="Scripts" />
     <Folder Include="Utils" />
     <Folder Include="Setup" />

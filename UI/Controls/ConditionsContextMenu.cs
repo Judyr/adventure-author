@@ -38,8 +38,17 @@ namespace AdventureAuthor.UI.Controls
 {
     public partial class LineControl : UserControl
     {    
+    	private bool HasCondition()
+    	{
+    		return nwn2Line.Conditions.Count > 0;
+    	}
+    	
 		private void OnClick_CreatureIsDead(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a hostile creature is within range of the player");
     		window.AddFloatQuestion("How close does a hostile creature need to be (in metres)?",0,null);
@@ -56,6 +65,10 @@ namespace AdventureAuthor.UI.Controls
 		
 		private void OnClick_EnemyIsNearPlayer(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a hostile creature is within range of the player");
     		window.AddFloatQuestion("How close does a hostile creature need to be (in metres)?",0,null);
@@ -72,9 +85,13 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_IntHasValue(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an integer variable has a certain value");
-    		window.AddStringQuestion("What is the name of the variable you want to check?");
+    		window.AddVariableQuestion("Which variable do you want to check?", NWN2ScriptVariableType.Int);
     		window.AddStringQuestion("What value does the variable need to have? Either enter the value, " +
     		                          "e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
@@ -90,9 +107,13 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_StringHasValue(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a string variable has a certain value");
-    		window.AddStringQuestion("What is the name of the variable you want to check?");
+    		window.AddVariableQuestion("Which variable do you want to check?", NWN2ScriptVariableType.String);
     		window.AddStringQuestion("What value does the variable need to have?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -107,6 +128,10 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of the player");
     		window.AddTagQuestion("Which object needs to be within range?",ScriptHelper.ObjectType.Any);
@@ -125,6 +150,10 @@ namespace AdventureAuthor.UI.Controls
 		
 		private void OnClick_PlayerHasGold(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a certain amount of gold");
     		window.AddIntegerQuestion("How much gold does the player need to have?",0,null);
@@ -141,6 +170,10 @@ namespace AdventureAuthor.UI.Controls
 		
 		private void OnClick_PlayerIsMale(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
@@ -148,6 +181,10 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
@@ -155,6 +192,10 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
@@ -162,6 +203,10 @@ namespace AdventureAuthor.UI.Controls
 			
 		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
@@ -169,6 +214,10 @@ namespace AdventureAuthor.UI.Controls
 		
 		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
@@ -176,13 +225,21 @@ namespace AdventureAuthor.UI.Controls
 				
 		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
 		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
 			nwn2Line.Conditions.Add(condition);
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}			
 				
 		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
-		{			
+		{		
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}	
 			// TODO, pass in a 'remark' that will extend the size of the parameter panel to give extra info,
 			// then add it in everywehre it needs it (e.g. make the stuff about '-4', '>6' into its own remark.
 			

@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using AdventureAuthor;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -41,26 +42,28 @@ namespace AdventureAuthor.UI.Windows
     {
         public AddRemoveSpeakersWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();   
+            AnswerBox.ItemsSource = ScriptHelper.GetTags(ScriptHelper.ObjectType.Creature);
         }
 
         private void OnClick_AddSpeaker(object sender, EventArgs ea)
         {
-        	if (Conversation.CurrentConversation != null) {
-        		if (NewSpeakerName.Text == String.Empty) {
-        			Say.Error("You didn't type anything.");
-        		}
-        		else if (Conversation.CurrentConversation.GetSpeaker(NewSpeakerName.Text) != null) {
-        			Say.Error("'" + NewSpeakerName.Text + "' is already a part of this conversation.");
-        		}
-        		else if (NewSpeakerName.Text.ToLower() == "player") {
-        			Say.Error("You can't add a character called 'Player', since the real Player is already a part of the conversation.");
-        		}
-        		else {
-        			Conversation.CurrentConversation.AddSpeaker(NewSpeakerName.Text);	
-        			Close();	
-        		}
+        	if (AnswerBox.SelectedItem == null) {
+        		Say.Error("You didn't select a speaker.");
+        		return;
         	}
+        	else if (Conversation.CurrentConversation.GetSpeaker((string)AnswerBox.SelectedItem) != null) {
+        	    Say.Error(AnswerBox.SelectedValue + " is already a part of this conversation."); // TODO - just don't display them
+        	    return; 	          
+        	}
+        	else {
+         		Conversation.CurrentConversation.AddSpeaker((string)AnswerBox.SelectedItem);	
+        		Close();       		
+        	}
+        	
+        	// TODO if this becomes editable, check they don't add anyone called Player
+        	// TODO let them add [OWNER]
+        	// TODO add in alphabetical order
         }
         
         private void OnClick_Cancel(object sender, EventArgs ea)

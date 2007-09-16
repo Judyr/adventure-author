@@ -1,0 +1,10 @@
+﻿<UserControl x:Class="AdventureAuthor.UI.Controls.VariableQuestionPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ 	Height="120" Width="500" Background="Pink">
+    <Canvas>
+		<TextBlock Name="QuestionLabel" FontSize="16" Foreground="Red" Canvas.Top="15" Canvas.Left="15" Height="40" Width="450"/>
+		<ComboBox Name="AnswerBox" Canvas.Top="60" Canvas.Left="15" Height="30" Width="180"
+    			  IsReadOnly="true" IsEditable="true" IsTextSearchEnabled="true"/>
+	</Canvas>
+</UserControl>

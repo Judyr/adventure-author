@@ -374,11 +374,7 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Set an integer variable");
     		
-    		// TODO: In future this should become an AddVariableQuestion, and the user should have to create a variable in a separate
-    		// VariableManager window (giving the name, type, and what it will be used for), and then be able to select what
-    		// variable they want to check here.
-    		
-    		window.AddStringQuestion("What is the name of the variable you want to set?");
+    		window.AddVariableQuestion("Which variable do you want to set?", NWN2ScriptVariableType.Int);
     		window.AddStringQuestion("What is the new value of the variable? Either enter the value, e.g. '5', or an operation, " +
     		                         "e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
@@ -397,18 +393,14 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Set a string variable");
     		
-    		// TODO: In future this should become an AddVariableQuestion, and the user should have to create a variable in a separate
-    		// VariableManager window (giving the name, type, and what it will be used for), and then be able to select what
-    		// variable they want to check here.
-    		
-    		window.AddStringQuestion("What is the name of the variable you want to set?");
+    		window.AddVariableQuestion("Which variable do you want to set?", NWN2ScriptVariableType.String);
     		window.AddStringQuestion("What is the new value of the variable?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.SetInt((string)prms[0],(string)prms[1]);
+    			NWN2ScriptFunctor action = Actions.SetString((string)prms[0],(string)prms[1]);
 	    		nwn2Line.Actions.Add(action);
 	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
     		}
@@ -416,7 +408,7 @@ namespace AdventureAuthor.UI.Controls
     	
 		
 		
-		public void JournalTest(object sender, EventArgs ea)
+		public void SetupVariables(object sender, EventArgs ea)
 		{
 			/* Journal stuff
 			 * 
@@ -464,26 +456,26 @@ namespace AdventureAuthor.UI.Controls
 				variable2.Name = "Player has killed the wolf";
 				variable2.VariableType = NWN2ScriptVariableType.String;
 				variable2.ValueString = "no";
-				form.App.Module.Areas["Scratchpad"].Variables.Add(variable);
-				form.App.Module.Areas["Scratchpad"].Variables.Add(variable2);
+				NWN2ScriptVariable variable3 = new NWN2ScriptVariable();
+				variable3.Name = "Number of rats collected";
+				variable3.VariableType = NWN2ScriptVariableType.Int;
+				variable3.ValueInt = 5;
+				NWN2ScriptVariable variable4 = new NWN2ScriptVariable();
+				variable4.Name = "Seconds till world explodes";
+				variable4.VariableType = NWN2ScriptVariableType.Int;
+				variable4.ValueInt = 179;
+				
+							NWN2ScriptVariable variable5 = new NWN2ScriptVariable();
+				variable5.Name = "Player's best friend";
+				variable5.VariableType = NWN2ScriptVariableType.String;
+				variable5.ValueString = "Skeletor";
+				form.App.Module.ModuleInfo.Variables.Add(variable);
+				form.App.Module.ModuleInfo.Variables.Add(variable2);
+				form.App.Module.ModuleInfo.Variables.Add(variable3);
+				form.App.Module.ModuleInfo.Variables.Add(variable4);
+				form.App.Module.ModuleInfo.Variables.Add(variable5);
 			
-			
-			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
 				
-
-				
-				
-				//area.Variables.Add(
-				
-				
-				Say.Information(area.Name);
-				if (area.Variables != null) {
-					Say.Information("Has a variables table.");
-					foreach (NWN2ScriptVariable var in area.Variables) {
-						Say.Information(var.ToString());
-					}
-				}
-			}
 		}
     }
 }

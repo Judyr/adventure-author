@@ -31,7 +31,7 @@
 	<UserControl.Resources>
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
-			<MenuItem Header="SETUP JOURNAL" Click="JournalTest"/>
+			<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>
 			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
 			<MenuItem Header="Create a creature" Click="OnClick_CreateCreature"/>

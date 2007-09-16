@@ -19,12 +19,12 @@ namespace AdventureAuthor.UI.Controls
 
     public partial class StringQuestionPanel : UserControl, IQuestionPanel
     {
-        public StringQuestionPanel(string question)
+		public StringQuestionPanel(string question)
         {
             InitializeComponent();
         	QuestionLabel.Text = question;
         }
-
+        
         public object Answer
         {
         	get {

@@ -27,7 +27,7 @@
     >
     <Grid>
         <StackPanel Orientation="Vertical">
-    		<TextBox Name="NewSpeakerName"/>
+    		<ComboBox Name="AnswerBox" IsReadOnly="true" IsEditable="true" IsTextSearchEnabled="true"/>
         	<StackPanel>
     			<Button Content="Add speaker" Click="OnClick_AddSpeaker"/>
     			<Button Content="Cancel" Click="OnClick_Cancel"/>

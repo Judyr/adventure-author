@@ -225,8 +225,8 @@ namespace AdventureAuthor.UI
 			newChapter.Activate += delegate { NewChapterDialog(); };
 			MenuButtonItem newConversation = new MenuButtonItem("Conversation Writer");
 			newConversation.Activate += delegate { NewConversationDialog(); };
-			MenuButtonItem newScript = new MenuButtonItem("Script Cards");
-			newScript.Activate += delegate { Say.Error("Not implemented yet."); };
+			MenuButtonItem newScript = new MenuButtonItem("Variables Manager");
+			newScript.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
 			
 			MenuButtonItem changeUser = new MenuButtonItem("Change User");
 			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
@@ -421,21 +421,21 @@ namespace AdventureAuthor.UI
 				
 				// Get rid of various menu items:
 				else if (fi.FieldType == typeof(MenuButtonItem)) {
-					MenuButtonItem menuButtonItem = (MenuButtonItem)fi.GetValue(form.App);	
-					
-					string[] dispose = new string[] {"Create Transition...",
-													 "Paint Spawn Point",
-													 "Module &Properties",
-													 "&Journal",
-													 "&2DA File...",
-													 "Mode"
-													 };
-					foreach (string text in dispose) {
-						if (menuButtonItem.Text == text) {
-							menuButtonItem.Dispose();
-							continue;
-						}						
-					}
+//					MenuButtonItem menuButtonItem = (MenuButtonItem)fi.GetValue(form.App);	
+//					
+//					string[] dispose = new string[] {"Create Transition...",
+//													 "Paint Spawn Point",
+//													 "Module &Properties",
+//													 "&Journal",
+//													 "&2DA File...",
+//													 "Mode"
+//													 };
+//					foreach (string text in dispose) {
+//						if (menuButtonItem.Text == text) {
+//							menuButtonItem.Dispose();
+//							continue;
+//						}						
+//					}
 				}
 				// Deal with MenuBarItems:
 				else if (fi.FieldType == typeof(MenuBarItem)) {
@@ -461,6 +461,38 @@ namespace AdventureAuthor.UI
 //					else if (menuBarItem.Text == "&Help") {
 //						
 //					}
+				}
+				else if (fi.FieldType == typeof(ToolBarContainer)) {
+					// new - adding AA toolbars
+					try {
+					ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+					if (tbc.Name == "topSandBarDock") {
+						TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();
+						tb.Text = "Dalek Toolbar";
+						ButtonItem mbi = new ButtonItem();
+						mbi.Text = "Operate";
+						ButtonItem mbi2 = new ButtonItem();
+						mbi2.Text = "Extrapolate";
+						ButtonItem mbi3 = new ButtonItem();
+						mbi3.Text = "Eliminate";
+						MenuBar mb4 = new MenuBar();
+						mb4.Text = "Exterminate";
+						mb4.Tearable = true;
+						MenuBarItem m1 = new MenuBarItem("Doctor");
+						MenuBarItem m2 = new MenuBarItem("TARDIS");
+						MenuBarItem m3 = new MenuBarItem("Davros");
+						mb4.Items.Add(m1);
+						mb4.Items.Add(m2);
+						mb4.Items.Add(m3);
+						tb.Items.Add(mbi);
+						tb.Items.Add(mbi2);
+						tb.Items.Add(mbi3);
+//						tbc.Controls.Add(mb4);
+						tbc.Controls.Add(tb);
+					}
+					} catch (Exception e) {
+						Say.Error(e.ToString());
+					}
 				}
 			}
 			
