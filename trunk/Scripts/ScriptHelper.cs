@@ -194,6 +194,11 @@ namespace AdventureAuthor.Scripts
 			Chuckle = 133
 		};
 		
+		public enum VariableType {
+			String,
+			Int
+		}
+		
 		#endregion
 		
 		#region Creating scripts

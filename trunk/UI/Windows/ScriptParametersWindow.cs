@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts;
+using NWN2Toolset.NWN2.Data;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -98,6 +99,12 @@ namespace AdventureAuthor.UI.Windows
         public void AddResRefQuestion(string question, ScriptHelper.ObjectType[] resrefTypes)
         {
         	ResRefQuestionPanel panel = new ResRefQuestionPanel(question,resrefTypes);
+        	QuestionsPanel.Children.Add(panel);
+        }
+
+        public void AddVariableQuestion(string question, NWN2ScriptVariableType variableType)
+        {
+        	VariableQuestionPanel panel = new VariableQuestionPanel(question,variableType);
         	QuestionsPanel.Children.Add(panel);
         }
         
