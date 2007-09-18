@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NWN2Toolset.NWN2.Data;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -26,22 +27,34 @@ namespace AdventureAuthor.UI.Controls
         {
             InitializeComponent();
         	QuestionLabel.Text = question;
+        	checkType = type;
         }
         
 		public enum CheckType { CheckForSetting, CheckForGetting }
 		
         public object Answer
         {
-        	get {    return null;    		
-        		if (checkType == CheckType.CheckForGetting) {
-        		}
-        		else if (checkType == CheckType.CheckForSetting) {
-        			
-        		}
-        		else {
-        			throw new NullReferenceException("IntegerAsStringQuestionPanel hasn't been given a CheckType.");
+        	get {    
+        		string s = AnswerBox.Text;
+        		
+        		switch (checkType) {
+        			case CheckType.CheckForSetting:
+        				if (s == String.Empty) {
+		        			
+		        		}
+        		
+        				
+        				break;
+        			case CheckType.CheckForGetting:
+        				
+        				
+        				break;
+        			default:
+        				throw new NullReferenceException("IntegerAsStringQuestionPanel hasn't been given a CheckType.");
         		}
         		
+        		
+        		return null;
         			/* Valid setting entries:
         			"5"     (Set to 5)
 					"=-2"   (Set to -2)

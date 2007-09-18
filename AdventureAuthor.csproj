@@ -46,6 +46,14 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Netron.Diagramming.Core">
+      <HintPath>..\Libraries\Netron3\Diagramming.Core\bin\Release\Netron.Diagramming.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Netron.Diagramming.Win">
+      <HintPath>..\Libraries\Netron3\Diagramming.Win\bin\Release\Netron.Diagramming.Win.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="NWN2Toolset">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -174,6 +182,10 @@
       <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Forms\ConversationGraph.cs" />
+    <Compile Include="UI\Forms\ConversationGraph.Designer.cs">
+      <DependentUpon>ConversationGraph.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Forms\CreateChapter_Form.cs" />
     <Compile Include="UI\Forms\CreateChapter_Form.Designer.cs">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
@@ -236,6 +248,9 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
+    <EmbeddedResource Include="UI\Forms\ConversationGraph.resx">
+      <DependentUpon>ConversationGraph.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>

@@ -69,6 +69,7 @@ namespace AdventureAuthor.Core
 		private static bool doBackups = true;
 		private static string adventureAuthorDir = @"C:\AdventureAuthor\";
 		private static string backupDir = Path.Combine(adventureAuthorDir,"backups");
+		private static string scriptsDir = Path.Combine(adventureAuthorDir,"scripts");		
 		private static string serializedDir = Path.Combine(adventureAuthorDir,"serialized");
 		private static string logDir = Path.Combine(adventureAuthorDir,"logs");
 		
@@ -92,7 +93,11 @@ namespace AdventureAuthor.Core
 		
 		public static string BackupDir {
 			get { return backupDir; }
-		}					
+		}		
+		
+		public static string ScriptsDir {
+			get { return scriptsDir; }
+		}			
 				
 		public static string SerializedDir {
 			get { return serializedDir; }
