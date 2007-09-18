@@ -181,7 +181,23 @@ namespace AdventureAuthor.UI.Controls
 	    		nwn2Line.Actions.Add(action);
 	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
     		}
-    	}    	
+    	}    
+    	    	    	
+    	private void OnClick_DisplayMessage(object sender, EventArgs ea)
+    	{    		
+    		object[] prms = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Display a message");
+    		window.AddStringQuestion("What message should be displayed?");
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    		
+    			NWN2ScriptFunctor action = Actions.DisplayMessage((string)prms[0]);
+	    		nwn2Line.Actions.Add(action);
+	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
+    		}
+    	}  
     	
     	private void OnClick_EndGame(object sender, EventArgs ea)
     	{
@@ -474,7 +490,13 @@ namespace AdventureAuthor.UI.Controls
 				form.App.Module.ModuleInfo.Variables.Add(variable3);
 				form.App.Module.ModuleInfo.Variables.Add(variable4);
 				form.App.Module.ModuleInfo.Variables.Add(variable5);
-			
+				
+				
+				NWN2ScriptVariable varx = new NWN2ScriptVariable();
+				varx.Name = "Don't set me to anything";
+				varx.VariableType = NWN2ScriptVariableType.String;
+				varx.ValueString = "originalvalue";
+				form.App.Module.ModuleInfo.Variables.Add(varx);
 				
 		}
     }
