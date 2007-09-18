@@ -295,49 +295,32 @@ namespace AdventureAuthor.Scripts
 		/// <returns>Returns the compiled script, or null if no script was found.</returns>
 		private static NWN2GameScript GetScript(string name, ScriptOrigin origin)
 		{
-			try {
-				ResourceRepository scripts;				
+			try {		
 				switch (origin) {
 					case ScriptOrigin.NWN2:
 						string path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
-						scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(path);
+						ResourceRepository scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(path);
+						ushort ncs = BWResourceTypes.GetResourceType("ncs");
+						OEIResRef resRef = new OEIResRef(name);
+						IResourceEntry entry = scripts.FindResource(resRef,ncs);
+						NWN2GameScript scrp = new NWN2GameScript(entry);	
+						return scrp;
 						break;
 					case ScriptOrigin.AdventureAuthor:
-						scripts = new DirectoryResourceRepository(Adventure.ScriptsDir);
+						throw new NotImplementedException();
+						if (!File.Exists(Path.Combine(Adventure.ScriptsDir,name+".ncs"))) {
+							Say.Error("No Adventure Author script named '" + name + "' was found.");
+							return null;
+						}
+						
 						break;
 					default: 
 						throw new ArgumentException("Invalid ScriptOrigin enum passed when trying to retrieve a script.");
 				}			
 				
-				ushort ncs = BWResourceTypes.GetResourceType("ncs");
-				OEIResRef resRef = new OEIResRef(name);
-				IResourceEntry entry = scripts.FindResource(resRef,ncs);
-				NWN2GameScript scrp = new NWN2GameScript(entry);	
-				return scrp;				
 				
 				
-				
-//				if (origin == ScriptOrigin.NWN2) {					
-//					string scriptsPath = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
-//					ResourceRepository scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(scriptsPath);
-//					ushort ncs = BWResourceTypes.GetResourceType("ncs");
-//					OEIResRef resRef = new OEIResRef(name);
-//					IResourceEntry entry = scripts.FindResource(resRef,ncs);
-//					NWN2GameScript scrp = new NWN2GameScript(entry);	
-//					return scrp;
-//				}
-//				else if (origin == ScriptOrigin.AdventureAuthor) {
-//					string path = Path.Combine(Adventure.ScriptsDir,name + ".ncs");
-//					DirectoryResourceRepository aascripts = new DirectoryResourceRepository(Adventure.ScriptsDir);
-//					ushort nc2s = BWResourceTypes.GetResourceType("ncs");
-//					//OEIGenericCollectionWithEvents<IResourceEntry> dict = aascripts.FindResource(
-//					dict.
-//					aascripts.Dispose();
-//					return null;
-//				}
-//				else {
-//					throw new ArgumentException("Invalid ScriptOrigin enum passed when trying to retrieve a script.");
-//				}
+	
 			}
 			catch (NullReferenceException e) {
 				Say.Error("Was unable to retrieve script named '" + name + "'.",e);
@@ -426,7 +409,7 @@ namespace AdventureAuthor.Scripts
 					
 				case "aa_display_messagebox":
 					int length = Math.Min(action.Parameters[0].ValueString.Length,50);					
-					string shortened = action.Parameters[0].ValueString.Substring(0,length-1);
+					string shortened = action.Parameters[0].ValueString.Substring(0,length);
 					if (shortened.Length < action.Parameters[0].ValueString.Length) {
 						return "DISPLAY MESSAGE \"" + shortened + "...\"";
 					}
