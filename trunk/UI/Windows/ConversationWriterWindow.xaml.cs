@@ -29,20 +29,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms.Integration;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using AdventureAuthor.Core;
-using AdventureAuthor.Scripts;
 using AdventureAuthor.UI.Controls;
+using AdventureAuthor.UI.Forms;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using winforms = System.Windows.Forms;
-using System.Windows.Forms.Integration;
-using OEIShared.IO;
-using OEIShared.Utils;
+using Netron.Diagramming.Core;
+using Netron.Diagramming.Win;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -67,6 +65,8 @@ namespace AdventureAuthor.UI.Windows
 		#endregion
     	
     	#region Fields    	
+    	
+    	private WindowsFormsHost host;
     	
     	private static ConversationWriterWindow instance;    	
 		public static ConversationWriterWindow Instance {
@@ -140,7 +140,7 @@ namespace AdventureAuthor.UI.Windows
         private bool StartsWithVowel(string word)
         {
         	if (word == null || word.Length == 0) {
-        		throw new InvalidOperationException("Was passed an empty or null word.");
+        		return false;
         	}
         	char c = word.ToLower()[0];
         	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; 
@@ -260,7 +260,7 @@ namespace AdventureAuthor.UI.Windows
 			currentPage.FinalControl = null;			
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
-			MainGraphViewer.RefreshSelectedNode();
+//			MainGraphViewer.RefreshSelectedNode();
 			if (ExpandedGraphViewer != null) {
 				ExpandedGraphViewer.RefreshSelectedNode();
 			}
@@ -416,7 +416,7 @@ namespace AdventureAuthor.UI.Windows
 					previousPage = null;
 				}					
 				
-				MainGraphViewer.RefreshGraph();
+//				MainGraphViewer.RefreshGraph();
 				if (ExpandedGraphViewer != null) {
 					ExpandedGraphViewer.RefreshGraph();
 				}
@@ -430,8 +430,29 @@ namespace AdventureAuthor.UI.Windows
 					
 		#region Event handlers
 		
+		private static int offset = 0;
+		
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
-		{
+		{Say.Information("CLICKED");
+			if (host == null) {
+				AdventureAuthor.Utils.Say.Error("Host was null");
+				
+			}
+			
+			DiagramControl d = (DiagramControl)host.Child;
+								offset += 40;
+					Say.Information("Trying to add shapes.");
+					ClassShape shape = new ClassShape();
+					shape.Height = 30;
+					shape.Width =30;
+					shape.X = offset;
+					shape.Y = offset;
+					shape.Text = "ARRG";
+					d.AddShape(shape);
+					host.Child.Invalidate();
+			
+			
+			return;
 			expandedGraphViewer = new GraphWindow();
 			Window window = new Window();
 			window.Height = 900;
@@ -524,7 +545,7 @@ namespace AdventureAuthor.UI.Windows
 						
 			// Build a graph based on the list of Pages:
 			pages = CreatePages(Conversation.CurrentConversation);
-			MainGraphViewer.RefreshGraph();		
+//			MainGraphViewer.RefreshGraph();		
 			if (ExpandedGraphViewer != null) {
 				ExpandedGraphViewer.RefreshGraph();
 			}
@@ -771,7 +792,7 @@ namespace AdventureAuthor.UI.Windows
 			currentlySelectedControl = null;
 			Conversation.CurrentConversation = null;
 			
-			MainGraphViewer.RefreshGraph();
+//			MainGraphViewer.RefreshGraph();
 			if (ExpandedGraphViewer != null) {
 				ExpandedGraphViewer.RefreshGraph();
 			}
@@ -786,6 +807,15 @@ namespace AdventureAuthor.UI.Windows
 //			}
 			this.LinesPanel.Children.Clear();
 
+		}
+		
+		private void OnLoaded(object sender, EventArgs ea)
+		{
+			host = new WindowsFormsHost();
+			host.Child = new ConversationGraph();
+			Grid.SetRow(host,0);
+			Grid.SetColumn(host,0);
+			GraphGrid.Children.Add(host);
 		}
     }
 }

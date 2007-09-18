@@ -262,7 +262,15 @@ namespace AdventureAuthor.Scripts
 		/// <param name="message">The message to display.</param>
 		public static NWN2ScriptFunctor DisplayMessage(string message)
 		{
-			return ScriptHelper.GetScriptFunctor("aa_display_messagebox",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
+			NWN2ScriptFunctor s = ScriptHelper.GetScriptFunctor("ga_attack",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
+			if (s == null) {
+				Say.Information("didn't return a script functor");
+			}
+			else {
+				Say.Information("script functor: " + s.ToString());
+			}
+			return s;
+			//return ScriptHelper.GetScriptFunctor("aa_display_messagebox",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
 		}
 		
 		/// <summary>
