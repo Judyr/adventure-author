@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using Netron.Diagramming.Core;
 using Netron.Diagramming.Win;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Core;
+using AdventureAuthor.Conversations;
 
 namespace AdventureAuthor.UI.Forms
 {
@@ -39,103 +41,117 @@ namespace AdventureAuthor.UI.Forms
 	/// </summary>
 	public partial class ConversationGraph : Form
 	{
-		private static int offset = 0;
-		private DiagramControl diagramControl1;
+		private DiagramControl diagramControl;
 		
 		public ConversationGraph()
 		{
 			TopLevel = false; // to allow it to be added to a WindowsFormHost
 			InitializeComponent();
 			
-            this.diagramControl1 = new Netron.Diagramming.Win.DiagramControl();
-            ((System.ComponentModel.ISupportInitialize)(this.diagramControl1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // diagramControl1
-            // 
-            ClassShape shape = new ClassShape();
-            shape.Enabled = false;
-            shape.Height = 500; 
-            shape.Width =200;
-            shape.X = 80;
-            shape.Y = 90;
-            shape.Text = "Iam an text.";
-            
-            ClassShape shape2 = new ClassShape();
-            shape2.Height = 50; 
-            shape2.Width =300;
-            shape2.X = 0;
-            shape2.Y = 0;
-            shape2.Text = "I am some text";
-            
-            SimpleRectangle rect = new SimpleRectangle();
-            rect.Height = 40;
-            rect.Width = 250;
-            rect.Name = "my reeeect";
-            rect.OnEntitySelect += delegate { Say.Information("Selected " + rect.Name + "."); };
-            rect.Text = "listen to me !";
-            rect.X = 100;
-            rect.Y = 120;
-            Say.Information(rect.EntityName);
-            
-            this.diagramControl1.AddShape(shape);
-            this.diagramControl1.AllowDrop = true;
-            this.diagramControl1.AutoScroll = true;
-            this.diagramControl1.BackColor = System.Drawing.Color.Silver;
-            this.diagramControl1.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.FlatColor;
-            this.diagramControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.diagramControl1.EnableAddConnection = true;
-            this.diagramControl1.Location = new System.Drawing.Point(0, 0);
-            this.diagramControl1.Magnification = new System.Drawing.SizeF(100F, 100F);
-            this.diagramControl1.Name = "diagramControl1";
-            this.diagramControl1.Origin = new System.Drawing.Point(0, 0);
-            this.diagramControl1.ShowPage = false;
-            this.diagramControl1.ShowRulers = false;
-            this.diagramControl1.Size = new System.Drawing.Size(862, 755);
-            this.diagramControl1.TabIndex = 0;
-            this.diagramControl1.Text = "diagramControl1";
-            this.diagramControl1.AddShape(shape2);
-            this.diagramControl1.AddShape(rect);
-            // 
-            // Form1
-            // 
-            this.Controls.Add(this.diagramControl1);
-            ((System.ComponentModel.ISupportInitialize)(this.diagramControl1)).EndInit();
-            this.ResumeLayout(false);
-			
-			
-		}
-		
-		
-			
-		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
-			
+            diagramControl = new DiagramControl();
+            ((System.ComponentModel.ISupportInitialize)(this.diagramControl)).BeginInit();
+            SuspendLayout();			
 
- 			
+            diagramControl.AllowDrop = false;
+            diagramControl.AutoScroll = true;
+            diagramControl.BackColor = System.Drawing.Color.LightBlue;
+            diagramControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
+            diagramControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            diagramControl.EnableAddConnection = true;
+           	Netron.Diagramming.Core.Layout.LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
+            diagramControl.Location = new System.Drawing.Point(0, 0);
+            diagramControl.Magnification = new System.Drawing.SizeF(100F, 100F);
+            diagramControl.Name = "diagramControl";
+            diagramControl.Size = new Size(500,500);
+//            Point p = new Point(-1200,0);
+//			diagramControl.Origin = p;
+            diagramControl.Origin = new System.Drawing.Point(0, 0);
+            
+            
+            
+            diagramControl.ShowPage = true;
+            diagramControl.ShowRulers = false;
+            diagramControl.TabIndex = 0;
+            diagramControl.Text = "Conversation Graph";
+            
+            diagramControl.Click += delegate { 
+            	Point p = new Point(diagramControl.Location.X - 10, diagramControl.Location.Y);
+            	diagramControl.Origin = p;
+            	diagramControl.Invalidate();
+            };
+            
+            
+            this.Controls.Add(this.diagramControl);
+            ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
+            ResumeLayout(false);
 		}
 		
-		protected override void OnClick(EventArgs e)
+		/*
+		 * if this doesn't work:
+		 * 
+		 * 
+		 * 
+		 */
+		
+		
+		private void DrawChildren(List<ConversationPage> children, PageNode parentNode)
 		{
+			if (children == null || children.Count == 0) {
+				return;
+			}
 			
-			foreach (Control c in this.Controls) {
-				if (c is DiagramControl) {
-					offset += 40;
-					Say.Information("Trying to add shapes.");
-					DiagramControl d = (DiagramControl)c;
-					ClassShape shape = new ClassShape();
-					shape.Height = 30;
-					shape.Width =30;
-					shape.X = offset;
-					shape.Y = offset;
-					shape.Text = "ARRG";
-					d.AddShape(shape);
-					d.Invalidate();
-					this.Invalidate();
+			foreach (ConversationPage child in children) {
+				if (child.LeadInLine == null) {
+					throw new ArgumentException("Found another root.");
 				}
+	            PageNode childNode = new PageNode();
+            	childNode.Text = Truncated(Conversation.OEIExoLocStringToString(child.LeadInLine.Text));            	
+	            diagramControl.AddShape(childNode);	
+	            diagramControl.AddConnection(parentNode.Connectors[0],childNode.Connectors[0]);
+	            DrawChildren(child.Children,childNode);
 			}
 		}
+	
+		public void Open(List<ConversationPage> pages)
+		{
+			if (pages == null || pages.Count == 0) {
+				return;
+			}
+            ((System.ComponentModel.ISupportInitialize)(this.diagramControl)).BeginInit();
+            SuspendLayout();			            
+            PageNode root = new PageNode();
+            root.Text = "Root";
+            diagramControl.AddShape(root);
+            diagramControl.SetLayoutRoot(root);
+            DrawChildren(pages[0].Children,root);
+            root.Move(new Point(root.X+150,root.Y+15));
+            this.diagramControl.RunActivity("Standard TreeLayout");
+            diagramControl.Invalidate();
+            ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
+            ResumeLayout(false);
+            diagramControl.Invalidate();
+		}
 		
+		public void Clear()
+		{
+			diagramControl.Document.Model.Clear();
+			diagramControl.Invalidate();
+		}
+		
+		private string Truncated(string text)
+		{
+			if (text.Length > 30) {
+				int lastSpace = text.LastIndexOf(' ',20);
+				if (lastSpace != -1) {
+					return text.Substring(0,lastSpace) + "...";
+				}
+				else {
+					return text.Substring(0,30) + "...";
+				}
+			}
+			else {
+				return text;
+			}
+		}
 	}
 }

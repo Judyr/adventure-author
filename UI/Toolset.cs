@@ -484,11 +484,6 @@ namespace AdventureAuthor.UI
 							vm.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
 							tb.Items.Add(vm);
 							
-							ButtonItem gt = new ButtonItem();
-							gt.Text = "Graph Test";
-							gt.Activate += delegate { (new ConversationGraph()).ShowDialog(); };
-							tb.Items.Add(gt);
-							
 							tbc.Controls.Add(tb);
 						}
 					} catch (Exception e) {

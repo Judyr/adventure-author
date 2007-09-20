@@ -382,8 +382,6 @@ namespace AdventureAuthor.UI.Windows
 				
 		public void RefreshDisplay(bool conversationStructureChanged)
 		{						
-//			Conversation.CurrentConversation.SaveToWorkingCopy();
-			
 			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
 			if (conversationStructureChanged) {
 				ConversationPage newVersionOfCurrentPage = null;
@@ -416,7 +414,8 @@ namespace AdventureAuthor.UI.Windows
 					previousPage = null;
 				}					
 				
-//				MainGraphViewer.RefreshGraph();
+
+				ConversationWriterWindow.instance.MainGraph.Open(pages);
 				if (ExpandedGraphViewer != null) {
 					ExpandedGraphViewer.RefreshGraph();
 				}
@@ -433,12 +432,7 @@ namespace AdventureAuthor.UI.Windows
 		private static int offset = 0;
 		
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
-		{Say.Information("CLICKED");
-			if (host == null) {
-				AdventureAuthor.Utils.Say.Error("Host was null");
-				
-			}
-			
+		{
 			DiagramControl d = (DiagramControl)host.Child;
 								offset += 40;
 					Say.Information("Trying to add shapes.");
@@ -451,15 +445,14 @@ namespace AdventureAuthor.UI.Windows
 					d.AddShape(shape);
 					host.Child.Invalidate();
 			
-			
-			return;
-			expandedGraphViewer = new GraphWindow();
-			Window window = new Window();
-			window.Height = 900;
-			window.Width = 900;
-			window.Content = this.expandedGraphViewer;
-			expandedGraphViewer.RefreshGraph();
-			window.ShowDialog();
+					
+//			expandedGraphViewer = new GraphWindow();
+//			Window window = new Window();
+//			window.Height = 900;
+//			window.Width = 900;
+//			window.Content = this.expandedGraphViewer;
+//			expandedGraphViewer.RefreshGraph();
+//			window.ShowDialog();
 		}
 		
 		private void OnClick_New(object sender, EventArgs ea)
@@ -545,7 +538,7 @@ namespace AdventureAuthor.UI.Windows
 						
 			// Build a graph based on the list of Pages:
 			pages = CreatePages(Conversation.CurrentConversation);
-//			MainGraphViewer.RefreshGraph();		
+			MainGraph.Open(pages);
 			if (ExpandedGraphViewer != null) {
 				ExpandedGraphViewer.RefreshGraph();
 			}
@@ -658,7 +651,6 @@ namespace AdventureAuthor.UI.Windows
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-//			Conversation.CurrentConversation.SaveToWorkingCopy();
 			DisplayPage(CurrentPage);
 			RefreshDisplay(true);			
 		}
@@ -792,7 +784,7 @@ namespace AdventureAuthor.UI.Windows
 			currentlySelectedControl = null;
 			Conversation.CurrentConversation = null;
 			
-//			MainGraphViewer.RefreshGraph();
+			MainGraph.Clear();
 			if (ExpandedGraphViewer != null) {
 				ExpandedGraphViewer.RefreshGraph();
 			}
@@ -802,21 +794,20 @@ namespace AdventureAuthor.UI.Windows
 			SpeakersButtonsPanel.Children.Add(addSpeakersButton);
 		
 			this.ButtonsPanel.IsEnabled = false;
-//			foreach (Button b in OtherActionsButtonsPanel.Children) {
-//				b.IsEnabled = false;//TODO: do better way
-//			}
 			this.LinesPanel.Children.Clear();
-
 		}
 		
 		private void OnLoaded(object sender, EventArgs ea)
 		{
 			host = new WindowsFormsHost();
-			host.Child = new ConversationGraph();
+			MainGraph = new ConversationGraph();
+			host.Child = MainGraph;
 			Grid.SetRow(host,0);
 			Grid.SetColumn(host,0);
 			GraphGrid.Children.Add(host);
 		}
+		
+		public ConversationGraph MainGraph;
     }
 }
 		
