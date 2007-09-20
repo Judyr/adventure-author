@@ -50,27 +50,6 @@ namespace AdventureAuthor.UI.Windows
         public GraphWindow()
         {
             InitializeComponent(); 
-            
-//           // Orbifold.Unfold.Core.
-//            
-//           // Orbifold.Unfold.Core.
-//           
-//           SimpleEllipse ellipse = new SimpleEllipse();
-//           ellipse.Text = "my ellipse";
-//           ellipse.ShapeColor = Colors.ForestGreen;
-//           DefaultConnection connection = new DefaultConnection();
-//           connection.EndPoint = new Point(60,60);
-//                     
-//           ellipse.BindConnection(connection,Connection.StartProperty, ConnectorLocation.Bottom);
-//     	   
-//           
-//           SimpleRectangle rectangle = new SimpleRectangle();
-//           rectangle.Text = "my rect";
-//           rectangle.ShapeColor = Colors.SeaGreen;
-//           rectangle.BindConnection(connection,Connection.EndProperty, ConnectorLocation.Top);
-//           myCanvas.Children.Add(ellipse);
-//           myCanvas.Children.Add(rectangle);
-//           myCanvas.Children.Add(connection);
         }
 
         public void RefreshGraph()

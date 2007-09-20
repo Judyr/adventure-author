@@ -92,6 +92,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
+    <Compile Include="Conversations\PageNode.cs" />
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
     <Compile Include="Core\Conversation.cs" />
@@ -293,6 +294,7 @@
     <Page Include="UI\Windows\SoundWindow.xaml" />
     <Page Include="UI\Windows\VariablesWindow.xaml" />
     <Folder Include="Core" />
+    <Folder Include="Conversations" />
     <Folder Include="Notebook" />
     <Folder Include="Notebook\MyIdeas" />
     <Folder Include="Notebook\MyNotes" />
