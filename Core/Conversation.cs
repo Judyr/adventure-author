@@ -94,14 +94,21 @@ namespace AdventureAuthor.Core
 			get { return currentConversation; }
 			set { currentConversation = value; }
 		}
+		
 		private static object padlock = new object();
 		
+		/// <summary>
+		/// The game conversation.
+		/// </summary>
 		private NWN2GameConversation nwnConv;		
 		public NWN2GameConversation NwnConv {
 			get { return nwnConv; }
 		}
 		
-		private List<Speaker> speakers; // speakers in the conversation other than the player		
+		/// <summary>
+		/// Characters who can speak in this conversation. Always includes the player.
+		/// </summary>
+		private List<Speaker> speakers;	
 		public List<Speaker> Speakers {
 			get { return speakers; }
 		}
@@ -109,8 +116,7 @@ namespace AdventureAuthor.Core
 		private bool isDirty;		
 		public bool IsDirty {
 			get { return isDirty; }
-		}
-		
+		}		
 		
 //		private DependencyProperty isDirtyProperty = DependencyProperty.Register("IsDirty",typeof(bool),typeof(Conversation));
 //		public bool IsDirty {
@@ -118,28 +124,19 @@ namespace AdventureAuthor.Core
 //			private set { SetValue(isDirtyProperty,value); }			
 //		}
 		
-		
-		//TODO: Currently no way to store this information below. Use NwnConv.Comments somehow?
-		//TODO: If this gets reinstated, use the Chapter.ContainsObject, Chapter.ContainsSpeakingObject stuff etc. Otherwise use them when attaching convo to an instance.
-		// Remember that this is the INSTANCE that owns this conversation (i.e. different instances of a Character will have different conversations!)
-//		private INWN2Instance owner; // the creature/door/placeable that owns this conversation			
-//		public INWN2Instance Owner {
-//			get { return owner; }
-//		}
-//		
-//		private Chapter owningChapter;		
-//		public Chapter OwningChapter {
-//			get { return owningChapter; }
-//		}
-				
-		// TODO: How does class Speaker relate to class Character? Speaker owns a Character?
-		
+		/// <summary>
+		/// Colours to assign to speakers as they are added.
+		/// </summary>
 		private List<Brush> unassignedColours;
 		
 		#endregion Fields
 		
 		#region Constructors 
 		
+		/// <summary>
+		/// Create a new conversation wrapped around a game conversation object.
+		/// </summary>
+		/// <param name="conv">The game conversation object.</param>
 		public Conversation(NWN2GameConversation conv)
 		{
 			this.nwnConv = conv;
@@ -155,16 +152,16 @@ namespace AdventureAuthor.Core
 		
 		#region Speakers
 		
+		/// <summary>
+		/// Add an object with a given tag as a speaker in this conversation.
+		/// </summary>
+		/// <param name="tag">The tag of the object (usually a creature) who will be a speaker, or String.Empty to add the player.</param>
+		/// <returns>A speaker object, representing that speaker's tag and assigned colour.</returns>
 		public Speaker AddSpeaker(string tag)
-		{
-			return AddSpeaker(tag,tag); // use the tag as the display name if one isn't provided
-		}
-		
-		public Speaker AddSpeaker(string tag, string displayName)
 		{
 			Speaker existingSpeaker = GetSpeaker(tag);
 			if (existingSpeaker == null) {	
-				Speaker speaker = new Speaker(tag,displayName);
+				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
 				ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker);
@@ -176,6 +173,11 @@ namespace AdventureAuthor.Core
 			}
 		}
 		
+		/// <summary>
+		/// Get the speaker with a given tag, if one exists.
+		/// </summary>
+		/// <param name="tag">The tag the returned speaker must have.</param>
+		/// <returns>The speaker with the given tag, or null if no such speaker exists.</returns>
 		public Speaker GetSpeaker(string tag)
 		{
 			foreach (Speaker speaker in speakers) {
@@ -186,6 +188,10 @@ namespace AdventureAuthor.Core
 			return null;
 		}
 		
+		/// <summary>
+		/// Assign a unique UI colour to a speaker, or black if all unique colours have been assigned.
+		/// </summary>
+		/// <param name="speaker"></param>
 		private void AssignColour(Speaker speaker)
 		{
 			if (speaker.Tag == String.Empty) { // player
@@ -210,7 +216,6 @@ namespace AdventureAuthor.Core
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			newLine.Comment = Conversation.NOT_FILLER;
 			newLine.Speaker = speakerTag;
-//			SaveToWorkingCopy();
 			return newLine;
 		}
 
@@ -219,7 +224,6 @@ namespace AdventureAuthor.Core
 			NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			fillerLine.Comment = Conversation.FILLER;
 			fillerLine.Speaker = String.Empty;
-//			SaveToWorkingCopy();
 			return fillerLine;
 		}
 		
@@ -355,8 +359,18 @@ namespace AdventureAuthor.Core
 				}
 			}
 			
-			// Remove and refresh display, and return the children of the deleted line:
 			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
+			
+			// If there is only one line left in the branch (i.e. the branch is removed), clear any conditions from the remaining line:
+			if (Nwn2Line.Parent == null) {
+        		if (NwnConv.StartingList.Count == 1) {
+					NwnConv.StartingList[0].Conditions.Clear();
+        		}
+        	}
+        	else if (Nwn2Line.Parent.Line.Children.Count == 1){
+				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
+        	} 
+			
 			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
 			ConversationWriterWindow.Instance.RefreshDisplay(true);
 			SaveToWorkingCopy();
@@ -429,7 +443,7 @@ namespace AdventureAuthor.Core
 			
 			// Refresh display:
 			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			SaveToWorkingCopy();
+			SaveToWorkingCopy(); // still needed ? TODO check
 			ConversationWriterWindow.Instance.RefreshDisplay(false);
 		}	
 		
@@ -491,8 +505,8 @@ namespace AdventureAuthor.Core
 			
 			lock (padlock) {
 				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
-				if (ConversationWriterWindow.Instance.CurrentlySelectedControl != null) {
-					LineControl lc = ConversationWriterWindow.Instance.CurrentlySelectedControl as LineControl;
+				if (ConversationWriterWindow.Instance.CurrentControl != null) {
+					LineControl lc = ConversationWriterWindow.Instance.CurrentControl as LineControl;
 					if (lc != null) {
 						lc.Nwn2Line.Line.Text = StringToOEIExoLocString(lc.Dialogue.Text);
 					}
@@ -523,7 +537,12 @@ namespace AdventureAuthor.Core
 			return toCount.Split(' ').Length;
 		}
 
-		public static DataFromConversation GetWordLinePageCounts(Conversation conversation, NWN2ConversationConnector parent)
+		/// <summary>
+		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
+		/// </summary>
+		/// <param name="parent">The line to start counting from, or pass null to count over the whole conversation.</param>
+		/// <returns>The total word, line and page count of the conversation (or conversation segment).</returns>
+		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
 		{			
 			// Get the counts from the parent line before continuing:
 			int words = 0;
@@ -532,7 +551,7 @@ namespace AdventureAuthor.Core
 			NWN2ConversationConnectorCollection children;
 			
 			if (parent == null) {
-				children = conversation.nwnConv.StartingList;
+				children = nwnConv.StartingList;
 				pages += children.Count; // if we have reached a branch point, increment the number of pages
 			}
 			else {

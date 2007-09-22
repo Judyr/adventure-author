@@ -105,7 +105,7 @@ namespace AdventureAuthor.UI.Forms
 					throw new ArgumentException("Found another root.");
 				}
 	            PageNode childNode = new PageNode();
-            	childNode.Text = Truncated(Conversation.OEIExoLocStringToString(child.LeadInLine.Text));            	
+            	childNode.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(child.LeadInLine.Text),30);            	
 	            diagramControl.AddShape(childNode);	
 	            diagramControl.AddConnection(parentNode.Connectors[0],childNode.Connectors[0]);
 	            DrawChildren(child.Children,childNode);
@@ -124,11 +124,12 @@ namespace AdventureAuthor.UI.Forms
             diagramControl.AddShape(root);
             diagramControl.SetLayoutRoot(root);
             DrawChildren(pages[0].Children,root);
+            diagramControl.Layout(LayoutType.ClassicTree);
             root.Move(new Point(root.X+150,root.Y+15));
-            this.diagramControl.RunActivity("Standard TreeLayout");
             diagramControl.Invalidate();
             ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
             ResumeLayout(false);
+            root.Move(new Point(root.X+150,root.Y+15));
             diagramControl.Invalidate();
 		}
 		
@@ -136,22 +137,6 @@ namespace AdventureAuthor.UI.Forms
 		{
 			diagramControl.Document.Model.Clear();
 			diagramControl.Invalidate();
-		}
-		
-		private string Truncated(string text)
-		{
-			if (text.Length > 30) {
-				int lastSpace = text.LastIndexOf(' ',20);
-				if (lastSpace != -1) {
-					return text.Substring(0,lastSpace) + "...";
-				}
-				else {
-					return text.Substring(0,30) + "...";
-				}
-			}
-			else {
-				return text;
-			}
 		}
 	}
 }

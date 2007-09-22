@@ -39,12 +39,17 @@ namespace AdventureAuthor.Core
 		public string Tag {
 			get { return tag; }
 			set { tag = value; }
-		}	
+		}
 		
-		private string displayName;		
-		public string DisplayName {
-			get { return displayName; }
-			set { displayName = value; }
+		public string Name {
+			get { 
+				if (tag == String.Empty) {
+					return Conversation.PLAYER_NAME;
+				}
+				else {
+					return tag;
+				}
+			}
 		}
 		
 		private Brush colour;				
@@ -53,16 +58,15 @@ namespace AdventureAuthor.Core
 			set { colour = value; }
 		}
 				
-		public Speaker(string tag, string name)
+		public Speaker(string tag)
 		{
 			this.tag = tag;
-			this.displayName = name;
 			this.colour = Brushes.Black;
 		}
 		
 		public override string ToString()
 		{
-			return displayName.ToUpper();
+			return Name;
 		}
 	}
 }

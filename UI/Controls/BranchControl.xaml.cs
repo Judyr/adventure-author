@@ -112,7 +112,7 @@ namespace AdventureAuthor.UI.Controls
 							lineControl.SpeakerLabel.Text = "???";
 						}
 						else {
-							lineControl.SpeakerLabel.Text = speaker.DisplayName.ToUpper();
+							lineControl.SpeakerLabel.Text = speaker.Name.ToUpper();
 						}
 						lineControl.SpeakerLabel.Foreground = Conversation.BRANCH_COLOUR;     					
        				}

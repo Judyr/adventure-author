@@ -46,14 +46,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Netron.Diagramming.Core">
-      <HintPath>..\Libraries\Netron3\Diagramming.Core\bin\Release\Netron.Diagramming.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Netron.Diagramming.Win">
-      <HintPath>..\Libraries\Netron3\Diagramming.Win\bin\Release\Netron.Diagramming.Win.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="NWN2Toolset">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -93,6 +85,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
     <Compile Include="Conversations\PageNode.cs" />
+    <Compile Include="Conversations\SimpleSelectionTool.cs" />
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
     <Compile Include="Core\Conversation.cs" />
@@ -249,6 +242,7 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
+    <Compile Include="Utils\UsefulTools.cs" />
     <EmbeddedResource Include="UI\Forms\ConversationGraph.resx">
       <DependentUpon>ConversationGraph.cs</DependentUpon>
     </EmbeddedResource>
@@ -307,5 +301,13 @@
     <Folder Include="UI\Controls" />
     <Folder Include="UI\Forms" />
     <Folder Include="UI\Windows" />
+    <ProjectReference Include="..\Libraries\Netron3\Diagramming.Core\Netron.Diagramming.Core.csproj">
+      <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
+      <Name>Netron.Diagramming.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\Netron3\Diagramming.Win\Netron.Diagramming.Win.csproj">
+      <Project>{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}</Project>
+      <Name>Netron.Diagramming.Win</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

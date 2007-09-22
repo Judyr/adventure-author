@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using AdventureAuthor.Core;
 using AdventureAuthor.UI.Windows;
@@ -82,7 +83,7 @@ namespace AdventureAuthor.UI.Controls
         	// Set the appearance of the control based on who is speaking:
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);
 			if (speaker != null) { 
-				SpeakerLabel.Text = speaker.DisplayName.ToUpper();
+				SpeakerLabel.Text = speaker.Name.ToUpper();
 				SpeakerLabel.Foreground = speaker.Colour;
 			}
 			else { // if we can't identify the speaker - but this should never happen
@@ -149,14 +150,20 @@ namespace AdventureAuthor.UI.Controls
         		MenuItem_MakeIntoChoice.IsEnabled = false;
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
+
+        	this.KeyDown += delegate(object sender, System.Windows.Input.KeyEventArgs e) 
+			{         	
+				if (e.Key == Key.Delete) {
+        			OnClick_Delete(sender,e);
+		       	}
+			};
         }
                 
         #region LineControl event handlers
-		
+        
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
         	if (Conversation.CurrentConversation != null && ConversationWriterWindow.Instance.PreviousPage != null) {
-//        		Conversation.CurrentConversation.SaveToWorkingCopy();
         		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage);
         	}
         }
@@ -205,90 +212,51 @@ namespace AdventureAuthor.UI.Controls
 				ConversationWriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
 			}
 		}
-        
+		
         private void OnClick_Delete(object sender, EventArgs ea)
         { 	
+        	if (!IsVisible) { // in case we have already deleted this line - should have lost focus, but doesn't seem to
+        		return;
+        	}        		
+        	
         	if (isPartOfBranch) {
-        		if (!Adventure.BeQuiet) {   
-        			// Check what effects this deletion will have on the conversation:
-        			Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(Conversation.CurrentConversation,this.nwn2Line);
-        			string onlyRemainingLineInBranch = null; // if there is only one possible line remaining, then the branch will be replaced by that line
-        			if (this.nwn2Line.Parent == null) {
-        				if (Conversation.CurrentConversation.NwnConv.StartingList.Count == 2) {
-        					if (Conversation.CurrentConversation.NwnConv.StartingList[0] == this.nwn2Line) {
-        						onlyRemainingLineInBranch = Conversation.OEIExoLocStringToString(Conversation.CurrentConversation.NwnConv.StartingList[1].Text);
-        					}
-        					else {
-        						onlyRemainingLineInBranch = Conversation.OEIExoLocStringToString(Conversation.CurrentConversation.NwnConv.StartingList[0].Text);
-        					}
-        				}
+	       		if (!Adventure.BeQuiet) {   
+        			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
+        			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
+        				Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
         			}
-        			else if (this.nwn2Line.Parent.Line.Children.Count == 2) {
-        				if (this.nwn2Line.Parent.Line.Children[0] == this.nwn2Line) {
-        					onlyRemainingLineInBranch = Conversation.OEIExoLocStringToString(this.nwn2Line.Parent.Line.Children[1].Text);
-        				}
-        				else {
-        					onlyRemainingLineInBranch = Conversation.OEIExoLocStringToString(this.nwn2Line.Parent.Line.Children[0].Text);
-        				}
-        			}        			    
-        			
-        			// Inform the user and ask them to confirm their choice:
-        			if (onlyRemainingLineInBranch == null && casualties.words == 0) {
-        				Conversation.CurrentConversation.DeleteLineFromBranch(this.nwn2Line); // if there's no real effect, then just delete the line
-        			}
-        			else {       
-        				string warning = String.Empty; 
-        				string shortLine = String.Empty;
-        				if (onlyRemainingLineInBranch != null) {        					
-        					if (onlyRemainingLineInBranch.Length < MAX_LENGTH_OF_LINE_TO_DISPLAY) {
-        						warning += "This branch will be replaced by the only other possible choice, which is the line '" + onlyRemainingLineInBranch + "'\n\n";
-        					}
-        					else {
-        						shortLine = onlyRemainingLineInBranch.Substring(0,MAX_LENGTH_OF_LINE_TO_DISPLAY);
-        						// TODO: Make it display up to the end of a word. Tried this before and got weird errors using .LastIndexOf, everything was
-        						// out of range, not sure why so just left it.
-        						
-//        						int maxlength = Math.Min(onlyRemainingLineInBranch.Length,MAX_LENGTH_OF_LINE_TO_DISPLAY);
-//        						MessageBox.Show("Other line length is " + onlyRemainingLineInBranch.Length.ToString() + " and max length is " + MAX_LENGTH_OF_LINE_TO_DISPLAY + 
-//        						                " so use the smallest, which is " + maxlength + ".");
-//        						MessageBox.Show(onlyRemainingLineInBranch);
-//        						
-//        						try {
-//        								int lastSpace = onlyRemainingLineInBranch.LastIndexOf('i',0);
-//        								MessageBox.Show(lastSpace.ToString());
-////	        						if (lastSpace != -1 && lastSpace < MAX_LENGTH_OF_LINE_TO_DISPLAY && lastSpace > MAX_LENGTH_OF_LINE_TO_DISPLAY - 15) { // if there's a nice cut-off point for the sentence
-////	        							shortLine = onlyRemainingLineInBranch.Substring(0,lastSpace);
-////	        						}
-////	        						else {
-////	        							shortLine = onlyRemainingLineInBranch.Substring(0,maxlength);
-////	        						}
-//        						}
-//        						catch (ArgumentOutOfRangeException are) {
-//        							Say.Error("Died " + are.ToString());
-//        						}
-        						
-        						warning += "This branch will be replaced by the only other possible choice, which is the line beginning '" + shortLine + "...'\n\n";
-        					}
-        				}
+        			else { // if there are consequences, remind the user of them and ask them to confirm		
+        				string warning = String.Empty;  
+		       			if (nwn2Line.Parent == null) {
+		        			if (Conversation.CurrentConversation.NwnConv.StartingList.Count == 2) {
+		        				warning += "Deleting this line will remove the whole branch, changing the shape of the conversation tree. ";
+		        			}
+		        		}
+		        		else if (nwn2Line.Parent.Line.Children.Count == 2){
+		        			warning += "Deleting this line will remove the whole branch, changing the shape of the conversation tree. ";
+		        		}   										
         				if (casualties.pages > 1) {
-        					warning += "Deleting this line will also delete the " + casualties.pages + " pages it can lead to. ";
+        					warning += "This will also delete " + casualties.pages + " page(s) and " + casualties.words + 
+        						" word(s) of conversation.\n\n";
         				}
-        				warning += "A total of " + casualties.lines + " lines and " + casualties.words + " words will be deleted. " +
-        						   "Are you sure you want to delete this line?";
+        				else if (casualties.pages == 1 && casualties.lines > 1) {
+        					warning += "This will also delete " + casualties.words + " word(s) of conversation on the next page.\n\n";
+        				}        				
+        				warning += "Are you sure?";
         				
 	 		        	MessageBoxResult result = MessageBox.Show(warning,"Delete?", MessageBoxButton.YesNo);
 			        	if (result == MessageBoxResult.Yes) {
-			        		Conversation.CurrentConversation.DeleteLineFromBranch(this.nwn2Line);
+			        		Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
 			        	}       			
         			}
         		}
         		else {
-        			Conversation.CurrentConversation.DeleteLineFromBranch(this.nwn2Line);
+        			Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
         		}
         	}
         	else {
-	        	// Only ask to confirm deletion if the line is not blank:
-	        	if (!Adventure.BeQuiet && this.nwn2Line.Text.Strings.Count > 0 && this.nwn2Line.Text.Strings[0].Value.Length > 0) {
+	        	// Only ask to confirm deletion if the line is not blank, or has an action associated with it:
+	        	if (!Adventure.BeQuiet && ((nwn2Line.Text.Strings.Count > 0 && nwn2Line.Text.Strings[0].Value.Length > 0) || nwn2Line.Actions.Count > 0)) {
 		        	MessageBoxResult result = MessageBox.Show("Delete?","Are you sure?", MessageBoxButton.YesNo);
 		        	if (result == MessageBoxResult.Yes) {
 		        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
@@ -300,10 +268,11 @@ namespace AdventureAuthor.UI.Controls
         	}
         }
         
+       
+        
         private void GoUp(object sender, EventArgs ea)
         {
         	if (ConversationWriterWindow.Instance.CurrentPage.ParentPage != null) {
-//        		Conversation.CurrentConversation.SaveToWorkingCopy();
         		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.ParentPage);
         	}
         }
@@ -340,7 +309,7 @@ namespace AdventureAuthor.UI.Controls
         
         private void OnGotFocus(object sender, EventArgs ea)
         {
-        	ConversationWriterWindow.Instance.CurrentlySelectedControl = this;
+        	ConversationWriterWindow.Instance.CurrentControl = this;
         	SelectLine();
         }
         
