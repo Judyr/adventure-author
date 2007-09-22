@@ -157,6 +157,17 @@ namespace AdventureAuthor.UI.Controls
         			OnClick_Delete(sender,e);
 		       	}
 			};
+        	
+        	
+        	
+        	
+        	
+        	// TEMP: TODO
+        	
+        	if (nwn2Line.Sound != null) {
+        		SoundButton.Height = 40;
+        		SoundButton.Width = 40;
+        	}
         }
                 
         #region LineControl event handlers
@@ -168,12 +179,6 @@ namespace AdventureAuthor.UI.Controls
         	}
         }
         
-        private void OnClick_SetAnimation(object sender, EventArgs ea)
-        {
-//        	AnimationWindow window = new AnimationWindow();
-//        	window.ShowDialog();
-        }
-        
 		private void OnClick_SetCamera(object sender, EventArgs ea)
         {
         	
@@ -181,14 +186,9 @@ namespace AdventureAuthor.UI.Controls
 		
 		private void OnClick_SetSound(object sender, EventArgs ea)
         {                	
-//        	SoundWindow window = new SoundWindow();
-//        	window.ShowDialog();
-        }
-		
-		private void OnClick_SetCondition(object sender, EventArgs ea)
-		{
-			
-		}        
+        	SoundWindow window = new SoundWindow(nwn2Line);
+        	window.ShowDialog();
+        }		
         
         private void OnClick_GoToPage(object sender, EventArgs ea)
         {
@@ -302,10 +302,10 @@ namespace AdventureAuthor.UI.Controls
 //        	}
         }
                
-        private void OnMouseDown(object sender, EventArgs ea)
+        private void OnMouseDown(object sender, MouseEventArgs ea)
         {
-        	Focus();        	
-        }
+        	Focus();  			
+        }        
         
         private void OnGotFocus(object sender, EventArgs ea)
         {
@@ -330,8 +330,8 @@ namespace AdventureAuthor.UI.Controls
         	this.Dialogue.BorderBrush = Brushes.Black;
         	this.SoundButton.IsEnabled = true;
         	this.SoundButton.Opacity = 1.0;
-        	this.AnimationButton.IsEnabled = true;
-        	this.AnimationButton.Opacity = 1.0;
+        	this.unusedButton.IsEnabled = true;
+        	this.unusedButton.Opacity = 1.0;
         	this.DeleteLineButton.IsEnabled = true;
         	this.DeleteLineButton.Opacity = 1.0;
         	if (this.conditionalControl != null) {
@@ -346,8 +346,8 @@ namespace AdventureAuthor.UI.Controls
         	this.Dialogue.BorderBrush = Brushes.Transparent;
         	this.SoundButton.IsEnabled = false;
         	this.SoundButton.Opacity = 0.0;
-        	this.AnimationButton.IsEnabled = false;
-        	this.AnimationButton.Opacity = 0.0;
+        	this.unusedButton.IsEnabled = false;
+        	this.unusedButton.Opacity = 0.0;
         	this.DeleteLineButton.IsEnabled = false;
         	this.DeleteLineButton.Opacity = 0.0;
         	if (this.conditionalControl != null) {
