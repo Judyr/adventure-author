@@ -203,10 +203,10 @@ namespace AdventureAuthor.UI.Windows
 					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
 					// something about taking focus away from screen elements maybe?)
 					LineControl newLineControl = GetControlForLine(newLine);
-//					Say.Information("try now");
+//					MessageBox.Show("try now");
 					
-					newLineControl.Dialogue.Focus();
-					
+					newLineControl.Focus();
+					newLineControl.Dialogue.Focus();					
 				}
 			};
 			SpeakersButtonsPanel.Children.Add(button);

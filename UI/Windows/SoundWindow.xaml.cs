@@ -29,13 +29,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.IO;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using NWN2Toolset.NWN2.Data.ConversationData;
+using OEIShared.IO;
+using OEIShared.Utils;
+using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -45,13 +50,54 @@ namespace AdventureAuthor.UI.Windows
 
     public partial class SoundWindow : Window
     {
-
-        public SoundWindow()
+    	private NWN2ConversationConnector line;
+    	
+        public SoundWindow(NWN2ConversationConnector line)
         {
-            InitializeComponent();
+            IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(Adventure.CurrentAdventure.ModulePath);
+            if (moduleRepos == null) {
+            	Say.Error("Couldn't locate the module as a resource repository.");
+            	return;
+            }        	
             
-            //TODO: Deal with connector.Sound, which is an IResourceEntry
+        	this.line = line;
+        	
+            InitializeComponent();
+       
+			ushort WAV = 4;
+			OEIGenericCollectionWithEvents<IResourceEntry> WAVfiles = moduleRepos.FindResourcesByType(WAV);
+			MissingResourceEntry blank = new MissingResourceEntry(new OEIResRef("<no sound>"));
+			WAVfiles.Insert(0,blank);
+			
+			SoundBox.ItemsSource = WAVfiles;
+			
+			if (line.Sound != null) {
+				CurrentSoundTextBox.Text = "Current sound: " + line.Sound.FullName;
+			}
+			else {
+				CurrentSoundTextBox.Text = "No sound currently selected";
+			}
         }
-
+        
+        private void OnClick_OK(object sender, EventArgs ea)
+        {
+        	IResourceEntry wav = SoundBox.SelectedItem as IResourceEntry;
+        	if (wav == null) {
+        		Say.Warning("You didn't select a sound file to play.");
+        	}
+        	else if (wav.ResRef.Value == "<no sound>") {
+        		line.Sound = null;
+        		Close();
+        	}
+        	else {
+        		line.Sound = wav;
+        		Close();
+        	}
+        }
+        
+        private void OnClick_Cancel(object sender, EventArgs ea)
+        {
+        	Close();
+        }
     }
 }
