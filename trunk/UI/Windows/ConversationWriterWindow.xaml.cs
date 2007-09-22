@@ -41,6 +41,7 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using Netron.Diagramming.Core;
 using Netron.Diagramming.Win;
+using System.Windows.Input;
 
 namespace AdventureAuthor.UI.Windows
 {
@@ -66,6 +67,9 @@ namespace AdventureAuthor.UI.Windows
     	
     	#region Fields    	
     	
+    	/// <summary>
+    	/// Used to host a .NET 2.0 Windows Forms object, specifically the conversation graph.
+    	/// </summary>
     	private WindowsFormsHost host;
     	
     	private static ConversationWriterWindow instance;    	
@@ -74,52 +78,68 @@ namespace AdventureAuthor.UI.Windows
 			set { instance = (ConversationWriterWindow)value; }
 		}
     	
-    	public GraphWindow MainGraphViewer {
-    		get { return (GraphWindow)FindName("mainGraphViewer"); }
-    	}
-    	
+    	/// <summary>
+    	/// Deprecated.
+    	/// </summary>
     	private GraphWindow expandedGraphViewer;    	
 		public GraphWindow ExpandedGraphViewer {
 			get { return expandedGraphViewer; }
 		}    	    	
     	
+    	/// <summary>
+    	/// The pages that make up the currently-open conversation, starting with a root page.
+    	/// A new page is taken when the conversation reaches a branch point (i.e. the player or
+    	/// an NPC has a choice of what to say next.)
+    	/// </summary>
     	private List<ConversationPage> pages;
     	public List<ConversationPage> Pages {
 			get { return pages; }
 		}
     	
+    	/// <summary>
+    	/// The page that is currently selected in the graph and displayed in the main window.
+    	/// </summary>
     	private ConversationPage currentPage;    	
 		public ConversationPage CurrentPage {
 			get { return currentPage; }
 		}
     	
+    	/// <summary>
+    	/// The previously viewed page, if there is one, to allow the user to click Back.
+    	/// </summary>
     	private ConversationPage previousPage;    	
 		public ConversationPage PreviousPage {
 			get { return previousPage; }
 		}    	
     	
-    	private UserControl currentlySelectedControl;
-		public UserControl CurrentlySelectedControl {
-			get { return currentlySelectedControl; }
-			set { currentlySelectedControl = value; }
+    	/// <summary>
+    	/// The currently selected line control.
+    	/// </summary>
+    	private LineControl currentControl;
+		public LineControl CurrentControl {
+			get { return currentControl; }
+			set { currentControl = value; }
 		}
     	    	
+    	/// <summary>
+    	/// The filename of the conversation the user opened.
+    	/// </summary>
     	private string originalFilename;    	
 		public string OriginalFilename {
 			get { return originalFilename; }
 		}
     	
+    	/// <summary>
+    	/// The filename of the working copy of the original conversation file that we are actually operating on.
+    	/// </summary>
     	private string workingFilename;    	
 		public string WorkingFilename {
 			get { return workingFilename; }
 		}    	
     	
-    	internal static MenuItem[] ActionsMenu = new MenuItem[5]; // static context menu used by all LineControls
-    	
     	#endregion Fields
     	        
         #region UI
-        
         
         
 //        private void TEMPDROPHANDLER(object sender, DragEventArgs e)
@@ -133,26 +153,9 @@ namespace AdventureAuthor.UI.Windows
 //        	}
 //        	e.Handled = true;
 //        }
-        
-        
-        
-        
-        private bool StartsWithVowel(string word)
-        {
-        	if (word == null || word.Length == 0) {
-        		return false;
-        	}
-        	char c = word.ToLower()[0];
-        	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; 
-        }
-        
-        internal void CreateButtonForSpeaker(Speaker speaker)
-        {
-        	Button button = CreateButtonForSpeaker(speaker.DisplayName,speaker.Tag,speaker.Colour);
-        	SpeakersButtonsPanel.Children.Add(button);
-        }
-        
-		private Button CreateButtonForSpeaker(string displayName, string tag, Brush colour)
+           
+
+		internal void CreateButtonForSpeaker(Speaker speaker)
 		{
 			Button button = new Button();
 			button.Margin = new Thickness(2);
@@ -164,15 +167,15 @@ namespace AdventureAuthor.UI.Windows
 			tb1.FontSize = 26;
 			tb2.FontSize = 26;
 			tb0.Foreground = Brushes.Black;
-			tb1.Foreground = colour;
+			tb1.Foreground = speaker.Colour;
 			tb2.Foreground = Brushes.Black;
-			if (displayName.Length > 0 && StartsWithVowel(displayName)) {
+			if (speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(speaker.Name)) {
 				tb0.Text = "Add an ";
 			}
 			else {
 				tb0.Text = "Add a ";
 			}
-			tb1.Text = displayName.ToUpper();
+			tb1.Text = speaker.Name.ToUpper();
 			tb2.Text = " line";
 			textBlock.Inlines.Add(tb0);
 			textBlock.Inlines.Add(tb1);
@@ -182,7 +185,7 @@ namespace AdventureAuthor.UI.Windows
 			{ 
 				if (currentPage != null) {					
 					NWN2ConversationConnector parentLine;
-					LineControl selectedLine = currentlySelectedControl as LineControl;
+					LineControl selectedLine = currentControl as LineControl;
 					if (selectedLine != null && !selectedLine.IsPartOfBranch) {
 						parentLine = selectedLine.Nwn2Line; // add a new line after the current one
 					}
@@ -192,23 +195,37 @@ namespace AdventureAuthor.UI.Windows
 					else { // add a line to the start of the page if there are no other lines
 						parentLine = currentPage.LeadInLine; // may be null (for root)
 					}
-					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,tag,true);
+					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
 					
 					DisplayPage(currentPage);
 					RefreshDisplay(false);
 					
-					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), something about taking focus away from screen elements maybe?)
-					if (newLine != null) {
-						foreach (LineControl lc in this.currentPage.LineControls) {
-							if (lc.Nwn2Line == newLine) {
-								lc.Dialogue.Focus();
-							}
-						}
-					}				
+					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
+					// something about taking focus away from screen elements maybe?)
+					LineControl newLineControl = GetControlForLine(newLine);
+//					Say.Information("try now");
+					
+					newLineControl.Dialogue.Focus();
+					
 				}
 			};
-			return button;
+			SpeakersButtonsPanel.Children.Add(button);
 		}	
+		
+		private LineControl GetControlForLine(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				return null;
+			}
+			
+			foreach (LineControl c in currentPage.LineControls) {
+				if (c.Nwn2Line == line) {
+					return c;
+				}
+			}
+			
+			return null;			
+		}
 								
 		private void DisplayLine(NWN2ConversationConnector line)
 		{
@@ -236,14 +253,12 @@ namespace AdventureAuthor.UI.Windows
 			}				
 			BranchControl branchControl = new BranchControl(possibleLines);
 			this.LinesPanel.Children.Add(branchControl);
-			this.currentPage.FinalControl = branchControl;
 		}
 		
 		private void DisplayEndOfConversation()
 		{				
 			EndConversationControl endOfConversation = new EndConversationControl();
 			LinesPanel.Children.Add(endOfConversation);
-			this.currentPage.FinalControl = endOfConversation;
 		}
 		
 		public void DisplayPage(ConversationPage page)
@@ -254,10 +269,9 @@ namespace AdventureAuthor.UI.Windows
 			// Clear the current page:
 			previousPage = currentPage;
 			currentPage = page;		
-			currentlySelectedControl = null;		
+			currentControl = null;		
 			LinesPanel.Children.Clear();
 			currentPage.LineControls.Clear();
-			currentPage.FinalControl = null;			
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
 //			MainGraphViewer.RefreshSelectedNode();
@@ -299,11 +313,13 @@ namespace AdventureAuthor.UI.Windows
 		/// <returns>a list of all Pages in the tree, the first entry being the root Page which owns all other Pages</returns>
 		private List<ConversationPage> CreatePages(Conversation conversation)
 		{
-			List<ConversationPage> pages = new List<ConversationPage>(10);			
+			if (conversation.NwnConv == null) {
+				throw new ArgumentNullException("The conversation has no NWN2GameConversation object to build pages for.");
+			}
+			
+			List<ConversationPage> pages = new List<ConversationPage>(1);			
 			ConversationPage rootPage = new ConversationPage(null,null);
 			pages.Add(rootPage);
-			
-			// TODO: Crashes on conversation.NwnConv null reference if it failed to create pages, unhandled
 			
 			// Identify every child of the root page:
 			if (conversation.NwnConv.StartingList.Count == 0) {
@@ -359,13 +375,19 @@ namespace AdventureAuthor.UI.Windows
 		}
 		
 		public void RemoveLineControl(NWN2ConversationConnector line)
-		{
+		{			
+			LineControl current = CurrentControl as LineControl;
+			if (current != null && current.Nwn2Line == line) {
+				CurrentControl = null;
+			}
+			
 			foreach (Control control in LinesPanel.Children) {
 				LineControl lineControl = control as LineControl;
 				BranchControl branchControl = control as BranchControl;
 				
 				if (lineControl != null && lineControl.Nwn2Line == line) {
-					CurrentPage.LineControls.Remove(lineControl);					
+					CurrentPage.LineControls.Remove(lineControl);
+					return;
 				}
 				else if (branchControl != null) {
 					LineControl toRemove = null;
@@ -375,7 +397,10 @@ namespace AdventureAuthor.UI.Windows
 							break;
 						}
 					}
-					branchControl.LineControls.Remove(toRemove);
+					if (toRemove != null) {
+						branchControl.LineControls.Remove(toRemove);
+						return;
+					}
 				}
 			}
 		}
@@ -469,31 +494,10 @@ namespace AdventureAuthor.UI.Windows
 			
 		public bool OpenConversation(string name, bool createAsNew)
 		{	
-			// Checks:
 			if (Adventure.CurrentAdventure == null) {
 				Say.Error("Open an Adventure first.");
 				return false;
 			}
-			
-			// TODO: these checks should now happen when you attach a conversation to a character, since we are currently not able to store OwningChapter or Owner:
-//			else if (conversation.OwningChapter == null) {
-//				Warning.Say("Warning - this conversation has not been assigned to a Chapter, so Adventure Author can't tell " +
-//							"whether the conversation will work properly.");
-//			}
-//			else {
-//				foreach (Speaker speaker in conversation.Speakers) {
-//					if (!conversation.OwningChapter.ContainsSpeakingObject(speaker.Tag)) {
-//						if (!conversation.OwningChapter.ContainsObject(speaker.Tag)) {
-//							Warning.Say("Warning - Adventure Author couldn't find an object with tag " + speaker.Tag +
-//								        ". The conversation will not work properly.");
-//						}
-//						else {
-//							Warning.Say("Warning - the object with tag " + speaker.Tag + " exists, but may not be able to speak. " +
-//							            "The conversation may not work as expected.");
-//						}
-//					}
-//				}
-//			}		
 			
 			// Close current conversation, if one is open:
 			if (!CloseConversationDialog()) {
@@ -544,7 +548,7 @@ namespace AdventureAuthor.UI.Windows
 			}
 			
 			// Allocate speakers unique colours and create a button for each:				
-			Conversation.CurrentConversation.AddSpeaker(String.Empty,Conversation.PLAYER_NAME); // player has no tag, so pass String.Empty
+			Conversation.CurrentConversation.AddSpeaker(String.Empty); // player has no tag, so pass String.Empty
 			foreach (NWN2ConversationConnector line in Conversation.CurrentConversation.NwnConv.AllConnectors) {
 				if (line.Speaker.Length > 0) {
 					if (Conversation.CurrentConversation.GetSpeaker(line.Speaker) == null) { // note that line.Speaker is just a tag, not a Speaker object
@@ -635,7 +639,7 @@ namespace AdventureAuthor.UI.Windows
 		
 		private void OnClick_MakeSelectedLineIntoBranch(object sender, EventArgs ea)
 		{
-			LineControl lc = CurrentlySelectedControl as LineControl;
+			LineControl lc = CurrentControl as LineControl;
 			if (lc == null) {
 				Say.Information("You must first click on the line that you want to make into a branch.");
 			}
@@ -781,7 +785,7 @@ namespace AdventureAuthor.UI.Windows
 			if (pages != null) {
 				pages.Clear();
 			}
-			currentlySelectedControl = null;
+			currentControl = null;
 			Conversation.CurrentConversation = null;
 			
 			MainGraph.Clear();

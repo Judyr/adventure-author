@@ -75,12 +75,6 @@ namespace AdventureAuthor.Core
 			get { return lineControls; }
 		}
     	
-    	private UserControl finalControl;    	
-		public UserControl FinalControl {
-			get { return finalControl; }
-			set { finalControl = value; }
-		}
-    	
     	#endregion Fields
     	
 		public ConversationPage(NWN2ConversationConnector leadsFrom, ConversationPage parent)
@@ -89,7 +83,6 @@ namespace AdventureAuthor.Core
 			this.parentPage = parent;
 			this.children = new List<ConversationPage>();
 			this.lineControls = new List<LineControl>();
-			this.finalControl = null;
 			if (parent != null) {
 				parent.children.Add(this);
 			}			
@@ -102,7 +95,6 @@ namespace AdventureAuthor.Core
 		
 		private void OnClickNode(object sender, EventArgs ea)
 		{
-//			Conversation.CurrentConversation.SaveToWorkingCopy();
 			ConversationWriterWindow.Instance.DisplayPage(this);
 		}		
 		

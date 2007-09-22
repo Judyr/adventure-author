@@ -47,7 +47,7 @@ namespace AdventureAuthor.UI.Windows
         private void OnClickOK(object sender, EventArgs ea)
         {        	
         	string name = ConversationName.Text;
-        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,Adventure.CurrentAdventure.Module.Repository.DirectoryName),name))) {
+        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,Adventure.CurrentAdventure.Module.Repository.DirectoryName),name+".dlg"))) {
         		Say.Warning("A conversation called '" + name + "' already exists in the Adventure '" + 
         		            Adventure.CurrentAdventure.Name + "' - try another name.");
         	}
