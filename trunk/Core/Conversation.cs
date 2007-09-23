@@ -73,17 +73,9 @@ namespace AdventureAuthor.Core
 		public const byte MAX_NUMBER_OF_SPEAKERS_IN_CONVERSATION = 3;
 		public static readonly SolidColorBrush PLAYER_COLOUR = Brushes.Blue;
 		public static readonly SolidColorBrush BRANCH_COLOUR = Brushes.Black;
-		public static readonly SolidColorBrush ACTION_COLOUR = Brushes.Orange;
 		public const string PLAYER_NAME = "Player";
 		public const string NOT_FILLER = "notfiller";
 		public const string FILLER = "filler";
-		public const int MINIMUM_WIDTH_BETWEEN_CHILDREN = 25; // pixels
-    	public const int HEIGHT_BETWEEN_LEVELS = 100;
-    	public const int HEIGHT_FROM_TOP_OF_WINDOW = 50;
-    	public const double SELECTED_NODE_OUTER_DIAMETER = 44.0;
-    	public const double SELECTED_NODE_INNER_DIAMETER = 39.0;
-    	public const double UNSELECTED_NODE_OUTER_DIAMETER = 40.0;
-    	public const double UNSELECTED_NODE_INNER_DIAMETER = 35.0;		
 		
 		#endregion Constants
 		
@@ -298,6 +290,7 @@ namespace AdventureAuthor.Core
 			if (addFillerBeforeNewLine) {
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent);
 				fillerLine.Comment = Conversation.FILLER;
+				fillerLine.Sound = null;
 				newLine = Conversation.CurrentConversation.NwnConv.InsertChild(fillerLine);						
 			}
 			else {
@@ -305,7 +298,6 @@ namespace AdventureAuthor.Core
 			}
 			newLine.Speaker = speakerTag;
 			newLine.Sound = null;
-			fillerLine.Sound = null;
 			
 			if (reparentChildren && children.Count > 1) { // reparent children if we're just adding a line; don't if we're adding a branch
 				ReparentChildren(newLine,fillerLine,children);
@@ -456,6 +448,7 @@ namespace AdventureAuthor.Core
 		
 		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector branchParent)
 		{
+			Say.Information("Running AddLineToBranch()");
 			string speakerTag = null;
 			foreach(NWN2ConversationConnector option in branchParent.Line.Children) {
 				if (speakerTag == null) {
