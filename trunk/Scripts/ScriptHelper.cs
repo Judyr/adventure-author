@@ -1025,7 +1025,7 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		public static List<string> GetTags(NWN2InstanceCollection instances)
-		{
+		{			
 			List<string> tags = new List<string>(instances.Count);
 			foreach (INWN2Instance instance in instances) {
 				string tag = ((INWN2Object)instance).Tag;
@@ -1033,6 +1033,17 @@ namespace AdventureAuthor.Scripts
 					tags.Add(tag);
 				}
 			}
+			return SortTags(tags);
+		}
+		
+		/// <summary>
+		/// Returns an alphabetised list of unique tags.
+		/// </summary>
+		/// <param name="tags">The tags to sort and check for duplicates.</param>
+		/// <returns>An alphabetised list of unique tags</returns>
+		private static List<string> SortTags(List<string> tags)
+		{
+			// TODO
 			return tags;
 		}
 		

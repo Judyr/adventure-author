@@ -28,7 +28,12 @@ namespace AdventureAuthor.UI.Windows
     		this.parameters = parameters;    		
             InitializeComponent();
     		this.Title = title;
-        }        
+    		this.ResizeMode = ResizeMode.NoResize;
+    		this.Loaded += delegate 
+    		{  
+    			Height = (QuestionsPanel.Children.Count * 120) + 85;
+    		};
+        }      
 
         public void AddBooleanQuestion(string question)
         {

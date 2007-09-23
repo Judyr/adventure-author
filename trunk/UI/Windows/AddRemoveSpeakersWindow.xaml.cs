@@ -64,6 +64,7 @@ namespace AdventureAuthor.UI.Windows
         	// TODO if this becomes editable, check they don't add anyone called Player
         	// TODO let them add [OWNER]
         	// TODO add in alphabetical order
+        	// TODO currently Golem is displaying twice - make sure no tags are repeated
         }
         
         private void OnClick_Cancel(object sender, EventArgs ea)
