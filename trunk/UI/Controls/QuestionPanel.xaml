@@ -1,0 +1,7 @@
+﻿<UserControl x:Class="AdventureAuthor.UI.Controls.QuestionPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Canvas Name="MainCanvas">
+		<Label Name="QuestionLabel" Canvas.Top="25" Canvas.Left="25" Height="40" Width="200"/>
+	</Canvas>
+</UserControl>
