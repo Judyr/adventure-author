@@ -74,7 +74,7 @@
 		<ContextMenu x:Key="LineControlContextMenu">
 			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> <!--Broken-->
 			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" IsEnabled="false"/>
-			<MenuItem Header="Set sound clip" Click="OnClick_SetSound" IsEnabled="false"/>
+			<MenuItem Header="Set sound clip" Click="OnClick_SetSound"/>
 			<MenuItem Header="Add an action">
 			<MenuItem.ItemsSource>
 				<StaticResource ResourceKey="ActionsMenu"/>
@@ -95,17 +95,7 @@
 	<UserControl.ContextMenu>		
 		<StaticResource ResourceKey="LineControlContextMenu"/>
 	</UserControl.ContextMenu>
-	
-	<UserControl.Style>
-		<Style TargetType="{x:Type uic:LineControl}">
-		<Style.Triggers>
-			<Trigger Property="IsFocused" Value="True">
-				<Setter Property="Background" Value="Wheat"/>
-			</Trigger>
-		</Style.Triggers>		
-		</Style>
-	</UserControl.Style>
-	
+		
 	<UserControl.Triggers>
 		<EventTrigger RoutedEvent="Button.Click" SourceName="SoundButton">
 		<EventTrigger.Actions>
@@ -130,7 +120,7 @@
     	<StackPanel Name="LineControlButtonsPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
 	    	<Button x:Name="SoundButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_SetSound">
     			<Button.ToolTip>
-    				<ToolTip>Add a sound clip to this line (doesn't work yet)</ToolTip>
+    				<ToolTip>Add a sound clip to this line</ToolTip>
     			</Button.ToolTip>
 	    		<Image Source="C:\ConversationWriter\speakericon.jpg" />
 	    	</Button>

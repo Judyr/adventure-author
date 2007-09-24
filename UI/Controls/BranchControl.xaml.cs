@@ -39,6 +39,7 @@ using System.Windows.Shapes;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.Core;
 using AdventureAuthor.UI.Windows;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -132,8 +133,10 @@ namespace AdventureAuthor.UI.Controls
 					
 			if (newLine != null) {
 				foreach (LineControl lc in OptionsPanel.Children) {
+					Say.Debug("Checking a LineControl for the line to focus on.");
 					if (lc.Nwn2Line == newLine) {
-						lc.Focus();
+						Say.Debug("Found the line to focus on.");
+						lc.Focus(); // TODO also doesn't work
 					}
 				}
 			}

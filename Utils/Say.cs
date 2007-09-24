@@ -34,6 +34,10 @@ namespace AdventureAuthor.Utils
 	// TODO: Create pretty forms with readable text (base text size on user age settings?) instead of message boxes.
 	public static class Say
 	{		
+		public static void Debug(string message) {
+			DebugLog.Write(message);
+		}
+		
 		public static void Error(string message) {
 			Error(message,null);
 		}
@@ -52,7 +56,7 @@ namespace AdventureAuthor.Utils
 			if (e != null) {
 				logMessage.Append("   > " + e.ToString());
 			}
-			Log.Write(logMessage.ToString());
+			DebugLog.Write(logMessage.ToString());
 		}
 		
 		public static void Error(Exception e)
@@ -62,7 +66,9 @@ namespace AdventureAuthor.Utils
 		
 		public static void Hint(string message)
 		{
-			MessageBox.Show("HINT: \n\n " + message);
+			if (!Adventure.BeQuiet) {
+				MessageBox.Show("HINT: \n\n " + message);
+			}
 		}
 		
 		public static void Information(string message)
@@ -106,7 +112,7 @@ namespace AdventureAuthor.Utils
 				MessageBox.Show("WARNING: \n\n " + message);
 			}
 			
-			Log.Write("- warned: " + message);
+			UserLog.Write("- warned: " + message);
 		}
 	}
 }

@@ -305,15 +305,12 @@ namespace AdventureAuthor.Scripts
 						IResourceEntry entry = scripts.FindResource(resRef,ncs);
 						NWN2GameScript scrp = new NWN2GameScript(entry);	
 						return scrp;
-						break;
 					case ScriptOrigin.AdventureAuthor:
 						throw new NotImplementedException();
-						if (!File.Exists(Path.Combine(Adventure.ScriptsDir,name+".ncs"))) {
-							Say.Error("No Adventure Author script named '" + name + "' was found.");
-							return null;
-						}
-						
-						break;
+//						if (!File.Exists(Path.Combine(Adventure.ScriptsDir,name+".ncs"))) {
+//							Say.Error("No Adventure Author script named '" + name + "' was found.");
+//							return null;
+//						}
 					default: 
 						throw new ArgumentException("Invalid ScriptOrigin enum passed when trying to retrieve a script.");
 				}			

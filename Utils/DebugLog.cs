@@ -1,4 +1,4 @@
-/*
+﻿/*
  *   This file is part of Adventure Author.
  *
  *   Adventure Author is copyright Heriot-Watt University 2006-2007.
@@ -25,49 +25,42 @@
  */
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.IO;
+using System.Text;
 using AdventureAuthor.Core;
-using AdventureAuthor.UI;
-using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.UI.Forms
+namespace AdventureAuthor.Utils
 {
-	/// <summary>
-	/// Description of CreateChapter_Form.
-	/// </summary>
-	public partial class CreateChapter_Form : Form
-	{
-		public CreateChapter_Form()
-		{
-			UserLog.Write(UserLog.WizardAction.Started,UserLog.WizardSubject.CreateChapterWizard);
-			InitializeComponent();
+	public static class DebugLog
+	{	
+		private static StreamWriter writer = null;		
+		
+		public static void StartRecording()
+		{			
+			string path = Path.Combine(Adventure.DebugDir,UsefulTools.GetTimeStamp(true)+".log");
+			Say.Information(path);
+			FileInfo f = new FileInfo(path);			
+			Stream s = f.Open(FileMode.Create);
+			writer = new StreamWriter(s);
+			writer.AutoFlush = true;
 		}
 		
-		void CreateChapter_Cancel(object sender, EventArgs e)
+		public static void StopRecording()
 		{
-			this.Close();
-			UserLog.Write(UserLog.WizardAction.Cancelled,UserLog.WizardSubject.CreateChapterWizard);			
+			if (writer != null) {
+				writer.Flush();
+				writer.Close();
+			}
 		}
-		
-		void CreateChapter_OK(object sender, EventArgs e)
+			
+		public static void Write(string message)
 		{
-			string name = this.textBox_ChapterName.Text;
-			string intro = this.textBox_IntroductionToChapter.Text;
-			bool exterior = this.radioButton_Outdoors.Checked;
-			int width = 8;
-			int height = 8;
-			
-			try {
-				Adventure.CurrentAdventure.AddChapter(name,intro,exterior,width,height);
-			}
-			catch (ArgumentException ae) {
-				Say.Error(ae);
-				return;
-			}
-			
-			this.Close();
-			UserLog.Write(UserLog.WizardAction.Completed,UserLog.WizardSubject.CreateChapterWizard);
+			writer.WriteLine(UsefulTools.GetTimeStamp(false) + ": " + message);
 		}
+			
+		public static void Write(Exception e)
+		{
+			writer.WriteLine(UsefulTools.GetTimeStamp(false) + ": " + e);
+		}				
 	}
 }

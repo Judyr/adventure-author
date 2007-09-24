@@ -484,6 +484,21 @@ namespace AdventureAuthor.UI
 							vm.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
 							tb.Items.Add(vm);
 							
+							ButtonItem temp = new ButtonItem();
+							temp.Text = "Show a MessageBox first";
+							temp.Activate += delegate 
+							{ 
+								if (ConversationWriterWindow.SHOWTHEMESSAGEBOX == true) {
+									ConversationWriterWindow.SHOWTHEMESSAGEBOX = false;
+									temp.Text = "Don't show a MessageBox first";
+								}
+								else {
+									ConversationWriterWindow.SHOWTHEMESSAGEBOX = true;
+									temp.Text = "Show a MessageBox first";
+								}
+							};
+							tb.Items.Add(temp);
+							
 							tbc.Controls.Add(tb);
 						}
 					} catch (Exception e) {
@@ -713,7 +728,7 @@ namespace AdventureAuthor.UI
 				
 		private static void ChapterList_Open(object sender, EventArgs ea)
 		{	
-			Log.Write(Log.Action.Opened,Log.Subject.Chapter);			
+			UserLog.Write(UserLog.Action.Opened,UserLog.Subject.Chapter);			
 			
 			try {
 				string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
@@ -736,7 +751,7 @@ namespace AdventureAuthor.UI
 				
 		private static void ChapterList_Delete(object sender, EventArgs ea)
 		{	
-			Log.Write(Log.Action.Deleted,Log.Subject.Chapter);
+			UserLog.Write(UserLog.Action.Deleted,UserLog.Subject.Chapter);
 			
 			string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
 			Chapter chapter = Adventure.CurrentAdventure.Chapters[name];
