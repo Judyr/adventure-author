@@ -81,6 +81,15 @@ namespace AdventureAuthor.UI.Forms
             };
             
             
+            foreach (ITool tool in diagramControl.Controller.Tools) {
+            	DebugLog.Write("found tool " + tool.Name);
+            	if (tool.Name != "Hit Tool") {
+            		tool.Enabled = false;
+            		DebugLog.Write("disable tool " + tool.Name);
+            	}
+            }
+            
+            
             this.Controls.Add(this.diagramControl);
             ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
             ResumeLayout(false);
