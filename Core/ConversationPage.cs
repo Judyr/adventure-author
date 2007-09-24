@@ -82,7 +82,7 @@ namespace AdventureAuthor.Core
 			if (parent != null) {
 				parent.children.Add(this);
 			}			
-		}		
+		}	
 
 		public bool IsEndPage()
 		{

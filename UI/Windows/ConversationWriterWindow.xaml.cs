@@ -287,6 +287,7 @@ namespace AdventureAuthor.UI.Windows
 			LinesPanel.Children.Add(endOfConversation);
 		}
 		
+		// TODO make this into ConversationPage.Display() to centralise everything, once it is fully working
 		public void DisplayPage(ConversationPage page)
 		{
 			// Save any changes that have been made to on-screen controls, since we're about to replace them:
@@ -300,12 +301,10 @@ namespace AdventureAuthor.UI.Windows
 			currentPage.LineControls.Clear();
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
-			
-			
-//			MainGraphViewer.RefreshSelectedNode();
-//			if (ExpandedGraphViewer != null) {
-//				ExpandedGraphViewer.RefreshSelectedNode();
-//			}
+			MainGraph.HighlightNode(currentPage);
+			// if (ExpandedGraph != null) {
+			// 	   ExpandedGraph.HighlightNode(currentPage);
+			// }
 					
 			// Check whether we are starting from the root:
 			NWN2ConversationConnectorCollection possibleNextLines;
@@ -831,6 +830,7 @@ namespace AdventureAuthor.UI.Windows
 		
 		private void OnLoaded(object sender, EventArgs ea)
 		{
+			// TODO try setting this through XAML
 			host = new WindowsFormsHost();
 			MainGraph = new ConversationGraph();
 			host.Child = MainGraph;

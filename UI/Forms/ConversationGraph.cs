@@ -126,12 +126,12 @@ namespace AdventureAuthor.UI.Forms
             graphControl.SetLayoutRoot(root);
             DrawChildren(pages[0].Children,root);
             graphControl.Layout(LayoutType.ClassicTree);
-            root.Move(new Point(root.X,root.Y+50));
+//            root.Move(new Point(root.X,root.Y+50));
             graphControl.Invalidate();
             
             ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
             ResumeLayout(false);
-            root.Move(new Point(root.X+70,root.Y));
+//            root.Move(new Point(root.X+70,root.Y));
             graphControl.Invalidate();
 		}
 		
@@ -140,6 +140,30 @@ namespace AdventureAuthor.UI.Forms
 			Selection.Clear();
 			graphControl.Controller.Model.Clear();
 			graphControl.Invalidate();
+		}
+		
+		internal void HighlightNode(ConversationPage page)
+		{
+			PageNode node = GetNode(page);
+			if (node != null) {
+				node.IsSelected = true;
+				node.Hovered = true;
+				node.Invalidate();
+			}
+			else {
+				Say.Error("Couldn't find a node to highlight.");
+			}
+		}
+		
+		internal PageNode GetNode(ConversationPage page)
+		{
+			foreach (IDiagramEntity entity in graphControl.Controller.Model.Paintables) {
+				PageNode pageNode = entity as PageNode;
+				if (pageNode != null && pageNode.Page == page) {
+					return pageNode;
+				}
+			}
+			return null;
 		}
 	}
 }
