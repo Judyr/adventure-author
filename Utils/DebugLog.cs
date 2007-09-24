@@ -38,7 +38,6 @@ namespace AdventureAuthor.Utils
 		public static void StartRecording()
 		{			
 			string path = Path.Combine(Adventure.DebugDir,UsefulTools.GetTimeStamp(true)+".log");
-			Say.Information(path);
 			FileInfo f = new FileInfo(path);			
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);
