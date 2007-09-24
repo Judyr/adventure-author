@@ -391,8 +391,8 @@ namespace AdventureAuthor.UI.Controls
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Set an integer variable");
     		
     		window.AddVariableQuestion("Which variable do you want to set?", NWN2ScriptVariableType.Int);
-    		window.AddStringQuestion("What is the new value of the variable? Either enter the value, e.g. '5', or an operation, " +
-    		                         "e.g. '-4' or '+1'."); // TODO add check
+    		window.AddStringQuestion("What is the new value of the variable?");// Either enter the value, e.g. '5', or an operation, " +
+    		                         //"e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;

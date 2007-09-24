@@ -92,8 +92,8 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an integer variable has a certain value");
     		window.AddVariableQuestion("Which variable do you want to check?", NWN2ScriptVariableType.Int);
-    		window.AddStringQuestion("What value does the variable need to have? Either enter the value, " +
-    		                          "e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
+    		window.AddStringQuestion("What value does the variable need to have?");// Either enter the value, " +
+    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -135,8 +135,8 @@ namespace AdventureAuthor.UI.Controls
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of the player");
     		window.AddTagQuestion("Which object needs to be within range?",ScriptHelper.ObjectType.Any);
-    		window.AddStringQuestion("How close does the object need to be (in metres)? Either enter the value, " +
-    		                          "e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
+    		window.AddStringQuestion("How close does the object need to be (in metres)?");// Either enter the value, " +
+    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -249,8 +249,8 @@ namespace AdventureAuthor.UI.Controls
 			object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a number of items");
     		window.AddTagQuestion("Which item should the player have?",ScriptHelper.ObjectType.Item);
-    		window.AddStringQuestion("How many items with this tag should the player have? Either enter the value, " +
-    		                          "e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
+    		window.AddStringQuestion("How many items with this tag should the player have?");// Either enter the value, " +
+    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;

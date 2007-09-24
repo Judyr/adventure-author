@@ -72,10 +72,10 @@ namespace AdventureAuthor.UI.Controls
 					  and an sCheck of "!0" returns TRUE if sVariable is not equal to 0.
 					*/
 					
-					string[] numbers = new string[] {"0","1","2","3","4","5","6","7","8","9"};
-					string[] operations = new string[] {"+","-","=-"};
-					
-					string check = AnswerBox.Text;
+//					string[] numbers = new string[] {"0","1","2","3","4","5","6","7","8","9"};
+//					string[] operations = new string[] {"+","-","=-"};
+//					
+//					string check = AnswerBox.Text;
 //					
 //					bool 
 //					foreach (string number in numbers) {

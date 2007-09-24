@@ -239,7 +239,8 @@
       <DependentUpon>VariablesWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\DebugLog.cs" />
+    <Compile Include="Utils\UserLog.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\UsefulTools.cs" />

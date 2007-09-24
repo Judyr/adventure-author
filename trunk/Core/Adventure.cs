@@ -69,6 +69,7 @@ namespace AdventureAuthor.Core
 		private static bool doBackups = true;
 		private static string adventureAuthorDir = @"C:\AdventureAuthor\";
 		private static string backupDir = Path.Combine(adventureAuthorDir,"backups");
+		private static string debugDir = Path.Combine(adventureAuthorDir,"debugs");		
 		private static string scriptsDir = Path.Combine(adventureAuthorDir,"scripts");		
 		private static string serializedDir = Path.Combine(adventureAuthorDir,"serialized");
 		private static string logDir = Path.Combine(adventureAuthorDir,"logs");
@@ -77,12 +78,12 @@ namespace AdventureAuthor.Core
 			get { return currentAdventure; }
 		}
 		
-		public static bool BeQuiet {
+		public static bool BeQuiet { //get; set; } automatic properties - doesn't seem to work?
 			get	{ return beQuiet; }
 			set	{ beQuiet = value; } 
 		}
 		
-		public static bool DoBackups {
+		public static bool DoBackups { //get; set; }
 			get { return doBackups; }
 			set { doBackups = value; }
 		}
@@ -94,6 +95,10 @@ namespace AdventureAuthor.Core
 		public static string BackupDir {
 			get { return backupDir; }
 		}		
+		
+		public static string DebugDir {
+			get { return debugDir; }
+		}
 		
 		public static string ScriptsDir {
 			get { return scriptsDir; }
@@ -363,7 +368,7 @@ namespace AdventureAuthor.Core
 					StreamWriter sw = new StreamWriter(reasonForBackup.OpenWrite());					
 					sw.WriteLine("Reason for backup:  " + reason);
 					sw.WriteLine();					
-					sw.WriteLine("Created " + Log.GetDate());	
+					sw.WriteLine("Created " + UsefulTools.GetDateStamp());	
 					sw.Flush();
 					sw.Close();
 				}
@@ -375,7 +380,7 @@ namespace AdventureAuthor.Core
 		
 		private string GetDirectoryPathForBackup()
 		{
-			string path = Path.Combine(Adventure.BackupDir,this.Name+"_"+Log.GetDate()+"___");			
+			string path = Path.Combine(Adventure.BackupDir,this.Name+"_"+UsefulTools.GetDateStamp()+"___");			
 			int count = 1;	
 			string newpath = path;
 			while (Directory.Exists(newpath)) { // keep trying directory names until one is not taken

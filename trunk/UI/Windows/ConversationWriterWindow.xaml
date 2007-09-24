@@ -24,10 +24,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uiw="clr-namespace:AdventureAuthor.UI.Windows"
-    Name="WriterWindow" Title="Conversation Writer" Width="1600" Height="1000" Background="LightYellow" Loaded="OnLoaded" Closing="OnClosing">
+    Name="WriterWindow" Title="Conversation Writer" Width="1600" Height="1000" Background="LightYellow"
+    Loaded="OnLoaded" Closing="OnClosing">
 		
 	<Grid Name="WriterWindowGrid">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
 			<RowDefinition/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
@@ -35,7 +37,7 @@
 			<ColumnDefinition MinWidth="350" Width="*"/>
 			<ColumnDefinition Width="400"/>
 		</Grid.ColumnDefinitions>
-		<Menu VerticalAlignment="Top" HorizontalAlignment="Left">
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
 			<MenuItem Header="File">
 				<MenuItem Header="New" Click="OnClick_New"/>
 				<MenuItem Header="Open" Click="OnClick_Open"/>
@@ -47,7 +49,7 @@
 				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers"/>
 			</MenuItem>
 		</Menu>
-		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
+		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
 			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false">
 				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
 					<Button Click="OnClick_CreateBranchAtEndOfPage" FontSize="26">
@@ -64,7 +66,7 @@
 				</StackPanel>
 			</StackPanel>
 		</Border>
-		<Border Name="graphBorder" Grid.Row="1" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Black" Grid.ZIndex="-1">
+		<Border Name="graphBorder" Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Black" Grid.ZIndex="-1">			
 			<Grid Name="GraphGrid">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
@@ -76,8 +78,10 @@
 				<Button Grid.Row="1" Grid.Column="0" Click="OnClick_ExpandGraph">ADD SHAPE (Expand Graph)</Button>
 			</Grid>
 		</Border>
-		<Border Name="LinesPanelBorder" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1">
-	    	<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" />
+		<Border Name="LinesPanelBorder" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1">
+			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
+	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" />
+	    	</ScrollViewer>
 	    </Border>
 	</Grid>
 </Window>

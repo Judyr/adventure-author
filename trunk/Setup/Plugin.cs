@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -47,6 +48,8 @@ namespace AdventureAuthor.Setup
 	public class Plugin : INWN2Plugin
 	{	
 		#region INWN2Plugin
+		
+		public static TextWriterTraceListener debugWriter;
 		
 		public MenuButtonItem PluginMenuItem {
 			get { return null; }
@@ -89,8 +92,9 @@ namespace AdventureAuthor.Setup
 			}
 			else {
 				ConversationWriterWindow.Instance = new ConversationWriterWindow();
+				DebugLog.StartRecording();				
 				Toolset.SetupUI();
-				Log.StartRecording();
+				UserLog.StartRecording();
 				Adventure.Open("francesca");
 			}
 		}	
@@ -101,7 +105,8 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="cHost"></param>
 		{		
-			Log.StopRecording();
+			UserLog.StopRecording();
+			DebugLog.StopRecording();
 		}
 		
 		public void Shutdown(INWN2PluginHost cHost)

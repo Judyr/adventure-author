@@ -32,7 +32,7 @@ using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
-	public static class Log
+	public static class UserLog
 	{	
 		// How to read log messages:
 			// GetNumber() // hour
@@ -118,9 +118,7 @@ namespace AdventureAuthor.Utils
 			// e.g. 05_05_07_JackStuart2.log
 			// Place in AdventureAuthor/logs
 			
-			DateTime now = DateTime.Now;
-			
-			string filename = GetDate() + "_" + Adventure.CurrentUser.Name;
+			string filename = UsefulTools.GetDateStamp() + "_" + Adventure.CurrentUser.Name;
 			string logpath = Path.Combine(Adventure.LogDir,filename+".log");
 			
 			// If the filename is already taken, add numbering ("<filename>2.log", "<filename>3.log" etc.):
@@ -133,6 +131,7 @@ namespace AdventureAuthor.Utils
 			FileInfo f = new FileInfo(logpath);			
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);
+			writer.AutoFlush = true;
 		}
 		
 		public static void StopRecording()
@@ -150,15 +149,9 @@ namespace AdventureAuthor.Utils
 		/// <param name="subject">The subject the action was performed upon</param>
 		public static void Write(Action action, Subject subject)
 		{
-			try	{
-				string message = GetTime() + action.ToString() + "_" + subject.ToString();
-				writer.WriteLine(message);
-				writer.Flush();
-			}
-			catch (NullReferenceException e) {
-				Debug.WriteLine("Log writer was not open.");
-				Debug.WriteLine(e.ToString());
-			}
+			string message = UsefulTools.GetTimeStamp(false) + action.ToString() + "_" + subject.ToString();
+			writer.WriteLine(message);
+			writer.Flush();
 		}
 				
 		/// <summary>
@@ -167,16 +160,10 @@ namespace AdventureAuthor.Utils
 		/// <param name="action">The action taken by the user</param>
 		/// <param name="subject">The subject the action was performed upon</param>
 		public static void Write(WizardAction action, WizardSubject subject)
-		{			
-			try	{
-				string message = GetTime() + action.ToString() + "_" + subject.ToString();
-				writer.WriteLine(message);
-				writer.Flush();
-			}
-			catch (NullReferenceException e) {
-				Debug.WriteLine("Log writer was not open.");
-				Debug.WriteLine(e.ToString());
-			}
+		{		
+			string message = UsefulTools.GetTimeStamp(false) + action.ToString() + "_" + subject.ToString();
+			writer.WriteLine(message);
+			writer.Flush();
 		}
 		
 		/// <summary>
@@ -185,15 +172,8 @@ namespace AdventureAuthor.Utils
 		/// <param name="action">The action taken by the user</param>
 		public static void Write(SpecialAction action)
 		{			
-			try	{
-				string message = GetTime() + action.ToString();
-				writer.WriteLine(message);
-				writer.Flush();
-			}
-			catch (NullReferenceException e) {
-				Debug.WriteLine("Log writer was not open.");
-				Debug.WriteLine(e.ToString());
-			}
+			writer.WriteLine(UsefulTools.GetTimeStamp(false) + action.ToString());
+			writer.Flush();
 		}
 		
 		/// <summary>
@@ -202,50 +182,8 @@ namespace AdventureAuthor.Utils
 		/// <param name="message">The message to log</param>
 		public static void Write(string message)
 		{
-			try	{
-				writer.WriteLine(GetTime() + message);
-				writer.Flush();
-			}
-			catch (NullReferenceException e) {
-				Debug.WriteLine("Log writer was not open.");
-				Debug.WriteLine(e.ToString());
-			}			
-		}
-		
-		public static String GetDate()
-		{
-			DateTime now = DateTime.Now;
-			return now.Day + "_" + now.Month + "_" + now.Year;
-		}
-		
-		public static String GetTime()
-		{
-			DateTime d = DateTime.Now;		
-			StringBuilder timestamp = new StringBuilder();
-			
-			string hour = d.Hour.ToString();
-			if (hour.Length == 1) {
-				timestamp.Append("0" + hour + ":");
-			}
-			else {
-				timestamp.Append(hour + ":");
-			}			
-			string minute = d.Minute.ToString();
-			if (minute.Length == 1) {
-				timestamp.Append("0" + minute + ":");
-			}
-			else {
-				timestamp.Append(minute + ":");
-			}						
-			string second = d.Second.ToString();
-			if (second.Length == 1) {
-				timestamp.Append("0" + second + ":");
-			}
-			else {
-				timestamp.Append(second + ":");
-			}
-				
-			return timestamp.ToString();
+			writer.WriteLine(UsefulTools.GetTimeStamp(false) + message);
+			writer.Flush();
 		}
 	}
 }

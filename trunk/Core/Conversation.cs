@@ -448,7 +448,6 @@ namespace AdventureAuthor.Core
 		
 		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector branchParent)
 		{
-			Say.Information("Running AddLineToBranch()");
 			string speakerTag = null;
 			foreach(NWN2ConversationConnector option in branchParent.Line.Children) {
 				if (speakerTag == null) {

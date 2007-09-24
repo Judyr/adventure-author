@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Text;
 
 namespace AdventureAuthor.Utils
 {
@@ -33,6 +34,8 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class UsefulTools
 	{	
+		// TODO make the string methods into Automatic Methods on string
+		
 		/// <summary>
         /// Returns true if a given word begins with a vowel (ignoring case).
         /// </summary>
@@ -69,6 +72,49 @@ namespace AdventureAuthor.Utils
 			else {
 				return text;
 			}
+		}
+		
+		public static string GetDateStamp()
+		{
+			DateTime now = DateTime.Now;
+			return now.Day + "_" + now.Month + "_" + now.Year;
+		}
+		
+		public static string GetTimeStamp(bool forFilename)
+		{
+			DateTime d = DateTime.Now;		
+			StringBuilder timestamp = new StringBuilder();
+			string divider;
+			if (forFilename) {
+				divider = "_";
+			}
+			else {
+				divider = ":";
+			}
+			
+			string hour = d.Hour.ToString();
+			if (hour.Length == 1) {
+				timestamp.Append("0" + hour + divider);
+			}
+			else {
+				timestamp.Append(hour + divider);
+			}			
+			string minute = d.Minute.ToString();
+			if (minute.Length == 1) {
+				timestamp.Append("0" + minute + divider);
+			}
+			else {
+				timestamp.Append(minute + divider);
+			}						
+			string second = d.Second.ToString();
+			if (second.Length == 1) {
+				timestamp.Append("0" + second + divider);
+			}
+			else {
+				timestamp.Append(second + divider);
+			}
+				
+			return timestamp.ToString();
 		}
 	}
 }

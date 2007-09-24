@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -81,7 +82,7 @@ namespace AdventureAuthor.UI.Windows
     	/// <summary>
     	/// Deprecated.
     	/// </summary>
-    	private GraphWindow expandedGraphViewer;    	
+    	private GraphWindow expandedGraphViewer = null;    	
 		public GraphWindow ExpandedGraphViewer {
 			get { return expandedGraphViewer; }
 		}    	    	
@@ -181,6 +182,9 @@ namespace AdventureAuthor.UI.Windows
 			textBlock.Inlines.Add(tb1);
 			textBlock.Inlines.Add(tb2);
 			button.Content = textBlock;
+			
+			
+			
 			button.Click += delegate 
 			{ 
 				if (currentPage != null) {					
@@ -203,14 +207,19 @@ namespace AdventureAuthor.UI.Windows
 					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
 					// something about taking focus away from screen elements maybe?)
 					LineControl newLineControl = GetControlForLine(newLine);
-//					MessageBox.Show("try now");
+					if (SHOWTHEMESSAGEBOX) {
+						MessageBox.Show("try now");
+					}
+//					newLineControl.Focus();
 					
-					newLineControl.Focus();
-					newLineControl.Dialogue.Focus();					
+					newLineControl.Dialogue.Focus();
+					
 				}
 			};
 			SpeakersButtonsPanel.Children.Add(button);
 		}	
+		
+		public static bool SHOWTHEMESSAGEBOX = true;//TODO TEMP
 		
 		private LineControl GetControlForLine(NWN2ConversationConnector line)
 		{
@@ -218,13 +227,30 @@ namespace AdventureAuthor.UI.Windows
 				return null;
 			}
 			
+			LineControl lineControl = null;
 			foreach (LineControl c in currentPage.LineControls) {
 				if (c.Nwn2Line == line) {
-					return c;
+					lineControl = c;
 				}
 			}
 			
-			return null;			
+			
+//			TODO test this after the focus on line stuff
+//			if (lineControl == null) {
+//				BranchControl branch = (BranchControl)FindName("Branch");
+//				if (branch == null) {
+//					Say.Debug("No branch control found.");
+//				}
+//				else {
+//					foreach (LineControl c in branch.LineControls) {
+//						if (c.Nwn2Line == line) {
+//							lineControl = c;
+//						}
+//					}
+//				}
+//			}
+			
+			return lineControl;			
 		}
 								
 		private void DisplayLine(NWN2ConversationConnector line)

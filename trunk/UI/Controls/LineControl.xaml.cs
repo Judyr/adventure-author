@@ -162,8 +162,7 @@ namespace AdventureAuthor.UI.Controls
         	
         	
         	
-        	// TEMP: TODO
-        	
+        	// TEMP: TODO        	
         	if (nwn2Line.Sound != null) {
         		SoundButton.Height = 40;
         		SoundButton.Width = 40;
@@ -301,21 +300,25 @@ namespace AdventureAuthor.UI.Controls
 //        		this.Background = Brushes.Blue;
 //        	}
         }
-               
+        
+        
+        
         private void OnMouseDown(object sender, MouseEventArgs ea)
-        {
-        	Focus();  			
+        {        	
+			Focus();
         }        
         
         private void OnGotFocus(object sender, EventArgs ea)
-        {
-        	ConversationWriterWindow.Instance.CurrentControl = this;
+        {      	
         	SelectLine();
+        	Say.Debug("OnGotFocus called from " + sender.ToString());  
+        	
         }
         
         private void OnLostFocus(object sender, EventArgs ea)
         {
         	DeselectLine();
+        	Say.Debug("OnLostFocus called from " + sender.ToString());
         }
         
         #endregion
@@ -326,6 +329,8 @@ namespace AdventureAuthor.UI.Controls
         
         private void SelectLine()
         {
+        	ConversationWriterWindow.Instance.CurrentControl = this;
+        	this.Background = Brushes.Wheat;
         	this.Dialogue.Background = Brushes.White;
         	this.Dialogue.BorderBrush = Brushes.Black;
         	this.SoundButton.IsEnabled = true;
@@ -342,6 +347,8 @@ namespace AdventureAuthor.UI.Controls
         
         private void DeselectLine()
         {
+        	ConversationWriterWindow.Instance.CurrentControl = null;
+        	this.Background = Brushes.LightYellow;
         	this.Dialogue.Background = Brushes.Transparent;	
         	this.Dialogue.BorderBrush = Brushes.Transparent;
         	this.SoundButton.IsEnabled = false;
@@ -357,5 +364,10 @@ namespace AdventureAuthor.UI.Controls
         }
         
         #endregion
+        
+		public override string ToString()
+		{
+			return "LineControl: " + SpeakerLabel.Text + " - " + UsefulTools.Truncate(Dialogue.Text,60);
+		}
     }
 }
