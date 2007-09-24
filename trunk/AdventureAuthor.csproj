@@ -70,6 +70,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Printing" />
@@ -84,8 +85,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
+    <Compile Include="Conversations\GraphTool.cs" />
     <Compile Include="Conversations\PageNode.cs" />
-    <Compile Include="Conversations\SimpleSelectionTool.cs" />
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
     <Compile Include="Core\Conversation.cs" />
@@ -302,11 +303,11 @@
     <Folder Include="UI\Controls" />
     <Folder Include="UI\Forms" />
     <Folder Include="UI\Windows" />
-    <ProjectReference Include="..\Libraries\Netron Original\Diagramming.Core\Netron.Diagramming.Core.csproj">
+    <ProjectReference Include="..\Libraries\NetronForAA\Diagramming.Core\Netron.Diagramming.Core.csproj">
       <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
       <Name>Netron.Diagramming.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\Netron Original\Diagramming.Win\Netron.Diagramming.Win.csproj">
+    <ProjectReference Include="..\Libraries\NetronForAA\Diagramming.Win\Netron.Diagramming.Win.csproj">
       <Project>{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}</Project>
       <Name>Netron.Diagramming.Win</Name>
     </ProjectReference>
