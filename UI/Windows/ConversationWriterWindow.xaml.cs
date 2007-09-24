@@ -300,10 +300,12 @@ namespace AdventureAuthor.UI.Windows
 			currentPage.LineControls.Clear();
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
+			
+			
 //			MainGraphViewer.RefreshSelectedNode();
-			if (ExpandedGraphViewer != null) {
-				ExpandedGraphViewer.RefreshSelectedNode();
-			}
+//			if (ExpandedGraphViewer != null) {
+//				ExpandedGraphViewer.RefreshSelectedNode();
+//			}
 					
 			// Check whether we are starting from the root:
 			NWN2ConversationConnectorCollection possibleNextLines;

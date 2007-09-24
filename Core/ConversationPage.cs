@@ -35,10 +35,6 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 
 namespace AdventureAuthor.Core
 {
-    /// <summary>
-    /// Interaction logic for CPage.xaml
-    /// </summary>
-
     public partial class ConversationPage
     {
     	#region Fields
@@ -92,11 +88,6 @@ namespace AdventureAuthor.Core
 		{
 			return children.Count == 0;
 		}
-		
-		private void OnClickNode(object sender, EventArgs ea)
-		{
-			ConversationWriterWindow.Instance.DisplayPage(this);
-		}		
 		
 		public override string ToString()
 		{

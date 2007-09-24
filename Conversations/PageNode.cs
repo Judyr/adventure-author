@@ -27,6 +27,9 @@
 using System;
 using Netron.Diagramming.Core;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Conversations;
+using AdventureAuthor.UI.Windows;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Conversations
 {
@@ -35,9 +38,23 @@ namespace AdventureAuthor.Conversations
 	/// </summary>
 	public class PageNode : SimpleRectangle
 	{
-		public PageNode() : base()
+		private ConversationPage page;		
+		public ConversationPage Page {
+			get { return page; }
+		}
+		
+		public PageNode(ConversationPage page) : base()
 		{			
+			this.page = page;
 			this.Resizable = false;
+		}
+		
+		public void Select()
+		{
+			ConversationWriterWindow.Instance.DisplayPage(page);
+			
+			// TODO:
+			// Highlight the route
 		}
 	}
 }

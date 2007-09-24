@@ -164,8 +164,8 @@ namespace AdventureAuthor.UI.Controls
         	
         	// TEMP: TODO        	
         	if (nwn2Line.Sound != null) {
-        		SoundButton.Height = 40;
-        		SoundButton.Width = 40;
+        		SoundButton.Height = 30;
+        		SoundButton.Width = 30;
         	}
         }
                 
@@ -300,8 +300,6 @@ namespace AdventureAuthor.UI.Controls
 //        		this.Background = Brushes.Blue;
 //        	}
         }
-        
-        
         
         private void OnMouseDown(object sender, MouseEventArgs ea)
         {        	

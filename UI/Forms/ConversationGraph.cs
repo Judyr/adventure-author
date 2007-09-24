@@ -29,7 +29,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using Netron.Diagramming.Core;
+using Netron.Diagramming.Core.AdventureAuthor;
 using Netron.Diagramming.Win;
+using Netron.Diagramming.Win.AdventureAuthor;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Core;
 using AdventureAuthor.Conversations;
@@ -41,66 +43,53 @@ namespace AdventureAuthor.UI.Forms
 	/// </summary>
 	public partial class ConversationGraph : Form
 	{
-		private DiagramControl diagramControl;
+		public GraphControl graphControl;
 		
 		public ConversationGraph()
 		{
-			TopLevel = false; // to allow it to be added to a WindowsFormHost
-			InitializeComponent();
-			
-            diagramControl = new DiagramControl();
-            ((System.ComponentModel.ISupportInitialize)(this.diagramControl)).BeginInit();
-            SuspendLayout();			
-
-            diagramControl.AllowDrop = false;
-            diagramControl.AutoScroll = true;
-            diagramControl.BackColor = System.Drawing.Color.LightBlue;
-            diagramControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
-            diagramControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            diagramControl.EnableAddConnection = true;
-           	Netron.Diagramming.Core.Layout.LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
-            diagramControl.Location = new System.Drawing.Point(0, 0);
-            diagramControl.Magnification = new System.Drawing.SizeF(100F, 100F);
-            diagramControl.Name = "diagramControl";
-            diagramControl.Size = new Size(500,500);
-//            Point p = new Point(-1200,0);
-//			diagramControl.Origin = p;
-            diagramControl.Origin = new System.Drawing.Point(0, 0);
-            
-            
-            
-            diagramControl.ShowPage = true;
-            diagramControl.ShowRulers = false;
-            diagramControl.TabIndex = 0;
-            diagramControl.Text = "Conversation Graph";
-            
-            diagramControl.Click += delegate { 
-            	Point p = new Point(diagramControl.Location.X - 10, diagramControl.Location.Y);
-            	diagramControl.Origin = p;
-            	diagramControl.Invalidate();
-            };
-            
-            
-            foreach (ITool tool in diagramControl.Controller.Tools) {
-            	DebugLog.Write("found tool " + tool.Name);
-            	if (tool.Name != "Hit Tool") {
-            		tool.Enabled = false;
-            		DebugLog.Write("disable tool " + tool.Name);
-            	}
-            }
-            
-            
-            this.Controls.Add(this.diagramControl);
-            ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
-            ResumeLayout(false);
+			try {
+				TopLevel = false; // to allow it to be added to a WindowsFormHost
+				InitializeComponent();
+				
+	            graphControl = new GraphControl();
+	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
+	            SuspendLayout();			
+				
+	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+	            graphControl.AllowDrop = false;
+	            graphControl.AutoScroll = true;
+	            graphControl.BackColor = System.Drawing.Color.LightBlue;
+	            graphControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
+	            graphControl.Dock = System.Windows.Forms.DockStyle.Fill;
+	            graphControl.EnableAddConnection = false;
+	           	Netron.Diagramming.Core.Layout.LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
+	            graphControl.Location = new System.Drawing.Point(0, 0);
+	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
+	            graphControl.Name = "diagramControl";
+	            graphControl.Size = new Size(500,500);
+	//            Point p = new Point(-1200,0);
+	//			graphControl.Origin = p;
+	            graphControl.Origin = new System.Drawing.Point(0, 0);
+	            graphControl.ShowPage = false;
+	            graphControl.ShowRulers = false;
+	            graphControl.TabIndex = 0;
+	            graphControl.Text = "Conversation Graph";
+	            
+	            graphControl.Click += delegate { 
+	            	Point p = new Point(graphControl.Location.X - 10, graphControl.Location.Y);
+	            	graphControl.Origin = p;
+	            	graphControl.Invalidate();
+	            };
+	            
+	            this.Controls.Add(this.graphControl);
+	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
+	            ResumeLayout(false);
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
 		}
 		
-		/*
-		 * if this doesn't work:
-		 * 
-		 * 
-		 * 
-		 */
 		
 		
 		private void DrawChildren(List<ConversationPage> children, PageNode parentNode)
@@ -113,10 +102,12 @@ namespace AdventureAuthor.UI.Forms
 				if (child.LeadInLine == null) {
 					throw new ArgumentException("Found another root.");
 				}
-	            PageNode childNode = new PageNode();
+				
+	            PageNode childNode = new PageNode(child);
             	childNode.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(child.LeadInLine.Text),30);            	
-	            diagramControl.AddShape(childNode);	
-	            diagramControl.AddConnection(parentNode.Connectors[0],childNode.Connectors[0]);
+	            graphControl.AddShape(childNode);	
+	            IConnection connection = graphControl.AddConnection(parentNode.Connectors[2],childNode.Connectors[0]);	
+	            
 	            DrawChildren(child.Children,childNode);
 			}
 		}
@@ -126,26 +117,29 @@ namespace AdventureAuthor.UI.Forms
 			if (pages == null || pages.Count == 0) {
 				return;
 			}
-            ((System.ComponentModel.ISupportInitialize)(this.diagramControl)).BeginInit();
-            SuspendLayout();			            
-            PageNode root = new PageNode();
-            root.Text = "Root";
-            diagramControl.AddShape(root);
-            diagramControl.SetLayoutRoot(root);
+            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
+            SuspendLayout();	
+            
+            PageNode root = new PageNode(pages[0]);
+            root.Text = "Start";
+            graphControl.AddShape(root);
+            graphControl.SetLayoutRoot(root);
             DrawChildren(pages[0].Children,root);
-            diagramControl.Layout(LayoutType.ClassicTree);
-            root.Move(new Point(root.X+150,root.Y+15));
-            diagramControl.Invalidate();
-            ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
+            graphControl.Layout(LayoutType.ClassicTree);
+            root.Move(new Point(root.X,root.Y+50));
+            graphControl.Invalidate();
+            
+            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
             ResumeLayout(false);
-            root.Move(new Point(root.X+150,root.Y+15));
-            diagramControl.Invalidate();
+            root.Move(new Point(root.X+70,root.Y));
+            graphControl.Invalidate();
 		}
 		
 		public void Clear()
 		{
-			diagramControl.Document.Model.Clear();
-			diagramControl.Invalidate();
+			Selection.Clear();
+			graphControl.Controller.Model.Clear();
+			graphControl.Invalidate();
 		}
 	}
 }
