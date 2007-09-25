@@ -44,33 +44,47 @@ namespace AdventureAuthor.UI.Controls
 
     public partial class LineControl : UserControl
     {    	
+    	/// <summary>
+    	/// The line of conversation this control represents.
+    	/// </summary>
     	private NWN2ConversationConnector nwn2Line;
 		public NWN2ConversationConnector Nwn2Line {
 			get { return nwn2Line; }
 		}
     	
+    	/// <summary>
+    	/// True if the line this control represents is part of a branch, i.e. either this line or another could be spoken next.
+    	/// </summary>
     	private bool isPartOfBranch;    	
 		public bool IsPartOfBranch {
 			get { return isPartOfBranch; }
 			set { isPartOfBranch = value; }
 		}    
     	
-    	private ConditionControl conditionalControl; // conditions are co-dependent, e.g. "IF (x) AND (y) THEN...", so they share a control 	
-		public ConditionControl ConditionalControl {
-			get { return conditionalControl; }
-		}
+    	/// <summary>
+    	/// A control representing all the conditions on the line (conditions are co-dependent, so they share a control). May be null.
+    	/// </summary>
+    	private ConditionControl conditionalControl;	
     	
-    	private List<ActionControl> actionControls; // actions are independent, e.g. "HIRO GIVES THE PLAYER 100 GOLD. 
-		public List<ActionControl> ActionControls { // HIRO JOINS THE PLAYER'S PARTY", so they each have their own control.
-			get { return actionControls; }
-		}
+    	/// <summary>
+    	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
+    	/// </summary>
+    	private List<ActionControl> actionControls;	
     	
-    	private const int MAX_LENGTH_OF_LINE_TO_DISPLAY = 70;
-    					
-        public LineControl(NWN2ConversationConnector line, bool lineIsPartOfBranch)
+    	/// <summary>
+    	/// A control representing a sound file that will be played on this line. May be null.
+    	/// </summary>
+    	private SoundControl soundControl;
+    	
+    	/// <summary>
+    	/// Create a new LineControl.
+    	/// </summary>
+    	/// <param name="line">The line of conversation to represent</param>
+    	/// <param name="lineIsPartOfBranch">True if the line is part of a branch, false otherwise</param>
+        public LineControl(NWN2ConversationConnector line, bool isPartOfBranch)
         {        
         	this.nwn2Line = line;
-        	this.isPartOfBranch = lineIsPartOfBranch;
+        	this.isPartOfBranch = isPartOfBranch;
         	
         	if (this.nwn2Line.Text.Strings.Count == 0) {
         		this.nwn2Line.Text = Conversation.StringToOEIExoLocString(String.Empty);
@@ -106,7 +120,7 @@ namespace AdventureAuthor.UI.Controls
         	
         	// Check if there are conditions for this line to be spoken, and if so represent *all* of them with a single control:
         	if (line.Conditions.Count > 0) {
-        		if (!lineIsPartOfBranch) {
+        		if (!isPartOfBranch) {
         			Say.Error("Conditional check appeared on a line that was not part of a branch.");
         		}
         		conditionalControl = new ConditionControl(this);
@@ -130,6 +144,16 @@ namespace AdventureAuthor.UI.Controls
         	}   
         	else {
         		actionControls = new List<ActionControl>();
+        	}
+        	
+        	// Check if there is a sound attached to this line, and if so represent it with a control. 
+        	// Note that there is an issue with lines having a non-null Sound property (FullName == ".RES") even when they don't have a sound:        	
+        	if (line.Sound != null && line.Sound.FullName != ".RES") { 	
+        		soundControl = new SoundControl(this);
+        		Grid.SetRow(soundControl,5);
+        		Grid.SetColumn(soundControl,0);
+        		Grid.SetColumnSpan(soundControl,3);
+        		LineControlGrid.Children.Add(soundControl);
         	}
         	
         	// Fine-tune context menu based on current circumstances:
@@ -157,16 +181,6 @@ namespace AdventureAuthor.UI.Controls
         			OnClick_Delete(sender,e);
 		       	}
 			};
-        	
-        	
-        	
-        	
-        	
-        	// TEMP: TODO        	
-        	if (nwn2Line.Sound != null) {
-        		SoundButton.Height = 30;
-        		SoundButton.Width = 30;
-        	}
         }
                 
         #region LineControl event handlers
@@ -309,14 +323,14 @@ namespace AdventureAuthor.UI.Controls
         private void OnGotFocus(object sender, EventArgs ea)
         {      	
         	SelectLine();
-        	Say.Debug("OnGotFocus called from " + sender.ToString());  
+//        	Say.Debug("OnGotFocus called from " + sender.ToString());  
         	
         }
         
         private void OnLostFocus(object sender, EventArgs ea)
         {
         	DeselectLine();
-        	Say.Debug("OnLostFocus called from " + sender.ToString());
+//        	Say.Debug("OnLostFocus called from " + sender.ToString());
         }
         
         #endregion
@@ -346,7 +360,12 @@ namespace AdventureAuthor.UI.Controls
         private void DeselectLine()
         {
         	ConversationWriterWindow.Instance.CurrentControl = null;
-        	this.Background = Brushes.LightYellow;
+        	if (isPartOfBranch) {
+        		Background = Brushes.AliceBlue;
+        	}
+        	else {
+        		Background = Brushes.LightYellow;
+        	}
         	this.Dialogue.Background = Brushes.Transparent;	
         	this.Dialogue.BorderBrush = Brushes.Transparent;
         	this.SoundButton.IsEnabled = false;

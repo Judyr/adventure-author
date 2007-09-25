@@ -90,6 +90,39 @@ namespace AdventureAuthor.UI.Forms
 			}
 		}
 		
+	
+		public void Open(List<ConversationPage> pages)
+		{
+			if (pages == null || pages.Count == 0) {
+				return;
+			}
+			
+			Say.Debug("Creating a graph with " + pages.Count + " pages.");
+			
+			Clear();
+			
+            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
+            SuspendLayout();	
+            
+            PageNode root = new PageNode(pages[0],null);
+            root.Text = "Start";
+            graphControl.AddShape(root);
+            graphControl.Invalidate(); // in case this is the only node we add
+            graphControl.SetLayoutRoot(root);
+            if (pages.Count > 1) {
+            	DrawChildren(pages[0].Children,root);
+            }
+            
+            graphControl.Layout(LayoutType.ClassicTree);
+//            root.Move(new Point(root.X,root.Y+50));
+            graphControl.Invalidate();
+            
+            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
+            ResumeLayout(false);
+//            root.Move(new Point(root.X+70,root.Y));
+            graphControl.Invalidate();
+            Say.Debug("Finished creating graph.");
+		}
 		
 		
 		private void DrawChildren(List<ConversationPage> children, PageNode parentNode)
@@ -103,36 +136,14 @@ namespace AdventureAuthor.UI.Forms
 					throw new ArgumentException("Found another root.");
 				}
 				
-	            PageNode childNode = new PageNode(child);
-            	childNode.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(child.LeadInLine.Text),30);            	
+	            PageNode childNode = new PageNode(child,parentNode);
+            	childNode.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(child.LeadInLine.Text),30); //TODO move to pagenode           	
 	            graphControl.AddShape(childNode);	
 	            IConnection connection = graphControl.AddConnection(parentNode.Connectors[2],childNode.Connectors[0]);	
+	            childNode.ParentEdge = connection;
 	            
 	            DrawChildren(child.Children,childNode);
 			}
-		}
-	
-		public void Open(List<ConversationPage> pages)
-		{
-			if (pages == null || pages.Count == 0) {
-				return;
-			}
-            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
-            SuspendLayout();	
-            
-            PageNode root = new PageNode(pages[0]);
-            root.Text = "Start";
-            graphControl.AddShape(root);
-            graphControl.SetLayoutRoot(root);
-            DrawChildren(pages[0].Children,root);
-            graphControl.Layout(LayoutType.ClassicTree);
-//            root.Move(new Point(root.X,root.Y+50));
-            graphControl.Invalidate();
-            
-            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
-            ResumeLayout(false);
-//            root.Move(new Point(root.X+70,root.Y));
-            graphControl.Invalidate();
 		}
 		
 		public void Clear()
@@ -142,24 +153,31 @@ namespace AdventureAuthor.UI.Forms
 			graphControl.Invalidate();
 		}
 		
-		internal void HighlightNode(ConversationPage page)
+		internal void SelectNode(PageNode node)
 		{
-			PageNode node = GetNode(page);
 			if (node != null) {
 				node.IsSelected = true;
 				node.Hovered = true;
 				node.Invalidate();
 			}
 			else {
-				Say.Error("Couldn't find a node to highlight.");
+				Say.Error("Tried to select a null node.");
 			}
 		}
 		
 		internal PageNode GetNode(ConversationPage page)
 		{
 			foreach (IDiagramEntity entity in graphControl.Controller.Model.Paintables) {
+				Say.Debug("Checking entity " + entity.ToString() + ".");
 				PageNode pageNode = entity as PageNode;
+				if (pageNode == null) {
+					Say.Debug("Wasn't a page node.");
+				}
+				else {
+					Say.Debug("Was a page node.");
+				}
 				if (pageNode != null && pageNode.Page == page) {
+					Say.Debug("Found the page node I was looking for.");
 					return pageNode;
 				}
 			}

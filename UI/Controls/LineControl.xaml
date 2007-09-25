@@ -110,6 +110,7 @@
     		<RowDefinition MinHeight="34" MaxHeight="34"/> <!--Speaker and first line of dialogue-->
     		<RowDefinition MinHeight="0" Height="*"/> <!--Any subsequent lines of dialogue-->
     		<RowDefinition MinHeight="0"/> <!--Action controls-->
+    		<RowDefinition MinHeight="0"/> <!--Sound control-->
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="100"/> <!--Buttons-->
