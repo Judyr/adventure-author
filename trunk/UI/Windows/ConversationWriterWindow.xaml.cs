@@ -204,53 +204,49 @@ namespace AdventureAuthor.UI.Windows
 					DisplayPage(currentPage);
 					RefreshDisplay(false);
 					
-					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
-					// something about taking focus away from screen elements maybe?)
 					LineControl newLineControl = GetControlForLine(newLine);
-					if (SHOWTHEMESSAGEBOX) {
-						MessageBox.Show("try now");
-					}
-//					newLineControl.Focus();
-					
-					newLineControl.Dialogue.Focus();
-					
+					FocusOnLine(newLineControl);
 				}
 			};
 			SpeakersButtonsPanel.Children.Add(button);
 		}	
+
+		internal void FocusOnLine(LineControl lineControl)
+		{
+			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
+			// something about taking focus away from screen elements maybe?)
+				
+			MessageBox.Show("try now");
+			
+//			lineControl.Focus();
+					
+			lineControl.Dialogue.Focus();
+		}
 		
-		public static bool SHOWTHEMESSAGEBOX = true;//TODO TEMP
-		
-		private LineControl GetControlForLine(NWN2ConversationConnector line)
+		internal LineControl GetControlForLine(NWN2ConversationConnector line)
 		{
 			if (line == null) {
 				return null;
 			}
 			
-			LineControl lineControl = null;
 			foreach (LineControl c in currentPage.LineControls) {
 				if (c.Nwn2Line == line) {
-					lineControl = c;
+					return c;
 				}
 			}
+						
+			foreach (Control control in LinesPanel.Children) {
+				BranchControl branch = control as BranchControl;
+				if (branch != null) {
+					foreach (LineControl c in branch.LineControls) {
+						if (c.Nwn2Line == line) {
+							return c;
+						}
+					}						
+				}
+			}			
 			
-			
-//			TODO test this after the focus on line stuff
-//			if (lineControl == null) {
-//				BranchControl branch = (BranchControl)FindName("Branch");
-//				if (branch == null) {
-//					Say.Debug("No branch control found.");
-//				}
-//				else {
-//					foreach (LineControl c in branch.LineControls) {
-//						if (c.Nwn2Line == line) {
-//							lineControl = c;
-//						}
-//					}
-//				}
-//			}
-			
-			return lineControl;			
+			return null;			
 		}
 								
 		private void DisplayLine(NWN2ConversationConnector line)
@@ -301,6 +297,7 @@ namespace AdventureAuthor.UI.Windows
 			currentPage.LineControls.Clear();
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
+			// TODO clear the graph first of all selected and highlighted nodes,except if they will continue to be so in the new display
 			MainGraph.HighlightNode(currentPage);
 			// if (ExpandedGraph != null) {
 			// 	   ExpandedGraph.HighlightNode(currentPage);

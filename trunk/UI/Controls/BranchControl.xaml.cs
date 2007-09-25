@@ -130,16 +130,8 @@ namespace AdventureAuthor.UI.Controls
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToBranch(parentLine);
 				
 			ConversationWriterWindow.Instance.RefreshDisplay(true);
-					
-			if (newLine != null) {
-				foreach (LineControl lc in OptionsPanel.Children) {
-					Say.Debug("Checking a LineControl for the line to focus on.");
-					if (lc.Nwn2Line == newLine) {
-						Say.Debug("Found the line to focus on.");
-						lc.Focus(); // TODO also doesn't work
-					}
-				}
-			}
+			LineControl newLineControl = ConversationWriterWindow.Instance.GetControlForLine(newLine);
+			ConversationWriterWindow.Instance.FocusOnLine(newLineControl);
         }
     }
 }
