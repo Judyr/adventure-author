@@ -484,21 +484,6 @@ namespace AdventureAuthor.UI
 							vm.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
 							tb.Items.Add(vm);
 							
-							ButtonItem temp = new ButtonItem();
-							temp.Text = "Show a MessageBox first";
-							temp.Activate += delegate 
-							{ 
-								if (ConversationWriterWindow.SHOWTHEMESSAGEBOX == true) {
-									ConversationWriterWindow.SHOWTHEMESSAGEBOX = false;
-									temp.Text = "Don't show a MessageBox first";
-								}
-								else {
-									ConversationWriterWindow.SHOWTHEMESSAGEBOX = true;
-									temp.Text = "Show a MessageBox first";
-								}
-							};
-							tb.Items.Add(temp);
-							
 							tbc.Controls.Add(tb);
 						}
 					} catch (Exception e) {
