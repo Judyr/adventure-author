@@ -181,6 +181,27 @@ namespace AdventureAuthor.UI.Controls
         			OnClick_Delete(sender,e);
 		       	}
 			};
+        	
+        	
+        	
+        	
+        	
+        	
+        	// TEMP:
+        	try {
+	        	SoundPlayerAction actionx = (SoundPlayerAction)FindName("rar");
+	        	actionx.Source = null;
+        	}
+        	catch (NullReferenceException) {
+        		Say.Error("First way got a null reference.");
+        	}
+        	
+        	try {
+        		this.rar.Source = null;
+        	}
+        	catch (NullReferenceException) {
+        		Say.Error("Second way got a null reference.");
+        	}
         }
                 
         #region LineControl event handlers
@@ -342,18 +363,20 @@ namespace AdventureAuthor.UI.Controls
         private void SelectLine()
         {
         	ConversationWriterWindow.Instance.CurrentControl = this;
-        	this.Background = Brushes.Wheat;
-        	this.Dialogue.Background = Brushes.White;
-        	this.Dialogue.BorderBrush = Brushes.Black;
-        	this.SoundButton.IsEnabled = true;
-        	this.SoundButton.Opacity = 1.0;
-        	this.unusedButton.IsEnabled = true;
-        	this.unusedButton.Opacity = 1.0;
-        	this.DeleteLineButton.IsEnabled = true;
-        	this.DeleteLineButton.Opacity = 1.0;
-        	if (this.conditionalControl != null) {
-	        	this.conditionalControl.EditConditionsButton.IsEnabled = true;
-	        	this.conditionalControl.EditConditionsButton.Opacity = 1.0;    
+        	Background = Brushes.Wheat;
+        	Dialogue.Background = Brushes.White;
+        	Dialogue.BorderBrush = Brushes.Black;
+        	SwitchOn(SoundButton);
+        	SwitchOn(unusedButton);
+        	SwitchOn(DeleteLineButton);
+        	if (conditionalControl != null) {
+        		SwitchOn(conditionalControl.EditConditionsButton);
+        	} 
+        	foreach (ActionControl actionControl in actionControls) {
+        		SwitchOn(actionControl.EditActionButton);
+        	}
+        	if (soundControl != null) {
+        		SwitchOn(soundControl.PlaySoundButton);
         	}
         }
         
@@ -366,18 +389,32 @@ namespace AdventureAuthor.UI.Controls
         	else {
         		Background = Brushes.LightYellow;
         	}
-        	this.Dialogue.Background = Brushes.Transparent;	
-        	this.Dialogue.BorderBrush = Brushes.Transparent;
-        	this.SoundButton.IsEnabled = false;
-        	this.SoundButton.Opacity = 0.0;
-        	this.unusedButton.IsEnabled = false;
-        	this.unusedButton.Opacity = 0.0;
-        	this.DeleteLineButton.IsEnabled = false;
-        	this.DeleteLineButton.Opacity = 0.0;
-        	if (this.conditionalControl != null) {
-	        	this.conditionalControl.EditConditionsButton.IsEnabled = false;
-	        	this.conditionalControl.EditConditionsButton.Opacity = 0.0;    
+        	Dialogue.Background = Brushes.Transparent;	
+        	Dialogue.BorderBrush = Brushes.Transparent;
+        	SwitchOff(SoundButton);
+        	SwitchOff(unusedButton);
+        	SwitchOff(DeleteLineButton);
+        	if (conditionalControl != null) {
+        		SwitchOff(conditionalControl.EditConditionsButton);
         	} 
+        	foreach (ActionControl actionControl in actionControls) {
+        		SwitchOff(actionControl.EditActionButton);
+        	}
+        	if (soundControl != null) {
+        		SwitchOff(soundControl.PlaySoundButton);
+        	}
+        }
+        
+        private void SwitchOn(Control c)
+        {
+        	c.IsEnabled = true;
+        	c.Opacity = 1.0;
+        }
+        
+        private void SwitchOff(Control c)
+        {
+        	c.IsEnabled = false;
+        	c.Opacity = 0.0;
         }
         
         #endregion

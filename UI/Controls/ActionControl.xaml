@@ -26,16 +26,16 @@
 	MouseDown="OnMouseDown">
     <Grid>
 		<Grid.RowDefinitions>
-    		<RowDefinition MinHeight="50" MaxHeight="50"/>
-    		<RowDefinition MinHeight="0"/>
+    		<RowDefinition/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="100"/>
     		<ColumnDefinition Width="*"/>
     	</Grid.ColumnDefinitions>
-		<Button x:Name="EditActionButton" Grid.Row="0" Grid.Column="0" IsEnabled="False" Opacity="0.0" Click="OnClick_EditAction" 
-				Width="85" Height="35" FontSize="16" Content="Edit Action"/>
-		<TextBlock x:Name="Description" Background="Transparent" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
-				   FontSize="22" FontWeight="700" Padding="6" TextWrapping="Wrap"/>
+    	<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">  
+			<Button Name="EditActionButton" Click="OnClick_EditAction" IsEnabled="false" Opacity="0.0" Content="Edit" 
+    		        Height="25" Width="60" Margin="6"/>
+			<TextBlock x:Name="Description" Background="Transparent" FontSize="22" FontWeight="600" Padding="6" TextWrapping="Wrap"/> 
+    	</StackPanel>
     </Grid>
 </UserControl>

@@ -25,23 +25,9 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NWN2Toolset.NWN2.Data;
-using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.Core;
-using AdventureAuthor.Scripts;
-using AdventureAuthor.UI.Controls;
-using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -57,6 +43,8 @@ namespace AdventureAuthor.UI.Controls
             	throw new ArgumentException("Tried to create a SoundControl for a line without a sound.");
             }
             this.Description.Text = "PLAY SOUND " + owner.Nwn2Line.Sound.FullName;
+            string filename = Path.Combine(Adventure.CurrentAdventure.ModulePath,owner.Nwn2Line.Sound.FullName);
+            SoundPlayer.Source = new Uri(filename);
         }
         
         private void OnMouseDown(object sender, EventArgs ea)

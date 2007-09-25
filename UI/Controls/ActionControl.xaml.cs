@@ -51,16 +51,16 @@ namespace AdventureAuthor.UI.Controls
 
     public partial class ActionControl : UserControl
     {
-    	private LineControl attachedTo;    	
-		public LineControl AttachedTo {
-			get { return attachedTo; }
-			set { attachedTo = value; }
+    	private LineControl owner;    	
+		public LineControl Owner {
+			get { return owner; }
+			set { owner = value; }
 		}
     	
-        internal ActionControl(NWN2ScriptFunctor action, LineControl attachedTo)
+        internal ActionControl(NWN2ScriptFunctor action, LineControl owner)
         {
             InitializeComponent();
-            this.attachedTo = attachedTo;
+            this.owner = owner;
             this.Description.Text = ScriptHelper.GetDescription(action);
         }
 
@@ -72,7 +72,7 @@ namespace AdventureAuthor.UI.Controls
         
         private void OnMouseDown(object sender, EventArgs ea)
         {
-        	this.attachedTo.Focus();        	
+        	this.owner.Focus();        	
         }
     }
 }
