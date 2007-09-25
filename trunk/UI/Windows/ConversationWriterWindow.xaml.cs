@@ -33,6 +33,7 @@ using System.Windows.Controls;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
 using AdventureAuthor.Core;
+using AdventureAuthor.Conversations;
 using AdventureAuthor.UI.Controls;
 using AdventureAuthor.UI.Forms;
 using AdventureAuthor.Utils;
@@ -73,19 +74,31 @@ namespace AdventureAuthor.UI.Windows
     	/// </summary>
     	private WindowsFormsHost host;
     	
+    	/// <summary>
+    	/// The single instance of the Conversation Writer window.
+    	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
+    	/// </summary>
     	private static ConversationWriterWindow instance;    	
 		public static ConversationWriterWindow Instance {
 			get { return instance; }
 			set { instance = (ConversationWriterWindow)value; }
-		}
+		}    	
     	
     	/// <summary>
-    	/// Deprecated.
+    	/// A form containing a navigatable graph representation of the conversation, displayed on the main window.
     	/// </summary>
-    	private GraphWindow expandedGraphViewer = null;    	
-		public GraphWindow ExpandedGraphViewer {
-			get { return expandedGraphViewer; }
-		}    	    	
+		private ConversationGraph mainGraph;		
+		public ConversationGraph MainGraph {
+			get { return mainGraph; }
+		}
+    	
+		/// <summary>
+		/// A form containing a navigatable graph representation of the conversation, displayed via an Expand Graph button on the main window.
+		/// </summary>
+		private ConversationGraph expandedGraph = null;	
+		public ConversationGraph ExpandedGraph {
+			get { return expandedGraph; }
+		}
     	
     	/// <summary>
     	/// The pages that make up the currently-open conversation, starting with a root page.
@@ -181,9 +194,7 @@ namespace AdventureAuthor.UI.Windows
 			textBlock.Inlines.Add(tb0);
 			textBlock.Inlines.Add(tb1);
 			textBlock.Inlines.Add(tb2);
-			button.Content = textBlock;
-			
-			
+			button.Content = textBlock;			
 			
 			button.Click += delegate 
 			{ 
@@ -286,6 +297,7 @@ namespace AdventureAuthor.UI.Windows
 		// TODO make this into ConversationPage.Display() to centralise everything, once it is fully working
 		public void DisplayPage(ConversationPage page)
 		{
+			Say.Debug("Displaying page " + page.ToString());
 			// Save any changes that have been made to on-screen controls, since we're about to replace them:
 			Conversation.CurrentConversation.SaveToWorkingCopy();
 			
@@ -298,10 +310,16 @@ namespace AdventureAuthor.UI.Windows
 			
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
 			// TODO clear the graph first of all selected and highlighted nodes,except if they will continue to be so in the new display
-			MainGraph.HighlightNode(currentPage);
-			// if (ExpandedGraph != null) {
-			// 	   ExpandedGraph.HighlightNode(currentPage);
-			// }
+			PageNode mainNode = MainGraph.GetNode(currentPage);
+			MainGraph.SelectNode(mainNode);
+			mainNode.ShowRoute(); // TODO inconsistent location of methods
+			MainGraph.Invalidate();
+			if (ExpandedGraph != null) {
+				PageNode expandedNode = ExpandedGraph.GetNode(currentPage);
+				ExpandedGraph.SelectNode(expandedNode);
+				expandedNode.ShowRoute(); // TODO inconsistent location of methods
+				ExpandedGraph.Invalidate();
+			}
 					
 			// Check whether we are starting from the root:
 			NWN2ConversationConnectorCollection possibleNextLines;
@@ -430,18 +448,28 @@ namespace AdventureAuthor.UI.Windows
 		}
 				
 		public void RefreshDisplay(bool conversationStructureChanged)
-		{						
+		{					
 			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
 			if (conversationStructureChanged) {
+				Say.Debug("RefreshDisplay() - conversation structure changed.");
+			
 				ConversationPage newVersionOfCurrentPage = null;
 				ConversationPage newVersionOfPreviousPage = null;
 						
+				Say.Debug("Creating a new set of pages.");
 				pages = CreatePages(Conversation.CurrentConversation);
 				foreach (ConversationPage p in pages) {					
 					if (p.LeadInLine == currentPage.LeadInLine) {
-						newVersionOfCurrentPage = p;
+						newVersionOfCurrentPage = p;						
 						break;
 					}
+				}
+				
+				if (newVersionOfCurrentPage == null) {
+					Say.Debug("Couldn't find a new version of the current page.");
+				}
+				else {
+					Say.Debug("Found a new version of the current page.");
 				}
 				
 				if (previousPage != null) {
@@ -451,25 +479,29 @@ namespace AdventureAuthor.UI.Windows
 							break;
 						}
 					}
+				}								
+
+				Say.Debug("Opening the new set of pages in the main graph.");
+				MainGraph.Open(pages);
+				if (ExpandedGraph != null) {
+					Say.Debug("Opening the new set of pages in the expanded graph.");
+					ExpandedGraph.Open(pages);
 				}
-										
+					
 				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
 				if (newVersionOfCurrentPage != null) {
+					Say.Debug("Displaying the new version of the current page.");
 					DisplayPage(newVersionOfCurrentPage);
 					previousPage = newVersionOfPreviousPage;
 				}
 				else {
+					Say.Debug("Displaying root.");
 					DisplayPage(pages[0]);
 					previousPage = null;
-				}					
-				
-
-				ConversationWriterWindow.instance.MainGraph.Open(pages);
-				if (ExpandedGraphViewer != null) {
-					ExpandedGraphViewer.RefreshGraph();
-				}
+				}	
 			}
 			else {
+				Say.Debug("RefreshDisplay() - conversation structure not changed.");
 				DisplayPage(currentPage);
 			}
 		}
@@ -477,31 +509,15 @@ namespace AdventureAuthor.UI.Windows
 		#endregion UI
 					
 		#region Event handlers
-		
-		private static int offset = 0;
-		
+				
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
-			DiagramControl d = (DiagramControl)host.Child;
-								offset += 40;
-					Say.Information("Trying to add shapes.");
-					ClassShape shape = new ClassShape();
-					shape.Height = 30;
-					shape.Width =30;
-					shape.X = offset;
-					shape.Y = offset;
-					shape.Text = "ARRG";
-					d.AddShape(shape);
-					host.Child.Invalidate();
-			
-					
-//			expandedGraphViewer = new GraphWindow();
-//			Window window = new Window();
-//			window.Height = 900;
-//			window.Width = 900;
-//			window.Content = this.expandedGraphViewer;
-//			expandedGraphViewer.RefreshGraph();
-//			window.ShowDialog();
+			try {
+				throw new NotImplementedException();
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
 		}
 		
 		private void OnClick_New(object sender, EventArgs ea)
@@ -567,8 +583,8 @@ namespace AdventureAuthor.UI.Windows
 			// Build a graph based on the list of Pages:
 			pages = CreatePages(Conversation.CurrentConversation);
 			MainGraph.Open(pages);
-			if (ExpandedGraphViewer != null) {
-				ExpandedGraphViewer.RefreshGraph();
+			if (ExpandedGraph != null) {
+				ExpandedGraph.Open(pages);
 			}
 			
 			// Allocate speakers unique colours and create a button for each:				
@@ -743,7 +759,6 @@ namespace AdventureAuthor.UI.Windows
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-//				Conversation.CurrentConversation.SaveToWorkingCopy();
 				DisplayPage(CurrentPage);
 				RefreshDisplay(true);
         	}
@@ -788,8 +803,6 @@ namespace AdventureAuthor.UI.Windows
 		#endregion Event handlers
 		
 		
-		// TODO: Highlight current node, and path through graph
-		// TODO: ArrowControl, which has IsSelected and IsPartOfPath triggers like CPage
 		// TODO: Write an OnClosing method for form.App, attach it, and see if it gets called by ShutdownToolset
 		
 		
@@ -813,8 +826,8 @@ namespace AdventureAuthor.UI.Windows
 			Conversation.CurrentConversation = null;
 			
 			MainGraph.Clear();
-			if (ExpandedGraphViewer != null) {
-				ExpandedGraphViewer.RefreshGraph();
+			if (ExpandedGraph != null) {
+				ExpandedGraph.Clear();
 			}
 			
 			Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
@@ -829,14 +842,12 @@ namespace AdventureAuthor.UI.Windows
 		{
 			// TODO try setting this through XAML
 			host = new WindowsFormsHost();
-			MainGraph = new ConversationGraph();
+			mainGraph = new ConversationGraph();
 			host.Child = MainGraph;
 			Grid.SetRow(host,0);
 			Grid.SetColumn(host,0);
 			GraphGrid.Children.Add(host);
-		}
-		
-		public ConversationGraph MainGraph;
+		}		
     }
 }
 		

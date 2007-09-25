@@ -34,23 +34,34 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ManagedElectron;
+using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Core;
+using AdventureAuthor.Scripts;
+using AdventureAuthor.UI.Controls;
+using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.UI.Windows
+namespace AdventureAuthor.UI.Controls
 {
-    /// <summary>
-    /// Interaction logic for AnimationWindow.xaml
-    /// </summary>
-
-    public partial class AnimationWindow : Window
+    public partial class SoundControl : UserControl
     {
-        public AnimationWindow()
+    	private LineControl owner; 
+    	
+        internal SoundControl(LineControl owner)
         {
             InitializeComponent();
-            
-            //TODO: Listbox with every possible animation - bound to ManagedElectron.NWN2_etc.
-            //this.AnimationsComboBox.Items.AddRange(ManagedElectron.NWN2_ConversationAnimType.GetValues();
+            this.owner = owner;
+            if (owner.Nwn2Line.Sound == null) {
+            	throw new ArgumentException("Tried to create a SoundControl for a line without a sound.");
+            }
+            this.Description.Text = "PLAY SOUND " + owner.Nwn2Line.Sound.FullName;
+        }
+        
+        private void OnMouseDown(object sender, EventArgs ea)
+        {
+        	this.owner.Focus();        	
         }
     }
 }

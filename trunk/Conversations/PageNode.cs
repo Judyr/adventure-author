@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Drawing;
 using Netron.Diagramming.Core;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Conversations;
@@ -38,23 +39,64 @@ namespace AdventureAuthor.Conversations
 	/// </summary>
 	public class PageNode : SimpleRectangle
 	{
+		/// <summary>
+		/// The page of the conversation that this node represents.
+		/// </summary>
 		private ConversationPage page;		
 		public ConversationPage Page {
 			get { return page; }
 		}
 		
-		public PageNode(ConversationPage page) : base()
+		/// <summary>
+		/// The node that leads to this node - null if this is the root.
+		/// </summary>
+		private PageNode parentNode;
+		
+		/// <summary>
+		/// The edge that connects this node and its parent node - null if this is the root.
+		/// </summary>
+		private IConnection parentEdge = null;	
+		public IConnection ParentEdge {
+			get { return parentEdge; }
+			set { parentEdge = value; }
+		}
+		
+		public PageNode(ConversationPage page, PageNode parentNode) : base()
 		{			
 			this.page = page;
 			this.Resizable = false;
-		}
+			this.parentNode = parentNode;
+		}		
 		
-		public void Select()
+		/// <summary>
+		/// Highlight the route to this node, up to the root of the conversation tree. 
+		/// <remarks>Requires an Invalidate() call on the parent form afterwards.</remarks>
+		/// </summary>
+		public void ShowRoute()
 		{
-			ConversationWriterWindow.Instance.DisplayPage(page);
+			if (parentNode != null && parentEdge == null) {
+				throw new ArgumentException("No information was provided about the edge that links the node to its parent node.");
+			}
 			
-			// TODO:
-			// Highlight the route
+			if (!IsSelected) { // highlight this node unless it is selected, in which it is the route's endpoint
+				
+				// TODO
+				
+				this.PaintStyle = new GradientPaintStyle(Color.LightBlue,Color.AntiqueWhite,0.0f);				
+			}
+			if (parentEdge != null) { // continue to highlight up the tree until you reach the root, which has no parent
+				// highlight the edge:
+				parentEdge.PaintStyle = new GradientPaintStyle(Color.Red,Color.Maroon,0.0f);
+				
+				// continue up the tree:
+				try {
+					parentNode.ShowRoute();
+				}
+				catch (NullReferenceException e) {
+					Say.Error("Failed to highlight route: node '" + page.ToString() + 
+					          "' has a parent edge but no parent node, which is invalid.",e);
+				}
+			}
 		}
 	}
 }

@@ -70,8 +70,9 @@ namespace AdventureAuthor.UI.Windows
 			WAVfiles.Insert(0,blank);
 			
 			SoundBox.ItemsSource = WAVfiles;
-			
-			if (line.Sound != null) {
+			    	
+			// Note that there is an issue with lines having a non-null Sound property (FullName == ".RES") even when they don't have a sound:
+			if (line.Sound != null && line.Sound.FullName != ".RES") { // 	
 				CurrentSoundTextBox.Text = "Current sound: " + line.Sound.FullName;
 			}
 			else {
@@ -84,15 +85,17 @@ namespace AdventureAuthor.UI.Windows
         	IResourceEntry wav = SoundBox.SelectedItem as IResourceEntry;
         	if (wav == null) {
         		Say.Warning("You didn't select a sound file to play.");
+        		return;
         	}
-        	else if (wav.ResRef.Value == "<no sound>") {
+        	
+        	if (wav.ResRef.Value == "<no sound>") {
         		line.Sound = null;
-        		Close();
         	}
         	else {
         		line.Sound = wav;
-        		Close();
         	}
+	    	ConversationWriterWindow.Instance.RefreshDisplay(false);
+        	Close();
         }
         
         private void OnClick_Cancel(object sender, EventArgs ea)

@@ -161,6 +161,10 @@
       <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Controls\SoundControl.xaml.cs">
+      <DependentUpon>SoundControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Controls\StringQuestionPanel.xaml.cs">
       <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -196,17 +200,9 @@
     <Compile Include="UI\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="UI\Windows\AddActionWindow.xaml.cs">
-      <DependentUpon>AddActionWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="UI\Windows\AddRemoveSpeakersWindow.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\AnimationWindow.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>AnimationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ChooseSpeaker.xaml.cs">
       <SubType>Code</SubType>
@@ -218,10 +214,6 @@
     </Compile>
     <Compile Include="UI\Windows\ScriptParametersWindow.cs">
       <DependentUpon>ScriptParametersWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Windows\GraphWindow.xaml.cs">
-      <DependentUpon>GraphWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Windows\NewConversation.xaml.cs">
@@ -274,17 +266,15 @@
     <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
     <Page Include="UI\Controls\LineControl.xaml" />
     <Page Include="UI\Controls\ResRefQuestionPanel.xaml" />
+    <Page Include="UI\Controls\SoundControl.xaml" />
     <Page Include="UI\Controls\StringQuestionPanel.xaml" />
     <Page Include="UI\Controls\StringVariableControl.xaml" />
     <Page Include="UI\Controls\TagQuestionPanel.xaml" />
     <Page Include="UI\Controls\VariableQuestionPanel.xaml" />
-    <Page Include="UI\Windows\AddActionWindow.xaml" />
     <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
-    <Page Include="UI\Windows\AnimationWindow.xaml" />
     <Page Include="UI\Windows\ChooseSpeaker.xaml" />
     <Page Include="UI\Windows\ConversationWriterWindow.xaml" />
     <Page Include="UI\Windows\ScriptParametersWindow.xaml" />
-    <Page Include="UI\Windows\GraphWindow.xaml" />
     <Page Include="UI\Windows\NewConversation.xaml" />
     <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
     <Page Include="UI\Windows\SoundWindow.xaml" />
