@@ -31,7 +31,7 @@
 	<UserControl.Resources>
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
-			<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>
+			<!--<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>-->
 			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
 			<MenuItem Header="Create a creature" Click="OnClick_CreateCreature"/>
@@ -99,7 +99,7 @@
 	<UserControl.Triggers>
 		<EventTrigger RoutedEvent="Button.Click" SourceName="SoundButton">
 		<EventTrigger.Actions>
-			<!--<SoundPlayerAction Source="C:\ConversationWriter\ds_doumbek_slap.wav"></SoundPlayerAction>-->
+			<SoundPlayerAction x:Name="rar" Source="C:\ConversationWriter\ds_doumbek_slap.wav"></SoundPlayerAction>
 		</EventTrigger.Actions>
 		</EventTrigger>
 	</UserControl.Triggers>

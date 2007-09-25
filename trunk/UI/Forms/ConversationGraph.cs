@@ -25,16 +25,14 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using Netron.Diagramming.Core;
-using Netron.Diagramming.Core.AdventureAuthor;
-using Netron.Diagramming.Win;
-using Netron.Diagramming.Win.AdventureAuthor;
-using AdventureAuthor.Utils;
-using AdventureAuthor.Core;
 using AdventureAuthor.Conversations;
+using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
+using Netron.Diagramming.Core;
+using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.UI.Forms
 {

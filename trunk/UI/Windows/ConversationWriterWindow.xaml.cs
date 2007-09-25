@@ -227,7 +227,7 @@ namespace AdventureAuthor.UI.Windows
 			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
 			// something about taking focus away from screen elements maybe?)
 				
-			MessageBox.Show("try now");
+//			MessageBox.Show("try now");
 			
 //			lineControl.Focus();
 					
