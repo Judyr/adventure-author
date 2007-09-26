@@ -25,18 +25,15 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Serialization;
-using AdventureAuthor.UI;
+using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.IO;
-using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
 using OEIShared.UI;
 using form = NWN2Toolset.NWN2ToolsetMainForm;

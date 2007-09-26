@@ -25,20 +25,13 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
-using NWN2Toolset;
+using AdventureAuthor.Conversations.UI;
+using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 using NWN2Toolset.Plugins;
 using TD.SandBar;
-using Crownwood.DotNetMagic.Docking;
-using form = NWN2Toolset.NWN2ToolsetMainForm;
-using AdventureAuthor.Core;
-using AdventureAuthor.UI;
-using AdventureAuthor.UI.Windows;
-using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Setup
 {

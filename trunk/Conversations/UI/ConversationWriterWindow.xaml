@@ -1,0 +1,89 @@
+﻿<!--
+    This file is part of Adventure Author.
+ 
+    Adventure Author is copyright Heriot-Watt University 2006-2007.
+ 
+    This copyright and licence apply to all source code, compiled code,
+    documentation, graphics and auxiliary files, except where otherwise stated.
+ 
+    Adventure Author is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    Adventure Author is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<Window x:Class="AdventureAuthor.Conversations.UI.ConversationWriterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uiw="clr-namespace:AdventureAuthor.Conversations.UI"
+    Name="WriterWindow" Title="Conversation Writer" Width="1600" Height="1000" Background="LightYellow"
+    Loaded="OnLoaded" Closing="OnClosing">
+		
+	<Grid Name="WriterWindowGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition MinWidth="350" Width="*"/>
+			<ColumnDefinition Width="400"/>
+		</Grid.ColumnDefinitions>
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<MenuItem Header="File">
+				<MenuItem Header="New" Click="OnClick_New"/>
+				<MenuItem Header="Open" Click="OnClick_Open"/>
+				<MenuItem Header="Save" Click="OnClick_Save"/>
+				<MenuItem Header="Save As" IsEnabled="false"/>
+				<MenuItem Header="Close" Click="OnClick_Close"/>
+				<MenuItem Header="Exit" Click="OnClick_Exit"/>
+			</MenuItem>
+			<MenuItem Header="Options">
+				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers"/>
+				<MenuItem Header="Remove a speaker" IsEnabled="false"/>
+			</MenuItem>
+		</Menu>
+		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
+			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false">
+				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
+					<Button Click="OnClick_CreateBranchAtEndOfPage" FontSize="26">
+						<TextBlock>
+							<TextBlock Foreground="Black" Text="Add a"/>
+							<TextBlock Foreground="Purple" Text="CHOICE"/>
+						</TextBlock>
+					</Button>	
+				</StackPanel>
+				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
+					<Button Name="AddSpeakersButton" FontSize="26" Margin="2" Click="OnClick_AddRemoveSpeakers">
+						<TextBlock Foreground="Black" Text="Add another speaker"/>
+					</Button>						
+				</StackPanel>
+			</StackPanel>
+		</Border>
+		<Border Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Black" Grid.ZIndex="-1">			
+			<Grid Name="GraphGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="50"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Button Grid.Row="1" Grid.Column="0" Click="OnClick_ExpandGraph">Expand Graph</Button>
+			</Grid>
+		</Border>
+		<Border Name="LinesPanelBorder" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1">
+			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
+	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" />
+	    	</ScrollViewer>
+	    </Border>
+	</Grid>
+</Window>

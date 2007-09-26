@@ -85,214 +85,223 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
-    <Compile Include="Conversations\GraphTool.cs" />
-    <Compile Include="Conversations\PageNode.cs" />
+    <Compile Include="Conversations\Conversation.cs" />
+    <Compile Include="Conversations\Page.cs" />
+    <Compile Include="Conversations\Speaker.cs" />
+    <Compile Include="Conversations\UI\AddRemoveSpeakersWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\ChooseSpeaker.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ChooseSpeaker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ActionControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ActionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ActionsContextMenu.cs" />
+    <Compile Include="Conversations\UI\Controls\BranchControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>BranchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ConditionControl.xaml.cs">
+      <DependentUpon>ConditionControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ConditionsContextMenu.cs" />
+    <Compile Include="Conversations\UI\Controls\EndConversationControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EndConversationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\LineControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\SoundControl.xaml.cs">
+      <DependentUpon>SoundControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\ConversationWriterWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ConversationWriterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Graph\GraphForm.cs" />
+    <Compile Include="Conversations\UI\Graph\GraphForm.Designer.cs">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Graph\GraphTool.cs" />
+    <Compile Include="Conversations\UI\Graph\Node.cs" />
+    <Compile Include="Conversations\UI\NewConversation.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>NewConversation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\SoundWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>SoundWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
-    <Compile Include="Core\Conversation.cs" />
-    <Compile Include="Core\ConversationPage.cs" />
     <Compile Include="Core\GameArea.cs" />
     <Compile Include="Core\Scratchpad.cs" />
-    <Compile Include="Core\Speaker.cs" />
+    <Compile Include="Core\UI\CreateChapter_Form.cs" />
+    <Compile Include="Core\UI\CreateChapter_Form.Designer.cs">
+      <DependentUpon>CreateChapter_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\UI\NewAdventure_Form.cs" />
+    <Compile Include="Core\UI\NewAdventure_Form.Designer.cs">
+      <DependentUpon>NewAdventure_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\UI\OpenAdventureWindow.xaml.cs">
+      <DependentUpon>OpenAdventureWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\UI\RunAdventure_Form.cs" />
+    <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
+      <DependentUpon>RunAdventure_Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Notebook\MyIdeas\Balloon.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\IdeaComment.cs" />
+    <Compile Include="Notebook\MyIdeas\Idea.cs" />
+    <Compile Include="Notebook\MyIdeas\UI\Balloon.xaml.cs">
       <DependentUpon>Balloon.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Notebook\MyIdeas\IdeaComment.cs" />
-    <Compile Include="Notebook\MyIdeas\Idea.cs" />
-    <Compile Include="Notebook\MyIdeas\MyIdeasWindow.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml.cs">
       <DependentUpon>MyIdeasWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Notebook\MyIdeas\Sky.xaml.cs">
+    <Compile Include="Notebook\MyIdeas\UI\Sky.xaml.cs">
       <DependentUpon>Sky.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripts\Actions.cs" />
     <Compile Include="Scripts\Conditions.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
-    <Compile Include="Setup\Plugin.cs" />
-    <Compile Include="UI\Controls\ActionControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>ActionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\BooleanQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\BooleanQuestionPanel.xaml.cs">
       <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\BranchControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>BranchControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\ConditionControl.xaml.cs">
-      <DependentUpon>ConditionControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ConditionsContextMenu.cs" />
-    <Compile Include="UI\Controls\EndConversationControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>EndConversationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\EnumQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\EnumQuestionPanel.xaml.cs">
       <DependentUpon>EnumQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\FloatQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\FloatQuestionPanel.xaml.cs">
       <DependentUpon>FloatQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\IntegerAsStringQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\IntegerAsStringQuestionPanel.xaml.cs">
       <DependentUpon>IntegerAsStringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\IntegerQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\IntegerQuestionPanel.xaml.cs">
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\IQuestionPanel.cs" />
-    <Compile Include="UI\Controls\LineControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>LineControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\ActionsContextMenu.cs" />
-    <Compile Include="UI\Controls\ResRefQuestionPanel.xaml.cs">
+    <Compile Include="Scripts\UI\IQuestionPanel.cs" />
+    <Compile Include="Scripts\UI\ResRefQuestionPanel.xaml.cs">
       <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Controls\SoundControl.xaml.cs">
-      <DependentUpon>SoundControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\StringQuestionPanel.xaml.cs">
-      <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\StringVariableControl.xaml.cs">
-      <DependentUpon>StringVariableControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\TagQuestionPanel.xaml.cs">
-      <DependentUpon>TagQuestionPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\VariableQuestionPanel.xaml.cs">
-      <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\ConversationGraph.cs" />
-    <Compile Include="UI\Forms\ConversationGraph.Designer.cs">
-      <DependentUpon>ConversationGraph.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Forms\CreateChapter_Form.cs" />
-    <Compile Include="UI\Forms\CreateChapter_Form.Designer.cs">
-      <DependentUpon>CreateChapter_Form.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Forms\NewAdventure_Form.cs" />
-    <Compile Include="UI\Forms\NewAdventure_Form.Designer.cs">
-      <DependentUpon>NewAdventure_Form.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Forms\RunAdventure_Form.cs" />
-    <Compile Include="UI\Forms\RunAdventure_Form.Designer.cs">
-      <DependentUpon>RunAdventure_Form.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Toolset.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="UI\Windows\AddRemoveSpeakersWindow.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ChooseSpeaker.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>ChooseSpeaker.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ConversationWriterWindow.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>ConversationWriterWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ScriptParametersWindow.cs">
+    <Compile Include="Scripts\UI\ScriptParametersWindow.cs">
       <DependentUpon>ScriptParametersWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Windows\NewConversation.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>NewConversation.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\OpenAdventureWindow.xaml.cs">
-      <DependentUpon>OpenAdventureWindow.xaml</DependentUpon>
+    <Compile Include="Scripts\UI\StringQuestionPanel.xaml.cs">
+      <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Windows\SoundWindow.xaml.cs">
+    <Compile Include="Scripts\UI\TagQuestionPanel.xaml.cs">
+      <DependentUpon>TagQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
-      <DependentUpon>SoundWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\VariablesWindow.xaml.cs">
-      <DependentUpon>VariablesWindow.xaml</DependentUpon>
+    <Compile Include="Scripts\UI\VariableQuestionPanel.xaml.cs">
+      <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Setup\Plugin.cs" />
+    <Compile Include="Setup\Toolset.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\DebugLog.cs" />
     <Compile Include="Utils\UserLog.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\UsefulTools.cs" />
-    <EmbeddedResource Include="UI\Forms\ConversationGraph.resx">
-      <DependentUpon>ConversationGraph.cs</DependentUpon>
+    <Compile Include="Variables\UI\StringControl.xaml.cs">
+      <DependentUpon>StringControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Variables\UI\VariablesWindow.xaml.cs">
+      <DependentUpon>VariablesWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Conversations\UI\Graph\GraphForm.resx">
+      <DependentUpon>GraphForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Forms\CreateChapter_Form.resx">
+    <EmbeddedResource Include="Core\UI\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Forms\NewAdventure_Form.resx">
+    <EmbeddedResource Include="Core\UI\NewAdventure_Form.resx">
       <DependentUpon>NewAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Forms\RunAdventure_Form.resx">
+    <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Notebook\MyIdeas\Balloon.xaml" />
-    <Page Include="Notebook\MyIdeas\MyIdeasWindow.xaml" />
-    <Page Include="Notebook\MyIdeas\Sky.xaml" />
-    <Page Include="UI\Controls\ActionControl.xaml" />
-    <Page Include="UI\Controls\BooleanQuestionPanel.xaml" />
-    <Page Include="UI\Controls\BranchControl.xaml" />
-    <Page Include="UI\Controls\ConditionControl.xaml" />
-    <Page Include="UI\Controls\EndConversationControl.xaml" />
-    <Page Include="UI\Controls\EnumQuestionPanel.xaml" />
-    <Page Include="UI\Controls\FloatQuestionPanel.xaml" />
-    <Page Include="UI\Controls\IntegerAsStringQuestionPanel.xaml" />
-    <Page Include="UI\Controls\IntegerQuestionPanel.xaml" />
-    <Page Include="UI\Controls\LineControl.xaml" />
-    <Page Include="UI\Controls\ResRefQuestionPanel.xaml" />
-    <Page Include="UI\Controls\SoundControl.xaml" />
-    <Page Include="UI\Controls\StringQuestionPanel.xaml" />
-    <Page Include="UI\Controls\StringVariableControl.xaml" />
-    <Page Include="UI\Controls\TagQuestionPanel.xaml" />
-    <Page Include="UI\Controls\VariableQuestionPanel.xaml" />
-    <Page Include="UI\Windows\AddRemoveSpeakersWindow.xaml" />
-    <Page Include="UI\Windows\ChooseSpeaker.xaml" />
-    <Page Include="UI\Windows\ConversationWriterWindow.xaml" />
-    <Page Include="UI\Windows\ScriptParametersWindow.xaml" />
-    <Page Include="UI\Windows\NewConversation.xaml" />
-    <Page Include="UI\Windows\OpenAdventureWindow.xaml" />
-    <Page Include="UI\Windows\SoundWindow.xaml" />
-    <Page Include="UI\Windows\VariablesWindow.xaml" />
+    <Page Include="Conversations\UI\AddRemoveSpeakersWindow.xaml" />
+    <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
+    <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
+    <Page Include="Conversations\UI\Controls\BranchControl.xaml" />
+    <Page Include="Conversations\UI\Controls\ConditionControl.xaml" />
+    <Page Include="Conversations\UI\Controls\EndConversationControl.xaml" />
+    <Page Include="Conversations\UI\Controls\LineControl.xaml" />
+    <Page Include="Conversations\UI\Controls\SoundControl.xaml" />
+    <Page Include="Conversations\UI\ConversationWriterWindow.xaml" />
+    <Page Include="Conversations\UI\NewConversation.xaml" />
+    <Page Include="Conversations\UI\SoundWindow.xaml" />
+    <Page Include="Core\UI\OpenAdventureWindow.xaml" />
+    <Page Include="Notebook\MyIdeas\UI\Balloon.xaml" />
+    <Page Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml" />
+    <Page Include="Notebook\MyIdeas\UI\Sky.xaml" />
+    <Page Include="Scripts\UI\BooleanQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\EnumQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\FloatQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\IntegerAsStringQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\IntegerQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\ResRefQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\ScriptParametersWindow.xaml" />
+    <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
+    <Page Include="Variables\UI\StringControl.xaml" />
+    <Page Include="Variables\UI\VariablesWindow.xaml" />
+    <Folder Include="Conversations\UI" />
+    <Folder Include="Conversations\UI\Graph" />
+    <Folder Include="Conversations\UI\Controls" />
     <Folder Include="Core" />
     <Folder Include="Conversations" />
+    <Folder Include="Core\UI" />
+    <Folder Include="Journal" />
+    <Folder Include="Journal\UI" />
+    <Folder Include="Variables" />
     <Folder Include="Notebook" />
+    <Folder Include="Notebook\MyAdvice\UI" />
     <Folder Include="Notebook\MyIdeas" />
+    <Folder Include="Notebook\MyIdeas\UI" />
     <Folder Include="Notebook\MyNotes" />
     <Folder Include="Notebook\MyAdvice" />
+    <Folder Include="Notebook\MyNotes\UI" />
     <Folder Include="Notebook\MyTasks" />
+    <Folder Include="Notebook\MyTasks\UI" />
     <Folder Include="Scripts" />
+    <Folder Include="Scripts\UI" />
     <Folder Include="Utils" />
     <Folder Include="Setup" />
-    <Folder Include="UI" />
-    <Folder Include="UI\Controls" />
-    <Folder Include="UI\Forms" />
-    <Folder Include="UI\Windows" />
+    <Folder Include="Variables\UI" />
     <ProjectReference Include="..\Libraries\NetronForAA\Diagramming.Core\Netron.Diagramming.Core.csproj">
       <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
       <Name>Netron.Diagramming.Core</Name>
