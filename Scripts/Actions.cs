@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using OEIShared.IO.GFF;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.Scripts
 {
@@ -262,15 +263,16 @@ namespace AdventureAuthor.Scripts
 		/// <param name="message">The message to display.</param>
 		public static NWN2ScriptFunctor DisplayMessage(string message)
 		{
-			NWN2ScriptFunctor s = ScriptHelper.GetScriptFunctor("ga_attack",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
-			if (s == null) {
-				Say.Information("didn't return a script functor");
-			}
-			else {
-				Say.Information("script functor: " + s.ToString());
-			}
-			return s;
-			//return ScriptHelper.GetScriptFunctor("aa_display_messagebox",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
+			return ScriptHelper.GetScriptFunctor("aa_displaymessage",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
+		}
+		
+		/// <summary>
+		/// Display a message in a message box. Should probably be used on the last line of a conversation.
+		/// </summary>
+		/// <param name="message">The message to display.</param>
+		public static NWN2ScriptFunctor DisplayMessage2(string message)
+		{
+			return ScriptHelper.GetScriptFunctor("aa_displaymessageactual",new object[]{message},ScriptHelper.ScriptOrigin.AdventureAuthor);
 		}
 		
 		/// <summary>
