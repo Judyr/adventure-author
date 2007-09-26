@@ -74,8 +74,8 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_AddHenchmanForPlayer(object sender, EventArgs ea)
     	{    	
     		object[] prms = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player a henchman");
-    		window.AddTagQuestion("Who should become the player's henchman?",ScriptHelper.ObjectType.Creature);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player an ally");
+    		window.AddTagQuestion("Who should become the player's ally?",ScriptHelper.ObjectType.Creature);
     		window.AddBooleanQuestion("Should they follow the player around and fight for him?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -91,9 +91,9 @@ namespace AdventureAuthor.UI.Controls
     	private void OnClick_AddHenchmanForCreature(object sender, EventArgs ea)
     	{    	
     		object[] prms = new object[3];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give someone else a henchman");
-    		window.AddTagQuestion("Who should become the henchman?",ScriptHelper.ObjectType.Creature);
-    		window.AddTagQuestion("Whose henchman should they become?",ScriptHelper.ObjectType.Creature);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give someone else an ally");
+    		window.AddTagQuestion("Who should become the ally?",ScriptHelper.ObjectType.Creature);
+    		window.AddTagQuestion("Whose ally should they become?",ScriptHelper.ObjectType.Creature);
     		window.AddBooleanQuestion("Should they follow their master around and fight for them?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed

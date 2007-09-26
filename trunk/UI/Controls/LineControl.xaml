@@ -28,7 +28,7 @@
 	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" 
     MouseDoubleClick="OnClick_GoToPage" Padding="6">
 	
-	<UserControl.Resources>
+	<UserControl.Resources>		
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
 			<!--<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>-->
@@ -43,12 +43,13 @@
 			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
 			<MenuItem Header="Give the player an item" Click="OnClick_GiveItem"/>
-			<MenuItem Header="Give the player a henchman" Click="OnClick_AddHenchmanForPlayer"/>
-			<MenuItem Header="Give someone else a henchman" Click="OnClick_AddHenchmanForCreature"/>
+			<MenuItem Header="Give the player an ally" Click="OnClick_AddHenchmanForPlayer"/>
+			<MenuItem Header="Give someone else an ally" Click="OnClick_AddHenchmanForCreature"/>
 			<MenuItem Header="Heal the player" Click="OnClick_HealPlayer"/>
 			<MenuItem Header="Kill a creature" Click="OnClick_Kill"/>
 			<MenuItem Header="Open a store" Click="OnClick_OpenStore"/>
 			<MenuItem Header="Play an animation" Click="OnClick_PlayAnimation"/>
+			<MenuItem Header="Play a sound" Click="OnClick_SetSound"/> <!--note that playing a sound is not done through scripting-->
 			<MenuItem Header="Set a number variable" Click="OnClick_SetIntVariable"/>
 			<MenuItem Header="Set a string variable" Click="OnClick_SetStringVariable"/>
 			<MenuItem Header="Shift good/evil alignment" Click="OnClick_ShiftGoodEvilAlignment"/>
@@ -69,12 +70,11 @@
 			<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>		
 			<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
 			<MenuItem Header="If a string variable has a certain value" Click="OnClick_StringHasValue"/>
-		</x:Array>		
-		
+		</x:Array>	
+				
 		<ContextMenu x:Key="LineControlContextMenu">
 			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> <!--Broken-->
 			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" IsEnabled="false"/>
-			<MenuItem Header="Set sound clip" Click="OnClick_SetSound"/>
 			<MenuItem Header="Add an action">
 			<MenuItem.ItemsSource>
 				<StaticResource ResourceKey="ActionsMenu"/>
@@ -95,22 +95,14 @@
 	<UserControl.ContextMenu>		
 		<StaticResource ResourceKey="LineControlContextMenu"/>
 	</UserControl.ContextMenu>
-		
-	<UserControl.Triggers>
-		<EventTrigger RoutedEvent="Button.Click" SourceName="SoundButton">
-		<EventTrigger.Actions>
-			<SoundPlayerAction x:Name="rar" Source="C:\ConversationWriter\ds_doumbek_slap.wav"></SoundPlayerAction>
-		</EventTrigger.Actions>
-		</EventTrigger>
-	</UserControl.Triggers>
-	
+			
     <Grid x:Name="LineControlGrid">		
 		<Grid.RowDefinitions>
     		<RowDefinition MinHeight="0"/> <!--Condition control-->
     		<RowDefinition MinHeight="34" MaxHeight="34"/> <!--Speaker and first line of dialogue-->
     		<RowDefinition MinHeight="0" Height="*"/> <!--Any subsequent lines of dialogue-->
-    		<RowDefinition MinHeight="0"/> <!--Action controls-->
     		<RowDefinition MinHeight="0"/> <!--Sound control-->
+    		<RowDefinition MinHeight="0"/> <!--Action controls-->
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="100"/> <!--Buttons-->
@@ -119,13 +111,9 @@
     	</Grid.ColumnDefinitions>
     	    	
     	<StackPanel Name="LineControlButtonsPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
-	    	<Button x:Name="SoundButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_SetSound">
-    			<Button.ToolTip>
-    				<ToolTip>Add a sound clip to this line</ToolTip>
-    			</Button.ToolTip>
-	    		<Image Source="C:\ConversationWriter\speakericon.jpg" />
+	    	<Button x:Name="unusedButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
 	    	</Button>
- 	    	<Button x:Name="unusedButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
+ 	    	<Button x:Name="unusedButton2" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
 	    	</Button>	    	
     		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_Delete">
     			<Button.ToolTip>
@@ -145,7 +133,7 @@
     		</TextBox.Text>    
     	</TextBox>
 	
-		<StackPanel x:Name="ActionsPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
+		<StackPanel x:Name="ActionsPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
 	
 	</Grid>
 

@@ -17,8 +17,8 @@
  *   GNU General Public License for more details.
  * 
  *   Adventure Author is a plugin for Atari's Neverwinter Nights 2, a COMMERCIAL
- *   product. Permission is given to link this GPL-covered plug-in with the 
- *   non-free main program. 
+ *   product. Permission is given to link this GPL-covered plug-in with the
+ *   non-free main program.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -31,18 +31,19 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.UI.Windows;
 using AdventureAuthor.Core;
+using Netron.Diagramming.Core.AdventureAuthor;
 
 namespace AdventureAuthor.Conversations
 {
 	/// <summary>
 	/// Description of PageNode.
 	/// </summary>
-	public class PageNode : SimpleRectangle
+	public class PageNode : SimpleRectangle, IToolTipped
 	{
 		/// <summary>
 		/// The page of the conversation that this node represents.
 		/// </summary>
-		private ConversationPage page;		
+		private ConversationPage page;
 		public ConversationPage Page {
 			get { return page; }
 		}
@@ -55,21 +56,44 @@ namespace AdventureAuthor.Conversations
 		/// <summary>
 		/// The edge that connects this node and its parent node - null if this is the root.
 		/// </summary>
-		private IConnection parentEdge = null;	
+		private IConnection parentEdge = null;
 		public IConnection ParentEdge {
 			get { return parentEdge; }
 			set { parentEdge = value; }
 		}
 		
+		/// <summary>
+		/// The text to display on a tool tip if the mouse is hovering over this node.
+		/// <remarks>This is necessary because the class does not derive from Control - rather
+		/// it tells the parent control what to display on its tooltip.</remarks>
+		/// </summary>
+		public string ToolTipText {
+			get { 
+				if (parentNode == null) { // root
+					return "Start";
+				}
+				else {
+					return Conversation.OEIExoLocStringToString(page.LeadInLine.Text);
+				}
+			}
+		}
+		
 		public PageNode(ConversationPage page, PageNode parentNode) : base()
-		{			
+		{
 			this.page = page;
 			this.Resizable = false;
 			this.parentNode = parentNode;
-		}		
+			
+			if (parentNode == null) { // root
+				this.Text = "Start";
+			}
+			else {
+				this.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(page.LeadInLine.Text),30) + "...";
+			}
+		}
 		
 		/// <summary>
-		/// Highlight the route to this node, up to the root of the conversation tree. 
+		/// Highlight the route to this node, up to the root of the conversation tree.
 		/// <remarks>Requires an Invalidate() call on the parent form afterwards.</remarks>
 		/// </summary>
 		public void ShowRoute()
@@ -82,7 +106,7 @@ namespace AdventureAuthor.Conversations
 				
 				// TODO
 				
-				this.PaintStyle = new GradientPaintStyle(Color.LightBlue,Color.AntiqueWhite,0.0f);				
+				this.PaintStyle = new GradientPaintStyle(Color.LightBlue,Color.AntiqueWhite,0.0f);
 			}
 			if (parentEdge != null) { // continue to highlight up the tree until you reach the root, which has no parent
 				// highlight the edge:
@@ -93,7 +117,7 @@ namespace AdventureAuthor.Conversations
 					parentNode.ShowRoute();
 				}
 				catch (NullReferenceException e) {
-					Say.Error("Failed to highlight route: node '" + page.ToString() + 
+					Say.Error("Failed to highlight route: node '" + page.ToString() +
 					          "' has a parent edge but no parent node, which is invalid.",e);
 				}
 			}

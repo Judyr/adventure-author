@@ -67,14 +67,14 @@ namespace AdventureAuthor.UI.Controls
     	private ConditionControl conditionalControl;	
     	
     	/// <summary>
-    	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
-    	/// </summary>
-    	private List<ActionControl> actionControls;	
-    	
-    	/// <summary>
     	/// A control representing a sound file that will be played on this line. May be null.
     	/// </summary>
     	private SoundControl soundControl;
+    	
+    	/// <summary>
+    	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
+    	/// </summary>
+    	private List<ActionControl> actionControls;	
     	
     	/// <summary>
     	/// Create a new LineControl.
@@ -150,7 +150,7 @@ namespace AdventureAuthor.UI.Controls
         	// Note that there is an issue with lines having a non-null Sound property (FullName == ".RES") even when they don't have a sound:        	
         	if (line.Sound != null && line.Sound.FullName != ".RES") { 	
         		soundControl = new SoundControl(this);
-        		Grid.SetRow(soundControl,5);
+        		Grid.SetRow(soundControl,3);
         		Grid.SetColumn(soundControl,0);
         		Grid.SetColumnSpan(soundControl,3);
         		LineControlGrid.Children.Add(soundControl);
@@ -181,27 +181,6 @@ namespace AdventureAuthor.UI.Controls
         			OnClick_Delete(sender,e);
 		       	}
 			};
-        	
-        	
-        	
-        	
-        	
-        	
-        	// TEMP:
-        	try {
-	        	SoundPlayerAction actionx = (SoundPlayerAction)FindName("rar");
-	        	actionx.Source = null;
-        	}
-        	catch (NullReferenceException) {
-        		Say.Error("First way got a null reference.");
-        	}
-        	
-        	try {
-        		this.rar.Source = null;
-        	}
-        	catch (NullReferenceException) {
-        		Say.Error("Second way got a null reference.");
-        	}
         }
                 
         #region LineControl event handlers
@@ -366,8 +345,8 @@ namespace AdventureAuthor.UI.Controls
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
-        	SwitchOn(SoundButton);
         	SwitchOn(unusedButton);
+        	SwitchOn(unusedButton2);
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOn(conditionalControl.EditConditionsButton);
@@ -391,8 +370,8 @@ namespace AdventureAuthor.UI.Controls
         	}
         	Dialogue.Background = Brushes.Transparent;	
         	Dialogue.BorderBrush = Brushes.Transparent;
-        	SwitchOff(SoundButton);
         	SwitchOff(unusedButton);
+        	SwitchOff(unusedButton2);
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOff(conditionalControl.EditConditionsButton);
@@ -421,7 +400,7 @@ namespace AdventureAuthor.UI.Controls
         
 		public override string ToString()
 		{
-			return "LineControl: " + SpeakerLabel.Text + " - " + UsefulTools.Truncate(Dialogue.Text,60);
+			return "LineControl: " + SpeakerLabel.Text + " - " + UsefulTools.Truncate(Dialogue.Text,60) + "...";
 		}
     }
 }

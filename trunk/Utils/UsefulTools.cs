@@ -63,10 +63,10 @@ namespace AdventureAuthor.Utils
 			if (text.Length > maxLength) {
 				int lastSpace = text.LastIndexOf(' ',maxLength-10);
 				if (lastSpace != -1) {
-					return text.Substring(0,lastSpace) + "...";
+					return text.Substring(0,lastSpace);
 				}
 				else {
-					return text.Substring(0,maxLength) + "...";
+					return text.Substring(0,maxLength);
 				}
 			}
 			else {

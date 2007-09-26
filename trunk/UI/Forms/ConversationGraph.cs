@@ -103,7 +103,6 @@ namespace AdventureAuthor.UI.Forms
             SuspendLayout();	
             
             PageNode root = new PageNode(pages[0],null);
-            root.Text = "Start";
             graphControl.AddShape(root);
             graphControl.Invalidate(); // in case this is the only node we add
             graphControl.SetLayoutRoot(root);
@@ -134,8 +133,7 @@ namespace AdventureAuthor.UI.Forms
 					throw new ArgumentException("Found another root.");
 				}
 				
-	            PageNode childNode = new PageNode(child,parentNode);
-            	childNode.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(child.LeadInLine.Text),30); //TODO move to pagenode           	
+	            PageNode childNode = new PageNode(child,parentNode);         	
 	            graphControl.AddShape(childNode);	
 	            IConnection connection = graphControl.AddConnection(parentNode.Connectors[2],childNode.Connectors[0]);	
 	            childNode.ParentEdge = connection;

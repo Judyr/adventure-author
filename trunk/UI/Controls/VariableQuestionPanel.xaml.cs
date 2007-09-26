@@ -14,6 +14,7 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Data;
+using AdventureAuthor.UI.Windows;
 
 namespace AdventureAuthor.UI.Controls
 {
@@ -48,5 +49,13 @@ namespace AdventureAuthor.UI.Controls
         		return AnswerBox.SelectedItem;
         	}
 		}
+        
+        private void OnClick_LaunchVariableManagerButton(object sender, EventArgs ea)
+        {
+        	// TODO: Always check that there is only one Variable Manager open, and if it is already open, simply bring it to the front.
+        	
+        	VariablesWindow window = new VariablesWindow();
+        	window.ShowDialog();
+        }
     }
 }
