@@ -604,10 +604,10 @@ namespace AdventureAuthor.Scripts
 				case "ga_henchman_add": 
 					string sTarget1 = action.Parameters[0].ValueString;
 					string sMaster = action.Parameters[2].ValueString;
-					return GetOwnerIfBlank(sTarget1) + " BECOMES A HENCHMAN OF " + GetPlayerIfBlank(sMaster) + ".";
+					return GetOwnerIfBlank(sTarget1) + " BECOMES AN ALLY OF " + GetPlayerIfBlank(sMaster) + ".";
 						
 				case "ga_henchman_remove":
-					return action.Parameters[0].ValueString + " IS REMOVED AS A HENCHMAN.";
+					return action.Parameters[0].ValueString + " STOPS BEING AN ALLY.";
 					
 				case "ga_jump":
 					string jumpdestination = action.Parameters[0].ValueString;
@@ -828,10 +828,10 @@ namespace AdventureAuthor.Scripts
 					
 				case "gc_henchman":
 					if (condition.Parameters[1].ValueString != String.Empty) {
-						return "IF " + condition.Parameters[0].ValueString + " IS A HENCHMAN OF " + condition.Parameters[1].ValueString;
+						return "IF " + condition.Parameters[0].ValueString + " IS AN ALLY OF " + condition.Parameters[1].ValueString;
 					}
 					else {
-						return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S HENCHMAN";
+						return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S ALLY";
 					}
 					
 				case "gc_is_enemy_near":
