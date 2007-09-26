@@ -28,18 +28,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Scripts;
-using AdventureAuthor.UI.Windows;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Data.TypedCollections;
-using NWN2Toolset.NWN2.UI;
 using OEIShared.IO;
 using OEIShared.Utils;
 

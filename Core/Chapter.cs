@@ -25,16 +25,13 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Xml.Serialization;
+using AdventureAuthor.Utils;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using AdventureAuthor.UI;
-using AdventureAuthor.Core;
-using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Core
 {
