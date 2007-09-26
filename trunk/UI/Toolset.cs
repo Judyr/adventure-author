@@ -39,7 +39,6 @@ using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
 using NWN2Toolset;
 using NWN2Toolset.NWN2.IO;
-using NWN2Toolset.NWN2.NetDisplay;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
 using NWN2Toolset.Plugins;
@@ -555,31 +554,7 @@ namespace AdventureAuthor.UI
 			}			
 			return found;
 		}
-				
-			
-					// Investigations:
-					// Q: Does area have a Dirty boolean?
-					// A: No, but the main form has a single boolean that is likely to be it. 
-					// Add a MessageBox to Chapter.X.Click that shouts TRUE or FALSE.
-					// Q: Area has event handlers, can we use them?
-					// A: Possibly but they are all of no interest (area name changes, size changes, north changes.)
-					// Q: Can we invoke private methods?
-					// A: Yes - just difficult to know how, when their names are hidden. 
-					// -- What else can they be distinguished by other than return type?
-					// --- Do any of the GetMethodBody etc. properties return useful results?
-					// Q: Why do the event handlers only fire sometimes??
-					// A: Noooooo idea.
-					
-					
-		
-		
-		
-		
-		
-		
-
-		
-		
+						
 		#region Event handlers
 				
 		private static void NewAdventureDialog()

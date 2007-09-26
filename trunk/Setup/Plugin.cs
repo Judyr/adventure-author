@@ -49,8 +49,6 @@ namespace AdventureAuthor.Setup
 	{	
 		#region INWN2Plugin
 		
-		public static TextWriterTraceListener debugWriter;
-		
 		public MenuButtonItem PluginMenuItem {
 			get { return null; }
 		}
@@ -91,10 +89,20 @@ namespace AdventureAuthor.Setup
 				CloseToolset();
 			}
 			else {
+				// Instantiate windows now to speed things up later on:
 				ConversationWriterWindow.Instance = new ConversationWriterWindow();
-				DebugLog.StartRecording();				
+				
+				// Start recording debug messages and user actions:
+				DebugLog.StartRecording();
+				UserLog.StartRecording();	
+				
+				// Set up the Adventure Author toolset:
 				Toolset.SetupUI();
-				UserLog.StartRecording();
+				
+				// Set up the repository for Adventure Author's custom scripts:
+				Scripts.ScriptHelper.SetupScriptRepository();
+				
+				// Temporary - open test module:
 				Adventure.Open("francesca");
 			}
 		}	

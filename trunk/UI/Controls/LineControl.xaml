@@ -39,6 +39,7 @@
 			<MenuItem Header="Create a placeable" Click="OnClick_CreatePlaceable"/> <!--leave out Waypoint and Store-->
 			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
 			<MenuItem Header="Display a message" Click="OnClick_DisplayMessage"/>
+			<MenuItem Header="Display a message" Click="OnClick_DisplayMessage2"/>
 			<MenuItem Header="End the game" Click="OnClick_EndGame"/>
 			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
