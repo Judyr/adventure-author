@@ -72,6 +72,11 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 		}
 		
+		/// <summary>
+		/// Create a new node
+		/// </summary>
+		/// <param name="page">The page the node represents</param>
+		/// <param name="parentNode">The parent node of this node</param>
 		public Node(Page page, Node parentNode) : base()
 		{
 			this.page = page;
