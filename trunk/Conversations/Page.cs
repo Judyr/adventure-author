@@ -38,21 +38,9 @@ namespace AdventureAuthor.Conversations
     {
     	#region Fields
     	
-    	private bool isSelected; 
-		public bool IsSelected {
-			get { return isSelected; }
-			set { isSelected = value; }
-		}
-    	
-    	private bool isInRoute;    	
-		public bool IsInRoute {
-			get { return isInRoute; }
-			set { isInRoute = value; }
-		}
-    	
-    	private Page parentPage;		
-		public Page ParentPage {
-			get { return parentPage; }
+    	private Page parent;		
+		public Page Parent {
+			get { return parent; }
 		}		
 		
 		private List<Page> children;		
@@ -75,7 +63,7 @@ namespace AdventureAuthor.Conversations
 		public Page(NWN2ConversationConnector leadsFrom, Page parent)
 		{
 			this.leadInLine = leadsFrom;
-			this.parentPage = parent;
+			this.parent = parent;
 			this.children = new List<Page>();
 			this.lineControls = new List<LineControl>();
 			if (parent != null) {

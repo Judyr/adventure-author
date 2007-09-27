@@ -174,7 +174,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
 
-        	this.KeyDown += delegate(object sender, System.Windows.Input.KeyEventArgs e) 
+        	this.KeyDown += delegate(object sender, KeyEventArgs e) 
 			{         	
 				if (e.Key == Key.Delete) {
         			OnClick_Delete(sender,e);
@@ -284,8 +284,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void GoUp(object sender, EventArgs ea)
         {
-        	if (ConversationWriterWindow.Instance.CurrentPage.ParentPage != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.ParentPage);
+        	if (ConversationWriterWindow.Instance.CurrentPage.Parent != null) {
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent);
         	}
         }
         
@@ -333,8 +333,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         #endregion
-        
-
+   
         
         #region Selecting lines
         

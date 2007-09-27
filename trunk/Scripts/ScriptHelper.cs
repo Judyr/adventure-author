@@ -35,6 +35,7 @@ using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Data.TypedCollections;
+using NWN2Toolset.NWN2.IO;
 using OEIShared.IO;
 using OEIShared.Utils;
 
@@ -52,9 +53,9 @@ namespace AdventureAuthor.Scripts
 		
 		private static string ownerName = "[OWNER]";		
 		
-		public enum ScriptOrigin {
-			NWN2, // included with the game installation
-			AdventureAuthor // included with the Adventure Author installation
+		public enum Origin {
+			NWN2, // included with game - located at Neverwinter Nights 2/Data/Scripts.zip on the main drive
+			AdventureAuthor // included with Adventure Author - located at Neverwinter Nights 2/Override on the main drive
 		}
 		
 		public enum FadeColour { 
@@ -209,7 +210,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. gc_item_count (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a conditional functor, or null if failed.</returns>
-		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, ScriptOrigin origin)
+		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, Origin origin)
 		{
 			NWN2ConditionalFunctor conditionalFunctor = GetFunctor(scriptName,args,origin);
 			
@@ -224,7 +225,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, ScriptOrigin origin)
+		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, Origin origin)
 		{
 			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,origin);
 			return scriptFunctor;
@@ -236,7 +237,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, ScriptOrigin origin)
+		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, Origin origin)
 		{
 			try {
 				NWN2GameScript script = GetScript(scriptName, origin);
@@ -283,45 +284,31 @@ namespace AdventureAuthor.Scripts
 		}	
 		
 		/// <summary>
-		/// Set up the repository for Adventure Author's custom scripts. Called at startup.
-		/// </summary>
-		internal static void SetupScriptRepository()
-		{
-			try {
-				DirectoryResourceRepository repository = new DirectoryResourceRepository(Adventure.ScriptsDir);
-				ResourceManager.Instance.AddRepository(repository);
-			} 
-			catch (Exception e) {
-				Say.Error(e);
-			}
-		}
-		
-		/// <summary>
 		/// Retrieves a compiled (.NCS) script of a given name/resref.
 		/// </summary>
 		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="origin">The origin of the script; i.e. a NWN2 game script, or an Adventure Author script</param>
 		/// <returns>Returns the compiled script, or null if no script was found.</returns>
-		private static NWN2GameScript GetScript(string name, ScriptOrigin origin)
+		private static NWN2GameScript GetScript(string name, Origin origin)
 		{
 			try {	
-				string path;
-				if (origin == ScriptOrigin.NWN2) {
-					path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
+				IResourceRepository scripts;
+				if (origin == Origin.NWN2) {
+					string path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
+					scripts = ResourceManager.Instance.GetRepositoryByName(path);
 				}
-				else if (origin == ScriptOrigin.AdventureAuthor) {
-					path = Adventure.ScriptsDir;
+				else if (origin == Origin.AdventureAuthor) {
+					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT UserOverrideDirectory
 				}
 				else {
 					throw new ArgumentException("Invalid ScriptOrigin enum passed.");
 				}
-				
-				ResourceRepository scripts = (ResourceRepository)ResourceManager.Instance.GetRepositoryByName(path);
+								
 				ushort ncs = BWResourceTypes.GetResourceType("ncs");
 				OEIResRef resRef = new OEIResRef(name);
 				IResourceEntry entry = scripts.FindResource(resRef,ncs);
-				NWN2GameScript scrp = new NWN2GameScript(entry);	
-				return scrp;	
+				NWN2GameScript script = new NWN2GameScript(entry);
+				return script;	
 			}
 			catch (NullReferenceException e) {
 				Say.Error("Was unable to retrieve script named '" + name + "'.",e);
@@ -406,17 +393,7 @@ namespace AdventureAuthor.Scripts
 				return "Was given a blank action.";
 			}
 			
-			switch (action.Script.ResRef.Value) {
-					
-				case "aa_display_messagebox":
-					int length = Math.Min(action.Parameters[0].ValueString.Length,50);					
-					string shortened = action.Parameters[0].ValueString.Substring(0,length);
-					if (shortened.Length < action.Parameters[0].ValueString.Length) {
-						return "DISPLAY MESSAGE \"" + shortened + "...\"";
-					}
-					else {
-						return "DISPLAY MESSAGE \"" + shortened + "\".";
-					}
+			switch (action.Script.ResRef.Value) {					
 					
 				case "ga_alignment":					
 					if (action.Parameters[0].ValueInt > 0) {
@@ -493,7 +470,16 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_destroy_party_henchmen":
 					return "ALL THE PLAYER'S HENCHMEN ARE REMOVED FROM THE AREA.";
-										
+
+				case "ga_display_message":
+					string message = Utils.UsefulTools.Truncate(action.Parameters[0].ValueString,60);					
+					if (message.Length < action.Parameters[0].ValueString.Length) {
+						return "DISPLAY MESSAGE \"" + message + "...\"";
+					}
+					else {
+						return "DISPLAY MESSAGE \"" + message;
+					}
+					
 				case "ga_door_close":
 					string sTag = action.Parameters[0].ValueString;
 					return "DOOR " + sTag + " IS CLOSED.";
@@ -588,13 +574,13 @@ namespace AdventureAuthor.Scripts
 				case "ga_give_xp":
 					return "PLAYER RECEIVES " + action.Parameters[0].ValueInt + " EXPERIENCE POINTS.";
 					
-				case "ga_global_float":
+				case "ga_module_float":
 					return "SET FLOAT VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 					
-				case "ga_global_int":
-					return "SET INT VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
+				case "ga_module_int":
+					return "SET INTEGER VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 						
-				case "ga_global_string":
+				case "ga_module_string":
 					return "SET STRING VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 					
 				case "ga_heal_pc":
@@ -821,13 +807,13 @@ namespace AdventureAuthor.Scripts
 				case "gc_equipped":
 					return "IF THE PLAYER HAS EQUIPPED ITEM " + condition.Parameters[0].ValueString + ".";
 					
-				case "gc_global_float":
+				case "gc_module_float":
 					return "IF FLOAT VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
 					
-				case "gc_global_int":
-					return "IF INT VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
+				case "gc_module_int":
+					return "IF INTEGER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
 						
-				case "gc_global_string":
+				case "gc_module_string":
 					return "IF STRING VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
 					
 				case "gc_henchman":

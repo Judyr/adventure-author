@@ -92,11 +92,8 @@ namespace AdventureAuthor.Setup
 				// Set up the Adventure Author toolset:
 				Toolset.SetupUI();
 				
-				// Set up the repository for Adventure Author's custom scripts:
-				Scripts.ScriptHelper.SetupScriptRepository();
-				
 				// Temporary - open test module:
-				Adventure.Open("francesca");
+				Adventure.Open("anymore");
 			}
 		}	
 		

@@ -480,7 +480,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			 * Variable stuff
 			 * 
 			 */
-							NWN2ScriptVariable variable = new NWN2ScriptVariable();
+			
+							
+				NWN2ScriptVariable variable = new NWN2ScriptVariable();
 				variable.Name = "Playerhasfoundamulet";
 				variable.VariableType = NWN2ScriptVariableType.String;
 				variable.ValueString = "yes";
@@ -497,7 +499,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				variable4.VariableType = NWN2ScriptVariableType.Int;
 				variable4.ValueInt = 179;
 				
-							NWN2ScriptVariable variable5 = new NWN2ScriptVariable();
+				NWN2ScriptVariable variable5 = new NWN2ScriptVariable();
 				variable5.Name = "Player's best friend";
 				variable5.VariableType = NWN2ScriptVariableType.String;
 				variable5.ValueString = "Skeletor";
@@ -506,13 +508,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				form.App.Module.ModuleInfo.Variables.Add(variable3);
 				form.App.Module.ModuleInfo.Variables.Add(variable4);
 				form.App.Module.ModuleInfo.Variables.Add(variable5);
-				
-				
-				NWN2ScriptVariable varx = new NWN2ScriptVariable();
-				varx.Name = "Don't set me to anything";
-				varx.VariableType = NWN2ScriptVariableType.String;
-				varx.ValueString = "originalvalue";
-				form.App.Module.ModuleInfo.Variables.Add(varx);
+//				
+//				
+//				NWN2ScriptVariable varx = new NWN2ScriptVariable();
+//				varx.Name = "Don't set me to anything";
+//				varx.VariableType = NWN2ScriptVariableType.String;
+//				varx.ValueString = "originalvalue";
+//				form.App.Module.ModuleInfo.Variables.Add(varx);
 				
 		}
     }

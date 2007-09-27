@@ -31,7 +31,7 @@
 	<UserControl.Resources>		
 		
 		<x:Array x:Key="ActionsMenu" Type="MenuItem">
-			<!--<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>-->
+			<MenuItem Header="*TEMP - setup variables*" Click="SetupVariables"/>
 			<MenuItem Header="Advance time" Click="OnClick_AdvanceTime"/>
 			<MenuItem Header="Attack the player" Click="OnClick_Attack"/>
 			<MenuItem Header="Create a creature" Click="OnClick_CreateCreature"/>
@@ -39,7 +39,6 @@
 			<MenuItem Header="Create a placeable" Click="OnClick_CreatePlaceable"/> <!--leave out Waypoint and Store-->
 			<MenuItem Header="Destroy an object" Click="OnClick_DestroyObject"/>
 			<MenuItem Header="Display a message" Click="OnClick_DisplayMessage"/>
-			<MenuItem Header="Display a message" Click="OnClick_DisplayMessage2"/>
 			<MenuItem Header="End the game" Click="OnClick_EndGame"/>
 			<MenuItem Header="Fade to black" Click="OnClick_FadeToBlack"/>
 			<MenuItem Header="Give the player gold" Click="OnClick_GiveGold"/>
