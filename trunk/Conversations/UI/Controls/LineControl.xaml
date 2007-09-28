@@ -110,7 +110,7 @@
     		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/> <!--Dialogue-->
     	</Grid.ColumnDefinitions>
     	    	
-    	<StackPanel Name="LineControlButtonsPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
+    	<StackPanel Name="LineControlButtonsPanel" Focusable="true" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
 	    	<Button x:Name="unusedButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
 	    	</Button>
  	    	<Button x:Name="unusedButton2" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
@@ -123,7 +123,7 @@
 	    	</Button>   	
     	</StackPanel>
     	
-    	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" FontSize="22" Padding="6" Margin="0,0,25,0" TextAlignment="Right"/>
+    	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" FontSize="22" Padding="6" TextAlignment="Right"/>
     	
     	<TextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" FontSize="22" FontWeight="4" Focusable="true"
     	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4" GotFocus="OnGotFocus" LostFocus="OnLostFocus">

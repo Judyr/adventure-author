@@ -160,12 +160,7 @@ namespace AdventureAuthor.Variables.UI
         /// <returns>True if the name is available, false if there is already a variable by that name</returns>
         private bool IsAvailable(string variableName)
         {
-        	foreach (NWN2ScriptVariable variable in Adventure.CurrentAdventure.Module.ModuleInfo.Variables) {
-        		if (variable.Name == variableName) {
-        			return false;
-        		}
-        	}
-        	return true;
+        	return Adventure.CurrentAdventure.Module.ModuleInfo.Variables.GetVariable(variableName) == null;
         }
         
         /// <summary>

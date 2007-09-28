@@ -40,16 +40,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
     {    	
     	private void OnClick_AdvanceTime(object sender, EventArgs ea)
     	{
-    		object[] prms = new object[2];
+    		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Advance time");
     		window.AddIntegerQuestion("Advance time by how many hours?",0,null);
-    		window.AddIntegerQuestion("...and how many minutes?",0,59);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.AdvanceTimeBy((int)prms[0],(int)prms[1],0,0);
+    			NWN2ScriptFunctor action = Actions.AdvanceTimeBy((int)prms[0]);
 	    		nwn2Line.Actions.Add(action);
 	    		ConversationWriterWindow.Instance.RefreshDisplay(false);
     		}
@@ -480,34 +479,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			 * Variable stuff
 			 * 
 			 */
-			
+			AdventureAuthorVariable aav = new AdventureAuthorVariable(true);
+			aav.Name = "player is investigating vars";
+			aav.ValueBool = true;
 							
-				NWN2ScriptVariable variable = new NWN2ScriptVariable();
-				variable.Name = "Playerhasfoundamulet";
-				variable.VariableType = NWN2ScriptVariableType.String;
-				variable.ValueString = "yes";
-				NWN2ScriptVariable variable2 = new NWN2ScriptVariable();
-				variable2.Name = "Player has killed the wolf";
-				variable2.VariableType = NWN2ScriptVariableType.String;
-				variable2.ValueString = "no";
-				NWN2ScriptVariable variable3 = new NWN2ScriptVariable();
-				variable3.Name = "Number of rats collected";
-				variable3.VariableType = NWN2ScriptVariableType.Int;
-				variable3.ValueInt = 5;
-				NWN2ScriptVariable variable4 = new NWN2ScriptVariable();
-				variable4.Name = "Seconds till world explodes";
-				variable4.VariableType = NWN2ScriptVariableType.Int;
-				variable4.ValueInt = 179;
 				
-				NWN2ScriptVariable variable5 = new NWN2ScriptVariable();
-				variable5.Name = "Player's best friend";
-				variable5.VariableType = NWN2ScriptVariableType.String;
-				variable5.ValueString = "Skeletor";
-				form.App.Module.ModuleInfo.Variables.Add(variable);
-				form.App.Module.ModuleInfo.Variables.Add(variable2);
-				form.App.Module.ModuleInfo.Variables.Add(variable3);
-				form.App.Module.ModuleInfo.Variables.Add(variable4);
-				form.App.Module.ModuleInfo.Variables.Add(variable5);
+				form.App.Module.ModuleInfo.Variables.Add(aav);
 //				
 //				
 //				NWN2ScriptVariable varx = new NWN2ScriptVariable();
@@ -517,5 +494,19 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //				form.App.Module.ModuleInfo.Variables.Add(varx);
 				
 		}
+    }
+    
+    public class AdventureAuthorVariable : NWN2ScriptVariable
+    {
+    	private bool valueBool;    	
+		public bool ValueBool {
+			get { return valueBool; }
+			set { valueBool = value; }
+		}
+    	    	
+    	public AdventureAuthorVariable(bool valueBool) : base()
+    	{
+    		this.valueBool = valueBool;
+    	}
     }
 }

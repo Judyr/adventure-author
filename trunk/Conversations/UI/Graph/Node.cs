@@ -87,7 +87,14 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				this.Text = "Start";
 			}
 			else {
-				this.Text = UsefulTools.Truncate(Conversation.OEIExoLocStringToString(page.LeadInLine.Text),30) + "...";
+				string text = Conversation.OEIExoLocStringToString(page.LeadInLine.Text);
+				string shorttext = UsefulTools.Truncate(text,30);
+				if (shorttext.Length < text.Length) {
+					this.Text = shorttext + "...";
+				}
+				else {
+					this.Text = text;
+				}
 			}
 		}
 		

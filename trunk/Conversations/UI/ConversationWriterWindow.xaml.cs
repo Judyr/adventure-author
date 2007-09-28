@@ -242,7 +242,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 						
 			foreach (Control control in LinesPanel.Children) {
-				BranchControl branch = control as BranchControl;
+				ChoiceControl branch = control as ChoiceControl;
 				if (branch != null) {
 					foreach (LineControl c in branch.LineControls) {
 						if (c.Nwn2Line == line) {
@@ -279,7 +279,7 @@ namespace AdventureAuthor.Conversations.UI
 					throw new ArgumentException("Tried to create a branch with lines by both PC and NPC.");
 				}
 			}				
-			BranchControl branchControl = new BranchControl(possibleLines);
+			ChoiceControl branchControl = new ChoiceControl(possibleLines);
 			this.LinesPanel.Children.Add(branchControl);
 		}
 		
@@ -420,7 +420,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 			foreach (Control control in LinesPanel.Children) {
 				LineControl lineControl = control as LineControl;
-				BranchControl branchControl = control as BranchControl;
+				ChoiceControl branchControl = control as ChoiceControl;
 				
 				if (lineControl != null && lineControl.Nwn2Line == line) {
 					CurrentPage.LineControls.Remove(lineControl);
@@ -591,7 +591,7 @@ namespace AdventureAuthor.Conversations.UI
 					}
 				}					
 			}
-					
+			
 			ButtonsPanel.IsEnabled = true;
 			
 			// Display the conversation from the root page:

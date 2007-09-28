@@ -443,7 +443,16 @@ namespace AdventureAuthor.Conversations
 		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector branchParent)
 		{
 			string speakerTag = null;
-			foreach(NWN2ConversationConnector option in branchParent.Line.Children) {
+			NWN2ConversationConnectorCollection children;
+			
+			if (branchParent == null) { // add line to root
+				children = nwnConv.StartingList;
+			}
+			else {
+				children = branchParent.Line.Children;
+			}
+			
+			foreach(NWN2ConversationConnector option in children) {
 				if (speakerTag == null) {
 					speakerTag = option.Speaker;
 				}
@@ -531,7 +540,7 @@ namespace AdventureAuthor.Conversations
 		/// <summary>
 		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
 		/// </summary>
-		/// <param name="parent">The line to start counting from, or pass null to count over the whole conversation.</param>
+		/// <param name="parent">The line to start counting from - pass null to start from the root.</param>
 		/// <returns>The total word, line and page count of the conversation (or conversation segment).</returns>
 		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
 		{			
@@ -563,7 +572,7 @@ namespace AdventureAuthor.Conversations
 			return totalCounts;
 		}
 		
-		private static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
+		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
 		{			
 			int words = 0;
 			int lines = 0;
