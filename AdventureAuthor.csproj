@@ -229,8 +229,12 @@
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\UsefulTools.cs" />
-    <Compile Include="Variables\UI\StringControl.xaml.cs">
-      <DependentUpon>StringControl.xaml</DependentUpon>
+    <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
+      <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Variables\UI\VariableControl.cs">
+      <DependentUpon>VariableControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Variables\UI\VariablesWindow.xaml.cs">
@@ -277,7 +281,8 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
-    <Page Include="Variables\UI\StringControl.xaml" />
+    <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
+    <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />
     <Folder Include="Conversations\UI" />
     <Folder Include="Conversations\UI\Graph" />
