@@ -11,7 +11,7 @@
 			<ColumnDefinition/> <!--delete-->
 		</Grid.ColumnDefinitions>
 		<TextBlock Name="VariableNameTextBox" Width="200" Height="40" Grid.Row="0" Grid.Column="0" />
-		<TextBox Name="VariableValueTextBox" Width="200" Height="40" Grid.Row="0" Grid.Column="1" />
+		<TextBlock Name="VariableValueTextBox" Width="200" Height="40" Grid.Row="0" Grid.Column="1" />
     	<StackPanel Grid.Row="0" Grid.Column="2" Width="100" Orientation="Horizontal">
 		    <Button Margin="6" Width="20" Height="20" IsEnabled="true" Opacity="1.0" Click="OnClick_Delete">
 	    		<Button.ToolTip>
@@ -19,7 +19,7 @@
 	    		</Button.ToolTip>
 		    	<Image Source="C:\ConversationWriter\deleteicon.jpg" />
 		    </Button> 
-			<Button Margin="6" Width="50" Height="30" IsEnabled="true" Opacity="1.0" Content="Edit" Click="OnClick_Edit">
+			<Button Margin="6" Width="50" Height="25" IsEnabled="true" Opacity="1.0" Content="Edit" Click="OnClick_Edit">
 	    		<Button.ToolTip>
 	    			<ToolTip>Edit this variable</ToolTip>
 	    		</Button.ToolTip>

@@ -224,9 +224,9 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem newChapter = new MenuButtonItem("New Chapter");
 			newChapter.Activate += delegate { NewChapterDialog(); };
 			MenuButtonItem newConversation = new MenuButtonItem("Conversation Writer");
-			newConversation.Activate += delegate { NewConversationDialog(); };
+			newConversation.Activate += delegate { LaunchConversationWriter(); };
 			MenuButtonItem newScript = new MenuButtonItem("Variables Manager");
-			newScript.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
+			newScript.Activate += delegate {LaunchVariableManager(); };
 			
 			MenuButtonItem changeUser = new MenuButtonItem("Change User");
 			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
@@ -476,12 +476,12 @@ namespace AdventureAuthor.Setup
 							Bitmap b = new Bitmap(Path.Combine(Adventure.AdventureAuthorDir,"cwimage.bmp"));
 							cw.Image = b;	
 							cw.Text = "Conversation Writer";
-							cw.Activate += delegate { NewConversationDialog(); };
+							cw.Activate += delegate { LaunchConversationWriter(); };
 							tb.Items.Add(cw);
 							
 							ButtonItem vm = new ButtonItem();
 							vm.Text = "Variable Manager";
-							vm.Activate += delegate { VariablesWindow vw = new VariablesWindow(); vw.ShowDialog(); };
+							vm.Activate += delegate { LaunchVariableManager(); };
 							tb.Items.Add(vm);
 							
 							tbc.Controls.Add(tb);
@@ -656,7 +656,7 @@ namespace AdventureAuthor.Setup
 			chapterForm.ShowDialog(form.App);
 		}
 		
-		private static void NewConversationDialog()
+		public static void LaunchConversationWriter()
 		{
 			if (Adventure.CurrentAdventure == null) {
 				Say.Error("Open or create an Adventure before trying to add a new conversation.");
@@ -672,6 +672,14 @@ namespace AdventureAuthor.Setup
 			catch (ExecutionEngineException e) {
 				Say.Error("ExecutionEngineException was thrown when running the ConversationWriterWindow.",e);
 			}
+		}
+		
+		public static void LaunchVariableManager()
+		{
+			if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
+				VariablesWindow.Instance = new VariablesWindow();
+			}
+			VariablesWindow.Instance.ShowDialog();
 		}
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)

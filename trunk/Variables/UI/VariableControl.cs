@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using NWN2Toolset.NWN2.Data;
 using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Variables.UI
 {
@@ -25,23 +26,29 @@ namespace AdventureAuthor.Variables.UI
             InitializeComponent();
             
             VariableNameTextBox.Text = var.Name;
-            VariableValueTextBox.Text = var.ValueString;
+            VariableValueTextBox.Text = "Value:  " + var.ValueString;
         }
         
         private void OnClick_Delete(object sender, EventArgs ea)
         {
         	if (MessageBox.Show("Delete this variable?","Delete", MessageBoxButtons.OKCancel) == DialogResult.OK) {
-	            NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
-	            variables.Remove(var);
-	            ((System.Windows.Controls.ListBox)Parent).Items.Remove(this);
+        		VariablesWindow.Instance.DeleteVariable(var);
         	}
         }
 
         private void OnClick_Edit(object sender, EventArgs ea)
         {
-        	CreateEditVariableWindow window = new CreateEditVariableWindow(ref var);
-        	window.ShowDialog();
-        	
+        	try {
+	        	CreateEditVariableWindow window = new CreateEditVariableWindow(ref var,true);
+	        	window.ShowDialog();
+	        	VariablesWindow.Instance.Refresh();
+        	}
+        	catch (ArgumentNullException ane) {
+        		Say.Error("Was unable to restore the original starting value of variable " + var.Name + ".",ane);
+        	}
+        	catch (ArgumentException ae) {
+        		Say.Error("Tried to add a variable of an invalid type.",ae);
+        	}
         }
     }
 }

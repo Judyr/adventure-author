@@ -29,6 +29,7 @@ using System.IO;
 using System.Windows.Forms;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
+using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Utils;
 using NWN2Toolset.Plugins;
 using TD.SandBar;
