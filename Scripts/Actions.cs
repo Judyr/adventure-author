@@ -89,8 +89,11 @@ namespace AdventureAuthor.Scripts
 		/// <param name="nMinute">Minutes to advance</param>
 		/// <param name="nSecond">Seconds to advance</param>
 		/// <param name="nMillisecond">Milliseconds to advance</param>
-		public static NWN2ScriptFunctor AdvanceTimeBy(int nHour, int nMinute, int nSecond, int nMillisecond)
+		public static NWN2ScriptFunctor AdvanceTimeBy(int nHour)
 		{
+			int nMinute = 0; // not useful and works strangely
+			int nSecond = 0; // not useful
+			int nMillisecond = 0; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_time_advance",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptHelper.Origin.NWN2);
 		}
 		
@@ -601,8 +604,9 @@ namespace AdventureAuthor.Scripts
 		/// <param name="nMinute">Minute</param>
 		/// <param name="nSecond">Second</param>
 		/// <param name="nMillisecond">Milliseconds</param>
-		public static NWN2ScriptFunctor SetTime(int nHour, int nMinute)
+		public static NWN2ScriptFunctor SetTime(int nHour)
 		{
+			int nMinute = 0; // not useful and works strangely
 			int nSecond = 0; // not useful
 			int nMillisecond = 0; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptHelper.Origin.NWN2);

@@ -666,11 +666,17 @@ namespace AdventureAuthor.Setup
 			try {
 				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
 					ConversationWriterWindow.Instance = new ConversationWriterWindow();
+					ConversationWriterWindow.Instance.Show();
 				}
-				ConversationWriterWindow.Instance.ShowDialog();
+				else {
+					if (!ConversationWriterWindow.Instance.IsActive) {
+						ConversationWriterWindow.Instance.Activate();
+					}
+					// TODO if the window is not currently maximised/notminimized, make it so
+				}
 			}
 			catch (ExecutionEngineException e) {
-				Say.Error("ExecutionEngineException was thrown when running the ConversationWriterWindow.",e);
+				Say.Error("ExecutionEngineException was thrown when launching the Conversation Writer.",e);
 			}
 		}
 		
@@ -678,8 +684,14 @@ namespace AdventureAuthor.Setup
 		{
 			if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 				VariablesWindow.Instance = new VariablesWindow();
+				VariablesWindow.Instance.Show();
 			}
-			VariablesWindow.Instance.ShowDialog();
+			else {
+				if (!VariablesWindow.Instance.IsActive) {
+					VariablesWindow.Instance.Activate();
+				}
+				// TODO if the window is not currently maximised/notminimized, make it so
+			}
 		}
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)

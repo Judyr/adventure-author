@@ -26,10 +26,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data.ConversationData;
 
 namespace AdventureAuthor.Conversations.UI.Controls
@@ -38,14 +40,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
     /// Interaction logic for BranchControl.xaml
     /// </summary>
 
-    public partial class BranchControl : UserControl
+    public partial class ChoiceControl : UserControl
     {    	
-    	public enum BranchControlType { Choice, Check }
+    	public enum ChoiceType { Player, NPC }
     	
-    	private BranchControlType branchType;
-		public BranchControlType BranchType {
-			get { return branchType; }
-			set { branchType = value; }
+    	private ChoiceType typeOfSpeaker;
+		public ChoiceType TypeOfSpeaker {
+			get { return typeOfSpeaker; }
+			set { typeOfSpeaker = value; }
 		}
     	
      	private List<LineControl> lineControls;    	
@@ -54,23 +56,23 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			set { lineControls = value; }
 		}
         
-        public BranchControl(NWN2ConversationConnectorCollection lines)
+        public ChoiceControl(NWN2ConversationConnectorCollection lines)
         {
         	InitializeComponent();
             this.lineControls = new List<LineControl>(2);
         	
         	if (lines == null) {
-        		throw new ArgumentNullException("lines","Tried to form a branch with a null collection of lines.");
+        		throw new ArgumentNullException("Tried to form a branch with a null collection of lines.");
         	}
         	else if (lines.Count < 2) {
         		throw new ArgumentException("Tried to form a branch with less than 2 lines.");
         	}
         	else {
         		if (lines[0].Type == NWN2ConversationConnectorType.Reply) {
-        			this.branchType = BranchControlType.Choice;
+        			this.typeOfSpeaker = ChoiceType.Player;
         		}
         		else {
-        			this.branchType = BranchControlType.Check;
+        			this.typeOfSpeaker = ChoiceType.NPC;
         		}
         	}
         
@@ -86,7 +88,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
                			
        			// Set appearance of control based on whether this is a choice (PC) or a check (NPC):
        			if (line.Type == NWN2ConversationConnectorType.Reply) {
-       				if (branchType == BranchControlType.Choice) { // PC chooses what to say
+       				if (typeOfSpeaker == ChoiceType.Player) { // PC chooses what to say
 						lineControl.SpeakerLabel.Text = Conversation.PLAYER_NAME.ToUpper();
 						lineControl.SpeakerLabel.Foreground = Conversation.BRANCH_COLOUR;
        				}
@@ -95,7 +97,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
        				}
        			}
        			else {
-       				if (branchType == BranchControlType.Choice) {
+       				if (typeOfSpeaker == ChoiceType.Player) {
        					throw new ArgumentException("Tried to form a Choice using an NPC line - Choices should only contain PC lines.");
        				}
        				else { // NPC checks what to say based on conditions
@@ -115,7 +117,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }	
         
-        public void OnClick_AddOption(object sender, EventArgs ea)
+        public void OnClick_AddBranch(object sender, EventArgs ea)
         {
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToBranch(parentLine);
@@ -123,6 +125,57 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			ConversationWriterWindow.Instance.RefreshDisplay(true);
 			LineControl newLineControl = ConversationWriterWindow.Instance.GetControlForLine(newLine);
 			ConversationWriterWindow.Instance.FocusOnLine(newLineControl);
+        }	
+        
+        public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
+        {        	
+        	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
+        	NWN2ConversationConnectorCollection children;
+        	if (parentLine == null) {
+        		children = Conversation.CurrentConversation.NwnConv.StartingList;
+        	}
+        	else {
+        		children = parentLine.Line.Children;
+        	}
+        	
+        	if (!Adventure.BeQuiet) { 	
+        		Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(children);
+        		
+        		StringBuilder warning = new StringBuilder();
+        		
+        		if (children.Count == 2) {
+        			warning.Append("Are you sure you want to delete both branches of this choice");
+        		}
+        		else {
+        			warning.Append("Are you sure you want to delete all " + children.Count + " branches of this choice");
+        		}
+        		
+        		if (casualties.words > 0) {
+        			warning.Append(", including " + casualties.words + " word(s) of dialogue?");
+        		}
+        		else {
+        			warning.Append("?");
+        		}
+        		
+        		if (!(bool)Say.Question(warning.ToString(),"Delete?",System.Windows.Forms.MessageBoxButtons.YesNo)) {
+        			return;
+        		}
+        	}
+        	
+        	// Clear the children of the choice's parent line:
+        	if (parentLine != null) {
+        		parentLine.Line.Children.Clear();
+        	}
+        	else { // deleting the root choice, hence deleting the entire conversation
+        		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
+        	}
+				
+        	// If there is a line remaining above the deleted choice, focus on it:
+			ConversationWriterWindow.Instance.RefreshDisplay(true);
+			if (parentLine != null) {
+				LineControl lineControl = ConversationWriterWindow.Instance.GetControlForLine(parentLine);
+				ConversationWriterWindow.Instance.FocusOnLine(lineControl);
+			}
         }
     }
 }
