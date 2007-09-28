@@ -1,7 +1,7 @@
 ﻿<Window x:Class="AdventureAuthor.Variables.UI.CreateEditVariableWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="AdventureAuthor.Variables.UI" Height="300" Width="440" Background="LightGreen" ResizeMode="NoResize"
+    Title="Variable Manager" Height="265" Width="440" Background="LightGreen" ResizeMode="NoResize"
     >	
     <Canvas>		
     	<TextBlock FontSize="16" Foreground="Red" Canvas.Top="15" Canvas.Left="15" Height="40" Width="200" Text="Name of variable:"/>

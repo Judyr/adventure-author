@@ -24,48 +24,52 @@ namespace AdventureAuthor.Variables.UI
     	/// <summary>
     	/// The variable the window is exposing.
     	/// </summary>
-    	private NWN2ScriptVariable var = null;    	
+    	private NWN2ScriptVariable var = null;    
     	
-    	private string originalName = null;
-    	private string originalStringValue = null;
-    	private int? originalIntValue = null;
+    	/// <summary>
+    	/// True if editing an existing variable, false otherwise.
+    	/// </summary>
+    	private bool edit;
+    	
+    	/// <summary>
+    	/// The original value of the variable being edited.
+    	/// </summary>
+    	private object originalValue = null;    	    	
     	
     	#endregion
     	
         /// <summary>
         /// Create a new instance of the CreateEditVariableWindow, to create or edit an existing variable
         /// </summary>
-        /// <param name="variable">The variable to edit, or null to create a new variable</param>
-        public CreateEditVariableWindow(ref NWN2ScriptVariable variable)
+        /// <param name="variable">The variable to edit></param>
+        /// <param name="edit">True if we are editing an existing variable, false if we are creating a new variable></param>
+        public CreateEditVariableWindow(ref NWN2ScriptVariable variable, bool edit)
         {
             Resources.Add("vartypes",VARIABLE_TYPES);
             
             InitializeComponent();
             
-            if (variable == null) {
-            	var = new NWN2ScriptVariable();
-            }
-            else {
-            	var = variable; 
-            	originalName = variable.Name;            	
-            	VariableNameTextBox.Text = var.Name;
-            	VariableTypeComboBox.IsEnabled = false;
-            	if (variable.VariableType == NWN2ScriptVariableType.String) {
-            		originalStringValue = variable.ValueString;
+            this.var = variable;
+            this.edit = edit;
+            VariableNameTextBox.Text = var.Name;
+            	
+            if (edit) { // edit an existing variable   
+            	if (var.VariableType == NWN2ScriptVariableType.String) {
+            		originalValue = var.ValueString; // remember the original value, to change back if the user cancels
+            		VariableStartingValueTextBox.Text = var.ValueString;
             		VariableTypeComboBox.SelectedItem = STRING_TERM;
-            		if (var.ValueString != null) {
-            			VariableStartingValueTextBox.Text = var.ValueString;
-            		}
             	}
             	else if (variable.VariableType == NWN2ScriptVariableType.Int) {
-            		originalIntValue = variable.ValueInt;
-            		VariableTypeComboBox.SelectedItem = INTEGER_TERM;
+            		originalValue = (object)var.ValueInt;
             		VariableStartingValueTextBox.Text = var.ValueInt.ToString();
+            		VariableTypeComboBox.SelectedItem = INTEGER_TERM;
             	}
             	else {
             		throw new ArgumentException("Currently you can only add " + STRING_TERM + " and " + INTEGER_TERM + " variables - " 
             		                            + var.VariableType.ToString() + " is invalid.");            		
-            	}  
+            	}
+            	VariableNameTextBox.IsEnabled = false;  // do not allow users to change an existing variable's name
+            	VariableTypeComboBox.IsEnabled = false; // or type, as this will cause problems with existing SetVariable scripts
             }
         }
         
@@ -81,8 +85,7 @@ namespace AdventureAuthor.Variables.UI
         		Say.Warning("You have chosen an invalid variable name. Names must be under " + Adventure.MAX_RESOURCE_NAME_LENGTH + 
         		            " characters long, and contain none of the following characters: \" < > | : * ? " + @"\ / ");
         	}
-        	else if ((originalName == null && !IsAvailable(VariableNameTextBox.Text)) || // TODO reword when less tired
-        	         (originalName != null && originalName != VariableNameTextBox.Text && !IsAvailable(VariableNameTextBox.Text))) {
+        	else if (!edit && !IsAvailable(VariableNameTextBox.Text)) {
         		Say.Warning("A variable called " + VariableNameTextBox.Text + " already exists - try something else.");
         	}
         	else if (VariableTypeComboBox.SelectedItem == null) {
@@ -95,9 +98,12 @@ namespace AdventureAuthor.Variables.UI
         		if ((string)VariableTypeComboBox.SelectedItem == INTEGER_TERM) {
         			try {
         				int val = int.Parse(VariableStartingValueTextBox.Text);
-        				var.Name = VariableNameTextBox.Text;
-        				var.VariableType = NWN2ScriptVariableType.Int;
+        				if (!edit) { // when editing these are fixed anyway
+	        				var.Name = VariableNameTextBox.Text;
+	        				var.VariableType = NWN2ScriptVariableType.Int;
+        				}
         				var.ValueInt = val;
+        				this.DialogResult = true;
         				Close();
         			}
         			catch (FormatException) {
@@ -109,9 +115,12 @@ namespace AdventureAuthor.Variables.UI
         			}
         		}
         		else if ((string)VariableTypeComboBox.SelectedItem == STRING_TERM) {
- 					var.Name = VariableNameTextBox.Text;
- 					var.VariableType = NWN2ScriptVariableType.String;
+        			if (!edit) { // when editing these are fixed anyway
+	 					var.Name = VariableNameTextBox.Text;
+	 					var.VariableType = NWN2ScriptVariableType.String;
+        			}
  					var.ValueString = VariableStartingValueTextBox.Text;
+ 					this.DialogResult = true;
  					Close();
         		}
             	else {
@@ -126,21 +135,21 @@ namespace AdventureAuthor.Variables.UI
         /// </summary>
         private void OnClick_Cancel(object sender, EventArgs ea)
         {
-        	if (originalName != null) {
-        		var.Name = originalName;
-        		if (originalStringValue != null) {
-        			var.ValueString = originalStringValue;
-        			var.VariableType = NWN2ScriptVariableType.String;
+        	this.DialogResult = false;
+        	if (edit) {
+        		try {
+	        		if (var.VariableType == NWN2ScriptVariableType.String) { // restore string value
+        				var.ValueString = (string)originalValue;
+	        		}
+        			else if (var.VariableType == NWN2ScriptVariableType.Int) { // restore int value
+        				var.ValueInt = (int)(object)originalValue;
+	        		}
         		}
-        		else if (originalIntValue != null) {
-        			var.ValueInt = (int)originalIntValue;
-        			var.VariableType = NWN2ScriptVariableType.Int;
-        		}
-        		else {
-        			throw new ArgumentNullException("Failed to record the initial state of the variable - could not restore " +
-        			                                "the original values upon cancellation.");
+        		catch (NullReferenceException e)  {
+        			throw new ArgumentNullException("Failed to restore the variable's original starting value.",e);
         		}
         	}
+        	
         	Close();
         }
         
