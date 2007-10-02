@@ -58,13 +58,9 @@ namespace AdventureAuthor.Variables
 		/// <param name="removeReferences">True to also remove all references in conversations and scripts, false to only delete the variable</param>
 		public static void Delete(NWN2ScriptVariable variable, bool removeReferences)
 		{
-			Say.Debug("Called Delete, removeReferences was " + removeReferences.ToString());
-			
 			if (removeReferences) {
 				RemoveReferences(variable);
 			}
-			
-			Say.Debug("Past removeReferences.");
 			
 			Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Remove(variable);
 			Adventure.CurrentAdventure.Save();
@@ -92,11 +88,11 @@ namespace AdventureAuthor.Variables
 
 			foreach (IResourceEntry resource in DLGfiles) {
 				Conversation conversation;
-				
+								
 				// Deal with the conversation currently open in the Conversation Writer (if there is one): 				
 				if (ConversationWriterWindow.Instance != null && 
 				    Conversation.CurrentConversation != null &&
-				    resource.FullName == ConversationWriterWindow.Instance.WorkingFilename) {
+				    resource.FullName == ConversationWriterWindow.Instance.WorkingFilename + ".DLG") {
 					
 					conversation = Conversation.CurrentConversation;
 				}
@@ -106,26 +102,30 @@ namespace AdventureAuthor.Variables
 					conversation = new Conversation(conv);
 				}
 				
-				Say.Debug("Dealing with " + conversation.NwnConv.Name);
-				
 	        	foreach (NWN2ConversationConnector connector in conversation.NwnConv.AllConnectors) {		
+					
+					List<NWN2ScriptFunctor> defunctActions = new List<NWN2ScriptFunctor>();
+					List<NWN2ConditionalFunctor> defunctConditions = new List<NWN2ConditionalFunctor>();
 					
 					for (int i = 0; i < connector.Actions.Count; i++) { 
 						if (DependsOnVariable(connector.Actions[i],variable)) {
-							Say.Debug(connector.Actions.Count.ToString() + " actions.");
-							Say.Debug("Removing Action " + connector.Actions[i].ToString());
-							connector.Actions.Remove(connector.Actions[i]);
-							Say.Debug(connector.Actions.Count.ToString() + " actions.");
+							defunctActions.Add(connector.Actions[i]);
 						}
 					}
 					
 					for (int i = 0; i < connector.Conditions.Count; i++) { 
 						if (DependsOnVariable(connector.Conditions[i],variable)) {
-							Say.Debug(connector.Conditions.Count.ToString() + " conditions.");
-							Say.Debug("Removing Condition " + connector.Conditions[i].ToString());
-							connector.Conditions.Remove(connector.Conditions[i]);
-							Say.Debug(connector.Conditions.Count.ToString() + " conditions.");
+							defunctConditions.Add(connector.Conditions[i]);
 						}
+					}
+					
+					
+					foreach (NWN2ScriptFunctor removable in defunctActions) {
+						connector.Actions.Remove(removable);
+					}
+					
+					foreach (NWN2ConditionalFunctor removable in defunctConditions) {
+						connector.Conditions.Remove(removable);
 					}
 	       		}
 				

@@ -604,5 +604,10 @@ namespace AdventureAuthor.Conversations
 			
 			return new DataFromConversation(words,lines,pages);
 		}
+		
+		public override string ToString()
+		{
+			return this.NwnConv.Name;
+		}
 	}
 }

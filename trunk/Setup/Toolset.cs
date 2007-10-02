@@ -656,8 +656,11 @@ namespace AdventureAuthor.Setup
 			chapterForm.ShowDialog(form.App);
 		}
 		
-		#region Fixed
 		
+		/// <summary>
+		/// Bring up the Conversation Writer window.
+		/// <remarks>Note that a bug occurs where you can't enter text into LineControls if you use Show() rather than ShowDialog().</remarks>
+		/// </summary>
 		public static void LaunchConversationWriter() // Works
 		{
 			if (Adventure.CurrentAdventure == null) {
@@ -666,7 +669,7 @@ namespace AdventureAuthor.Setup
 			}
 			
 			try {
-				if (ConversationWriterWindow.Instance == null) {
+				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
 					ConversationWriterWindow.Instance = new ConversationWriterWindow();
 				}
 				ConversationWriterWindow.Instance.ShowDialog();
@@ -676,10 +679,14 @@ namespace AdventureAuthor.Setup
 			}
 		}	
 		
+		
+		/// <summary>
+		/// Bring up the Variable Manager window.
+		/// </summary>
 		public static void LaunchVariableManager() // Works
 		{
 			try {
-				if (VariablesWindow.Instance == null) {
+				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
 				}
 				VariablesWindow.Instance.ShowDialog();
@@ -688,9 +695,6 @@ namespace AdventureAuthor.Setup
 				Say.Error(e);
 			}
 		}		
-		
-		#endregion
-			
 		
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)
