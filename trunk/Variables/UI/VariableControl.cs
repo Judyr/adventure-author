@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.ConversationData;
+using NWN2Toolset.NWN2.Data.TypedCollections;
 using AdventureAuthor.Core;
+using AdventureAuthor.Variables;
 using AdventureAuthor.Utils;
+using OEIShared.IO;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.Variables.UI
 {
@@ -26,16 +32,21 @@ namespace AdventureAuthor.Variables.UI
             InitializeComponent();
             
             VariableNameTextBox.Text = var.Name;
+            VariableTypeTextBox.Text = var.VariableType.ToString();
             VariableValueTextBox.Text = "Value:  " + var.ValueString;
-        }
+        }             
+        
         
         private void OnClick_Delete(object sender, EventArgs ea)
         {
-        	if (MessageBox.Show("Delete this variable?","Delete", MessageBoxButtons.OKCancel) == DialogResult.OK) {
-        		VariablesWindow.Instance.DeleteVariable(var);
-        	}
+        	string warning = "Any actions/conditions which reference this variable will also be deleted. This operation cannot " +
+        	                 "be undone. Are you sure you want to delete this variable?";
+        	if (MessageBox.Show(warning,"Delete", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+        		VariableManager.Delete(var,true);
+        	} 
         }
-
+        
+        
         private void OnClick_Edit(object sender, EventArgs ea)
         {
         	try {

@@ -28,9 +28,6 @@ using System;
 
 namespace AdventureAuthor.Scripts.UI
 {
-	/// <summary>
-	/// Description of QuestionPanel.
-	/// </summary>
 	public interface IQuestionPanel
 	{
 		object Answer { get; }

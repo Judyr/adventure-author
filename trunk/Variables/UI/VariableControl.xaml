@@ -7,12 +7,14 @@
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/> <!--variable name-->
+			<ColumnDefinition/> <!--variable type-->
 			<ColumnDefinition/> <!--variable value-->
 			<ColumnDefinition/> <!--delete-->
 		</Grid.ColumnDefinitions>
-		<TextBlock Name="VariableNameTextBox" Width="200" Height="40" Grid.Row="0" Grid.Column="0" />
-		<TextBlock Name="VariableValueTextBox" Width="200" Height="40" Grid.Row="0" Grid.Column="1" />
-    	<StackPanel Grid.Row="0" Grid.Column="2" Width="100" Orientation="Horizontal">
+		<TextBlock Name="VariableNameTextBox" Width="180" Height="40" Grid.Row="0" Grid.Column="0" />
+		<TextBlock Name="VariableTypeTextBox" Width="70" Height="40" Grid.Row="0" Grid.Column="1" />
+		<TextBlock Name="VariableValueTextBox" Width="150" Height="40" Grid.Row="0" Grid.Column="2" />
+    	<StackPanel Grid.Row="0" Grid.Column="3" Width="100" Orientation="Horizontal">
 		    <Button Margin="6" Width="20" Height="20" IsEnabled="true" Opacity="1.0" Click="OnClick_Delete">
 	    		<Button.ToolTip>
 	    			<ToolTip>Delete this variable</ToolTip>

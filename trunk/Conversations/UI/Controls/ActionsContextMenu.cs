@@ -441,14 +441,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 		
 		public void SetupVariables(object sender, EventArgs ea)
 		{
-			/* Journal stuff
-			 * 
-			 * All seems very simple. 
-			 * 
-			 * 
-			 * 
-			 */
-			
 //			NWN2Journal journal = Adventure.CurrentAdventure.Module.Journal;
 //			
 //			NWN2JournalCategory category = journal.AddCategory();
@@ -475,38 +467,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //			category.Tag = "blacklagoonquest";	
 //			
 			
-			/*
-			 * Variable stuff
-			 * 
-			 */
-			AdventureAuthorVariable aav = new AdventureAuthorVariable(true);
-			aav.Name = "player is investigating vars";
-			aav.ValueBool = true;
-							
-				
-				form.App.Module.ModuleInfo.Variables.Add(aav);
-//				
-//				
-//				NWN2ScriptVariable varx = new NWN2ScriptVariable();
-//				varx.Name = "Don't set me to anything";
-//				varx.VariableType = NWN2ScriptVariableType.String;
-//				varx.ValueString = "originalvalue";
-//				form.App.Module.ModuleInfo.Variables.Add(varx);
-				
 		}
-    }
-    
-    public class AdventureAuthorVariable : NWN2ScriptVariable
-    {
-    	private bool valueBool;    	
-		public bool ValueBool {
-			get { return valueBool; }
-			set { valueBool = value; }
-		}
-    	    	
-    	public AdventureAuthorVariable(bool valueBool) : base()
-    	{
-    		this.valueBool = valueBool;
-    	}
     }
 }
