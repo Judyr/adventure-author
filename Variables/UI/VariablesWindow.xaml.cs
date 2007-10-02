@@ -18,13 +18,15 @@ namespace AdventureAuthor.Variables.UI
 			set { instance = (VariablesWindow)value; }
 		}   
     	
+    	
         public VariablesWindow()
         {
             InitializeComponent();
             Refresh();
         }
         
-        public void OnClick_AddVariable(object sender, EventArgs ea)
+                
+        private void OnClick_AddVariable(object sender, EventArgs ea)
         {
         	NWN2ScriptVariable var = new NWN2ScriptVariable();
         	bool? result = null;
@@ -38,17 +40,11 @@ namespace AdventureAuthor.Variables.UI
         	}
         	
         	if (result.HasValue && result.Value) { // returned true, so add the new variable
-	        	Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Add(var);
+        		VariableManager.Add(var);
 	        	Refresh();   		
         	}
         }
         
-        internal void DeleteVariable(NWN2ScriptVariable var)
-        {
-			NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
-			variables.Remove(var);
-			Refresh();
-        }
         
         internal void Refresh()
         {        	

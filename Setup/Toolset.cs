@@ -225,8 +225,8 @@ namespace AdventureAuthor.Setup
 			newChapter.Activate += delegate { NewChapterDialog(); };
 			MenuButtonItem newConversation = new MenuButtonItem("Conversation Writer");
 			newConversation.Activate += delegate { LaunchConversationWriter(); };
-			MenuButtonItem newScript = new MenuButtonItem("Variables Manager");
-			newScript.Activate += delegate {LaunchVariableManager(); };
+			MenuButtonItem variableManager = new MenuButtonItem("Variables Manager");
+			variableManager.Activate += delegate { LaunchVariableManager(); };
 			
 			MenuButtonItem changeUser = new MenuButtonItem("Change User");
 			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
@@ -242,7 +242,7 @@ namespace AdventureAuthor.Setup
 			                           	closeAdventure,
 			                           	newChapter,
 			                           	newConversation,
-			                           	newScript,
+			                           	variableManager,
 			                           	changeUser,
 			                           	exitAdventureAuthor
 			                           });			
@@ -669,9 +669,7 @@ namespace AdventureAuthor.Setup
 					ConversationWriterWindow.Instance.Show();
 				}
 				else {
-					if (!ConversationWriterWindow.Instance.IsActive) {
-						ConversationWriterWindow.Instance.Activate();
-					}
+					ConversationWriterWindow.Instance.Activate();
 					// TODO if the window is not currently maximised/notminimized, make it so
 				}
 			}
@@ -687,9 +685,7 @@ namespace AdventureAuthor.Setup
 				VariablesWindow.Instance.Show();
 			}
 			else {
-				if (!VariablesWindow.Instance.IsActive) {
-					VariablesWindow.Instance.Activate();
-				}
+				VariablesWindow.Instance.Activate();
 				// TODO if the window is not currently maximised/notminimized, make it so
 			}
 		}

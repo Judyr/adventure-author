@@ -122,6 +122,7 @@ namespace AdventureAuthor.Conversations
 		/// <summary>
 		/// Create a new conversation wrapped around a game conversation object.
 		/// </summary>
+		/// <remarks>The game conversation object is assumed to be retrieved from disk prior to calling this constructor</remarks>
 		/// <param name="conv">The game conversation object.</param>
 		public Conversation(NWN2GameConversation conv)
 		{
@@ -529,6 +530,14 @@ namespace AdventureAuthor.Conversations
 			lock (padlock) {
 				NwnConv.OEISerialize(false);
 				isDirty = true;
+				Say.Debug("Saved to working copy.");
+			}
+		}
+		
+		internal void Serialize()
+		{
+			lock (padlock) {
+				NwnConv.OEISerialize(false);
 			}
 		}
 		

@@ -40,7 +40,7 @@ namespace AdventureAuthor.Scripts.UI
             		variables.Add(variable.Name);
             	}
             }            
-            AnswerBox.ItemsSource = variables;        	
+            AnswerBox.ItemsSource = variables;  
         }
         
         private void OnClick_LaunchVariableManagerButton(object sender, EventArgs ea)

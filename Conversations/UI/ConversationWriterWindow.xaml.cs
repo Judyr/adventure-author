@@ -216,6 +216,7 @@ namespace AdventureAuthor.Conversations.UI
 			};
 			SpeakersButtonsPanel.Children.Add(button);
 		}	
+		
 
 		internal void FocusOnLine(LineControl lineControl)
 		{
@@ -228,6 +229,7 @@ namespace AdventureAuthor.Conversations.UI
 					
 			lineControl.Dialogue.Focus();
 		}
+		
 		
 		internal LineControl GetControlForLine(NWN2ConversationConnector line)
 		{
@@ -254,7 +256,8 @@ namespace AdventureAuthor.Conversations.UI
 			
 			return null;			
 		}
-								
+							
+		
 		private void DisplayLine(NWN2ConversationConnector line)
 		{
 			LineControl lineControl = new LineControl(line,false);
@@ -262,6 +265,7 @@ namespace AdventureAuthor.Conversations.UI
 			this.LinesPanel.Children.Add(lineControl);
 		}	
 			
+		
 		private void DisplayBranch(NWN2ConversationConnectorCollection possibleLines) 
 		{
 			if (possibleLines == null) {
@@ -283,11 +287,13 @@ namespace AdventureAuthor.Conversations.UI
 			this.LinesPanel.Children.Add(branchControl);
 		}
 		
+		
 		private void DisplayEndOfConversation()
 		{				
 			EndConversationControl endOfConversation = new EndConversationControl();
 			LinesPanel.Children.Add(endOfConversation);
 		}
+		
 		
 		// TODO make this into ConversationPage.Display() to centralise everything, once it is fully working
 		public void DisplayPage(Page page)
@@ -343,6 +349,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}
 		
+		
 		/// <summary>
 		/// Creates and returns a tree of Pages from a conversation
 		/// </summary>
@@ -388,6 +395,7 @@ namespace AdventureAuthor.Conversations.UI
 			return pages;
 		}
 		
+		
 		private List<Page> CreatePages(Page parentPage)
 		{
 			List<Page> pages = new List<Page>();
@@ -410,6 +418,7 @@ namespace AdventureAuthor.Conversations.UI
 			pages.AddRange(pages2);
 			return pages;
 		}
+		
 		
 		public void RemoveLineControl(NWN2ConversationConnector line)
 		{			
@@ -441,6 +450,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 			}
 		}
+		
 				
 		public void RefreshDisplay(bool conversationStructureChanged)
 		{					
@@ -503,6 +513,7 @@ namespace AdventureAuthor.Conversations.UI
 		
 		#endregion UI
 					
+		
 		#region Event handlers
 				
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
@@ -515,6 +526,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}
 		
+		
 		private void OnClick_New(object sender, EventArgs ea)
 		{
 			NewConversation form = new NewConversation();
@@ -526,6 +538,7 @@ namespace AdventureAuthor.Conversations.UI
 			// (so for instance, doors and treasure chests can talk to the player as well). 
 			// Could also have a special Narrator speaker? (invisible object)
 		}
+		
 			
 		public bool OpenConversation(string name, bool createAsNew)
 		{	
@@ -548,7 +561,7 @@ namespace AdventureAuthor.Conversations.UI
 					conv = new NWN2GameConversation(originalFilename,
 					                         		Adventure.CurrentAdventure.Module.Repository.DirectoryName,
 						                     		Adventure.CurrentAdventure.Module.Repository);
-					form.App.Module.AddResource(conv);
+					form.App.Module.AddResource(conv); // necessary?
 				}
 					
 				// Create and open a working copy of the original conversation:
@@ -601,6 +614,7 @@ namespace AdventureAuthor.Conversations.UI
 			return true;
 		}		
 		
+		
 		private void OnClick_Open(object sender, EventArgs ea)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
@@ -614,6 +628,7 @@ namespace AdventureAuthor.Conversations.UI
 				OpenConversation(System.IO.Path.GetFileNameWithoutExtension(openFile.FileName),false);
 			}			
 		}
+		
 		
 		private string MakeWorkingCopy(string originalFilenameWithoutExtension)
 		{
@@ -630,6 +645,7 @@ namespace AdventureAuthor.Conversations.UI
 			return tempFileName;			
 		}		
 		
+		
 		private void OnClick_Save(object sender, EventArgs ea)
 		{	
 			if (Conversation.CurrentConversation != null) {
@@ -638,15 +654,18 @@ namespace AdventureAuthor.Conversations.UI
 			}			
 		}
 		
+		
 		private void OnClick_Close(object sender, EventArgs ea)
 		{
 			CloseConversationDialog();
 		}
 		
+		
 		private void OnClick_Exit(object sender, EventArgs ea)
 		{
 			Close();
 		}
+		
 		
 		private void OnClick_AddRemoveSpeakers(object sender, EventArgs ea)
 		{
@@ -658,6 +677,7 @@ namespace AdventureAuthor.Conversations.UI
 				Say.Information("You have to have a conversation open to be able to add speakers.");
 			}
 		}
+		
 		
 		private void OnClick_CreateBranchAtEndOfPage(object sender, EventArgs ea)
 		{
@@ -671,6 +691,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 			}
 		}			
+		
 		
 		private void OnClick_MakeSelectedLineIntoBranch(object sender, EventArgs ea)
 		{
@@ -686,6 +707,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}
 		
+		
 		//TODO: Move to Conversation
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
@@ -693,6 +715,7 @@ namespace AdventureAuthor.Conversations.UI
 			DisplayPage(CurrentPage);
 			RefreshDisplay(true);			
 		}
+		
 		
 		//TODO: Move to Conversation
 		internal void MakeBranchAtEndOfPage(string speakerTag)
@@ -762,10 +785,12 @@ namespace AdventureAuthor.Conversations.UI
         	}
 		}		
 		
+		
 		private void OnClick_AddAction(object sender, EventArgs ea)
 		{
 			
 		}
+		
 		
 		private void OnClosing(object sender, EventArgs ea)
 		{
@@ -773,6 +798,7 @@ namespace AdventureAuthor.Conversations.UI
 				// TODO: Abort closing of window.
 			}
 		}
+		
 		
 		/// <summary>
 		/// Closes the current conversation; if appropriate, asks whether the user wants to save first.
@@ -832,6 +858,7 @@ namespace AdventureAuthor.Conversations.UI
 			this.ButtonsPanel.IsEnabled = false;
 			this.LinesPanel.Children.Clear();
 		}
+		
 		
 		private void OnLoaded(object sender, EventArgs ea)
 		{

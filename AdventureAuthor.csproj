@@ -241,6 +241,7 @@
       <DependentUpon>VariablesWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Variables\VariableManager.cs" />
     <EmbeddedResource Include="Conversations\UI\Graph\GraphForm.resx">
       <DependentUpon>GraphForm.cs</DependentUpon>
     </EmbeddedResource>
