@@ -656,6 +656,28 @@ namespace AdventureAuthor.Setup
 			chapterForm.ShowDialog(form.App);
 		}
 		
+//		public static void LaunchConversationWriter()
+//		{
+//			if (Adventure.CurrentAdventure == null) {
+//				Say.Error("Open or create an Adventure before trying to add a new conversation.");
+//				return;
+//			}
+//			
+//			try {
+//				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
+//					ConversationWriterWindow.Instance = new ConversationWriterWindow();
+//					ConversationWriterWindow.Instance.Show();
+//				}
+//				else {
+//					ConversationWriterWindow.Instance.Activate();
+//					// TODO if the window is not currently maximised/notminimized, make it so
+//				}
+//			}
+//			catch (ExecutionEngineException e) {
+//				Say.Error("ExecutionEngineException was thrown when launching the Conversation Writer.",e);
+//			}
+//		}
+		
 		public static void LaunchConversationWriter()
 		{
 			if (Adventure.CurrentAdventure == null) {
@@ -666,28 +688,32 @@ namespace AdventureAuthor.Setup
 			try {
 				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
 					ConversationWriterWindow.Instance = new ConversationWriterWindow();
-					ConversationWriterWindow.Instance.Show();
 				}
-				else {
-					ConversationWriterWindow.Instance.Activate();
-					// TODO if the window is not currently maximised/notminimized, make it so
-				}
+				ConversationWriterWindow.Instance.ShowDialog();
 			}
 			catch (ExecutionEngineException e) {
-				Say.Error("ExecutionEngineException was thrown when launching the Conversation Writer.",e);
+				Say.Error("ExecutionEngineException was thrown when running the ConversationWriterWindow.",e);
 			}
 		}
+		
+//		public static void LaunchVariableManager()
+//		{
+//			if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
+//				VariablesWindow.Instance = new VariablesWindow();
+//				VariablesWindow.Instance.Show();
+//			}
+//			else {
+//				VariablesWindow.Instance.Activate();
+//				// TODO if the window is not currently maximised/notminimized, make it so
+//			}
+//		}				
 		
 		public static void LaunchVariableManager()
 		{
 			if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 				VariablesWindow.Instance = new VariablesWindow();
-				VariablesWindow.Instance.Show();
 			}
-			else {
-				VariablesWindow.Instance.Activate();
-				// TODO if the window is not currently maximised/notminimized, make it so
-			}
+			VariablesWindow.Instance.ShowDialog();
 		}
 		
 		private static void DeleteChapterDialog(Chapter chapterToDelete)
