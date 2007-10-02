@@ -19,13 +19,16 @@ namespace AdventureAuthor.Variables.UI
 		}   
     	
     	
+    	/// <summary>
+    	/// Construct a new instance of VariablesWindow.
+    	/// </summary>
         public VariablesWindow()
         {
             InitializeComponent();
             Refresh();
         }
         
-                
+            
         private void OnClick_AddVariable(object sender, EventArgs ea)
         {
         	NWN2ScriptVariable var = new NWN2ScriptVariable();
@@ -46,6 +49,9 @@ namespace AdventureAuthor.Variables.UI
         }
         
         
+        /// <summary>
+        /// Refresh the list of variables when one is added, edited or deleted.
+        /// </summary>
         internal void Refresh()
         {        	
             NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
