@@ -20,6 +20,7 @@ namespace AdventureAuthor.Variables.UI
 			get { return var; }
 		}
     	
+    	
         public VariableControl(NWN2ScriptVariable variable)
         {
         	if (variable.VariableType != NWN2ScriptVariableType.String && variable.VariableType != NWN2ScriptVariableType.Int) {
@@ -32,8 +33,8 @@ namespace AdventureAuthor.Variables.UI
             InitializeComponent();
             
             VariableNameTextBox.Text = var.Name;
-            VariableTypeTextBox.Text = var.VariableType.ToString();
-            VariableValueTextBox.Text = "Value:  " + var.ValueString;
+            VariableTypeTextBox.Text = "(" + var.VariableType.ToString() + ")";
+            VariableValueTextBox.Text = var.ValueString;
         }             
         
         

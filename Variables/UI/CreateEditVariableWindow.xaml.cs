@@ -38,6 +38,7 @@ namespace AdventureAuthor.Variables.UI
     	
     	#endregion
     	
+    	
         /// <summary>
         /// Create a new instance of the CreateEditVariableWindow, to create or edit an existing variable
         /// </summary>
@@ -73,6 +74,7 @@ namespace AdventureAuthor.Variables.UI
             }
         }
         
+        
         /// <summary>
         /// Close the variable operation, returning a variable object.
         /// </summary>
@@ -81,11 +83,11 @@ namespace AdventureAuthor.Variables.UI
         	if (VariableNameTextBox.Text == String.Empty) {
         		Say.Warning("You haven't given this variable a name.");
         	}
-        	else if (!IsValid(VariableNameTextBox.Text)) {
+        	else if (!VariableManager.NameIsValid(VariableNameTextBox.Text)) {
         		Say.Warning("You have chosen an invalid variable name. Names must be under " + Adventure.MAX_RESOURCE_NAME_LENGTH + 
         		            " characters long, and contain none of the following characters: \" < > | : * ? " + @"\ / ");
         	}
-        	else if (!edit && !IsAvailable(VariableNameTextBox.Text)) {
+        	else if (!edit && !VariableManager.NameIsAvailable(VariableNameTextBox.Text)) {
         		Say.Warning("A variable called " + VariableNameTextBox.Text + " already exists - try something else.");
         	}
         	else if (VariableTypeComboBox.SelectedItem == null) {
@@ -130,6 +132,7 @@ namespace AdventureAuthor.Variables.UI
         	}
         }
         
+        
         /// <summary>
         /// Cancel the variable operation. If editing a variable, restore the initial values of that variable before exiting.
         /// </summary>
@@ -151,31 +154,6 @@ namespace AdventureAuthor.Variables.UI
         	}
         	
         	Close();
-        }
-        
-        /// <summary>
-        /// Check whether this variable name is taken.
-        /// </summary>
-        /// <param name="variableName">The variable name to check for</param>
-        /// <returns>True if the name is available, false if there is already a variable by that name</returns>
-        private bool IsAvailable(string variableName)
-        {
-        	return Adventure.CurrentAdventure.Module.ModuleInfo.Variables.GetVariable(variableName) == null;
-        }
-        
-        /// <summary>
-        /// Check whether this is a valid name for a variable, based on length and the absence of invalid characters.
-        /// </summary>
-        /// <param name="variableName">The variable name to check</param>
-        /// <returns>True if this is a valid name, false otherwise</returns>
-        private bool IsValid(string variableName)
-        {
-        	foreach (char c in Path.GetInvalidFileNameChars()) {
-        		if (variableName.Contains(c.ToString())) {
-        			return false;
-        		}
-        	}
-        	return variableName.Length <= Adventure.MAX_RESOURCE_NAME_LENGTH;
         }
     }
 }
