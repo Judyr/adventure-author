@@ -88,7 +88,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				return;
 			}
 			
-			GraphControl.Clear();
+			graphControl.Clear();
 			
             ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
             SuspendLayout();	

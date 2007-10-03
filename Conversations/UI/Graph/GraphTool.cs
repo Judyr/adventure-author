@@ -34,27 +34,13 @@ namespace AdventureAuthor.Conversations.UI.Graph
         	
             if (e.Button == MouseButtons.Left && Enabled && !IsSuspended)
             {        
-//            	Selection.CollectEntitiesAt(e.Location);
-//            	if (Selection.SelectedItems.Count > 0) {
-//	            	if (Selection.SelectedItems[0] is Node) {
-//            			Page page = ((Node)Selection.SelectedItems[0]).Page;
-//            			ConversationWriterWindow.Instance.DisplayPage(page);
-//	            	}
-//	            	else if (Selection.SelectedItems[0] is IConnection) {
-//            			Selection.Clear();
-//            			Selection.Invalidate();
-//	            	}
-//	            	else if (Selection.SelectedItems[0] is IConnector) {
-//            			Selection.Clear();
-//            			Selection.Invalidate();
-//	            	}
-//            	}
-
+            	bool centreGraph = e.Clicks == 2 ? true : false; // only centre on double-click
+            	
             	Selection.CollectEntitiesAt(e.Location);
             	foreach (IDiagramEntity entity in Selection.SelectedItems) {
             		Node node = entity as Node;
             		if (node != null) {
-            			ConversationWriterWindow.Instance.DisplayPage(node.Page);
+            			ConversationWriterWindow.Instance.DisplayPage(node.Page,centreGraph);
             			break;
             		}
             	}

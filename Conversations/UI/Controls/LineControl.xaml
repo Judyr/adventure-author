@@ -124,8 +124,10 @@
     	
     	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" FontSize="22" Padding="6" TextAlignment="Right"/>
     	
-    	<TextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" FontSize="22" FontWeight="4" Focusable="true"
-    	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4" GotFocus="OnGotFocus" LostFocus="OnLostFocus">
+    	<TextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" 
+    	         FontSize="22" FontWeight="4" Focusable="true" AcceptsReturn="false"
+    	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4" 
+    	         GotFocus="OnGotFocus" LostFocus="OnLostFocus">
     		<TextBox.Text>
     			<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>    		
     			<!--<Binding ElementName="SpeakerLabel" Path="Text"></Binding> (works) -->

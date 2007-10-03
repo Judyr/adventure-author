@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
@@ -114,6 +115,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        		// to be OneWayToSource or TwoWay (although no reason why the source itself would change, but better to
 	        		// be safe) and remove this delegate - however for some reason the binding doesn't seem to take.
 	        		// If have time do it properly, but this works for now.
+	        		
+	        		// Redraw the graph to get the new node label (invalidating the node doesn't seem to do it):
+	        		if (IsPartOfBranch) {
+	        			ConversationWriterWindow.Instance.RefreshDisplay(true);
+	        		}
         		}
         	};            
         	
@@ -174,27 +180,35 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
 
-        	this.KeyDown += delegate(object sender, KeyEventArgs e) 
-			{         	
-				if (e.Key == Key.Delete) {
-        			OnClick_Delete(sender,e);
-		       	}
-			};
+        	this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
                 
         #region LineControl event handlers
         
+        /// <summary>
+        /// Hit delete to delete this line. Hit return to update the node labels on the graph.
+        /// </summary>
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+			if (e.Key == Key.Delete) {
+        		OnClick_Delete(sender,e);
+		    }
+        }
+        
+        
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
         	if (Conversation.CurrentConversation != null && ConversationWriterWindow.Instance.PreviousPage != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage);
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage,true);
         	}
         }
+        
         
 		private void OnClick_SetCamera(object sender, EventArgs ea)
         {
         	
         }
+		
 		
 		private void OnClick_SetSound(object sender, EventArgs ea)
         {                	
@@ -202,18 +216,20 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	window.ShowDialog();
         }		
         
+		
         private void OnClick_GoToPage(object sender, EventArgs ea)
         {
         	// If this line is part of a branch, double-clicking it should display the page it leads to:
         	if (this.isPartOfBranch) {
         		foreach (Page page in ConversationWriterWindow.Instance.Pages) {
         			if (page.LeadInLine == this.nwn2Line) {
-        				ConversationWriterWindow.Instance.DisplayPage(page);
+        				ConversationWriterWindow.Instance.DisplayPage(page,true);
         				return;
         			}
         		}
         	}
         }        
+        
         
 		private void OnClick_MakeIntoBranch(object sender, EventArgs ea)
 		{
@@ -224,6 +240,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				ConversationWriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
 			}
 		}
+		
 		
         private void OnClick_Delete(object sender, EventArgs ea)
         { 	
@@ -278,16 +295,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
 	        	}        		
         	}
-        }
-        
+        }        
        
         
         private void GoUp(object sender, EventArgs ea)
         {
         	if (ConversationWriterWindow.Instance.CurrentPage.Parent != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent);
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent,true);
         	}
         }
+        
         
         /// <summary>
         /// Called when a drag-drop operation is started.
@@ -299,10 +316,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	//this.Background = Brushes.Pink;
         }
         
+        
         private void OnDragCompleted(object sender, EventArgs ea) 
         {
         	//this.Background = Brushes.LightYellow;
         }
+        
         
         private void OnDragDelta(object sender, EventArgs ea)
         {
@@ -314,17 +333,19 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //        	}
         }
         
+        
         private void OnMouseDown(object sender, MouseEventArgs ea)
         {        	
 			Focus();
         }        
         
+        
         private void OnGotFocus(object sender, EventArgs ea)
         {      	
         	SelectLine();
-//        	Say.Debug("OnGotFocus called from " + sender.ToString());  
-        	
+//        	Say.Debug("OnGotFocus called from " + sender.ToString()); 
         }
+        
         
         private void OnLostFocus(object sender, EventArgs ea)
         {

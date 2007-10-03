@@ -88,23 +88,29 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			this.page = page;
 			this.parentNode = parentNode;
 			
-			if (parentNode == null) { // root
+			SetLabel();
+		}
+		
+		
+		private void SetLabel()
+		{
+			if (this.parentNode == null) { // root
 				this.Text = "Start";
 			}
-			else {
-				string text = Conversation.OEIExoLocStringToString(page.LeadInLine.Text);
-				if (text.Length == 0) {
+			else {			
+				string newText = Conversation.OEIExoLocStringToString(this.page.LeadInLine.Text);
+				if (newText.Length == 0) {
 					this.Text = "...";
 				}
 				else {
-					string shorttext = UsefulTools.Truncate(text,25);
-					if (shorttext.Length < text.Length) {
+					string shorttext = UsefulTools.Truncate(newText,25);
+					if (shorttext.Length < newText.Length) {
 						this.Text = shorttext + "...";
 					}
 					else {
-						this.Text = text;
+						this.Text = newText;
 					}
-				}
+				}	
 			}
 		}
 		
