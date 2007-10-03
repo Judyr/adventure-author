@@ -64,7 +64,12 @@ namespace AdventureAuthor.Utils
 			if (text.Length > maxLength) {
 				int lastSpace = text.LastIndexOf(' ',maxLength-10);
 				if (lastSpace != -1) {
-					return text.Substring(0,lastSpace);
+					if (EndsWithPunctuation(text.Substring(0,lastSpace+1))) {
+						return text.Substring(0,lastSpace-1);
+					}
+					else {
+						return text.Substring(0,lastSpace);
+					}
 				}
 				else {
 					return text.Substring(0,maxLength);
@@ -73,6 +78,21 @@ namespace AdventureAuthor.Utils
 			else {
 				return text;
 			}
+		}
+		
+		
+		/// <summary>
+		/// Check whether a string ends with a punctuation character.
+		/// </summary>
+		/// <param name="text">The piece of text to check</param>
+		/// <returns>True if the text ends with .,:;()!?&-, false otherwise</returns>
+		private static bool EndsWithPunctuation(string text)
+		{
+			if (text.Length < 1) {
+				return false;
+			}
+			char[] punctuation = new char[] {'.',',',':',';','(',')','!','?','&','-'};
+			return text.LastIndexOfAny(punctuation,text.Length-1) != -1;
 		}
 		
 		

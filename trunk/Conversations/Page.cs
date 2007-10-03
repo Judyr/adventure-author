@@ -30,7 +30,9 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Conversations.UI.Controls;
+using AdventureAuthor.Conversations.UI.Graph;
 
 namespace AdventureAuthor.Conversations
 {
@@ -56,9 +58,20 @@ namespace AdventureAuthor.Conversations
     	private List<LineControl> lineControls;  	
 		public List<LineControl> LineControls {
 			get { return lineControls; }
+		}  
+    	
+    	private bool isSelected;    	
+		public bool IsSelected {
+			get { return isSelected; }
+			set { isSelected = value; }
 		}
     	
+    	public bool IsEndPage {
+    		get { return children.Count == 0; }
+    	}
+    	
     	#endregion Fields
+    	
     	
 		public Page(NWN2ConversationConnector leadsFrom, Page parent)
 		{
@@ -68,13 +81,9 @@ namespace AdventureAuthor.Conversations
 			this.lineControls = new List<LineControl>();
 			if (parent != null) {
 				parent.children.Add(this);
-			}			
+			}
 		}	
-
-		public bool IsEndPage()
-		{
-			return children.Count == 0;
-		}
+		
 		
 		public override string ToString()
 		{

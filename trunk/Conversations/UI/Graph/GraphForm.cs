@@ -38,7 +38,11 @@ namespace AdventureAuthor.Conversations.UI.Graph
 {
 	public partial class GraphForm : Form
 	{
-		public GraphControl graphControl;
+		private GraphControl graphControl;		
+		public GraphControl GraphControl {
+			get { return graphControl; }
+		}
+		
 		
 		public GraphForm()
 		{
@@ -55,17 +59,16 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            graphControl.AutoScroll = true;
 	            graphControl.BackColor = System.Drawing.Color.LightBlue;
 	            graphControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
-	            graphControl.Dock = System.Windows.Forms.DockStyle.Fill;
+	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
 	            graphControl.EnableAddConnection = false;
 	           	Netron.Diagramming.Core.Layout.LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
 	            graphControl.Location = new System.Drawing.Point(0, 0);
 	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
 	            graphControl.Name = "diagramControl";
+	            this.Size = new Size(400,400);
 	            graphControl.Size = this.Size;
-	            Point p = new Point(-150,10);
-				graphControl.Origin = p;
-	            graphControl.ShowPage = false;
-	            graphControl.ShowRulers = false;
+	            graphControl.ShowPage = true;
+	            graphControl.ShowRulers = true;
 	            graphControl.Text = "Conversation Graph";
 	            
 	            this.Controls.Add(this.graphControl);
@@ -81,39 +84,33 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		public void Open(List<Page> pages)
 		{
 			if (pages == null || pages.Count == 0) {
+				Say.Information("pages == null || pages.count == 0");
 				return;
 			}
 			
-			Say.Debug("Creating a graph with " + pages.Count + " pages.");
-			
-			Clear();
+			GraphControl.Clear();
 			
             ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
             SuspendLayout();	
             
             Node root = new Node(pages[0],null);
             graphControl.AddShape(root);
-            graphControl.Invalidate(); // in case this is the only node we add
+            
+            // inexplicably required to get the root drawn if that's all there is:
+            graphControl.AddConnection(root.Connectors[0],root.Connectors[0]); 
             graphControl.SetLayoutRoot(root);
-            if (pages.Count > 1) {
-            	DrawChildren(pages[0].Children,root);
-            }
-            
+            DrawChildren(pages[0].Children,root);            
             graphControl.Layout(LayoutType.ClassicTree);
-//            root.Move(new Point(root.X,root.Y+50));
-            graphControl.Invalidate();
-            
+                        
             ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
             ResumeLayout(false);
-//            root.Move(new Point(root.X+70,root.Y));
             graphControl.Invalidate();
-            Say.Debug("Finished creating graph.");
 		}
 		
 		
 		private void DrawChildren(List<Page> children, Node parentNode)
 		{
-			if (children == null || children.Count == 0) {
+			if (children == null) {
 				return;
 			}
 			
@@ -131,38 +128,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 		}
 		
-		public void Clear()
-		{
-			Selection.Clear();
-			graphControl.Controller.Model.Clear();
-			graphControl.Invalidate();
-		}
-		
-		internal void SelectNode(Node node)
-		{
-			if (node != null) {
-				node.IsSelected = true;
-				node.Hovered = true;
-				node.Invalidate();
-			}
-			else {
-				Say.Error("Tried to select a null node.");
-			}
-		}
 		
 		internal Node GetNode(Page page)
 		{
 			foreach (IDiagramEntity entity in graphControl.Controller.Model.Paintables) {
-				Say.Debug("Checking entity " + entity.ToString() + ".");
 				Node pageNode = entity as Node;
-				if (pageNode == null) {
-					Say.Debug("Wasn't a page node.");
-				}
-				else {
-					Say.Debug("Was a page node.");
-				}
 				if (pageNode != null && pageNode.Page == page) {
-					Say.Debug("Found the page node I was looking for.");
 					return pageNode;
 				}
 			}

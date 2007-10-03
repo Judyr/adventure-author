@@ -34,32 +34,32 @@ namespace AdventureAuthor.Conversations.UI.Graph
         	
             if (e.Button == MouseButtons.Left && Enabled && !IsSuspended)
             {        
+//            	Selection.CollectEntitiesAt(e.Location);
+//            	if (Selection.SelectedItems.Count > 0) {
+//	            	if (Selection.SelectedItems[0] is Node) {
+//            			Page page = ((Node)Selection.SelectedItems[0]).Page;
+//            			ConversationWriterWindow.Instance.DisplayPage(page);
+//	            	}
+//	            	else if (Selection.SelectedItems[0] is IConnection) {
+//            			Selection.Clear();
+//            			Selection.Invalidate();
+//	            	}
+//	            	else if (Selection.SelectedItems[0] is IConnector) {
+//            			Selection.Clear();
+//            			Selection.Invalidate();
+//	            	}
+//            	}
+
             	Selection.CollectEntitiesAt(e.Location);
-            	if (Selection.SelectedItems.Count > 0) {
-	            	if (Selection.SelectedItems[0] is Node) {
-            			Page page = ((Node)Selection.SelectedItems[0]).Page;
-            			ConversationWriterWindow.Instance.DisplayPage(page);
-	            	}
-	            	else if (Selection.SelectedItems[0] is IConnection) {
-            			Selection.Clear();
-            			Selection.Invalidate();
-	            	}
-	            	else if (Selection.SelectedItems[0] is IConnector) {
-            			Selection.Clear();
-            			Selection.Invalidate();
-	            	}
+            	foreach (IDiagramEntity entity in Selection.SelectedItems) {
+            		Node node = entity as Node;
+            		if (node != null) {
+            			ConversationWriterWindow.Instance.DisplayPage(node.Page);
+            			break;
+            		}
             	}
-            	
-            	
-                              
-//                if (Selection.SelectedItems.Count > 0) {
-//                    IMouseListener listener = Selection.SelectedItems[0].GetService(typeof(IMouseListener)) as IMouseListener;
-//                    if(listener != null) {
-//                    	if (listener.MouseDown(e)) {
-//                            return true;
-//                        }
-//                    }
-//                }               
+            	Selection.Clear();
+            	Selection.Invalidate();             
             }
             return false;
         }
