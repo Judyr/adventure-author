@@ -61,20 +61,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            graphControl.Location = new System.Drawing.Point(0, 0);
 	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
 	            graphControl.Name = "diagramControl";
-	            graphControl.Size = new Size(500,500);
-	//            Point p = new Point(-1200,0);
-	//			graphControl.Origin = p;
-	            graphControl.Origin = new System.Drawing.Point(0, 0);
+	            graphControl.Size = this.Size;
+	            Point p = new Point(-150,10);
+				graphControl.Origin = p;
 	            graphControl.ShowPage = false;
 	            graphControl.ShowRulers = false;
-	            graphControl.TabIndex = 0;
 	            graphControl.Text = "Conversation Graph";
-	            
-	            graphControl.Click += delegate { 
-	            	Point p = new Point(graphControl.Location.X - 10, graphControl.Location.Y);
-	            	graphControl.Origin = p;
-	            	graphControl.Invalidate();
-	            };
 	            
 	            this.Controls.Add(this.graphControl);
 	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();

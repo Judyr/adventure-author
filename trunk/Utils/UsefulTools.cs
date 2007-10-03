@@ -50,6 +50,7 @@ namespace AdventureAuthor.Utils
         	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; 
         }
 		
+        
         /// <summary>
         /// Truncates a line of text to within a given length, if possible stopping at the end of whole word.
         /// </summary>
@@ -74,18 +75,29 @@ namespace AdventureAuthor.Utils
 			}
 		}
 		
+		
+		/// <summary>
+		/// Get a string representing the current date.
+		/// </summary>
+		/// <returns>A string representing the date in days, months and years</returns>
 		public static string GetDateStamp()
 		{
 			DateTime now = DateTime.Now;
 			return now.Day + "_" + now.Month + "_" + now.Year;
 		}
 		
-		public static string GetTimeStamp(bool forFilename)
+		
+		/// <summary>
+		/// Get a string representing the current time.
+		/// </summary>
+		/// <param name="validForFilename">True if the string should only contain valid characters for filenames, false otherwise</param>
+		/// <returns>A string representing the current time in hours, minutes and seconds</returns>
+		public static string GetTimeStamp(bool validForFilename)
 		{
 			DateTime d = DateTime.Now;		
 			StringBuilder timestamp = new StringBuilder();
 			string divider;
-			if (forFilename) {
+			if (validForFilename) {
 				divider = "_";
 			}
 			else {

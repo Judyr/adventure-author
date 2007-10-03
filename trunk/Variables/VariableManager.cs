@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.Data.TypedCollections;
@@ -159,6 +160,33 @@ namespace AdventureAuthor.Variables
 				}
 			}	
         	return false;
+        }
+        
+        
+        /// <summary>
+        /// Check whether this variable name is taken.
+        /// </summary>
+        /// <param name="variableName">The variable name to check for</param>
+        /// <returns>True if the name is available, false if there is already a variable by that name</returns>
+        public static bool NameIsAvailable(string variableName)
+        {
+        	return Adventure.CurrentAdventure.Module.ModuleInfo.Variables.GetVariable(variableName) == null;
+        }
+        
+        
+        /// <summary>
+        /// Check whether this is a valid name for a variable, based on length and the absence of invalid characters.
+        /// </summary>
+        /// <param name="variableName">The variable name to check</param>
+        /// <returns>True if this is a valid name, false otherwise</returns>
+        public static bool NameIsValid(string variableName)
+        {
+        	foreach (char c in Path.GetInvalidFileNameChars()) {
+        		if (variableName.Contains(c.ToString())) {
+        			return false;
+        		}
+        	}
+        	return variableName.Length <= Adventure.MAX_RESOURCE_NAME_LENGTH;
         }
 	}
 }

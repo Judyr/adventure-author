@@ -72,6 +72,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 		}
 		
+		
 		/// <summary>
 		/// Create a new node
 		/// </summary>
@@ -88,7 +89,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 			else {
 				string text = Conversation.OEIExoLocStringToString(page.LeadInLine.Text);
-				string shorttext = UsefulTools.Truncate(text,30);
+				string shorttext = UsefulTools.Truncate(text,25);
 				if (shorttext.Length < text.Length) {
 					this.Text = shorttext + "...";
 				}
@@ -97,6 +98,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				}
 			}
 		}
+		
 		
 		/// <summary>
 		/// Highlight the route to this node, up to the root of the conversation tree.

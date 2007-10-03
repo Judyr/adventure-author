@@ -1,19 +1,24 @@
 ﻿<Window x:Class="AdventureAuthor.Variables.UI.VariablesWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Variable Manager" Height="400" Width="540"
-    >
+    Title="Variable Manager" Height="400" Width="540" Background="AntiqueWhite">
     <Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
-			<RowDefinition Height="100"/>
+			<RowDefinition/>
+			<RowDefinition Height="30"/>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition MinWidth="400" Width="*"/>
 		</Grid.ColumnDefinitions>
-        <ListBox Name="VariablesList" Grid.Column="0" Grid.Row="0" Background="LightBlue"/>
-        <Canvas Grid.Column="0" Grid.Row="1">
-        	<Button Canvas.Top="10" Canvas.Right="10" Height="30" Width="120" Content="Add variable" Click="OnClick_AddVariable"/>
+    	<StackPanel Grid.Row="0" Grid.Column="0" MaxHeight="25" Orientation="Horizontal">
+			<TextBlock Width="180" Height="25" FontFamily="Helvetica" FontSize="18" FontStyle="Italic" Text="Name"/>
+			<TextBlock Width="70" Height="25" FontFamily="Helvetica" FontSize="18" FontStyle="Italic" Text="Type of value" />
+			<TextBlock Width="150" Height="25" FontFamily="Helvetica" FontSize="18" FontStyle="Italic" Text="Starting value" />    		
+    	</StackPanel>
+        <ListBox Name="VariablesList" Grid.Row="1" Grid.Column="0" />
+        <Canvas Grid.Row="2" Grid.Column="0" Background="Brown">
+        	<Button Canvas.Top="10" Canvas.Right="10" Height="25" Width="120" FontSize="18" Content="Add variable" Click="OnClick_AddVariable"/>
         </Canvas>
     </Grid>
 </Window>
