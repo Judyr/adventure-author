@@ -25,14 +25,16 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using AdventureAuthor.Utils;
 using Netron.Diagramming.Core;
 using Netron.Diagramming.Core.AdventureAuthor;
+using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.Conversations.UI.Graph
 {
-	public class Node : SimpleRectangle, IToolTipped
+	public class Node : SimpleRectangle, INode
 	{
 		/// <summary>
 		/// The page of the conversation that this node represents.
@@ -62,7 +64,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		/// it tells the parent control what to display on its tooltip.</remarks>
 		/// </summary>
 		public string ToolTipText {
-			get { 
+			get {
 				if (parentNode == null) { // root
 					return "Start";
 				}
@@ -80,8 +82,10 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		/// <param name="parentNode">The parent node of this node</param>
 		public Node(Page page, Node parentNode) : base()
 		{
-			this.page = page;
 			this.Resizable = false;
+			this.PaintStyle = GraphControl.PAINT_STANDARD;
+			
+			this.page = page;
 			this.parentNode = parentNode;
 			
 			if (parentNode == null) { // root
@@ -89,46 +93,89 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 			else {
 				string text = Conversation.OEIExoLocStringToString(page.LeadInLine.Text);
-				string shorttext = UsefulTools.Truncate(text,25);
-				if (shorttext.Length < text.Length) {
-					this.Text = shorttext + "...";
+				if (text.Length == 0) {
+					this.Text = "...";
 				}
 				else {
-					this.Text = text;
+					string shorttext = UsefulTools.Truncate(text,25);
+					if (shorttext.Length < text.Length) {
+						this.Text = shorttext + "...";
+					}
+					else {
+						this.Text = text;
+					}
 				}
 			}
 		}
 		
 		
 		/// <summary>
-		/// Highlight the route to this node, up to the root of the conversation tree.
-		/// <remarks>Requires an Invalidate() call on the parent form afterwards.</remarks>
+		/// Get the route between the selected node and the root, in the form of a list of nodes.
 		/// </summary>
-		public void ShowRoute()
+		/// <returns>A list of INode objects representing the route between the selected node and the root. Empty if called on root.</returns>
+		public List<INode> GetRoute()
 		{
 			if (parentNode != null && parentEdge == null) {
 				throw new ArgumentException("No information was provided about the edge that links the node to its parent node.");
 			}
 			
-			if (!IsSelected) { // highlight this node unless it is selected, in which it is the route's endpoint
-				
-				// TODO
-				
-				this.PaintStyle = new GradientPaintStyle(Color.LightBlue,Color.AntiqueWhite,0.0f);
+			List<INode> routeNodes = new List<INode>();
+			
+			Node parent = this.parentNode;			
+			while (parent != null) {
+				routeNodes.Add(parent);
+				parent = parent.parentNode;
 			}
-			if (parentEdge != null) { // continue to highlight up the tree until you reach the root, which has no parent
-				// highlight the edge:
-				parentEdge.PaintStyle = new GradientPaintStyle(Color.Red,Color.Maroon,0.0f);
-				
-				// continue up the tree:
-				try {
-					parentNode.ShowRoute();
-				}
-				catch (NullReferenceException e) {
-					Say.Error("Failed to highlight route: node '" + page.ToString() +
-					          "' has a parent edge but no parent node, which is invalid.",e);
-				}
-			}
+			
+			return routeNodes;
 		}
+		
+		
+		
+//		/// <summary>
+//		/// DEPRECATED
+//		/// <remarks>Requires an Invalidate() call on the parent form afterwards.</remarks>
+//		/// </summary>
+//		public void ShowRoute()
+//		{
+//
+//			
+//			if (IsSelected) {
+//				this.PaintStyle = PAINT_SELECTED;
+//			}
+//			else {
+//				this.PaintStyle = PAINT_ON_ROUTE;
+//			}
+//			
+//			if (parentEdge != null) { // continue to highlight up the tree until you reach the root, which has no parent
+//				// highlight the edge:
+//				parentEdge.PaintStyle = PAINT_ON_ROUTE; // not sure if this does anything
+//				
+//				// continue up the tree:
+//				try {
+//					parentNode.ShowRoute();
+//				}
+//				catch (NullReferenceException e) {
+//					Say.Error("Failed to highlight route: node '" + page.ToString() +
+//					          "' has a parent edge but no parent node, which is invalid.",e);
+//				}
+//			}
+//		}
+		
+		
+		
+		
+		
+		
+//		/// <summary>
+//		/// DEPRECATED
+//		/// </summary>
+//		public void CentreGraph()
+//		{
+//			ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(this);
+//			if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
+//				ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(this);
+//			}
+//		}
 	}
 }

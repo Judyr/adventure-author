@@ -302,7 +302,7 @@ namespace AdventureAuthor.Conversations.UI
 			// Save any changes that have been made to on-screen controls, since we're about to replace them:
 			Conversation.CurrentConversation.SaveToWorkingCopy();
 			
-			// Clear the current page:
+			// Clear the current graph:
 			previousPage = currentPage;
 			currentPage = page;		
 			currentControl = null;		
@@ -312,14 +312,10 @@ namespace AdventureAuthor.Conversations.UI
 			// Activate the page node in the graph, and deselect the current page node if one is selected:
 			// TODO clear the graph first of all selected and highlighted nodes,except if they will continue to be so in the new display
 			Node mainNode = MainGraph.GetNode(currentPage);
-			MainGraph.SelectNode(mainNode);
-			mainNode.ShowRoute(); // TODO inconsistent location of methods
-			MainGraph.Invalidate();
+			MainGraph.GraphControl.SelectNode(mainNode);
 			if (ExpandedGraph != null) {
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
-				ExpandedGraph.SelectNode(expandedNode);
-				expandedNode.ShowRoute(); // TODO inconsistent location of methods
-				ExpandedGraph.Invalidate();
+				ExpandedGraph.GraphControl.SelectNode(mainNode);
 			}
 					
 			// Check whether we are starting from the root:
@@ -682,7 +678,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_CreateBranchAtEndOfPage(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
-				if (!CurrentPage.IsEndPage()) {
+				if (!CurrentPage.IsEndPage) {
 					Say.Information("This page already ends in a branch. Try again on a page that ends with 'END OF CONVERSATION'.");
 				}
 				else {
@@ -720,7 +716,7 @@ namespace AdventureAuthor.Conversations.UI
 		//TODO: Move to Conversation
 		internal void MakeBranchAtEndOfPage(string speakerTag)
 		{
-			if (!CurrentPage.IsEndPage()) {
+			if (!CurrentPage.IsEndPage) {
 				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
 			}
 			
@@ -846,9 +842,9 @@ namespace AdventureAuthor.Conversations.UI
 			currentControl = null;
 			Conversation.CurrentConversation = null;
 			
-			MainGraph.Clear();
+			MainGraph.GraphControl.Clear();
 			if (ExpandedGraph != null) {
-				ExpandedGraph.Clear();
+				ExpandedGraph.GraphControl.Clear();
 			}
 			
 			Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
