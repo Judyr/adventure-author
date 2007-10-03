@@ -207,7 +207,7 @@ namespace AdventureAuthor.Conversations.UI
 					}
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
 					
-					DisplayPage(currentPage);
+					DisplayPage(currentPage,false);
 					RefreshDisplay(false);
 					
 					LineControl newLineControl = GetControlForLine(newLine);
@@ -295,27 +295,30 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
-		// TODO make this into ConversationPage.Display() to centralise everything, once it is fully working
-		public void DisplayPage(Page page)
+		/// <summary>
+		/// Display a page of the conversation, in the screenplay view and in the graph view.
+		/// </summary>
+		/// <param name="page">The page to display</param>
+		/// <param name="centreGraph">True to centre the graph around the node representing this page; false otherwise</param>
+		public void DisplayPage(Page page, bool centreGraph)
 		{
 			Say.Debug("Displaying page " + page.ToString());
 			// Save any changes that have been made to on-screen controls, since we're about to replace them:
 			Conversation.CurrentConversation.SaveToWorkingCopy();
 			
-			// Clear the current graph:
+			// Clear the current page:
 			previousPage = currentPage;
 			currentPage = page;		
 			currentControl = null;		
 			LinesPanel.Children.Clear();
 			currentPage.LineControls.Clear();
 			
-			// Activate the page node in the graph, and deselect the current page node if one is selected:
-			// TODO clear the graph first of all selected and highlighted nodes,except if they will continue to be so in the new display
+			// Select the node and its route in the graph:
 			Node mainNode = MainGraph.GetNode(currentPage);
-			MainGraph.GraphControl.SelectNode(mainNode);
+			MainGraph.GraphControl.SelectNode(mainNode,centreGraph);
 			if (ExpandedGraph != null) {
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
-				ExpandedGraph.GraphControl.SelectNode(mainNode);
+				ExpandedGraph.GraphControl.SelectNode(mainNode,centreGraph);
 			}
 					
 			// Check whether we are starting from the root:
@@ -452,12 +455,10 @@ namespace AdventureAuthor.Conversations.UI
 		{					
 			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
 			if (conversationStructureChanged) {
-				Say.Debug("RefreshDisplay() - conversation structure changed.");
 			
 				Page newVersionOfCurrentPage = null;
 				Page newVersionOfPreviousPage = null;
 						
-				Say.Debug("Creating a new set of pages.");
 				pages = CreatePages(Conversation.CurrentConversation);
 				foreach (Page p in pages) {					
 					if (p.LeadInLine == currentPage.LeadInLine) {
@@ -465,14 +466,7 @@ namespace AdventureAuthor.Conversations.UI
 						break;
 					}
 				}
-				
-				if (newVersionOfCurrentPage == null) {
-					Say.Debug("Couldn't find a new version of the current page.");
-				}
-				else {
-					Say.Debug("Found a new version of the current page.");
-				}
-				
+								
 				if (previousPage != null) {
 					foreach (Page p in pages) {
 						if (p.LeadInLine == previousPage.LeadInLine) {
@@ -482,28 +476,23 @@ namespace AdventureAuthor.Conversations.UI
 					}
 				}								
 
-				Say.Debug("Opening the new set of pages in the main graph.");
 				MainGraph.Open(pages);
 				if (ExpandedGraph != null) {
-					Say.Debug("Opening the new set of pages in the expanded graph.");
 					ExpandedGraph.Open(pages);
 				}
 					
 				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
 				if (newVersionOfCurrentPage != null) {
-					Say.Debug("Displaying the new version of the current page.");
-					DisplayPage(newVersionOfCurrentPage);
+					DisplayPage(newVersionOfCurrentPage,false);
 					previousPage = newVersionOfPreviousPage;
 				}
 				else {
-					Say.Debug("Displaying root.");
-					DisplayPage(pages[0]);
+					DisplayPage(pages[0],true);
 					previousPage = null;
 				}	
 			}
 			else {
-				Say.Debug("RefreshDisplay() - conversation structure not changed.");
-				DisplayPage(currentPage);
+				DisplayPage(currentPage,false);
 			}
 		}
 		
@@ -604,7 +593,7 @@ namespace AdventureAuthor.Conversations.UI
 			ButtonsPanel.IsEnabled = true;
 			
 			// Display the conversation from the root page:
-			DisplayPage(pages[0]);			
+			DisplayPage(pages[0],true);			
 			this.Title += ": " + this.originalFilename;
 			
 			return true;
@@ -708,7 +697,7 @@ namespace AdventureAuthor.Conversations.UI
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			DisplayPage(CurrentPage);
+			DisplayPage(CurrentPage,false);
 			RefreshDisplay(true);			
 		}
 		
@@ -773,7 +762,7 @@ namespace AdventureAuthor.Conversations.UI
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-				DisplayPage(CurrentPage);
+				DisplayPage(CurrentPage,false);
 				RefreshDisplay(true);
         	}
         	catch (InvalidOperationException) {
