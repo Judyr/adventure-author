@@ -44,10 +44,10 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		}
 		
 		
-		public GraphForm()
+		public GraphForm(bool expanded)
 		{
 			try {
-				TopLevel = false; // to allow it to be added to a WindowsFormHost
+				TopLevel = expanded; // allows it to be added to a WindowsFormHost
 				InitializeComponent();
 				
 	            graphControl = new GraphControl();
@@ -57,7 +57,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
 	            graphControl.AllowDrop = false;
 	            graphControl.AutoScroll = true;
-	            graphControl.BackColor = System.Drawing.Color.LightBlue;
+	            if (expanded) {
+	            	graphControl.BackColor = System.Drawing.Color.Green;
+	            }
+	            else {
+	            	graphControl.BackColor = System.Drawing.Color.LightBlue;
+	            }
 	            graphControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
 	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
 	            graphControl.EnableAddConnection = false;
@@ -65,7 +70,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            graphControl.Location = new System.Drawing.Point(0, 0);
 	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
 	            graphControl.Name = "diagramControl";
-	            this.Size = new Size(400,400);
+	            if (expanded) {
+	            	this.Size = new Size(800,600);
+	            }
+	            else {
+	            	this.Size = new Size(400,400);
+	            }
 	            graphControl.Size = this.Size;
 	            graphControl.ShowPage = true;
 	            graphControl.ShowRulers = true;
