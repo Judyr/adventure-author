@@ -14,6 +14,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
         	
         }
         
+        
         /// <summary>
         /// Called when the tool is activated.
         /// </summary>
@@ -21,6 +22,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
         {
         	
         }
+        
 
         /// <summary>
         /// Handles the mouse down event
@@ -35,20 +37,20 @@ namespace AdventureAuthor.Conversations.UI.Graph
             if (e.Button == MouseButtons.Left && Enabled && !IsSuspended)
             {        
             	bool centreGraph = e.Clicks == 2 ? true : false; // only centre on double-click
-            	
             	Selection.CollectEntitiesAt(e.Location);
             	foreach (IDiagramEntity entity in Selection.SelectedItems) {
             		Node node = entity as Node;
             		if (node != null) {
             			ConversationWriterWindow.Instance.DisplayPage(node.Page,centreGraph);
-            			break;
             		}
+            		entity.IsSelected = false; // doesn't help
             	}
             	Selection.Clear();
-            	Selection.Invalidate();             
+            	Selection.Invalidate();
             }
             return false;
         }
+        
 
         /// <summary>
         /// Handles the mouse move event
@@ -58,6 +60,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
         {
       
         }
+        
       
         public void MouseUp(MouseEventArgs e)
         {

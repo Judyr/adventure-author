@@ -104,24 +104,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				SpeakerLabel.Text = "???";
 				SpeakerLabel.Foreground = Brushes.Black;
 			}
-
-        	// Save the changes made to dialogue:
-        	Dialogue.LostFocus += delegate
-        	{
-        		if (Conversation.CurrentConversation != null) {
-	        		this.nwn2Line.Line.Text.Strings[0].Value = Dialogue.Text;
-	        		Conversation.CurrentConversation.SaveToWorkingCopy();
-	        		// Note that the better way to do this would be for the Binding from Dialogue.Text to "LineText"
-	        		// to be OneWayToSource or TwoWay (although no reason why the source itself would change, but better to
-	        		// be safe) and remove this delegate - however for some reason the binding doesn't seem to take.
-	        		// If have time do it properly, but this works for now.
-	        		
-	        		// Redraw the graph to get the new node label (invalidating the node doesn't seem to do it):
-	        		if (IsPartOfBranch) {
-	        			ConversationWriterWindow.Instance.RefreshDisplay(true);
-	        		}
-        		}
-        	};            
         	
         	// Check if there are conditions for this line to be spoken, and if so represent *all* of them with a single control:
         	if (line.Conditions.Count > 0) {
@@ -180,10 +162,32 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
 
+        	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);  
         	this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
                 
         #region LineControl event handlers
+        
+        /// <summary>
+        /// Save changes made to dialogue, and update the node label on the graph
+        /// </summary>
+        private void OnDialogueLostFocus(object sender, RoutedEventArgs e)
+        {
+        	if (Conversation.CurrentConversation != null) {
+	        	this.nwn2Line.Line.Text.Strings[0].Value = Dialogue.Text;
+	        	Conversation.CurrentConversation.SaveToWorkingCopy();
+	        	// Note that the better way to do this would be for the Binding from Dialogue.Text to "LineText"
+	        	// to be OneWayToSource or TwoWay (although no reason why the source itself would change, but better to
+	        	// be safe) and remove this delegate - however for some reason the binding doesn't seem to take.
+	        	// If have time do it properly, but this works for now.
+	        	
+	        	// Redraw the graph to get the new node label (invalidating the node doesn't seem to do it):
+	        	if (IsPartOfBranch) {
+	        		ConversationWriterWindow.Instance.RefreshDisplay(true);
+	        	}
+        	}
+        }
+        
         
         /// <summary>
         /// Hit delete to delete this line. Hit return to update the node labels on the graph.

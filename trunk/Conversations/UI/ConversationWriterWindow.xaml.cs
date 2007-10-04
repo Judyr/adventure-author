@@ -503,10 +503,12 @@ namespace AdventureAuthor.Conversations.UI
 				
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
-			this.expandedGraph = new GraphForm(true);
-			this.expandedGraph.Open(pages);
-			DisplayPage(currentPage,false);
-			this.ExpandedGraph.ShowDialog();
+			if (Conversation.CurrentConversation != null) {
+				this.expandedGraph = new GraphForm(true);
+				this.expandedGraph.Open(pages);
+				DisplayPage(currentPage,false);
+				this.ExpandedGraph.ShowDialog();
+			}
 		}
 		
 		
@@ -589,6 +591,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 			
 			ButtonsPanel.IsEnabled = true;
+			ExpandGraphButton.IsEnabled = true;
 			
 			// Display the conversation from the root page:
 			DisplayPage(pages[0],true);			
@@ -811,10 +814,8 @@ namespace AdventureAuthor.Conversations.UI
 		
 		
 		/// <summary>
-		/// 
+		/// Close the current conversation.
 		/// </summary>
-		/// <param name="withoutSaving"></param>
-		/// <returns>false if aborted, true otherwise</returns>
 		private void CloseConversation()
 		{
 			string workingFilePath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,this.workingFilename+".dlg");
@@ -839,6 +840,7 @@ namespace AdventureAuthor.Conversations.UI
 			SpeakersButtonsPanel.Children.Add(addSpeakersButton);
 		
 			this.ButtonsPanel.IsEnabled = false;
+			ExpandGraphButton.IsEnabled = false;
 			this.LinesPanel.Children.Clear();
 		}
 		
