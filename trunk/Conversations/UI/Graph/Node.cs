@@ -34,7 +34,7 @@ using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.Conversations.UI.Graph
 {
-	public class Node : SimpleRectangle, INode
+	public class Node : SimpleRectangle, IPageNode
 	{
 		/// <summary>
 		/// The page of the conversation that this node represents.
@@ -119,13 +119,13 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		/// Get the route between the selected node and the root, in the form of a list of nodes.
 		/// </summary>
 		/// <returns>A list of INode objects representing the route between the selected node and the root. Empty if called on root.</returns>
-		public List<INode> GetRoute()
+		public List<IPageNode> GetRoute()
 		{
 			if (parentNode != null && parentEdge == null) {
 				throw new ArgumentException("No information was provided about the edge that links the node to its parent node.");
 			}
 			
-			List<INode> routeNodes = new List<INode>();
+			List<IPageNode> routeNodes = new List<IPageNode>();
 			
 			Node parent = this.parentNode;			
 			while (parent != null) {
