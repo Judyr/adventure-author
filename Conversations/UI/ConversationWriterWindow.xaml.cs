@@ -818,30 +818,38 @@ namespace AdventureAuthor.Conversations.UI
 		/// </summary>
 		private void CloseConversation()
 		{
-			string workingFilePath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,this.workingFilename+".dlg");
-			File.Delete(workingFilePath);
-			this.workingFilename = null;
-			this.originalFilename = null;
-			this.Title = "Conversation Writer";
-			currentPage = null;
-			if (pages != null) {
-				pages.Clear();
-			}
-			currentControl = null;
-			Conversation.CurrentConversation = null;
+			try {
+				string workingFilePath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,this.workingFilename+".dlg");
+				File.Delete(workingFilePath);
+				this.workingFilename = null;
+				this.originalFilename = null;
+				this.Title = "Conversation Writer";
+				currentPage = null;
+				if (pages != null) {
+					pages.Clear();
+				}
+				currentControl = null;
+				Conversation.CurrentConversation = null;
+								
+				MainGraph.GraphControl.Clear();
+				MainGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+					
+				if (ExpandedGraph != null) {
+					ExpandedGraph.GraphControl.Clear();
+					ExpandedGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool")); // TODO should these both be using the same one? confused
+				}
+								
+				Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
+				SpeakersButtonsPanel.Children.Clear();
+				SpeakersButtonsPanel.Children.Add(addSpeakersButton);
 			
-			MainGraph.GraphControl.Clear();
-			if (ExpandedGraph != null) {
-				ExpandedGraph.GraphControl.Clear();
+				this.ButtonsPanel.IsEnabled = false;
+				ExpandGraphButton.IsEnabled = false;
+				this.LinesPanel.Children.Clear();
 			}
-			
-			Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
-			SpeakersButtonsPanel.Children.Clear();
-			SpeakersButtonsPanel.Children.Add(addSpeakersButton);
-		
-			this.ButtonsPanel.IsEnabled = false;
-			ExpandGraphButton.IsEnabled = false;
-			this.LinesPanel.Children.Clear();
+			catch (Exception e) {
+				Say.Error(e);
+			}
 		}
 		
 		

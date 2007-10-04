@@ -44,17 +44,17 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		}
 		
 		
-		public GraphForm(bool expanded)
+		public GraphForm(bool topLevel)
 		{
 			try {
-				TopLevel = expanded; // allows it to be added to a WindowsFormHost
+				TopLevel = topLevel; // allows it to be added to a WindowsFormHost
 				InitializeComponent();
 				
 	            graphControl = new GraphControl();
 	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
 	            SuspendLayout();			
 				
-	            if (expanded) {
+	            if (topLevel) { // TODO this is getting overriden by the later assignment, do it properly after the Clear thing
 	            	graphControl.Size = new Size(800,600);
 	            }
 	            else {
@@ -73,11 +73,18 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
 	            graphControl.Name = "diagramControl";
 	            graphControl.Size = this.Size;
-	            graphControl.ShowPage = true;
-	            graphControl.ShowRulers = true;
-	            //graphControl.Text = "Conversation Graph";
+	            
+//	            if (topLevel) {
+//		            this.MaximumSize = new Size(1200,900);
+//		            this.MinimumSize = new Size(1200,900);
+//	            }
+//	            else {
+//		            this.MaximumSize = new Size(400,400);
+//		            this.MinimumSize = new Size(400,400);
+//	            }
 	            
 	            this.Controls.Add(this.graphControl);
+	            
 	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
 	            ResumeLayout(false);
 			}
@@ -95,6 +102,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 			
 			graphControl.Clear();
+			graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
 			
             ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
             SuspendLayout();	
