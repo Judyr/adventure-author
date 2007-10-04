@@ -93,6 +93,50 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 		}
 		
+		
+		public void Clear() // a test to see if I can just recreate the entire GraphControl everywhere I'm calling GraphControl.Clear()
+		{
+			graphControl.Dispose();
+	            graphControl = new GraphControl();
+	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
+	            SuspendLayout();			
+				
+	            if (this.Parent == null) { // TODO this is getting overriden by the later assignment, do it properly after the Clear thing
+	            	graphControl.Size = new Size(800,600);
+	            }
+	            else {
+	            	graphControl.Size = new Size(400,400);
+	            }
+	            
+	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+	            graphControl.AllowDrop = false;
+	            graphControl.AutoScroll = true;
+	            // can only set colours on CanvasBackgroundTypes.FlatColour - could use an image however:
+	            graphControl.BackgroundType = CanvasBackgroundTypes.Gradient; 
+	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
+	            graphControl.EnableAddConnection = false;
+	           	LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
+	            graphControl.Location = new System.Drawing.Point(0, 0);
+	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
+	            graphControl.Name = "diagramControl";
+	            graphControl.Size = this.Size;
+	            
+//	            if (topLevel) {
+//		            this.MaximumSize = new Size(1200,900);
+//		            this.MinimumSize = new Size(1200,900);
+//	            }
+//	            else {
+//		            this.MaximumSize = new Size(400,400);
+//		            this.MinimumSize = new Size(400,400);
+//	            }
+	            
+	            this.Controls.Add(this.graphControl);
+	            
+	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
+	            ResumeLayout(false);
+			
+		}
+		
 	
 		public void Open(List<Page> pages)
 		{
@@ -101,8 +145,9 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				return;
 			}
 			
-			graphControl.Clear();
-			graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+			this.Clear();
+//			graphControl.Clear();
+//			graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
 			
             ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
             SuspendLayout();	

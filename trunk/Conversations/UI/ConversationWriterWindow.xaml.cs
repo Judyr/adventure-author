@@ -483,7 +483,7 @@ namespace AdventureAuthor.Conversations.UI
 					
 				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
 				if (newVersionOfCurrentPage != null) {
-					DisplayPage(newVersionOfCurrentPage,false);
+					DisplayPage(newVersionOfCurrentPage,true);
 					previousPage = newVersionOfPreviousPage;
 				}
 				else {
@@ -772,12 +772,6 @@ namespace AdventureAuthor.Conversations.UI
 		}		
 		
 		
-		private void OnClick_AddAction(object sender, EventArgs ea)
-		{
-			
-		}
-		
-		
 		private void OnClosing(object sender, EventArgs ea)
 		{
 			if (!CloseConversationDialog()) {
@@ -831,12 +825,14 @@ namespace AdventureAuthor.Conversations.UI
 				currentControl = null;
 				Conversation.CurrentConversation = null;
 								
-				MainGraph.GraphControl.Clear();
-				MainGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+//				MainGraph.GraphControl.Clear();
+				MainGraph.Clear();
+//				MainGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool"));
 					
 				if (ExpandedGraph != null) {
-					ExpandedGraph.GraphControl.Clear();
-					ExpandedGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool")); // TODO should these both be using the same one? confused
+//					ExpandedGraph.GraphControl.Clear();
+					ExpandedGraph.Clear();
+//					ExpandedGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool")); // TODO should these both be using the same one? confused
 				}
 								
 				Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
