@@ -318,7 +318,7 @@ namespace AdventureAuthor.Conversations.UI
 			MainGraph.GraphControl.SelectNode(mainNode,centreGraph);
 			if (ExpandedGraph != null) {
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
-				ExpandedGraph.GraphControl.SelectNode(mainNode,centreGraph);
+				ExpandedGraph.GraphControl.SelectNode(expandedNode,centreGraph);
 			}
 					
 			// Check whether we are starting from the root:
@@ -503,12 +503,10 @@ namespace AdventureAuthor.Conversations.UI
 				
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
-			try {
-				throw new NotImplementedException();
-			}
-			catch (Exception e) {
-				Say.Error(e);
-			}
+			this.expandedGraph = new GraphForm(true);
+			this.expandedGraph.Open(pages);
+			DisplayPage(currentPage,false);
+			this.ExpandedGraph.ShowDialog();
 		}
 		
 		
@@ -849,7 +847,7 @@ namespace AdventureAuthor.Conversations.UI
 		{
 			// TODO try setting this through XAML
 			host = new WindowsFormsHost();
-			mainGraph = new GraphForm();
+			mainGraph = new GraphForm(false);
 			host.Child = MainGraph;
 			Grid.SetRow(host,0);
 			Grid.SetColumn(host,0);
