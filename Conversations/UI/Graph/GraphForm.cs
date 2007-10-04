@@ -27,16 +27,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using Netron.Diagramming.Core;
+using Netron.Diagramming.Core.Layout;
 using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.Conversations.UI.Graph
 {
-	public partial class GraphForm : Form
+	public partial class GraphForm : System.Windows.Forms.Form
 	{
 		private GraphControl graphControl;		
 		public GraphControl GraphControl {
@@ -54,32 +54,28 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
 	            SuspendLayout();			
 				
+	            if (expanded) {
+	            	graphControl.Size = new Size(800,600);
+	            }
+	            else {
+	            	graphControl.Size = new Size(400,400);
+	            }
+	            
 	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
 	            graphControl.AllowDrop = false;
 	            graphControl.AutoScroll = true;
-	            if (expanded) {
-	            	graphControl.BackColor = System.Drawing.Color.Green;
-	            }
-	            else {
-	            	graphControl.BackColor = System.Drawing.Color.LightBlue;
-	            }
-	            graphControl.BackgroundType = Netron.Diagramming.Core.CanvasBackgroundTypes.Gradient;
+	            // can only set colours on CanvasBackgroundTypes.FlatColour - could use an image however:
+	            graphControl.BackgroundType = CanvasBackgroundTypes.Gradient; 
 	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
 	            graphControl.EnableAddConnection = false;
-	           	Netron.Diagramming.Core.Layout.LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
+	           	LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
 	            graphControl.Location = new System.Drawing.Point(0, 0);
 	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
 	            graphControl.Name = "diagramControl";
-	            if (expanded) {
-	            	this.Size = new Size(800,600);
-	            }
-	            else {
-	            	this.Size = new Size(400,400);
-	            }
 	            graphControl.Size = this.Size;
 	            graphControl.ShowPage = true;
 	            graphControl.ShowRulers = true;
-	            graphControl.Text = "Conversation Graph";
+	            //graphControl.Text = "Conversation Graph";
 	            
 	            this.Controls.Add(this.graphControl);
 	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
@@ -94,7 +90,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		public void Open(List<Page> pages)
 		{
 			if (pages == null || pages.Count == 0) {
-				Say.Information("pages == null || pages.count == 0");
+				Say.Error("Tried to open a null page collection, or page collection was empty.");
 				return;
 			}
 			
@@ -114,6 +110,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
                         
             ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
             ResumeLayout(false);
+            graphControl.CentreOnShape(root);
             graphControl.Invalidate();
 		}
 		
