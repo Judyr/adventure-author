@@ -115,6 +115,10 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		}
 		
 	
+		/// <summary>
+		/// Open a conversation as a conversation tree.
+		/// </summary>
+		/// <param name="pages">A list of pages of the conversation; there must be at least one page in the collection</param>
 		public void Open(List<Page> pages)
 		{
 			if (pages == null || pages.Count == 0) {
@@ -143,6 +147,11 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		}
 		
 		
+		/// <summary>
+		/// Recursively draw the children of this node, and edges to connect them to the parent node.
+		/// </summary>
+		/// <param name="children">A list of pages that are the children of the page represented by parentNode</param>
+		/// <param name="parentNode">The node to draw children for</param>
 		private void DrawChildren(List<Page> children, Node parentNode)
 		{
 			if (children == null) {
@@ -157,14 +166,19 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            Node childNode = new Node(child,parentNode);         	
 	            graphControl.AddShape(childNode);	
 	            IConnection connection = graphControl.AddConnection(parentNode.Connectors[2],childNode.Connectors[0]);	
-	            childNode.ParentEdge = connection;
+	            graphControl.Controller.Model.SendToBack(connection);
+	            childNode.ParentEdge = connection;	            
 	            
 	            DrawChildren(child.Children,childNode);
 			}
 		}
 		
 		
-		
+		/// <summary>
+		/// Get the node in this graph that represents the given page.
+		/// </summary>
+		/// <param name="page">The page that the returned node represents</param>
+		/// <returns>A node that represents the given page if one exists; null otherwise</returns>
 		internal Node GetNode(Page page)
 		{
 			foreach (IDiagramEntity entity in graphControl.Controller.Model.Paintables) {
