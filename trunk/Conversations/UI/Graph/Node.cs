@@ -83,7 +83,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		public Node(Page page, Node parentNode) : base()
 		{
 			this.Resizable = false;
-			this.PaintStyle = GraphControl.PAINT_STANDARD;
+			this.PaintStyle = GraphControl.PAINT_NOT_ON_ROUTE;
 			
 			this.page = page;
 			this.parentNode = parentNode;
@@ -103,7 +103,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 					this.Text = "...";
 				}
 				else {
-					string shorttext = UsefulTools.Truncate(newText,25);
+					string shorttext = UsefulTools.Truncate(newText,30);
 					if (shorttext.Length < newText.Length) {
 						this.Text = shorttext + "...";
 					}
@@ -116,72 +116,28 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		
 		
 		/// <summary>
-		/// Get the route between the selected node and the root, in the form of a list of nodes.
+		/// Get the route between the selected node and the root, in the form of a list of nodes and edges.
 		/// </summary>
 		/// <returns>A list of INode objects representing the route between the selected node and the root. Empty if called on root.</returns>
-		public List<IPageNode> GetRoute()
+		public List<IDiagramEntity> GetRoute()
 		{
 			if (parentNode != null && parentEdge == null) {
 				throw new ArgumentException("No information was provided about the edge that links the node to its parent node.");
 			}
 			
-			List<IPageNode> routeNodes = new List<IPageNode>();
+			List<IDiagramEntity> route = new List<IDiagramEntity>();			
 			
-			Node parent = this.parentNode;			
-			while (parent != null) {
-				routeNodes.Add(parent);
-				parent = parent.parentNode;
+			Node node = this;	
+			
+			while (node != null) {
+				route.Add(node);
+				if (node.parentEdge != null) {
+					route.Add(node.parentEdge);
+				}
+				node = node.parentNode;
 			}
 			
-			return routeNodes;
+			return route;
 		}
-		
-		
-		
-//		/// <summary>
-//		/// DEPRECATED
-//		/// <remarks>Requires an Invalidate() call on the parent form afterwards.</remarks>
-//		/// </summary>
-//		public void ShowRoute()
-//		{
-//
-//			
-//			if (IsSelected) {
-//				this.PaintStyle = PAINT_SELECTED;
-//			}
-//			else {
-//				this.PaintStyle = PAINT_ON_ROUTE;
-//			}
-//			
-//			if (parentEdge != null) { // continue to highlight up the tree until you reach the root, which has no parent
-//				// highlight the edge:
-//				parentEdge.PaintStyle = PAINT_ON_ROUTE; // not sure if this does anything
-//				
-//				// continue up the tree:
-//				try {
-//					parentNode.ShowRoute();
-//				}
-//				catch (NullReferenceException e) {
-//					Say.Error("Failed to highlight route: node '" + page.ToString() +
-//					          "' has a parent edge but no parent node, which is invalid.",e);
-//				}
-//			}
-//		}
-		
-		
-		
-		
-		
-		
-//		/// <summary>
-//		/// DEPRECATED
-//		/// </summary>
-//		public void CentreGraph()
-//		{
-//			ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(this);
-//			if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
-//				ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(this);
-//			}
-//		}
 	}
 }
