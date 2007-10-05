@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
@@ -38,55 +39,42 @@ namespace AdventureAuthor.Conversations.UI.Graph
 {
 	public partial class GraphForm : System.Windows.Forms.Form
 	{
+		/// <summary>
+		/// The amount to offset the graph control by to hide the space left by the rulers.
+		/// </summary>
+		private const int RULER_OFFSET = 30;
+		
+		/// <summary>
+		/// The graph control held by this form.
+		/// </summary>
 		private GraphControl graphControl;		
 		public GraphControl GraphControl {
 			get { return graphControl; }
 		}
 		
-		
+		/// <summary>
+		/// Create a new instance of a form that holds a graph control.
+		/// </summary>
+		/// <param name="topLevel">True if this form has no parent; false otherwise. Necessary to allow it to be added to a WindowsFormHost.</param>
 		public GraphForm(bool topLevel)
 		{
 			try {
-				TopLevel = topLevel; // allows it to be added to a WindowsFormHost
+				this.TopLevel = topLevel;
 				InitializeComponent();
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint |
+							  ControlStyles.UserPaint |
+							  ControlStyles.DoubleBuffer,true);
 				
-	            graphControl = new GraphControl();
-	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
-	            SuspendLayout();			
+	            if (topLevel) {
+		            this.MaximumSize = new Size(1200,900);
+				}
+				else {
+					this.MaximumSize = new Size(400,420);
+	            }
+		        this.MinimumSize = this.MaximumSize;
+				this.SizeGripStyle = SizeGripStyle.Hide;
 				
-	            if (topLevel) { // TODO this is getting overriden by the later assignment, do it properly after the Clear thing
-	            	graphControl.Size = new Size(800,600);
-	            }
-	            else {
-	            	graphControl.Size = new Size(400,400);
-	            }
-	            
-	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
-	            graphControl.AllowDrop = false;
-	            graphControl.AutoScroll = true;
-	            // can only set colours on CanvasBackgroundTypes.FlatColour - could use an image however:
-	            graphControl.BackgroundType = CanvasBackgroundTypes.Gradient; 
-	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
-	            graphControl.EnableAddConnection = false;
-	           	LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
-	            graphControl.Location = new System.Drawing.Point(0, 0);
-	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
-	            graphControl.Name = "diagramControl";
-	            graphControl.Size = this.Size;
-	            
-//	            if (topLevel) {
-//		            this.MaximumSize = new Size(1200,900);
-//		            this.MinimumSize = new Size(1200,900);
-//	            }
-//	            else {
-//		            this.MaximumSize = new Size(400,400);
-//		            this.MinimumSize = new Size(400,400);
-//	            }
-	            
-	            this.Controls.Add(this.graphControl);
-	            
-	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
-	            ResumeLayout(false);
+				ClearGraph();
 			}
 			catch (Exception e) {
 				Say.Error(e);
@@ -94,47 +82,36 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		}
 		
 		
-		public void Clear() // a test to see if I can just recreate the entire GraphControl everywhere I'm calling GraphControl.Clear()
+		/// <summary>
+		/// Create a new instance of the graph, effectively clearing the graph display.
+		/// </summary>
+		public void ClearGraph()
 		{
-			graphControl.Dispose();
-	            graphControl = new GraphControl();
-	            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
-	            SuspendLayout();			
-				
-	            if (this.Parent == null) { // TODO this is getting overriden by the later assignment, do it properly after the Clear thing
-	            	graphControl.Size = new Size(800,600);
-	            }
-	            else {
-	            	graphControl.Size = new Size(400,400);
-	            }
-	            
-	            graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
-	            graphControl.AllowDrop = false;
-	            graphControl.AutoScroll = true;
-	            // can only set colours on CanvasBackgroundTypes.FlatColour - could use an image however:
-	            graphControl.BackgroundType = CanvasBackgroundTypes.Gradient; 
-	            graphControl.Dock = System.Windows.Forms.DockStyle.None;
-	            graphControl.EnableAddConnection = false;
-	           	LayoutSettings.TreeLayout.TreeOrientation = TreeOrientation.TopBottom;
-	            graphControl.Location = new System.Drawing.Point(0, 0);
-	            graphControl.Magnification = new System.Drawing.SizeF(100F, 100F);
-	            graphControl.Name = "diagramControl";
-	            graphControl.Size = this.Size;
-	            
-//	            if (topLevel) {
-//		            this.MaximumSize = new Size(1200,900);
-//		            this.MinimumSize = new Size(1200,900);
-//	            }
-//	            else {
-//		            this.MaximumSize = new Size(400,400);
-//		            this.MinimumSize = new Size(400,400);
-//	            }
-	            
-	            this.Controls.Add(this.graphControl);
-	            
-	            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
-	            ResumeLayout(false);
+			// If a GraphControl object already exists, remember its origin and magnification:
+			Point origin;
+			SizeF magnification;
+			if (graphControl != null) {
+				origin = graphControl.Origin;
+				magnification = graphControl.Magnification;
+				graphControl.Dispose();
+			}
+			else {
+				origin = new Point(0,0);
+				magnification = new SizeF(100F,100F);
+			}
 			
+			// Create a new GraphControl object:	
+	        graphControl = new GraphControl();
+				
+	        graphControl.Controller.AddTool(new GraphTool("Graph Tool")); // the tool which governs clicks on the graph
+	        graphControl.Location = new System.Drawing.Point(-RULER_OFFSET,-RULER_OFFSET); // hide the ruler space
+	        graphControl.Dock = System.Windows.Forms.DockStyle.None;
+	        graphControl.Size = new Size(this.Width+RULER_OFFSET,this.Height+RULER_OFFSET);
+	        
+	        graphControl.Origin = origin;
+	        graphControl.Magnification = magnification;
+	            
+	        this.Controls.Add(this.graphControl);
 		}
 		
 	
@@ -145,9 +122,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				return;
 			}
 			
-			this.Clear();
-//			graphControl.Clear();
-//			graphControl.Controller.AddTool(new GraphTool("Graph Tool"));
+			this.ClearGraph();
 			
             ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
             SuspendLayout();	
@@ -187,6 +162,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            DrawChildren(child.Children,childNode);
 			}
 		}
+		
 		
 		
 		internal Node GetNode(Page page)

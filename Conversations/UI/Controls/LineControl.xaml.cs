@@ -169,9 +169,32 @@ namespace AdventureAuthor.Conversations.UI.Controls
         #region LineControl event handlers
         
         /// <summary>
-        /// Save changes made to dialogue, and update the node label on the graph
+        /// Save changes made to dialogue - necessary so as not to lose changes to the last line you worked on
         /// </summary>
         private void OnDialogueLostFocus(object sender, RoutedEventArgs e)
+        {
+        	SaveLine();
+        }
+        
+        
+        /// <summary>
+        /// Hit delete to delete this line. Hit return to update the node labels on the graph.
+        /// </summary>
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+			if (e.Key == Key.Delete) {
+        		OnClick_Delete(sender,e);
+		    }
+        	if (e.Key == Key.Return) {
+        		SaveLine();
+        	}
+        }
+        
+        
+        /// <summary>
+        /// Save changes made to dialogue, and update the node label on the graph if appropriate
+        /// </summary>
+        private void SaveLine()
         {
         	if (Conversation.CurrentConversation != null) {
 	        	this.nwn2Line.Line.Text.Strings[0].Value = Dialogue.Text;
@@ -187,23 +210,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        	}
         	}
         }
-        
-        
-        /// <summary>
-        /// Hit delete to delete this line. Hit return to update the node labels on the graph.
-        /// </summary>
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-			if (e.Key == Key.Delete) {
-        		OnClick_Delete(sender,e);
-		    }
-        }
-        
+                
         
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
         	if (Conversation.CurrentConversation != null && ConversationWriterWindow.Instance.PreviousPage != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage,true);
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage);
+        		ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+				if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
+					ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+				}
         	}
         }
         
@@ -227,7 +243,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (this.isPartOfBranch) {
         		foreach (Page page in ConversationWriterWindow.Instance.Pages) {
         			if (page.LeadInLine == this.nwn2Line) {
-        				ConversationWriterWindow.Instance.DisplayPage(page,true);
+        				ConversationWriterWindow.Instance.DisplayPage(page);
+		        		ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+						if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
+							ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+						}
         				return;
         			}
         		}
@@ -305,7 +325,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         private void GoUp(object sender, EventArgs ea)
         {
         	if (ConversationWriterWindow.Instance.CurrentPage.Parent != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent,true);
+        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent);
+		        ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+				if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
+					ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
+				}
         	}
         }
         
