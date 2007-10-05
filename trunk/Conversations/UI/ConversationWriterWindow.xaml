@@ -31,7 +31,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
 			<RowDefinition/>
-			<RowDefinition/>
+			<RowDefinition MinHeight="450" MaxHeight="450"/>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition MinWidth="350" Width="*"/>

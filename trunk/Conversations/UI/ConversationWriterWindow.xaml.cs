@@ -207,7 +207,7 @@ namespace AdventureAuthor.Conversations.UI
 					}
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
 					
-					DisplayPage(currentPage,false);
+					DisplayPage(currentPage);
 					RefreshDisplay(false);
 					
 					LineControl newLineControl = GetControlForLine(newLine);
@@ -296,11 +296,11 @@ namespace AdventureAuthor.Conversations.UI
 		
 		
 		/// <summary>
-		/// Display a page of the conversation, in the screenplay view and in the graph view.
+		/// Display a page of the conversation, in the page view and in the graph view.
 		/// </summary>
 		/// <param name="page">The page to display</param>
 		/// <param name="centreGraph">True to centre the graph around the node representing this page; false otherwise</param>
-		public void DisplayPage(Page page, bool centreGraph)
+		public void DisplayPage(Page page)
 		{
 			Say.Debug("Displaying page " + page.ToString());
 			// Save any changes that have been made to on-screen controls, since we're about to replace them:
@@ -315,10 +315,10 @@ namespace AdventureAuthor.Conversations.UI
 			
 			// Select the node and its route in the graph:
 			Node mainNode = MainGraph.GetNode(currentPage);
-			MainGraph.GraphControl.SelectNode(mainNode,centreGraph);
+			MainGraph.GraphControl.SelectNode(mainNode);
 			if (ExpandedGraph != null) {
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
-				ExpandedGraph.GraphControl.SelectNode(expandedNode,centreGraph);
+				ExpandedGraph.GraphControl.SelectNode(expandedNode);
 			}
 					
 			// Check whether we are starting from the root:
@@ -483,16 +483,20 @@ namespace AdventureAuthor.Conversations.UI
 					
 				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
 				if (newVersionOfCurrentPage != null) {
-					DisplayPage(newVersionOfCurrentPage,true);
+					DisplayPage(newVersionOfCurrentPage);
 					previousPage = newVersionOfPreviousPage;
 				}
 				else {
-					DisplayPage(pages[0],true);
+					DisplayPage(pages[0]);
+					MainGraph.GraphControl.CentreOnShape(MainGraph.GetNode(pages[0]));
+					if (ExpandedGraph != null) {
+						ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(pages[0]));
+					}
 					previousPage = null;
 				}	
 			}
 			else {
-				DisplayPage(currentPage,false);
+				DisplayPage(currentPage);
 			}
 		}
 		
@@ -506,7 +510,7 @@ namespace AdventureAuthor.Conversations.UI
 			if (Conversation.CurrentConversation != null) {
 				this.expandedGraph = new GraphForm(true);
 				this.expandedGraph.Open(pages);
-				DisplayPage(currentPage,false);
+				DisplayPage(currentPage);
 				this.ExpandedGraph.ShowDialog();
 			}
 		}
@@ -594,7 +598,11 @@ namespace AdventureAuthor.Conversations.UI
 			ExpandGraphButton.IsEnabled = true;
 			
 			// Display the conversation from the root page:
-			DisplayPage(pages[0],true);			
+			DisplayPage(pages[0]);	
+			MainGraph.GraphControl.CentreOnShape(MainGraph.GetNode(pages[0]));
+			if (ExpandedGraph != null) {
+				ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(pages[0]));
+			}		
 			this.Title += ": " + this.originalFilename;
 			
 			return true;
@@ -698,7 +706,7 @@ namespace AdventureAuthor.Conversations.UI
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			DisplayPage(CurrentPage,false);
+			DisplayPage(CurrentPage);
 			RefreshDisplay(true);			
 		}
 		
@@ -763,7 +771,7 @@ namespace AdventureAuthor.Conversations.UI
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-				DisplayPage(CurrentPage,false);
+				DisplayPage(CurrentPage);
 				RefreshDisplay(true);
         	}
         	catch (InvalidOperationException) {
@@ -825,14 +833,9 @@ namespace AdventureAuthor.Conversations.UI
 				currentControl = null;
 				Conversation.CurrentConversation = null;
 								
-//				MainGraph.GraphControl.Clear();
-				MainGraph.Clear();
-//				MainGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool"));
-					
+				MainGraph.ClearGraph();					
 				if (ExpandedGraph != null) {
-//					ExpandedGraph.GraphControl.Clear();
-					ExpandedGraph.Clear();
-//					ExpandedGraph.GraphControl.Controller.AddTool(new GraphTool("Graph Tool")); // TODO should these both be using the same one? confused
+					ExpandedGraph.ClearGraph();
 				}
 								
 				Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
@@ -852,12 +855,13 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnLoaded(object sender, EventArgs ea)
 		{
 			// TODO try setting this through XAML
-			host = new WindowsFormsHost();
+			host = new WindowsFormsHost();	
 			mainGraph = new GraphForm(false);
-			host.Child = MainGraph;
+			host.Child = MainGraph;			
+			
 			Grid.SetRow(host,0);
 			Grid.SetColumn(host,0);
-			GraphGrid.Children.Add(host);
+			GraphGrid.Children.Add(host);			
 		}		
     }
 }

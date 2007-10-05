@@ -520,7 +520,11 @@ namespace AdventureAuthor.Conversations
 				isDirty = false;
 			}
 		}
-				
+		
+		
+		/// <summary>
+		/// This should be called anytime a change is made to the conversation.
+		/// </summary>
 		public void SaveToWorkingCopy() 
 		{
 			if (this != CurrentConversation) {
@@ -528,7 +532,7 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			lock (padlock) {
-				NwnConv.OEISerialize(false);
+				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
 				isDirty = true;
 				Say.Debug("Saved to working copy.");
 			}
