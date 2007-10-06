@@ -25,7 +25,7 @@ namespace AdventureAuthor.Variables.UI
         public VariablesWindow()
         {
             InitializeComponent();
-            Refresh();
+            RefreshVariablesList();
         }
         
             
@@ -44,7 +44,7 @@ namespace AdventureAuthor.Variables.UI
         	
         	if (result.HasValue && result.Value) { // returned true, so add the new variable
         		VariableManager.Add(var);
-	        	Refresh();   		
+	        	RefreshVariablesList();   		
         	}
         }
         
@@ -52,7 +52,7 @@ namespace AdventureAuthor.Variables.UI
         /// <summary>
         /// Refresh the list of variables when one is added, edited or deleted.
         /// </summary>
-        internal void Refresh()
+        internal void RefreshVariablesList()
         {        	
             NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
             VariablesList.Items.Clear();
