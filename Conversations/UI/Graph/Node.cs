@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using AdventureAuthor.Utils;
 using Netron.Diagramming.Core;
 using Netron.Diagramming.Core.AdventureAuthor;
@@ -88,7 +89,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			this.page = page;
 			this.parentNode = parentNode;
 			
-			SetLabel();
+			SetLabel();			
 		}
 		
 		

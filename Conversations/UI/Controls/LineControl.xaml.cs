@@ -144,7 +144,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	// Fine-tune context menu based on current circumstances:
-        	if (ConversationWriterWindow.Instance.PreviousPage == null) {
+        	if (WriterWindow.Instance.PreviousPage == null) {
         		MenuItem MenuItem_GoBack = (MenuItem)FindName("MenuItem_GoBack");
         		MenuItem_GoBack.IsEnabled = false;
         	}
@@ -206,7 +206,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        	
 	        	// Redraw the graph to get the new node label (invalidating the node doesn't seem to do it):
 	        	if (IsPartOfBranch) {
-	        		ConversationWriterWindow.Instance.RefreshDisplay(true);
+	        		WriterWindow.Instance.RedrawGraphView();
 	        	}
         	}
         }
@@ -214,12 +214,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void OnClick_GoBack(object sender, EventArgs ea)
         {
-        	if (Conversation.CurrentConversation != null && ConversationWriterWindow.Instance.PreviousPage != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.PreviousPage);
-        		ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-				if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
-					ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-				}
+        	if (Conversation.CurrentConversation != null && WriterWindow.Instance.PreviousPage != null) {
+        		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.PreviousPage);
+        		WriterWindow.Instance.CentreGraph(false);
         	}
         }
         
@@ -241,13 +238,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	// If this line is part of a branch, double-clicking it should display the page it leads to:
         	if (this.isPartOfBranch) {
-        		foreach (Page page in ConversationWriterWindow.Instance.Pages) {
+        		foreach (Page page in WriterWindow.Instance.Pages) {
         			if (page.LeadInLine == this.nwn2Line) {
-        				ConversationWriterWindow.Instance.DisplayPage(page);
-		        		ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-						if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
-							ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-						}
+        				WriterWindow.Instance.DisplayPage(page);
+        				WriterWindow.Instance.CentreGraph(false);
         				return;
         			}
         		}
@@ -261,7 +255,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				Say.Information("The line you have selected is already part of a choice.");
 			}
 			else {
-				ConversationWriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
+				WriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
 			}
 		}
 		
@@ -324,12 +318,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void GoUp(object sender, EventArgs ea)
         {
-        	if (ConversationWriterWindow.Instance.CurrentPage.Parent != null) {
-        		ConversationWriterWindow.Instance.DisplayPage(ConversationWriterWindow.Instance.CurrentPage.Parent);
-		        ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-				if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
-					ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-				}
+        	if (WriterWindow.Instance.CurrentPage.Parent != null) {
+        		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage.Parent);
+        		WriterWindow.Instance.CentreGraph(false);
         	}
         }
         
@@ -388,7 +379,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void SelectLine()
         {
-        	ConversationWriterWindow.Instance.CurrentControl = this;
+        	WriterWindow.Instance.CurrentControl = this;
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
@@ -408,7 +399,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void DeselectLine()
         {
-        	ConversationWriterWindow.Instance.CurrentControl = null;
+        	WriterWindow.Instance.CurrentControl = null;
         	if (isPartOfBranch) {
         		Background = Brushes.AliceBlue;
         	}

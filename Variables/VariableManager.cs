@@ -91,9 +91,9 @@ namespace AdventureAuthor.Variables
 				Conversation conversation;
 								
 				// Deal with the conversation currently open in the Conversation Writer (if there is one): 				
-				if (ConversationWriterWindow.Instance != null && 
+				if (WriterWindow.Instance != null && 
 				    Conversation.CurrentConversation != null &&
-				    resource.FullName == ConversationWriterWindow.Instance.WorkingFilename + ".DLG") {
+				    resource.FullName == WriterWindow.Instance.WorkingFilename + ".DLG") {
 					
 					conversation = Conversation.CurrentConversation;
 				}
@@ -135,7 +135,7 @@ namespace AdventureAuthor.Variables
 					conversation.NwnConv.Release();
 				}
 				else {
-					ConversationWriterWindow.Instance.RefreshDisplay(false); // SaveToWorkingCopy() called through this.
+					WriterWindow.Instance.RedrawPageView(); // SaveToWorkingCopy() called through this.
 				}
 			}
 			

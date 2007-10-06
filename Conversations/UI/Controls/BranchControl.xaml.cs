@@ -122,9 +122,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToBranch(parentLine);
 				
-			ConversationWriterWindow.Instance.RefreshDisplay(true);
-			LineControl newLineControl = ConversationWriterWindow.Instance.GetControlForLine(newLine);
-			ConversationWriterWindow.Instance.FocusOnLine(newLineControl);
+			WriterWindow.Instance.RedrawGraphView();
+			LineControl newLineControl = WriterWindow.Instance.GetLineControl(newLine);
+			WriterWindow.Instance.FocusOnLine(newLineControl);
         }	
         
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
@@ -171,10 +171,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
 				
         	// If there is a line remaining above the deleted choice, focus on it:
-			ConversationWriterWindow.Instance.RefreshDisplay(true);
+			WriterWindow.Instance.RedrawGraphView();
 			if (parentLine != null) {
-				LineControl lineControl = ConversationWriterWindow.Instance.GetControlForLine(parentLine);
-				ConversationWriterWindow.Instance.FocusOnLine(lineControl);
+				LineControl lineControl = WriterWindow.Instance.GetLineControl(parentLine);
+				WriterWindow.Instance.FocusOnLine(lineControl);
 			}
         }
     }
