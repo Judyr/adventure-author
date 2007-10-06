@@ -669,10 +669,10 @@ namespace AdventureAuthor.Setup
 			}
 			
 			try {
-				if (ConversationWriterWindow.Instance == null || !ConversationWriterWindow.Instance.IsLoaded) {
-					ConversationWriterWindow.Instance = new ConversationWriterWindow();
+				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
+					WriterWindow.Instance = new WriterWindow();
 				}
-				ConversationWriterWindow.Instance.ShowDialog();
+				WriterWindow.Instance.ShowDialog();
 			}
 			catch (Exception e) {
 				Say.Error(e);

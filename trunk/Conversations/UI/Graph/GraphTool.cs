@@ -41,12 +41,9 @@ namespace AdventureAuthor.Conversations.UI.Graph
             	foreach (IDiagramEntity entity in Selection.SelectedItems) {
             		Node node = entity as Node;
             		if (node != null) {
-            			ConversationWriterWindow.Instance.DisplayPage(node.Page);
+            			WriterWindow.Instance.DisplayPage(node.Page);
             			if (centreGraph) {
-			        		ConversationWriterWindow.Instance.MainGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.MainGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-							if (ConversationWriterWindow.Instance.ExpandedGraph != null) {
-								ConversationWriterWindow.Instance.ExpandedGraph.GraphControl.CentreOnShape(ConversationWriterWindow.Instance.ExpandedGraph.GetNode(ConversationWriterWindow.Instance.CurrentPage));
-							}
+            				WriterWindow.Instance.CentreGraph(false);
             			}
             		}
             		entity.IsSelected = false; // doesn't help

@@ -84,7 +84,7 @@ namespace AdventureAuthor.Setup
 			}
 			else {
 				// Instantiate windows now to speed things up later on:
-				ConversationWriterWindow.Instance = new ConversationWriterWindow();
+				WriterWindow.Instance = new WriterWindow();
 				
 				// Start recording debug messages and user actions:
 				DebugLog.StartRecording();

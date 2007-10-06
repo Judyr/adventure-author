@@ -46,18 +46,13 @@ namespace AdventureAuthor.Conversations.UI
     /// Interaction logic for ConversationWriterWindow.xaml
     /// </summary>
 
-    public sealed partial class ConversationWriterWindow : Window
+    public sealed partial class WriterWindow : Window
     {    
     	#region Constructors 
     	
-		public ConversationWriterWindow()
+		public WriterWindow()
 		{
-			try {
-				InitializeComponent();
-			}
-			catch (Exception e) {
-				Say.Error(e);
-			}
+			InitializeComponent();
 		}
 		
 		#endregion
@@ -70,13 +65,13 @@ namespace AdventureAuthor.Conversations.UI
     	private WindowsFormsHost host;
     	
     	/// <summary>
-    	/// The single instance of the Conversation Writer window.
+    	/// The single instance of the Writer window.
     	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
     	/// </summary>
-    	private static ConversationWriterWindow instance;    	
-		public static ConversationWriterWindow Instance {
+    	private static WriterWindow instance;    	
+		public static WriterWindow Instance {
 			get { return instance; }
-			set { instance = (ConversationWriterWindow)value; }
+			set { instance = (WriterWindow)value; }
 		}    	
     	
     	/// <summary>
@@ -148,7 +143,6 @@ namespace AdventureAuthor.Conversations.UI
     	
     	#endregion Fields
     	        
-        #region UI
         
         
 //        private void TEMPDROPHANDLER(object sender, DragEventArgs e)
@@ -164,6 +158,16 @@ namespace AdventureAuthor.Conversations.UI
 //        }
            
 
+		#region Page view
+		#endregion
+
+		
+		#region Tree view
+		#endregion
+		
+		
+		#region Writer window
+		
 		internal void CreateButtonForSpeaker(Speaker speaker)
 		{
 			Button button = new Button();
@@ -193,7 +197,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 			button.Click += delegate 
 			{ 
-				if (currentPage != null) {					
+				if (currentPage != null) {									
 					NWN2ConversationConnector parentLine;
 					LineControl selectedLine = currentControl as LineControl;
 					if (selectedLine != null && !selectedLine.IsPartOfBranch) {
@@ -208,16 +212,19 @@ namespace AdventureAuthor.Conversations.UI
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
 					
 					DisplayPage(currentPage);
-					RefreshDisplay(false);
+					RedrawPageView();
 					
-					LineControl newLineControl = GetControlForLine(newLine);
+					LineControl newLineControl = GetLineControl(newLine);
 					FocusOnLine(newLineControl);
 				}
 			};
 			SpeakersButtonsPanel.Children.Add(button);
 		}	
 		
+		
+		#endregion
 
+		
 		internal void FocusOnLine(LineControl lineControl)
 		{
 			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
@@ -229,9 +236,9 @@ namespace AdventureAuthor.Conversations.UI
 					
 			lineControl.Dialogue.Focus();
 		}
+				
 		
-		
-		internal LineControl GetControlForLine(NWN2ConversationConnector line)
+		internal LineControl GetLineControl(NWN2ConversationConnector line)
 		{
 			if (line == null) {
 				return null;
@@ -256,17 +263,25 @@ namespace AdventureAuthor.Conversations.UI
 			
 			return null;			
 		}
-							
+					
 		
-		private void DisplayLine(NWN2ConversationConnector line)
+		/// <summary>
+		/// Add a line of dialogue to the current page view.
+		/// </summary>
+		/// <param name="line">The line of dialogue to add</param>
+		private void ShowLine(NWN2ConversationConnector line)
 		{
 			LineControl lineControl = new LineControl(line,false);
 			this.currentPage.LineControls.Add(lineControl);
 			this.LinesPanel.Children.Add(lineControl);
-		}	
-			
+		}				
 		
-		private void DisplayBranch(NWN2ConversationConnectorCollection possibleLines) 
+		
+		/// <summary>
+		/// Add a branch to the current page view.
+		/// </summary>
+		/// <param name="possibleLines">The lines which make up the branch</param>
+		private void ShowBranch(NWN2ConversationConnectorCollection possibleLines) 
 		{
 			if (possibleLines == null) {
 				Say.Error("Tried to create a branch from a null collection of lines.");
@@ -285,10 +300,13 @@ namespace AdventureAuthor.Conversations.UI
 			}				
 			ChoiceControl branchControl = new ChoiceControl(possibleLines);
 			this.LinesPanel.Children.Add(branchControl);
-		}
+		}		
 		
 		
-		private void DisplayEndOfConversation()
+		/// <summary>
+		/// Add an end of conversation notice to the current page view.
+		/// </summary>
+		private void ShowEndOfConversation()
 		{				
 			EndConversationControl endOfConversation = new EndConversationControl();
 			LinesPanel.Children.Add(endOfConversation);
@@ -299,19 +317,16 @@ namespace AdventureAuthor.Conversations.UI
 		/// Display a page of the conversation, in the page view and in the graph view.
 		/// </summary>
 		/// <param name="page">The page to display</param>
-		/// <param name="centreGraph">True to centre the graph around the node representing this page; false otherwise</param>
 		public void DisplayPage(Page page)
 		{
-			Say.Debug("Displaying page " + page.ToString());
-			// Save any changes that have been made to on-screen controls, since we're about to replace them:
-			Conversation.CurrentConversation.SaveToWorkingCopy();
-			
-			// Clear the current page:
-			previousPage = currentPage;
+			// Update references to the currently and previously viewed pages:
+			if (previousPage != currentPage) {
+				previousPage = currentPage;
+			}
 			currentPage = page;		
-			currentControl = null;		
-			LinesPanel.Children.Clear();
-			currentPage.LineControls.Clear();
+			
+			// Draw the new current page:
+			RedrawPageView();
 			
 			// Select the node and its route in the graph:
 			Node mainNode = MainGraph.GetNode(currentPage);
@@ -320,7 +335,22 @@ namespace AdventureAuthor.Conversations.UI
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
 				ExpandedGraph.GraphControl.SelectNode(expandedNode);
 			}
-					
+		}
+			
+		
+		/// <summary>
+		/// Refresh the page view display for the current page, to take account of changes to the page.
+		/// </summary>
+		public void RedrawPageView()
+		{
+			// Save any changes that have been made to on-screen controls, since we're about to replace them:
+			Conversation.CurrentConversation.SaveToWorkingCopy();
+			
+			// Clear the page view:
+			currentControl = null;		
+			LinesPanel.Children.Clear();
+			currentPage.LineControls.Clear();
+								
 			// Check whether we are starting from the root:
 			NWN2ConversationConnectorCollection possibleNextLines;
 			if (currentPage.LeadInLine == null) { // root
@@ -334,19 +364,83 @@ namespace AdventureAuthor.Conversations.UI
 			while (possibleNextLines.Count == 1) {
 				NWN2ConversationConnector currentLine = possibleNextLines[0];
 				if (!Conversation.IsFiller(currentLine)) {
-					DisplayLine(currentLine);
+					ShowLine(currentLine);
 				}
 				possibleNextLines = currentLine.Line.Children;
 			}
 				
 			// Display the choice, check or end of conversation that ends this page:
 			if (possibleNextLines.Count == 0) {
-				DisplayEndOfConversation();
+				ShowEndOfConversation();
 			}
 			else {
-				DisplayBranch(possibleNextLines);
+				ShowBranch(possibleNextLines);
 			}
 		}
+		
+				
+		/// <summary>
+		/// Refresh the graph view display for the current conversation, to take account of changes to the graph structure or node labels.
+		/// </summary>
+		public void RedrawGraphView()
+		{					
+			// The structure of the conversation graph has changed, so recreate the entire graph and reset the display:
+			
+			Page newVersionOfCurrentPage = null;
+			Page newVersionOfPreviousPage = null;
+						
+			pages = CreatePages(Conversation.CurrentConversation);
+			foreach (Page p in pages) {					
+				if (p.LeadInLine == currentPage.LeadInLine) {
+					newVersionOfCurrentPage = p;						
+					break;
+				}
+			}
+							
+			if (previousPage != null) {
+				foreach (Page p in pages) {
+					if (p.LeadInLine == previousPage.LeadInLine) {
+						newVersionOfPreviousPage = p;
+						break;
+					}
+				}
+			}								
+				
+			MainGraph.Open(pages);
+			if (ExpandedGraph != null) {
+				ExpandedGraph.Open(pages);
+			}
+				
+			// If the currently viewed page still exists after recreating the graph, display it again; otherwise, display root:				
+			if (newVersionOfCurrentPage != null) {
+				DisplayPage(newVersionOfCurrentPage);
+				previousPage = newVersionOfPreviousPage;
+			}
+			else {
+				DisplayPage(pages[0]);
+				CentreGraph(false);
+				previousPage = null;
+			}	
+		}
+		
+		
+		/// <summary>
+		/// Centre the conversation graph(s) around the node representing the current page.
+		/// </summary>
+		public void CentreGraph(bool resetZoomLevel)
+		{
+			if (resetZoomLevel) {
+				MainGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
+				if (ExpandedGraph != null) {
+					ExpandedGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
+				}
+			}
+			
+			MainGraph.GraphControl.CentreOnShape(MainGraph.GetNode(CurrentPage));
+			if (ExpandedGraph != null) {
+				ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(CurrentPage));
+			}
+		}		
 		
 		
 		/// <summary>
@@ -451,70 +545,30 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 				
-		public void RefreshDisplay(bool conversationStructureChanged)
-		{					
-			// If the structure of the page tree has changed, recreate the entire tree and reset the display:
-			if (conversationStructureChanged) {
-			
-				Page newVersionOfCurrentPage = null;
-				Page newVersionOfPreviousPage = null;
-						
-				pages = CreatePages(Conversation.CurrentConversation);
-				foreach (Page p in pages) {					
-					if (p.LeadInLine == currentPage.LeadInLine) {
-						newVersionOfCurrentPage = p;						
-						break;
-					}
-				}
-								
-				if (previousPage != null) {
-					foreach (Page p in pages) {
-						if (p.LeadInLine == previousPage.LeadInLine) {
-							newVersionOfPreviousPage = p;
-							break;
-						}
-					}
-				}								
-
-				MainGraph.Open(pages);
-				if (ExpandedGraph != null) {
-					ExpandedGraph.Open(pages);
-				}
-					
-				// If the currently viewed page still exists after recreating the page tree, display it again; otherwise, display root:				
-				if (newVersionOfCurrentPage != null) {
-					DisplayPage(newVersionOfCurrentPage);
-					previousPage = newVersionOfPreviousPage;
-				}
-				else {
-					DisplayPage(pages[0]);
-					MainGraph.GraphControl.CentreOnShape(MainGraph.GetNode(pages[0]));
-					if (ExpandedGraph != null) {
-						ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(pages[0]));
-					}
-					previousPage = null;
-				}	
-			}
-			else {
-				DisplayPage(currentPage);
-			}
-		}
-		
-		#endregion UI
-					
-		
-		#region Event handlers
+		#region Event handlers: graph view
 				
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
-				this.expandedGraph = new GraphForm(true);
-				this.expandedGraph.Open(pages);
+				expandedGraph = new GraphForm(true);
+				expandedGraph.Open(pages);
 				DisplayPage(currentPage);
-				this.ExpandedGraph.ShowDialog();
+				expandedGraph.GraphControl.CentreOnShape(expandedGraph.GetNode(pages[0])); // display from root for clarity
+				expandedGraph.ShowDialog();
 			}
 		}
 		
+		
+		/// <summary>
+		/// On clicking 'Go to Start', display the root page and centre the graph on it.
+		/// </summary>
+		private void OnClick_GoToStart(object sender, EventArgs ea)
+		{
+			DisplayPage(pages[0]);
+			CentreGraph(true);
+		}
+		
+		#endregion
 		
 		private void OnClick_New(object sender, EventArgs ea)
 		{
@@ -596,13 +650,11 @@ namespace AdventureAuthor.Conversations.UI
 			
 			ButtonsPanel.IsEnabled = true;
 			ExpandGraphButton.IsEnabled = true;
+			GoToStartButton.IsEnabled = true;
 			
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);	
-			MainGraph.GraphControl.CentreOnShape(MainGraph.GetNode(pages[0]));
-			if (ExpandedGraph != null) {
-				ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(pages[0]));
-			}		
+			CentreGraph(true);
 			this.Title += ": " + this.originalFilename;
 			
 			return true;
@@ -707,7 +759,7 @@ namespace AdventureAuthor.Conversations.UI
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
 			DisplayPage(CurrentPage);
-			RefreshDisplay(true);			
+			RedrawGraphView();			
 		}
 		
 		
@@ -720,11 +772,11 @@ namespace AdventureAuthor.Conversations.UI
 			
         	NWN2ConversationConnector parent;
         	NWN2ConversationConnectorCollection children;
-        	if (ConversationWriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
-        		parent = ConversationWriterWindow.Instance.CurrentPage.LineControls[ConversationWriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
+        	if (WriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
+        		parent = WriterWindow.Instance.CurrentPage.LineControls[WriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
 			}
 			else {
-        		parent = ConversationWriterWindow.Instance.CurrentPage.LeadInLine; // LeadInLine may be null i.e. root
+        		parent = WriterWindow.Instance.CurrentPage.LeadInLine; // LeadInLine may be null i.e. root
 			}				
 			
 			if (parent == null) {
@@ -772,7 +824,7 @@ namespace AdventureAuthor.Conversations.UI
 				}			
 								
 				DisplayPage(CurrentPage);
-				RefreshDisplay(true);
+				RedrawGraphView();
         	}
         	catch (InvalidOperationException) {
         		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
@@ -809,7 +861,6 @@ namespace AdventureAuthor.Conversations.UI
 			return true;
 		}
 			
-		#endregion Event handlers
 		
 		
 		// TODO: Write an OnClosing method for form.App, attach it, and see if it gets called by ShutdownToolset
@@ -844,6 +895,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 				this.ButtonsPanel.IsEnabled = false;
 				ExpandGraphButton.IsEnabled = false;
+				GoToStartButton.IsEnabled = false;
 				this.LinesPanel.Children.Clear();
 			}
 			catch (Exception e) {
@@ -854,7 +906,6 @@ namespace AdventureAuthor.Conversations.UI
 		
 		private void OnLoaded(object sender, EventArgs ea)
 		{
-			// TODO try setting this through XAML
 			host = new WindowsFormsHost();	
 			mainGraph = new GraphForm(false);
 			host.Child = MainGraph;			

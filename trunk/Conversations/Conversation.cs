@@ -151,7 +151,7 @@ namespace AdventureAuthor.Conversations
 				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
-				ConversationWriterWindow.Instance.CreateButtonForSpeaker(speaker);
+				WriterWindow.Instance.CreateButtonForSpeaker(speaker);
 				return speaker;
 			}
 			else {
@@ -363,8 +363,8 @@ namespace AdventureAuthor.Conversations
 				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
         	} 
 			
-			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			ConversationWriterWindow.Instance.RefreshDisplay(true);
+			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
+			WriterWindow.Instance.RedrawGraphView();
 			SaveToWorkingCopy();
 			return children;
 		}
@@ -434,9 +434,9 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			// Refresh display:
-			ConversationWriterWindow.Instance.RemoveLineControl(Nwn2Line);
+			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
 			SaveToWorkingCopy(); // still needed ? TODO check
-			ConversationWriterWindow.Instance.RefreshDisplay(false);
+			WriterWindow.Instance.RedrawPageView();
 		}	
 		
 		#endregion Editing the conversation		
@@ -506,16 +506,16 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {
 				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
-				if (ConversationWriterWindow.Instance.CurrentControl != null) {
-					LineControl lc = ConversationWriterWindow.Instance.CurrentControl as LineControl;
+				if (WriterWindow.Instance.CurrentControl != null) {
+					LineControl lc = WriterWindow.Instance.CurrentControl as LineControl;
 					if (lc != null) {
 						lc.Nwn2Line.Line.Text = StringToOEIExoLocString(lc.Dialogue.Text);
 					}
 				}
 				
 				NwnConv.OEISerialize(false);
-				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.OriginalFilename+".dlg");
-				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,ConversationWriterWindow.Instance.WorkingFilename+".dlg");
+				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
+				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
 				isDirty = false;
 			}
