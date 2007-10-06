@@ -53,7 +53,7 @@ namespace AdventureAuthor.Variables.UI
         	try {
 	        	CreateEditVariableWindow window = new CreateEditVariableWindow(ref var,true);
 	        	window.ShowDialog();
-	        	VariablesWindow.Instance.Refresh();
+	        	VariablesWindow.Instance.RefreshVariablesList();
         	}
         	catch (ArgumentNullException ane) {
         		Say.Error("Was unable to restore the original starting value of variable " + var.Name + ".",ane);

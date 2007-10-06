@@ -49,6 +49,9 @@ namespace AdventureAuthor.Variables
 		public static void Add(NWN2ScriptVariable variable)
 		{
 	        Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Add(variable);
+			if (VariablesWindow.Instance != null) {
+				VariablesWindow.Instance.RefreshVariablesList();
+			}
 		}
 		
 		
@@ -66,7 +69,7 @@ namespace AdventureAuthor.Variables
 			Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Remove(variable);
 			Adventure.CurrentAdventure.Save();
 			if (VariablesWindow.Instance != null) {
-				VariablesWindow.Instance.Refresh();
+				VariablesWindow.Instance.RefreshVariablesList();
 			}
 		}
 		
