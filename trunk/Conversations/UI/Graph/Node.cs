@@ -35,7 +35,7 @@ using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.Conversations.UI.Graph
 {
-	public class Node : SimpleRectangle, IPageNode
+	public class Node : SimpleRectangle, IPageNode, IHoverListener
 	{
 		/// <summary>
 		/// The page of the conversation that this node represents.
@@ -57,7 +57,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		public IConnection ParentEdge {
 			get { return parentEdge; }
 			set { parentEdge = value; }
-		}
+		}        
+		
+		/// <summary>
+        /// the services of this shape
+        /// </summary>
+        private Dictionary<Type, IInteraction> mServices;
 		
 		/// <summary>
 		/// The text to display on a tool tip if the mouse is hovering over this node.
@@ -89,7 +94,10 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			this.page = page;
 			this.parentNode = parentNode;
 			
-			SetLabel();			
+			SetLabel();					
+			
+            mServices = new Dictionary<Type, IInteraction>();
+            mServices[typeof(IHoverListener)] = this;
 		}
 		
 		
@@ -139,6 +147,21 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 			
 			return route;
+		}
+		
+		void IHoverListener.MouseHover(MouseEventArgs e)
+		{
+			Say.Debug("Hovered: " + this.Page.ToString());
+		}
+		
+		void IHoverListener.MouseEnter(MouseEventArgs e)
+		{
+			Say.Debug("Entered: " + this.Page.ToString());
+		}
+		
+		void IHoverListener.MouseLeave(MouseEventArgs e)
+		{
+			Say.Debug("Left: " + this.Page.ToString());
 		}
 	}
 }

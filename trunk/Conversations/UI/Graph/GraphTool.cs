@@ -19,7 +19,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
         /// Called when the tool is activated.
         /// </summary>
         protected override void OnActivateTool()
-        {
+        {	
         	
         }
         
@@ -54,23 +54,19 @@ namespace AdventureAuthor.Conversations.UI.Graph
             return false;
         }
         
-
+        
         /// <summary>
         /// Handles the mouse move event
         /// </summary>
         /// <param name="e">The <see cref="T:System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
         public void MouseMove(MouseEventArgs e)
         {
-      
         }
         
       
         public void MouseUp(MouseEventArgs e)
         {
-            if (IsActive)
-            {
-                DeactivateTool();
-            }
+        	
         }
     }
 

@@ -40,11 +40,6 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	public partial class GraphForm : System.Windows.Forms.Form
 	{
 		/// <summary>
-		/// The amount to offset the graph control by to hide the space left by the rulers.
-		/// </summary>
-		private const int RULER_OFFSET = 30;
-		
-		/// <summary>
 		/// The graph control held by this form.
 		/// </summary>
 		private GraphControl graphControl;		
@@ -91,16 +86,11 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			Point origin;
 			SizeF magnification;
 			if (graphControl != null) {
-				Say.Debug("A graph control already existed.");
 				origin = graphControl.Origin;
-				Say.Debug("Saving origin: " + origin.ToString());
 				magnification = graphControl.Magnification;
-				Say.Debug("Saving magnification: " + magnification.ToString());
 				graphControl.Dispose();
-				Say.Debug("Disposing existing graph control.");
 			}
 			else {
-				Say.Debug("A graph control did not already exist - creating origin and magnification.");
 				origin = new Point(0,0);
 				magnification = new SizeF(100F,100F);
 			}
@@ -109,13 +99,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	        graphControl = new GraphControl();
 				
 	        graphControl.Controller.AddTool(new GraphTool("Graph Tool")); // the tool which governs clicks on the graph
-	        graphControl.Location = new System.Drawing.Point(-RULER_OFFSET,-RULER_OFFSET); // hide the ruler space
 	        graphControl.Dock = System.Windows.Forms.DockStyle.None;
-	        graphControl.Size = new Size(this.Width+RULER_OFFSET,this.Height+RULER_OFFSET);
+	        graphControl.Location = new System.Drawing.Point(-GraphControl.RULER_OFFSET,-GraphControl.RULER_OFFSET); // hide the ruler space
+	        graphControl.Size = new Size(this.Width+GraphControl.RULER_OFFSET,this.Height+GraphControl.RULER_OFFSET);
 	        
 	        graphControl.Origin = origin;
 	        graphControl.Magnification = magnification;
-	        Say.Debug("Graph now has origin " + graphControl.Origin.ToString() + " and magnification " + graphControl.Magnification.ToString());
 	            
 	        this.Controls.Add(this.graphControl);
 		}

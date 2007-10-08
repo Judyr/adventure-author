@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -655,7 +656,7 @@ namespace AdventureAuthor.Conversations.UI
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);	
 			CentreGraph(true);
-			this.Title += ": " + this.originalFilename;
+			UpdateTitleBar();
 			
 			return true;
 		}		
@@ -709,7 +710,7 @@ namespace AdventureAuthor.Conversations.UI
 		
 		private void OnClick_Exit(object sender, EventArgs ea)
 		{
-			Close();
+			Close(); // close window
 		}
 		
 		
@@ -798,7 +799,8 @@ namespace AdventureAuthor.Conversations.UI
 					foreach (NWN2ConversationConnector child in childrenToRemove) {
 						Conversation.CurrentConversation.NwnConv.RemoveNode(child);
 					}
-	        		Say.Error("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
+	        		Say.Debug("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
+//					Say.Error("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
 				}			
 				
 				// Insert the new lines, including a filler line if necessary:
@@ -829,13 +831,16 @@ namespace AdventureAuthor.Conversations.UI
         	catch (InvalidOperationException) {
         		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
         	}
-		}		
+		}				
 		
 		
-		private void OnClosing(object sender, EventArgs ea)
+		/// <summary>
+		/// If there's a conversation still open, ask if the user wants to save it before closing. If they cancel, cancel the closing event.
+		/// </summary>
+		private void OnClosing(object sender, CancelEventArgs ea)
 		{
 			if (!CloseConversationDialog()) {
-				// TODO: Abort closing of window.
+				ea.Cancel = true;
 			}
 		}
 		
@@ -848,6 +853,7 @@ namespace AdventureAuthor.Conversations.UI
 		{
 			if (Conversation.CurrentConversation != null) {
 				if (!Adventure.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
+					MessageBox.Show(Conversation.CurrentConversation.ToString());
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
 						return false;
@@ -863,6 +869,19 @@ namespace AdventureAuthor.Conversations.UI
 			
 		
 		
+		internal void UpdateTitleBar()
+		{
+			if (Conversation.CurrentConversation == null) {
+				this.Title = "Conversation Writer";
+			}
+			else if (!Conversation.CurrentConversation.IsDirty) {
+				this.Title = this.OriginalFilename + " - Conversation Writer";
+			}
+			else {
+				this.Title = this.OriginalFilename + "* - Conversation Writer";
+			}
+		}
+		
 		// TODO: Write an OnClosing method for form.App, attach it, and see if it gets called by ShutdownToolset
 		
 		
@@ -876,7 +895,7 @@ namespace AdventureAuthor.Conversations.UI
 				File.Delete(workingFilePath);
 				this.workingFilename = null;
 				this.originalFilename = null;
-				this.Title = "Conversation Writer";
+				UpdateTitleBar();
 				currentPage = null;
 				if (pages != null) {
 					pages.Clear();

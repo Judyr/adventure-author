@@ -759,7 +759,7 @@ namespace AdventureAuthor.Scripts
 					return "TIME PASSES. THE TIME IS NOW " + action.Parameters[0].ValueInt + ":" + action.Parameters[1].ValueInt + ".";
 					
 				default:
-					return "No description available (" + action.Script.ResRef.Value + ")";
+					return "SCRIPT: " + action.ToString();				
 			}
 		}
 			 	
@@ -851,7 +851,7 @@ namespace AdventureAuthor.Scripts
 					return "IF THE PLAYER HAS " + condition.Parameters[0].ValueString + " COMPANIONS";
 					
 				default:
-					return "No description available (" + condition.Script.ResRef.Value + ")";
+					return "SCRIPT: " + condition.ToString();
 			}
 		}
 		
