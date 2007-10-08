@@ -102,6 +102,13 @@ namespace AdventureAuthor.Conversations
 		private bool isDirty;		
 		public bool IsDirty {
 			get { return isDirty; }
+			set 
+			{
+				isDirty = value;
+				if (WriterWindow.Instance != null) {
+					WriterWindow.Instance.UpdateTitleBar();
+				}
+			}
 		}		
 		
 //		private DependencyProperty isDirtyProperty = DependencyProperty.Register("IsDirty",typeof(bool),typeof(Conversation));
@@ -132,7 +139,7 @@ namespace AdventureAuthor.Conversations
 			this.unassignedColours.Add(Brushes.Red); 
 			this.unassignedColours.Add(Brushes.DarkGreen); 
 			this.unassignedColours.Add(Brushes.Brown);
-			isDirty = false;
+			IsDirty = false;
 		}
 		
 		#endregion Constructors
@@ -198,6 +205,20 @@ namespace AdventureAuthor.Conversations
 		
 		#region Editing the conversation
 
+		
+		public static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
+		{
+			if (line == null) {
+				return typeOfFollowingLine == NWN2ConversationConnectorType.StartingEntry;
+			}
+			else if (line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
+				return typeOfFollowingLine == NWN2ConversationConnectorType.Reply;
+			}
+			else {
+				return typeOfFollowingLine != NWN2ConversationConnectorType.Reply;
+			}
+		}
+					
 		internal NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
 		{
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
@@ -215,21 +236,7 @@ namespace AdventureAuthor.Conversations
 			fillerLine.Sound = null;
 			return fillerLine;
 		}
-		
-		public static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
-		{
-			if (line == null) {
-				return typeOfFollowingLine == NWN2ConversationConnectorType.StartingEntry;
-			}
-			else if (line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
-				return typeOfFollowingLine == NWN2ConversationConnectorType.Reply;
-			}
-			else {
-				return typeOfFollowingLine != NWN2ConversationConnectorType.Reply;
-			}
-		}
-					
-		public NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speakerTag, bool reparentChildren)
+		internal NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speakerTag, bool reparentChildren)
 		{			
 			if (this != currentConversation) {
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
@@ -517,7 +524,7 @@ namespace AdventureAuthor.Conversations
 				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
 				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
-				isDirty = false;
+				IsDirty = false;
 			}
 		}
 		
@@ -533,10 +540,11 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {
 				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
-				isDirty = true;
+				IsDirty = true;
 				Say.Debug("Saved to working copy.");
 			}
 		}
+		
 		
 		internal void Serialize()
 		{
@@ -545,10 +553,16 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 		
+		/// <summary>
+		/// Get the number of words in a sentence.
+		/// </summary>
+		/// <param name="toCount">The sentence to count the words in.</param>
+		/// <returns>The number of words in the sentence</returns>
 		public static int WordCount(string toCount)
 		{ 
 			return toCount.Split(' ').Length;
 		}
+		
 
 		/// <summary>
 		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
