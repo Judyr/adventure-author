@@ -513,8 +513,8 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {
 				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
-				if (WriterWindow.Instance.CurrentControl != null) {
-					WriterWindow.Instance.CurrentControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.CurrentControl.Dialogue.Text);
+				if (WriterWindow.Instance.SelectedLineControl != null) {
+					WriterWindow.Instance.SelectedLineControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.SelectedLineControl.Dialogue.Text);
 				}
 				
 				NwnConv.OEISerialize(false);
