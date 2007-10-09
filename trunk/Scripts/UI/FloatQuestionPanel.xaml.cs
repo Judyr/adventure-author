@@ -13,23 +13,65 @@ using System.Windows.Shapes;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Scripts.UI
-{
+{	
+	/// <summary>
+	/// Ask a question which will be answered by a float value.
+	/// </summary>
     public partial class FloatQuestionPanel : UserControl, IQuestionPanel
     {
-    	int? min, max;
+    	/// <summary>
+    	/// The minimum allowed value for this answer
+    	/// </summary>
+    	int? min;
     	
+    	/// <summary>
+    	/// The maximum allowed value for this answer
+    	/// </summary>
+    	int? max;
+    	    	
+    	    	
+    	/// <summary>
+    	/// Create a question panel which will be answered by a float value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
         public FloatQuestionPanel(string question)
         {
             InitializeComponent();
         	QuestionLabel.Text = question;
         }
+        
 
+    	/// <summary>
+    	/// Create a question panel which will be answered by a float value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+    	/// <param name="min">The minimum allowed value for this answer</param>
+    	/// <param name="max">The maximum allowed value for this answer</param>
+    	/// <remarks>Min/max are int values in order to hide the float representation</remarks>
         public FloatQuestionPanel(string question, int? min, int? max) : this(question)
         {
         	this.min = min;
         	this.max = max;
+        }    	
+        
+        
+        /// <summary>
+    	/// Create a question panel which will be answered by a float value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+    	/// <param name="min">The minimum allowed value for this answer</param>
+    	/// <param name="max">The maximum allowed value for this answer</param>
+        /// <param name="defaultValue">The default value of this answer on loading the window</param>
+    	/// <remarks>Min/max are int values in order to hide the float representation</remarks>
+        public FloatQuestionPanel(string question, int? min, int? max, int defaultValue) : this(question,min,max)
+        {
+        	AnswerBox.Text = defaultValue.ToString();
         }
         
+        
+        /// <summary>
+        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// </summary>
         public object Answer
         {
 			get { 

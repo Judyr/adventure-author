@@ -38,12 +38,14 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
-    /// <summary>
-    /// Interaction logic for LineControl.xaml
-    /// </summary>
-
+	/// <summary>
+	/// A control representing a line of dialogue and its speaker.
+	/// <remarks>Can also host controls to represent any actions, conditions or sounds attached to this line of dialogue.</remarks>
+	/// </summary>
     public partial class LineControl : UserControl
     {    	
+    	#region Fields
+    	
     	/// <summary>
     	/// The line of conversation this control represents.
     	/// </summary>
@@ -75,6 +77,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
     	/// </summary>
     	private List<ActionControl> actionControls;	
+    	
+    	#endregion Fields
+    	
+    	#region Constructor
     	
     	/// <summary>
     	/// Create a new LineControl.
@@ -165,11 +171,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);  
         	this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
+        
+        #endregion Constructor
                 
-        #region LineControl event handlers
+        #region Event handlers
         
         /// <summary>
-        /// Save changes made to dialogue - necessary so as not to lose changes to the last line you worked on
+        /// Save changes made to dialogue - necessary so as not to lose changes to the last line you worked on.
         /// </summary>
         private void OnDialogueLostFocus(object sender, RoutedEventArgs e)
         {
@@ -361,6 +369,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void OnGotFocus(object sender, EventArgs ea)
         {      	
+        	Say.Debug("Got focus: " + this.ToString());
         	SelectLine();
 //        	Say.Debug("OnGotFocus called from " + sender.ToString()); 
         }
@@ -368,6 +377,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void OnLostFocus(object sender, EventArgs ea)
         {
+        	Say.Debug("Lost focus: " + this.ToString());
         	DeselectLine();
 //        	Say.Debug("OnLostFocus called from " + sender.ToString());
         }
@@ -383,8 +393,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
-        	SwitchOn(unusedButton);
-        	SwitchOn(unusedButton2);
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOn(conditionalControl.EditConditionsButton);
@@ -397,9 +405,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }
         
+        
         private void DeselectLine()
         {
-        	WriterWindow.Instance.CurrentControl = null;
+        	if (WriterWindow.Instance.CurrentControl == this) {
+        		WriterWindow.Instance.CurrentControl = null;
+        	}
         	if (isPartOfBranch) {
         		Background = Brushes.AliceBlue;
         	}
@@ -408,8 +419,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	Dialogue.Background = Brushes.Transparent;	
         	Dialogue.BorderBrush = Brushes.Transparent;
-        	SwitchOff(unusedButton);
-        	SwitchOff(unusedButton2);
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOff(conditionalControl.EditConditionsButton);
@@ -422,11 +431,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }
         
+        
         private void SwitchOn(Control c)
         {
         	c.IsEnabled = true;
         	c.Opacity = 1.0;
         }
+        
         
         private void SwitchOff(Control c)
         {

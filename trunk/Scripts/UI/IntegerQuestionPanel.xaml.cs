@@ -14,26 +14,62 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Scripts.UI
 {
-    /// <summary>
-    /// Interaction logic for IntegerQuestionPanel.xaml
-    /// </summary>
-
+	/// <summary>
+	/// Ask a question which will be answered by an integer value.
+	/// </summary>
     public partial class IntegerQuestionPanel : UserControl, IQuestionPanel
     {
-    	int? min, max;
+    	/// <summary>
+    	/// The minimum allowed value for this answer
+    	/// </summary>
+    	int? min;
     	
+    	/// <summary>
+    	/// The maximum allowed value for this answer
+    	/// </summary>
+    	int? max;
+    	
+    	    	
+    	/// <summary>
+    	/// Create a question panel which will be answered by an int value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
         public IntegerQuestionPanel(string question)
         {
             InitializeComponent();
         	QuestionLabel.Text = question;
         }
-
+        
+        
+    	/// <summary>
+    	/// Create a question panel which will be answered by an int value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+    	/// <param name="min">The minimum allowed value for this answer</param>
+    	/// <param name="max">The maximum allowed value for this answer</param>
         public IntegerQuestionPanel(string question, int? min, int? max) : this(question)
         {
         	this.min = min;
         	this.max = max;
         }
         
+                     
+    	/// <summary>
+    	/// Create a question panel which will be answered by an int value.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+    	/// <param name="min">The minimum allowed value for this answer</param>
+    	/// <param name="max">The maximum allowed value for this answer</param>
+        /// <param name="defaultValue">The default value of this answer on loading the window</param>
+        public IntegerQuestionPanel(string question, int? min, int? max, int defaultValue) : this(question,min,max)
+        {
+        	AnswerBox.Text = defaultValue.ToString();
+        }
+        
+        
+        /// <summary>
+        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// </summary>
         public object Answer
         {
 			get { 

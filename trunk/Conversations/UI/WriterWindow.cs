@@ -123,7 +123,7 @@ namespace AdventureAuthor.Conversations.UI
     	private LineControl currentControl;
 		public LineControl CurrentControl {
 			get { return currentControl; }
-			set { currentControl = value; }
+			set { currentControl = value; if (currentControl == null) Say.Debug("Set CurrentControl to null."); else Say.Debug("Set CurrentControl to value: " + currentControl.Nwn2Line.ToString());}
 		}
     	    	
     	/// <summary>
@@ -144,127 +144,48 @@ namespace AdventureAuthor.Conversations.UI
     	
     	#endregion Fields
     	        
-        
-        
-//        private void TEMPDROPHANDLER(object sender, DragEventArgs e)
-//        {
-//        	
-//        	
-//        	if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
-//        		string[] fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-//        		Conversation.CurrentConversation.AddSpeaker(fileNames[0]);
-//        		
-//        	}
-//        	e.Handled = true;
-//        }
-           
-
-		#region Page view
-		#endregion
-
-		
-		#region Tree view
-		#endregion
-		
-		
-		#region Writer window
-		
-		internal void CreateButtonForSpeaker(Speaker speaker)
+        #region Page view
+          	
+		/// <summary>
+		/// Refresh the page view display for the current page, to take account of changes to the page.
+		/// </summary>
+		internal void RedrawPageView()
 		{
-			Button button = new Button();
-			button.Margin = new Thickness(2);
-			TextBlock textBlock = new TextBlock();
-			TextBlock tb0 = new TextBlock();
-			TextBlock tb1 = new TextBlock();
-			TextBlock tb2 = new TextBlock();
-			tb0.FontSize = 26;
-			tb1.FontSize = 26;
-			tb2.FontSize = 26;
-			tb0.Foreground = Brushes.Black;
-			tb1.Foreground = speaker.Colour;
-			tb2.Foreground = Brushes.Black;
-			if (speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(speaker.Name)) {
-				tb0.Text = "Add an ";
+			// Save any changes that have been made to on-screen controls, since we're about to replace them:
+			Conversation.CurrentConversation.SaveToWorkingCopy();
+			
+			// Clear the page view:
+			CurrentControl = null;		
+			LinesPanel.Children.Clear();
+			currentPage.LineControls.Clear();
+								
+			// Check whether we are starting from the root:
+			NWN2ConversationConnectorCollection possibleNextLines;
+			if (currentPage.LeadInLine == null) { // root
+				possibleNextLines = Conversation.CurrentConversation.NwnConv.StartingList;
 			}
 			else {
-				tb0.Text = "Add a ";
+				possibleNextLines = currentPage.LeadInLine.Line.Children;
 			}
-			tb1.Text = speaker.Name.ToUpper();
-			tb2.Text = " line";
-			textBlock.Inlines.Add(tb0);
-			textBlock.Inlines.Add(tb1);
-			textBlock.Inlines.Add(tb2);
-			button.Content = textBlock;			
 			
-			button.Click += delegate 
-			{ 
-				if (currentPage != null) {									
-					NWN2ConversationConnector parentLine;
-					LineControl selectedLine = currentControl as LineControl;
-					if (selectedLine != null && !selectedLine.IsPartOfBranch) {
-						parentLine = selectedLine.Nwn2Line; // add a new line after the current one
-					}
-					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
-						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
-					}
-					else { // add a line to the start of the page if there are no other lines
-						parentLine = currentPage.LeadInLine; // may be null (for root)
-					}
-					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
-					
-					DisplayPage(currentPage);
-					RedrawPageView();
-					
-					LineControl newLineControl = GetLineControl(newLine);
-					FocusOnLine(newLineControl);
+			// Display each line of dialogue until the page branches or the conversation ends:
+			while (possibleNextLines.Count == 1) {
+				NWN2ConversationConnector currentLine = possibleNextLines[0];
+				if (!Conversation.IsFiller(currentLine)) {
+					ShowLine(currentLine);
 				}
-			};
-			SpeakersButtonsPanel.Children.Add(button);
-		}	
-		
-		
-		#endregion
-
-		
-		internal void FocusOnLine(LineControl lineControl)
-		{
-			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
-			// something about taking focus away from screen elements maybe?)
+				possibleNextLines = currentLine.Line.Children;
+			}
 				
-//			MessageBox.Show("try now");
-			
-//			lineControl.Focus();
-					
-			lineControl.Dialogue.Focus();
+			// Display the choice, check or end of conversation that ends this page:
+			if (possibleNextLines.Count == 0) {
+				ShowEndOfConversation();
+			}
+			else {
+				ShowBranch(possibleNextLines);
+			}
 		}
-				
 		
-		internal LineControl GetLineControl(NWN2ConversationConnector line)
-		{
-			if (line == null) {
-				return null;
-			}
-			
-			foreach (LineControl c in currentPage.LineControls) {
-				if (c.Nwn2Line == line) {
-					return c;
-				}
-			}
-						
-			foreach (Control control in LinesPanel.Children) {
-				ChoiceControl branch = control as ChoiceControl;
-				if (branch != null) {
-					foreach (LineControl c in branch.LineControls) {
-						if (c.Nwn2Line == line) {
-							return c;
-						}
-					}						
-				}
-			}			
-			
-			return null;			
-		}
-					
 		
 		/// <summary>
 		/// Add a line of dialogue to the current page view.
@@ -276,7 +197,7 @@ namespace AdventureAuthor.Conversations.UI
 			this.currentPage.LineControls.Add(lineControl);
 			this.LinesPanel.Children.Add(lineControl);
 		}				
-		
+	
 		
 		/// <summary>
 		/// Add a branch to the current page view.
@@ -313,84 +234,70 @@ namespace AdventureAuthor.Conversations.UI
 			LinesPanel.Children.Add(endOfConversation);
 		}
 		
-		
+        
 		/// <summary>
-		/// Display a page of the conversation, in the page view and in the graph view.
+		/// Get the line control on the current page view that represents a given line of conversation, if one exists.
 		/// </summary>
-		/// <param name="page">The page to display</param>
-		public void DisplayPage(Page page)
+		/// <param name="line">The line to fetch a control for</param>
+		/// <returns>A LineControl object representing this line if one exists; null otherwise</returns>
+		internal LineControl GetLineControl(NWN2ConversationConnector line)
 		{
-			// Update references to the currently and previously viewed pages:
-			if (previousPage != currentPage) {
-				previousPage = currentPage;
-			}
-			currentPage = page;		
-			
-			// Draw the new current page:
-			RedrawPageView();
-			
-			// Select the node and its route in the graph:
-			Node mainNode = MainGraph.GetNode(currentPage);
-			MainGraph.GraphControl.SelectNode(mainNode);
-			if (ExpandedGraph != null) {
-				Node expandedNode = ExpandedGraph.GetNode(currentPage);
-				ExpandedGraph.GraphControl.SelectNode(expandedNode);
-			}
-		}
-			
-		
-		/// <summary>
-		/// Refresh the page view display for the current page, to take account of changes to the page.
-		/// </summary>
-		public void RedrawPageView()
-		{
-			// Save any changes that have been made to on-screen controls, since we're about to replace them:
-			Conversation.CurrentConversation.SaveToWorkingCopy();
-			
-			// Clear the page view:
-			currentControl = null;		
-			LinesPanel.Children.Clear();
-			currentPage.LineControls.Clear();
-								
-			// Check whether we are starting from the root:
-			NWN2ConversationConnectorCollection possibleNextLines;
-			if (currentPage.LeadInLine == null) { // root
-				possibleNextLines = Conversation.CurrentConversation.NwnConv.StartingList;
-			}
-			else {
-				possibleNextLines = currentPage.LeadInLine.Line.Children;
+			if (line == null) {
+				return null;
 			}
 			
-			// Display each line of dialogue until the page branches or the conversation ends:
-			while (possibleNextLines.Count == 1) {
-				NWN2ConversationConnector currentLine = possibleNextLines[0];
-				if (!Conversation.IsFiller(currentLine)) {
-					ShowLine(currentLine);
+			foreach (LineControl c in currentPage.LineControls) {
+				if (c.Nwn2Line == line) {
+					return c;
 				}
-				possibleNextLines = currentLine.Line.Children;
 			}
-				
-			// Display the choice, check or end of conversation that ends this page:
-			if (possibleNextLines.Count == 0) {
-				ShowEndOfConversation();
-			}
-			else {
-				ShowBranch(possibleNextLines);
-			}
+						
+			foreach (Control control in LinesPanel.Children) {
+				ChoiceControl branch = control as ChoiceControl;
+				if (branch != null) {
+					foreach (LineControl c in branch.LineControls) {
+						if (c.Nwn2Line == line) {
+							return c;
+						}
+					}						
+				}
+			}			
+			
+			return null;			
 		}
+        
 		
+		/// <summary>
+		/// BROKEN. Focus on a given line control.
+		/// </summary>
+		/// <param name="lineControl"></param>
+		internal void FocusOnLine(LineControl lineControl)
+		{
+			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
+			// something about taking focus away from screen elements maybe?)
+				
+//			MessageBox.Show("try now");
+			
+//			lineControl.Focus();
+					
+			lineControl.Dialogue.Focus();
+		}
+				
+        #endregion
+        
+        #region Graph view   
 				
 		/// <summary>
 		/// Refresh the graph view display for the current conversation, to take account of changes to the graph structure or node labels.
 		/// </summary>
-		public void RedrawGraphView()
+		internal void RedrawGraphView()
 		{					
 			// The structure of the conversation graph has changed, so recreate the entire graph and reset the display:
 			
 			Page newVersionOfCurrentPage = null;
 			Page newVersionOfPreviousPage = null;
 						
-			pages = CreatePages(Conversation.CurrentConversation);
+			pages = CreatePageTree(Conversation.CurrentConversation);
 			foreach (Page p in pages) {					
 				if (p.LeadInLine == currentPage.LeadInLine) {
 					newVersionOfCurrentPage = p;						
@@ -423,12 +330,12 @@ namespace AdventureAuthor.Conversations.UI
 				previousPage = null;
 			}	
 		}
-		
-		
+		        
+
 		/// <summary>
 		/// Centre the conversation graph(s) around the node representing the current page.
 		/// </summary>
-		public void CentreGraph(bool resetZoomLevel)
+		internal void CentreGraph(bool resetZoomLevel)
 		{
 			if (resetZoomLevel) {
 				MainGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
@@ -442,6 +349,112 @@ namespace AdventureAuthor.Conversations.UI
 				ExpandedGraph.GraphControl.CentreOnShape(ExpandedGraph.GetNode(CurrentPage));
 			}
 		}		
+		        
+        #endregion
+        
+        #region Writer window        
+
+		internal void CreateButtonForSpeaker(Speaker speaker)
+		{
+			Button button = new Button();
+			button.Margin = new Thickness(2);
+			TextBlock textBlock = new TextBlock();
+			TextBlock tb0 = new TextBlock();
+			TextBlock tb1 = new TextBlock();
+			TextBlock tb2 = new TextBlock();
+			tb0.FontSize = 26;
+			tb1.FontSize = 26;
+			tb2.FontSize = 26;
+			tb0.Foreground = Brushes.Black;
+			tb1.Foreground = speaker.Colour;
+			tb2.Foreground = Brushes.Black;
+			if (speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(speaker.Name)) {
+				tb0.Text = "Add an ";
+			}
+			else {
+				tb0.Text = "Add a ";
+			}
+			tb1.Text = speaker.Name.ToUpper();
+			tb2.Text = " line";
+			textBlock.Inlines.Add(tb0);
+			textBlock.Inlines.Add(tb1);
+			textBlock.Inlines.Add(tb2);
+			button.Content = textBlock;			
+			
+			button.Click += delegate 
+			{ 
+				if (currentPage != null) {	
+					Say.Debug("Current page is not null, so continue.");
+					NWN2ConversationConnector parentLine;
+					if (CurrentControl != null) {
+						Say.Debug("Selected line exists.");
+						if (!CurrentControl.IsPartOfBranch) {
+							Say.Debug("Selected line exists and is not a part of a branch, so identify it as the parent.");
+							parentLine = CurrentControl.Nwn2Line; // add a new line after the current one
+						}
+						else {
+							Say.Debug("But was a part of a branch.");
+						}
+						return;//TODO TEMP
+					}
+					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
+						Say.Debug("If a selected line did exist, it was part of a branch. Take the last linecontrol in the page as parent.");
+						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
+					}
+					else { // add a line to the start of the page if there are no other lines
+						Say.Debug("There are no lines on the page - take root as the parent");
+						parentLine = currentPage.LeadInLine; // may be null (for root)
+					}
+					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
+					Say.Debug("Added a line to the parentline.");
+					
+					DisplayPage(currentPage);
+					RedrawPageView();
+					
+					LineControl newLineControl = GetLineControl(newLine);
+					FocusOnLine(newLineControl);
+				}
+			};
+			SpeakersButtonsPanel.Children.Add(button);
+		}	
+		        
+        
+        #endregion
+
+    	
+    	
+    	
+		
+		
+
+		
+		
+		
+		
+		/// <summary>
+		/// Display a page of the conversation, in the page view and in the graph view.
+		/// </summary>
+		/// <param name="page">The page to display</param>
+		public void DisplayPage(Page page)
+		{
+			// Update references to the currently and previously viewed pages:
+			if (previousPage != currentPage) {
+				previousPage = currentPage;
+			}
+			currentPage = page;		
+			
+			// Draw the new current page:
+			RedrawPageView();
+			
+			// Select the node and its route in the graph:
+			Node mainNode = MainGraph.GetNode(currentPage);
+			MainGraph.GraphControl.SelectNode(mainNode);
+			if (ExpandedGraph != null) {
+				Node expandedNode = ExpandedGraph.GetNode(currentPage);
+				ExpandedGraph.GraphControl.SelectNode(expandedNode);
+			}
+		}
+			
 		
 		
 		/// <summary>
@@ -449,7 +462,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// </summary>
 		/// <param name="conversation">The conversation to traverse to create pages for</param>
 		/// <returns>a list of all Pages in the tree, the first entry being the root Page which owns all other Pages</returns>
-		private List<Page> CreatePages(Conversation conversation)
+		private List<Page> CreatePageTree(Conversation conversation)
 		{
 			if (conversation.NwnConv == null) {
 				throw new ArgumentNullException("The conversation has no NWN2GameConversation object to build pages for.");
@@ -490,6 +503,11 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
+		/// <summary>
+		/// A recursive method called from CreatePageTree, to create pages for the children of a given page.
+		/// </summary>
+		/// <param name="parentPage">The page to create child pages for</param>
+		/// <returns>A list of created child pages</returns>
 		private List<Page> CreatePages(Page parentPage)
 		{
 			List<Page> pages = new List<Page>();
@@ -516,8 +534,7 @@ namespace AdventureAuthor.Conversations.UI
 		
 		public void RemoveLineControl(NWN2ConversationConnector line)
 		{			
-			LineControl current = CurrentControl as LineControl;
-			if (current != null && current.Nwn2Line == line) {
+			if (CurrentControl != null && CurrentControl.Nwn2Line == line) {
 				CurrentControl = null;
 			}
 			
@@ -633,7 +650,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 						
 			// Build a graph based on the list of Pages:
-			pages = CreatePages(Conversation.CurrentConversation);
+			pages = CreatePageTree(Conversation.CurrentConversation);
 			MainGraph.Open(pages);
 			if (ExpandedGraph != null) {
 				ExpandedGraph.Open(pages);
@@ -740,21 +757,6 @@ namespace AdventureAuthor.Conversations.UI
 		}			
 		
 		
-		private void OnClick_MakeSelectedLineIntoBranch(object sender, EventArgs ea)
-		{
-			LineControl lc = CurrentControl as LineControl;
-			if (lc == null) {
-				Say.Information("You must first click on the line that you want to make into a branch.");
-			}
-			else if (lc.IsPartOfBranch) {
-				Say.Information("The line you have selected is already part of a branch.");
-			}
-			else {
-				MakeLineIntoBranch(lc.Nwn2Line);
-			}
-		}
-		
-		
 		//TODO: Move to Conversation
 		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
 		{
@@ -853,7 +855,6 @@ namespace AdventureAuthor.Conversations.UI
 		{
 			if (Conversation.CurrentConversation != null) {
 				if (!Adventure.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
-					MessageBox.Show(Conversation.CurrentConversation.ToString());
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
 						return false;
@@ -900,7 +901,7 @@ namespace AdventureAuthor.Conversations.UI
 				if (pages != null) {
 					pages.Clear();
 				}
-				currentControl = null;
+				CurrentControl = null;
 				Conversation.CurrentConversation = null;
 								
 				MainGraph.ClearGraph();					

@@ -176,7 +176,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.Destroy((string)prms[0],(float)prms[1]); // unbox first
+    			NWN2ScriptFunctor action = Actions.Destroy((string)prms[0],(float)prms[1]); 
 	    		nwn2Line.Actions.Add(action);
 	    		WriterWindow.Instance.RedrawPageView();
     		}
@@ -198,22 +198,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     	}  
     	    	    	
-    	private void OnClick_DisplayMessage2(object sender, EventArgs ea)
-    	{    		
-    		object[] prms = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Display a message");
-    		window.AddStringQuestion("What message should be displayed?");
-    		bool? result = window.ShowDialog();
-    		if (result == null || !(bool)result) { // cancelled or failed
-    			return;
-    		}
-    		else {    		
-    			NWN2ScriptFunctor action = Actions.DisplayMessage((string)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RedrawPageView();
-    		}
-    	}  
-    	
     	private void OnClick_EndGame(object sender, EventArgs ea)
     	{
     		object[] prms = new object[1];
@@ -248,6 +232,87 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     	}
     	
+    	
+    	
+//    	
+//    	private void CreateNewAction()
+//    	{
+//    		
+//    	}
+//    	
+//    	
+//    	private void EditExistingAction()
+//    	{
+//    		
+//    	}
+//    	
+//    	
+//    	
+//    	
+//    	// public ScriptParametersWindow(string scriptName)
+//    	private ScriptParametersWindow GetScriptParametersWindow(string scriptName)
+//    	{
+//    		switch (scriptName) {
+//    			case "ga_attack":
+//    				
+//    				break;
+//    			default:
+//    				break;
+//    		}
+//    	}
+//    	
+//    	
+//    	
+//    	
+//    	private void OnClick_Attack(object sender, EventArgs ea)
+//    	{    		
+//    		object[] prms = new object[1];
+//    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Attack the player");
+//    		window.AddTagQuestion("Who should attack the player?",ScriptHelper.ObjectType.Creature);
+//    		bool? result = window.ShowDialog();
+//    		if (result == null || !(bool)result) { // cancelled or failed
+//    			return;
+//    		}
+//    		else {    			
+//    			NWN2ScriptFunctor action = Actions.Attack((string)prms[0]);
+//	    		nwn2Line.Actions.Add(action);
+//	    		WriterWindow.Instance.RedrawPageView();
+//    		}
+//    	}
+//    	
+//    	
+//    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
     	private void OnClick_GiveGold(object sender, EventArgs ea)
     	{
     		object[] prms = new object[1];
@@ -263,9 +328,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	    		WriterWindow.Instance.RedrawPageView();
     		}
     	}   
-    	
-    	// TODO add default value to method call
-    	
+    	    	
     	private void OnClick_GiveItem(object sender, EventArgs ea)
     	{
     		object[] prms = new object[2];
