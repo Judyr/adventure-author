@@ -605,6 +605,8 @@ namespace AdventureAuthor.Conversations.UI
 				
 				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
+				
+				Conversation.CurrentConversation.ConversationChanged += new EventHandler<ConversationChangedEventArgs>(OnConversationChanged);
 			}
 			catch (Exception e) {			
 				if (conv != null) {
@@ -817,7 +819,7 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
-		private void OnLoaded(object sender, EventArgs ea)
+		private void OnLoaded(object sender, EventArgs e)
 		{
 			host = new WindowsFormsHost();	
 			mainGraph = new GraphForm(false);
@@ -827,6 +829,23 @@ namespace AdventureAuthor.Conversations.UI
 			Grid.SetColumn(host,0);
 			GraphGrid.Children.Add(host);			
 		}		
+    
+		
+		
+		
+		
+		
+		
+		
+    private int x = 0;
+		private void OnConversationChanged(object sender, ConversationChangedEventArgs e)
+		{
+			x++;
+			if (x == 1) this.Title = "Conversation has changed 1 time.";
+			else this.Title = "Conversation has changed " + x + " times.";
+			
+			
+		}
     }
 }
 		
