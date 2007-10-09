@@ -503,7 +503,7 @@ namespace AdventureAuthor.Conversations.UI
 			return pages;
 		}
 		
-		
+		// TODO very ugly way of deleting lines, fix
 		public void RemoveLineControl(NWN2ConversationConnector line)
 		{			
 			if (SelectedLineControl != null && SelectedLineControl.Nwn2Line == line) {
@@ -728,86 +728,6 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}			
 		
-		
-		//TODO: Move to Conversation
-		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
-		{
-			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			DisplayPage(CurrentPage);
-			RedrawGraphView();			
-		}
-		
-		
-		//TODO: Move to Conversation
-		internal void MakeBranchAtEndOfPage(string speakerTag)
-		{
-			if (!CurrentPage.IsEndPage) {
-				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
-			}
-			
-        	NWN2ConversationConnector parent;
-        	NWN2ConversationConnectorCollection children;
-        	if (WriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
-        		parent = WriterWindow.Instance.CurrentPage.LineControls[WriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
-			}
-			else {
-        		parent = WriterWindow.Instance.CurrentPage.LeadInLine; // LeadInLine may be null i.e. root
-			}				
-			
-			if (parent == null) {
-				children = Conversation.CurrentConversation.NwnConv.StartingList;
-			}
-			else {
-				children = parent.Line.Children;
-			}			
-			
-        	try {
-				if (children.Count > 0) { // shouldn't happen as we are at the end of the page
-					NWN2ConversationConnectorCollection childrenToRemove = new NWN2ConversationConnectorCollection();
-					foreach (NWN2ConversationConnector child in children) {
-						if (child.Comment != Conversation.FILLER) {
-							throw new InvalidOperationException("The line at the end of the page had non-filler lines as children.");
-						}		
-						childrenToRemove.Add(child);
-					}
-					foreach (NWN2ConversationConnector child in childrenToRemove) {
-						Conversation.CurrentConversation.NwnConv.RemoveNode(child);
-					}
-	        		Say.Debug("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
-//					Say.Error("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
-				}			
-				
-				// Insert the new lines, including a filler line if necessary:
-				NWN2ConversationConnectorType newLineType;
-				if (speakerTag == String.Empty) {
-					newLineType = NWN2ConversationConnectorType.Reply;
-				}
-				else if (parent == null) {
-					newLineType = NWN2ConversationConnectorType.StartingEntry;
-				}
-				else {
-					newLineType = NWN2ConversationConnectorType.Entry;
-				}	
-				
-				if (Conversation.CanFollow(parent,newLineType)) {
-					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(parent,speakerTag);
-					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(parent,speakerTag);
-				}
-				else {					
-					NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.InsertFillerLineWithoutReparenting(parent);
-					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);
-					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
-				}			
-								
-				DisplayPage(CurrentPage);
-				RedrawGraphView();
-        	}
-        	catch (InvalidOperationException) {
-        		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
-        	}
-		}				
-		
-		
 		/// <summary>
 		/// If there's a conversation still open, ask if the user wants to save it before closing. If they cancel, cancel the closing event.
 		/// </summary>
@@ -817,6 +737,7 @@ namespace AdventureAuthor.Conversations.UI
 				ea.Cancel = true;
 			}
 		}
+		
 		
 		
 		/// <summary>

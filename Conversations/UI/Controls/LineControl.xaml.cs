@@ -272,7 +272,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				Say.Information("The line you have selected is already part of a choice.");
 			}
 			else {
-				WriterWindow.Instance.MakeLineIntoBranch(Nwn2Line); //TODO: move the make branch functions to Conversation
+				Conversation.CurrentConversation.MakeLineIntoBranch(Nwn2Line);
 			}
 		}
 		
