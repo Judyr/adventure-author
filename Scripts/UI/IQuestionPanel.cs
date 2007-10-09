@@ -28,8 +28,14 @@ using System;
 
 namespace AdventureAuthor.Scripts.UI
 {
+	/// <summary>
+	/// A panel that asks a question of the user, and can return the user's answer. 
+	/// </summary>
 	public interface IQuestionPanel
 	{
+		/// <summary>
+		/// Returns an object representing the answer to the question posed by the panel, based on user input.
+		/// </summary>
 		object Answer { get; }
 	}
 }

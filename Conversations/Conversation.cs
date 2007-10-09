@@ -256,7 +256,7 @@ namespace AdventureAuthor.Conversations
 			}						
 			
 			if (parent == null) { // adding to root
-				if (newLineType == NWN2ConversationConnectorType.Reply) { 
+				if (newLineType == NWN2ConversationConnectorType.Reply) { 					
 					newLine = AddLine(parent,speakerTag,true,reparentChildren); // adding PC line to root is only possible by adding a filler line first
 				}
 				else {
@@ -442,7 +442,7 @@ namespace AdventureAuthor.Conversations
 			
 			// Refresh display:
 			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			SaveToWorkingCopy(); // still needed ? TODO check
+			SaveToWorkingCopy();
 			WriterWindow.Instance.RedrawPageView();
 		}	
 		
@@ -514,10 +514,7 @@ namespace AdventureAuthor.Conversations
 			lock (padlock) {
 				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
 				if (WriterWindow.Instance.CurrentControl != null) {
-					LineControl lc = WriterWindow.Instance.CurrentControl as LineControl;
-					if (lc != null) {
-						lc.Nwn2Line.Line.Text = StringToOEIExoLocString(lc.Dialogue.Text);
-					}
+					WriterWindow.Instance.CurrentControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.CurrentControl.Dialogue.Text);
 				}
 				
 				NwnConv.OEISerialize(false);

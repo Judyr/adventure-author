@@ -14,9 +14,17 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.Scripts.UI
-{
+{	
+	/// <summary>
+	/// Ask a question which will be answered by a string value corresponding to the resref of a game object blueprint. 
+	/// </summary>
     public partial class ResRefQuestionPanel : UserControl, IQuestionPanel
-    {
+    {    	
+    	/// <summary>
+    	/// Create a question panel which will be answered by a string value corresponding to the resref of a game object blueprint.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+        /// <param name="objectTypes">The (multiple) types of object to populate the resref list from</param>
         public ResRefQuestionPanel(string question, ScriptHelper.ObjectType[] objectTypes)
         {
             InitializeComponent();
@@ -29,6 +37,10 @@ namespace AdventureAuthor.Scripts.UI
             AnswerBox.ItemsSource = resrefs;
         }
         
+        
+        /// <summary>
+        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// </summary>
         public object Answer
         {
 			get { 

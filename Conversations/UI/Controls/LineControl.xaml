@@ -110,10 +110,6 @@
     	</Grid.ColumnDefinitions>
     	    	
     	<StackPanel Name="LineControlButtonsPanel" Focusable="true" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
-	    	<Button x:Name="unusedButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
-	    	</Button>
- 	    	<Button x:Name="unusedButton2" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0">
-	    	</Button>	    	
     		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="false" Opacity="0.0" Click="OnClick_Delete">
     			<Button.ToolTip>
     				<ToolTip>Delete this line</ToolTip>

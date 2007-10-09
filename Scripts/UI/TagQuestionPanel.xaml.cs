@@ -15,12 +15,16 @@ using AdventureAuthor.Scripts;
 
 namespace AdventureAuthor.Scripts.UI
 {
-    /// <summary>
-    /// Interaction logic for TagQuestionPanel.xaml
-    /// </summary>
-
+	/// <summary>
+	/// Ask a question which will be answered by a string value corresponding to the tag of a game object.
+	/// </summary>
     public partial class TagQuestionPanel : UserControl, IQuestionPanel
-    {
+    {    	
+    	/// <summary>
+    	/// Create a question panel which will be answered by a string value corresponding to the tag of a game object.
+    	/// </summary>
+    	/// <param name="question">The question to ask the user</param>
+        /// <param name="objectTypes">The (multiple) types of object to populate the tag list from</param>
         public TagQuestionPanel(string question, ScriptHelper.ObjectType[] objectTypes)
         {
             InitializeComponent();
@@ -33,6 +37,10 @@ namespace AdventureAuthor.Scripts.UI
             AnswerBox.ItemsSource = tags;
         }
         
+                
+        /// <summary>
+        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// </summary>
         public object Answer
         {
 			get { 
