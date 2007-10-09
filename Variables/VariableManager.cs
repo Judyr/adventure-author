@@ -138,7 +138,7 @@ namespace AdventureAuthor.Variables
 					conversation.NwnConv.Release();
 				}
 				else {
-					WriterWindow.Instance.RedrawPageView(); // SaveToWorkingCopy() called through this.
+					WriterWindow.Instance.RefreshPageViewOnly(); // SaveToWorkingCopy() called through this.
 				}
 			}
 			

@@ -116,13 +116,6 @@ namespace AdventureAuthor.Conversations
 		private bool isDirty;		
 		public bool IsDirty {
 			get { return isDirty; }
-			set 
-			{
-				isDirty = value;
-				if (WriterWindow.Instance != null) {
-					WriterWindow.Instance.UpdateTitleBar();
-				}
-			}
 		}		
 		
 //		private DependencyProperty isDirtyProperty = DependencyProperty.Register("IsDirty",typeof(bool),typeof(Conversation));
@@ -153,7 +146,8 @@ namespace AdventureAuthor.Conversations
 			this.unassignedColours.Add(Brushes.Red); 
 			this.unassignedColours.Add(Brushes.DarkGreen); 
 			this.unassignedColours.Add(Brushes.Brown);
-			IsDirty = false;
+			isDirty = false;
+			this.ConversationChanged += new EventHandler<ConversationChangedEventArgs>(Conversation_OnConversationChanged);
 		}
 		
 		#endregion Constructors
@@ -238,7 +232,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Remove(action);
-				SaveToWorkingCopy();
+				OnConversationChanged(new ConversationChangedEventArgs(false));
 			}
 		}		
 		
@@ -261,7 +255,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Conditions.Remove(condition);
-				SaveToWorkingCopy();
+				OnConversationChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 		
@@ -277,7 +271,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Clear();
-				SaveToWorkingCopy();
+				OnConversationChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 				
@@ -293,7 +287,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Conditions.Clear();
-				SaveToWorkingCopy();
+				OnConversationChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 		
@@ -301,11 +295,11 @@ namespace AdventureAuthor.Conversations
 		
 		
 		
-		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
+		internal void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
 			WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
-			WriterWindow.Instance.RedrawGraphView();			
+			WriterWindow.Instance.RefreshBothViews();			
 		}
 		
 		
@@ -371,7 +365,7 @@ namespace AdventureAuthor.Conversations
 				}			
 								
 				WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
-				WriterWindow.Instance.RedrawGraphView();
+				WriterWindow.Instance.RefreshBothViews();
         	}
         	catch (InvalidOperationException) {
         		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
@@ -396,7 +390,7 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 					
-		internal NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
+		private NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
 		{
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			newLine.Comment = Conversation.NOT_FILLER;
@@ -405,7 +399,7 @@ namespace AdventureAuthor.Conversations
 			return newLine;
 		}
 
-		internal NWN2ConversationConnector InsertFillerLineWithoutReparenting(NWN2ConversationConnector parentLine)
+		private NWN2ConversationConnector InsertFillerLineWithoutReparenting(NWN2ConversationConnector parentLine)
 		{
 			NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
 			fillerLine.Comment = Conversation.FILLER;
@@ -413,7 +407,49 @@ namespace AdventureAuthor.Conversations
 			fillerLine.Sound = null;
 			return fillerLine;
 		}
-		internal NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speakerTag, bool reparentChildren)
+		
+		#region Public methods for adding lines
+		
+		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector parent)
+		{
+			string speaker = null;
+			NWN2ConversationConnectorCollection children;
+			
+			if (parent == null) { // add line to root
+				children = nwnConv.StartingList;
+			}
+			else {
+				children = parent.Line.Children;
+			}
+			
+			foreach(NWN2ConversationConnector option in children) {
+				if (speaker == null) {
+					speaker = option.Speaker;
+				}
+				else if (speaker != option.Speaker) {
+					throw new ArgumentException("Found different speakers in the same branch.");
+				}
+			}
+			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
+			OnConversationChanged(new ConversationChangedEventArgs(true));
+			return createdLine;
+		}
+		
+		public NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speaker)
+		{
+			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,true);
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+			return createdLine;
+		}
+		
+		#endregion
+		
+		#region Private methods for adding lines, do not call directly
+						
+		/// <summary>
+		/// Do not call directly.
+		/// </summary>
+		private NWN2ConversationConnector CreateNewLine(NWN2ConversationConnector parent, string speakerTag, bool reparentChildren)
 		{			
 			if (this != currentConversation) {
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
@@ -434,27 +470,29 @@ namespace AdventureAuthor.Conversations
 			
 			if (parent == null) { // adding to root
 				if (newLineType == NWN2ConversationConnectorType.Reply) { 					
-					newLine = AddLine(parent,speakerTag,true,reparentChildren); // adding PC line to root is only possible by adding a filler line first
+					newLine = CreateNewLine(parent,speakerTag,true,reparentChildren); // adding PC line to root is only possible by adding a filler line first
 				}
 				else {
-					newLine = AddLine(parent,speakerTag,false,reparentChildren); // can add an NPC line directly to root without adding a filler line first
+					newLine = CreateNewLine(parent,speakerTag,false,reparentChildren); // can add an NPC line directly to root without adding a filler line first
 				}
 			}
 			else { // adding to an existing line	
 				if (!CanFollow(parent,newLineType)) { // if the new line can't be directly added, put in a filler line first
-					newLine = AddLine(parent,speakerTag,true,reparentChildren);
+					newLine = CreateNewLine(parent,speakerTag,true,reparentChildren);
 				}
 				else { // add the new line to the parent	
-					newLine = AddLine(parent,speakerTag,false,reparentChildren); 
+					newLine = CreateNewLine(parent,speakerTag,false,reparentChildren); 
 				}
 			}
 			
-			newLine.Comment = Conversation.NOT_FILLER;	
-			SaveToWorkingCopy();
+			newLine.Comment = Conversation.NOT_FILLER;
 			return newLine;
 		}			
-		
-		private NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speakerTag, bool addFillerBeforeNewLine, bool reparentChildren)
+				
+		/// <summary>
+		/// Do not call directly.
+		/// </summary>
+		private NWN2ConversationConnector CreateNewLine(NWN2ConversationConnector parent, string speakerTag, bool addFillerBeforeNewLine, bool reparentChildren)
 		{
 			NWN2ConversationConnector newLine = null;
 			NWN2ConversationConnector fillerLine = null;
@@ -483,8 +521,11 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			return newLine;
-		}						
+		}					
 		
+		/// <summary>
+		/// Do not call directly.
+		/// </summary>
 		private void ReparentChildren(NWN2ConversationConnector newLine, NWN2ConversationConnector fillerLine, NWN2ConversationConnectorCollection children)
 		{						
 			NWN2ConversationConnectorCollection displacedChildren = new NWN2ConversationConnectorCollection();
@@ -513,11 +554,16 @@ namespace AdventureAuthor.Conversations
 			}	
 		}
 		
+		#endregion
+		
+		
+		
 		public bool Contains(NWN2ConversationConnector line)
 		{
 			return this.nwnConv.Entries.Contains(line.Line) || this.nwnConv.Replies.Contains(line.Line) || this.nwnConv.StartingList.Contains(line);
 		}
 		
+		// TODO - ignoring until I refactor to get rid of RemoveLineControl
 		public NWN2ConversationConnectorCollection DeleteLineFromBranch(NWN2ConversationConnector Nwn2Line)
 		{			
 			// Checks:
@@ -548,11 +594,12 @@ namespace AdventureAuthor.Conversations
         	} 
 			
 			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			WriterWindow.Instance.RedrawGraphView();
+			WriterWindow.Instance.RefreshBothViews();
 			SaveToWorkingCopy();
 			return children;
 		}
 		
+		// TODO - ignoring until I refactor to get rid of RemoveLineControl
 		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
 		{
 			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
@@ -620,33 +667,11 @@ namespace AdventureAuthor.Conversations
 			// Refresh display:
 			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
 			SaveToWorkingCopy();
-			WriterWindow.Instance.RedrawPageView();
+			WriterWindow.Instance.RefreshPageViewOnly();
 		}	
 		
 		#endregion Editing the conversation		
 		
-		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector branchParent)
-		{
-			string speakerTag = null;
-			NWN2ConversationConnectorCollection children;
-			
-			if (branchParent == null) { // add line to root
-				children = nwnConv.StartingList;
-			}
-			else {
-				children = branchParent.Line.Children;
-			}
-			
-			foreach(NWN2ConversationConnector option in children) {
-				if (speakerTag == null) {
-					speakerTag = option.Speaker;
-				}
-				else if (speakerTag != option.Speaker) {
-					throw new ArgumentException("Found different speakers in the same branch.");
-				}
-			}
-			return AddLine(branchParent,speakerTag,false);
-		}
 						
 		public static bool IsFiller(NWN2ConversationConnector line)
 		{
@@ -698,7 +723,7 @@ namespace AdventureAuthor.Conversations
 				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
 				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
-				IsDirty = false;
+				isDirty = false;
 			}
 		}
 		
@@ -714,7 +739,7 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {
 				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
-				IsDirty = true;
+				isDirty = true;
 				Say.Debug("Saved to working copy.");
 			}
 		}
@@ -800,6 +825,46 @@ namespace AdventureAuthor.Conversations
 		public override string ToString()
 		{
 			return this.NwnConv.Name;
+		}
+		
+		
+		
+		
+		/// <summary>
+		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
+		/// </summary>
+		private void Conversation_OnConversationChanged(object sender, ConversationChangedEventArgs e)
+		{
+			SaveToWorkingCopy();
+		}
+		
+		
+		/// <summary>
+		/// Set the text of a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="newText">The new value to assign to the line text</param>
+		public void SetTextOfLine(NWN2ConversationConnector line, string newText)
+		{
+			if (line == null) {
+				Say.Error("Cannot operate on a null line.");
+			}
+			else if (newText == null) {
+				Say.Error("Cannot assign a null string to this line.");
+			}
+			else {
+				line.Line.Text = StringToOEIExoLocString(newText);
+				
+				// If this is the first line of a node, the node labels on the graph will need to be refreshed.
+				// Refresh even if this is the first line of the root node - the graph view does not currently
+				// display this line (instead it uses 'Start') but could do in the future.
+				if (line.Parent == null || line.Parent.Line.Children.Count > 1) { 
+					OnConversationChanged(new ConversationChangedEventArgs(true));
+				}
+				else {
+					OnConversationChanged(new ConversationChangedEventArgs(false));
+				}
+			}
 		}
 	}
 }
