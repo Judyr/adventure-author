@@ -86,6 +86,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
     <Compile Include="Conversations\Conversation.cs" />
+    <Compile Include="Conversations\ConversationChanged.cs" />
     <Compile Include="Conversations\Page.cs" />
     <Compile Include="Conversations\Speaker.cs" />
     <Compile Include="Conversations\UI\AddRemoveSpeakersWindow.xaml.cs">

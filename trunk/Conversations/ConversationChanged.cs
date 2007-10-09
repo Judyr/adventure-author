@@ -25,40 +25,24 @@
  */
 
 using System;
-using System.Windows;
-using NWN2Toolset.NWN2.Data.ConversationData;
-using AdventureAuthor.Core;
-using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.Conversations.UI
+namespace AdventureAuthor.Conversations
 {
-    /// <summary>
-    /// Interaction logic for ChooseSpeaker.xaml
-    /// </summary>
-
-    public partial class ChooseSpeaker : Window
-    {
-        public ChooseSpeaker()
-        {
-        	this.Resources.Add("speakers",Conversation.CurrentConversation.Speakers);
-            InitializeComponent();
-        }
-
-        private void OnClickOK(object sender, EventArgs ea)
-        {
-        	if (SpeakersList.SelectedItem == null) {
-        		Say.Information("Select a speaker.");
-        	}
-        	else {
-        		string speakerTag = ((Speaker)SpeakersList.SelectedItem).Tag;   
-				Conversation.CurrentConversation.MakeBranchAtEndOfPage(speakerTag);
-				this.Close();
-        	}
-        }
-
-        private void OnClickCancel(object sender, EventArgs ea)
-        {
-        	this.Close();
-        }
-    }
+	/// <summary>
+	/// Description of ConversationChanged.
+	/// </summary>
+	public partial class Conversation
+	{
+		public class ConversationChangedEventArgs : EventArgs
+		{
+			public ConversationChangedEventArgs()
+			{
+				
+			}
+		}
+		
+		public delegate void ConversationChangedEventHandler(object sender, ConversationChangedEventArgs e);
+		
+		public event ConversationChangedEventHandler ConversationChanged;
+	}
 }

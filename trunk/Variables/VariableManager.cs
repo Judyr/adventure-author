@@ -125,11 +125,11 @@ namespace AdventureAuthor.Variables
 					
 					
 					foreach (NWN2ScriptFunctor removable in defunctActions) {
-						connector.Actions.Remove(removable);
+						Conversation.CurrentConversation.DeleteAction(connector,removable);
 					}
 					
 					foreach (NWN2ConditionalFunctor removable in defunctConditions) {
-						connector.Conditions.Remove(removable);
+						Conversation.CurrentConversation.DeleteCondition(connector,removable);
 					}
 	       		}
 				

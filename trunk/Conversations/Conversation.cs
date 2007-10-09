@@ -40,9 +40,9 @@ using OEIShared.Utils;
 namespace AdventureAuthor.Conversations
 {
 	/// <summary>
-	/// Conversation wraps a NWN2GameConversation with some additional information for the Adventure Author Conversation Writer.
+	/// Conversation wraps a NWN2GameConversation with some additional information for the Conversation Writer.
 	/// </summary>
-	public class Conversation : DependencyObject
+	public partial class Conversation
 	{
 		#region Classes
 		
@@ -72,7 +72,7 @@ namespace AdventureAuthor.Conversations
 		public const string FILLER = "filler";
 		
 		#endregion Constants
-		
+				
 		#region Fields
 		
 		private static Conversation currentConversation;		
@@ -210,7 +210,7 @@ namespace AdventureAuthor.Conversations
 		/// Delete an action from a line of dialogue.
 		/// </summary>
 		/// <param name="line">The line of dialogue</param>
-		/// <param name="condition">The action to delete</param>
+		/// <param name="action">The action to delete</param>
 		public void DeleteAction(NWN2ConversationConnector line, NWN2ScriptFunctor action)
 		{
 			if (line == null) {
@@ -224,6 +224,29 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Remove(action);
+				SaveToWorkingCopy();
+			}
+		}		
+		
+		
+		/// <summary>
+		/// Delete a condition from a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="condition">The condition to delete</param>
+		public void DeleteCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (condition == null) {
+				Say.Error("Can't delete a null condition.");
+			}
+			else if (!line.Conditions.Contains(condition)) {
+				Say.Error("Condition " + condition.Script.FullName + " does not exist on line + " + line.ToString());
+			}
+			else {
+				line.Conditions.Remove(condition);
 				SaveToWorkingCopy();
 			}
 		}
@@ -261,6 +284,85 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		#endregion
+		
+		
+		
+		internal void MakeLineIntoBranch(NWN2ConversationConnector memberOfBranch)
+		{
+			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
+			WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
+			WriterWindow.Instance.RedrawGraphView();			
+		}
+		
+		
+		
+		internal void MakeBranchAtEndOfPage(string speakerTag)
+		{
+			if (!WriterWindow.Instance.CurrentPage.IsEndPage) {
+				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
+			}
+			
+        	NWN2ConversationConnector parent;
+        	NWN2ConversationConnectorCollection children;
+        	if (WriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
+        		parent = WriterWindow.Instance.CurrentPage.LineControls[WriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
+			}
+			else {
+        		parent = WriterWindow.Instance.CurrentPage.LeadInLine; // LeadInLine may be null i.e. root
+			}				
+			
+			if (parent == null) {
+				children = Conversation.CurrentConversation.NwnConv.StartingList;
+			}
+			else {
+				children = parent.Line.Children;
+			}			
+			
+        	try {
+				if (children.Count > 0) { // shouldn't happen as we are at the end of the page
+					NWN2ConversationConnectorCollection childrenToRemove = new NWN2ConversationConnectorCollection();
+					foreach (NWN2ConversationConnector child in children) {
+						if (child.Comment != Conversation.FILLER) {
+							throw new InvalidOperationException("The line at the end of the page had non-filler lines as children.");
+						}		
+						childrenToRemove.Add(child);
+					}
+					foreach (NWN2ConversationConnector child in childrenToRemove) {
+						Conversation.CurrentConversation.NwnConv.RemoveNode(child);
+					}
+	        		Say.Debug("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
+//					Say.Error("The line Adventure Author took to be the end of the page had filler lines as children - this shouldn't have happened.");
+				}			
+				
+				// Insert the new lines, including a filler line if necessary:
+				NWN2ConversationConnectorType newLineType;
+				if (speakerTag == String.Empty) {
+					newLineType = NWN2ConversationConnectorType.Reply;
+				}
+				else if (parent == null) {
+					newLineType = NWN2ConversationConnectorType.StartingEntry;
+				}
+				else {
+					newLineType = NWN2ConversationConnectorType.Entry;
+				}	
+				
+				if (Conversation.CanFollow(parent,newLineType)) {
+					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(parent,speakerTag);
+					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(parent,speakerTag);
+				}
+				else {					
+					NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.InsertFillerLineWithoutReparenting(parent);
+					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);
+					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
+				}			
+								
+				WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
+				WriterWindow.Instance.RedrawGraphView();
+        	}
+        	catch (InvalidOperationException) {
+        		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
+        	}
+		}				
 		
 		
 		
