@@ -80,6 +80,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	
     	#endregion Fields
     	
+    	#region Events
+    	
+    	
+    	
+    	#endregion
+    	
     	#region Constructor
     	
     	/// <summary>
@@ -168,7 +174,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
 
-        	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);  
+        	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus2);
+
+			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);
+			Dialogue.GotFocus += new RoutedEventHandler(OnDialogueGotFocus);
         	this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
         
@@ -179,7 +188,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// <summary>
         /// Save changes made to dialogue - necessary so as not to lose changes to the last line you worked on.
         /// </summary>
-        private void OnDialogueLostFocus(object sender, RoutedEventArgs e)
+        private void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
         {
         	SaveLine();
         }
@@ -332,6 +341,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }
         
+        #region Drag-drop
         
         /// <summary>
         /// Called when a drag-drop operation is started.
@@ -360,6 +370,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //        	}
         }
         
+        #endregion
         
         private void OnMouseDown(object sender, MouseEventArgs ea)
         {        	
@@ -367,19 +378,30 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }        
         
         
-        private void OnGotFocus(object sender, EventArgs ea)
-        {      	
-        	Say.Debug("Got focus: " + this.ToString());
+        private void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
+        {      	        	
+        	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
         	SelectLine();
-//        	Say.Debug("OnGotFocus called from " + sender.ToString()); 
         }
         
         
-        private void OnLostFocus(object sender, EventArgs ea)
+        private void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
         {
-        	Say.Debug("Lost focus: " + this.ToString());
+        	Say.Debug("OnLineControlLostFocus(): " + this.ToString());
         	DeselectLine();
-//        	Say.Debug("OnLostFocus called from " + sender.ToString());
+        }
+        
+        private void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
+        {      	        	
+        	Say.Debug("OnDialogueGotFocus(): " + this.ToString());
+        	SelectLine();
+        }
+        
+        
+        private void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
+        {
+        	Say.Debug("OnDialogueLostFocus(): " + this.ToString());
+        	DeselectLine();
         }
         
         #endregion
@@ -387,27 +409,55 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #region Selecting lines
         
+        /// <summary>
+        /// Silly name cos this method shouldn't be necessary, but keep having problems with focusing on LineControls.
+        /// </summary>
+        internal void FocusOnMe()
+        {
+			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
+			// something about taking focus away from screen elements maybe?)
+				
+//			MessageBox.Show("try now");
+			
+			// TODO - if Focus is called, it works (but we want the textbox to be enabled.) If Dialogue.Focus() is called, it doesn't 
+			// work, even though from debug statements I can see that SelectLine() is ran all the way through to the end.
+			
+			Say.Debug("FocusOnMe(): " + this.ToString());
+//			Focus();
+//			Dialogue.Focus();
+			
+//			TextBox dialogue = (TextBox)FindName("Dialogue");
+//			dialogue.Focus();
+        }
+        
         private void SelectLine()
         {
+        	Say.Debug("SelectLine(): " + this.ToString());
         	WriterWindow.Instance.SelectedLineControl = this;
+        	Say.Debug("about to set background");
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
+        	Say.Debug("just set background. about to switch on all the buttons");
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOn(conditionalControl.EditConditionsButton);
+        		SwitchOn(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
         		SwitchOn(actionControl.EditActionButton);
+        		SwitchOn(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
         		SwitchOn(soundControl.PlaySoundButton);
         	}
+        	Say.Debug("Switched on all the buttons.");
         }
         
         
         private void DeselectLine()
         {
+        	Say.Debug("DeselectLine(): " + this.ToString());
         	if (isPartOfBranch) {
         		Background = Brushes.AliceBlue;
         	}
@@ -419,9 +469,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
         		SwitchOff(conditionalControl.EditConditionsButton);
+        		SwitchOff(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
         		SwitchOff(actionControl.EditActionButton);
+        		SwitchOff(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
         		SwitchOff(soundControl.PlaySoundButton);

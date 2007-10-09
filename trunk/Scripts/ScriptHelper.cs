@@ -477,7 +477,7 @@ namespace AdventureAuthor.Scripts
 						return "DISPLAY MESSAGE \"" + message + "...\"";
 					}
 					else {
-						return "DISPLAY MESSAGE \"" + message;
+						return "DISPLAY MESSAGE \"" + message + "\"";
 					}
 					
 				case "ga_door_close":
