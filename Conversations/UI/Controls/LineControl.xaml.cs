@@ -389,7 +389,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void SelectLine()
         {
-        	WriterWindow.Instance.CurrentControl = this;
+        	WriterWindow.Instance.SelectedLineControl = this;
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
@@ -408,9 +408,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void DeselectLine()
         {
-        	if (WriterWindow.Instance.CurrentControl == this) {
-        		WriterWindow.Instance.CurrentControl = null;
-        	}
         	if (isPartOfBranch) {
         		Background = Brushes.AliceBlue;
         	}

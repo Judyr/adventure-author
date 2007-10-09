@@ -120,10 +120,10 @@ namespace AdventureAuthor.Conversations.UI
     	/// <summary>
     	/// The currently selected line control.
     	/// </summary>
-    	private LineControl currentControl;
-		public LineControl CurrentControl {
-			get { return currentControl; }
-			set { currentControl = value; if (currentControl == null) Say.Debug("Set CurrentControl to null."); else Say.Debug("Set CurrentControl to value: " + currentControl.Nwn2Line.ToString());}
+    	private LineControl selectedLineControl;
+		public LineControl SelectedLineControl {
+			get { return selectedLineControl; }
+			set { selectedLineControl = value; if (selectedLineControl == null) Say.Debug("Set CurrentControl to null."); else Say.Debug("Set CurrentControl to value: " + selectedLineControl.Nwn2Line.ToString());}
 		}
     	    	
     	/// <summary>
@@ -155,7 +155,7 @@ namespace AdventureAuthor.Conversations.UI
 			Conversation.CurrentConversation.SaveToWorkingCopy();
 			
 			// Clear the page view:
-			CurrentControl = null;		
+			SelectedLineControl = null;		
 			LinesPanel.Children.Clear();
 			currentPage.LineControls.Clear();
 								
@@ -386,16 +386,16 @@ namespace AdventureAuthor.Conversations.UI
 				if (currentPage != null) {	
 					Say.Debug("Current page is not null, so continue.");
 					NWN2ConversationConnector parentLine;
-					if (CurrentControl != null) {
+					if (SelectedLineControl != null) {
 						Say.Debug("Selected line exists.");
-						if (!CurrentControl.IsPartOfBranch) {
+						if (!SelectedLineControl.IsPartOfBranch) {
 							Say.Debug("Selected line exists and is not a part of a branch, so identify it as the parent.");
-							parentLine = CurrentControl.Nwn2Line; // add a new line after the current one
+							parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
 						}
 						else {
 							Say.Debug("But was a part of a branch.");
+							return;
 						}
-						return;//TODO TEMP
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						Say.Debug("If a selected line did exist, it was part of a branch. Take the last linecontrol in the page as parent.");
@@ -534,8 +534,8 @@ namespace AdventureAuthor.Conversations.UI
 		
 		public void RemoveLineControl(NWN2ConversationConnector line)
 		{			
-			if (CurrentControl != null && CurrentControl.Nwn2Line == line) {
-				CurrentControl = null;
+			if (SelectedLineControl != null && SelectedLineControl.Nwn2Line == line) {
+				SelectedLineControl = null;
 			}
 			
 			foreach (Control control in LinesPanel.Children) {
@@ -901,7 +901,7 @@ namespace AdventureAuthor.Conversations.UI
 				if (pages != null) {
 					pages.Clear();
 				}
-				CurrentControl = null;
+				SelectedLineControl = null;
 				Conversation.CurrentConversation = null;
 								
 				MainGraph.ClearGraph();					
