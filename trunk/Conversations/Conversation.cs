@@ -73,6 +73,20 @@ namespace AdventureAuthor.Conversations
 		
 		#endregion Constants
 				
+		#region Events	
+		
+		public event EventHandler<ConversationChangedEventArgs> ConversationChanged;
+		
+		protected virtual void OnConversationChanged(ConversationChangedEventArgs e)
+		{
+			EventHandler<ConversationChangedEventArgs> handler = ConversationChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+				
+		#endregion
+		
 		#region Fields
 		
 		private static Conversation currentConversation;		
