@@ -203,6 +203,67 @@ namespace AdventureAuthor.Conversations
 		
 		#endregion Speakers
 		
+		
+		#region Editing lines
+		
+		/// <summary>
+		/// Delete an action from a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="condition">The action to delete</param>
+		public void DeleteAction(NWN2ConversationConnector line, NWN2ScriptFunctor action)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (action == null) {
+				Say.Error("Can't delete a null action.");
+			}
+			else if (!line.Actions.Contains(action)) {
+				Say.Error("Action " + action.Script.FullName + " does not exist on line + " + line.ToString());
+			}
+			else {
+				line.Actions.Remove(action);
+				SaveToWorkingCopy();
+			}
+		}
+		
+				
+		/// <summary>
+		/// Delete all actions on a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		public void DeleteAllActions(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else {
+				line.Actions.Clear();
+				SaveToWorkingCopy();
+			}
+		}
+				
+		
+		/// <summary>
+		/// Delete all conditions on a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		public void DeleteAllConditions(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else {
+				line.Conditions.Clear();
+				SaveToWorkingCopy();
+			}
+		}
+		
+		#endregion
+		
+		
+		
 		#region Editing the conversation
 
 		

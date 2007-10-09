@@ -25,38 +25,35 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NWN2Toolset.NWN2.Data;
-using NWN2Toolset.NWN2.Data.ConversationData;
-using NWN2Toolset.NWN2.Data.TypedCollections;
-using AdventureAuthor.Core;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
-    /// <summary>
-    /// Interaction logic for ConditionControl.xaml
-    /// </summary>
-
+	/// <summary>
+	/// A control representing the condition(s) attached to a particular line of dialogue.
+	/// </summary>
     public partial class ConditionControl : UserControl
     {
+    	/// <summary>
+    	/// The control representing the line of dialogue this condition is attached to.
+    	/// </summary>
     	private LineControl attachedTo;    	
 		public LineControl AttachedTo {
 			get { return attachedTo; }
 			set { attachedTo = value; }
 		}
     	
+    	
+    	/// <summary>
+    	/// Create a new ConditionControl.
+    	/// </summary>
+    	/// <param name="attachedTo">The line that this condition is attached to</param>
+    	/// <remarks>Not necessary to specify a condition because due to issues with generating a natural language
+    	/// description of the boolean logic of multiple conditions, one ConditionControl represents all the conditions
+    	/// on a line. Furthermore, adding more than one condition to a single line is currently blocked.</remarks>
         internal ConditionControl(LineControl attachedTo)
         {
         	InitializeComponent();
@@ -64,12 +61,32 @@ namespace AdventureAuthor.Conversations.UI.Controls
             this.Description.Text = ScriptHelper.GetDescription(attachedTo.Nwn2Line.Conditions);
         }
 
+                
+        /// <summary>
+        /// Launch a window to edit the parameters of an existing condition. 
+        /// </summary>
         private void OnClick_EditConditions(object sender, EventArgs ea)
         {
         	Say.Information("Not implemented. yet.");
-        	// TODO: On returning an OK result from ScriptCards/ScriptWizard, Conversation.CurrentConversation.Dirty = true;
         }
         
+        
+        /// <summary>
+        /// Delete this condition from the line it's attached to.
+        /// </summary>
+        private void OnClick_DeleteConditions(object sender, EventArgs ea)
+        {
+	 		MessageBoxResult result = MessageBox.Show("Delete this condition?","Delete?", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes) {
+	 			Conversation.CurrentConversation.DeleteAllConditions(AttachedTo.Nwn2Line);
+	 			WriterWindow.Instance.RedrawPageView();
+			}	 		
+        }
+        
+        
+        /// <summary>
+        /// Give focus to the parent LineControl.
+        /// </summary>
         private void OnMouseDown(object sender, EventArgs ea)
         {
         	this.attachedTo.Focus();        	

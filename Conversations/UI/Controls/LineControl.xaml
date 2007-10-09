@@ -25,7 +25,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
-	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnGotFocus" LostFocus="OnLostFocus" 
+	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus" 
     MouseDoubleClick="OnClick_GoToPage" Padding="6">
 	
 	<UserControl.Resources>		
@@ -122,8 +122,7 @@
     	
     	<TextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" 
     	         FontSize="22" FontWeight="4" Focusable="true" AcceptsReturn="false"
-    	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4" 
-    	         GotFocus="OnGotFocus" LostFocus="OnLostFocus">
+    	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4">
     		<TextBox.Text>
     			<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>    		
     			<!--<Binding ElementName="SpeakerLabel" Path="Text"></Binding> (works) -->

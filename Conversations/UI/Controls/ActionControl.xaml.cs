@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Windows;
 using System.Windows.Controls;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
@@ -32,34 +33,72 @@ using NWN2Toolset.NWN2.Data;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
-    /// <summary>
-    /// Interaction logic for ActionControl.xaml
-    /// </summary>
-
+	/// <summary>
+	/// A control representing the action attached to a particular line of dialogue.
+	/// </summary>
     public partial class ActionControl : UserControl
     {
-    	private LineControl owner;    	
-		public LineControl Owner {
-			get { return owner; }
-			set { owner = value; }
+    	/// <summary>
+    	/// The control representing the line of dialogue this action is attached to.
+    	/// </summary>
+    	private LineControl attachedTo;    	
+		public LineControl AttachedTo {
+			get { return attachedTo; }
+			set { attachedTo = value; }
 		}
     	
-        internal ActionControl(NWN2ScriptFunctor action, LineControl owner)
+    	/// <summary>
+    	/// The action to represent.
+    	/// </summary>
+    	private NWN2ScriptFunctor action;    	
+		public NWN2ScriptFunctor Action {
+			get { return action; }
+			set { action = value; }
+		}
+    	
+    	
+    	/// <summary>
+    	/// Create a new ActionControl.
+    	/// </summary>
+    	/// <param name="action">The action to represent</param>
+    	/// <param name="attachedTo">The control representing the line of dialogue this action is attached to</param>
+        internal ActionControl(NWN2ScriptFunctor action, LineControl attachedTo)
         {
             InitializeComponent();
-            this.owner = owner;
+            this.action = action;
+            this.attachedTo = attachedTo;
             this.Description.Text = ScriptHelper.GetDescription(action);
         }
 
+        
+        /// <summary>
+        /// Launch a window to edit the parameters of an existing action. 
+        /// </summary>
         private void OnClick_EditAction(object sender, EventArgs ea)
         {
         	Say.Information("Not implemented. yet.");
-        	// TODO: On returning an OK result from ScriptCards/ScriptWizard, Conversation.CurrentConversation.Dirty = true;
         }
         
+        
+        /// <summary>
+        /// Delete this action from the line it's attached to.
+        /// </summary>
+        private void OnClick_DeleteAction(object sender, EventArgs ea)
+        {
+	 		MessageBoxResult result = MessageBox.Show("Delete this action?","Delete?", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes) {
+	 			Conversation.CurrentConversation.DeleteAction(AttachedTo.Nwn2Line,Action);
+	 			WriterWindow.Instance.RedrawPageView();
+			}	 
+        }
+        
+        
+        /// <summary>
+        /// Give focus to the parent LineControl.
+        /// </summary>
         private void OnMouseDown(object sender, EventArgs ea)
         {
-        	this.owner.Focus();        	
+        	this.attachedTo.Focus();        	
         }
     }
 }

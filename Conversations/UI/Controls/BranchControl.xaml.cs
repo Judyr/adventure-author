@@ -124,7 +124,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				
 			WriterWindow.Instance.RedrawGraphView();
 			LineControl newLineControl = WriterWindow.Instance.GetLineControl(newLine);
-			WriterWindow.Instance.FocusOnLine(newLineControl);
+			if (newLineControl == null) {
+				Say.Error("Couldn't find the branch line that was just added.");
+			}
+			else {
+				Say.Debug("Added a branch, now focus on it.");
+				newLineControl.FocusOnMe();
+			}
         }	
         
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
@@ -170,12 +176,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
         	}
 				
-        	// If there is a line remaining above the deleted choice, focus on it:
 			WriterWindow.Instance.RedrawGraphView();
-			if (parentLine != null) {
-				LineControl lineControl = WriterWindow.Instance.GetLineControl(parentLine);
-				WriterWindow.Instance.FocusOnLine(lineControl);
-			}
         }
     }
 }

@@ -265,23 +265,6 @@ namespace AdventureAuthor.Conversations.UI
 			
 			return null;			
 		}
-        
-		
-		/// <summary>
-		/// BROKEN. Focus on a given line control.
-		/// </summary>
-		/// <param name="lineControl"></param>
-		internal void FocusOnLine(LineControl lineControl)
-		{
-			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
-			// something about taking focus away from screen elements maybe?)
-				
-//			MessageBox.Show("try now");
-			
-//			lineControl.Focus();
-					
-			lineControl.Dialogue.Focus();
-		}
 				
         #endregion
         
@@ -384,35 +367,24 @@ namespace AdventureAuthor.Conversations.UI
 			button.Click += delegate 
 			{ 
 				if (currentPage != null) {	
-					Say.Debug("Current page is not null, so continue.");
 					NWN2ConversationConnector parentLine;
-					if (SelectedLineControl != null) {
-						Say.Debug("Selected line exists.");
-						if (!SelectedLineControl.IsPartOfBranch) {
-							Say.Debug("Selected line exists and is not a part of a branch, so identify it as the parent.");
-							parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
-						}
-						else {
-							Say.Debug("But was a part of a branch.");
-							return;
-						}
+					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
+						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
-						Say.Debug("If a selected line did exist, it was part of a branch. Take the last linecontrol in the page as parent.");
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
 					}
 					else { // add a line to the start of the page if there are no other lines
-						Say.Debug("There are no lines on the page - take root as the parent");
 						parentLine = currentPage.LeadInLine; // may be null (for root)
 					}
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
-					Say.Debug("Added a line to the parentline.");
 					
 					DisplayPage(currentPage);
 					RedrawPageView();
 					
 					LineControl newLineControl = GetLineControl(newLine);
-					FocusOnLine(newLineControl);
+					Say.Debug("Added a line, now focus on it.");
+					newLineControl.FocusOnMe();
 				}
 			};
 			SpeakersButtonsPanel.Children.Add(button);
