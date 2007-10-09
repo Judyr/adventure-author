@@ -94,7 +94,7 @@ namespace AdventureAuthor.Conversations.UI
         	else {
         		line.Sound = wav;
         	}
-	    	WriterWindow.Instance.RedrawPageView();
+	    	WriterWindow.Instance.RefreshPageViewOnly();
         	Close();
         }
         

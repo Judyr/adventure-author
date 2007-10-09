@@ -149,13 +149,12 @@ namespace AdventureAuthor.Conversations.UI
 		/// <summary>
 		/// Refresh the page view display for the current page, to take account of changes to the page.
 		/// </summary>
-		internal void RedrawPageView()
+		internal void RefreshPageViewOnly()
 		{
-			// Save any changes that have been made to on-screen controls, since we're about to replace them:
-			Conversation.CurrentConversation.SaveToWorkingCopy();
-			
-			// Clear the page view:
-			SelectedLineControl = null;		
+			if (SelectedLineControl != null) {
+				SelectedLineControl.SaveChangesToText();
+				SelectedLineControl = null;
+			}			
 			LinesPanel.Children.Clear();
 			currentPage.LineControls.Clear();
 								
@@ -271,12 +270,11 @@ namespace AdventureAuthor.Conversations.UI
         #region Graph view   
 				
 		/// <summary>
-		/// Refresh the graph view display for the current conversation, to take account of changes to the graph structure or node labels.
+		/// Refresh both the graph view and the page view to account for changes to the conversation.
 		/// </summary>
-		internal void RedrawGraphView()
+		internal void RefreshBothViews()
 		{					
-			// The structure of the conversation graph has changed, so recreate the entire graph and reset the display:
-			
+			// The structure of the conversation graph has changed, so recreate the entire graph and reset the display:			
 			Page newVersionOfCurrentPage = null;
 			Page newVersionOfPreviousPage = null;
 						
@@ -302,7 +300,8 @@ namespace AdventureAuthor.Conversations.UI
 				ExpandedGraph.Open(pages);
 			}
 				
-			// If the currently viewed page still exists after recreating the graph, display it again; otherwise, display root:				
+			// If the currently viewed page still exists after recreating the graph, display it again; otherwise, display root.
+			// Note that this acts to refresh the page view, and so no separate call to RefreshPageViewOnly() is necessary.
 			if (newVersionOfCurrentPage != null) {
 				DisplayPage(newVersionOfCurrentPage);
 				previousPage = newVersionOfPreviousPage;
@@ -377,11 +376,8 @@ namespace AdventureAuthor.Conversations.UI
 					else { // add a line to the start of the page if there are no other lines
 						parentLine = currentPage.LeadInLine; // may be null (for root)
 					}
-					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag,true);
-					
-					DisplayPage(currentPage);
-					RedrawPageView();
-					
+					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag);
+										
 					LineControl newLineControl = GetLineControl(newLine);
 					Say.Debug("Added a line, now focus on it.");
 					newLineControl.FocusOnMe();
@@ -416,7 +412,7 @@ namespace AdventureAuthor.Conversations.UI
 			currentPage = page;		
 			
 			// Draw the new current page:
-			RedrawPageView();
+			RefreshPageViewOnly();
 			
 			// Select the node and its route in the graph:
 			Node mainNode = MainGraph.GetNode(currentPage);
@@ -606,7 +602,8 @@ namespace AdventureAuthor.Conversations.UI
 				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
 				
-				Conversation.CurrentConversation.ConversationChanged += new EventHandler<ConversationChangedEventArgs>(OnConversationChanged);
+				Conversation.CurrentConversation.ConversationChanged += 
+					new EventHandler<ConversationChangedEventArgs>(WriterWindow_OnConversationChanged);
 			}
 			catch (Exception e) {			
 				if (conv != null) {
@@ -765,19 +762,6 @@ namespace AdventureAuthor.Conversations.UI
 			
 		
 		
-		internal void UpdateTitleBar()
-		{
-			if (Conversation.CurrentConversation == null) {
-				this.Title = "Conversation Writer";
-			}
-			else if (!Conversation.CurrentConversation.IsDirty) {
-				this.Title = this.OriginalFilename + " - Conversation Writer";
-			}
-			else {
-				this.Title = this.OriginalFilename + "* - Conversation Writer";
-			}
-		}
-		
 		// TODO: Write an OnClosing method for form.App, attach it, and see if it gets called by ShutdownToolset
 		
 		
@@ -831,20 +815,34 @@ namespace AdventureAuthor.Conversations.UI
 		}		
     
 		
-		
-		
-		
-		
-		
-		
-    private int x = 0;
-		private void OnConversationChanged(object sender, ConversationChangedEventArgs e)
+
+		private void UpdateTitleBar()
 		{
-			x++;
-			if (x == 1) this.Title = "Conversation has changed 1 time.";
-			else this.Title = "Conversation has changed " + x + " times.";
+			if (Conversation.CurrentConversation == null) {
+				this.Title = "Conversation Writer";
+			}
+			else if (!Conversation.CurrentConversation.IsDirty) {
+				this.Title = this.OriginalFilename + " - Conversation Writer";
+			}
+			else {
+				this.Title = this.OriginalFilename + "* - Conversation Writer";
+			}
+		}
+				
+		
+		
+		private void WriterWindow_OnConversationChanged(object sender, ConversationChangedEventArgs e)
+		{
+			// TODO: Deal with a line control that needs removed first.
 			
+			if (e.GraphOutOfDate) {
+				RefreshBothViews();
+			}
+			else {
+				RefreshPageViewOnly();
+			}
 			
+			UpdateTitleBar();
 		}
     }
 }

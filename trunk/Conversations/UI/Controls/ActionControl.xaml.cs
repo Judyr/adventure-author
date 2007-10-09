@@ -88,7 +88,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	 		MessageBoxResult result = MessageBox.Show("Delete this action?","Delete?", MessageBoxButton.YesNo);
 			if (result == MessageBoxResult.Yes) {
 	 			Conversation.CurrentConversation.DeleteAction(AttachedTo.Nwn2Line,Action);
-	 			WriterWindow.Instance.RedrawPageView();
+	 			WriterWindow.Instance.RefreshPageViewOnly();
 			}	 
         }
         

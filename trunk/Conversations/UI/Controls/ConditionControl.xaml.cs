@@ -79,7 +79,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	 		MessageBoxResult result = MessageBox.Show("Delete this condition?","Delete?", MessageBoxButton.YesNo);
 			if (result == MessageBoxResult.Yes) {
 	 			Conversation.CurrentConversation.DeleteAllConditions(AttachedTo.Nwn2Line);
-	 			WriterWindow.Instance.RedrawPageView();
+	 			WriterWindow.Instance.RefreshPageViewOnly();
 			}	 		
         }
         

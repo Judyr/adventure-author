@@ -34,34 +34,24 @@ namespace AdventureAuthor.Conversations
 	public class ConversationChangedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Whether or not the current page has changed in some way, e.g. a line/action/condition/sound was edited/added/deleted.
+		/// Whether or not the change will require the conversation graph to be redrawn.
 		/// </summary>
-		private bool pageChanged;		
-		public bool PageChanged {
-			get { return pageChanged; }
-		}		
-		
-		/// <summary>
-		/// Whether or not the conversation graph has changed in some way, e.g. a branch was added/deleted,
-		/// or a page's opening line was changed, so that the node representing it needs to be refreshed.
-		/// </summary>
-		private bool graphChanged;
-		public bool GraphChanged {
-			get { return graphChanged; }
+		private bool graphOutOfDate;		
+		public bool GraphOutOfDate {
+			get { return graphOutOfDate; }
 		}
-				
+		
 		
 		/// <summary>
 		/// Create a new ConversationChangedEventArgs.
 		/// </summary>
-		/// <param name="pageChanged">Whether or not the current page has changed in some way, 
-		/// e.g. a line/action/condition/sound was edited/added/deleted.</param>
-		/// <param name="graphChanged">Whether or not the conversation graph has changed in some way, e.g. a branch was added/deleted,
-		/// or a page's opening line was changed, so that the node representing it needs to be refreshed.</param>
-		public ConversationChangedEventArgs(bool pageChanged, bool graphChanged)
+		/// <param name="graphOutOfDate">True if the change to the conversation will require the graph to be redrawn, either
+		/// due to a structural change or due to node labels being outdated; false otherwise</param>
+		/// <remarks>Note that the page view will always be out of date after any change,
+		/// but the graph view will only be out of date after specific changes.</remarks>
+		public ConversationChangedEventArgs(bool graphOutOfDate)
 		{
-			this.pageChanged = pageChanged;
-			this.graphChanged = graphChanged;
+			this.graphOutOfDate = graphOutOfDate;
 		}
 	}
 }

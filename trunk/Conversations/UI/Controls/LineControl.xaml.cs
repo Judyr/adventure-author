@@ -186,11 +186,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         #region Event handlers
         
         /// <summary>
-        /// Save changes made to dialogue - necessary so as not to lose changes to the last line you worked on.
+        /// Save changes made to dialogue, if necessary updating node labels on the graph.
         /// </summary>
         private void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
         {
-        	SaveLine();
+        	SaveChangesToText();
         }
         
         
@@ -203,28 +203,18 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		OnClick_Delete(sender,e);
 		    }
         	if (e.Key == Key.Return) {
-        		SaveLine();
+        		SaveChangesToText();
         	}
         }
         
         
         /// <summary>
-        /// Save changes made to dialogue, and update the node label on the graph if appropriate
+        /// Save changes made to dialogue, so they are not lost when the page view is next refreshed.
         /// </summary>
-        private void SaveLine()
+        internal void SaveChangesToText()
         {
-        	if (Conversation.CurrentConversation != null) {
-	        	this.nwn2Line.Line.Text.Strings[0].Value = Dialogue.Text;
-	        	Conversation.CurrentConversation.SaveToWorkingCopy();
-	        	// Note that the better way to do this would be for the Binding from Dialogue.Text to "LineText"
-	        	// to be OneWayToSource or TwoWay (although no reason why the source itself would change, but better to
-	        	// be safe) and remove this delegate - however for some reason the binding doesn't seem to take.
-	        	// If have time do it properly, but this works for now.
-	        	
-	        	// Redraw the graph to get the new node label (invalidating the node doesn't seem to do it):
-	        	if (IsPartOfBranch) {
-	        		WriterWindow.Instance.RedrawGraphView();
-	        	}
+        	if (Conversation.OEIExoLocStringToString(nwn2Line.Line.Text) != Dialogue.Text) {
+        		Conversation.CurrentConversation.SetTextOfLine(nwn2Line,Dialogue.Text);
         	}
         }
                 
@@ -272,7 +262,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				Say.Information("The line you have selected is already part of a choice.");
 			}
 			else {
-				Conversation.CurrentConversation.MakeLineIntoBranch(Nwn2Line);
+				Conversation.CurrentConversation.MakeLineIntoChoice(Nwn2Line);
 			}
 		}
 		
