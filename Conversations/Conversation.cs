@@ -77,6 +77,7 @@ namespace AdventureAuthor.Conversations
 		#region Events	
 		
 		public event EventHandler<ConversationChangedEventArgs> ConversationChanged;
+		public event EventHandler<EventArgs> ConversationSaved;
 		
 		protected virtual void OnConversationChanged(ConversationChangedEventArgs e)
 		{
@@ -85,6 +86,14 @@ namespace AdventureAuthor.Conversations
 				handler(this,e);
 			}
 		}		
+		
+		protected virtual void OnConversationSaved(EventArgs e) // maybe not?
+		{
+			EventHandler<EventArgs> handler = ConversationSaved;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}	
 		
 		/// <summary>
 		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
@@ -546,6 +555,7 @@ namespace AdventureAuthor.Conversations
 				
 		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
 		{
+			Say.Debug("Ran DeleteLine");
 			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
 				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
 					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
@@ -624,12 +634,12 @@ namespace AdventureAuthor.Conversations
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
 			
-			lock (padlock) {
-				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
-				if (WriterWindow.Instance.SelectedLineControl != null) {
-					WriterWindow.Instance.SelectedLineControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.SelectedLineControl.Dialogue.Text);
-				}
-				
+			// Changes to a line's text are not saved immediately, so save changes before going any further:
+			if (WriterWindow.Instance.SelectedLineControl != null) {
+				WriterWindow.Instance.SelectedLineControl.SaveChangesToText();
+			}
+			
+			lock (padlock) {				
 				NwnConv.OEISerialize(false);
 				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
 				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");

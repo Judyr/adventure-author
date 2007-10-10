@@ -67,7 +67,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         private void OnClick_EditConditions(object sender, EventArgs ea)
         {
-        	Say.Information("Not implemented. yet.");
+        	Say.Information("Not implemented yet.");
+        	
+//        	Conversation.CurrentConversation.ReplaceCondition(AttachedTo.Nwn2Line,AttachedTo.Nwn2Line.Conditions[0],null);
         }
         
         
