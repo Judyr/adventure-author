@@ -99,7 +99,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	this.isPartOfBranch = isPartOfBranch;
         	
         	if (this.nwn2Line.Text.Strings.Count == 0) {
-        		this.nwn2Line.Text = Conversation.StringToOEIExoLocString(String.Empty);
+        		this.nwn2Line.Text = Conversation.GetOEIStringFromString(String.Empty);
         		// TODO: Could just do this to an entire conversation upon opening it to avoid problems?
         	}
         	
@@ -213,7 +213,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         internal void SaveChangesToText()
         {
-        	if (Conversation.OEIExoLocStringToString(nwn2Line.Line.Text) != Dialogue.Text) {
+        	if (Conversation.GetStringFromOEIString(nwn2Line.Line.Text) != Dialogue.Text) {
         		Conversation.CurrentConversation.SetText(nwn2Line,Dialogue.Text);
         	}
         }

@@ -671,8 +671,9 @@ namespace AdventureAuthor.Setup
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
 					WriterWindow.Instance = new WriterWindow();
+					WriterWindow.Instance.ShowDialog();
 				}
-				WriterWindow.Instance.ShowDialog();
+				
 			}
 			catch (Exception e) {
 				Say.Error(e);
@@ -688,8 +689,8 @@ namespace AdventureAuthor.Setup
 			try {
 				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
+					VariablesWindow.Instance.ShowDialog();
 				}
-				VariablesWindow.Instance.ShowDialog();
 			}
 			catch (Exception e) {
 				Say.Error(e);

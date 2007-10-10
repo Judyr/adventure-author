@@ -69,8 +69,16 @@ namespace AdventureAuthor.Conversations
 		public static readonly SolidColorBrush PLAYER_COLOUR = Brushes.Blue;
 		public static readonly SolidColorBrush BRANCH_COLOUR = Brushes.Black;
 		public const string PLAYER_NAME = "Player";
-		public const string NOT_FILLER = "notfiller";
-		public const string FILLER = "filler";
+				
+		/// <summary>
+		/// Set the comment field on a line to this value to identify it as a non-filler line.
+		/// </summary>
+		private const string IDENTIFY_AS_NOT_FILLER = "notfiller";
+				
+		/// <summary>
+		/// Set the comment field on a line to this value to identify it as a filler line.
+		/// </summary>
+		private const string IDENTIFY_AS_FILLER = "filler";
 		
 		#endregion Constants
 				
@@ -81,6 +89,7 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnConversationChanged(ConversationChangedEventArgs e)
 		{
+			Say.Debug("OnConversationChanged event raised.");
 			EventHandler<ConversationChangedEventArgs> handler = ConversationChanged;
 			if (handler != null) {
 				handler(this,e);
@@ -100,6 +109,7 @@ namespace AdventureAuthor.Conversations
 		/// </summary>
 		private void Conversation_OnConversationChanged(object sender, ConversationChangedEventArgs e)
 		{
+			Say.Debug("Conversation_OnConversationChanged()");
 			SaveToWorkingCopy();
 		}
 				
@@ -425,7 +435,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Cannot assign a null string to this line.");
 			}
 			else {
-				line.Line.Text = StringToOEIExoLocString(newText);
+				line.Line.Text = GetOEIStringFromString(newText);
 				
 				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
 				if (line.Parent != null && line.Parent.Line.Children.Count > 1) { 
@@ -557,25 +567,33 @@ namespace AdventureAuthor.Conversations
 		{
 			Say.Debug("Ran DeleteLine");
 			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
+				Say.Debug("Dealing with first line in conversation (must be NPC).");
 				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
+					Say.Debug("Line has no children, so just delete it.");
 					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
 				}
 				else { // otherwise, if the line has children, make it a filler line, since root must always start with an NPC starting entry:
-					Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
-					Nwn2Line.Comment = Conversation.FILLER;						
+					Say.Debug("Line has children, so set it as a filler line.");
+					SetAsFillerLine(Nwn2Line);
 				}				
 			}
 			else {
+				Say.Debug("Not dealing with first line in conversation.");
 				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
+					Say.Debug("Line has no children, so just delete it.");
 					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
 				}
+				// TODO refactor to check more explicitly how many children it has/whether single child is filler etc. - bit ratty.
 				else if (Nwn2Line.Line.Children.Count > 0) { // if the line has children:
+					Say.Debug("Line has children.");
 					NWN2ConversationConnector child = Nwn2Line.Line.Children[0];
-					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:		
+					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:	
+						Say.Debug("Line's child is a filler line.");
 						if (Nwn2Line.Line.Children.Count > 1) {
 							throw new InvalidDataException("A filler line formed part of a choice/check.");
 						}
 						else {
+							Say.Debug("Give all of the line's child's children to the line's parent, and remove the child and the line.");
 							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
 							foreach (NWN2ConversationConnector lineToBeReparented in child.Line.Children) {
 								linesToBeReparented.Add(lineToBeReparented);
@@ -590,7 +608,9 @@ namespace AdventureAuthor.Conversations
 						}
 					}
 					else { // if there is more than one child, or the single child is not a filler line:
+						Say.Debug("Line has more than one child, or the single child is not a filler line.");
 						if (IsFiller(Nwn2Line.Parent)) { // if the single child is a real line and the parent is a filler line, give the child to line.Parent.Parent:
+							Say.Debug("The child is a non-filler line and the parent is a filler line, so give the child to line.Parent.Parent, and remove the parent and the line.");
 							NWN2ConversationLine newParent;
 							if (Nwn2Line.Parent.Parent == null) {
 								newParent = null; // special case if the grandparent is root
@@ -608,11 +628,11 @@ namespace AdventureAuthor.Conversations
 							}	
 														
 							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);						
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line.Parent);		 // delete the line and its parent
+							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line.Parent); // delete the line and its parent
 						}
 						else { // if the child(ren) and parent are real lines, make line a filler line:
-							Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
-							Nwn2Line.Comment = Conversation.FILLER;	
+							Say.Debug("Both the children and the parent are real lines, so make the current line into a filler line.");
+							SetAsFillerLine(Nwn2Line);	
 						}						
 					}
 				}
@@ -626,7 +646,7 @@ namespace AdventureAuthor.Conversations
 		#region Saving
 		
 		/// <summary>
-		/// Save any changes to the conversation to disk.
+		/// Save the current working copy as the master copy.
 		/// </summary>
 		public void SaveToOriginal()
 		{
@@ -660,6 +680,14 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {
 				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
+				
+				//TODO : TEMP:
+				foreach (NWN2ConversationConnector line in this.nwnConv.AllConnectors) {
+					bool isFiller = IsFiller(line);
+					if (isFiller) Say.Debug("Filler: " + line.ToString());
+					else Say.Debug("Nonfil: " + line.ToString());
+				}
+				
 				isDirty = true;
 				Say.Debug("Saved to working copy.");
 			}
@@ -709,7 +737,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				children = parent.Line.Children;				
-				string text = OEIExoLocStringToString(parent.Line.Text);
+				string text = GetStringFromOEIString(parent.Line.Text);
 				if (text.Length > 0) {
 					words += WordCount(text);
 					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
@@ -724,24 +752,9 @@ namespace AdventureAuthor.Conversations
 				
 			return totalCounts;
 		}
-		
-		public static bool IsFiller(NWN2ConversationConnector line)
-		{
-			if (line.Comment == Conversation.FILLER) {
-				if (line.Text.Strings.Count > 0 && line.Text.Strings[0].Value.Length > 0) {
-					throw new InvalidDataException("Line is marked as 'filler', but contains text and will therefore be displayed.");
-				}
-				else {
-					return true;
-				}
-			}
-			else {
-				return false;
-			}
-		}
 				
-		public static OEIExoLocString StringToOEIExoLocString(string text)
-		{
+		public static OEIExoLocString GetOEIStringFromString(string text)
+		{			
 			OEIExoLocString str = new OEIExoLocString();
 			OEIExoLocSubString substr = new OEIExoLocSubString();
 			substr.Value = text;
@@ -749,7 +762,7 @@ namespace AdventureAuthor.Conversations
 			return str;
 		}
 		
-		public static string OEIExoLocStringToString(OEIExoLocString text)
+		public static string GetStringFromOEIString(OEIExoLocString text)
 		{
 			if (text.Strings.Count == 0) {
 				return String.Empty;
@@ -784,7 +797,7 @@ namespace AdventureAuthor.Conversations
 			int pages = 0;
 			
 			foreach (NWN2ConversationConnector parent in parents) {
-				string text = OEIExoLocStringToString(parent.Line.Text);
+				string text = GetStringFromOEIString(parent.Line.Text);
 				if (text.Length > 0) {
 					words += WordCount(text);
 					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
@@ -846,7 +859,7 @@ namespace AdventureAuthor.Conversations
 				if (children.Count > 0) { // shouldn't happen as we are at the end of the page
 					NWN2ConversationConnectorCollection childrenToRemove = new NWN2ConversationConnectorCollection();
 					foreach (NWN2ConversationConnector child in children) {
-						if (child.Comment != Conversation.FILLER) {
+						if (!IsFiller(child)) {
 							throw new InvalidOperationException("The line at the end of the page had non-filler lines as children.");
 						}		
 						childrenToRemove.Add(child);
@@ -891,7 +904,7 @@ namespace AdventureAuthor.Conversations
 		private NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
 		{
 			NWN2ConversationConnector newLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
-			newLine.Comment = Conversation.NOT_FILLER;
+			SetAsNotFillerLine(newLine);
 			newLine.Speaker = speakerTag;
 			newLine.Sound = null;
 			return newLine;
@@ -900,9 +913,7 @@ namespace AdventureAuthor.Conversations
 		private NWN2ConversationConnector InsertFillerLineWithoutReparenting(NWN2ConversationConnector parentLine)
 		{
 			NWN2ConversationConnector fillerLine = Conversation.CurrentConversation.nwnConv.InsertChild(parentLine);
-			fillerLine.Comment = Conversation.FILLER;
-			fillerLine.Speaker = String.Empty;
-			fillerLine.Sound = null;
+			SetAsFillerLine(fillerLine);
 			return fillerLine;
 		}
 		
@@ -949,7 +960,7 @@ namespace AdventureAuthor.Conversations
 				}
 			}
 			
-			newLine.Comment = Conversation.NOT_FILLER;
+			SetAsNotFillerLine(newLine);
 			return newLine;
 		}			
 				
@@ -970,8 +981,7 @@ namespace AdventureAuthor.Conversations
 		
 			if (addFillerBeforeNewLine) {
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent);
-				fillerLine.Comment = Conversation.FILLER;
-				fillerLine.Sound = null;
+				SetAsFillerLine(fillerLine);
 				newLine = Conversation.CurrentConversation.NwnConv.InsertChild(fillerLine);						
 			}
 			else {
@@ -998,8 +1008,7 @@ namespace AdventureAuthor.Conversations
 			
 			if (fillerLine == null) { // create a fillerLine between newLine and newLine's children
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(newLine);
-				fillerLine.Comment = Conversation.FILLER;
-				fillerLine.Sound = null;
+				SetAsFillerLine(fillerLine);
 				newParent = fillerLine;
 				childToIgnore = newLine;
 			}
@@ -1020,6 +1029,91 @@ namespace AdventureAuthor.Conversations
 		
 		#endregion
 			
+		#region Filler lines
+						
+		/// <summary>
+		/// Check whether a given line is marked as a filler line.
+		/// </summary>		
+		/// <remarks>Invisible filler lines are necessary to overcome the NWN2 restriction that a player or NPC
+		/// have to take turns to speak (rather than being able to say two lines in a row).</remarks>
+		/// <param name="line">The line of dialogue to check</param>
+		/// <returns>True if this line has been identified as a filler line; false otherwise.</returns>
+		/// <exception cref="InvalidDataException">Thrown if a filler line illegally contains text, or if
+		/// the identifier is invalid.</exception>
+		public static bool IsFiller(NWN2ConversationConnector line)
+		{
+			if (line.Comment == Conversation.IDENTIFY_AS_FILLER) {
+				string text = GetStringFromOEIString(line.Text);
+				if (text.Length > 0) {
+					throw new InvalidDataException("Line is marked as 'filler', but contains text - '" 
+					                               + text + "' - and will therefore be displayed.");
+				}
+				else {
+					return true;
+				}
+			}
+			else if (line.Comment == null || line.Comment == String.Empty || line.Comment == Conversation.IDENTIFY_AS_NOT_FILLER) {
+				return false;
+			}
+			else {
+				throw new InvalidDataException(line.ToString() + " has an invalid comment field: " + line.Comment.ToString() + "." +
+				                               "Comment field is reserved to identify lines as filler or non-filler.");
+			}
+		}
+		
+		
+		/// <summary>
+		/// Identify the given line as a filler line, so that it is invisible to the user.
+		/// </summary>
+		/// <remarks>Invisible filler lines are necessary to overcome the NWN2 restriction that a player or NPC
+		/// have to take turns to speak (rather than being able to say two lines in a row).</remarks>
+		/// <param name="line">The line of dialogue to set as a filler line</param>
+		private void SetAsFillerLine(NWN2ConversationConnector line)
+		{		
+			if (line == null) {
+				throw new ArgumentNullException("Can't operate on a null line.");
+			}
+			
+			Say.Debug("Initial value of line: " + GetStringFromOEIString(line.Text));
+			line.Comment = IDENTIFY_AS_FILLER;
+			SetText(line,String.Empty);	
+			Say.Debug("New value of line: " + GetStringFromOEIString(line.Text));
+			
+			if (line.Speaker != String.Empty) {
+				line.Speaker = String.Empty;
+			}
+			if (line.Sound != null) {
+				line.Sound = null;
+			}
+			if (line.Actions.Count > 0) {
+				line.Actions.Clear();
+			}
+			if (line.Conditions.Count > 0) {
+				line.Conditions.Clear();
+			}
+			// TODO - also set camera info, not sure how to do this yet
+		}
+				
+		
+		/// <summary>
+		/// Identify the given line as a non-filler line, so that it is visible to the user. 
+		/// </summary>
+		/// <remarks>This is necessary to make the distinction between a blank line that the player has added
+		/// (and thus wants to interact with) and a blank line that the software has added to deal with
+		/// restrictions in conversation structure (which should be invisible).</remarks>
+		/// <param name="line">The line of dialogue to set as a non-filler line</param>
+		private void SetAsNotFillerLine(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				throw new ArgumentNullException("Can't operate on a null line.");
+			}
+			
+			line.Comment = IDENTIFY_AS_NOT_FILLER;
+		}
+		
+		#endregion
+		
+		
 		#endregion
 	}
 }

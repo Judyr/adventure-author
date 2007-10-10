@@ -153,7 +153,15 @@ namespace AdventureAuthor.Conversations.UI
 		/// </summary>
 		private void RefreshPageViewOnly()
 		{
-			if (SelectedLineControl != null) {
+			Say.Debug("RefreshPageViewOnly()");
+			
+			// Save any changes to the currently selected line before clearing the page, but NOT
+			// if it's a filler line - this can happen when the selected line is 'deleted' and the software
+			// chooses to turn it into an invisible filler line rather than actually deleting it. In these
+			// circumstances the LineControl needs to be ignored until the page is cleared and repopulated,
+			// at which point the LineControl will not be recreated. Otherwise, it will save the text of the
+			// LineControl to what is now a filler line, causing problems. 
+			if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
 				SelectedLineControl.SaveChangesToText();
 				SelectedLineControl = null;
 			}			
@@ -172,6 +180,7 @@ namespace AdventureAuthor.Conversations.UI
 			// Display each line of dialogue until the page branches or the conversation ends:
 			while (possibleNextLines.Count == 1) {
 				NWN2ConversationConnector currentLine = possibleNextLines[0];
+				Say.Debug("About to check if the next line is a filler line.");
 				if (!Conversation.IsFiller(currentLine)) {
 					ShowLine(currentLine);
 				}
@@ -805,6 +814,8 @@ namespace AdventureAuthor.Conversations.UI
 		private void WriterWindow_OnConversationChanged(object sender, ConversationChangedEventArgs e)
 		{
 			// TODO: Deal with a line control that needs removed first.
+			
+			Say.Debug("WriterWindow_OnConversationChanged()");
 			
 			if (e.GraphOutOfDate) {
 				RefreshBothViews();
