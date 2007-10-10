@@ -84,34 +84,45 @@ namespace AdventureAuthor.Conversations
 				
 		#region Events	
 		
-		public event EventHandler<ConversationChangedEventArgs> ConversationChanged;
-		public event EventHandler<EventArgs> ConversationSaved;
+		public event EventHandler<ConversationChangedEventArgs> Changed;
+		public event EventHandler<EventArgs> Saved;
+		public event EventHandler<SpeakerAddedEventArgs> SpeakerAdded;
 		
-		protected virtual void OnConversationChanged(ConversationChangedEventArgs e)
+		protected virtual void OnChanged(ConversationChangedEventArgs e)
 		{
-			Say.Debug("OnConversationChanged event raised.");
-			EventHandler<ConversationChangedEventArgs> handler = ConversationChanged;
+			Say.Debug("OnChanged event raised.");
+			EventHandler<ConversationChangedEventArgs> handler = Changed;
 			if (handler != null) {
 				handler(this,e);
 			}
 		}		
 		
-		protected virtual void OnConversationSaved(EventArgs e) // maybe not?
+		protected virtual void OnSaved(EventArgs e)
 		{
-			EventHandler<EventArgs> handler = ConversationSaved;
+			Say.Debug("OnSaved event raised.");
+			EventHandler<EventArgs> handler = Saved;
 			if (handler != null) {
 				handler(this,e);
 			}
-		}	
+		}		
 		
+		protected virtual void OnSpeakerAdded(SpeakerAddedEventArgs e)
+		{
+			Say.Debug("OnSpeakersAdded event raised.");
+			EventHandler<SpeakerAddedEventArgs> handler = SpeakerAdded;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}		
+				
 		/// <summary>
 		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
 		/// </summary>
-		private void Conversation_OnConversationChanged(object sender, ConversationChangedEventArgs e)
+		private void Conversation_OnChanged(object sender, ConversationChangedEventArgs e)
 		{
-			Say.Debug("Conversation_OnConversationChanged()");
+			Say.Debug("Conversation_OnChanged()");
 			SaveToWorkingCopy();
-		}
+		}		
 				
 		#endregion
 		
@@ -172,7 +183,7 @@ namespace AdventureAuthor.Conversations
 			this.unassignedColours.Add(Brushes.DarkGreen); 
 			this.unassignedColours.Add(Brushes.Brown);
 			isDirty = false;
-			this.ConversationChanged += new EventHandler<ConversationChangedEventArgs>(Conversation_OnConversationChanged);
+			this.Changed += new EventHandler<ConversationChangedEventArgs>(Conversation_OnChanged);
 		}
 		
 		#endregion Constructors
@@ -193,7 +204,7 @@ namespace AdventureAuthor.Conversations
 				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
-				WriterWindow.Instance.CreateButtonForSpeaker(speaker);
+				OnSpeakerAdded(new SpeakerAddedEventArgs(speaker));
 				return speaker;
 			}
 			else {
@@ -201,6 +212,7 @@ namespace AdventureAuthor.Conversations
 				return existingSpeaker;
 			}
 		}
+		
 		
 		/// <summary>
 		/// Get the speaker with a given tag, if one exists.
@@ -216,6 +228,7 @@ namespace AdventureAuthor.Conversations
 			}
 			return null;
 		}
+		
 		
 		/// <summary>
 		/// Assign a unique UI colour to a speaker, or black if all unique colours have been assigned.
@@ -255,7 +268,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Add(action);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}			
 		
@@ -278,7 +291,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Conditions.Add(condition);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}	
 		
@@ -301,7 +314,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Remove(action);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}		
 		
@@ -317,7 +330,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Actions.Clear();
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 				
@@ -333,7 +346,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Conditions.Clear();
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 		
@@ -356,7 +369,7 @@ namespace AdventureAuthor.Conversations
 			}
 			else {
 				line.Conditions.Remove(condition);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}
 			
@@ -365,7 +378,7 @@ namespace AdventureAuthor.Conversations
 		public void SetCameraAngle(NWN2ConversationConnector line)
 		{
 			throw new NotImplementedException();
-			OnConversationChanged(new ConversationChangedEventArgs(false));
+			OnChanged(new ConversationChangedEventArgs(false));
 		}		
 		
 
@@ -390,7 +403,7 @@ namespace AdventureAuthor.Conversations
 			else {
 				line.Actions.Remove(originalAction);
 				line.Actions.Add(newAction);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}	
 		
@@ -416,7 +429,7 @@ namespace AdventureAuthor.Conversations
 			else {
 				line.Conditions.Remove(originalCondition);
 				line.Conditions.Add(newCondition);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}	
 		
@@ -439,10 +452,10 @@ namespace AdventureAuthor.Conversations
 				
 				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
 				if (line.Parent != null && line.Parent.Line.Children.Count > 1) { 
-					OnConversationChanged(new ConversationChangedEventArgs(true));
+					OnChanged(new ConversationChangedEventArgs(true));
 				}
 				else {
-					OnConversationChanged(new ConversationChangedEventArgs(false));
+					OnChanged(new ConversationChangedEventArgs(false));
 				}
 			}
 		}
@@ -460,7 +473,7 @@ namespace AdventureAuthor.Conversations
         	}
 			else {
 				line.Sound = sound; // valid for this to be null
-				OnConversationChanged(new ConversationChangedEventArgs(false));
+				OnChanged(new ConversationChangedEventArgs(false));
 			}
         }
 	        
@@ -494,7 +507,7 @@ namespace AdventureAuthor.Conversations
 				}
 			}
 			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
-			OnConversationChanged(new ConversationChangedEventArgs(true));
+			OnChanged(new ConversationChangedEventArgs(true));
 			return createdLine;
 		}
 		
@@ -510,7 +523,7 @@ namespace AdventureAuthor.Conversations
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
 			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
-			OnConversationChanged(new ConversationChangedEventArgs(false));
+			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
 		}
 		
@@ -527,7 +540,7 @@ namespace AdventureAuthor.Conversations
         	else { // deleting the root choice, hence deleting the entire conversation
         		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
         	}
-        	OnConversationChanged(new ConversationChangedEventArgs(true));
+        	OnChanged(new ConversationChangedEventArgs(true));
 		}
 		
 		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector Nwn2Line)
@@ -559,7 +572,7 @@ namespace AdventureAuthor.Conversations
 				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
         	} 
 			
-			OnConversationChanged(new ConversationChangedEventArgs(true));
+			OnChanged(new ConversationChangedEventArgs(true));
 			return children;
 		}
 				
@@ -638,7 +651,7 @@ namespace AdventureAuthor.Conversations
 				}
 			}
 			
-			OnConversationChanged(new ConversationChangedEventArgs(false));
+			OnChanged(new ConversationChangedEventArgs(false));
 		}	
 		
 		#endregion
@@ -655,7 +668,7 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			// Changes to a line's text are not saved immediately, so save changes before going any further:
-			if (WriterWindow.Instance.SelectedLineControl != null) {
+			if (WriterWindow.Instance.SelectedLineControl != null && !IsFiller(WriterWindow.Instance.SelectedLineControl.Nwn2Line)) {
 				WriterWindow.Instance.SelectedLineControl.SaveChangesToText();
 			}
 			
@@ -665,6 +678,7 @@ namespace AdventureAuthor.Conversations
 				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
 				isDirty = false;
+				OnSaved(new EventArgs());
 			}
 		}
 		
@@ -679,15 +693,7 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			lock (padlock) {
-				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
-				
-				//TODO : TEMP:
-				foreach (NWN2ConversationConnector line in this.nwnConv.AllConnectors) {
-					bool isFiller = IsFiller(line);
-					if (isFiller) Say.Debug("Filler: " + line.ToString());
-					else Say.Debug("Nonfil: " + line.ToString());
-				}
-				
+				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ?				
 				isDirty = true;
 				Say.Debug("Saved to working copy.");
 			}
@@ -828,7 +834,7 @@ namespace AdventureAuthor.Conversations
 		public void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			OnConversationChanged(new ConversationChangedEventArgs(true));
+			OnChanged(new ConversationChangedEventArgs(true));
 		}
 		
 		
@@ -893,7 +899,7 @@ namespace AdventureAuthor.Conversations
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-				OnConversationChanged(new ConversationChangedEventArgs(true));
+				OnChanged(new ConversationChangedEventArgs(true));
         	}
         	catch (InvalidOperationException) {
         		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");

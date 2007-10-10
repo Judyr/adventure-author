@@ -343,57 +343,7 @@ namespace AdventureAuthor.Conversations.UI
         #endregion
         
         #region Writer window        
-
-		internal void CreateButtonForSpeaker(Speaker speaker)
-		{
-			Button button = new Button();
-			button.Margin = new Thickness(2);
-			TextBlock textBlock = new TextBlock();
-			TextBlock tb0 = new TextBlock();
-			TextBlock tb1 = new TextBlock();
-			TextBlock tb2 = new TextBlock();
-			tb0.FontSize = 26;
-			tb1.FontSize = 26;
-			tb2.FontSize = 26;
-			tb0.Foreground = Brushes.Black;
-			tb1.Foreground = speaker.Colour;
-			tb2.Foreground = Brushes.Black;
-			if (speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(speaker.Name)) {
-				tb0.Text = "Add an ";
-			}
-			else {
-				tb0.Text = "Add a ";
-			}
-			tb1.Text = speaker.Name.ToUpper();
-			tb2.Text = " line";
-			textBlock.Inlines.Add(tb0);
-			textBlock.Inlines.Add(tb1);
-			textBlock.Inlines.Add(tb2);
-			button.Content = textBlock;			
-			
-			button.Click += delegate 
-			{ 
-				if (currentPage != null) {	
-					NWN2ConversationConnector parentLine;
-					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
-						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
-					}
-					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
-						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
-					}
-					else { // add a line to the start of the page if there are no other lines
-						parentLine = currentPage.LeadInLine; // may be null (for root)
-					}
-					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,speaker.Tag);
-										
-					LineControl newLineControl = GetLineControl(newLine);
-					Say.Debug("Added a line, now focus on it.");
-					newLineControl.FocusOnMe();
-				}
-			};
-			SpeakersButtonsPanel.Children.Add(button);
-		}	
-		        
+   
         
         #endregion
 
@@ -579,8 +529,13 @@ namespace AdventureAuthor.Conversations.UI
 				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
 				
-				Conversation.CurrentConversation.ConversationChanged += 
-					new EventHandler<ConversationChangedEventArgs>(WriterWindow_OnConversationChanged);
+				// Add event handlers:
+				Conversation.CurrentConversation.Changed += 
+					new EventHandler<ConversationChangedEventArgs>(WriterWindow_OnChanged);
+				Conversation.CurrentConversation.SpeakerAdded += 
+					new EventHandler<SpeakerAddedEventArgs>(WriterWindow_OnSpeakerAdded);
+				Conversation.CurrentConversation.Saved += 
+					new EventHandler<EventArgs>(WriterWindow_OnSaved);
 			}
 			catch (Exception e) {			
 				if (conv != null) {
@@ -621,7 +576,7 @@ namespace AdventureAuthor.Conversations.UI
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);	
 			CentreGraph(true);
-			UpdateTitleBar();
+			SetTitleBar();
 			
 			return true;
 		}		
@@ -752,7 +707,7 @@ namespace AdventureAuthor.Conversations.UI
 				File.Delete(workingFilePath);
 				this.workingFilename = null;
 				this.originalFilename = null;
-				UpdateTitleBar();
+				SetTitleBar();
 				currentPage = null;
 				if (pages != null) {
 					pages.Clear();
@@ -793,7 +748,7 @@ namespace AdventureAuthor.Conversations.UI
     
 		
 
-		private void UpdateTitleBar()
+		private void SetTitleBar()
 		{
 			if (Conversation.CurrentConversation == null) {
 				this.Title = "Conversation Writer";
@@ -806,23 +761,90 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}
 				
-		
-		
-		private void WriterWindow_OnConversationChanged(object sender, ConversationChangedEventArgs e)
+			
+		/// <summary>
+		/// Refresh the page and graph views as needed, and update the title bar to reflect that the working copy has changes.
+		/// </summary>
+		private void WriterWindow_OnChanged(object sender, ConversationChangedEventArgs e)
 		{
-			// TODO: Deal with a line control that needs removed first.
-			
-			Say.Debug("WriterWindow_OnConversationChanged()");
-			
 			if (e.GraphOutOfDate) {
 				RefreshBothViews();
 			}
 			else {
 				RefreshPageViewOnly();
+			}		
+			
+			SetTitleBar();
+		}
+		
+		
+		/// <summary>
+		/// Update the title bar to reflect that the working copy is up to date.
+		/// </summary>
+		private void WriterWindow_OnSaved(object sender, EventArgs e)
+		{
+			SetTitleBar();
+		}
+		
+		
+		/// <summary>
+		/// Create a button on the interface that allows user to add lines of dialogue by the newly added speaker.
+		/// </summary>
+		private void WriterWindow_OnSpeakerAdded(object sender, SpeakerAddedEventArgs e)
+		{
+			if (e.Speaker == null) {
+				Say.Error("Can't add a null speaker.");
+				return;
 			}
 			
-			UpdateTitleBar();
-		}
+			Button button = new Button();
+			button.Margin = new Thickness(2);
+			TextBlock textBlock = new TextBlock();
+			TextBlock tb0 = new TextBlock();
+			TextBlock tb1 = new TextBlock();
+			TextBlock tb2 = new TextBlock();
+			tb0.FontSize = 24;
+			tb1.FontSize = 24;
+			tb2.FontSize = 24;
+			tb0.Foreground = Brushes.Black;
+			tb1.Foreground = e.Speaker.Colour;
+			tb2.Foreground = Brushes.Black;
+			if (e.Speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(e.Speaker.Name)) {
+				tb0.Text = "Add an ";
+			}
+			else {
+				tb0.Text = "Add a ";
+			}
+			tb1.Text = e.Speaker.Name.ToUpper();
+			tb2.Text = " line";
+			textBlock.Inlines.Add(tb0);
+			textBlock.Inlines.Add(tb1);
+			textBlock.Inlines.Add(tb2);
+			button.Content = textBlock;			
+			
+			button.Click += delegate 
+			{ 
+				if (currentPage != null) {	
+					NWN2ConversationConnector parentLine;
+					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
+						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
+					}
+					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
+						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
+					}
+					else { // add a line to the start of the page if there are no other lines
+						parentLine = currentPage.LeadInLine; // may be null (for root)
+					}
+					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
+										
+					LineControl newLineControl = GetLineControl(newLine);
+					Say.Debug("Added a line, now focus on it.");
+					newLineControl.FocusOnMe();
+				}
+			};
+			
+			SpeakersButtonsPanel.Children.Add(button);
+		}	
     }
 }
 		

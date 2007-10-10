@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using AdventureAuthor;
@@ -42,8 +43,17 @@ namespace AdventureAuthor.Conversations.UI
     {
         public AddRemoveSpeakersWindow()
         {
-            InitializeComponent();   
-            AnswerBox.ItemsSource = ScriptHelper.GetTags(ScriptHelper.ObjectType.Creature);
+            InitializeComponent();
+            
+            // Populate list of possible speakers with all creatures in module except for those already in the conversation:
+            List<string> allSpeakers = ScriptHelper.GetTags(ScriptHelper.ObjectType.Creature);
+            foreach (Speaker speaker in Conversation.CurrentConversation.Speakers) {
+            	if (allSpeakers.Contains(speaker.Tag)) {
+            		allSpeakers.Remove(speaker.Tag);
+            	}
+            }
+            
+            AnswerBox.ItemsSource = allSpeakers;
         }
 
         private void OnClick_AddSpeaker(object sender, EventArgs ea)
