@@ -52,7 +52,7 @@ namespace AdventureAuthor.Conversations.UI
         		            Adventure.CurrentAdventure.Name + "' - try another name.");
         	}
         	else if (!Adventure.IsValidName(name)) {
-				Say.Information("The name '" + name + "' is invalid. Adventure names " + 
+				Say.Information("The name '" + name + "' is invalid. Conversation names " + 
 				        	    "must not contain the following characters ('<', '>', ':', '\', '\"', '/', '|', '.') " +
 				          		"and must be between 1 and 32 characters in length. Try another name.");
         	}

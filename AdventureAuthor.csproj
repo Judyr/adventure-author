@@ -89,6 +89,7 @@
     <Compile Include="Conversations\ConversationChangedEventArgs.cs" />
     <Compile Include="Conversations\Page.cs" />
     <Compile Include="Conversations\Speaker.cs" />
+    <Compile Include="Conversations\SpeakersChangedEventArgs.cs" />
     <Compile Include="Conversations\UI\AddRemoveSpeakersWindow.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
