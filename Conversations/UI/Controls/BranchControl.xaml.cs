@@ -120,7 +120,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         public void OnClick_AddBranch(object sender, EventArgs ea)
         {
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
-        	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToBranch(parentLine);
+        	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToChoice(parentLine);
 				
 			LineControl newLineControl = WriterWindow.Instance.GetLineControl(newLine);
 			if (newLineControl == null) {
@@ -144,7 +144,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	if (!Adventure.BeQuiet) { 	
-        		Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(children);
+        		Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(children);
         		
         		StringBuilder warning = new StringBuilder();
         		
@@ -167,15 +167,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		}
         	}
         	
-        	// Clear the children of the choice's parent line:
-        	if (parentLine != null) {
-        		parentLine.Line.Children.Clear();
-        	}
-        	else { // deleting the root choice, hence deleting the entire conversation
-        		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
-        	}
-				
-			WriterWindow.Instance.RefreshBothViews();
+        	Conversation.CurrentConversation.DeleteEntireChoice(parentLine);
         }
     }
 }

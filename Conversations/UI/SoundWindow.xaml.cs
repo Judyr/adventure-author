@@ -89,12 +89,12 @@ namespace AdventureAuthor.Conversations.UI
         	}
         	
         	if (wav.ResRef.Value == "<no sound>") {
-        		line.Sound = null;
+        		Conversation.CurrentConversation.SetSound(line,null);
         	}
         	else {
-        		line.Sound = wav;
+        		Conversation.CurrentConversation.SetSound(line,wav);
         	}
-	    	WriterWindow.Instance.RefreshPageViewOnly();
+        	
         	Close();
         }
         
