@@ -61,52 +61,57 @@ namespace AdventureAuthor.Core
 		#region Global variables
 		
 		private static Adventure currentAdventure = null;
-		private static User currentUser = new User("Anonymous");		
+		private static User currentUser = new User("Anon");		
 		private static bool beQuiet = false;
 		private static bool doBackups = true;
-		private static string adventureAuthorDir = @"C:\AdventureAuthor\";
-		private static string backupDir = Path.Combine(adventureAuthorDir,"backups");
-		private static string debugDir = Path.Combine(adventureAuthorDir,"debugs");			
-		private static string serializedDir = Path.Combine(adventureAuthorDir,"serialized");
-		private static string logDir = Path.Combine(adventureAuthorDir,"logs");
+		private static readonly string adventureAuthorDir = @"C:\AdventureAuthor\"; // TODO make settable
+		private static readonly string backupDir = Path.Combine(adventureAuthorDir,"backups");
+		private static readonly string debugDir = Path.Combine(adventureAuthorDir,"debugs");
+		private static readonly string imagesDir = Path.Combine(adventureAuthorDir,"images");			
+		private static readonly string logDir = Path.Combine(adventureAuthorDir,"logs");		
+		private static readonly string serializedDir = Path.Combine(adventureAuthorDir,"serialized");
 		
 		public static Adventure CurrentAdventure {
 			get { return currentAdventure; }
 		}
 		
-		public static bool BeQuiet { //get; set; } automatic properties - doesn't seem to work?
+		public static bool BeQuiet {
 			get	{ return beQuiet; }
 			set	{ beQuiet = value; } 
 		}
 		
-		public static bool DoBackups { //get; set; }
+		public static bool DoBackups {
 			get { return doBackups; }
 			set { doBackups = value; }
 		}
 		
-		public static string AdventureAuthorDir {
+		internal static string AdventureAuthorDir {
 			get { return adventureAuthorDir; }
 		}	
 		
-		public static string BackupDir {
+		internal static string BackupDir {
 			get { return backupDir; }
 		}		
 		
-		public static string DebugDir {
+		internal static string DebugDir {
 			get { return debugDir; }
 		}
+				
+		internal static string ImagesDir {
+			get { return imagesDir; }
+		}
 		
-		public static string SerializedDir {
+		internal static string LogDir {
+			get { return logDir; }
+		}
+		
+		internal static string SerializedDir {
 			get { return serializedDir; }
 		}	
 				
 		public static User CurrentUser {
 			get { return currentUser; }
 		}				
-		
-		public static string LogDir {
-			get { return logDir; }
-		}
 		
 		#endregion Global variables
 				

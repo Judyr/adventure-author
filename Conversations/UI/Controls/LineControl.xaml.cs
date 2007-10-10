@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -104,7 +105,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
-        	InitializeComponent();               	
+        	InitializeComponent();      
+            
+        	// Set the image on the delete button:
+            Image image = new Image();
+            ImageSourceConverter s = new ImageSourceConverter();
+            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"delete.jpg"));            
+            DeleteLineButton.Content = image;            	
         	
         	// Set the appearance of the control based on who is speaking:
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);
