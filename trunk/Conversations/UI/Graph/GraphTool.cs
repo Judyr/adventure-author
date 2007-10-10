@@ -38,7 +38,10 @@ namespace AdventureAuthor.Conversations.UI.Graph
             {        
             	bool centreGraph = e.Clicks == 2 ? true : false; // only centre on double-click
             	Selection.CollectEntitiesAt(e.Location);
-            	foreach (IDiagramEntity entity in Selection.SelectedItems) {
+            	foreach (IDiagramEntity entity in Selection.SelectedItems) { 
+            		// TODO Raised Exception (collection was modified, cannot enumerate)
+            		//, but don't know where it was modified? doesn't seem to have been by me. Only raised on double click 
+            		// seemingly
             		Node node = entity as Node;
             		if (node != null) {
             			WriterWindow.Instance.DisplayPage(node.Page);

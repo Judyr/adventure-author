@@ -36,6 +36,7 @@ using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using OEIShared.Utils;
+using OEIShared.IO;
 
 namespace AdventureAuthor.Conversations
 {
@@ -83,6 +84,14 @@ namespace AdventureAuthor.Conversations
 			if (handler != null) {
 				handler(this,e);
 			}
+		}		
+		
+		/// <summary>
+		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
+		/// </summary>
+		private void Conversation_OnConversationChanged(object sender, ConversationChangedEventArgs e)
+		{
+			SaveToWorkingCopy();
 		}
 				
 		#endregion
@@ -113,16 +122,13 @@ namespace AdventureAuthor.Conversations
 			get { return speakers; }
 		}
 		
+		/// <summary>
+		/// Whether or not a change has been made to the conversation since the last save.
+		/// </summary>
 		private bool isDirty;		
 		public bool IsDirty {
 			get { return isDirty; }
 		}		
-		
-//		private DependencyProperty isDirtyProperty = DependencyProperty.Register("IsDirty",typeof(bool),typeof(Conversation));
-//		public bool IsDirty {
-//			get { return (bool)GetValue(isDirtyProperty); }
-//			private set { SetValue(isDirtyProperty,value); }			
-//		}
 		
 		/// <summary>
 		/// Colours to assign to speakers as they are added.
@@ -151,6 +157,8 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		#endregion Constructors
+		
+		#region Methods
 		
 		#region Speakers
 		
@@ -211,8 +219,50 @@ namespace AdventureAuthor.Conversations
 		
 		#endregion Speakers
 		
-		
 		#region Editing lines
+		
+		/// <summary>
+		/// Add an action to a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="action">The action to add</param>
+		public void AddAction(NWN2ConversationConnector line, NWN2ScriptFunctor action)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (action == null) {
+				Say.Error("Can't add a null action.");
+			}
+			else {
+				line.Actions.Add(action);
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+		}			
+		
+		
+		/// <summary>
+		/// Add a condition to a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="action">The action to add</param>
+		public void AddCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (line.Conditions.Count != 0) {
+				Say.Error("Can't add more than one condition to a line.");
+			}
+			else if (condition == null) {
+				Say.Error("Can't add a null condition.");
+			}
+			else {
+				line.Conditions.Add(condition);
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+		}	
+		
 		
 		/// <summary>
 		/// Delete an action from a line of dialogue.
@@ -235,29 +285,6 @@ namespace AdventureAuthor.Conversations
 				OnConversationChanged(new ConversationChangedEventArgs(false));
 			}
 		}		
-		
-		
-		/// <summary>
-		/// Delete a condition from a line of dialogue.
-		/// </summary>
-		/// <param name="line">The line of dialogue</param>
-		/// <param name="condition">The condition to delete</param>
-		public void DeleteCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
-		{
-			if (line == null) {
-				Say.Error("Can't operate on a null line.");
-			}
-			else if (condition == null) {
-				Say.Error("Can't delete a null condition.");
-			}
-			else if (!line.Conditions.Contains(condition)) {
-				Say.Error("Condition " + condition.Script.FullName + " does not exist on line + " + line.ToString());
-			}
-			else {
-				line.Conditions.Remove(condition);
-				OnConversationChanged(new ConversationChangedEventArgs(false));
-			}
-		}
 		
 				
 		/// <summary>
@@ -291,20 +318,463 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 		
+		
+		/// <summary>
+		/// Delete a condition from a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="condition">The condition to delete</param>
+		public void DeleteCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (condition == null) {
+				Say.Error("Can't delete a null condition.");
+			}
+			else if (!line.Conditions.Contains(condition)) {
+				Say.Error("Condition " + condition.Script.FullName + " does not exist on line + " + line.ToString());
+			}
+			else {
+				line.Conditions.Remove(condition);
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+		}
+			
+		
+		// TODO
+		public void SetAction(NWN2ConversationConnector line, NWN2ScriptFunctor action)
+		{
+			throw new NotImplementedException();
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+		}	
+		
+		
+		// TODO
+		public void SetCameraAngle(NWN2ConversationConnector line)
+		{
+			throw new NotImplementedException();
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+		}
+		
+		
+		// TODO
+		public void SetCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
+		{
+			throw new NotImplementedException();
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+		}
+		
+		
+		/// <summary>
+		/// Set the text of a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="newText">The new value to assign to the line text</param>
+		public void SetText(NWN2ConversationConnector line, string newText)
+		{
+			if (line == null) {
+				Say.Error("Cannot operate on a null line.");
+			}
+			else if (newText == null) {
+				Say.Error("Cannot assign a null string to this line.");
+			}
+			else {
+				line.Line.Text = StringToOEIExoLocString(newText);
+				
+				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
+				if (line.Parent != null && line.Parent.Line.Children.Count > 1) { 
+					OnConversationChanged(new ConversationChangedEventArgs(true));
+				}
+				else {
+					OnConversationChanged(new ConversationChangedEventArgs(false));
+				}
+			}
+		}
+		
+		
+		/// <summary>
+		/// Set the sound file to be played on a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="sound">The sound file to play when this line is spoken; null to play no sound</param>
+        public void SetSound(NWN2ConversationConnector line, IResourceEntry sound)
+        {
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+        	}
+			else {
+				line.Sound = sound; // valid for this to be null
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+        }
+	        
 		#endregion
 		
+		#region Adding lines
+		
+		/// <summary>
+		/// Add a new blank line to an existing choice.
+		/// </summary>
+		/// <param name="parent">The parent line of the choice</param>
+		/// <returns>The newly created branch</returns>
+		public NWN2ConversationConnector AddLineToChoice(NWN2ConversationConnector parent)
+		{
+			string speaker = null;
+			NWN2ConversationConnectorCollection children;
+			
+			if (parent == null) { // add line to root
+				children = nwnConv.StartingList;
+			}
+			else {
+				children = parent.Line.Children;
+			}
+			
+			foreach(NWN2ConversationConnector option in children) {
+				if (speaker == null) {
+					speaker = option.Speaker;
+				}
+				else if (speaker != option.Speaker) {
+					throw new ArgumentException("Found different speakers in the same branch.");
+				}
+			}
+			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
+			OnConversationChanged(new ConversationChangedEventArgs(true));
+			return createdLine;
+		}
+		
+		/// <summary>
+		/// Add a new blank line underneath the specified line.
+		/// </summary>
+		/// <remarks>To add a line to a choice, call AddLineToChoice instead.</remarks>
+		/// <param name="preceding">The existing line which the new line should follow. Pass null to add to root.
+		/// Note that this is the visible preceding line, rather than the parent line - filler lines do not
+		/// need to be accounted for.</param>
+		/// <param name="speaker">The tag of the line's speaker</param>
+		/// <returns>The newly created line</returns>
+		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
+		{
+			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+			return createdLine;
+		}
+		
+		#endregion
+		
+		#region Deleting lines
+		
+		public void DeleteEntireChoice(NWN2ConversationConnector parentOfChoice)
+		{
+        	// Clear the children of the choice's parent line:
+        	if (parentOfChoice != null) {
+        		parentOfChoice.Line.Children.Clear();
+        	}
+        	else { // deleting the root choice, hence deleting the entire conversation
+        		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
+        	}
+        	OnConversationChanged(new ConversationChangedEventArgs(true));
+		}
+		
+		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector Nwn2Line)
+		{			
+			// Checks:
+			if (!(this.Contains(Nwn2Line))) {
+				return null;
+			}
+			else {
+				if (Nwn2Line.Parent == null) {
+					if (nwnConv.StartingList.Count < 2) {
+						throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
+					}
+				}
+				else if (Nwn2Line.Parent.Line.Children.Count < 2) {
+					throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
+				}
+			}
+			
+			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
+			
+			// If there is only one line left in the branch (i.e. the branch is removed), clear any conditions from the remaining line:
+			if (Nwn2Line.Parent == null) {
+        		if (NwnConv.StartingList.Count == 1) {
+					NwnConv.StartingList[0].Conditions.Clear();
+        		}
+        	}
+        	else if (Nwn2Line.Parent.Line.Children.Count == 1){
+				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
+        	} 
+			
+			OnConversationChanged(new ConversationChangedEventArgs(true));
+			return children;
+		}
+				
+		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
+		{
+			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
+				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
+					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
+				}
+				else { // otherwise, if the line has children, make it a filler line, since root must always start with an NPC starting entry:
+					Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
+					Nwn2Line.Comment = Conversation.FILLER;						
+				}				
+			}
+			else {
+				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
+					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
+				}
+				else if (Nwn2Line.Line.Children.Count > 0) { // if the line has children:
+					NWN2ConversationConnector child = Nwn2Line.Line.Children[0];
+					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:		
+						if (Nwn2Line.Line.Children.Count > 1) {
+							throw new InvalidDataException("A filler line formed part of a choice/check.");
+						}
+						else {
+							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
+							foreach (NWN2ConversationConnector lineToBeReparented in child.Line.Children) {
+								linesToBeReparented.Add(lineToBeReparented);
+							}
+							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
+								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,Nwn2Line.Parent.Line);
+							}	
+							Conversation.CurrentConversation.NwnConv.RemoveNode(child);
+							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
+							// NB: Even if both line.Parent and the line's child are filler lines, we always choose to delete the child since
+							// the Parent may be a filler starting entry (by leaving it there, we can allow conversations to start with the PC.)
+						}
+					}
+					else { // if there is more than one child, or the single child is not a filler line:
+						if (IsFiller(Nwn2Line.Parent)) { // if the single child is a real line and the parent is a filler line, give the child to line.Parent.Parent:
+							NWN2ConversationLine newParent;
+							if (Nwn2Line.Parent.Parent == null) {
+								newParent = null; // special case if the grandparent is root
+							}
+							else {
+								newParent = Nwn2Line.Parent.Parent.Line;
+							}							
+							
+							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
+							foreach (NWN2ConversationConnector lineToBeReparented in Nwn2Line.Line.Children) {
+								linesToBeReparented.Add(lineToBeReparented);
+							}
+							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
+								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,newParent);
+							}	
+														
+							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);						
+							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line.Parent);		 // delete the line and its parent
+						}
+						else { // if the child(ren) and parent are real lines, make line a filler line:
+							Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
+							Nwn2Line.Comment = Conversation.FILLER;	
+						}						
+					}
+				}
+			}
+			
+			OnConversationChanged(new ConversationChangedEventArgs(false));
+		}	
+		
+		#endregion
+		
+		#region Saving
+		
+		/// <summary>
+		/// Save any changes to the conversation to disk.
+		/// </summary>
+		public void SaveToOriginal()
+		{
+			if (this != CurrentConversation) {
+				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
+			}
+			
+			lock (padlock) {
+				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
+				if (WriterWindow.Instance.SelectedLineControl != null) {
+					WriterWindow.Instance.SelectedLineControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.SelectedLineControl.Dialogue.Text);
+				}
+				
+				NwnConv.OEISerialize(false);
+				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
+				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
+				File.Copy(workingPath,originalPath,true);
+				isDirty = false;
+			}
+		}
 		
 		
-		internal void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
+		/// <summary>
+		/// This should be called anytime a change is made to the conversation.
+		/// </summary>
+		private void SaveToWorkingCopy() 
+		{
+			if (this != CurrentConversation) {
+				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
+			}
+			
+			lock (padlock) {
+				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
+				isDirty = true;
+				Say.Debug("Saved to working copy.");
+			}
+		}
+		
+		
+		/// <summary>
+		/// Messy - refactor?
+		/// </summary>
+		internal void Serialize()
+		{
+			lock (padlock) {
+				NwnConv.OEISerialize(false);
+			}
+		}
+		
+		#endregion
+					
+		#region General methods
+			
+		/// <summary>
+		/// Get the number of words in a sentence.
+		/// </summary>
+		/// <param name="toCount">The sentence to count the words in.</param>
+		/// <returns>The number of words in the sentence</returns>
+		public static int WordCount(string toCount)
+		{ 
+			return toCount.Split(' ').Length;
+		}
+		
+		/// <summary>
+		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
+		/// </summary>
+		/// <param name="parent">The line to start counting from - pass null to start from the root.</param>
+		/// <returns>The total word, line and page count of the conversation (or conversation segment).</returns>
+		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
+		{			
+			// Get the counts from the parent line before continuing:
+			int words = 0;
+			int lines = 0;
+			int pages = 0;
+			NWN2ConversationConnectorCollection children;
+			
+			if (parent == null) {
+				children = nwnConv.StartingList;
+				pages += children.Count; // if we have reached a branch point, increment the number of pages
+			}
+			else {
+				children = parent.Line.Children;				
+				string text = OEIExoLocStringToString(parent.Line.Text);
+				if (text.Length > 0) {
+					words += WordCount(text);
+					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
+				}
+				if (children != null && children.Count > 1) {
+					pages += children.Count; // if we have reached a branch point, increment the number of pages
+				}
+			}		
+			
+			DataFromConversation childrenCounts = GetWordLinePageCounts(children);
+			DataFromConversation totalCounts = new DataFromConversation(childrenCounts.words + words, childrenCounts.lines + lines, childrenCounts.pages + pages);
+				
+			return totalCounts;
+		}
+		
+		public static bool IsFiller(NWN2ConversationConnector line)
+		{
+			if (line.Comment == Conversation.FILLER) {
+				if (line.Text.Strings.Count > 0 && line.Text.Strings[0].Value.Length > 0) {
+					throw new InvalidDataException("Line is marked as 'filler', but contains text and will therefore be displayed.");
+				}
+				else {
+					return true;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+				
+		public static OEIExoLocString StringToOEIExoLocString(string text)
+		{
+			OEIExoLocString str = new OEIExoLocString();
+			OEIExoLocSubString substr = new OEIExoLocSubString();
+			substr.Value = text;
+			str.Strings.Add(substr);
+			return str;
+		}
+		
+		public static string OEIExoLocStringToString(OEIExoLocString text)
+		{
+			if (text.Strings.Count == 0) {
+				return String.Empty;
+			}
+			else {
+				return text.Strings[0].Value;
+			}
+		}
+		
+		private static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
+		{
+			if (line == null) {
+				return typeOfFollowingLine == NWN2ConversationConnectorType.StartingEntry;
+			}
+			else if (line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
+				return typeOfFollowingLine == NWN2ConversationConnectorType.Reply;
+			}
+			else {
+				return typeOfFollowingLine != NWN2ConversationConnectorType.Reply;
+			}
+		}
+		
+		public bool Contains(NWN2ConversationConnector line)
+		{
+			return this.nwnConv.Entries.Contains(line.Line) || this.nwnConv.Replies.Contains(line.Line) || this.nwnConv.StartingList.Contains(line);
+		}
+				
+		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
+		{			
+			int words = 0;
+			int lines = 0;
+			int pages = 0;
+			
+			foreach (NWN2ConversationConnector parent in parents) {
+				string text = OEIExoLocStringToString(parent.Line.Text);
+				if (text.Length > 0) {
+					words += WordCount(text);
+					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
+				}
+				if (parent.Line.Children != null && parent.Line.Children.Count > 1) {
+					pages += parent.Line.Children.Count; // if we have reached a branch point, increment the number of pages
+				}
+				DataFromConversation dataFromChildren = GetWordLinePageCounts(parent.Line.Children);
+				words += dataFromChildren.words;
+				lines += dataFromChildren.lines;
+				pages += dataFromChildren.pages;
+			}
+			
+			return new DataFromConversation(words,lines,pages);
+		}
+		
+		public override string ToString()
+		{
+			return this.NwnConv.Name;
+		}
+				
+		#endregion
+		
+		// TODO reconcile these methods		
+		
+		#region Needs reconciled with other adding line methods, and updated with OnConversationChange
+		
+		public void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
 		{
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
-			WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
-			WriterWindow.Instance.RefreshBothViews();			
+			OnConversationChanged(new ConversationChangedEventArgs(true));
 		}
 		
 		
 		
-		internal void MakeBranchAtEndOfPage(string speakerTag)
+		public void AddChoice(string speakerTag)
 		{
 			if (!WriterWindow.Instance.CurrentPage.IsEndPage) {
 				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
@@ -364,31 +834,13 @@ namespace AdventureAuthor.Conversations
 					Conversation.CurrentConversation.InsertNewLineWithoutReparenting(fillerLine,speakerTag);	
 				}			
 								
-				WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage);
-				WriterWindow.Instance.RefreshBothViews();
+				OnConversationChanged(new ConversationChangedEventArgs(true));
         	}
         	catch (InvalidOperationException) {
         		Say.Error("The line at the end of the page had non-filler lines as children - failed to create a branch.");
         	}
 		}				
 		
-		
-		
-		#region Editing the conversation
-
-		
-		public static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
-		{
-			if (line == null) {
-				return typeOfFollowingLine == NWN2ConversationConnectorType.StartingEntry;
-			}
-			else if (line.Type != NWN2ConversationConnectorType.Reply) { // only if following an existing NPC line can you add a PC line
-				return typeOfFollowingLine == NWN2ConversationConnectorType.Reply;
-			}
-			else {
-				return typeOfFollowingLine != NWN2ConversationConnectorType.Reply;
-			}
-		}
 					
 		private NWN2ConversationConnector InsertNewLineWithoutReparenting(NWN2ConversationConnector parentLine, string speakerTag)
 		{
@@ -408,42 +860,8 @@ namespace AdventureAuthor.Conversations
 			return fillerLine;
 		}
 		
-		#region Public methods for adding lines
-		
-		public NWN2ConversationConnector AddLineToBranch(NWN2ConversationConnector parent)
-		{
-			string speaker = null;
-			NWN2ConversationConnectorCollection children;
-			
-			if (parent == null) { // add line to root
-				children = nwnConv.StartingList;
-			}
-			else {
-				children = parent.Line.Children;
-			}
-			
-			foreach(NWN2ConversationConnector option in children) {
-				if (speaker == null) {
-					speaker = option.Speaker;
-				}
-				else if (speaker != option.Speaker) {
-					throw new ArgumentException("Found different speakers in the same branch.");
-				}
-			}
-			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
-			OnConversationChanged(new ConversationChangedEventArgs(true));
-			return createdLine;
-		}
-		
-		public NWN2ConversationConnector AddLine(NWN2ConversationConnector parent, string speaker)
-		{
-			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,true);
-			OnConversationChanged(new ConversationChangedEventArgs(false));
-			return createdLine;
-		}
-		
 		#endregion
-		
+	
 		#region Private methods for adding lines, do not call directly
 						
 		/// <summary>
@@ -555,316 +973,7 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		#endregion
-		
-		
-		
-		public bool Contains(NWN2ConversationConnector line)
-		{
-			return this.nwnConv.Entries.Contains(line.Line) || this.nwnConv.Replies.Contains(line.Line) || this.nwnConv.StartingList.Contains(line);
-		}
-		
-		// TODO - ignoring until I refactor to get rid of RemoveLineControl
-		public NWN2ConversationConnectorCollection DeleteLineFromBranch(NWN2ConversationConnector Nwn2Line)
-		{			
-			// Checks:
-			if (!(this.Contains(Nwn2Line))) {
-				return null;
-			}
-			else {
-				if (Nwn2Line.Parent == null) {
-					if (nwnConv.StartingList.Count < 2) {
-						throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
-					}
-				}
-				else if (Nwn2Line.Parent.Line.Children.Count < 2) {
-					throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
-				}
-			}
 			
-			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
-			
-			// If there is only one line left in the branch (i.e. the branch is removed), clear any conditions from the remaining line:
-			if (Nwn2Line.Parent == null) {
-        		if (NwnConv.StartingList.Count == 1) {
-					NwnConv.StartingList[0].Conditions.Clear();
-        		}
-        	}
-        	else if (Nwn2Line.Parent.Line.Children.Count == 1){
-				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
-        	} 
-			
-			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			WriterWindow.Instance.RefreshBothViews();
-			SaveToWorkingCopy();
-			return children;
-		}
-		
-		// TODO - ignoring until I refactor to get rid of RemoveLineControl
-		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
-		{
-			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
-				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
-					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
-				}
-				else { // otherwise, if the line has children, make it a filler line, since root must always start with an NPC starting entry:
-					Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
-					Nwn2Line.Comment = Conversation.FILLER;						
-				}				
-			}
-			else {
-				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
-					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
-				}
-				else if (Nwn2Line.Line.Children.Count > 0) { // if the line has children:
-					NWN2ConversationConnector child = Nwn2Line.Line.Children[0];
-					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:		
-						if (Nwn2Line.Line.Children.Count > 1) {
-							throw new InvalidDataException("A filler line formed part of a choice/check.");
-						}
-						else {
-							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
-							foreach (NWN2ConversationConnector lineToBeReparented in child.Line.Children) {
-								linesToBeReparented.Add(lineToBeReparented);
-							}
-							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
-								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,Nwn2Line.Parent.Line);
-							}	
-							Conversation.CurrentConversation.NwnConv.RemoveNode(child);
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
-							// NB: Even if both line.Parent and the line's child are filler lines, we always choose to delete the child since
-							// the Parent may be a filler starting entry (by leaving it there, we can allow conversations to start with the PC.)
-						}
-					}
-					else { // if there is more than one child, or the single child is not a filler line:
-						if (IsFiller(Nwn2Line.Parent)) { // if the single child is a real line and the parent is a filler line, give the child to line.Parent.Parent:
-							NWN2ConversationLine newParent;
-							if (Nwn2Line.Parent.Parent == null) {
-								newParent = null; // special case if the grandparent is root
-							}
-							else {
-								newParent = Nwn2Line.Parent.Parent.Line;
-							}							
-							
-							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
-							foreach (NWN2ConversationConnector lineToBeReparented in Nwn2Line.Line.Children) {
-								linesToBeReparented.Add(lineToBeReparented);
-							}
-							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
-								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,newParent);
-							}	
-														
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);						
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line.Parent);		 // delete the line and its parent
-						}
-						else { // if the child(ren) and parent are real lines, make line a filler line:
-							Nwn2Line.Text = StringToOEIExoLocString(String.Empty);
-							Nwn2Line.Comment = Conversation.FILLER;	
-						}						
-					}
-				}
-			}
-			
-			// Refresh display:
-			WriterWindow.Instance.RemoveLineControl(Nwn2Line);
-			SaveToWorkingCopy();
-			WriterWindow.Instance.RefreshPageViewOnly();
-		}	
-		
-		#endregion Editing the conversation		
-		
-						
-		public static bool IsFiller(NWN2ConversationConnector line)
-		{
-			if (line.Comment == Conversation.FILLER) {
-				if (line.Text.Strings.Count > 0 && line.Text.Strings[0].Value.Length > 0) {
-					throw new InvalidDataException("Line is marked as 'filler', but contains text and will therefore be displayed.");
-				}
-				else {
-					return true;
-				}
-			}
-			else {
-				return false;
-			}
-		}
-				
-		public static OEIExoLocString StringToOEIExoLocString(string text)
-		{
-			OEIExoLocString str = new OEIExoLocString();
-			OEIExoLocSubString substr = new OEIExoLocSubString();
-			substr.Value = text;
-			str.Strings.Add(substr);
-			return str;
-		}
-		
-		public static string OEIExoLocStringToString(OEIExoLocString text)
-		{
-			if (text.Strings.Count == 0) {
-				return String.Empty;
-			}
-			else {
-				return text.Strings[0].Value;
-			}
-		}
-		
-		public void SaveToOriginal()
-		{
-			if (this != CurrentConversation) {
-				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
-			}
-			
-			lock (padlock) {
-				// Changes to lines are only saved to the working copy when the control loses focus, so make sure you save changes to a currently selected line:
-				if (WriterWindow.Instance.SelectedLineControl != null) {
-					WriterWindow.Instance.SelectedLineControl.Nwn2Line.Line.Text = StringToOEIExoLocString(WriterWindow.Instance.SelectedLineControl.Dialogue.Text);
-				}
-				
-				NwnConv.OEISerialize(false);
-				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
-				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
-				File.Copy(workingPath,originalPath,true);
-				isDirty = false;
-			}
-		}
-		
-		
-		/// <summary>
-		/// This should be called anytime a change is made to the conversation.
-		/// </summary>
-		public void SaveToWorkingCopy() 
-		{
-			if (this != CurrentConversation) {
-				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
-			}
-			
-			lock (padlock) {
-				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ? 
-				isDirty = true;
-				Say.Debug("Saved to working copy.");
-			}
-		}
-		
-		
-		internal void Serialize()
-		{
-			lock (padlock) {
-				NwnConv.OEISerialize(false);
-			}
-		}
-		
-		/// <summary>
-		/// Get the number of words in a sentence.
-		/// </summary>
-		/// <param name="toCount">The sentence to count the words in.</param>
-		/// <returns>The number of words in the sentence</returns>
-		public static int WordCount(string toCount)
-		{ 
-			return toCount.Split(' ').Length;
-		}
-		
-
-		/// <summary>
-		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
-		/// </summary>
-		/// <param name="parent">The line to start counting from - pass null to start from the root.</param>
-		/// <returns>The total word, line and page count of the conversation (or conversation segment).</returns>
-		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
-		{			
-			// Get the counts from the parent line before continuing:
-			int words = 0;
-			int lines = 0;
-			int pages = 0;
-			NWN2ConversationConnectorCollection children;
-			
-			if (parent == null) {
-				children = nwnConv.StartingList;
-				pages += children.Count; // if we have reached a branch point, increment the number of pages
-			}
-			else {
-				children = parent.Line.Children;				
-				string text = OEIExoLocStringToString(parent.Line.Text);
-				if (text.Length > 0) {
-					words += WordCount(text);
-					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
-				}
-				if (children != null && children.Count > 1) {
-					pages += children.Count; // if we have reached a branch point, increment the number of pages
-				}
-			}		
-			
-			DataFromConversation childrenCounts = GetWordLinePageCounts(children);
-			DataFromConversation totalCounts = new DataFromConversation(childrenCounts.words + words, childrenCounts.lines + lines, childrenCounts.pages + pages);
-				
-			return totalCounts;
-		}
-		
-		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
-		{			
-			int words = 0;
-			int lines = 0;
-			int pages = 0;
-			
-			foreach (NWN2ConversationConnector parent in parents) {
-				string text = OEIExoLocStringToString(parent.Line.Text);
-				if (text.Length > 0) {
-					words += WordCount(text);
-					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
-				}
-				if (parent.Line.Children != null && parent.Line.Children.Count > 1) {
-					pages += parent.Line.Children.Count; // if we have reached a branch point, increment the number of pages
-				}
-				DataFromConversation dataFromChildren = GetWordLinePageCounts(parent.Line.Children);
-				words += dataFromChildren.words;
-				lines += dataFromChildren.lines;
-				pages += dataFromChildren.pages;
-			}
-			
-			return new DataFromConversation(words,lines,pages);
-		}
-		
-		public override string ToString()
-		{
-			return this.NwnConv.Name;
-		}
-		
-		
-		
-		
-		/// <summary>
-		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
-		/// </summary>
-		private void Conversation_OnConversationChanged(object sender, ConversationChangedEventArgs e)
-		{
-			SaveToWorkingCopy();
-		}
-		
-		
-		/// <summary>
-		/// Set the text of a line of dialogue.
-		/// </summary>
-		/// <param name="line">The line of dialogue</param>
-		/// <param name="newText">The new value to assign to the line text</param>
-		public void SetTextOfLine(NWN2ConversationConnector line, string newText)
-		{
-			if (line == null) {
-				Say.Error("Cannot operate on a null line.");
-			}
-			else if (newText == null) {
-				Say.Error("Cannot assign a null string to this line.");
-			}
-			else {
-				line.Line.Text = StringToOEIExoLocString(newText);
-				
-				// If this is the first line of a node, the node labels on the graph will need to be refreshed.
-				// Refresh even if this is the first line of the root node - the graph view does not currently
-				// display this line (instead it uses 'Start') but could do in the future.
-				if (line.Parent == null || line.Parent.Line.Children.Count > 1) { 
-					OnConversationChanged(new ConversationChangedEventArgs(true));
-				}
-				else {
-					OnConversationChanged(new ConversationChangedEventArgs(false));
-				}
-			}
-		}
+		#endregion
 	}
 }

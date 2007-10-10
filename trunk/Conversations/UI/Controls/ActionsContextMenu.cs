@@ -49,8 +49,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.AdvanceTimeBy((int)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -65,8 +64,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.Attack((string)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
         
@@ -82,8 +80,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.AddHenchman((string)prms[0],String.Empty,(int)prms[1]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}  
     	    	
@@ -100,8 +97,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.AddHenchman((string)prms[0],(string)prms[1],(int)prms[2]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    
     	    	
@@ -120,8 +116,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.CreateCreature((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    	
     	    	    	
@@ -140,8 +135,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.CreateItem((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    	
     	    	    	
@@ -160,8 +154,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.CreatePlaceable((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    	
     	    	
@@ -177,8 +170,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.Destroy((string)prms[0],(float)prms[1]); 
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    
     	    	    	
@@ -193,8 +185,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    		
     			NWN2ScriptFunctor action = Actions.DisplayMessage((string)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}  
     	    	    	
@@ -209,8 +200,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.EndGame(((ScriptHelper.Movie)prms[0]).ToString());
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -227,8 +217,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.FadeOut((float)prms[1],(float)prms[2],(ScriptHelper.FadeColour)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -324,8 +313,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.GiveGold((int)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}   
     	    	
@@ -341,8 +329,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.GiveItem((string)prms[0],(int)prms[1]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -357,8 +344,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.HealPC((int)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -373,8 +359,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.Kill((string)prms[0]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -391,8 +376,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.OpenStore((string)prms[0],(int)prms[1],(int)prms[2]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -410,8 +394,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		else {    			
     			NWN2ScriptFunctor action = Actions.PlayAnimationOnce((string)prms[0],(ScriptHelper.OneTimeAnimation)prms[1],
     			                                                     1.0f,(float)prms[2]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -434,8 +417,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     				shift = 0 - (int)prms[1];
     			}
     			NWN2ScriptFunctor action = Actions.PlayerBecomesMoreGoodOrMoreEvil(shift);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	    	
@@ -458,8 +440,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     				shift = 0 - (int)prms[1];
     			}
     			NWN2ScriptFunctor action = Actions.PlayerBecomesMoreLawfulOrMoreChaotic(shift);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	    	
@@ -477,8 +458,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.SetInt((string)prms[0],(string)prms[1]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	
@@ -495,8 +475,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ScriptFunctor action = Actions.SetString((string)prms[0],(string)prms[1]);
-	    		nwn2Line.Actions.Add(action);
-	    		WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
     	

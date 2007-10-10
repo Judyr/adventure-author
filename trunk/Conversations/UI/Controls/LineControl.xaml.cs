@@ -214,7 +214,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         internal void SaveChangesToText()
         {
         	if (Conversation.OEIExoLocStringToString(nwn2Line.Line.Text) != Dialogue.Text) {
-        		Conversation.CurrentConversation.SetTextOfLine(nwn2Line,Dialogue.Text);
+        		Conversation.CurrentConversation.SetText(nwn2Line,Dialogue.Text);
         	}
         }
                 
@@ -277,7 +277,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	       		if (!Adventure.BeQuiet) {   
         			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
         			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
-        				Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
+        				Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
         			}
         			else { // if there are consequences, remind the user of them and ask them to confirm		
         				string warning = String.Empty;  
@@ -300,12 +300,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         				
 	 		        	MessageBoxResult result = MessageBox.Show(warning,"Delete?", MessageBoxButton.YesNo);
 			        	if (result == MessageBoxResult.Yes) {
-			        		Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
+			        		Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
 			        	}       			
         			}
         		}
         		else {
-        			Conversation.CurrentConversation.DeleteLineFromBranch(nwn2Line);
+        			Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
         		}
         	}
         	else {

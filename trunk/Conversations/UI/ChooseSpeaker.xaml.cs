@@ -51,7 +51,7 @@ namespace AdventureAuthor.Conversations.UI
         	}
         	else {
         		string speakerTag = ((Speaker)SpeakersList.SelectedItem).Tag;   
-				Conversation.CurrentConversation.MakeBranchAtEndOfPage(speakerTag);
+				Conversation.CurrentConversation.AddChoice(speakerTag);
 				this.Close();
         	}
         }

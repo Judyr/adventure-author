@@ -55,8 +55,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.CreatureIsDead((string)prms[0]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
 		
@@ -75,8 +74,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer((int)prms[0]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
 				
@@ -97,8 +95,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.IntHasValue((string)prms[0],(string)prms[1]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
 				
@@ -118,8 +115,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.StringHasValue((string)prms[0],(string)prms[1]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
 				
@@ -140,8 +136,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearPlayer((string)prms[0],(string)prms[1]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}		
 		
@@ -160,8 +155,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.PlayerHasGold((int)prms[0]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
 		
@@ -172,8 +166,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}
 				
 		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
@@ -183,8 +176,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}
 				
 		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
@@ -194,8 +186,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}
 			
 		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
@@ -205,8 +196,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}		
 		
 		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
@@ -216,8 +206,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}
 				
 		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
@@ -227,8 +216,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
-			nwn2Line.Conditions.Add(condition);
-			WriterWindow.Instance.RefreshPageViewOnly();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}			
 				
 		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
@@ -254,8 +242,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     		else {    			
     			NWN2ConditionalFunctor condition = Conditions.PlayerHasNumberOfItems((string)prms[0],(string)prms[1]);
-				nwn2Line.Conditions.Add(condition);
-				WriterWindow.Instance.RefreshPageViewOnly();
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
     }

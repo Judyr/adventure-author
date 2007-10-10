@@ -123,7 +123,9 @@ namespace AdventureAuthor.Conversations.UI
     	private LineControl selectedLineControl;
 		public LineControl SelectedLineControl {
 			get { return selectedLineControl; }
-			set { selectedLineControl = value; if (selectedLineControl == null) Say.Debug("Set CurrentControl to null."); else Say.Debug("Set CurrentControl to value: " + selectedLineControl.Nwn2Line.ToString());}
+			set { selectedLineControl = value; 
+				if (selectedLineControl == null) Say.Debug("Set CurrentControl to null."); 
+				else Say.Debug("Set CurrentControl to value: " + selectedLineControl.Nwn2Line.ToString());}
 		}
     	    	
     	/// <summary>
@@ -145,11 +147,11 @@ namespace AdventureAuthor.Conversations.UI
     	#endregion Fields
     	        
         #region Page view
-          	
-		/// <summary>
+          
+        /// <summary>
 		/// Refresh the page view display for the current page, to take account of changes to the page.
 		/// </summary>
-		internal void RefreshPageViewOnly()
+		private void RefreshPageViewOnly()
 		{
 			if (SelectedLineControl != null) {
 				SelectedLineControl.SaveChangesToText();
@@ -272,7 +274,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <summary>
 		/// Refresh both the graph view and the page view to account for changes to the conversation.
 		/// </summary>
-		internal void RefreshBothViews()
+		private void RefreshBothViews()
 		{					
 			// The structure of the conversation graph has changed, so recreate the entire graph and reset the display:			
 			Page newVersionOfCurrentPage = null;
@@ -317,7 +319,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <summary>
 		/// Centre the conversation graph(s) around the node representing the current page.
 		/// </summary>
-		internal void CentreGraph(bool resetZoomLevel)
+		public void CentreGraph(bool resetZoomLevel)
 		{
 			if (resetZoomLevel) {
 				MainGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
@@ -497,37 +499,6 @@ namespace AdventureAuthor.Conversations.UI
 			
 			pages.AddRange(pages2);
 			return pages;
-		}
-		
-		// TODO very ugly way of deleting lines, fix
-		public void RemoveLineControl(NWN2ConversationConnector line)
-		{			
-			if (SelectedLineControl != null && SelectedLineControl.Nwn2Line == line) {
-				SelectedLineControl = null;
-			}
-			
-			foreach (Control control in LinesPanel.Children) {
-				LineControl lineControl = control as LineControl;
-				ChoiceControl branchControl = control as ChoiceControl;
-				
-				if (lineControl != null && lineControl.Nwn2Line == line) {
-					CurrentPage.LineControls.Remove(lineControl);
-					return;
-				}
-				else if (branchControl != null) {
-					LineControl toRemove = null;
-					foreach (LineControl lc in branchControl.LineControls) {
-						if (lc.Nwn2Line == line) {
-							toRemove = lc;
-							break;
-						}
-					}
-					if (toRemove != null) {
-						branchControl.LineControls.Remove(toRemove);
-						return;
-					}
-				}
-			}
 		}
 		
 				
