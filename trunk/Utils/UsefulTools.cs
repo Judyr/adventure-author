@@ -116,7 +116,7 @@ namespace AdventureAuthor.Utils
 		/// <returns>A string representing the current time in hours, minutes and seconds</returns>
 		public static string GetTimeStamp(bool validForFilename)
 		{
-			DateTime d = DateTime.Now;		
+			DateTime d = DateTime.Now;
 			StringBuilder timestamp = new StringBuilder();
 			string divider;
 			if (validForFilename) {
