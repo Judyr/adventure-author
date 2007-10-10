@@ -343,27 +343,63 @@ namespace AdventureAuthor.Conversations
 			
 		
 		// TODO
-		public void SetAction(NWN2ConversationConnector line, NWN2ScriptFunctor action)
-		{
-			throw new NotImplementedException();
-			OnConversationChanged(new ConversationChangedEventArgs(false));
-		}	
-		
-		
-		// TODO
 		public void SetCameraAngle(NWN2ConversationConnector line)
 		{
 			throw new NotImplementedException();
 			OnConversationChanged(new ConversationChangedEventArgs(false));
-		}
+		}		
 		
-		
-		// TODO
-		public void SetCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor condition)
+
+		/// <summary>
+		/// Replace an existing action on a line of dialogue with a new action.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="originalAction">The action to replace</param>
+		/// <param name="newAction">The new action</param>
+		/// <remarks>Used to update an action with a new set of parameters</remarks>
+		public void ReplaceAction(NWN2ConversationConnector line, NWN2ScriptFunctor originalAction, NWN2ScriptFunctor newAction)
 		{
-			throw new NotImplementedException();
-			OnConversationChanged(new ConversationChangedEventArgs(false));
-		}
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (originalAction == null || newAction == null) {
+				Say.Error("Can't operate on a null action.");
+			}
+			else if (!line.Actions.Contains(originalAction)) {
+				Say.Error("Action " + originalAction.Script.FullName + " does not exist on line + " + line.ToString());
+			}
+			else {
+				line.Actions.Remove(originalAction);
+				line.Actions.Add(newAction);
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+		}	
+		
+		
+		/// <summary>
+		/// Replace an existing condition on a line of dialogue with a new condition.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		/// <param name="originalCondition">The condition to replace</param>
+		/// <param name="newCondition">The new condition</param>
+		/// <remarks>Used to update a condition with a new set of parameters</remarks>
+		public void ReplaceCondition(NWN2ConversationConnector line, NWN2ConditionalFunctor originalCondition, NWN2ConditionalFunctor newCondition)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else if (originalCondition == null || newCondition == null) {
+				Say.Error("Can't operate on a null condition.");
+			}
+			else if (!line.Conditions.Contains(originalCondition)) {
+				Say.Error("Condition " + originalCondition.Script.FullName + " does not exist on line + " + line.ToString());
+			}
+			else {
+				line.Conditions.Remove(originalCondition);
+				line.Conditions.Add(newCondition);
+				OnConversationChanged(new ConversationChangedEventArgs(false));
+			}
+		}	
 		
 		
 		/// <summary>
