@@ -153,8 +153,6 @@ namespace AdventureAuthor.Conversations.UI
 		/// </summary>
 		private void RefreshPageViewOnly()
 		{
-			Say.Debug("RefreshPageViewOnly()");
-			
 			// Save any changes to the currently selected line before clearing the page, but NOT
 			// if it's a filler line - this can happen when the selected line is 'deleted' and the software
 			// chooses to turn it into an invisible filler line rather than actually deleting it. In these
@@ -180,7 +178,6 @@ namespace AdventureAuthor.Conversations.UI
 			// Display each line of dialogue until the page branches or the conversation ends:
 			while (possibleNextLines.Count == 1) {
 				NWN2ConversationConnector currentLine = possibleNextLines[0];
-				Say.Debug("About to check if the next line is a filler line.");
 				if (!Conversation.IsFiller(currentLine)) {
 					ShowLine(currentLine);
 				}

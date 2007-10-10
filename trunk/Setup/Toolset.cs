@@ -473,7 +473,7 @@ namespace AdventureAuthor.Setup
 							tb.AllowMerge = true;
 							
 							ButtonItem cw = new ButtonItem();
-							Bitmap b = new Bitmap(Path.Combine(Adventure.AdventureAuthorDir,"cwimage.bmp"));
+							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
 							cw.Image = b;	
 							cw.Text = "Conversation Writer";
 							cw.Activate += delegate { LaunchConversationWriter(); };

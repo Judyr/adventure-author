@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.IO;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.Data.TypedCollections;
@@ -30,7 +32,12 @@ namespace AdventureAuthor.Variables.UI
         	
         	var = variable;
         	
-            InitializeComponent();
+            InitializeComponent();            
+            
+            Image image = new Image();
+            ImageSourceConverter s = new ImageSourceConverter();
+            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"delete.jpg"));            
+            DeleteButton.Content = image;
             
             VariableNameTextBox.Text = var.Name;
             VariableTypeTextBox.Text = "(" + var.VariableType.ToString() + ")";
