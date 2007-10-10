@@ -32,10 +32,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
-using AdventureAuthor.Core;
-using AdventureAuthor.Utils;
 using AdventureAuthor.Conversations.UI.Controls;
 using AdventureAuthor.Conversations.UI.Graph;
+using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
 using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
@@ -521,7 +521,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 					
 				// Create and open a working copy of the original conversation:
-				this.workingFilename = MakeWorkingCopy(originalFilename);
+				this.workingFilename = CreateWorkingCopy(originalFilename);
 				conv = new NWN2GameConversation(workingFilename,
 				                                Adventure.CurrentAdventure.Module.Repository.DirectoryName,
 					                            Adventure.CurrentAdventure.Module.Repository);		
@@ -532,10 +532,10 @@ namespace AdventureAuthor.Conversations.UI
 				// Add event handlers:
 				Conversation.CurrentConversation.Changed += 
 					new EventHandler<ConversationChangedEventArgs>(WriterWindow_OnChanged);
-				Conversation.CurrentConversation.SpeakerAdded += 
-					new EventHandler<SpeakerAddedEventArgs>(WriterWindow_OnSpeakerAdded);
 				Conversation.CurrentConversation.Saved += 
 					new EventHandler<EventArgs>(WriterWindow_OnSaved);
+				Conversation.CurrentConversation.SpeakerAdded += 
+					new EventHandler<SpeakerAddedEventArgs>(WriterWindow_OnSpeakerAdded);
 			}
 			catch (Exception e) {			
 				if (conv != null) {
@@ -585,32 +585,42 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_Open(object sender, EventArgs ea)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
-			openFile.Filter = "dlg files (*.dlg)|*.dlg|All files (*.*)|*.*";
+			openFile.ValidateNames = true;
+			openFile.Filter = "dlg files (*.dlg)|*.dlg";
 			openFile.Title = "Select a conversation file";
 			openFile.Multiselect = false;
 			openFile.InitialDirectory = form.App.Module.Repository.DirectoryName;
 			openFile.RestoreDirectory = true;
 			
 			if ((bool)openFile.ShowDialog()) {
+				if (openFile.SafeFileName.StartsWith("~tmp")) {
+					Say.Information(openFile.SafeFileName + " is a temporary file, and cannot be opened.");
+					return;
+				}
 				OpenConversation(System.IO.Path.GetFileNameWithoutExtension(openFile.FileName),false);
 			}			
 		}
-		
-		
-		private string MakeWorkingCopy(string originalFilenameWithoutExtension)
-		{
-			string tempPath, tempFileName;
-			Random randomNumberGenerator = new Random();
-			do {
-				tempFileName = originalFilenameWithoutExtension + "_" + randomNumberGenerator.Next();
-				tempPath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,tempFileName+".dlg");
-			}
-			while (File.Exists(tempPath));				
 				
-			string originalPath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,originalFilenameWithoutExtension+".dlg");
-			File.Copy(originalPath,tempPath);
-			return tempFileName;			
-		}		
+		
+		/// <summary>
+		/// Create a working copy of a conversation file with a unique temporary name.
+		/// </summary>
+		/// <param name="originalFilename">The name of the conversation file to create a working copy of</param>
+		/// <returns>The filename (without extension) of the working copy.</returns>
+		private string CreateWorkingCopy(string originalFilename)
+		{				
+			string tempname, temppath;
+			Random random = new Random();
+			do {
+				tempname = "~tmp" + random.Next();
+				temppath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,tempname+".dlg");
+			}
+			while (File.Exists(temppath));		
+							
+			string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,originalFilename+".dlg");
+			File.Copy(originalPath,temppath);
+			return tempname;			
+		}	
 		
 		
 		private void OnClick_Save(object sender, EventArgs ea)
