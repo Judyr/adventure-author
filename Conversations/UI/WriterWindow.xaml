@@ -42,7 +42,7 @@
 				<MenuItem Header="New" Click="OnClick_New"/>
 				<MenuItem Header="Open" Click="OnClick_Open"/>
 				<MenuItem Header="Save" Click="OnClick_Save" Name="SaveMenuItem"/>
-				<MenuItem Header="Save As" IsEnabled="false"/>
+				<!--<MenuItem Header="Save As" IsEnabled="false"/>-->
 				<MenuItem Header="Close" Click="OnClick_Close"/>
 				<MenuItem Header="Exit" Click="OnClick_Exit"/>
 			</MenuItem>

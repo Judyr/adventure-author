@@ -25,13 +25,13 @@ namespace AdventureAuthor.Scripts.UI
     	/// </summary>
     	/// <param name="question">The question to ask the user</param>
         /// <param name="objectTypes">The (multiple) types of object to populate the tag list from</param>
-        public TagQuestionPanel(string question, ScriptHelper.ObjectType[] objectTypes)
+        public TagQuestionPanel(string question, ScriptHelper.TaggedType[] objectTypes)
         {
             InitializeComponent();
             QuestionLabel.Text = question;
             
             List<string> tags = new List<string>();
-            foreach (ScriptHelper.ObjectType type in objectTypes) {
+            foreach (ScriptHelper.TaggedType type in objectTypes) {
             	tags.AddRange(ScriptHelper.GetTags(type));
             }
             AnswerBox.ItemsSource = tags;

@@ -33,6 +33,7 @@ using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
+using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Data.TypedCollections;
 using NWN2Toolset.NWN2.IO;
@@ -80,7 +81,8 @@ namespace AdventureAuthor.Scripts
 			PowerAttack = 28 
 		};
 		
-		public enum LoopingAnimation { 
+		public enum Animation { 
+			// Looping:
 			Pause = 0,
 			Pause2 = 1,
 			Listen = 2,
@@ -128,37 +130,9 @@ namespace AdventureAuthor.Scripts
 			LookLeft = 44,
 			LookRight = 45,
 			Shoveling = 46,
-			Injured = 47
-		};
-		
-		public enum Movie { //.bik files in Neverwinter Nights 2/Movies
-			AtariLogo,
-			Credits,
-			Intro,
-			Legal,
-			NvidiaLogo,
-			OEIlogo,
-			WOTCLogo
-		}
-		
-		public enum ObjectType { 
-			Any, 
-			Creature, 
-			Door, 
-			Encounter, 
-			Item, 
-			Light, 
-			Placeable,
-			PlacedEffect, 
-			Sound, 
-			StaticCamera, 
-			Store, 
-			Tree, 
-			Trigger, 
-			Waypoint 
-		};
-				
-		public enum OneTimeAnimation { 
+			Injured = 47,
+			
+			// One-time:
 			TurnHeadLeft = 100,
 			TurnHeadRight = 101,
 			PauseScratchHead = 102,
@@ -175,7 +149,7 @@ namespace AdventureAuthor.Scripts
 			Drink = 113,
 			DodgeToSide = 114,
 			Duck = 115,
-			Spasm = 116,
+//			Spasm = 116, // seems to be repeated
 			Collapse = 117,
 			LieDown = 118,
 			StandUp = 119,
@@ -192,9 +166,37 @@ namespace AdventureAuthor.Scripts
 			Wildshape = 130,
 			Search = 131,
 			Intimidate = 132,
-			Chuckle = 133
+			Chuckle = 133			
 		};
 		
+		public enum Movie { //.bik files in Neverwinter Nights 2/Movies
+			AtariLogo,
+			Credits,
+			Intro,
+			Legal,
+			NvidiaLogo,
+			OEIlogo,
+			WOTCLogo
+		}
+		
+		public enum TaggedType { 
+			AnyObject, 
+			Creature, 
+			Door, 
+			Encounter, 
+			Item, 
+			JournalCategory, // note that journal does not exist as an object
+			Light, 
+			Placeable,
+			PlacedEffect, 
+			Sound, 
+			StaticCamera, 
+			Store, 
+			Tree, 
+			Trigger, 
+			Waypoint 
+		};
+						
 		public enum VariableType {
 			String,
 			Int
@@ -398,18 +400,18 @@ namespace AdventureAuthor.Scripts
 				case "ga_alignment":					
 					if (action.Parameters[0].ValueInt > 0) {
 						if (action.Parameters[1].ValueInt == 0) {
-							return "PLAYER PERFORMS A NOBLE ACT (+" + action.Parameters[0].ValueInt + " POINTS ON GOOD/EVIL ALIGNMENT).";
+							return "PLAYER PERFORMS A NOBLE ACT.";
 						}
 						else {
-							return "PLAYER PERFORMS A LAWFUL ACT (+" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
+							return "PLAYER PERFORMS A LAWFUL ACT.";
 						}
 					}
 					else if (action.Parameters[0].ValueInt < 0) {
 						if (action.Parameters[1].ValueInt == 0) {
-							return "PLAYER PERFORMS AN EVIL ACT (" + action.Parameters[0].ValueInt + " POINTS ON GOOD/EVIL ALIGNMENT).";
+							return "PLAYER PERFORMS AN EVIL ACT.";
 						}
 						else {
-							return "PLAYER PERFORMS A CHAOTIC ACT (" + action.Parameters[0].ValueInt + " POINTS ON LAW/CHAOS ALIGNMENT).";
+							return "PLAYER PERFORMS A CHAOTIC ACT.";
 						}						
 					}
 					else {
@@ -457,19 +459,19 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_destroy_item":
 					string destroyitemtag = action.Parameters[0].ValueString;
-					int destroyiteminstances = action.Parameters[1].ValueInt;
-					if (destroyiteminstances == -1) {
-						return "EVERY ITEM CALLED " + destroyitemtag + " IS REMOVED FROM INVENTORY.";
-					}
-					else if (destroyiteminstances == 1) {
-						return destroyitemtag + " IS REMOVED FROM INVENTORY.";
-					}
-					else {
-						return destroyiteminstances.ToString() + " ITEMS CALLED " + destroyitemtag + " ARE REMOVED FROM INVENTORY.";
-					}
+//					int destroyiteminstances = action.Parameters[1].ValueInt;
+//					if (destroyiteminstances == -1) {
+//						return "EVERY ITEM CALLED " + destroyitemtag + " IS REMOVED FROM INVENTORY.";
+//					}
+//					else if (destroyiteminstances == 1) {
+						return destroyitemtag + " IS REMOVED FROM THE PLAYER'S INVENTORY.";
+//					}
+//					else {
+//						return destroyiteminstances.ToString() + " ITEMS CALLED " + destroyitemtag + " ARE REMOVED FROM INVENTORY.";
+//					}
 					
 				case "ga_destroy_party_henchmen":
-					return "ALL THE PLAYER'S HENCHMEN ARE REMOVED FROM THE AREA.";
+					return "ALL THE PLAYER'S ALLIES ARE REMOVED FROM THE AREA.";
 
 				case "ga_display_message":
 					string message = Utils.UsefulTools.Truncate(action.Parameters[0].ValueString,60);					
@@ -482,11 +484,11 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_door_close":
 					string sTag = action.Parameters[0].ValueString;
-					return "DOOR " + sTag + " IS CLOSED.";
+					return "DOOR " + sTag + " BECOMES CLOSED.";
 										
 				case "ga_door_open":
 					string sTag1 = action.Parameters[0].ValueString;
-					return "DOOR " + sTag1 + " IS OPENED.";
+					return "DOOR " + sTag1 + " BECOMES OPEN.";
 						
 				case "ga_end_game":
 					if (action.Parameters[0].ValueString != String.Empty) {
@@ -551,10 +553,10 @@ namespace AdventureAuthor.Scripts
 					string featgiven = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
 					if (featgiven == null) {
 						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
-							" RECEIVES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+							" RECEIVES SPECIAL ABILITY " + action.Parameters[1].ValueInt + ".";
 					}
 					else {
-						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " RECEIVES THE " + featgiven + " FEAT.";
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " RECEIVES THE " + featgiven + " SPECIAL ABILITY.";
 					}
 					
 				case "ga_give_gold":
@@ -563,13 +565,13 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_give_item":
 					string sTemplate1 = action.Parameters[0].ValueString;
-					int nQuantity = action.Parameters[1].ValueInt;
-					if (nQuantity != 1) {
-						return "PLAYER RECEIVES " + nQuantity + " COPIES OF " + sTemplate1 + ".";
-					}
-					else {
+//					int nQuantity = action.Parameters[1].ValueInt;
+//					if (nQuantity != 1) {
+//						return "PLAYER RECEIVES " + nQuantity + " COPIES OF " + sTemplate1 + ".";
+//					}
+//					else {
 						return "PLAYER RECEIVES A " + sTemplate1 + ".";
-					}
+//					}
 					
 				case "ga_give_xp":
 					return "PLAYER RECEIVES " + action.Parameters[0].ValueInt + " EXPERIENCE POINTS.";
@@ -585,10 +587,10 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_heal_pc":
 					if (action.Parameters[0].ValueInt == 100) {
-						return "THE PLAYER (AND HIS COMPANIONS) HAVE ALL OF THEIR WOUNDS HEALED.";
+						return "THE PLAYER HAS ALL OF THEIR WOUNDS HEALED.";
 					}
 					else {
-						return "THE PLAYER (AND HIS COMPANIONS) HAVE " + action.Parameters[0].ValueInt + "% OF THEIR WOUNDS HEALED.";
+						return "THE PLAYER HAS " + action.Parameters[0].ValueInt + "% OF THEIR WOUNDS HEALED.";
 					}
 					
 				case "ga_henchman_add": 
@@ -597,31 +599,31 @@ namespace AdventureAuthor.Scripts
 					return GetOwnerIfBlank(sTarget1) + " BECOMES AN ALLY OF " + GetPlayerIfBlank(sMaster) + ".";
 						
 				case "ga_henchman_remove":
-					return action.Parameters[0].ValueString + " STOPS BEING AN ALLY.";
+					return action.Parameters[0].ValueString + " STOPS BEING THE PLAYER'S ALLY.";
 					
 				case "ga_jump":
 					string jumpdestination = action.Parameters[0].ValueString;
 					string thingthatjumps = action.Parameters[1].ValueString;
 					float timetowait = action.Parameters[2].ValueFloat;					
 					if (timetowait != 0.0) {
-						return timetowait.ToString() + " SECONDS LATER, " + thingthatjumps + " JUMPS TO " + jumpdestination + ".";
+						return timetowait.ToString() + " SECONDS LATER, " + thingthatjumps + " TELEPORTS TO " + jumpdestination + ".";
 					}
 					else {
-						return "" + thingthatjumps + " JUMPS TO " + jumpdestination + ".";
+						return "" + thingthatjumps + " TELEPORTS TO " + jumpdestination + ".";
 					}
 					
 				case "ga_jump_players":
 					string locationtojumpto = action.Parameters[0].ValueString;
-					return "PLAYER JUMPS TO LOCATION " + locationtojumpto + ".";
+					return "PLAYER TELEPORTS TO LOCATION " + locationtojumpto + ".";
 					
 				case "ga_lock":
 					string locktag = action.Parameters[0].ValueString;
 					int lockstatus = action.Parameters[1].ValueInt;
 					if (lockstatus == 1) {
-						return "DOOR " + locktag + " IS LOCKED.";
+						return "DOOR " + locktag + " BECOMES LOCKED.";
 					}
 					else {
-						return "DOOR " + locktag + " IS UNLOCKED.";
+						return "DOOR " + locktag + " BECOMES UNLOCKED.";
 					}
 					
 				case "ga_move":
@@ -664,21 +666,10 @@ namespace AdventureAuthor.Scripts
 									}
 							}
 					}
-					
-				case "ga_party_face_target":
-					return "PARTY TURNS TO FACE " + action.Parameters[1].ValueString + ".";
-					
+										
 				case "ga_play_animation":
-					string animName;
-					string loopname = Enum.GetName(typeof(ScriptHelper.LoopingAnimation),action.Parameters[1].ValueInt);
-					string oncename = Enum.GetName(typeof(ScriptHelper.OneTimeAnimation),action.Parameters[1].ValueInt);
-					if (oncename != null) {
-						animName = oncename;
-					}
-					else if (loopname != null) {
-						animName = loopname;
-					}
-					else {
+					string animName = Enum.GetName(typeof(ScriptHelper.Animation),action.Parameters[1].ValueInt);
+					if (animName == null) {
 						animName = "unidentified animation";
 					}
 					StringBuilder ga_play_animation = new StringBuilder();
@@ -708,26 +699,18 @@ namespace AdventureAuthor.Scripts
 					string featremoved = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
 					if (featremoved == null) {
 						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
-							" LOSES FEAT NUMBER " + action.Parameters[1].ValueInt + ".";
+							" LOSES SPECIAL ABILITY " + action.Parameters[1].ValueInt + ".";
 					}
 					else {
-						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " LOSES THE " + featremoved + " FEAT.";
+						return GetPlayerIfBlank(action.Parameters[0].ValueString) + " LOSES SPECIAL ABILITY " + featremoved + ".";
 					}
-					
-				case "ga_roster_add_blueprint":
-					return "BLUEPRINT " + action.Parameters[1].ValueString + " IS ADDED TO THE ROSTER UNDER THE NAME " 
-						+ action.Parameters[0].ValueString + ".";
-					
-				case "ga_roster_add_object":
-					return action.Parameters[1].ValueString + " IS ADDED TO THE ROSTER UNDER THE NAME " 
-						+ action.Parameters[0].ValueString + ".";
-					
+										
 				case "ga_setimmortal":
 					if (action.Parameters[1].ValueInt == 0) {
-						return action.Parameters[0].ValueString + " BECOMES IMMORTAL.";
+						return action.Parameters[0].ValueString + " BECOMES UNKILLABLE.";
 					}
 					else {
-						return action.Parameters[0].ValueString + " BECOMES MORTAL.";
+						return action.Parameters[0].ValueString + " STOPS BEING UNKILLABLE.";
 					}
 					
 				case "ga_take_gold":
@@ -748,15 +731,31 @@ namespace AdventureAuthor.Scripts
 					}
 					
 				case "ga_time_advance":
-					if (action.Parameters[0].ValueInt > 0 || action.Parameters[1].ValueInt > 0) {						
-						return action.Parameters[0].ValueInt.ToString() + " HOURS AND " + action.Parameters[1].ValueInt + " MINUTES PASS.";
-					}
-					else {
-						return action.Parameters[2].ValueInt.ToString() + " SECONDS AND " + action.Parameters[3].ValueInt + " MILLISECONDS PASS.";
-					}
+					return action.Parameters[0].ValueInt.ToString() + " HOURS PASS.";
+//					if (action.Parameters[0].ValueInt > 0 || action.Parameters[1].ValueInt > 0) {						
+//						return action.Parameters[0].ValueInt.ToString() + " HOURS AND " + action.Parameters[1].ValueInt + " MINUTES PASS.";
+//					}
+//					else {
+//						return action.Parameters[2].ValueInt.ToString() + " SECONDS AND " + action.Parameters[3].ValueInt + " MILLISECONDS PASS.";
+//					}
 					
 				case "ga_time_set":
-					return "TIME PASSES. THE TIME IS NOW " + action.Parameters[0].ValueInt + ":" + action.Parameters[1].ValueInt + ".";
+					StringBuilder ga_time_set = new StringBuilder("TIME PASSES. THE TIME IS NOW ");
+					
+					if (action.Parameters[0].ValueInt == 0) {
+						ga_time_set.Append(" MIDNIGHT.");
+					}
+					else if (action.Parameters[0].ValueInt == 12) {
+						ga_time_set.Append(" NOON.");
+					}
+					else if (action.Parameters[0].ValueInt < 12) {
+						ga_time_set.Append(action.Parameters[0].ValueInt.ToString() + "AM.");
+					}
+					else if (action.Parameters[0].ValueInt > 12) {
+						ga_time_set.Append(action.Parameters[0].ValueInt.ToString() + "PM.");
+					}                                   
+					
+					return ga_time_set.ToString();
 					
 				default:
 					return "SCRIPT: " + action.ToString();				
@@ -830,25 +829,15 @@ namespace AdventureAuthor.Scripts
 				case "gc_is_female":
 					return "IF THE PLAYER IS FEMALE";
 					
-				case "gc_is_in_party":
-					return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S COMPANION";
-					
 				case "gc_is_male":
 					return "IF THE PLAYER IS MALE";
 					
-				case "gc_is_open":
+				case "gc_is_open": // not currently used
 					return "IF " + condition.Parameters[0].ValueString + " IS OPEN";
 					
-				case "gc_item_count":
+				case "gc_item_count": // not currently used
 					return "IF THE PLAYER HAS " + condition.Parameters[1].ValueString + 
 						   " COPIES OF ITEM " + condition.Parameters[0].ValueString + "";
-					
-				case "gc_journal_entry":
-					// TODO: Might be possible to do this better by checking the journal entry and getting its title, entries?
-					return "IF JOURNAL QUEST " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
-					
-				case "gc_num_comps":
-					return "IF THE PLAYER HAS " + condition.Parameters[0].ValueString + " COMPANIONS";
 					
 				default:
 					return "SCRIPT: " + condition.ToString();
@@ -879,7 +868,7 @@ namespace AdventureAuthor.Scripts
 		
 		#region Tags and blueprints
 				
-		public static List<String> GetResRefs(ObjectType type)
+		public static List<String> GetResRefs(TaggedType type)
 		{
 			if (Adventure.CurrentAdventure == null) {
 				return null;
@@ -888,48 +877,50 @@ namespace AdventureAuthor.Scripts
 			List<string> resrefs = new List<string>();
 						
 			switch (type) {
-				case ObjectType.Any:
+				case TaggedType.AnyObject:
 					foreach (NWN2BlueprintCollection blueprintCollection in NWN2GlobalBlueprintManager.Instance.BlueprintCollections) {
 						resrefs.AddRange(GetResRefs(blueprintCollection));
 					}
 					break;					
-				case ObjectType.Creature:
+				case TaggedType.Creature:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Creatures));
 					break;
-				case ObjectType.Door:
+				case TaggedType.Door:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Doors));
 					break;
-				case ObjectType.Encounter:
+				case TaggedType.Encounter:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Encounters));
 					break;
-				case ObjectType.Item:
+				case TaggedType.Item:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Items));
 					break;
-				case ObjectType.Light:
+				case TaggedType.JournalCategory:
+					throw new ArgumentException("Journal categories are not objects, and do not have resrefs.");
+				case TaggedType.Light:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Lights));
 					break;
-				case ObjectType.Placeable:
+				case TaggedType.Placeable:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Placeables));
 					break;
-				case ObjectType.PlacedEffect:
+				case TaggedType.PlacedEffect:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.PlacedEffects));
 					break;
-				case ObjectType.Sound:
+				case TaggedType.Sound:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Sounds));
 					break;
-				case ObjectType.StaticCamera:
+				case TaggedType.StaticCamera:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.StaticCameras));
 					break;
-				case ObjectType.Store:
+				case TaggedType.Store:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Stores));
 					break;
-				case ObjectType.Tree:
+				case TaggedType.Tree:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Trees));
 					break;
-				case ObjectType.Trigger:
+				case TaggedType.Trigger:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Triggers));
 					break;
-				case ObjectType.Waypoint:
+				case TaggedType.Waypoint:
 					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Waypoints));
 					break;
 				default:
@@ -950,7 +941,7 @@ namespace AdventureAuthor.Scripts
 			return resrefs;
 		}
 		
-		public static List<String> GetTags(ObjectType type)
+		public static List<String> GetTags(TaggedType type)
 		{
 			if (Adventure.CurrentAdventure == null) {
 				return null;
@@ -960,48 +951,51 @@ namespace AdventureAuthor.Scripts
 						
 			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
 				switch (type) {
-					case ObjectType.Any:
+					case TaggedType.AnyObject: // excludes journal
 						foreach (NWN2InstanceCollection coll in area.AllInstances) {
 							tags.AddRange(GetTags(coll));
 						}
 						break;
-					case ObjectType.Creature:
+					case TaggedType.Creature:
 						tags.AddRange(GetTags(area.Creatures));
 						break;
-					case ObjectType.Door:
+					case TaggedType.Door:
 						tags.AddRange(GetTags(area.Doors));
 						break;
-					case ObjectType.Encounter:
+					case TaggedType.Encounter:
 						tags.AddRange(GetTags(area.Encounters));
 						break;
-					case ObjectType.Item:
+					case TaggedType.Item:
 						tags.AddRange(GetTags(area.Items));
 						break;
-					case ObjectType.Light:
+					case TaggedType.JournalCategory:
+						tags.AddRange(GetTags(Adventure.CurrentAdventure.Module.Journal.Categories));
+						break;
+					case TaggedType.Light:
 						tags.AddRange(GetTags(area.Lights));
 						break;
-					case ObjectType.Placeable:
+					case TaggedType.Placeable:
 						tags.AddRange(GetTags(area.Placeables));
 						break;
-					case ObjectType.PlacedEffect:
+					case TaggedType.PlacedEffect:
 						tags.AddRange(GetTags(area.PlacedEffects));
 						break;
-					case ObjectType.Sound:
+					case TaggedType.Sound:
 						tags.AddRange(GetTags(area.Sounds));
 						break;
-					case ObjectType.StaticCamera:
+					case TaggedType.StaticCamera:
 						tags.AddRange(GetTags(area.StaticCameras));
 						break;
-					case ObjectType.Store:
+					case TaggedType.Store:
 						tags.AddRange(GetTags(area.Stores));
 						break;
-					case ObjectType.Tree:
+					case TaggedType.Tree:
 						tags.AddRange(GetTags(area.Trees));
 						break;
-					case ObjectType.Trigger:
+					case TaggedType.Trigger:
 						tags.AddRange(GetTags(area.Triggers));
 						break;
-					case ObjectType.Waypoint:
+					case TaggedType.Waypoint:
 						tags.AddRange(GetTags(area.Waypoints));
 						break;
 					default:
@@ -1011,6 +1005,12 @@ namespace AdventureAuthor.Scripts
 			return tags;
 		}
 		
+		
+		/// <summary>
+		/// Get a 
+		/// </summary>
+		/// <param name="instances"></param>
+		/// <returns></returns>
 		public static List<string> GetTags(NWN2InstanceCollection instances)
 		{			
 			List<string> tags = new List<string>(instances.Count);
@@ -1022,6 +1022,20 @@ namespace AdventureAuthor.Scripts
 			}
 			return SortTags(tags);
 		}
+		
+		
+		public static List<string> GetTags(NWN2JournalCategoryCollection journalCategories)
+		{			
+			List<string> tags = new List<string>(journalCategories.Count);
+			foreach (NWN2JournalCategory category in journalCategories) {
+				string tag = category.Tag;
+				if (tag != String.Empty && !tags.Contains(tag)) {
+					tags.Add(tag);
+				}
+			}
+			return tags; // less useful to sort these as they will appear in order of creation (?)
+		}
+		
 		
 		/// <summary>
 		/// Returns an alphabetised list of unique tags.

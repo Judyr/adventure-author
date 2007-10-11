@@ -30,11 +30,9 @@ using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Scripts
 {
-	/* TODO
+	/* Scripts to add:
 	 * If game time has reached a certain point
-	 * If (random - gc_rand_1of. But this should be part of a structured 'Create Random Choice' bit.)
-	 * 
-	 * 
+	 * If random (gc_rand_1of. But this should be part of a structured 'Create Random Choice' bit.)
 	 */
 	
 	/// <summary>
@@ -112,16 +110,6 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Checks the value of a journal entry
-		/// </summary>
-		/// <param name="sQuestTag">The journal quest to check</param>
-		/// <param name="sCheck">The value to check for, can use operators e.g. <5, >10, !0</param>
-		public static NWN2ConditionalFunctor JournalEntryHasValue(string sQuestTag, string sCheck)
-		{
-			return ScriptHelper.GetConditionalFunctor("gc_journal_entry",new object[]{sQuestTag,sCheck},ScriptHelper.Origin.NWN2);
-		}
-			
-		/// <summary>
 		/// Check the distance between an object and the player
 		/// </summary>
 		/// <param name="sTag">The object to check</param>
@@ -153,16 +141,6 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Check whether the player has an item with a given tag
-		/// </summary>
-		/// <param name="sItemTag">Tag of the item to check for</param>
-		public static NWN2ConditionalFunctor PlayerHasItem(string sItem)
-		{
-			int bCheckParty	= 1; // not useful 
-			return ScriptHelper.GetConditionalFunctor("gc_check_item",new object[]{sItem,bCheckParty},ScriptHelper.Origin.NWN2);
-		}
-			
-		/// <summary>
 		/// Check whether a creature is a henchman of the player
 		/// </summary>
 		/// <param name="sTarget">The tag of the creature to check</param>
@@ -173,24 +151,15 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Check whether the creature is a companion of the player (i.e. is in the player's party)
+		/// Check whether the player has an item with a given tag
 		/// </summary>
-		/// <remarks>**Not sure whether this also checks for henchmen or not</remarks>
-		/// <param name="sTarget">The tag of the creature to check</param>
-		/// <returns></returns>
-		public static NWN2ConditionalFunctor PlayerHasCompanion(string sTarget)
+		/// <param name="sItemTag">Tag of the item to check for</param>
+		public static NWN2ConditionalFunctor PlayerHasItem(string sItem)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_is_in_party",new object[]{sTarget},ScriptHelper.Origin.NWN2);
+			int bCheckParty	= 1; // not useful 
+			return ScriptHelper.GetConditionalFunctor("gc_check_item",new object[]{sItem,bCheckParty},ScriptHelper.Origin.NWN2);
 		}
-		
-		/// <summary>
-		/// Check whether the player has a certain number of roster companions (i.e. party members)
-		/// </summary>
-		/// <param name="sCheck">The value to check for, can use operators e.g. <5, >10, !0</param>
-		public static NWN2ConditionalFunctor PlayerHasNumberOfRosterCompanions(string sCheck)
-		{
-			return ScriptHelper.GetConditionalFunctor("gc_num_comps",new object[]{sCheck},ScriptHelper.Origin.NWN2);
-		}
+			
 		
 		/// <summary>
 		/// Check whether the player has a certain number of items with a given tag

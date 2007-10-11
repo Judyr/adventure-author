@@ -36,52 +36,39 @@ namespace AdventureAuthor.Scripts
 	public static class Actions
 	{			
 		/* Actions to add:
-		 * play looping animation as well as bow animation
 		 * ga_effect
 		 * the 10 music scripts to start/stop battle and background music
-		 * ga_remove_comp (should work on both henchmen and companions)
 		 * ga_set_wwp_controller
-		 * Change NPC faction
 		 * */
 		
 		/// <summary>
-		/// Add a target creature to your party as a henchman.
+		/// Add a target creature as the player's henchman.
+		/// </summary>
+		/// <description>ga_henchman_add</description>
+		/// <param name="sTarget">Tag of the creature you want to add</param>
+		/// <param name="bOverrideBehavior">if set to 1, sTarget's event handlers (scripts) will be replaced with henchman scripts</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor AddHenchmanForPlayer(string sTarget, int bOverrideBehavior)
+		{
+			int bForce = 1; // always add henchman even if the player has max henchmen
+			string sMaster = String.Empty; // add to player
+			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptHelper.Origin.NWN2);
+		}				
+		
+		/// <summary>
+		/// Add a target creature as the henchman of another creature.
 		/// </summary>
 		/// <description>ga_henchman_add</description>
 		/// <param name="sTarget">Tag of the creature you want to add</param>
 		/// <param name="sMaster">The creature you are adding the henchman to</param>
 		/// <param name="bOverrideBehavior">if set to 1, sTarget's event handlers (scripts) will be replaced with henchman scripts</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor AddHenchman(string sTarget, string sMaster, int bOverrideBehavior)
+		public static NWN2ScriptFunctor AddHenchmanForCreature(string sTarget, string sMaster, int bOverrideBehavior)
 		{
 			int bForce = 1; // always add henchman even if the player has max henchmen
 			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptHelper.Origin.NWN2);
-		}		
+		}	
 				
-		/// <summary>
-		/// Add an existing NPC to the roster, so that they can then be added to the player's party.
-		/// </summary>
-		/// <remarks>The roster is the pool of NPCs from which you can add companions to the party</remarks>
-		/// <param name="sRosterName">The roster name of the companion, to refer to when adding and removing them from the party</param>
-		/// <param name="sTarget">The existing creature to add to the party roster</param>
-		public static NWN2ScriptFunctor AddObjectToRoster(string sRosterName, string sTarget)
-		{
-			// TODO: It may be sensible to only allow work with either henchmen or party members, but not both. 
-			return ScriptHelper.GetScriptFunctor("ga_roster_add_object",new object[]{sRosterName,sTarget},ScriptHelper.Origin.NWN2);
-		}
-		
-		/// <summary>
-		/// Add a blueprint to the roster, so that an object created from that blueprint can then be added to the player's party.
-		/// </summary>
-		/// <remarks>The roster is the pool of NPCs from which you can add companions to the party</remarks>
-		/// <param name="sRosterName">The roster name of the companion, to refer to when adding and removing them from the party</param>
-		/// <param name="sTarget">The name of the blueprint/template to add to the party roster</param>
-		public static NWN2ScriptFunctor AddBlueprintToRoster(string sRosterName, string sTarget)
-		{
-			// TODO: It may be sensible to only allow work with either henchmen or party members, but not both. 
-			return ScriptHelper.GetScriptFunctor("ga_roster_add_blueprint",new object[]{sRosterName,sTarget},ScriptHelper.Origin.NWN2);
-		}
-
 		/// <summary>
 		/// Advance time by a given amount
 		/// </summary>
@@ -213,28 +200,23 @@ namespace AdventureAuthor.Scripts
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"W",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
 		}			
-				
+						
 		/// <summary>
-		/// Make a creature walk/run to a location
+		/// Make a creature walk/run to a location, and optionally vanish.
 		/// </summary>
-		/// <param name="sCreatureTag">The tag of the creature to move</param>
-		/// <param name="sWPTag">The tag of the location the creature will move to</param>
+		/// <param name="sCreatureTag">The tag of the creature to make walk/run</param>
+		/// <param name="sWPTag">The tag of the location the creature will move to (and then optionally disappear at)</param>
 		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
-		public static NWN2ScriptFunctor CreatureMoves(string sCreatureTag, string sWPTag, int bRun)
+		/// <param name="disappear">Set to 1 to make the creature vanish once they reach their location</param>
+		public static NWN2ScriptFunctor CreatureMoves(string sCreatureTag, string sWPTag, int bRun, int disappear)
 		{
-			// parameters are in a different order from the function call, to be consistent with CreatureMovesAndExits:
-			return ScriptHelper.GetScriptFunctor("ga_move",new object[]{sWPTag,bRun,sCreatureTag},ScriptHelper.Origin.NWN2);
-		}
-		
-		/// <summary>
-		/// Make a creature walk/run to a location and then vanish (exit stage left)
-		/// </summary>
-		/// <param name="sCreatureTag">The tag of the creature to move/vanish</param>
-		/// <param name="sWPTag">The tag of the location the creature will move to and then disappear at</param>
-		/// <param name="bRun">Set to 0 for walk, 1 for run</param>
-		public static NWN2ScriptFunctor CreatureMovesAndDisappears(string sCreatureTag, string sWPTag, int bRun)
-		{
-			return ScriptHelper.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun},ScriptHelper.Origin.NWN2);
+			if (disappear == 1) {
+				return ScriptHelper.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun},ScriptHelper.Origin.NWN2);
+			}
+			else {
+				// parameters are in a different order from the function call, to be consistent with ga_force_exit:
+				return ScriptHelper.GetScriptFunctor("ga_move",new object[]{sWPTag,bRun,sCreatureTag},ScriptHelper.Origin.NWN2);
+			}
 		}
 		
 		/// <summary>
@@ -263,7 +245,6 @@ namespace AdventureAuthor.Scripts
 		/// Destroy all the henchmen in the party. If you just want to remove them, use RemoveHenchman().
 		/// </summary>
 		/// <description>ga_destroy_party_henchmen</description>
-		/// <returns></returns>
 		public static NWN2ScriptFunctor DestroyAllHenchmen()
 		{
 			return ScriptHelper.GetScriptFunctor("ga_destroy_party_henchmen",null,ScriptHelper.Origin.NWN2);
@@ -277,17 +258,6 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptHelper.GetScriptFunctor("ga_end_game",new object[]{sEndMovie},ScriptHelper.Origin.NWN2);
 		}
-		    
-    	/// <summary>
-    	/// Make the party turn to face a particular object.
-    	/// </summary>
-    	/// <param name="sFacer">The tag of any member of the party faction. Can also be a GetTarget() constant (?).</param>
-    	/// <param name="sTarget">Tag of object that the party will orient towards.</param>
-    	public static NWN2ScriptFunctor FaceParty(string sFacer, string sTarget)
-    	{
-    		int bLockOrientation = 0; // not useful
-    		return ScriptHelper.GetScriptFunctor("ga_party_face_target",new object[]{sFacer,sTarget,bLockOrientation},ScriptHelper.Origin.NWN2);
-    	}		
 		
 		/// <summary>
 		/// If the screen has faded to black (or another colour), fade out from that colour over a number of seconds.
@@ -311,20 +281,26 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Instantly make screen black (useful if you want to then 'fade in')
+		/// Give the player a feat. 
 		/// </summary>
-		public static NWN2ScriptFunctor FadeOutInstantly()
+		/// <remarks>A feat is a special ability, often relating to combat.</remarks>
+		/// <param name="feat">The feat to give.</param>
+		public static NWN2ScriptFunctor GivePlayerFeat(ScriptHelper.Feat feat)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_blackout",null,ScriptHelper.Origin.NWN2);
+			string sTarget = String.Empty; // player
+			int nFeat = (int)feat;
+			int bCheckReq = 0; // not useful
+			int bAllPartyMembers = 0; // not useful
+			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Give the player or a creature a feat. 
+		/// Give a creature a feat. 
 		/// </summary>
 		/// <remarks>A feat is a special ability, often relating to combat.</remarks>
 		/// <param name="sTarget">The creature to give the feat to. If blank, assign to the player.</param>
-		/// <param name="nFeat">The feat to give.</param>
-		public static NWN2ScriptFunctor GiveFeat(string sTarget, ScriptHelper.Feat feat)
+		/// <param name="feat">The feat to give.</param>
+		public static NWN2ScriptFunctor GiveCreatureFeat(string sTarget, ScriptHelper.Feat feat)
 		{
 			int nFeat = (int)feat;
 			int bCheckReq = 0; // not useful
@@ -377,17 +353,50 @@ namespace AdventureAuthor.Scripts
 		{
 			int bAllPartyMembers = 1; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_heal_pc",new object[]{nHealPercent,bAllPartyMembers},ScriptHelper.Origin.NWN2);
-		}
-			
+		}		
+		
 		/// <summary>
-		/// Make a creature join a new faction.
+		/// Make a creature join the Commoner faction.
 		/// </summary>
 		/// <param name="sTarget">The target whose faction will change.</param>
-		/// <param name="sTargetFaction">Either one of the 4 standard factions $COMMONER, $DEFENDER, $HOSTILE, $MERCHANT or
-		/// a target who's faction is to be joined (must be a creature)</param>
-		public static NWN2ScriptFunctor JoinFaction(string sTarget, string sTargetFaction)
+		public static NWN2ScriptFunctor CreatureJoinsCommonerFaction(string sTarget)
 		{
+			string sTargetFaction = "$COMMONER";
 			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.Origin.NWN2);
+		}			
+		
+		/// <summary>
+		/// Make a creature join the Defender faction.
+		/// </summary>
+		/// <param name="sTarget">The target whose faction will change.</param>
+		public static NWN2ScriptFunctor CreatureJoinsDefenderFaction(string sTarget)
+		{
+			string sTargetFaction = "$DEFENDER";
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.Origin.NWN2);
+		}	
+		
+		/// <summary>
+		/// Make a creature join the Hostile faction.
+		/// </summary>
+		/// <param name="sTarget">The target whose faction will change.</param>
+		public static NWN2ScriptFunctor CreatureJoinsHostileFaction(string sTarget)
+		{
+			string sTargetFaction = "$HOSTILE";
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.Origin.NWN2);
+		}	
+		
+		/// <summary>
+		/// Jump a creature to a waypoint or another object.
+		/// </summary>
+		/// <description>ga_jump</description>
+		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
+		/// <param name="sTarget">Tag of creature to jump</param>
+		/// <param name="fDelay">Delay before jumping</param>
+		public static NWN2ScriptFunctor TeleportCreature(string sDestination, string sTarget, float fDelay)
+		{
+			// NB: Identical to TeleportObject, but it felt more natural to have teleport creature and teleport object
+			// separate in the UI, so I've replicated that here for consistency's sake.
+    		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptHelper.Origin.NWN2);
 		}
 	
 		/// <summary>
@@ -397,8 +406,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
 		/// <param name="sTarget">Tag of object to jump</param>
 		/// <param name="fDelay">Delay before jumping</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor JumpObject(string sDestination, string sTarget, float fDelay)
+		public static NWN2ScriptFunctor TeleportObject(string sDestination, string sTarget, float fDelay)
 		{
     		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptHelper.Origin.NWN2);
 		}
@@ -408,8 +416,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_jump_players</description>
 		/// <param name="sDestTag">Tag of waypoint or object to jump to</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor JumpPlayer(string sDestTag)
+		public static NWN2ScriptFunctor TeleportPlayer(string sDestTag)
 		{
 			int bWholeParty = 1; // not useful
 			int bOnlyThisArea = 0; // deprecated parameter
@@ -450,30 +457,29 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		/// <summary>
-		/// Play an animation once on a line of dialogue.
+		/// Play an animation on a line of dialogue.
 		/// </summary>
-		/// <param name="sTarget">Tag of creature to play animation - default is conversation owner.</param>
 		/// <param name="animation">The animation to play.</param>
-		/// <param name="fSpeed">Speed animation plays at. (Default is probably 1.0?)</param>
 		/// <param name="fDelayUntilStart">Number of seconds to wait before starting to play the animation.</param>
-		public static NWN2ScriptFunctor PlayAnimationOnce(string sTarget, ScriptHelper.OneTimeAnimation animation, float fSpeed, float fDelayUntilStart)
+		public static NWN2ScriptFunctor PlayerAnimation(ScriptHelper.Animation animation, float fDelayUntilStart)
 		{
-			float fDuration = 30; // not useful
+			string sTarget = String.Empty; // player
+			float fDuration = 6.0f; // not used for one-time animations, simpler to give it a fixed value for the looping ones too
+			float fSpeed = 1.0f; // simpler to leave this out of the equation, for now anyway
 			int iAnim = (int)animation;
 			return ScriptHelper.GetScriptFunctor("ga_play_animation",new object[]{sTarget,iAnim,fSpeed,fDuration,fDelayUntilStart},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Play an animation repeatedly on a line of dialogue.
+		/// Play an animation on a line of dialogue.
 		/// </summary>
 		/// <param name="sTarget">Tag of creature to play animation - default is conversation owner.</param>
 		/// <param name="animation">The animation to play.</param>
-		/// <param name="fSpeed">Speed animation plays at. (Default is probably 1.0?)</param>
-		/// <param name="fDuration">Number of seconds to play this animation for.</param>
 		/// <param name="fDelayUntilStart">Number of seconds to wait before starting to play the animation.</param>
-		public static NWN2ScriptFunctor PlayAnimationRepeatedly(string sTarget, ScriptHelper.LoopingAnimation animation, 
-		                                                        float fSpeed, float fDuration, float fDelayUntilStart)
+		public static NWN2ScriptFunctor CreatureAnimation(string sTarget, ScriptHelper.Animation animation, float fDelayUntilStart)
 		{
+			float fDuration = 6.0f; // not used for one-time animations, simpler to give it a fixed value for the looping ones too
+			float fSpeed = 1.0f; // simpler to leave this out of the equation, for now anyway
 			int iAnim = (int)animation;
 			return ScriptHelper.GetScriptFunctor("ga_play_animation",new object[]{sTarget,iAnim,fSpeed,fDuration,fDelayUntilStart},ScriptHelper.Origin.NWN2);
 		}
@@ -484,18 +490,31 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sSound">The filename (without extension or directory) of the sound to play</param>
 		/// <param name="sTarget">The object to play the sound on - it is recommended to only play sounds on creature objects</param>
 		/// <param name="fDelay">The delay before playing the sound, in seconds</param>
-		/// <returns></returns>
+		/// <remarks>Don't use this from a conversation as it will complicate matters, but may want the ability to play a sound
+		/// on a creature/object from an OnEntry(etc.) script later on.</remarks>
 		public static NWN2ScriptFunctor PlaySound(string sSound, string sTarget, float fDelay)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_play_sound",new object[]{sSound,sTarget,fDelay},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Remove a feat from a player or creature.
+		/// Remove a feat from the player.
 		/// </summary>
-		/// <param name="sTarget">The creature to remove the feat from. If blank, remove from the player.</param>
 		/// <param name="feat">The feat to remove.</param>
-		public static NWN2ScriptFunctor RemoveFeat(string sTarget, ScriptHelper.Feat feat)
+		public static NWN2ScriptFunctor RemovePlayerFeat(ScriptHelper.Feat feat)
+		{
+			string sTarget = String.Empty; // player
+			int bAllPartyMembers = 0; // not useful
+			int nFeat = (int)feat;
+			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers},ScriptHelper.Origin.NWN2);
+		}	
+		
+		/// <summary>
+		/// Remove a feat from a creature.
+		/// </summary>
+		/// <param name="sTarget">The creature to remove the feat from.</param>
+		/// <param name="feat">The feat to remove.</param>
+		public static NWN2ScriptFunctor RemoveCreatureFeat(string sTarget, ScriptHelper.Feat feat)
 		{
 			int bAllPartyMembers = 0; // not useful
 			int nFeat = (int)feat;
@@ -506,8 +525,7 @@ namespace AdventureAuthor.Scripts
 		/// Remove a target henchman from the party.
 		/// </summary>
 		/// <description>ga_henchman_remove</description>
-		/// <param name="sTarget">tag of the creature you want to remove</param>
-		/// <returns></returns>
+		/// <param name="sTarget">Tag of the creature you want to remove</param>
 		public static NWN2ScriptFunctor RemoveHenchman(string sTarget)
 		{
 			string sOptionalMasterTag = String.Empty; // deprecated parameter
@@ -519,23 +537,35 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_destroy_item</description>
 		/// <param name="sItemTag">Tag of the item to remove</param>
-		/// <param name="nQuantity">The number of items to destroy. -1 is all of the Player's items of that tag</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor RemoveItem(string sItemTag, int nQuantity)
+		public static NWN2ScriptFunctor RemoveItem(string sItemTag)
 		{
+			int nQuantity = -1; // destroy all items with this tag. Think we should hide the functionality of objects sharing the same tag.
 			int bPCFaction = 1; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_destroy_item",new object[]{sItemTag,nQuantity,bPCFaction},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Change the lock status of a door
+		/// Lock a door
 		/// </summary>
 		/// <description>ga_lock</description>
-		/// <param name="sDoorTag">The door to lock/unlock</param>
-		/// <param name="bLock">True to lock the door, false to unlock the door</param>
+		/// <param name="sDoorTag">The door to lock</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor SetDoorLock(string sDoorTag, int bLock)
+		public static NWN2ScriptFunctor LockDoor(string sDoorTag)
 		{
+			int bLock = 1; // lock
+			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptHelper.Origin.NWN2);
+		}		
+		
+		/// <summary>
+		/// Unlock a door
+		/// </summary>
+		/// <description>ga_lock</description>
+		/// <param name="sDoorTag">The door to unlock</param>
+		/// <returns></returns>
+		public static NWN2ScriptFunctor UnlockDoor(string sDoorTag)
+		{
+			int bLock = 0; // unlock
 			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptHelper.Origin.NWN2);
 		}
 		
@@ -588,12 +618,22 @@ namespace AdventureAuthor.Scripts
 		}		
 		
 		/// <summary>
-		/// Set a creature to be immortal or not immortal
+		/// Set a creature to be immortal
 		/// </summary>
-		/// <param name="sTarget">Tag of target creature, if blank use OWNER</param>
-		/// <param name="bImmortal">0 for FALSE, else for TRUE</param>
-		public static NWN2ScriptFunctor SetImmortal(string sTarget, int bImmortal)
+		/// <param name="sTarget">Tag of target creature</param>
+		public static NWN2ScriptFunctor CreatureBecomesImmortal(string sTarget)
 		{
+			int bImmortal = 1; // unkillable
+			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptHelper.Origin.NWN2);
+		}	
+		
+		/// <summary>
+		/// Set a creature to be killable
+		/// </summary>
+		/// <param name="sTarget">Tag of target creature</param>
+		public static NWN2ScriptFunctor CreatureBecomesMortal(string sTarget)
+		{
+			int bImmortal = 0; // killable
 			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptHelper.Origin.NWN2);
 		}
 				
@@ -613,28 +653,47 @@ namespace AdventureAuthor.Scripts
 		}	
 		
 		/// <summary>
-		/// Shift the player's alignment towards good or evil (because he has committed a good or evil act).
+		/// Shift the player's alignment towards good (because he has committed a good act).
 		/// </summary>
-		/// <param name="amountToChangeBy">The amount to change alignment by, from 3 (a very good act) to -3 (a very evil act).</param>
 		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
-		public static NWN2ScriptFunctor PlayerBecomesMoreGoodOrMoreEvil(int degreeOfChange)
+		public static NWN2ScriptFunctor PlayerBecomesMoreGood()
 		{
+			int degreeOfChange = 1; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
 			int axis = 0; // adjust on the Good/Evil axis
 			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Shift the player's alignment towards law or chaos (because he has committed a lawful or chaotic act).
+		/// Shift the player's alignment towards evil (because he has committed a evil act).
 		/// </summary>
-		/// <param name="amountToChangeBy">The amount to change alignment by, from 3 (a very lawful act) to -3 (a very chaotic act).</param>
-		/// <remarks>The player's law/chaos alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
-		/// <remarks>A lawful act is one in which you keep a vow, obey the law, obey orders etc. A chaotic act is one in which you break
-		/// a promise, break the law or simply act unexpectedly. They don't equate to good and evil - for example a cruel king or contract
-		/// killer would be Lawful Evil, while somebody who robs the rich to feed the poor would be Chaotic Good.</remarks>
-		public static NWN2ScriptFunctor PlayerBecomesMoreLawfulOrMoreChaotic(int degreeOfChange)
+		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
+		public static NWN2ScriptFunctor PlayerBecomesMoreEvil()
 		{
+			int degreeOfChange = -1; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
+			int axis = 0; // adjust on the Good/Evil axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
+		}		
+		
+		/// <summary>
+		/// Shift the player's alignment towards lawf (because he has committed a lawful act).
+		/// </summary>
+		/// <remarks>The player's lawful/chaotic alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
+		public static NWN2ScriptFunctor PlayerBecomesMoreLawful()
+		{
+			int degreeOfChange = 1; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
 			int axis = 1; // adjust on the Law/Chaos axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);			
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
+		}
+		
+		/// <summary>
+		/// Shift the player's alignment towards chaos (because he has committed a chaotic act).
+		/// </summary>
+		/// <remarks>The player's lawful/chaotic alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
+		public static NWN2ScriptFunctor PlayerBecomesMoreChaotic()
+		{
+			int degreeOfChange = -1; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
+			int axis = 1; // adjust on the Law/Chaos axis
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
@@ -647,19 +706,6 @@ namespace AdventureAuthor.Scripts
 		{
 			int bAllPartyMembers = 0; // not useful
 			return ScriptHelper.GetScriptFunctor("ga_take_gold",new object[]{nGold,bAllPartyMembers},ScriptHelper.Origin.NWN2);
-		}		
-		
-		/// <summary>
-		/// Take item(s) from the player
-		/// </summary>
-		/// <description>ga_take_item</description>
-		/// <param name="sItemTag">This is the string name of the item's tag</param>
-		/// <param name="nQuantity">The number of items to take, set to -1 to take all of the Player's items of that tag</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor TakeItem(string sItemTag, int nQuantity)
-		{
-			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_take_item",new object[]{sItemTag,nQuantity,bAllPartyMembers},ScriptHelper.Origin.NWN2);
 		}	
 	}
 }

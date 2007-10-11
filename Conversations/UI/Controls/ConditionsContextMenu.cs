@@ -40,6 +40,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		return nwn2Line.Conditions.Count > 0;
     	}
     	
+    	
 		private void OnClick_CreatureIsDead(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
@@ -47,8 +48,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
     		object[] prms = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a hostile creature is within range of the player");
-    		window.AddFloatQuestion("How close does a hostile creature need to be (in metres)?",0,null);
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is dead.");
+    		window.AddStringQuestion("Which creature should be dead?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -58,6 +59,27 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
+		
+		
+		private void OnClick_DoorOrContainerIsOpen(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+    		object[] prms = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular door (or container) is open.");
+    		window.AddStringQuestion("Which door/container should be open?");
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.DoorOrContainerIsOpen((string)prms[0]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
+		}
+		
 		
 		private void OnClick_EnemyIsNearPlayer(object sender, EventArgs ea)
 		{
@@ -77,7 +99,30 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
-				
+					
+		
+		private void OnClick_FloatHasValue(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+    		object[] prms = new object[2];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a float variable has a certain value");
+    		window.AddVariableQuestion("Which variable do you want to check?", NWN2ScriptVariableType.Float);
+    		window.AddStringQuestion("What value does the variable need to have?");// Either enter the value, " +
+    		                          //"e.g. '5.0', or an operation, e.g. '-4.6' or '+1.5'."); // TODO add check
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.FloatHasValue((string)prms[0],(string)prms[1]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
+		}
+		
+		
 		private void OnClick_IntHasValue(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
@@ -98,7 +143,28 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
+		
+		
+		private void OnClick_ItemIsEquipped(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+    		object[] prms = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a particular item equipped");
+    		window.AddTagQuestion("Which item should the player be using/wearing?",ScriptHelper.TaggedType.Item);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.ItemIsEquipped((string)prms[0]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
+		}
 				
+		
 		private void OnClick_StringHasValue(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
@@ -119,6 +185,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
 		}
 				
+				
 		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
@@ -127,7 +194,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of the player");
-    		window.AddTagQuestion("Which object needs to be within range?",ScriptHelper.ObjectType.Any);
+    		window.AddTagQuestion("Which object needs to be within range?",ScriptHelper.TaggedType.AnyObject);
     		window.AddStringQuestion("How close does the object need to be (in metres)?");// Either enter the value, " +
     		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
@@ -139,6 +206,30 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}		
+				
+		
+		private void OnClick_ObjectIsNearObject(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+    		object[] prms = new object[3];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of another object");
+    		window.AddTagQuestion("What is the first object?",ScriptHelper.TaggedType.AnyObject);
+    		window.AddTagQuestion("What is the second object?",ScriptHelper.TaggedType.AnyObject);    		
+    		window.AddStringQuestion("How close do the two objects need to be (in metres)?");// Either enter the value, " +
+    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearObject((string)prms[0],(string)prms[1],(string)prms[2]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
+		}		
+		
 		
 		private void OnClick_PlayerHasGold(object sender, EventArgs ea)
 		{
@@ -159,66 +250,47 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
 		}
 		
-		private void OnClick_PlayerIsMale(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-		}
-				
-		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-		}
-				
-		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-		}
-			
-		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-		}		
 		
-		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
+		private void OnClick_PlayerHasHenchman(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
 				Say.Information("Sorry - you can only add one condition to a line.");
 				return;
 			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		object[] prms = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is the player's ally");
+    		window.AddTagQuestion("Which creature does the player need to have as an ally?",ScriptHelper.TaggedType.Creature);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.PlayerHasHenchman((string)prms[0]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
 		}
-				
-		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
+		
+		
+		private void OnClick_PlayerHasItem(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
 				Say.Information("Sorry - you can only add one condition to a line.");
 				return;
 			}
-			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
-    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-		}			
-				
+    		object[] prms = new object[1];
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a particular item");
+    		window.AddTagQuestion("Which item does the player need to have?",ScriptHelper.TaggedType.Item);
+    		bool? result = window.ShowDialog();
+    		if (result == null || !(bool)result) { // cancelled or failed
+    			return;
+    		}
+    		else {    			
+    			NWN2ConditionalFunctor condition = Conditions.PlayerHasItem((string)prms[0]);
+    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+    		}
+		}
+							
+		
 		private void OnClick_PlayerHasNumberOfItems(object sender, EventArgs ea)
 		{		
 			if (HasCondition()) {
@@ -233,7 +305,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			
 			object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a number of items");
-    		window.AddTagQuestion("Which item should the player have?",ScriptHelper.ObjectType.Item);
+    		window.AddTagQuestion("Which item should the player have?",ScriptHelper.TaggedType.Item);
     		window.AddStringQuestion("How many items with this tag should the player have?");// Either enter the value, " +
     		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
@@ -245,5 +317,71 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
+		
+		
+		private void OnClick_PlayerIsMale(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsMale();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}
+				
+		
+		private void OnClick_PlayerIsFemale(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsFemale();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}
+		
+				
+		private void OnClick_PlayerIsGood(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsGood();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}
+			
+		
+		private void OnClick_PlayerIsEvil(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsEvil();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}		
+		
+		
+		private void OnClick_PlayerIsLawful(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsLawful();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}
+				
+		
+		private void OnClick_PlayerIsChaotic(object sender, EventArgs ea)
+		{
+			if (HasCondition()) {
+				Say.Information("Sorry - you can only add one condition to a line.");
+				return;
+			}
+			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
+    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+		}	
     }
 }

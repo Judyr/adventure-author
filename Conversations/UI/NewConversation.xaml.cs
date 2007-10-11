@@ -57,7 +57,7 @@ namespace AdventureAuthor.Conversations.UI
 				          		"and must be between 1 and 32 characters in length. Try another name.");
         	}
         	else {        		
-        		WriterWindow.Instance.OpenConversation(name,true);
+        		WriterWindow.Instance.CreateOpen(name);
         		this.Close();
         	}
         }

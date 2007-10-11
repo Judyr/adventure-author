@@ -214,9 +214,9 @@ namespace AdventureAuthor.Scripts.UI
         /// </summary>
         /// <param name="question">The question to ask the user</param>
         /// <param name="tagType">The type of object to populate the tag list from (e.g. Creature, Placeable, or All)</param>
-        public void AddTagQuestion(string question, ScriptHelper.ObjectType tagType)
+        public void AddTagQuestion(string question, ScriptHelper.TaggedType tagType)
         {
-        	ScriptHelper.ObjectType[] tagTypes = new ScriptHelper.ObjectType[]{tagType};
+        	ScriptHelper.TaggedType[] tagTypes = new ScriptHelper.TaggedType[]{tagType};
         	AddTagQuestion(question,tagTypes);
         }
         
@@ -226,7 +226,7 @@ namespace AdventureAuthor.Scripts.UI
         /// </summary>
         /// <param name="question">The question to ask the user</param>
         /// <param name="tagType">The (multiple) types of object to populate the tag list from</param>
-        public void AddTagQuestion(string question, ScriptHelper.ObjectType[] tagTypes)
+        public void AddTagQuestion(string question, ScriptHelper.TaggedType[] tagTypes)
         {
         	TagQuestionPanel panel = new TagQuestionPanel(question,tagTypes);
         	QuestionsPanel.Children.Add(panel);
@@ -238,9 +238,9 @@ namespace AdventureAuthor.Scripts.UI
         /// </summary>
         /// <param name="question">The question to ask the user</param>
         /// <param name="resrefType">The type of blueprint to populate the resref list from (e.g. Creature, Placeable, or All)</param>
-        public void AddResRefQuestion(string question, ScriptHelper.ObjectType resrefType)
+        public void AddResRefQuestion(string question, ScriptHelper.TaggedType resrefType)
         {
-        	ScriptHelper.ObjectType[] resrefTypes = new ScriptHelper.ObjectType[]{resrefType};
+        	ScriptHelper.TaggedType[] resrefTypes = new ScriptHelper.TaggedType[]{resrefType};
         	AddResRefQuestion(question,resrefTypes);
         }
         
@@ -250,7 +250,7 @@ namespace AdventureAuthor.Scripts.UI
         /// </summary>
         /// <param name="question">The question to ask the user</param>
         /// <param name="resrefTypes">The (multiple) types of blueprint to populate the resref list from</param>
-        public void AddResRefQuestion(string question, ScriptHelper.ObjectType[] resrefTypes)
+        public void AddResRefQuestion(string question, ScriptHelper.TaggedType[] resrefTypes)
         {
         	ResRefQuestionPanel panel = new ResRefQuestionPanel(question,resrefTypes);
         	QuestionsPanel.Children.Add(panel);
