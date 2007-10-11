@@ -62,7 +62,8 @@ namespace AdventureAuthor.Core
 		
 		private static Adventure currentAdventure = null;
 		private static User currentUser = new User("Anon");		
-		private static bool beQuiet = false;
+		private static bool beQuiet = false;	
+		private static bool debug = true;
 		private static bool doBackups = true;
 		private static readonly string adventureAuthorDir = @"C:\AdventureAuthor\"; // TODO make settable
 		private static readonly string backupDir = Path.Combine(adventureAuthorDir,"backups");
@@ -78,6 +79,11 @@ namespace AdventureAuthor.Core
 		public static bool BeQuiet {
 			get	{ return beQuiet; }
 			set	{ beQuiet = value; } 
+		}
+		
+		public static bool Debug {
+			get	{ return debug; }
+			set	{ debug = value; } 
 		}
 		
 		public static bool DoBackups {
