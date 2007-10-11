@@ -38,13 +38,11 @@
 				<MenuItem.Items>
 					<MenuItem Header="The player gains some gold" Click="OnClick_GiveGold"/>
 					<MenuItem Header="The player gains an item" Click="OnClick_GiveItem"/>
-					<MenuItem Header="The player gains an ally" Click="OnClick_AddHenchmanForPlayer"/>
 					<MenuItem Header="The player gains a special ability" Click="OnClick_GivePlayerFeat"/>
 					<MenuItem Header="The player gains some experience" Click="OnClick_GiveExperience"/>
 					<Separator/>		
 					<MenuItem Header="The player loses some gold" Click="OnClick_TakeGold"/>
 					<MenuItem Header="The player loses an item" Click="OnClick_RemoveItem"/>
-					<MenuItem Header="The player loses an ally" Click="OnClick_RemoveHenchman"/>
 					<MenuItem Header="The player loses a special ability" Click="OnClick_RemovePlayerFeat"/>
 					<Separator/>
 					<MenuItem Header="The player does something good" Click="OnClick_PlayerBecomesMoreGood"/>
@@ -71,7 +69,10 @@
 					<MenuItem Header="A creature walks somewhere" Click="OnClick_CreatureMoves"/>
 					<MenuItem Header="A creature is teleported somewhere" Click="OnClick_TeleportCreature"/>
 					<Separator/>		
-					<MenuItem Header="(TBC) A creature becomes another creature's ally" Click="OnClick_AddHenchmanForCreature"/>	
+					<MenuItem Header="A creature becomes the player's ally" Click="OnClick_AddHenchmanForPlayer"/>
+					<MenuItem Header="A creature stops being the player's ally" Click="OnClick_RemoveHenchman"/>
+					<MenuItem Header="A creature becomes another creature's ally" Click="OnClick_AddHenchmanForCreature"/>	
+					<Separator/>		
 					<MenuItem Header="A creature becomes a commoner" Click="OnClick_CreatureJoinsCommonerFaction"/>
 					<MenuItem Header="A creature becomes a defender" Click="OnClick_CreatureJoinsDefenderFaction"/>
 					<MenuItem Header="A creature becomes a hostile" Click="OnClick_CreatureJoinsHostileFaction"/>
