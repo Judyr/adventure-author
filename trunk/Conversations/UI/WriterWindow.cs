@@ -694,7 +694,7 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
-		private void OnClick_CreateBranchAtEndOfPage(object sender, EventArgs ea)
+		private void OnClick_CreateChoiceAtEndOfPage(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
 				if (!CurrentPage.IsEndPage) {
@@ -851,9 +851,9 @@ namespace AdventureAuthor.Conversations.UI
 			TextBlock tb0 = new TextBlock();
 			TextBlock tb1 = new TextBlock();
 			TextBlock tb2 = new TextBlock();
-			tb0.FontSize = 24;
-			tb1.FontSize = 24;
-			tb2.FontSize = 24;
+			tb0.FontSize = 22;
+			tb1.FontSize = 22;
+			tb2.FontSize = 22;
 			tb0.Foreground = Brushes.Black;
 			tb1.Foreground = e.Speaker.Colour;
 			tb2.Foreground = Brushes.Black;
@@ -876,13 +876,24 @@ namespace AdventureAuthor.Conversations.UI
 					NWN2ConversationConnector parentLine;
 					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
+						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
+						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
 						parentLine = currentPage.LeadInLine; // may be null (for root)
+						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
 					}
+					
+					if (parentLine == null) {
+						Say.Debug("Parentline: null.");
+					}
+					else {
+						Say.Debug("Parentline: " + Conversation.GetStringFromOEIString(parentLine.Line.Text));
+					}
+					
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
 										
 					LineControl newLineControl = GetLineControl(newLine);
