@@ -120,82 +120,77 @@ namespace AdventureAuthor.Scripts
 		}
 				       
 		/// <summary>
-		/// Create an object.
+		/// Create a creature.
 		/// </summary>
 		/// <description>ga_create_obj</description>
 		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
 		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
-		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor CreateCreature(string sTemplate, string sLocationTag, 
-		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		public static NWN2ScriptFunctor CreateCreature(string sTemplate, string sNewTag, string sLocationTag, 
+		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"C",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Create an object.
+		/// Create an item.
 		/// </summary>
 		/// <description>ga_create_obj</description>
 		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
 		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
-		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor CreateItem(string sTemplate, string sLocationTag, 
-		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		public static NWN2ScriptFunctor CreateItem(string sTemplate, string sNewTag, string sLocationTag, 
+		                                             int bUseAppearAnimation, float fDelay)			
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"I",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
 		}					       
 		/// <summary>
-		/// Create an object.
+		/// Create a placeable.
 		/// </summary>
 		/// <description>ga_create_obj</description>
 		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
 		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
-		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor CreatePlaceable(string sTemplate, string sLocationTag, 
-		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		public static NWN2ScriptFunctor CreatePlaceable(string sTemplate, string sNewTag, string sLocationTag, 
+		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"P",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
 		}					       
 		/// <summary>
-		/// Create an object.
+		/// Create a store.
 		/// </summary>
 		/// <description>ga_create_obj</description>
 		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
 		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
-		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor CreateStore(string sTemplate, string sLocationTag, 
-		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		public static NWN2ScriptFunctor CreateStore(string sTemplate, string sNewTag, string sLocationTag, 
+		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"S",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
 		}					       
 		/// <summary>
-		/// Create an object.
+		/// Create a waypoint.
 		/// </summary>
 		/// <description>ga_create_obj</description>
 		/// <param name="sTemplate">Template to create object from</param>
+		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="sLocationTag">Tag of the waypoint at which to create the object</param>
 		/// <param name="bUseAppearAnimation">Set to 1 to make an animation play when the object appears</param>
-		/// <param name="sNewTag">Tag of the newly created object</param>
 		/// <param name="fDelay">Delay, in seconds, before creating the object</param>
-		/// <returns></returns>
-		public static NWN2ScriptFunctor CreateWaypoint(string sTemplate, string sLocationTag, 
-		                                             int bUseAppearAnimation, string sNewTag, float fDelay)
+		public static NWN2ScriptFunctor CreateWaypoint(string sTemplate, string sNewTag, string sLocationTag, 
+		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
 			                                      new object[]{"W",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.Origin.NWN2);
@@ -271,11 +266,11 @@ namespace AdventureAuthor.Scripts
 		/// <summary>
 		/// Fade the screen to black (or another colour).
 		/// </summary>
+		/// <param name="fadeColour">The colour to fade to - either black, white or red.</param>
 		/// <param name="fSpeed">Number of seconds to fade out over (0.0 for instantly).</param>
 		/// <param name="fFailsafe">Maximum length of time to allow fade-out for before automatically fading back in 
 		/// (passing 0.0 results in the default value of 15 seconds)</param>
-		/// <param name="fadeColour">The colour to fade to - either black, white or red.</param>
-		public static NWN2ScriptFunctor FadeOut(float fSpeed, float fFailsafe, ScriptHelper.FadeColour fadeColour)
+		public static NWN2ScriptFunctor FadeOut(ScriptHelper.FadeColour fadeColour, float fSpeed, float fFailsafe)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_fade_to_black",new object[]{fSpeed,fFailsafe,(int)fadeColour},ScriptHelper.Origin.NWN2);
 		}
@@ -346,7 +341,7 @@ namespace AdventureAuthor.Scripts
 		}
 					
 		/// <summary>
-		/// Heal the player and his companions.
+		/// Heal the player.
 		/// </summary>
 		/// <param name="nHealPercent">The percentage damage to heal, from 0 to 100, 100 being the most.</param>
 		public static NWN2ScriptFunctor HealPC(int nHealPercent)
@@ -389,10 +384,10 @@ namespace AdventureAuthor.Scripts
 		/// Jump a creature to a waypoint or another object.
 		/// </summary>
 		/// <description>ga_jump</description>
-		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
 		/// <param name="sTarget">Tag of creature to jump</param>
+		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
 		/// <param name="fDelay">Delay before jumping</param>
-		public static NWN2ScriptFunctor TeleportCreature(string sDestination, string sTarget, float fDelay)
+		public static NWN2ScriptFunctor TeleportCreature(string sTarget, string sDestination, float fDelay)
 		{
 			// NB: Identical to TeleportObject, but it felt more natural to have teleport creature and teleport object
 			// separate in the UI, so I've replicated that here for consistency's sake.
@@ -403,16 +398,16 @@ namespace AdventureAuthor.Scripts
 		/// Jump an object to a waypoint or another object.
 		/// </summary>
 		/// <description>ga_jump</description>
-		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
 		/// <param name="sTarget">Tag of object to jump</param>
+		/// <param name="sDestination">Tag of waypoint or object to jump to</param>
 		/// <param name="fDelay">Delay before jumping</param>
-		public static NWN2ScriptFunctor TeleportObject(string sDestination, string sTarget, float fDelay)
+		public static NWN2ScriptFunctor TeleportObject(string sTarget, string sDestination, float fDelay)
 		{
     		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
-		/// Jump the PC party to a waypoint or object.
+		/// Jump the player to a waypoint or object.
 		/// </summary>
 		/// <description>ga_jump_players</description>
 		/// <param name="sDestTag">Tag of waypoint or object to jump to</param>

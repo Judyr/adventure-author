@@ -665,7 +665,7 @@ namespace AdventureAuthor.Conversations.UI
 		{	
 			if (Conversation.CurrentConversation != null) {
 				Conversation.CurrentConversation.SaveToOriginal();
-				Say.Information("Saved.");
+				Say.Debug("Saved.");
 			}			
 		}
 		

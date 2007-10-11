@@ -136,17 +136,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a creature");
-    		window.AddResRefQuestion("What template should the creature be created from?",ScriptHelper.TaggedType.Creature); //0th
-    		window.AddStringQuestion("What tag should the new creature be given?"); //3rd
-    		window.AddTagQuestion("What waypoint should the creature appear at?",ScriptHelper.TaggedType.Waypoint); //1st
-    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?"); //2nd
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); //4th
+    		window.AddResRefQuestion("What template should the creature be created from?",ScriptHelper.TaggedType.Creature);
+    		window.AddStringQuestion("What tag should the new creature be given?");
+    		window.AddTagQuestion("What waypoint should the creature appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); 
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.CreateCreature((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
+    			NWN2ScriptFunctor action = Actions.CreateCreature((string)prms[0],(string)prms[1],(string)prms[2],(int)prms[3],(float)prms[4]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    	
@@ -155,17 +155,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create an item");
-    		window.AddResRefQuestion("What template should the item be created from?",ScriptHelper.TaggedType.Item); //0th
-    		window.AddStringQuestion("What tag should the new item be given?"); //3rd
-    		window.AddTagQuestion("What waypoint should the item appear at?",ScriptHelper.TaggedType.Waypoint); //1st
-    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?"); //2nd
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); //4th
+    		window.AddResRefQuestion("What template should the item be created from?",ScriptHelper.TaggedType.Item);
+    		window.AddStringQuestion("What tag should the new item be given?");
+    		window.AddTagQuestion("What waypoint should the item appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.CreateItem((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
+    			NWN2ScriptFunctor action = Actions.CreateItem((string)prms[0],(string)prms[1],(string)prms[2],(int)prms[3],(float)prms[4]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    	
@@ -174,17 +174,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a placeable");
-    		window.AddResRefQuestion("What template should the placeable be created from?",ScriptHelper.TaggedType.Placeable); //0th
-    		window.AddStringQuestion("What tag should the new placeable be given?"); //3rd
-    		window.AddTagQuestion("What waypoint should the placeable appear at?",ScriptHelper.TaggedType.Waypoint); //1st
-    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?"); //2nd
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); //4th
+    		window.AddResRefQuestion("What template should the placeable be created from?",ScriptHelper.TaggedType.Placeable);
+    		window.AddStringQuestion("What tag should the new placeable be given?");
+    		window.AddTagQuestion("What waypoint should the placeable appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.CreatePlaceable((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
+    			NWN2ScriptFunctor action = Actions.CreatePlaceable((string)prms[0],(string)prms[1],(string)prms[2],(int)prms[3],(float)prms[4]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    		
@@ -193,17 +193,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a placeable");
-    		window.AddResRefQuestion("What template should the store be created from?",ScriptHelper.TaggedType.Store); //0th
-    		window.AddStringQuestion("What tag should the new store be given?"); //3rd
-    		window.AddTagQuestion("What waypoint should the store appear at?",ScriptHelper.TaggedType.Waypoint); //1st
-    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?"); //2nd
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); //4th
+    		window.AddResRefQuestion("What template should the store be created from?",ScriptHelper.TaggedType.Store);
+    		window.AddStringQuestion("What tag should the new store be given?");
+    		window.AddTagQuestion("What waypoint should the store appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.CreateStore((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
+    			NWN2ScriptFunctor action = Actions.CreateStore((string)prms[0],(string)prms[1],(string)prms[2],(int)prms[3],(float)prms[4]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    		
@@ -215,21 +215,20 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		// which may be useful in future. Currently however the interface just takes a waypoint tag, so this is of no use.
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a waypoint");
-    		window.AddResRefQuestion("What template should the waypoint be created from?",ScriptHelper.TaggedType.Waypoint); //0th
-    		window.AddStringQuestion("What tag should the new waypoint be given?"); //3rd
-    		window.AddTagQuestion("What waypoint should the waypoint appear at?",ScriptHelper.TaggedType.Waypoint); //1st
-    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?"); //2nd
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); //4th
+    		window.AddResRefQuestion("What template should the waypoint be created from?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddStringQuestion("What tag should the new waypoint be given?");
+    		window.AddTagQuestion("What waypoint should the waypoint appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    		
-    			NWN2ScriptFunctor action = Actions.CreateWaypoint((string)prms[0],(string)prms[2],(int)prms[3],(string)prms[1],(float)prms[4]);
+    			NWN2ScriptFunctor action = Actions.CreateWaypoint((string)prms[0],(string)prms[1],(string)prms[2],(int)prms[3],(float)prms[4]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    
-    	    	
     	
     	private void OnClick_CreatureMoves(object sender, EventArgs ea)
     	{    	
@@ -248,8 +247,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}  
-    	
-    	
     	    	
     	private void OnClick_DestroyObject(object sender, EventArgs ea)
     	{    		
@@ -307,15 +304,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Fade out");
-    		window.AddEnumQuestion("What colour should the screen fade to?",typeof(ScriptHelper.FadeColour));//2nd
-    		window.AddFloatQuestion("How many seconds should it take to fade out?",0,60);//0th
-    		window.AddFloatQuestion("How many seconds should pass before fading in again?",0,60);//1st
+    		window.AddEnumQuestion("What colour should the screen fade to?",typeof(ScriptHelper.FadeColour));
+    		window.AddFloatQuestion("How many seconds should it take to fade out?",0,60);
+    		window.AddFloatQuestion("How many seconds should pass before fading in again?",0,60);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.FadeOut((float)prms[1],(float)prms[2],(ScriptHelper.FadeColour)prms[0]);
+    			NWN2ScriptFunctor action = Actions.FadeOut((ScriptHelper.FadeColour)prms[0],(float)prms[1],(float)prms[2]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -476,15 +473,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Move a creature instantly to another location");
-    		window.AddTagQuestion("Which creature should be teleported?",ScriptHelper.TaggedType.Creature); // out of sequence deliberately
-    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint); // out of sequence deliberately
-    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);    
+    		window.AddTagQuestion("Which creature should be teleported?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.TeleportCreature((string)prms[1],(string)prms[0],(float)prms[2]);
+    			NWN2ScriptFunctor action = Actions.TeleportCreature((string)prms[0],(string)prms[1],(float)prms[2]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -493,15 +490,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Move an object instantly to another location");
-    		window.AddTagQuestion("Which object should be teleported?",ScriptHelper.TaggedType.AnyObject); // out of sequence deliberately
-    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint); // out of sequence deliberately
+    		window.AddTagQuestion("Which object should be teleported?",ScriptHelper.TaggedType.AnyObject);
+    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint);
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);    
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.TeleportObject((string)prms[1],(string)prms[0],(float)prms[2]);
+    			NWN2ScriptFunctor action = Actions.TeleportObject((string)prms[0],(string)prms[1],(float)prms[2]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -520,8 +517,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
-    	
-    	
+    	    	
     	private void OnClick_Kill(object sender, EventArgs ea)
     	{
     		object[] prms = new object[1];
@@ -536,8 +532,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
-    	  
-    	    	
+  	
     	private void OnClick_OpenDoor(object sender, EventArgs ea)
     	{    	
     		object[] prms = new object[1];
@@ -552,7 +547,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	} 
-    	
     	
     	private void OnClick_OpenStore(object sender, EventArgs ea)
     	{
@@ -665,8 +659,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}   
-    	
-    	    	
+    		
     	private void OnClick_LockDoor(object sender, EventArgs ea)
     	{    	
     		object[] prms = new object[1];

@@ -49,7 +49,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is dead.");
-    		window.AddStringQuestion("Which creature should be dead?");
+    		window.AddStringQuestion("Which creature needs to be dead?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -68,8 +68,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				return;
 			}
     		object[] prms = new object[1];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular door (or container) is open.");
-    		window.AddStringQuestion("Which door/container should be open?");
+    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular door is open.");
+    		window.AddTagQuestion("Which door needs to be open?",ScriptHelper.TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -153,7 +153,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a particular item equipped");
-    		window.AddTagQuestion("Which item should the player be using/wearing?",ScriptHelper.TaggedType.Item);
+    		window.AddTagQuestion("Which item does the player need to be using/wearing?",ScriptHelper.TaggedType.Item);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -306,7 +306,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a number of items");
     		window.AddTagQuestion("Which item should the player have?",ScriptHelper.TaggedType.Item);
-    		window.AddStringQuestion("How many items with this tag should the player have?");// Either enter the value, " +
+    		window.AddStringQuestion("How many items with this tag does the player need to have?");// Either enter the value, " +
     		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
