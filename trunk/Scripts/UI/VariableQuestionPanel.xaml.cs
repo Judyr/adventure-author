@@ -28,7 +28,7 @@ namespace AdventureAuthor.Scripts.UI
     	public VariableQuestionPanel(string question, NWN2ScriptVariableType type)
         {
     		if (type != NWN2ScriptVariableType.Int && type != NWN2ScriptVariableType.String) {
-    			Say.Error("Variables other than strings and ints are not currently supported.");
+    			throw new ArgumentException("Variables other than strings and ints are not currently supported.");
     		}
     		    		
             InitializeComponent();

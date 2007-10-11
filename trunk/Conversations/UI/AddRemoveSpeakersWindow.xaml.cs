@@ -46,7 +46,7 @@ namespace AdventureAuthor.Conversations.UI
             InitializeComponent();
             
             // Populate list of possible speakers with all creatures in module except for those already in the conversation:
-            List<string> allSpeakers = ScriptHelper.GetTags(ScriptHelper.ObjectType.Creature);
+            List<string> allSpeakers = ScriptHelper.GetTags(ScriptHelper.TaggedType.Creature);
             foreach (Speaker speaker in Conversation.CurrentConversation.Speakers) {
             	if (allSpeakers.Contains(speaker.Tag)) {
             		allSpeakers.Remove(speaker.Tag);

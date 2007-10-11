@@ -495,20 +495,58 @@ namespace AdventureAuthor.Conversations.UI
 			// Could also have a special Narrator speaker? (invisible object)
 		}
 		
-			
-		public bool OpenConversation(string name, bool createAsNew)
-		{	
+		#region Opening a conversation
+		
+		/// <summary>
+		/// Open an existing conversation.
+		/// </summary>
+		/// <param name="name">The filename of the conversation.</param>
+		/// <remarks>The conversation file must be located in the directory of the current Adventure.</remarks>
+		public void Open(string name)
+		{
 			if (Adventure.CurrentAdventure == null) {
 				Say.Error("Open an Adventure first.");
-				return false;
+				return;
+			}
+			else if (!Adventure.IsValidName(name)) {
+				Say.Error(name + " is not a valid name.");
+				return;
 			}
 			
 			// Close current conversation, if one is open:
 			if (!CloseConversationDialog()) {
-				return false;
+				return;
 			}
 			
-			// Open new conversation:
+			Open(name,false);
+		}
+				
+		
+		/// <summary>
+		/// Create and open a new conversation.
+		/// </summary>
+		/// <param name="name">The filename of the conversation to create.</param>
+		public void CreateOpen(string name)
+		{
+			if (Adventure.CurrentAdventure == null) {
+				Say.Error("Open an Adventure first.");
+				return;
+			}
+			else if (!Adventure.IsValidName(name)) {
+				Say.Error(name + " is not a valid name.");
+				return;
+			}
+			
+			// Close current conversation, if one is open:
+			if (!CloseConversationDialog()) {
+				return;
+			}
+			
+			Open(name,true);
+		}
+		
+		private void Open(string name, bool createAsNew)
+		{				
 			NWN2GameConversation conv = null;
 			try {
 				this.originalFilename = name;	
@@ -517,7 +555,7 @@ namespace AdventureAuthor.Conversations.UI
 					conv = new NWN2GameConversation(originalFilename,
 					                         		Adventure.CurrentAdventure.Module.Repository.DirectoryName,
 						                     		Adventure.CurrentAdventure.Module.Repository);
-					form.App.Module.AddResource(conv); // necessary?
+					Adventure.CurrentAdventure.Module.AddResource(conv); // necessary?
 				}
 					
 				// Create and open a working copy of the original conversation:
@@ -577,30 +615,8 @@ namespace AdventureAuthor.Conversations.UI
 			DisplayPage(pages[0]);	
 			CentreGraph(true);
 			SetTitleBar();
-			
-			return true;
 		}		
 		
-		
-		private void OnClick_Open(object sender, EventArgs ea)
-		{
-			OpenFileDialog openFile = new OpenFileDialog();
-			openFile.ValidateNames = true;
-			openFile.Filter = "dlg files (*.dlg)|*.dlg";
-			openFile.Title = "Select a conversation file";
-			openFile.Multiselect = false;
-			openFile.InitialDirectory = form.App.Module.Repository.DirectoryName;
-			openFile.RestoreDirectory = true;
-			
-			if ((bool)openFile.ShowDialog()) {
-				if (openFile.SafeFileName.StartsWith("~tmp")) {
-					Say.Information(openFile.SafeFileName + " is a temporary file, and cannot be opened.");
-					return;
-				}
-				OpenConversation(System.IO.Path.GetFileNameWithoutExtension(openFile.FileName),false);
-			}			
-		}
-				
 		
 		/// <summary>
 		/// Create a working copy of a conversation file with a unique temporary name.
@@ -621,6 +637,28 @@ namespace AdventureAuthor.Conversations.UI
 			File.Copy(originalPath,temppath);
 			return tempname;			
 		}	
+		
+		#endregion
+		
+		private void OnClick_Open(object sender, EventArgs ea)
+		{
+			OpenFileDialog openFile = new OpenFileDialog();
+			openFile.ValidateNames = true;
+			openFile.Filter = "dlg files (*.dlg)|*.dlg";
+			openFile.Title = "Select a conversation file";
+			openFile.Multiselect = false;
+			openFile.InitialDirectory = form.App.Module.Repository.DirectoryName;
+			openFile.RestoreDirectory = true;
+			
+			if ((bool)openFile.ShowDialog()) {
+				if (openFile.SafeFileName.StartsWith("~tmp")) {
+					Say.Information(openFile.SafeFileName + " is a temporary file, and cannot be opened.");
+					return;
+				}
+				Open(Path.GetFileNameWithoutExtension(openFile.FileName),false);
+			}			
+		}
+				
 		
 		
 		private void OnClick_Save(object sender, EventArgs ea)

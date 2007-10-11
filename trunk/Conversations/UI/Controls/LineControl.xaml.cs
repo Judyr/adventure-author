@@ -105,7 +105,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
-        	InitializeComponent();      
+        	InitializeComponent();
             
         	// Set the image on the delete button:
             Image image = new Image();
@@ -438,11 +438,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Say.Debug("just set background. about to switch on all the buttons");
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
-        		SwitchOn(conditionalControl.EditConditionsButton);
+//        		SwitchOn(conditionalControl.EditConditionsButton);
         		SwitchOn(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
-        		SwitchOn(actionControl.EditActionButton);
+//        		SwitchOn(actionControl.EditActionButton);
         		SwitchOn(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
@@ -465,11 +465,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Dialogue.BorderBrush = Brushes.Transparent;
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
-        		SwitchOff(conditionalControl.EditConditionsButton);
+//        		SwitchOff(conditionalControl.EditConditionsButton);
         		SwitchOff(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
-        		SwitchOff(actionControl.EditActionButton);
+//        		SwitchOff(actionControl.EditActionButton);
         		SwitchOff(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
