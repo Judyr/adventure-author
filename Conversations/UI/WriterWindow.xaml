@@ -38,22 +38,22 @@
 			<ColumnDefinition Width="400"/>
 		</Grid.ColumnDefinitions>
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
-			<MenuItem Header="File">
-				<MenuItem Header="New" Click="OnClick_New"/>
-				<MenuItem Header="Open" Click="OnClick_Open"/>
-				<MenuItem Header="Save" Click="OnClick_Save" Name="SaveMenuItem"/>
-				<!--<MenuItem Header="Save As" IsEnabled="false"/>-->
-				<MenuItem Header="Close" Click="OnClick_Close"/>
-				<MenuItem Header="Exit" Click="OnClick_Exit"/>
+			<MenuItem Header="File" FontSize="14">
+				<MenuItem Header="New" Click="OnClick_New" FontSize="14"/>
+				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
+				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14" Name="SaveMenuItem"/>
+				<!--<MenuItem Header="Save As" IsEnabled="false" FontSize="14"/>-->
+				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
+				<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>
-			<MenuItem Header="Options">
-				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers"/>
+			<MenuItem Header="Options" FontSize="14">
+				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers" FontSize="14"/>
 			</MenuItem>
 		</Menu>
 		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
 			<StackPanel Name="ButtonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false">
 				<StackPanel Name="OtherActionsButtonsPanel" Orientation="Vertical" Margin="10">
-					<Button Click="OnClick_CreateBranchAtEndOfPage" FontSize="24">
+					<Button Click="OnClick_CreateChoiceAtEndOfPage" FontSize="22">
 						<TextBlock>
 							<TextBlock Foreground="Black" Text="Add a"/>
 							<TextBlock Foreground="Purple" Text="CHOICE"/>
@@ -61,7 +61,7 @@
 					</Button>	
 				</StackPanel>
 				<StackPanel Name="SpeakersButtonsPanel" Orientation="Vertical" Margin="10">
-					<Button Name="AddSpeakersButton" FontSize="24" Margin="2" Click="OnClick_AddRemoveSpeakers">
+					<Button Name="AddSpeakersButton" FontSize="22" Margin="2" Click="OnClick_AddRemoveSpeakers">
 						<TextBlock Foreground="Black" Text="Add another speaker"/>
 					</Button>						
 				</StackPanel>

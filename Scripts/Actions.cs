@@ -39,6 +39,7 @@ namespace AdventureAuthor.Scripts
 		 * ga_effect
 		 * the 10 music scripts to start/stop battle and background music
 		 * ga_set_wwp_controller
+		 * Custom script for AttackPlayer that will take the creature out of the player's party first (?)
 		 * */
 		
 		/// <summary>
