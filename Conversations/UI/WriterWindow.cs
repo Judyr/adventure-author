@@ -707,6 +707,7 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}			
 		
+		
 		/// <summary>
 		/// If there's a conversation still open, ask if the user wants to save it before closing. If they cancel, cancel the closing event.
 		/// </summary>
@@ -718,11 +719,25 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
+		/// <summary>
+		/// Check to see if there are old temporary conversation files lying about, and if so delete them. 
+		/// </summary>
+		/// <remarks>These are usually deleted when they're done with, but will remain if there's a crash.</remarks>
+		private void OnClosed(object sender, EventArgs ea)
+		{
+			string path = Adventure.CurrentAdventure.Module.Repository.DirectoryName;
+			DirectoryInfo di = new DirectoryInfo(path);
+			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
+			foreach (FileInfo file in tempFiles) {
+				file.Delete();
+			}
+		}
+		
 		
 		/// <summary>
 		/// Closes the current conversation; if appropriate, asks whether the user wants to save first.
 		/// </summary>
-		/// <returns>false if the close operation was cancelled, true otherwise</returns>
+		/// <returns>False if the close operation was cancelled; true otherwise</returns>
 		private bool CloseConversationDialog()
 		{
 			if (Conversation.CurrentConversation != null) {

@@ -35,7 +35,9 @@ namespace AdventureAuthor.Utils
 	public static class Say
 	{		
 		public static void Debug(string message) {
-			DebugLog.Write(message);
+			if (Adventure.Debug) {
+				DebugLog.Write(message);
+			}
 		}
 		
 		public static void Error(string message) {
@@ -56,7 +58,7 @@ namespace AdventureAuthor.Utils
 			if (e != null) {
 				logMessage.Append("   > " + e.ToString());
 			}
-			DebugLog.Write(logMessage.ToString());
+			Debug(logMessage.ToString());
 		}
 		
 		public static void Error(Exception e)
