@@ -992,7 +992,12 @@ namespace AdventureAuthor.Conversations
 		
 			if (addFillerBeforeNewLine) {
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent);
-				Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of " + GetStringFromOEIString(parent.Text) + ".");
+				if (parent ==  null) {
+					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of root.");				
+				}
+				else {
+					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of " + GetStringFromOEIString(parent.Text) + ".");
+				}
 				SetAsFillerLine(fillerLine);
 				Say.Debug("Set it to be a filler line.");
 				newLine = Conversation.CurrentConversation.NwnConv.InsertChild(fillerLine);	
