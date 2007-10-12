@@ -114,7 +114,7 @@ namespace AdventureAuthor.Utils
 				MessageBox.Show("WARNING: \n\n " + message);
 			}
 			
-			UserLog.Write("- warned: " + message);
+			Log.Write("- warned: " + message);
 		}
 	}
 }

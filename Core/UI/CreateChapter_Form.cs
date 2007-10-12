@@ -37,14 +37,14 @@ namespace AdventureAuthor.Core.UI
 	{
 		public CreateChapter_Form()
 		{
-			UserLog.Write(UserLog.WizardAction.Started,UserLog.WizardSubject.CreateChapterWizard);
+			Log.Write(Log.WizardAction.Started,Log.WizardSubject.CreateChapterWizard);
 			InitializeComponent();
 		}
 		
 		void CreateChapter_Cancel(object sender, EventArgs e)
 		{
 			this.Close();
-			UserLog.Write(UserLog.WizardAction.Cancelled,UserLog.WizardSubject.CreateChapterWizard);			
+			Log.Write(Log.WizardAction.Cancelled,Log.WizardSubject.CreateChapterWizard);			
 		}
 		
 		void CreateChapter_OK(object sender, EventArgs e)
@@ -64,7 +64,7 @@ namespace AdventureAuthor.Core.UI
 			}
 			
 			this.Close();
-			UserLog.Write(UserLog.WizardAction.Completed,UserLog.WizardSubject.CreateChapterWizard);
+			Log.Write(Log.WizardAction.Completed,Log.WizardSubject.CreateChapterWizard);
 		}
 	}
 }

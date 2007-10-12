@@ -42,11 +42,12 @@ namespace AdventureAuthor.Conversations.UI
         public NewConversation()
         {
             InitializeComponent();
+            ConversationNameTextBox.Focus();
         }
 
         private void OnClickOK(object sender, EventArgs ea)
         {        	
-        	string name = ConversationName.Text;
+        	string name = ConversationNameTextBox.Text;
         	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,Adventure.CurrentAdventure.Module.Repository.DirectoryName),name+".dlg"))) {
         		Say.Warning("A conversation called '" + name + "' already exists in the Adventure '" + 
         		            Adventure.CurrentAdventure.Name + "' - try another name.");
