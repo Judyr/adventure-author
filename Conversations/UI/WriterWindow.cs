@@ -660,7 +660,8 @@ namespace AdventureAuthor.Conversations.UI
 					Say.Information(openFile.SafeFileName + " is a temporary file, and cannot be opened.");
 					return;
 				}
-				Open(Path.GetFileNameWithoutExtension(openFile.FileName),false);
+				
+				Open(Path.GetFileNameWithoutExtension(openFile.FileName));
 			}			
 		}
 				
@@ -670,7 +671,7 @@ namespace AdventureAuthor.Conversations.UI
 		{	
 			if (Conversation.CurrentConversation != null) {
 				Conversation.CurrentConversation.SaveToOriginal();
-				Say.Debug("Saved.");
+//				Say.Debug("Saved.");
 			}			
 		}
 		
@@ -678,6 +679,17 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_Close(object sender, EventArgs ea)
 		{
 			CloseConversationDialog();
+			Say.Debug("After clicking close.");
+				if (Conversation.CurrentConversation == null) {
+					Say.Debug("CurrentConversation is null.");
+				}
+				else {
+					Say.Debug("CurrentConversation is not null:  " + Conversation.CurrentConversation.ToString());
+				}
+			Say.Debug("Title bar is " + this.Title);
+			Say.Debug("Run SetTitleBar()");
+			SetTitleBar();
+			Say.Debug("Title bar is now " + this.Title);
 		}
 		
 		
@@ -745,17 +757,34 @@ namespace AdventureAuthor.Conversations.UI
 		/// <returns>False if the close operation was cancelled; true otherwise</returns>
 		private bool CloseConversationDialog()
 		{
+			Say.Debug("CloseConversationDialog()");
 			if (Conversation.CurrentConversation != null) {
+				Say.Debug("CurrentConversation is not null.");
+				// Make sure you get any changes to the current line:
+				if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
+					SelectedLineControl.SaveChangesToText();
+				}	
 				if (!Adventure.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
+					Say.Debug("IsDirty == true.");
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
+						Say.Debug("Cancelled.");
 						return false;
 					}
 					else if (result == MessageBoxResult.Yes) {
+						Say.Debug("Clicked Yes - saving.");			
+
 						Conversation.CurrentConversation.SaveToOriginal();
 					}
-				}				
+				}			
+				else {
+					Say.Debug("IsDirty == false.");
+				}
+				Say.Debug("Close the conversation.");
 				CloseConversation();
+			}
+			else {
+				Say.Debug("CurrentConversation is null.");
 			}
 			return true;
 		}
@@ -775,13 +804,14 @@ namespace AdventureAuthor.Conversations.UI
 				File.Delete(workingFilePath);
 				this.workingFilename = null;
 				this.originalFilename = null;
-				SetTitleBar();
 				currentPage = null;
 				if (pages != null) {
 					pages.Clear();
 				}
+				
 				SelectedLineControl = null;
 				Conversation.CurrentConversation = null;
+				SetTitleBar();
 								
 				MainGraph.ClearGraph();					
 				if (ExpandedGraph != null) {
@@ -896,23 +926,23 @@ namespace AdventureAuthor.Conversations.UI
 					NWN2ConversationConnector parentLine;
 					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
-						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
+//						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
-						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
+//						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
 						parentLine = currentPage.LeadInLine; // may be null (for root)
-						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
+//						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
 					}
 					
-					if (parentLine == null) {
-						Say.Debug("Parentline: null.");
-					}
-					else {
-						Say.Debug("Parentline: " + Conversation.GetStringFromOEIString(parentLine.Line.Text));
-					}
+//					if (parentLine == null) {
+//						Say.Debug("Parentline: null.");
+//					}
+//					else {
+//						Say.Debug("Parentline: " + Conversation.GetStringFromOEIString(parentLine.Line.Text));
+//					}
 					
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
 										

@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using AdventureAuthor.Conversations.UI;
@@ -822,7 +823,18 @@ namespace AdventureAuthor.Conversations
 		
 		public override string ToString()
 		{
-			return this.NwnConv.Name;
+			StringBuilder s = new StringBuilder();
+			if (this.nwnConv.Name != null) {
+				s.Append(this.nwnConv.Name + " (" + speakers[0].ToString());
+				for (int i = 1; i < speakers.Count; i++) {
+					s.Append(", " + speakers[i].ToString());
+				}
+				s.Append(")");
+			}
+			else {
+				s.Append("(Null conversation)");
+			}
+			return s.ToString();
 		}
 				
 		#endregion
@@ -951,26 +963,26 @@ namespace AdventureAuthor.Conversations
 			
 			if (parent == null) { // adding to root
 				if (newLineType == NWN2ConversationConnectorType.Reply) { 	
-					Say.Debug("Adding a player line to root, need to add a filler line first.");
+//					Say.Debug("Adding a player line to root, need to add a filler line first.");
 					newLine = CreateNewLine(parent,speakerTag,true,reparentChildren); // adding PC line to root is only possible by adding a filler line first
 				}
 				else {
-					Say.Debug("Adding an NPC line to root, no need to add a filler line first.");
+//					Say.Debug("Adding an NPC line to root, no need to add a filler line first.");
 					newLine = CreateNewLine(parent,speakerTag,false,reparentChildren); // can add an NPC line directly to root without adding a filler line first
 				}
 			}
 			else { // adding to an existing line	
 				if (!CanFollow(parent,newLineType)) { // if the new line can't be directly added, put in a filler line first
-					Say.Debug("Adding a " + newLineType.ToString() + " line to a " + parent.Type.ToString() + " line - need a filler line first.");
+//					Say.Debug("Adding a " + newLineType.ToString() + " line to a " + parent.Type.ToString() + " line - need a filler line first.");
 					newLine = CreateNewLine(parent,speakerTag,true,reparentChildren);
 				}
 				else { // add the new line to the parent	
-					Say.Debug("Adding a " + newLineType.ToString() + " line to a " + parent.Type.ToString() + " line - don't need a filler line.");
+//					Say.Debug("Adding a " + newLineType.ToString() + " line to a " + parent.Type.ToString() + " line - don't need a filler line.");
 					newLine = CreateNewLine(parent,speakerTag,false,reparentChildren); 
 				}
 			}
 			
-			Say.Debug("Set new line: " + GetStringFromOEIString(newLine.Text) + " ... as a non-filler line.");
+//			Say.Debug("Set new line: " + GetStringFromOEIString(newLine.Text) + " ... as a non-filler line.");
 			SetAsNotFillerLine(newLine);
 			return newLine;
 		}			
@@ -992,36 +1004,32 @@ namespace AdventureAuthor.Conversations
 		
 			if (addFillerBeforeNewLine) {
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent);
-				if (parent ==  null) {
-					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of root.");				
-				}
-				else {
-					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of " + GetStringFromOEIString(parent.Text) + ".");
-				}
+//				if (parent ==  null) {
+//					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of root.");				
+//				}
+//				else {
+//					Say.Debug("Added " + GetStringFromOEIString(fillerLine.Text) + " as a filler line, child of " + GetStringFromOEIString(parent.Text) + ".");
+//				}
 				SetAsFillerLine(fillerLine);
-				Say.Debug("Set it to be a filler line.");
+//				Say.Debug("Set it to be a filler line.");
 				newLine = Conversation.CurrentConversation.NwnConv.InsertChild(fillerLine);	
-				Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as the new line, child of filler line.");
+//				Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as the new line, child of filler line.");
 			}
 			else {
 				newLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent); // again, parent may be null for ROOT
-				if (parent == null) {
-					Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of root.");
-				}
-				else {
-					if (parent == null) {
-						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of root.");
-					}
-					else {
-						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of " + GetStringFromOEIString(parent.Text) + ".");
-					}
-				}
+
+//					if (parent == null) {
+//						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of root.");
+//					}
+//					else {
+//						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of " + GetStringFromOEIString(parent.Text) + ".");
+//					}
 			}
 			newLine.Speaker = speakerTag;
 			newLine.Sound = null;
 			
 			if (reparentChildren && children.Count > 1) { // reparent children if we're just adding a line; don't if we're adding a branch
-				Say.Debug("Reparent the children.");
+//				Say.Debug("Reparent the children.");
 				ReparentChildren(newLine,fillerLine,children);
 			}
 			
@@ -1042,12 +1050,12 @@ namespace AdventureAuthor.Conversations
 				SetAsFillerLine(fillerLine);
 				newParent = fillerLine;
 				childToIgnore = newLine; // TODO - surely fillerLine must be the child to ignore?
-				Say.Debug("Added a filler line between the new line and its children since one didn't exist. The filler line is their new parent.");
+//				Say.Debug("Added a filler line between the new line and its children since one didn't exist. The filler line is their new parent.");
 			}
 			else { // a fillerLine has already been created, between newLine and newLine's parent
 				newParent = newLine;
 				childToIgnore = fillerLine;
-				Say.Debug("a fillerLine has already been created, between newLine and newLine's parent.");
+//				Say.Debug("a fillerLine has already been created, between newLine and newLine's parent.");
 			}
 				
 			foreach (NWN2ConversationConnector child in children) { // split over two foreach statements to avoid an enumeration exception
@@ -1059,7 +1067,7 @@ namespace AdventureAuthor.Conversations
 				Conversation.CurrentConversation.NwnConv.ReparentNode(displacedChild,newParent.Line);
 			}	
 			
-			Say.Debug("Reparented children.");
+//			Say.Debug("Reparented children.");
 		}
 		
 		#endregion
@@ -1109,10 +1117,10 @@ namespace AdventureAuthor.Conversations
 				throw new ArgumentNullException("Can't operate on a null line.");
 			}
 			
-			Say.Debug("Initial value of line: " + GetStringFromOEIString(line.Text));
+//			Say.Debug("Initial value of line: " + GetStringFromOEIString(line.Text));
 			line.Comment = IDENTIFY_AS_FILLER;
 			line.Line.Text = GetOEIStringFromString(String.Empty); // don't use SetText as this will fire an OnChanged event, and we're not finished
-			Say.Debug("New value of line: " + GetStringFromOEIString(line.Text));
+//			Say.Debug("New value of line: " + GetStringFromOEIString(line.Text));
 			
 			if (line.Speaker != String.Empty) {
 				line.Speaker = String.Empty;
