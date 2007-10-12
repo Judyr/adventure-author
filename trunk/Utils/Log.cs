@@ -32,7 +32,7 @@ using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
-	public static class UserLog
+	public static class Log
 	{	
 		// How to read log messages:
 			// GetNumber() // hour
@@ -47,6 +47,55 @@ namespace AdventureAuthor.Utils
 			// }
 		
 		private static StreamWriter writer = null;
+		
+		/* ---Conversation writer actions:---
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 */ 
+		
+		
+		
+		
+		
+		
+		public enum Do {
+			Clicked
+		}
+		
+		public enum Menu {
+			New,
+			Open,
+			Save,
+			Close,
+			Exit
+		}
+		
+		public enum Button {
+			AddAChoice,
+			AddAnotherSpeaker,
+			
+			GoToStart,
+			ExpandGraph,
+			
+			File_New,
+			FileOpen,
+			FileSave,
+			FileClose,
+			FileExit,
+			
+			OptionsAddASpeaker
+			
+		}
+		
+		
+		
+		
 		
 		public enum Action {
 			Added,

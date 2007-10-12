@@ -20,18 +20,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<Window x:Class="AdventureAuthor.Conversations.UI.AddRemoveSpeakersWindow"
+<Window x:Class="AdventureAuthor.Conversations.UI.AddSpeakerWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Add a speaker?" Height="300" Width="300"
+    Title="Add a speaker" Height="190" Width="440" Background="LightBlue" ResizeMode="NoResize"
     >
-    <Grid>
-        <StackPanel Orientation="Vertical">
-    		<ComboBox Name="AnswerBox" IsReadOnly="true" IsEditable="false" IsTextSearchEnabled="true"/>
-        	<StackPanel>
-    			<Button Content="Add speaker" Click="OnClick_AddSpeaker"/>
-    			<Button Content="Cancel" Click="OnClick_Cancel"/>
-    		</StackPanel>
-    	</StackPanel>
-    </Grid>
+    <Canvas>	    	
+		<TextBlock FontSize="16" Foreground="Red" Canvas.Top="15" Canvas.Left="15"
+    	           Height="40" Width="270" Text="Select a speaker to add:"/>	
+    	<ComboBox Name="AnswerBox" IsReadOnly="true" IsEditable="false" IsTextSearchEnabled="true"
+    			  Canvas.Top="55" Canvas.Left="15" Height="28" Width="270" FontSize="14"/>
+		<Button Height="30" Width="70" Canvas.Top="120" Canvas.Right="130" Content="Cancel" Click="OnClick_Cancel"/>
+		<Button Height="30" Width="100" Canvas.Top="120" Canvas.Right="15" Content="Add speaker" Click="OnClick_AddSpeaker"/>
+	</Canvas>
 </Window>

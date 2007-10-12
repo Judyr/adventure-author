@@ -88,7 +88,7 @@ namespace AdventureAuthor.Setup
 				
 				// Start recording debug messages and user actions:
 				DebugLog.StartRecording();
-				UserLog.StartRecording();	
+				Log.StartRecording();	
 				
 				// Set up the Adventure Author toolset:
 				Toolset.SetupUI();
@@ -104,7 +104,7 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="cHost"></param>
 		{		
-			UserLog.StopRecording();
+			Log.StopRecording();
 			DebugLog.StopRecording();
 		}
 		

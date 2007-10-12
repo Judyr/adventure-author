@@ -53,7 +53,12 @@ namespace AdventureAuthor.Conversations.UI
     	
 		public WriterWindow()
 		{
-			InitializeComponent();
+			InitializeComponent();     
+				                            
+//			Image image = new Image();
+//            ImageSourceConverter s = new ImageSourceConverter();
+//            ImageSource source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"parchmentbase.jpg"));            
+//            this.Background = new ImageBrush(source);
 		}
 		
 		#endregion
@@ -685,7 +690,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_AddRemoveSpeakers(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
-				AddRemoveSpeakersWindow window = new AddRemoveSpeakersWindow();
+				AddSpeakerWindow window = new AddSpeakerWindow();
 				window.ShowDialog();
 			}
 			else {

@@ -129,7 +129,7 @@
 				<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
 				<MenuItem Header="If a particular object is nearby" Click="OnClick_ObjectIsNearPlayer"/>
 				<MenuItem Header="If two particular objects are near each other" Click="OnClick_ObjectIsNearObject"/>	
-				<MenuItem Header="If a particular door/container is open" Click="OnClick_DoorOrContainerIsOpen"/> could be mistaken as OnDoorOpen event
+				<MenuItem Header="If a particular door/container is open" Click="OnClick_DoorOrContainerIsOpen"/>
 				<Separator/>		
 				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->
 				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>

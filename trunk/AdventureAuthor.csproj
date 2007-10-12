@@ -90,9 +90,9 @@
     <Compile Include="Conversations\Page.cs" />
     <Compile Include="Conversations\Speaker.cs" />
     <Compile Include="Conversations\SpeakersChangedEventArgs.cs" />
-    <Compile Include="Conversations\UI\AddRemoveSpeakersWindow.xaml.cs">
+    <Compile Include="Conversations\UI\AddSpeakerWindow.cs">
       <SubType>Code</SubType>
-      <DependentUpon>AddRemoveSpeakersWindow.xaml</DependentUpon>
+      <DependentUpon>AddSpeakerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Conversations\UI\ChooseSpeaker.xaml.cs">
       <SubType>Code</SubType>
@@ -226,8 +226,8 @@
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Utils\DebugLog.cs" />
-    <Compile Include="Utils\UserLog.cs" />
+    <Compile Include="Utils\Debug.cs" />
+    <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\UsefulTools.cs" />
@@ -259,7 +259,7 @@
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Conversations\UI\AddRemoveSpeakersWindow.xaml" />
+    <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
     <Page Include="Conversations\UI\Controls\BranchControl.xaml" />

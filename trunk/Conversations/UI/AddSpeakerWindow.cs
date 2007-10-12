@@ -36,12 +36,12 @@ using AdventureAuthor.Scripts;
 namespace AdventureAuthor.Conversations.UI
 {
     /// <summary>
-    /// Interaction logic for AddRemoveSpeakersWindow.xaml
+    /// Interaction logic for AddSpeakerWindow.xaml
     /// </summary>
 
-    public partial class AddRemoveSpeakersWindow : Window
+    public partial class AddSpeakerWindow : Window
     {
-        public AddRemoveSpeakersWindow()
+        public AddSpeakerWindow()
         {
             InitializeComponent();
             
@@ -68,7 +68,7 @@ namespace AdventureAuthor.Conversations.UI
         	}
         	else {
          		Conversation.CurrentConversation.AddSpeaker((string)AnswerBox.SelectedItem);	
-        		Close();       		
+        		Close(); 
         	}
         	
         	// TODO if this becomes editable, check they don't add anyone called Player

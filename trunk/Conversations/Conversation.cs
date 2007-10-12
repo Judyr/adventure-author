@@ -522,7 +522,6 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created line</returns>
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
-			Say.Debug("Creating a line with the preceding line " + GetStringFromOEIString(preceding.Text) + " and speaker " + speaker + ".");
 			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
@@ -1005,7 +1004,12 @@ namespace AdventureAuthor.Conversations
 					Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of root.");
 				}
 				else {
-					Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of " + GetStringFromOEIString(parent.Text) + ".");
+					if (parent == null) {
+						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of root.");
+					}
+					else {
+						Say.Debug("Added " + GetStringFromOEIString(newLine.Text) + " as a newline, child of " + GetStringFromOEIString(parent.Text) + ".");
+					}
 				}
 			}
 			newLine.Speaker = speakerTag;
