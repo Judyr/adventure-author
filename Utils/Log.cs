@@ -47,117 +47,32 @@ namespace AdventureAuthor.Utils
 			// }
 		
 		private static StreamWriter writer = null;
-		
-		/* ---Conversation writer actions:---
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */ 
-		
-		
-		
-		
-		
-		
-		public enum Do {
-			Clicked
-		}
-		
-		public enum Menu {
-			New,
-			Open,
-			Save,
-			Close,
-			Exit
-		}
-		
-		public enum Button {
-			AddAChoice,
-			AddAnotherSpeaker,
-			
-			GoToStart,
-			ExpandGraph,
-			
-			File_New,
-			FileOpen,
-			FileSave,
-			FileClose,
-			FileExit,
-			
-			OptionsAddASpeaker
-			
-		}
-		
-		
-		
-		
-		
-		public enum Action {
-			Added,
-			Deleted,
-			Edited,
-			Opened,
-			Renamed
-		}
-		
-		public enum Subject {
-			Adventure,
-			Chapter,
-			Character,
-			MinorCharacter,
-			Creature,
-			CharacterBlueprint,
-			MinorCharacterBlueprint,
-			CreatureBlueprint,
-			Hero,
-			Conversation,
-			Script,
-			Variable,
-			Entrance,
-			Exit,
-			Transition,
-			Item,
-			ItemBlueprint,
-			Idea
+				
+		public enum UIAction {
+			Clicked,
+			DoubleClicked,
+			RightClicked,
+			PressedKey
 		}
 		
 		public enum WizardAction {
-			Started,
-			Completed,
-			Cancelled,
-			Deferred
+			StartedWizard,
+			CompletedWizard,
+			CancelledWizard
+			// DeferredWizard?
 		}
 		
-		public enum WizardSubject {
-			CreateChapterWizard,
-			EditChapterWizard,
-			CreateCharacterWizard,
-			EditCharacterWizard,
-			CreateCreatureWizard,
-			EditCreatureWizard,
-			CreateHeroWizard,
-			EditHeroWizard,
-			CreateConversationWizard,
-			EditConversationWizard
+		public enum EffectiveAction {
+			Launched,
+			Opened,
+			Closed,
+			Added,
+			Edited,
+			Renamed,
+			Deleted,
+			Selected
 		}
 		
-		public enum SpecialAction {
-			RanFromStart,
-			RanFromChapter,
-			AcceptedAdvice,
-			RejectedAdvice,
-			AttachedIdea,
-			DetachedIdea,
-			DonatedIdea,
-			RequestedIdea,
-			CategorisedIdea,
-			OpenedAdventure
-		}	
 		
 		public static void StartRecording()
 		{			
@@ -190,48 +105,142 @@ namespace AdventureAuthor.Utils
 				writer.Close();
 			}
 		}
-	
+		
+		
+		
+		
+		
+		// TODO refactor
+		
+		// TODO 
+		
+		
+		
+		
 		/// <summary>
-		/// Writes a log message in the form: '16:24:15:Modified_Character'
+		/// Writes a log message in the form: '16:24:15:message'
 		/// </summary>
-		/// <param name="action">The action taken by the user</param>
-		/// <param name="subject">The subject the action was performed upon</param>
-		public static void Write(Action action, Subject subject)
+		/// <param name="logMessage">The message to log. For unique user actions.</param>
+		public static void WriteMessage(string logMessage)
 		{
-			string message = UsefulTools.GetTimeStamp(false) + action.ToString() + "_" + subject.ToString();
+			string message = UsefulTools.GetTimeStamp(false) + ": " + logMessage;
+			writer.WriteLine(message);
+			writer.Flush();
+		}			
+		
+
+		/// <summary>
+		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button'
+		/// </summary>
+		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
+		/// <remarks>Completed indicates the user clicked OK to complete a wizard; 
+		/// Cancelled indicates they clicked Cancel to cancel a wizard.</remarks>
+		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, Completed, Cancelled</param>
+		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
+		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
+		public static void WriteUIAction(UIAction interaction, string element)
+		{
+			WriteUIAction(interaction,element,null);
+		}		
+		
+		
+		/// <summary>
+		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button -WOLF'
+		/// </summary>
+		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
+		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, RightClicked, DoubleClicked</param>
+		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
+		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
+		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+		public static void WriteUIAction(UIAction interaction, string element, string extraInfo)
+		{
+			string message;
+			if (element == null) {
+				message = "Invalid log message, did not specify an element.";
+			}
+			else if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + interaction + " " + element + " -" + extraInfo;
+			}
+			else {
+				message = UsefulTools.GetTimeStamp(false) + ": " + interaction + " " + element;
+			}
+				
 			writer.WriteLine(message);
 			writer.Flush();
 		}
 				
+		
 		/// <summary>
-		/// Writes a log message in the form: '16:24:23:Started_CreateCreatureWizard'
+		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard'
 		/// </summary>
-		/// <param name="action">The action taken by the user</param>
-		/// <param name="subject">The subject the action was performed upon</param>
-		public static void Write(WizardAction action, WizardSubject subject)
-		{		
-			string message = UsefulTools.GetTimeStamp(false) + action.ToString() + "_" + subject.ToString();
+		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
+		/// <param name="action">The user's action involving a wizard, i.e. Starting, Completing or Cancelling it</param>
+		/// <param name="wizard">The wizard in question, e.g. NewConversationWizard, AddSpeakerWizard</param>
+		public static void WriteWizardAction(WizardAction action, string wizard)
+		{
+			WriteWizardAction(action,wizard,null);
+		}		
+		
+		
+		/// <summary>
+		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard -8th character created'
+		/// </summary>
+		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
+		/// <param name="action">The user's action involving a wizard, i.e. Starting, Completing or Cancelling it</param>
+		/// <param name="wizard">The wizard in question, e.g. NewConversationWizard, AddSpeakerWizard</param>
+		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+		public static void WriteWizardAction(WizardAction action, string wizard, string extraInfo)
+		{
+			string message;
+			if (wizard == null) {
+				message = "Invalid log message, did not specify a subject.";
+			}
+			else if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + wizard + " -" + extraInfo;
+			}
+			else {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + wizard;
+			}
+				
 			writer.WriteLine(message);
 			writer.Flush();
 		}
 		
+		
+
 		/// <summary>
-		/// Writes a log message in the form: '16:24:47:RanFromChapter'
+		/// Writes a log message in the form: '16:24:15:Added Choice'
 		/// </summary>
-		/// <param name="action">The action taken by the user</param>
-		public static void Write(SpecialAction action)
-		{			
-			writer.WriteLine(UsefulTools.GetTimeStamp(false) + action.ToString());
-			writer.Flush();
-		}
+		/// <remarks>Timestamp:EffectiveAction subject -optionalextrainfo</remarks>
+		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
+		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
+		public static void WriteEffectiveAction(EffectiveAction action, string subject)
+		{
+			WriteEffectiveAction(action,subject,null);
+		}		
+		
 		
 		/// <summary>
-		/// Writes a log message in the form: '16:24:47:(message)'
+		/// Writes a log message in the form: '16:24:15:Added Choice -PLAYER'
 		/// </summary>
-		/// <param name="message">The message to log</param>
-		public static void Write(string message)
+		/// <remarks>Timestamp:EffectiveAction subject -optionalextrainfo</remarks>
+		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
+		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
+		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+		public static void WriteEffectiveAction(EffectiveAction action, string subject, string extraInfo)
 		{
-			writer.WriteLine(UsefulTools.GetTimeStamp(false) + message);
+			string message;
+			if (subject == null) {
+				message = "Invalid log message, did not specify a subject.";
+			}
+			else if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subject + " -" + extraInfo;
+			}
+			else {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subject;
+			}
+				
+			writer.WriteLine(message);
 			writer.Flush();
 		}
 	}

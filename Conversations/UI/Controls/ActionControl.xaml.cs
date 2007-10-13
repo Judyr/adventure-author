@@ -78,6 +78,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	Say.Information("Not implemented yet.");
         	
+//        	Log.WriteUIAction(Log.UIAction.Clicked,"EditAction_button");
+//        	Log.WriteWizardAction(Log.WizardAction.StartedWizard,"EditActionWizard"); should go in the replace action wizard itself
+        	
 //        	Conversation.CurrentConversation.ReplaceAction(AttachedTo.Nwn2Line,Action,null);
         }
         
