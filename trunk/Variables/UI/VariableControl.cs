@@ -32,17 +32,32 @@ namespace AdventureAuthor.Variables.UI
         	
         	var = variable;
         	
-            InitializeComponent();            
+            InitializeComponent();    
             
-            Image image = new Image();
-            ImageSourceConverter s = new ImageSourceConverter();
-            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"delete.jpg"));            
-            DeleteButton.Content = image;
+//            Image image = new Image();
+//            ImageSourceConverter s = new ImageSourceConverter();
+//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"delete.jpg"));            
+//            DeleteButton.Content = image;
             
             VariableNameTextBox.Text = var.Name;
-            VariableTypeTextBox.Text = "(" + var.VariableType.ToString() + ")";
+            VariableTypeTextBox.Text = GetVariableType(var);
             VariableValueTextBox.Text = var.ValueString;
         }             
+        
+        
+        private string GetVariableType(NWN2ScriptVariable var)
+        {
+            switch (var.VariableType) {
+            	case NWN2ScriptVariableType.Int:
+            		return "Number";
+            	case NWN2ScriptVariableType.String:
+            		return "Word(s)";
+            	case NWN2ScriptVariableType.Float:
+            		return "Decimal";
+            	default: 
+            		return var.ToString();
+            }
+        }
         
         
         private void OnClick_Delete(object sender, EventArgs ea)

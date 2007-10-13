@@ -55,10 +55,10 @@ namespace AdventureAuthor.Variables.UI
         internal void RefreshVariablesList()
         {        	
             NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
-            VariablesList.Items.Clear();
+            VariablesStackPanel.Children.Clear();
             foreach (NWN2ScriptVariable var in variables) {
             	VariableControl varControl = new VariableControl(var);
-            	VariablesList.Items.Add(varControl);
+            	VariablesStackPanel.Children.Add(varControl);
             }
         }
     }
