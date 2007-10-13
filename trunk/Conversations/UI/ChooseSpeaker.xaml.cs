@@ -52,6 +52,7 @@ namespace AdventureAuthor.Conversations.UI
         	else {
         		string speakerTag = ((Speaker)SpeakersList.SelectedItem).Tag;   
 				Conversation.CurrentConversation.AddChoice(speakerTag);
+				WriterWindow.Instance.PageScroll.ScrollToBottom();
 				this.Close();
         	}
         }

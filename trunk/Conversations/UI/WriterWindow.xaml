@@ -48,6 +48,7 @@
 			</MenuItem>
 			<MenuItem Header="Options" FontSize="14">
 				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers" FontSize="14"/>
+				<MenuItem Header="Expand graph" Click="OnClick_ExpandGraph" FontSize="14"/>
 			</MenuItem>
 		</Menu>
 		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">
@@ -83,7 +84,7 @@
 			</Grid>
 		</Border>
 		<Border Name="LinesPanelBorder" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1">
-			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
+			<ScrollViewer Name="PageScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
 	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" />
 	    	</ScrollViewer>
 	    </Border>

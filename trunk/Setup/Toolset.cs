@@ -712,8 +712,7 @@ namespace AdventureAuthor.Setup
 		}
 				
 		private static void ChapterList_Open(object sender, EventArgs ea)
-		{	
-			Log.Write(Log.Action.Opened,Log.Subject.Chapter);			
+		{		
 			
 			try {
 				string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
@@ -736,7 +735,6 @@ namespace AdventureAuthor.Setup
 				
 		private static void ChapterList_Delete(object sender, EventArgs ea)
 		{	
-			Log.Write(Log.Action.Deleted,Log.Subject.Chapter);
 			
 			string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
 			Chapter chapter = Adventure.CurrentAdventure.Chapters[name];

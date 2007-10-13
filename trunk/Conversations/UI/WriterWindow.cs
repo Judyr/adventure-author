@@ -53,8 +53,8 @@ namespace AdventureAuthor.Conversations.UI
     	
 		public WriterWindow()
 		{
-			InitializeComponent();     
-				                            
+			InitializeComponent();    
+			
 //			Image image = new Image();
 //            ImageSourceConverter s = new ImageSourceConverter();
 //            ImageSource source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"parchmentbase.jpg"));            
@@ -376,6 +376,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 			// Draw the new current page:
 			RefreshPageViewOnly();
+			PageScroll.ScrollToTop();
 			
 			// Select the node and its route in the graph:
 			Node mainNode = MainGraph.GetNode(currentPage);
@@ -923,6 +924,7 @@ namespace AdventureAuthor.Conversations.UI
 			button.Click += delegate 
 			{ 
 				if (currentPage != null) {	
+					bool scrollToEnd = false;
 					NWN2ConversationConnector parentLine;
 					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
@@ -930,6 +932,7 @@ namespace AdventureAuthor.Conversations.UI
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
+						scrollToEnd = true;
 //						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
@@ -947,8 +950,18 @@ namespace AdventureAuthor.Conversations.UI
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
 										
 					LineControl newLineControl = GetLineControl(newLine);
-					Say.Debug("Added a line, now focus on it.");
-					newLineControl.FocusOnMe();
+					
+					if (newLineControl != null) {
+						if (newLineControl.ActualHeight == 0) {
+							if (scrollToEnd) {
+								PageScroll.ScrollToBottom();
+							}
+							else {
+								newLineControl.BringIntoView();								
+							}
+						}
+						newLineControl.FocusOnMe(); // broken
+					}
 				}
 			};
 			

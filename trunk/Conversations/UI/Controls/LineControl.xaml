@@ -94,6 +94,7 @@
 					<MenuItem Header="The player's allies disappear" Click="OnClick_DestroyAllHenchmen"/>
 					<MenuItem Header="An object is teleported somewhere" Click="OnClick_TeleportObject"/>
 					<Separator/>
+					<MenuItem Header="A sound clip plays" Click="OnClick_SetSound"/>
 					<MenuItem Header="Time moves forward (by some hours)" Click="OnClick_AdvanceTime"/>
 					<MenuItem Header="Time moves forward (to a set time)" Click="OnClick_SetTime"/>	
 					<MenuItem Header="A store screen is displayed" Click="OnClick_OpenStore"/>

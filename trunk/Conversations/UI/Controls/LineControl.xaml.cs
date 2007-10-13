@@ -270,6 +270,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
 			else {
 				Conversation.CurrentConversation.MakeLineIntoChoice(Nwn2Line);
+				WriterWindow.Instance.PageScroll.ScrollToBottom();
 			}
 		}
 		
