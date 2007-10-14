@@ -33,6 +33,7 @@ using System.Windows.Media;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Conversations.UI.Controls;
 using AdventureAuthor.Core;
+using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
@@ -202,6 +203,7 @@ namespace AdventureAuthor.Conversations
 		{
 			Speaker existingSpeaker = GetSpeaker(tag);
 			if (existingSpeaker == null) {	
+				Log.WriteEffectiveAction(Log.EffectiveAction.added,"speaker",tag);
 				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
@@ -268,6 +270,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't add a null action.");
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.added,"action",ScriptHelper.GetDescriptionForAction(action));
 				line.Actions.Add(action);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -291,6 +294,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't add a null condition.");
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.added,"condition",ScriptHelper.GetDescriptionForCondition(condition));
 				line.Conditions.Add(condition);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -314,6 +318,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Action " + action.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"action",ScriptHelper.GetDescriptionForAction(action));
 				line.Actions.Remove(action);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -330,6 +335,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't operate on a null line.");
 			}
 			else {
+				Log.WriteMessage("deleted all actions on line");
 				line.Actions.Clear();
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -346,6 +352,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't operate on a null line.");
 			}
 			else {
+				Log.WriteMessage("deleted all conditions on line");
 				line.Conditions.Clear();
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -369,6 +376,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Condition " + condition.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"condition",ScriptHelper.GetDescriptionForAction(condition));
 				line.Conditions.Remove(condition);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -378,6 +386,7 @@ namespace AdventureAuthor.Conversations
 		// TODO
 		public void SetCameraAngle(NWN2ConversationConnector line)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.set,"camera");
 			throw new NotImplementedException();
 //			OnChanged(new ConversationChangedEventArgs(false));
 		}		
@@ -402,6 +411,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Action " + originalAction.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"action",ScriptHelper.GetDescriptionForAction(newAction));
 				line.Actions.Remove(originalAction);
 				line.Actions.Add(newAction);
 				OnChanged(new ConversationChangedEventArgs(false));
@@ -428,6 +438,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Condition " + originalCondition.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"condition",ScriptHelper.GetDescriptionForAction(newCondition));
 				line.Conditions.Remove(originalCondition);
 				line.Conditions.Add(newCondition);
 				OnChanged(new ConversationChangedEventArgs(false));
@@ -449,6 +460,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Cannot assign a null string to this line.");
 			}
 			else {
+				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"linetext");//,newText);
 				line.Line.Text = GetOEIStringFromString(newText);
 				
 				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
@@ -473,6 +485,12 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't operate on a null line.");
         	}
 			else {
+        		if (sound == null) {
+        			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"sound");
+        		}
+        		else {
+        			Log.WriteEffectiveAction(Log.EffectiveAction.set,"sound");
+        		}
 				line.Sound = sound; // valid for this to be null
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -507,6 +525,8 @@ namespace AdventureAuthor.Conversations
 					throw new ArgumentException("Found different speakers in the same branch.");
 				}
 			}
+			
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"branch");
 			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
 			OnChanged(new ConversationChangedEventArgs(true));
 			return createdLine;
@@ -523,6 +543,7 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created line</returns>
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"line",speaker);
 			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
@@ -534,6 +555,7 @@ namespace AdventureAuthor.Conversations
 		
 		public void DeleteEntireChoice(NWN2ConversationConnector parentOfChoice)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"choice");
         	// Clear the children of the choice's parent line:
         	if (parentOfChoice != null) {
         		parentOfChoice.Line.Children.Clear();
@@ -561,6 +583,8 @@ namespace AdventureAuthor.Conversations
 				}
 			}
 			
+			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"branch");
+			
 			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
 			
 			// If there is only one line left in the branch (i.e. the branch is removed), clear any conditions from the remaining line:
@@ -579,6 +603,8 @@ namespace AdventureAuthor.Conversations
 				
 		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"line");
+			
 			Say.Debug("Ran DeleteLine");
 			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
 				Say.Debug("Dealing with first line in conversation (must be NPC).");
@@ -667,6 +693,8 @@ namespace AdventureAuthor.Conversations
 			if (this != CurrentConversation) {
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
+			
+			Log.WriteEffectiveAction(Log.EffectiveAction.saved,"conversation");
 			
 			// Changes to a line's text are not saved immediately, so save changes before going any further:
 			if (WriterWindow.Instance.SelectedLineControl != null && !IsFiller(WriterWindow.Instance.SelectedLineControl.Nwn2Line)) {
@@ -850,6 +878,7 @@ namespace AdventureAuthor.Conversations
 		
 		public void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"choice","made existing line into choice");
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
 			OnChanged(new ConversationChangedEventArgs(true));
 		}
@@ -861,6 +890,8 @@ namespace AdventureAuthor.Conversations
 			if (!WriterWindow.Instance.CurrentPage.IsEndPage) {
 				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
 			}
+			
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"choice",speakerTag);
 			
         	NWN2ConversationConnector parent;
         	NWN2ConversationConnectorCollection children;
@@ -1139,7 +1170,7 @@ namespace AdventureAuthor.Conversations
 			if (line.Conditions.Count > 0) {
 				line.Conditions.Clear();
 			}
-			// TODO - also set camera info, not sure how to do this yet
+			// TODO - also set camera info
 		}
 				
 		

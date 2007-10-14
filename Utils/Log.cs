@@ -49,30 +49,42 @@ namespace AdventureAuthor.Utils
 		
 		private static StreamWriter writer = null;
 				
-		public enum UIAction {
-			Clicked,
-			DoubleClicked,
-			RightClicked,
-			PressedKey
-		}
-		
-		public enum WizardAction {
-			Started,
-			Completed,
-			Cancelled
-			// Deferred?
-		}
+//		public enum UIAction {
+//			Clicked,
+//			DoubleClicked,
+//			RightClicked,
+//			PressedKey
+//		}
+//		
+//		public enum DialogAction {
+//			Started,
+//			Completed,
+//			Aborted
+//			// Deferred?
+//		}
 		
 		public enum EffectiveAction {
-			Launched,
-			Opened,
-			Closed,
-			Added,
-			Edited,
-			Renamed,
-			Deleted,
-			Selected,
-			Viewed
+			// applications or mini-applications e.g. conversationwriter, expandedgraph:
+			launched,
+			exited,
+			
+			// documents etc.:
+			opened,
+			closed,
+			
+			
+			added,
+			edited,
+			renamed,
+			deleted,
+			saved,
+			set,
+			
+			// selected just means giving it focus:
+			selected,
+			
+			// viewed is selected when it causes properties etc. to appear, e.g. displaying a conversation page or viewing character details
+			viewed
 		}
 		
 		
@@ -125,80 +137,80 @@ namespace AdventureAuthor.Utils
 		}			
 		
 
-		/// <summary>
-		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button'
-		/// </summary>
-		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
-		/// <remarks>Completed indicates the user clicked OK to complete a wizard; 
-		/// Cancelled indicates they clicked Cancel to cancel a wizard.</remarks>
-		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, Completed, Cancelled</param>
-		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
-		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
-		public static void WriteUIAction(UIAction interaction, string element)
-		{
-			WriteUIAction(interaction,element,null);
-		}		
-		
-		
-		/// <summary>
-		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button -WOLF'
-		/// </summary>
-		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
-		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, RightClicked, DoubleClicked</param>
-		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
-		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
-		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-		public static void WriteUIAction(UIAction interaction, string element, string extraInfo)
-		{
-			string message;
-			string subjectmsg = element == null ? "<Subject not logged>" : element;			
-			
-			if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg + " -" + extraInfo;
-			}
-			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg;
-			}
-				
-			writer.WriteLine(message);
-			writer.Flush();
-		}
-				
-		
-		/// <summary>
-		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard'
-		/// </summary>
-		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
-		/// <param name="action">The user's action involving a wizard, i.e. Starting, Completing or Cancelling it</param>
-		/// <param name="wizard">The wizard in question, e.g. NewConversationWizard, AddSpeakerWizard</param>
-		public static void WriteWizardAction(WizardAction action, string wizard)
-		{
-			WriteWizardAction(action,wizard,null);
-		}		
-		
-		
-		/// <summary>
-		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard -8th character created'
-		/// </summary>
-		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
-		/// <param name="action">The user's action involving a wizard, i.e. Starting, Completing or Cancelling it</param>
-		/// <param name="wizard">The wizard in question, e.g. NewConversationWizard, AddSpeakerWizard</param>
-		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-		public static void WriteWizardAction(WizardAction action, string wizard, string extraInfo)
-		{
-			string message;
-			string subjectmsg = wizard == null ? "<Subject not logged>" : wizard;			
-			
-			if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
-			}
-			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
-			}
-				
-			writer.WriteLine(message);
-			writer.Flush();
-		}
+//		/// <summary>
+//		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button'
+//		/// </summary>
+//		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
+//		/// <remarks>Completed indicates the user clicked OK to complete a wizard; 
+//		/// Cancelled indicates they clicked Cancel to cancel a wizard.</remarks>
+//		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, Completed, Cancelled</param>
+//		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
+//		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
+//		public static void WriteUIAction(UIAction interaction, string element)
+//		{
+//			WriteUIAction(interaction,element,null);
+//		}		
+//		
+//		
+//		/// <summary>
+//		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button -WOLF'
+//		/// </summary>
+//		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
+//		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, RightClicked, DoubleClicked</param>
+//		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
+//		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
+//		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+//		public static void WriteUIAction(UIAction interaction, string element, string extraInfo)
+//		{
+//			string message;
+//			string subjectmsg = element == null ? "<Subject not logged>" : element;			
+//			
+//			if (extraInfo != null) {
+//				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg + " -" + extraInfo;
+//			}
+//			else {
+//				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg;
+//			}
+//				
+//			writer.WriteLine(message);
+//			writer.Flush();
+//		}
+//				
+//		
+//		/// <summary>
+//		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard'
+//		/// </summary>
+//		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
+//		/// <param name="action">The user's action involving a wizard/dialog, i.e. Starting, Completing or Aborting it</param>
+//		/// <param name="dialog">The wizard/dialog in question, e.g. NewConversationWizard, AddSpeakerWizard, DeleteActionDialog</param>
+//		public static void WriteDialogAction(DialogAction action, string wizard)
+//		{
+//			WriteDialogAction(action,wizard,null);
+//		}		
+//		
+//		
+//		/// <summary>
+//		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard -8th character created'
+//		/// </summary>
+//		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
+//		/// <param name="action">The user's action involving a wizard/dialog, i.e. Starting, Completing or Aborting it</param>
+//		/// <param name="dialog">The wizard/dialog in question, e.g. NewConversationWizard, AddSpeakerWizard, DeleteActionDialog</param>
+//		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+//		public static void WriteDialogAction(DialogAction action, string dialog, string extraInfo)
+//		{
+//			string message;
+//			string subjectmsg = dialog == null ? "<Subject not logged>" : dialog;			
+//			
+//			if (extraInfo != null) {
+//				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
+//			}
+//			else {
+//				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
+//			}
+//				
+//			writer.WriteLine(message);
+//			writer.Flush();
+//		}
 		
 		
 

@@ -389,7 +389,7 @@ namespace AdventureAuthor.Scripts
 		
 		#region Describing scripts
 		
-		public static string GetDescription(NWN2ScriptFunctor action)
+		public static string GetDescriptionForAction(NWN2ScriptFunctor action)
 		{
 			if (action == null) {
 				return "Was given a blank action.";
@@ -762,7 +762,8 @@ namespace AdventureAuthor.Scripts
 			}
 		}
 			 	
-		public static string GetDescription(NWN2ConditionalFunctorCollection conditions)
+		
+		public static string GetDescriptionForCondition(NWN2ConditionalFunctorCollection conditions)
 		{
 			if (conditions == null || conditions.Count == 0) {
 				return "Was given a blank set of conditions.";
@@ -772,6 +773,14 @@ namespace AdventureAuthor.Scripts
 			}
 			
 			NWN2ConditionalFunctor condition = conditions[0];
+			return GetDescriptionForCondition(condition);
+		}
+		
+		public static string GetDescriptionForCondition(NWN2ConditionalFunctor condition)
+		{
+			if (condition == null) {
+				return "Was given a blank condition.";
+			}			
 			
 			switch (condition.Script.ResRef.Value) {
 				case "gc_align_chaotic":

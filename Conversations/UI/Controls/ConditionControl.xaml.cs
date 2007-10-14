@@ -58,7 +58,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	InitializeComponent();
             this.attachedTo = attachedTo;
-            this.Description.Text = ScriptHelper.GetDescription(attachedTo.Nwn2Line.Conditions);
+            this.Description.Text = ScriptHelper.GetDescriptionForCondition(attachedTo.Nwn2Line.Conditions);
         }
 
                 
