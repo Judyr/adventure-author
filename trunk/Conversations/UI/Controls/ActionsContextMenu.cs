@@ -68,21 +68,21 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     	}
     	
-    	private void OnClick_AttackTarget(object sender, EventArgs ea)
-    	{    		
-    		object[] prms = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Make a creature attack another creature");
-    		window.AddTagQuestion("Who should be the attacker?",ScriptHelper.TaggedType.Creature);
-    		window.AddTagQuestion("Who should be the victim?",ScriptHelper.TaggedType.Creature);
-    		bool? result = window.ShowDialog();
-    		if (result == null || !(bool)result) { // cancelled or failed
-    			return;
-    		}
-    		else {    			
-    			NWN2ScriptFunctor action = Actions.AttackTarget((string)prms[0],(string)prms[1]);
-    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
-    		}
-    	}
+//    	private void OnClick_AttackTarget(object sender, EventArgs ea)
+//    	{    		
+//    		object[] prms = new object[2];
+//    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Make a creature attack another creature");
+//    		window.AddTagQuestion("Who should be the attacker?",ScriptHelper.TaggedType.Creature);
+//    		window.AddTagQuestion("Who should be the victim?",ScriptHelper.TaggedType.Creature);
+//    		bool? result = window.ShowDialog();
+//    		if (result == null || !(bool)result) { // cancelled or failed
+//    			return;
+//    		}
+//    		else {    			
+//    			NWN2ScriptFunctor action = Actions.AttackTarget((string)prms[0],(string)prms[1]);
+//    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
+//    		}
+//    	}
         
     	private void OnClick_AddHenchmanForPlayer(object sender, EventArgs ea)
     	{    	
@@ -349,7 +349,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	
     	private void OnClick_GiveCreatureFeat(object sender, EventArgs ea)
     	{
-    		object[] prms = new object[1];
+    		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give a creature a special ability");
     		window.AddTagQuestion("Which creature should learn the special ability?",ScriptHelper.TaggedType.Creature);
     		window.AddEnumQuestion("Which special ability should the creature learn?",typeof(ScriptHelper.Feat));
@@ -367,7 +367,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player gold");
-    		window.AddIntegerQuestion("How much gold should the player receive?",0,null);
+    		window.AddIntegerQuestion("How many gold coins should the player receive?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -396,7 +396,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	
     	private void OnClick_GiveExperience(object sender, EventArgs ea)
     	{
-    		object[] prms = new object[2];
+    		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player experience points");
     		window.AddIntegerQuestion("How many experience points should the player receive?",0,1000000);
     		bool? result = window.ShowDialog();
@@ -564,23 +564,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
-    	
-    	private void OnClick_PlayerAnimation(object sender, EventArgs ea)
-    	{
-    		object[] prms = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Player plays an animation");
-    		window.AddEnumQuestion("Which animation should they perform?",typeof(ScriptHelper.Animation));
-    		window.AddFloatQuestion("How long should they wait before performing it (in seconds)?",0,null);
-    		bool? result = window.ShowDialog();
-    		if (result == null || !(bool)result) { // cancelled or failed
-    			return;
-    		}
-    		else {    			
-    			NWN2ScriptFunctor action = Actions.PlayerAnimation((ScriptHelper.Animation)prms[0],(float)prms[1]);
-    			Conversation.CurrentConversation.AddAction(nwn2Line,action);
-    		}
-    	}
-    	
+    	    	
     	private void OnClick_CreatureAnimation(object sender, EventArgs ea)
     	{
     		// Add a remark: "Note that many animations only work on humanoid creatures."
@@ -747,7 +731,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature killable");
-    		window.AddTagQuestion("Which creature should become killable?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become mortal (can be killed)?",ScriptHelper.TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -762,7 +746,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature unkillable");
-    		window.AddTagQuestion("Which creature should become unkillable?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become immortal (can't be killed)?",ScriptHelper.TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -816,7 +800,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Take gold away from the player");
-    		window.AddIntegerQuestion("How much gold should the player lose?",0,null);
+    		window.AddIntegerQuestion("How many gold coins should the player lose?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;

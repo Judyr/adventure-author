@@ -12,9 +12,9 @@
 			<ColumnDefinition MinWidth="730" MaxWidth="730"/>
 		</Grid.ColumnDefinitions>    	
     	<Canvas Grid.Row="0" Grid.Column="0">
-	    	<TextBlock FontSize="22" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="10" Height="40" Width="230" Text="Name of variable"/>
-	    	<TextBlock FontSize="22" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="260" Height="40" Width="80" Text="Type"/>
-	    	<TextBlock FontSize="22" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="360" Height="40" Width="360" Text="Value at start of game"/>
+	    	<TextBlock FontSize="18" FontWeight="SemiBold" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="10" Height="40" Width="230" Text="Name of variable"/>
+	    	<TextBlock FontSize="18" FontWeight="SemiBold" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="260" Height="40" Width="80" Text="Type"/>
+	    	<TextBlock FontSize="18" FontWeight="SemiBold" FontStyle="Italic" Foreground="Black" Canvas.Top="10" Canvas.Left="360" Height="40" Width="360" Text="Value at start of game"/>
     	</Canvas>		
     	<ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" >
         	<StackPanel Name="VariablesStackPanel" Orientation="Vertical" Background="AntiqueWhite"/>

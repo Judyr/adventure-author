@@ -424,7 +424,7 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_attack_target":
 					string sAttacker1 = action.Parameters[0].ValueString;
-					string sTarget = action.Parameters[0].ValueString;
+					string sTarget = action.Parameters[1].ValueString;
 					return GetOwnerIfBlank(sAttacker1) + " ATTACKS " + sTarget + ".";
 					
 				case "ga_blackout":
@@ -565,13 +565,13 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_give_item":
 					string sTemplate1 = action.Parameters[0].ValueString;
-//					int nQuantity = action.Parameters[1].ValueInt;
-//					if (nQuantity != 1) {
-//						return "PLAYER RECEIVES " + nQuantity + " COPIES OF " + sTemplate1 + ".";
-//					}
-//					else {
+					int nQuantity = action.Parameters[1].ValueInt;
+					if (nQuantity != 1) {
+						return "PLAYER RECEIVES " + nQuantity + " COPIES OF " + sTemplate1 + ".";
+					}
+					else {
 						return "PLAYER RECEIVES A " + sTemplate1 + ".";
-//					}
+					}
 					
 				case "ga_give_xp":
 					return "PLAYER RECEIVES " + action.Parameters[0].ValueInt + " EXPERIENCE POINTS.";
@@ -706,11 +706,11 @@ namespace AdventureAuthor.Scripts
 					}
 										
 				case "ga_setimmortal":
-					if (action.Parameters[1].ValueInt == 0) {
-						return action.Parameters[0].ValueString + " BECOMES UNKILLABLE.";
+					if (action.Parameters[1].ValueInt == 1) {
+						return action.Parameters[0].ValueString + " BECOMES IMMORTAL.";
 					}
 					else {
-						return action.Parameters[0].ValueString + " STOPS BEING UNKILLABLE.";
+						return action.Parameters[0].ValueString + " BECOMES MORTAL.";
 					}
 					
 				case "ga_take_gold":

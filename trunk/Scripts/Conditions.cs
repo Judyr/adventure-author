@@ -29,7 +29,7 @@ using NWN2Toolset.NWN2.Data;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Scripts
-{
+{	
 	/* Scripts to add:
 	 * If game time has reached a certain point
 	 * If random (gc_rand_1of. But this should be part of a structured 'Create Random Choice' bit.)
@@ -107,27 +107,6 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor StringHasValue(string sVariable, string sCheck)
 		{
 			return ScriptHelper.GetConditionalFunctor("gc_module_string",new object[]{sVariable,sCheck},ScriptHelper.Origin.AdventureAuthor);
-		}
-		
-		/// <summary>
-		/// Check the distance between an object and the player
-		/// </summary>
-		/// <param name="sTag">The object to check</param>
-		/// <param name="sCheck">The distance in metres to check for, can use operators e.g. <5.0, >10.0</param>
-		public static NWN2ConditionalFunctor ObjectIsNearPlayer(string sTag, string sCheck)
-		{
-			return ScriptHelper.GetConditionalFunctor("gc_distance_pc",new object[]{sTag,sCheck},ScriptHelper.Origin.NWN2);			
-		}			
-			
-		/// <summary>
-		/// Check the distance between two objects
-		/// </summary>
-		/// <param name="sTagA">The first object to check</param>
-		/// <param name="sTagB">The second object to check</param>
-		/// <param name="sCheck">The distance in metres to check for, can use operators e.g. <5.0, >10.0</param>
-		public static NWN2ConditionalFunctor ObjectIsNearObject(string sTagA, string sTagB, string sCheck)
-		{
-			return ScriptHelper.GetConditionalFunctor("gc_distance",new object[]{sTagA,sTagB,sCheck},ScriptHelper.Origin.NWN2);
 		}
 		
 		/// <summary>
