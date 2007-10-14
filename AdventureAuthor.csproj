@@ -256,6 +256,7 @@
     <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="EULA.txt" />
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
