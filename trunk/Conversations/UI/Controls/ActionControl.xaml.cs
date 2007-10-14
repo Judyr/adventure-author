@@ -67,7 +67,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
             InitializeComponent();
             this.action = action;
             this.attachedTo = attachedTo;
-            this.Description.Text = ScriptHelper.GetDescription(action);
+            this.Description.Text = ScriptHelper.GetDescriptionForAction(action);
         }
 
         
@@ -78,8 +78,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	Say.Information("Not implemented yet.");
         	
-//        	Log.WriteUIAction(Log.UIAction.Clicked,"EditAction_button");
-//        	Log.WriteWizardAction(Log.WizardAction.StartedWizard,"EditActionWizard"); should go in the replace action wizard itself
+//        	Log.WriteUIAction(Log.UIAction.Clicked,"EditAction_button","not implemented yet");
         	
 //        	Conversation.CurrentConversation.ReplaceAction(AttachedTo.Nwn2Line,Action,null);
         }
@@ -90,10 +89,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         private void OnClick_DeleteAction(object sender, EventArgs ea)
         {
+//        	Log.WriteDialogAction(Log.DialogAction.Started,"DeleteActionDialog");
 	 		MessageBoxResult result = MessageBox.Show("Delete this action?","Delete?", MessageBoxButton.YesNo);
 			if (result == MessageBoxResult.Yes) {
+//	 			Log.WriteDialogAction(Log.DialogAction.Completed,"DeleteActionDialog");
 	 			Conversation.CurrentConversation.DeleteAction(AttachedTo.Nwn2Line,Action);
-			}	 
+	 			
+			}	
+	 		else {
+//	 			Log.WriteDialogAction(Log.DialogAction.Aborted,"DeleteActionDialog");
+	 		}
         }
         
         
@@ -102,7 +107,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         private void OnMouseDown(object sender, EventArgs ea)
         {
-        	this.attachedTo.Focus();        	
+        	this.attachedTo.Focus();    
+        	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
         }
     }
 }

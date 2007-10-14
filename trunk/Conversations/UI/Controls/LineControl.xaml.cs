@@ -381,6 +381,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         private void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
+        	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
         	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
         	SelectLine();
         }

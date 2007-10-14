@@ -46,19 +46,11 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            		// seemingly
 	            		Node node = entity as Node;
 	            		if (node != null) {
-	            			WriterWindow.Instance.DisplayPage(node.Page);
-	            			
-	            			if (!centreGraph) {
-	            				Log.WriteUIAction(Log.UIAction.Clicked,"node");
-	            			}
-	            			else {
-	            				Log.WriteUIAction(Log.UIAction.DoubleClicked,"node");
-	            			}
-	            			Log.WriteEffectiveAction(Log.EffectiveAction.Viewed,"page");
-	            			
-	            			if (centreGraph) {	            				
+	            			Log.WriteEffectiveAction(Log.EffectiveAction.selected,"node");
+	            			WriterWindow.Instance.DisplayPage(node.Page);	            			
+	            			if (centreGraph) {	            	
+	            				Log.WriteMessage("centred graph on the new page.");			
 	            				WriterWindow.Instance.CentreGraph(false);
-	            				Log.WriteMessage("Centred graph on current page.");
 	            			}
 	            		}
 	            		entity.IsSelected = false; // doesn't help

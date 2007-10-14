@@ -336,6 +336,8 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="page">The page to display</param>
 		public void DisplayPage(Page page)
 		{
+	        Log.WriteEffectiveAction(Log.EffectiveAction.viewed,"page");
+	        
 			// Update references to the currently and previously viewed pages:
 			if (previousPage != currentPage) {
 				previousPage = currentPage;
@@ -437,6 +439,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
+				Log.WriteEffectiveAction(Log.EffectiveAction.launched,"expandedgraph");
 				expandedGraph = new GraphForm(true);
 				expandedGraph.Open(pages);
 				DisplayPage(currentPage);
@@ -492,6 +495,8 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
+			Log.WriteEffectiveAction(Log.EffectiveAction.opened,"conversation",name);
+			
 			Open(name,false);
 		}
 				
@@ -515,6 +520,9 @@ namespace AdventureAuthor.Conversations.UI
 			if (!CloseConversationDialog()) {
 				return;
 			}
+			
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"conversation",name);
+			Log.WriteEffectiveAction(Log.EffectiveAction.opened,"conversation",name);
 			
 			Open(name,true);
 		}
@@ -640,7 +648,6 @@ namespace AdventureAuthor.Conversations.UI
 		{	
 			if (Conversation.CurrentConversation != null) {
 				Conversation.CurrentConversation.SaveToOriginal();
-//				Say.Debug("Saved.");
 			}			
 		}
 		
@@ -648,17 +655,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_Close(object sender, EventArgs ea)
 		{
 			CloseConversationDialog();
-			Say.Debug("After clicking close.");
-				if (Conversation.CurrentConversation == null) {
-					Say.Debug("CurrentConversation is null.");
-				}
-				else {
-					Say.Debug("CurrentConversation is not null:  " + Conversation.CurrentConversation.ToString());
-				}
-			Say.Debug("Title bar is " + this.Title);
-			Say.Debug("Run SetTitleBar()");
 			SetTitleBar();
-			Say.Debug("Title bar is now " + this.Title);
 		}
 		
 		
@@ -711,6 +708,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <remarks>These are usually deleted when they're done with, but will remain if there's a crash.</remarks>
 		private void OnClosed(object sender, EventArgs ea)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.exited,"conversationwriter");
 			string path = Adventure.CurrentAdventure.Module.Repository.DirectoryName;
 			DirectoryInfo di = new DirectoryInfo(path);
 			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
@@ -750,6 +748,9 @@ namespace AdventureAuthor.Conversations.UI
 					Say.Debug("IsDirty == false.");
 				}
 				Say.Debug("Close the conversation.");
+				
+				Log.WriteEffectiveAction(Log.EffectiveAction.closed,"conversation",this.originalFilename);
+				
 				CloseConversation();
 			}
 			else {
