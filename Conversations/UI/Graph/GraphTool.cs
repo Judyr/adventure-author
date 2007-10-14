@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Netron.Diagramming.Core;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Conversations.UI.Graph
 {
@@ -36,7 +37,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	        	}
 	        	
 	            if (e.Button == MouseButtons.Left && Enabled && !IsSuspended)
-	            {        
+	            {    
 	            	bool centreGraph = e.Clicks == 2 ? true : false; // only centre on double-click
 	            	Selection.CollectEntitiesAt(e.Location);
 	            	foreach (IDiagramEntity entity in Selection.SelectedItems) { 
@@ -46,8 +47,18 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            		Node node = entity as Node;
 	            		if (node != null) {
 	            			WriterWindow.Instance.DisplayPage(node.Page);
-	            			if (centreGraph) {
+	            			
+	            			if (!centreGraph) {
+	            				Log.WriteUIAction(Log.UIAction.Clicked,"node");
+	            			}
+	            			else {
+	            				Log.WriteUIAction(Log.UIAction.DoubleClicked,"node");
+	            			}
+	            			Log.WriteEffectiveAction(Log.EffectiveAction.Viewed,"page");
+	            			
+	            			if (centreGraph) {	            				
 	            				WriterWindow.Instance.CentreGraph(false);
+	            				Log.WriteMessage("Centred graph on current page.");
 	            			}
 	            		}
 	            		entity.IsSelected = false; // doesn't help
