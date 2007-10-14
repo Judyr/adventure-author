@@ -25,7 +25,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
-	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus" 
+	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
     MouseDoubleClick="OnClick_GoToPage" Padding="6">
 	
 	<UserControl.Resources>		
