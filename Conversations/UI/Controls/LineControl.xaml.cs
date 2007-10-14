@@ -181,11 +181,22 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
         	}        	
 
+        	
+        	
+        	
         	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus2);
 
 			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);
 			Dialogue.GotFocus += new RoutedEventHandler(OnDialogueGotFocus);
+			
+			
         	this.KeyDown += new KeyEventHandler(OnKeyDown);
+			
+			
+			
+//			Dialogue.LostFocus += new RoutedEventHandler(New_DialogueLostFocus);
+//			Dialogue.GotFocus += new RoutedEventHandler(New_DialogueGotFocus);
+//			this.LostFocus += delegate { DeselectLine(); };
         }
         
         #endregion Constructor
@@ -379,6 +390,74 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }        
         
         
+        
+        
+        #endregion
+        
+        // Tests:
+        
+        
+//        
+//		protected override void OnGotFocus(RoutedEventArgs e)
+//		{
+//			SelectLine();
+//			base.OnGotFocus(e);
+//		}
+//		
+////		protected override void OnLostFocus(RoutedEventArgs e)
+////		{	
+////			base.OnLostFocus(e);
+////			if (!DeleteLineButton.IsFocused) {
+////				DeselectLine();
+////			}
+////		}
+//		
+//		private void New_DialogueGotFocus(object sender, RoutedEventArgs e)
+//		{
+//			SelectLine();
+//		}
+//       
+//		private void New_DialogueLostFocus(object sender, RoutedEventArgs e)
+//		{
+//			DeselectLine();
+//		}
+        
+        
+        
+        
+        
+        
+        
+//		protected override void OnGotFocus(RoutedEventArgs e)
+//		{
+//			Dialogue.Focus();
+//		}
+//		
+//		protected override void OnLostFocus(RoutedEventArgs e)
+//		{
+//			base.OnLostFocus(e);
+//		}
+//		
+//		private void New_DialogueGotFocus(object sender, RoutedEventArgs e)
+//		{
+//			SelectLine();
+//			e.Handled = true;			
+//		}
+//       
+//		private void New_DialogueLostFocus(object sender, RoutedEventArgs e)
+//		{
+//			DeselectLine();
+//			e.Handled = false;
+//		}
+        
+        
+        
+        
+        
+        
+        
+        
+        
         private void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
         	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
@@ -406,14 +485,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	DeselectLine();
         }
         
-        #endregion
    
         
         #region Selecting lines
         
         private void SelectLine()
         {
-        	Say.Debug("SelectLine(): " + this.ToString());
+//        	Say.Debug("SelectLine(): " + this.ToString());
         	WriterWindow.Instance.SelectedLineControl = this;
 //        	Say.Debug("about to set background");
         	Background = Brushes.Wheat;
@@ -432,13 +510,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (soundControl != null) {
         		SwitchOn(soundControl.PlaySoundButton);
         	}
-        	Say.Debug("Switched on all the buttons.");
+//        	Say.Debug("Switched on all the buttons.");
         }
         
         
         private void DeselectLine()
         {
-        	Say.Debug("DeselectLine(): " + this.ToString());
+//        	Say.Debug("DeselectLine(): " + this.ToString());
         	if (isPartOfBranch) {
         		Background = Brushes.AliceBlue;
         	}
