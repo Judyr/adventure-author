@@ -245,39 +245,7 @@ namespace AdventureAuthor.Conversations.UI
 			EndConversationControl endOfConversation = new EndConversationControl();
 			LinesPanel.Children.Add(endOfConversation);
 		}
-		
-        
-		/// <summary>
-		/// Get the line control on the current page view that represents a given line of conversation, if one exists.
-		/// </summary>
-		/// <param name="line">The line to fetch a control for</param>
-		/// <returns>A LineControl object representing this line if one exists; null otherwise</returns>
-		internal LineControl GetLineControl(NWN2ConversationConnector line)
-		{
-			if (line == null) {
-				return null;
-			}
-			
-			foreach (LineControl c in currentPage.LineControls) {
-				if (c.Nwn2Line == line) {
-					return c;
-				}
-			}
 						
-			foreach (Control control in LinesPanel.Children) {
-				ChoiceControl branch = control as ChoiceControl;
-				if (branch != null) {
-					foreach (LineControl c in branch.LineControls) {
-						if (c.Nwn2Line == line) {
-							return c;
-						}
-					}						
-				}
-			}			
-			
-			return null;			
-		}
-				
         #endregion
         
         #region Graph view   
@@ -924,7 +892,6 @@ namespace AdventureAuthor.Conversations.UI
 			button.Click += delegate 
 			{ 
 				if (currentPage != null) {	
-					bool scrollToEnd = false;
 					NWN2ConversationConnector parentLine;
 					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
@@ -932,7 +899,6 @@ namespace AdventureAuthor.Conversations.UI
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
-						scrollToEnd = true;
 //						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
@@ -940,33 +906,91 @@ namespace AdventureAuthor.Conversations.UI
 //						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
 					}
 					
-//					if (parentLine == null) {
-//						Say.Debug("Parentline: null.");
-//					}
-//					else {
-//						Say.Debug("Parentline: " + Conversation.GetStringFromOEIString(parentLine.Line.Text));
-//					}
-					
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
 										
-					LineControl newLineControl = GetLineControl(newLine);
-					
-					if (newLineControl != null) {
-						if (newLineControl.ActualHeight == 0) {
-							if (scrollToEnd) {
-								PageScroll.ScrollToBottom();
-							}
-							else {
-								newLineControl.BringIntoView();								
-							}
-						}
-						newLineControl.FocusOnMe(); // broken
-					}
+					FocusOn(newLine);
 				}
 			};
 			
 			SpeakersButtonsPanel.Children.Add(button);
 		}	
+		
+		
+		/// <summary>
+		/// Bring a line into view and focus on it.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		internal void FocusOn(NWN2ConversationConnector line)
+		{
+			if (line != null) {
+				LineControl lineControl = GetLineControl(line);
+				if (lineControl != null) {
+					if (lineControl.ActualHeight == 0) {
+						// TODO: following logic does not account for very large choice points, in which case you want to
+						// want to bring the branch into view if it's not on the screen, or you don't want to scroll
+						// to bottom if that means the last line on the page will go out of view (because of a huge choice point)
+						if (lineControl.IsPartOfBranch) {
+							PageScroll.ScrollToBottom();
+						}
+						else if (currentPage.LineControls.Count > 0 && currentPage.LineControls[currentPage.LineControls.Count-1] == lineControl) {
+							PageScroll.ScrollToBottom();
+						}
+						else {
+							lineControl.BringIntoView();								
+						}
+					}
+					
+					// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
+					// something about taking focus away from screen elements maybe?)
+						
+					//MessageBox.Show("try now");
+					
+					// TODO - if Focus is called, it works (but we want the textbox to be enabled.) If Dialogue.Focus() is called, it doesn't 
+					// work, even though from debug statements I can see that SelectLine() is ran all the way through to the end.
+					
+					Focus();
+					//Dialogue.Focus();
+					
+					//TextBox dialogue = (TextBox)FindName("Dialogue");
+					//dialogue.Focus();
+				}
+			}
+			else {
+				throw new ArgumentNullException("Tried to focus on a null line.");
+			}
+		}
+		
+		
+		/// <summary>
+		/// Get the line control on the current page view that represents a given line of conversation, if one exists.
+		/// </summary>
+		/// <param name="line">The line to fetch a control for</param>
+		/// <returns>A LineControl object representing this line if one exists; null otherwise</returns>
+		private LineControl GetLineControl(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				return null;
+			}
+			
+			foreach (LineControl c in currentPage.LineControls) {
+				if (c.Nwn2Line == line) {
+					return c;
+				}
+			}
+						
+			foreach (Control control in LinesPanel.Children) {
+				ChoiceControl branch = control as ChoiceControl;
+				if (branch != null) {
+					foreach (LineControl c in branch.LineControls) {
+						if (c.Nwn2Line == line) {
+							return c;
+						}
+					}						
+				}
+			}			
+			
+			return null;			
+		}
     }
 }
 		

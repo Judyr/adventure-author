@@ -122,14 +122,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToChoice(parentLine);
 				
-			LineControl newLineControl = WriterWindow.Instance.GetLineControl(newLine);
-			if (newLineControl == null) {
-				Say.Error("Couldn't find the branch line that was just added.");
-			}
-			else {
-				Say.Debug("Added a branch, now focus on it.");
-				newLineControl.FocusOnMe();
-			}
+        	WriterWindow.Instance.FocusOn(newLine);
         }	
         
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)

@@ -286,6 +286,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
         			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
         				Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
+        				WriterWindow.Instance.PageScroll.ScrollToBottom();
         			}
         			else { // if there are consequences, remind the user of them and ask them to confirm		
         				string warning = String.Empty;  
@@ -309,11 +310,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	 		        	MessageBoxResult result = MessageBox.Show(warning,"Delete?", MessageBoxButton.YesNo);
 			        	if (result == MessageBoxResult.Yes) {
 			        		Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
+        					WriterWindow.Instance.PageScroll.ScrollToBottom();
 			        	}       			
         			}
         		}
         		else {
         			Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
+        			WriterWindow.Instance.PageScroll.ScrollToBottom();
         		}
         	}
         	else {
@@ -407,36 +410,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #region Selecting lines
         
-        /// <summary>
-        /// Silly name cos this method shouldn't be necessary, but keep having problems with focusing on LineControls.
-        /// </summary>
-        internal void FocusOnMe()
-        {
-			// TODO: Doesn't work: (but does if you launch a message box before .Focus(), 
-			// something about taking focus away from screen elements maybe?)
-				
-//			MessageBox.Show("try now");
-			
-			// TODO - if Focus is called, it works (but we want the textbox to be enabled.) If Dialogue.Focus() is called, it doesn't 
-			// work, even though from debug statements I can see that SelectLine() is ran all the way through to the end.
-			
-			Say.Debug("FocusOnMe(): " + this.ToString());
-//			Focus();
-//			Dialogue.Focus();
-			
-//			TextBox dialogue = (TextBox)FindName("Dialogue");
-//			dialogue.Focus();
-        }
-        
         private void SelectLine()
         {
         	Say.Debug("SelectLine(): " + this.ToString());
         	WriterWindow.Instance.SelectedLineControl = this;
-        	Say.Debug("about to set background");
+//        	Say.Debug("about to set background");
         	Background = Brushes.Wheat;
         	Dialogue.Background = Brushes.White;
         	Dialogue.BorderBrush = Brushes.Black;
-        	Say.Debug("just set background. about to switch on all the buttons");
+//        	Say.Debug("just set background. about to switch on all the buttons");
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
 //        		SwitchOn(conditionalControl.EditConditionsButton);

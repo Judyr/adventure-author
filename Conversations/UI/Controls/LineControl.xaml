@@ -51,14 +51,13 @@
 					<MenuItem Header="The player does something chaotic" Click="OnClick_PlayerBecomesMoreChaotic"/>
 					<Separator/>		
 					<MenuItem Header="The player is healed" Click="OnClick_HealPlayer"/>
-					<MenuItem Header="The player plays an animation" Click="OnClick_PlayerAnimation"/>	
 					<MenuItem Header="The player is teleported somewhere" Click="OnClick_TeleportPlayer"/>				
 				</MenuItem.Items>
 				</MenuItem>
 				<MenuItem Header="Creature actions">
 				<MenuItem.Items>
 					<MenuItem Header="A creature attacks the player" Click="OnClick_Attack"/>
-					<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/>				
+					<!--<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/>	-->			
 					<MenuItem Header="A creature dies" Click="OnClick_Kill"/>	
 					<MenuItem Header="A creature becomes unkillable" Click="OnClick_CreatureBecomesImmortal"/>			
 					<MenuItem Header="A creature becomes killable" Click="OnClick_CreatureBecomesMortal"/>	
@@ -128,8 +127,6 @@
 				<MenuItem Header="If a particular creature is the player's ally" Click="OnClick_PlayerHasHenchman"/>		
 				<Separator/>		
 				<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
-				<MenuItem Header="If a particular object is nearby" Click="OnClick_ObjectIsNearPlayer"/>
-				<MenuItem Header="If two particular objects are near each other" Click="OnClick_ObjectIsNearObject"/>	
 				<MenuItem Header="If a particular door/container is open" Click="OnClick_DoorOrContainerIsOpen"/>
 				<Separator/>		
 				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->

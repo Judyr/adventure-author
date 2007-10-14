@@ -379,7 +379,7 @@ namespace AdventureAuthor.Conversations
 		public void SetCameraAngle(NWN2ConversationConnector line)
 		{
 			throw new NotImplementedException();
-			OnChanged(new ConversationChangedEventArgs(false));
+//			OnChanged(new ConversationChangedEventArgs(false));
 		}		
 		
 
@@ -693,10 +693,15 @@ namespace AdventureAuthor.Conversations
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
 			
-			lock (padlock) {
-				NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ?				
-				isDirty = true;
-				Say.Debug("Saved to working copy.");
+			try {
+				lock (padlock) {
+					NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ?				
+					isDirty = true;
+					Say.Debug("Saved to working copy.");
+				}
+			}
+			catch (Exception e) {
+				Say.Error("Error on serializing.",e);
 			}
 		}
 		

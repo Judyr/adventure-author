@@ -49,7 +49,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is dead.");
-    		window.AddStringQuestion("Which creature needs to be dead?");
+    		window.AddTagQuestion("Which creature needs to be dead?",ScriptHelper.TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -95,7 +95,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			return;
     		}
     		else {    			
-    			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer((int)prms[0]);
+    			NWN2ConditionalFunctor condition = Conditions.EnemyIsNearPlayer((float)prms[0]);
     			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
     		}
 		}
@@ -186,51 +186,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 		}
 				
 				
-		private void OnClick_ObjectIsNearPlayer(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-    		object[] prms = new object[2];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of the player");
-    		window.AddTagQuestion("Which object needs to be within range?",ScriptHelper.TaggedType.AnyObject);
-    		window.AddStringQuestion("How close does the object need to be (in metres)?");// Either enter the value, " +
-    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
-    		bool? result = window.ShowDialog();
-    		if (result == null || !(bool)result) { // cancelled or failed
-    			return;
-    		}
-    		else {    			
-    			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearPlayer((string)prms[0],(string)prms[1]);
-    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-    		}
-		}		
-				
-		
-		private void OnClick_ObjectIsNearObject(object sender, EventArgs ea)
-		{
-			if (HasCondition()) {
-				Say.Information("Sorry - you can only add one condition to a line.");
-				return;
-			}
-    		object[] prms = new object[3];
-    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that an object is within range of another object");
-    		window.AddTagQuestion("What is the first object?",ScriptHelper.TaggedType.AnyObject);
-    		window.AddTagQuestion("What is the second object?",ScriptHelper.TaggedType.AnyObject);    		
-    		window.AddStringQuestion("How close do the two objects need to be (in metres)?");// Either enter the value, " +
-    		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
-    		bool? result = window.ShowDialog();
-    		if (result == null || !(bool)result) { // cancelled or failed
-    			return;
-    		}
-    		else {    			
-    			NWN2ConditionalFunctor condition = Conditions.ObjectIsNearObject((string)prms[0],(string)prms[1],(string)prms[2]);
-    			Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
-    		}
-		}		
-		
-		
 		private void OnClick_PlayerHasGold(object sender, EventArgs ea)
 		{
 			if (HasCondition()) {
@@ -239,7 +194,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a certain amount of gold");
-    		window.AddIntegerQuestion("How much gold does the player need to have?",0,null);
+    		window.AddIntegerQuestion("How many gold coins does the player need to have?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;

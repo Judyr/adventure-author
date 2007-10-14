@@ -26,6 +26,7 @@
 
 using System;
 using NWN2Toolset.NWN2.Data;
+using AdventureAuthor.Utils;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Scripts
@@ -35,6 +36,26 @@ namespace AdventureAuthor.Scripts
 	/// </summary>
 	public static class Actions
 	{			
+		/* Notes on scripts:
+		 * 
+		 * Deleted ObjectIsNearby, ObjectIsNearObject, PlayerAnimation, because they didn't work. I think I've made
+		 * the player animate before though, so should investigate fixing this.
+		 * 
+		 * EnemyIsNearby works in 'metres'. Game metres look about half as long as a real metre (at a guess). With the 
+		 * standard fog settings, the point where you can just start to see an enemy on the horizon is (very roughly)
+		 * 100 metres. Again very roughly, a big area may be 200 metres across (less sure of this). 
+		 * 
+		 * Alignment works, but there is a big 'neutral' area in the middle, so you need several changes to alignment
+		 * in the same direction before a condition check will notice it on your character.
+		 * 
+		 * AttackTarget doesn't really work - attacks the faction of the target instead, which is almost always Commoner,
+		 * and that essentially means anyone since Defenders will help Commoners.
+		 * 
+		 * 
+		 * 
+		 */ 
+		
+		
 		/* Actions to add:
 		 * ga_effect
 		 * the 10 music scripts to start/stop battle and background music
@@ -103,7 +124,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sAttacker">Tag of attacker</param>
 		/// <param name="sTarget">Tag of target</param>
 		/// <returns></returns>
-		public static NWN2ScriptFunctor AttackTarget(string sAttacker, string sTarget)
+		private static NWN2ScriptFunctor AttackTarget(string sAttacker, string sTarget)
 		{
 			return ScriptHelper.GetScriptFunctor("ga_attack_target",new object[]{sAttacker,sTarget},ScriptHelper.Origin.NWN2);
 		}
@@ -451,21 +472,7 @@ namespace AdventureAuthor.Scripts
 		{
 			return ScriptHelper.GetScriptFunctor("ga_open_store",new object[]{sTag,nMarkUp,nMarkDown},ScriptHelper.Origin.NWN2);
 		}
-		
-		/// <summary>
-		/// Play an animation on a line of dialogue.
-		/// </summary>
-		/// <param name="animation">The animation to play.</param>
-		/// <param name="fDelayUntilStart">Number of seconds to wait before starting to play the animation.</param>
-		public static NWN2ScriptFunctor PlayerAnimation(ScriptHelper.Animation animation, float fDelayUntilStart)
-		{
-			string sTarget = String.Empty; // player
-			float fDuration = 6.0f; // not used for one-time animations, simpler to give it a fixed value for the looping ones too
-			float fSpeed = 1.0f; // simpler to leave this out of the equation, for now anyway
-			int iAnim = (int)animation;
-			return ScriptHelper.GetScriptFunctor("ga_play_animation",new object[]{sTarget,iAnim,fSpeed,fDuration,fDelayUntilStart},ScriptHelper.Origin.NWN2);
-		}
-		
+				
 		/// <summary>
 		/// Play an animation on a line of dialogue.
 		/// </summary>
@@ -654,7 +661,7 @@ namespace AdventureAuthor.Scripts
 		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreGood()
 		{
-			int degreeOfChange = 1; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
+			int degreeOfChange = 3; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
 			int axis = 0; // adjust on the Good/Evil axis
 			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}
@@ -665,7 +672,7 @@ namespace AdventureAuthor.Scripts
 		/// <remarks>The player's good/evil alignment is 100 if he is completely good, and 0 if he is completely evil.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreEvil()
 		{
-			int degreeOfChange = -1; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
+			int degreeOfChange = -3; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
 			int axis = 0; // adjust on the Good/Evil axis
 			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}		
@@ -676,7 +683,7 @@ namespace AdventureAuthor.Scripts
 		/// <remarks>The player's lawful/chaotic alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreLawful()
 		{
-			int degreeOfChange = 1; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
+			int degreeOfChange = 3; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
 			int axis = 1; // adjust on the Law/Chaos axis
 			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}
@@ -687,7 +694,7 @@ namespace AdventureAuthor.Scripts
 		/// <remarks>The player's lawful/chaotic alignment is 100 if he is completely lawful, and 0 if he is completely chaotic.</remarks>
 		public static NWN2ScriptFunctor PlayerBecomesMoreChaotic()
 		{
-			int degreeOfChange = -1; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
+			int degreeOfChange = -3; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
 			int axis = 1; // adjust on the Law/Chaos axis
 			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.Origin.NWN2);
 		}
