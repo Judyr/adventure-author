@@ -34,6 +34,7 @@ namespace AdventureAuthor.Utils
 {
 	public static class Log
 	{	
+		// TODO out of date:
 		// How to read log messages:
 			// GetNumber() // hour
 			// GetChar(":")
@@ -56,10 +57,10 @@ namespace AdventureAuthor.Utils
 		}
 		
 		public enum WizardAction {
-			StartedWizard,
-			CompletedWizard,
-			CancelledWizard
-			// DeferredWizard?
+			Started,
+			Completed,
+			Cancelled
+			// Deferred?
 		}
 		
 		public enum EffectiveAction {
@@ -70,7 +71,8 @@ namespace AdventureAuthor.Utils
 			Edited,
 			Renamed,
 			Deleted,
-			Selected
+			Selected,
+			Viewed
 		}
 		
 		
@@ -107,23 +109,17 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		
-		
-		
-		// TODO refactor
-		
-		// TODO 
-		
-		
+		// TODO refactor all the redundant code below
 		
 		
 		/// <summary>
 		/// Writes a log message in the form: '16:24:15:message'
 		/// </summary>
+		/// <remarks>'>' character indicates this message does not follow the usual format</remarks>
 		/// <param name="logMessage">The message to log. For unique user actions.</param>
 		public static void WriteMessage(string logMessage)
 		{
-			string message = UsefulTools.GetTimeStamp(false) + ": " + logMessage;
+			string message = UsefulTools.GetTimeStamp(false) + ": >" + logMessage;
 			writer.WriteLine(message);
 			writer.Flush();
 		}			
@@ -155,14 +151,13 @@ namespace AdventureAuthor.Utils
 		public static void WriteUIAction(UIAction interaction, string element, string extraInfo)
 		{
 			string message;
-			if (element == null) {
-				message = "Invalid log message, did not specify an element.";
-			}
-			else if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + interaction + " " + element + " -" + extraInfo;
+			string subjectmsg = element == null ? "<Subject not logged>" : element;			
+			
+			if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + interaction + " " + element;
+				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg;
 			}
 				
 			writer.WriteLine(message);
@@ -192,14 +187,13 @@ namespace AdventureAuthor.Utils
 		public static void WriteWizardAction(WizardAction action, string wizard, string extraInfo)
 		{
 			string message;
-			if (wizard == null) {
-				message = "Invalid log message, did not specify a subject.";
-			}
-			else if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + wizard + " -" + extraInfo;
+			string subjectmsg = wizard == null ? "<Subject not logged>" : wizard;			
+			
+			if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + wizard;
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
 			}
 				
 			writer.WriteLine(message);
@@ -230,14 +224,13 @@ namespace AdventureAuthor.Utils
 		public static void WriteEffectiveAction(EffectiveAction action, string subject, string extraInfo)
 		{
 			string message;
-			if (subject == null) {
-				message = "Invalid log message, did not specify a subject.";
-			}
-			else if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subject + " -" + extraInfo;
+			string subjectmsg = subject == null ? "<Subject not logged>" : subject;			
+			
+			if (extraInfo != null) {
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subject;
+				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
 			}
 				
 			writer.WriteLine(message);

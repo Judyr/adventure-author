@@ -33,6 +33,7 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Conversations.UI.Controls;
 using AdventureAuthor.Conversations.UI.Graph;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Conversations
 {
@@ -90,11 +91,11 @@ namespace AdventureAuthor.Conversations
 			if (leadInLine == null) {
 				return "Root";
 			}
-			else if (leadInLine.Line.Text.Strings.Count == 0) {
+			else if (Conversation.GetStringFromOEIString(leadInLine.Line.Text).Length == 0) {
 				return "[Continue]";
 			}
 			else {
-				return leadInLine.Line.Text.Strings[0].Value;
+				return UsefulTools.Truncate(Conversation.GetStringFromOEIString(leadInLine.Line.Text),30);
 			}
 		}
     }
