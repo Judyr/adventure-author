@@ -27,6 +27,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using NWN2Toolset.NWN2.Data.ConversationData;
 
@@ -48,13 +49,28 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		LineControlGrid.Children.Add(conditionalControl);
         	}   
         	
+        	// Disable and grey out everything:
+        	Focusable = false;
         	DeleteLineButton.IsEnabled = false;
-        	DeleteLineButton.Visibility = Visibility.Collapsed;        	
-        	
+        	DeleteLineButton.Visibility = Visibility.Hidden;  
+        	SpeakerLabel.IsEnabled = false;
         	SpeakerLabel.Foreground = Brushes.Gray;
         	Dialogue.Foreground = Brushes.Gray;
+        	Dialogue.Background = Brushes.LightYellow;
+        	Dialogue.BorderBrush = Brushes.Transparent;         	
         	Dialogue.IsEnabled = false;
-        	Focusable = false;
+        	Dialogue.ContextMenu = null;
+        	foreach (ActionControl actionControl in actionControls) {
+        		actionControl.Foreground = Brushes.Gray;
+        	}
+        	if (conditionalControl != null) {
+        		conditionalControl.Foreground = Brushes.Gray;
+        	} 
+        	if (soundControl != null) {
+        		soundControl.Foreground = Brushes.Gray;
+        	}
+        	
+        	this.MouseDoubleClick += new MouseButtonEventHandler(OnMouseDoubleClick_GoToPage);
 		}  		
 		
 		
@@ -97,9 +113,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				if (page.Children.Contains(WriterWindow.Instance.CurrentPage)) {
         			WriterWindow.Instance.DisplayPage(page);
         			WriterWindow.Instance.CentreGraph(false);
+        			WriterWindow.Instance.FocusOn(this.nwn2Line);
         			return;
 				}
         	}        	
         } 
+        
+        
+        private void OnMouseDoubleClick_GoToPage(object sender, MouseButtonEventArgs e)
+        {
+        	OnClick_GoToPage(this,e);
+        }
 	}
 }

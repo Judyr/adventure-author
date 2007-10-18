@@ -489,8 +489,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	else {
         		Background = Brushes.LightYellow;
         	}
-        	Dialogue.Background = Brushes.Transparent;	
+        	Dialogue.Background = Brushes.Transparent;
         	Dialogue.BorderBrush = Brushes.Transparent;
+        	
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
 //        		SwitchOff(conditionalControl.EditConditionsButton);
@@ -508,6 +509,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void SwitchOn(Control c)
         {
+        	Say.Debug("Switched on " + c.Name);
         	c.IsEnabled = true;
         	c.Visibility = Visibility.Visible;
         }
@@ -515,6 +517,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void SwitchOff(Control c)
         {
+        	Say.Debug("Switched off " + c.Name);
         	c.IsEnabled = false;
         	c.Visibility = Visibility.Hidden;
         }
