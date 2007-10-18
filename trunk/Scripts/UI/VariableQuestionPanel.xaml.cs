@@ -54,10 +54,10 @@ namespace AdventureAuthor.Scripts.UI
         /// </summary>
         private void PopulateVariableList()
         {
-            List<string> variables = new List<string>();            
+            SortedList<string,string> variables = new SortedList<string,string>();            
             foreach (NWN2ScriptVariable variable in Adventure.CurrentAdventure.Module.ModuleInfo.Variables) {
-            	if (variable.VariableType == type) {
-            		variables.Add(variable.Name);
+            	if (variable.VariableType == type && !variables.ContainsKey(variable.Name)) {
+            		variables.Add(variable.Name,null);
             	}
             }            
             AnswerBox.ItemsSource = variables;  

@@ -28,13 +28,17 @@ namespace AdventureAuthor.Scripts.UI
         public TagQuestionPanel(string question, ScriptHelper.TaggedType[] objectTypes)
         {
             InitializeComponent();
-            QuestionLabel.Text = question;
+            QuestionLabel.Text = question;            
             
-            List<string> tags = new List<string>();
+            SortedList<string,string> tags = new SortedList<string,string>();
             foreach (ScriptHelper.TaggedType type in objectTypes) {
-            	tags.AddRange(ScriptHelper.GetTags(type));
+            	foreach (string tag in ScriptHelper.GetTags(type).Keys) {
+            		if (!tags.ContainsKey(tag)) {
+            			tags.Add(tag,null);
+            		}
+            	}
             }
-            AnswerBox.ItemsSource = tags;
+            AnswerBox.ItemsSource = tags.Keys;
         }
         
                 

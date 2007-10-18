@@ -877,212 +877,183 @@ namespace AdventureAuthor.Scripts
 		
 		#region Tags and blueprints
 				
-		public static List<String> GetResRefs(TaggedType type)
+		public static SortedList<string,string> GetResRefs(TaggedType type)
 		{
 			if (Adventure.CurrentAdventure == null) {
 				return null;
 			}
-			
-			List<string> resrefs = new List<string>();
 						
 			switch (type) {
 				case TaggedType.AnyObject:
+					SortedList<string,string> resrefs = new SortedList<string,string>();
 					foreach (NWN2BlueprintCollection blueprintCollection in NWN2GlobalBlueprintManager.Instance.BlueprintCollections) {
-						resrefs.AddRange(GetResRefs(blueprintCollection));
+						Merge(ref resrefs,GetResRefs(blueprintCollection));
 					}
-					break;					
+					return resrefs;			
 				case TaggedType.Creature:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Creatures));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Creatures);
 				case TaggedType.Door:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Doors));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Doors);
 				case TaggedType.Encounter:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Encounters));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Encounters);
 				case TaggedType.Item:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Items));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Items);
 				case TaggedType.JournalCategory:
-					throw new ArgumentException("Journal categories are not objects, and do not have resrefs.");
+					throw new ArgumentException("Journal categories are not created from a blueprint, and so do not have resrefs.");
 				case TaggedType.Light:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Lights));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Lights);
 				case TaggedType.Placeable:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Placeables));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Placeables);
 				case TaggedType.PlacedEffect:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.PlacedEffects));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.PlacedEffects);
 				case TaggedType.Sound:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Sounds));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Sounds);
 				case TaggedType.StaticCamera:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.StaticCameras));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.StaticCameras);
 				case TaggedType.Store:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Stores));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Stores);
 				case TaggedType.Tree:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Trees));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Trees);
 				case TaggedType.Trigger:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Triggers));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Triggers);
 				case TaggedType.Waypoint:
-					resrefs.AddRange(GetResRefs(NWN2GlobalBlueprintManager.Instance.Waypoints));
-					break;
+					return GetResRefs(NWN2GlobalBlueprintManager.Instance.Waypoints);
 				default:
 					return null;
 			}
-			return resrefs;
 		}	
 				
-		private static SortedList<string,string> NewGetResRefs(NWN2BlueprintCollection blueprints)
+		
+		private static SortedList<string,string> GetResRefs(NWN2BlueprintCollection blueprints)
 		{
 			SortedList<string,string> resrefs = new SortedList<string,string>(blueprints.Count);
 			
 			foreach (INWN2Blueprint blueprint in blueprints) {
 				string resref = blueprint.TemplateResRef.Value;
-				string description = blueprint.ResourceName.Value == null ? String.Empty : blueprint.ResourceName.Value;
+				string description = null; 
 				if (resref != String.Empty) {
 					try {
 						resrefs.Add(resref,description);
 					}
-					catch (ArgumentException) {
-						
-					}
-				}
-			}
-			return resrefs;
-		}
-			
-			
-		public static List<string> GetResRefs(NWN2BlueprintCollection blueprints)
-		{			
-			SortedList<string,string> newresrefs = NewGetResRefs(blueprints);
-			foreach (string resref in newresrefs.Keys) {
-				Say.Debug(resref + " : " + newresrefs[resref]);
-			}
-			
-			
-			List<string> resrefs = new List<string>(blueprints.Count);
-			foreach (INWN2Blueprint blueprint in blueprints) {
-				string resref = blueprint.TemplateResRef.Value;				
-				if (resref != String.Empty && !resrefs.Contains(resref)) {
-					resrefs.Add(resref);
+					catch (ArgumentException) {	}
 				}
 			}
 			return resrefs;
 		}
 		
-		public static List<String> GetTags(TaggedType type)
+		
+		private static SortedList<string,string> Merge(ref SortedList<string,string> a, SortedList<string,string> b)
+		{
+			foreach (string key in b.Keys) {
+				try {
+					a.Add(key,b[key]);
+				}
+				catch (ArgumentException) { }
+			}
+			return a;
+		}
+		
+		
+		public static SortedList<string,string> GetTags(TaggedType type)
 		{
 			if (Adventure.CurrentAdventure == null) {
 				return null;
 			}
 			
-			List<string> tags = new List<string>();
-						
+			SortedList<string,string> tags = new SortedList<string,string>();
+			
 			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
 				switch (type) {
-					case TaggedType.AnyObject: // excludes journal
+					case TaggedType.AnyObject: // excludes journal					
 						foreach (NWN2InstanceCollection coll in area.AllInstances) {
-							tags.AddRange(GetTags(coll));
+							Merge(ref tags,GetTags(coll));
 						}
 						break;
 					case TaggedType.Creature:
-						tags.AddRange(GetTags(area.Creatures));
+						Merge(ref tags,GetTags(area.Creatures));
 						break;
 					case TaggedType.Door:
-						tags.AddRange(GetTags(area.Doors));
+						Merge(ref tags,GetTags(area.Doors));
 						break;
 					case TaggedType.Encounter:
-						tags.AddRange(GetTags(area.Encounters));
+						Merge(ref tags,GetTags(area.Encounters));
 						break;
 					case TaggedType.Item:
-						tags.AddRange(GetTags(area.Items));
+						Merge(ref tags,GetTags(area.Items));
 						break;
 					case TaggedType.JournalCategory:
-						tags.AddRange(GetTags(Adventure.CurrentAdventure.Module.Journal.Categories));
+						Merge(ref tags,GetTags(Adventure.CurrentAdventure.Module.Journal.Categories));
 						break;
 					case TaggedType.Light:
-						tags.AddRange(GetTags(area.Lights));
+						Merge(ref tags,GetTags(area.Lights));
 						break;
 					case TaggedType.Placeable:
-						tags.AddRange(GetTags(area.Placeables));
+						Merge(ref tags,GetTags(area.Placeables));
 						break;
 					case TaggedType.PlacedEffect:
-						tags.AddRange(GetTags(area.PlacedEffects));
+						Merge(ref tags,GetTags(area.PlacedEffects));
 						break;
 					case TaggedType.Sound:
-						tags.AddRange(GetTags(area.Sounds));
+						Merge(ref tags,GetTags(area.Sounds));
 						break;
 					case TaggedType.StaticCamera:
-						tags.AddRange(GetTags(area.StaticCameras));
+						Merge(ref tags,GetTags(area.StaticCameras));
 						break;
 					case TaggedType.Store:
-						tags.AddRange(GetTags(area.Stores));
+						Merge(ref tags,GetTags(area.Stores));
 						break;
 					case TaggedType.Tree:
-						tags.AddRange(GetTags(area.Trees));
+						Merge(ref tags,GetTags(area.Trees));
 						break;
 					case TaggedType.Trigger:
-						tags.AddRange(GetTags(area.Triggers));
+						Merge(ref tags,GetTags(area.Triggers));
 						break;
 					case TaggedType.Waypoint:
-						tags.AddRange(GetTags(area.Waypoints));
+						Merge(ref tags,GetTags(area.Waypoints));
 						break;
 					default:
-						return null;
+						throw new ArgumentException("Invalid TaggedType value.");
 				}
-			}			
+			}
 			return tags;
 		}
 		
 		
-		/// <summary>
-		/// Get a 
-		/// </summary>
-		/// <param name="instances"></param>
-		/// <returns></returns>
-		public static List<string> GetTags(NWN2InstanceCollection instances)
-		{			
-			List<string> tags = new List<string>(instances.Count);
-			foreach (INWN2Instance instance in instances) {
-				string tag = ((INWN2Object)instance).Tag;
-				if (tag != String.Empty && !tags.Contains(tag)) {
-					tags.Add(tag);
-				}
-			}
-			return SortTags(tags);
-		}
 		
-		
-		public static List<string> GetTags(NWN2JournalCategoryCollection journalCategories)
-		{			
-			List<string> tags = new List<string>(journalCategories.Count);
-			foreach (NWN2JournalCategory category in journalCategories) {
-				string tag = category.Tag;
-				if (tag != String.Empty && !tags.Contains(tag)) {
-					tags.Add(tag);
-				}
-			}
-			return tags; // less useful to sort these as they will appear in order of creation (?)
-		}
-		
-		
-		/// <summary>
-		/// Returns an alphabetised list of unique tags.
-		/// </summary>
-		/// <param name="tags">The tags to sort and check for duplicates.</param>
-		/// <returns>An alphabetised list of unique tags</returns>
-		private static List<string> SortTags(List<string> tags)
+		private static SortedList<string,string> GetTags(NWN2InstanceCollection instances)
 		{
-			// TODO
+			SortedList<string,string> tags = new SortedList<string,string>(instances.Count);			
+			foreach (INWN2Instance instance in instances) {				
+				string tag = instance.Name;
+				string description = null; 
+				if (tag != String.Empty) {
+					try {
+						tags.Add(tag,description);
+					}
+					catch (ArgumentException) {						
+					}
+				}
+			}
 			return tags;
 		}
 		
+				
+		private static SortedList<string,string> GetTags(NWN2JournalCategoryCollection journalCategories)
+		{
+			SortedList<string,string> tags = new SortedList<string,string>(journalCategories.Count);			
+			foreach (NWN2JournalCategory category in journalCategories) {				
+				string tag = category.Tag;
+				string description = null; 
+				if (tag != String.Empty) {
+					try {
+						tags.Add(tag,description);
+					}
+					catch (ArgumentException) {						
+					}
+				}
+			}
+			return tags;
+		}
 		#endregion
 		
 	}
