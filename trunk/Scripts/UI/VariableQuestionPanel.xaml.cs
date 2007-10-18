@@ -60,7 +60,7 @@ namespace AdventureAuthor.Scripts.UI
             		variables.Add(variable.Name,null);
             	}
             }            
-            AnswerBox.ItemsSource = variables;  
+            AnswerBox.ItemsSource = variables.Keys;  
         }
         
         
