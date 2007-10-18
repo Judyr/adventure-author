@@ -62,10 +62,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
             this.lineControls = new List<LineControl>(2);
         	
         	if (lines == null) {
-        		throw new ArgumentNullException("Tried to form a branch with a null collection of lines.");
+        		throw new ArgumentNullException("Tried to form a choice with a null collection of lines.");
         	}
         	else if (lines.Count < 2) {
-        		throw new ArgumentException("Tried to form a branch with less than 2 lines.");
+        		throw new ArgumentException("Tried to form a choice with less than 2 lines.");
         	}
         	else {
         		if (lines[0].Type == NWN2ConversationConnectorType.Reply) {
@@ -78,10 +78,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         	foreach (NWN2ConversationConnector line in lines) {
             	if (Conversation.IsFiller(line)) {
-            		throw new ArgumentException("Tried to form a branch with a filler line.");
+            		throw new ArgumentException("Tried to form a choice with a filler line.");
             	}
             	
-				LineControl lineControl = new LineControl(line,true);				
+            	BranchLine lineControl = new BranchLine(line);
 				lineControl.Dialogue.FontStyle = FontStyles.Italic;
 				lineControl.SpeakerLabel.FontStyle = FontStyles.Italic;
        			lineControl.Dialogue.Foreground = Brushes.Black;
@@ -93,12 +93,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
 						lineControl.SpeakerLabel.Foreground = Conversation.BRANCH_COLOUR;
        				}
        				else {
-       					throw new ArgumentException("Tried to form a Check using an PC line - Checks should only contain NPC lines.");
+       					throw new ArgumentException("Tried to form a choice with lines from more than one speaker.");
        				}
        			}
        			else {
        				if (typeOfSpeaker == ChoiceType.Player) {
-       					throw new ArgumentException("Tried to form a Choice using an NPC line - Choices should only contain PC lines.");
+       					throw new ArgumentException("Tried to form a choice with lines from more than one speaker.");
        				}
        				else { // NPC checks what to say based on conditions
 	  					Speaker speaker = Conversation.CurrentConversation.GetSpeaker(line.Speaker);

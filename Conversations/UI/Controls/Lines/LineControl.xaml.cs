@@ -40,44 +40,35 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 namespace AdventureAuthor.Conversations.UI.Controls
 {
 	/// <summary>
-	/// A control representing a line of dialogue and its speaker.
-	/// <remarks>Can also host controls to represent any actions, conditions or sounds attached to this line of dialogue.</remarks>
+	/// A control representing a line of dialogue and its speaker. It also hosts controls to represent any 
+	/// actions, conditions or sounds attached to this line of dialogue.</remarks>
 	/// </summary>
-    public partial class LineControl : UserControl
+    public abstract partial class LineControl : UserControl
     {    	
     	#region Fields
     	
     	/// <summary>
     	/// The line of conversation this control represents.
     	/// </summary>
-    	private NWN2ConversationConnector nwn2Line;
+    	protected NWN2ConversationConnector nwn2Line;
 		public NWN2ConversationConnector Nwn2Line {
 			get { return nwn2Line; }
 		}
     	
     	/// <summary>
-    	/// True if the line this control represents is part of a branch, i.e. either this line or another could be spoken next.
-    	/// </summary>
-    	private bool isPartOfBranch;    	
-		public bool IsPartOfBranch {
-			get { return isPartOfBranch; }
-			set { isPartOfBranch = value; }
-		}    
-    	
-    	/// <summary>
     	/// A control representing all the conditions on the line (conditions are co-dependent, so they share a control). May be null.
     	/// </summary>
-    	private ConditionControl conditionalControl;	
+    	protected ConditionControl conditionalControl = null;
     	
     	/// <summary>
     	/// A control representing a sound file that will be played on this line. May be null.
     	/// </summary>
-    	private SoundControl soundControl;
+    	protected SoundControl soundControl = null;
     	
     	/// <summary>
     	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
     	/// </summary>
-    	private List<ActionControl> actionControls;	
+    	protected List<ActionControl> actionControls = null;
     	
     	#endregion Fields
     	
@@ -88,20 +79,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	#endregion
     	
     	#region Constructor
-    	
+    	    	
     	/// <summary>
     	/// Create a new LineControl.
     	/// </summary>
     	/// <param name="line">The line of conversation to represent</param>
     	/// <param name="lineIsPartOfBranch">True if the line is part of a branch, false otherwise</param>
-        public LineControl(NWN2ConversationConnector line, bool isPartOfBranch)
+        protected LineControl(NWN2ConversationConnector line)
         {        
-        	this.nwn2Line = line;
-        	this.isPartOfBranch = isPartOfBranch;
-        	
+        	this.nwn2Line = line;        	
         	if (this.nwn2Line.Text.Strings.Count == 0) {
         		this.nwn2Line.Text = Conversation.GetOEIStringFromString(String.Empty);
-        		// TODO: Could just do this to an entire conversation upon opening it to avoid problems?
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
@@ -117,27 +105,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);
 			if (speaker != null) { 
 				SpeakerLabel.Text = speaker.Name.ToUpper();
-				SpeakerLabel.Foreground = speaker.Colour;
 			}
 			else { // if we can't identify the speaker - but this should never happen
 				SpeakerLabel.Text = "???";
-				SpeakerLabel.Foreground = Brushes.Black;
 			}
-        	
-        	// Check if there are conditions for this line to be spoken, and if so represent *all* of them with a single control:
-        	if (line.Conditions.Count > 0) {
-        		if (!isPartOfBranch) {
-        			Say.Error("Conditional check appeared on a line that was not part of a branch.");
-        		}
-        		conditionalControl = new ConditionControl(this);
-        		Grid.SetRow(conditionalControl,0);
-        		Grid.SetColumn(conditionalControl,0);
-        		Grid.SetColumnSpan(conditionalControl,3);
-        		LineControlGrid.Children.Add(conditionalControl);
-        	}   
-        	else {
-        		conditionalControl = null;
-        	}        	        	       
+      	        	       
         	
         	// Check if there are actions to occur when this line is spoken, and if so represent *each* of them with a control:
         	if (line.Actions.Count > 0) {
@@ -162,42 +134,46 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		LineControlGrid.Children.Add(soundControl);
         	}
         	
-        	// Fine-tune context menu based on current circumstances:
-        	if (WriterWindow.Instance.PreviousPage == null) {
-        		MenuItem MenuItem_GoBack = (MenuItem)FindName("MenuItem_GoBack");
-        		MenuItem_GoBack.IsEnabled = false;
-        	}
-        	if (!isPartOfBranch) {
-        		MenuItem MenuItem_AddCondition = (MenuItem)FindName("MenuItem_AddCondition");        		
-        		MenuItem MenuItem_GoToPage = (MenuItem)FindName("MenuItem_GoToPage");
-        		MenuItem_AddCondition.IsEnabled = false;
-        		MenuItem_AddCondition.Visibility = Visibility.Collapsed;
-        		MenuItem_GoToPage.IsEnabled = false;
-        		MenuItem_GoToPage.Visibility = Visibility.Collapsed;
-        	}
-        	else {
-        		MenuItem MenuItem_MakeIntoChoice = (MenuItem)FindName("MenuItem_MakeIntoChoice");
-        		MenuItem_MakeIntoChoice.IsEnabled = false;
-        		MenuItem_MakeIntoChoice.Visibility = Visibility.Collapsed;
-        	}        	
+        	SetupContextMenu();
 
+        	WriterWindow.Instance.ViewedPage += new EventHandler(LineControl_OnViewedPage);
+        	
+			
         	
         	
-        	
-        	this.Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus2);
-
-			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);
-			Dialogue.GotFocus += new RoutedEventHandler(OnDialogueGotFocus);
-			
-			
-        	this.KeyDown += new KeyEventHandler(OnKeyDown);
-			
-			
-			
+        	// originally commented out:
 //			Dialogue.LostFocus += new RoutedEventHandler(New_DialogueLostFocus);
 //			Dialogue.GotFocus += new RoutedEventHandler(New_DialogueGotFocus);
 //			this.LostFocus += delegate { DeselectLine(); };
         }
+        
+        protected virtual void SetupContextMenu()
+        {        
+        }
+        
+        
+        protected virtual void OnClick_GoToPage(object sender, EventArgs e)
+        {        	
+        }
+        
+        
+        private void LineControl_OnViewedPage(object sender, EventArgs e)
+        {
+        	MenuItem MenuItem_GoBack = (MenuItem)FindName("MenuItem_GoBack");
+        	
+        	if (WriterWindow.Instance.PreviousPage == null) {
+        		if (MenuItem_GoBack.IsEnabled) {
+        			MenuItem_GoBack.IsEnabled = false;
+        		}
+        	}
+        	else {
+        		if (!MenuItem_GoBack.IsEnabled) {
+        			MenuItem_GoBack.IsEnabled = true;
+        		}
+        	}
+        }
+        
+        
         
         #endregion Constructor
                 
@@ -206,7 +182,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// <summary>
         /// Save changes made to dialogue, if necessary updating node labels on the graph.
         /// </summary>
-        private void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
+        protected void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
         {
         	SaveChangesToText();
         }
@@ -215,7 +191,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// <summary>
         /// Hit delete to delete this line. Hit return to update the node labels on the graph.
         /// </summary>
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        protected void OnKeyDown(object sender, KeyEventArgs e)
         {
 			if (e.Key == Key.Delete) {
         		OnClick_Delete(sender,e);
@@ -237,7 +213,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
                 
         
-        private void OnClick_GoBack(object sender, EventArgs ea)
+        protected void OnClick_GoBack(object sender, EventArgs ea)
         {
         	if (Conversation.CurrentConversation != null && WriterWindow.Instance.PreviousPage != null) {
         		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.PreviousPage);
@@ -246,37 +222,24 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
-		private void OnClick_SetCamera(object sender, EventArgs ea)
+		protected void OnClick_SetCamera(object sender, EventArgs ea)
         {
         	
         }
 		
 		
-		private void OnClick_SetSound(object sender, EventArgs ea)
+		protected void OnClick_SetSound(object sender, EventArgs ea)
         {                	
         	SoundWindow window = new SoundWindow(nwn2Line);
         	window.ShowDialog();
         }		
         
 		
-        private void OnClick_GoToPage(object sender, EventArgs ea)
-        {
-        	// If this line is part of a branch, double-clicking it should display the page it leads to:
-        	if (this.isPartOfBranch) {
-        		foreach (Page page in WriterWindow.Instance.Pages) {
-        			if (page.LeadInLine == this.nwn2Line) {
-        				WriterWindow.Instance.DisplayPage(page);
-        				WriterWindow.Instance.CentreGraph(false);
-        				return;
-        			}
-        		}
-        	}
-        }        
         
-        
-		private void OnClick_MakeIntoBranch(object sender, EventArgs ea)
+        // TODO override
+		protected void OnClick_MakeIntoBranch(object sender, EventArgs ea)
 		{
-			if (isPartOfBranch) {
+			if (this is BranchLine) {
 				Say.Information("The line you have selected is already part of a choice.");
 			}
 			else {
@@ -286,13 +249,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
 		}
 		
 		
-        private void OnClick_Delete(object sender, EventArgs ea)
+		// TODO override
+        protected void OnClick_Delete(object sender, EventArgs ea)
         { 	
         	if (!IsVisible) { // in case we have already deleted this line - should have lost focus, but doesn't seem to
         		return;
         	}        		
         	
-        	if (isPartOfBranch) {
+        	if (this is BranchLine) {
 	       		if (!Adventure.BeQuiet) {   
         			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
         			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
@@ -345,10 +309,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }        
        
         
-        private void GoUp(object sender, EventArgs ea)
+        protected void GoUp(object sender, EventArgs ea)
         {
         	if (WriterWindow.Instance.CurrentPage.Parent != null) {
         		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage.Parent);
+        		WriterWindow.Instance.PageScroll.ScrollToBottom(); // to ensure choice is visible
         		WriterWindow.Instance.CentreGraph(false);
         	}
         }
@@ -360,19 +325,19 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="ea"></param>
-        private void OnDragStarted(object sender, EventArgs ea)
+        protected void OnDragStarted(object sender, EventArgs ea)
         {
         	//this.Background = Brushes.Pink;
         }
         
         
-        private void OnDragCompleted(object sender, EventArgs ea) 
+        protected void OnDragCompleted(object sender, EventArgs ea) 
         {
         	//this.Background = Brushes.LightYellow;
         }
         
         
-        private void OnDragDelta(object sender, EventArgs ea)
+        protected void OnDragDelta(object sender, EventArgs ea)
         {
 //        	if (DateTime.Now.Second % 2 == 0) {
 //        		this.Background = Brushes.Red;
@@ -384,7 +349,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #endregion
         
-        private void OnMouseDown(object sender, MouseEventArgs ea)
+        protected void OnMouseDown(object sender, MouseEventArgs ea)
         {        	
 			Focus();
         }        
@@ -458,7 +423,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         
         
-        private void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
+        protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
         	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
         	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
@@ -466,20 +431,20 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
-        private void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
+        protected void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
         {
         	Say.Debug("OnLineControlLostFocus(): " + this.ToString());
         	DeselectLine();
         }
         
-        private void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
+        protected void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
         	Say.Debug("OnDialogueGotFocus(): " + this.ToString());
         	SelectLine();
         }
         
         
-        private void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
+        protected void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
         {
         	Say.Debug("OnDialogueLostFocus(): " + this.ToString());
         	DeselectLine();
@@ -489,7 +454,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #region Selecting lines
         
-        private void SelectLine()
+        protected void SelectLine()
         {
 //        	Say.Debug("SelectLine(): " + this.ToString());
         	WriterWindow.Instance.SelectedLineControl = this;
@@ -514,10 +479,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
-        private void DeselectLine()
+        // TODO override
+        protected void DeselectLine()
         {
 //        	Say.Debug("DeselectLine(): " + this.ToString());
-        	if (isPartOfBranch) {
+        	if (this is BranchLine) {
         		Background = Brushes.AliceBlue;
         	}
         	else {
@@ -540,17 +506,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
-        private void SwitchOn(Control c)
+        protected void SwitchOn(Control c)
         {
         	c.IsEnabled = true;
-        	c.Opacity = 1.0;
+        	c.Visibility = Visibility.Visible;
         }
         
         
-        private void SwitchOff(Control c)
+        protected void SwitchOff(Control c)
         {
         	c.IsEnabled = false;
-        	c.Opacity = 0.0;
+        	c.Visibility = Visibility.Hidden;
         }
         
         #endregion
