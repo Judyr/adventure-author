@@ -30,11 +30,15 @@ namespace AdventureAuthor.Scripts.UI
             InitializeComponent();
             QuestionLabel.Text = question;
             
-            List<string> resrefs = new List<string>();
+            SortedList<string,string> resrefs = new SortedList<string,string>();
             foreach (ScriptHelper.TaggedType type in objectTypes) {
-            	resrefs.AddRange(ScriptHelper.GetResRefs(type));
+            	foreach (string resref in ScriptHelper.GetResRefs(type).Keys) {
+            		if (!resrefs.ContainsKey(resref)) {
+            			resrefs.Add(resref,null);
+            		}
+            	}
             }
-            AnswerBox.ItemsSource = resrefs;
+            AnswerBox.ItemsSource = resrefs.Keys;
         }
         
         

@@ -46,14 +46,14 @@ namespace AdventureAuthor.Conversations.UI
             InitializeComponent();
             
             // Populate list of possible speakers with all creatures in module except for those already in the conversation:
-            List<string> allSpeakers = ScriptHelper.GetTags(ScriptHelper.TaggedType.Creature);
+            SortedList<string,string> allSpeakers = ScriptHelper.GetTags(ScriptHelper.TaggedType.Creature);
             foreach (Speaker speaker in Conversation.CurrentConversation.Speakers) {
-            	if (allSpeakers.Contains(speaker.Tag)) {
+            	if (allSpeakers.ContainsKey(speaker.Tag)) {
             		allSpeakers.Remove(speaker.Tag);
             	}
             }
             
-            AnswerBox.ItemsSource = allSpeakers;
+            AnswerBox.ItemsSource = allSpeakers.Keys;
         }
 
         private void OnClick_AddSpeaker(object sender, EventArgs ea)
@@ -63,7 +63,7 @@ namespace AdventureAuthor.Conversations.UI
         		return;
         	}
         	else if (Conversation.CurrentConversation.GetSpeaker((string)AnswerBox.SelectedItem) != null) {
-        	    Say.Error(AnswerBox.SelectedValue + " is already a part of this conversation."); // TODO - just don't display them
+        	    Say.Error(AnswerBox.SelectedValue + " is already a part of this conversation."); 
         	    return; 	          
         	}
         	else {
@@ -71,10 +71,7 @@ namespace AdventureAuthor.Conversations.UI
         		Close(); 
         	}
         	
-        	// TODO if this becomes editable, check they don't add anyone called Player
         	// TODO let them add [OWNER]
-        	// TODO add in alphabetical order
-        	// TODO currently Golem is displaying twice - make sure no tags are repeated
         }
         
         private void OnClick_Cancel(object sender, EventArgs ea)
