@@ -102,21 +102,24 @@
       <SubType>Code</SubType>
       <DependentUpon>ActionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Conversations\UI\Controls\ActionsContextMenu.cs" />
-    <Compile Include="Conversations\UI\Controls\BranchControl.xaml.cs">
+    <Compile Include="Conversations\UI\Controls\ChoiceControl.cs">
       <SubType>Code</SubType>
-      <DependentUpon>BranchControl.xaml</DependentUpon>
+      <DependentUpon>ChoiceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Conversations\UI\Controls\ConditionControl.xaml.cs">
       <DependentUpon>ConditionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversations\UI\Controls\ConditionsContextMenu.cs" />
     <Compile Include="Conversations\UI\Controls\EndConversationControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>EndConversationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Conversations\UI\Controls\LineControl.xaml.cs">
+    <Compile Include="Conversations\UI\Controls\Lines\BranchLine.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\ContextMenu_Actions.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\ContextMenu_Conditions.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\LeadingLine.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\Line.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\LineControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>LineControl.xaml</DependentUpon>
     </Compile>
@@ -263,10 +266,10 @@
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
-    <Page Include="Conversations\UI\Controls\BranchControl.xaml" />
+    <Page Include="Conversations\UI\Controls\ChoiceControl.xaml" />
     <Page Include="Conversations\UI\Controls\ConditionControl.xaml" />
     <Page Include="Conversations\UI\Controls\EndConversationControl.xaml" />
-    <Page Include="Conversations\UI\Controls\LineControl.xaml" />
+    <Page Include="Conversations\UI\Controls\Lines\LineControl.xaml" />
     <Page Include="Conversations\UI\Controls\SoundControl.xaml" />
     <Page Include="Conversations\UI\WriterWindow.xaml" />
     <Page Include="Conversations\UI\NewConversation.xaml" />
@@ -289,6 +292,7 @@
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />
     <Folder Include="Conversations\UI" />
+    <Folder Include="Conversations\UI\Controls\Lines" />
     <Folder Include="Conversations\UI\Graph" />
     <Folder Include="Conversations\UI\Controls" />
     <Folder Include="Core" />

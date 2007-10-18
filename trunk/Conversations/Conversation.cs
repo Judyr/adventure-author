@@ -92,7 +92,7 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnChanged(ConversationChangedEventArgs e)
 		{
-			Say.Debug("OnChanged event raised.");
+			Say.Debug("Conversation.Changed event raised.");
 			EventHandler<ConversationChangedEventArgs> handler = Changed;
 			if (handler != null) {
 				handler(this,e);
@@ -101,7 +101,7 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnSaved(EventArgs e)
 		{
-			Say.Debug("OnSaved event raised.");
+			Say.Debug("Conversation.Saved event raised.");
 			EventHandler<EventArgs> handler = Saved;
 			if (handler != null) {
 				handler(this,e);
@@ -110,7 +110,7 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnSpeakerAdded(SpeakerAddedEventArgs e)
 		{
-			Say.Debug("OnSpeakersAdded event raised.");
+			Say.Debug("Conversation.SpeakersAdded event raised.");
 			EventHandler<SpeakerAddedEventArgs> handler = SpeakerAdded;
 			if (handler != null) {
 				handler(this,e);

@@ -26,13 +26,13 @@
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
 	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
-    MouseDoubleClick="OnClick_GoToPage" Padding="6">
+    Padding="6">
 	
 	<UserControl.Resources>		
 		<ContextMenu x:Key="LineControlContextMenu">
-			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" Visibility="Collapsed" IsEnabled="false"/> <!--Broken-->
-			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" Visibility="Collapsed" IsEnabled="false"/> <!--Not implemented-->
-			<MenuItem Header="Add an action">
+			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> <!--Broken-->
+			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
+			<MenuItem Header="Add an action" Name="MenuItem_AddAction">
 			<MenuItem.Items>
 				<MenuItem Header="Player actions">
 				<MenuItem.Items>
@@ -134,8 +134,8 @@
 				<MenuItem Header="If a string variable has a certain value" Click="OnClick_StringHasValue"/>
 			</MenuItem.Items>
 			</MenuItem>
-			<MenuItem Header="Delete line" Click="OnClick_Delete"/>
-			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
+			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" Name="MenuItem_SetCamera" IsEnabled="false" Visibility="Collapsed"/> <!--Not implemented-->
+			<MenuItem Header="Delete line" Click="OnClick_Delete" Name="MenuItem_DeleteLine"/>
 			<MenuItem Header="Make into choice" Click="OnClick_MakeIntoBranch" Name="MenuItem_MakeIntoChoice"/>
 		</ContextMenu>	
 	</UserControl.Resources>

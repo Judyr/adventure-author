@@ -938,8 +938,34 @@ namespace AdventureAuthor.Scripts
 			return resrefs;
 		}	
 				
-		public static List<string> GetResRefs(NWN2BlueprintCollection blueprints)
+		private static SortedList<string,string> NewGetResRefs(NWN2BlueprintCollection blueprints)
 		{
+			SortedList<string,string> resrefs = new SortedList<string,string>(blueprints.Count);
+			
+			foreach (INWN2Blueprint blueprint in blueprints) {
+				string resref = blueprint.TemplateResRef.Value;
+				string description = blueprint.ResourceName.Value == null ? String.Empty : blueprint.ResourceName.Value;
+				if (resref != String.Empty) {
+					try {
+						resrefs.Add(resref,description);
+					}
+					catch (ArgumentException) {
+						
+					}
+				}
+			}
+			return resrefs;
+		}
+			
+			
+		public static List<string> GetResRefs(NWN2BlueprintCollection blueprints)
+		{			
+			SortedList<string,string> newresrefs = NewGetResRefs(blueprints);
+			foreach (string resref in newresrefs.Keys) {
+				Say.Debug(resref + " : " + newresrefs[resref]);
+			}
+			
+			
 			List<string> resrefs = new List<string>(blueprints.Count);
 			foreach (INWN2Blueprint blueprint in blueprints) {
 				string resref = blueprint.TemplateResRef.Value;				

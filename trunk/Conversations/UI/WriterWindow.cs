@@ -54,14 +54,25 @@ namespace AdventureAuthor.Conversations.UI
 		public WriterWindow()
 		{
 			InitializeComponent();    
-			
-//			Image image = new Image();
-//            ImageSourceConverter s = new ImageSourceConverter();
-//            ImageSource source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"parchmentbase.jpg"));            
-//            this.Background = new ImageBrush(source);
 		}
 		
 		#endregion
+		
+		#region Events
+		
+		public event EventHandler ViewedPage;
+		
+		private void OnViewedPage(EventArgs e)
+		{
+			Say.Debug("Conversation.ViewedPage event raised.");
+			EventHandler handler = ViewedPage;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+		
+		#endregion
+		
     	
     	#region Fields    	
     	
@@ -205,7 +216,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="line">The line of dialogue to add</param>
 		private void ShowLine(NWN2ConversationConnector line)
 		{
-			LineControl lineControl = new LineControl(line,false);
+			Line lineControl = new Line(line);
 			this.currentPage.LineControls.Add(lineControl);
 			this.LinesPanel.Children.Add(lineControl);
 		}				
@@ -284,13 +295,15 @@ namespace AdventureAuthor.Conversations.UI
 			// If the currently viewed page still exists after recreating the graph, display it again; otherwise, display root.
 			// Note that this acts to refresh the page view, and so no separate call to RefreshPageViewOnly() is necessary.
 			if (newVersionOfCurrentPage != null) {
-				DisplayPage(newVersionOfCurrentPage);
+				currentPage = newVersionOfCurrentPage;
 				previousPage = newVersionOfPreviousPage;
+				DisplayPage(newVersionOfCurrentPage);
 			}
 			else {
+				previousPage = null;
+				currentPage = null;
 				DisplayPage(pages[0]);
 				CentreGraph(false);
-				previousPage = null;
 			}	
 		}
 		        
@@ -298,9 +311,10 @@ namespace AdventureAuthor.Conversations.UI
 		/// <summary>
 		/// Centre the conversation graph(s) around the node representing the current page.
 		/// </summary>
-		public void CentreGraph(bool resetZoomLevel)
+		/// <param name="resetZoom">True to reset the zoom level to default; false otherwise</param>
+		public void CentreGraph(bool resetZoom)
 		{
-			if (resetZoomLevel) {
+			if (resetZoom) {
 				MainGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
 				if (ExpandedGraph != null) {
 					ExpandedGraph.GraphControl.Magnification = new System.Drawing.SizeF(100F,100F);
@@ -339,10 +353,10 @@ namespace AdventureAuthor.Conversations.UI
 	        Log.WriteEffectiveAction(Log.EffectiveAction.viewed,"page");
 	        
 			// Update references to the currently and previously viewed pages:
-			if (previousPage != currentPage) {
+			if (currentPage != page) {
 				previousPage = currentPage;
+				currentPage = page;				
 			}
-			currentPage = page;		
 			
 			// Draw the new current page:
 			RefreshPageViewOnly();
@@ -355,6 +369,8 @@ namespace AdventureAuthor.Conversations.UI
 				Node expandedNode = ExpandedGraph.GetNode(currentPage);
 				ExpandedGraph.GraphControl.SelectNode(expandedNode);
 			}
+			
+			OnViewedPage(new EventArgs());
 		}
 			
 		
@@ -894,7 +910,7 @@ namespace AdventureAuthor.Conversations.UI
 			{ 
 				if (currentPage != null) {	
 					NWN2ConversationConnector parentLine;
-					if (SelectedLineControl != null && !SelectedLineControl.IsPartOfBranch) {
+					if (SelectedLineControl != null && !(SelectedLineControl is BranchLine)) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
 //						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
 					}
@@ -930,7 +946,7 @@ namespace AdventureAuthor.Conversations.UI
 						// TODO: following logic does not account for very large choice points, in which case you want to
 						// want to bring the branch into view if it's not on the screen, or you don't want to scroll
 						// to bottom if that means the last line on the page will go out of view (because of a huge choice point)
-						if (lineControl.IsPartOfBranch) {
+						if (lineControl is BranchLine) {
 							PageScroll.ScrollToBottom();
 						}
 						else if (currentPage.LineControls.Count > 0 && currentPage.LineControls[currentPage.LineControls.Count-1] == lineControl) {
