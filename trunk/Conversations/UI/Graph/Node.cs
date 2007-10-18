@@ -75,7 +75,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 					return "Start";
 				}
 				else {
-					return Conversation.GetStringFromOEIString(page.LeadInLine.Text);
+					return Conversation.GetStringFromOEIString(page.LeadLine.Text);
 				}
 			}
 		}
@@ -107,7 +107,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				this.Text = "Start";
 			}
 			else {			
-				string newText = Conversation.GetStringFromOEIString(this.page.LeadInLine.Text);
+				string newText = Conversation.GetStringFromOEIString(this.page.LeadLine.Text);
 				if (newText.Length == 0) {
 					this.Text = "...";
 				}

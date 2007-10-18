@@ -153,7 +153,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			}
 			
 			foreach (Page child in children) {
-				if (child.LeadInLine == null) {
+				if (child.LeadLine == null) {
 					throw new ArgumentException("Found another root.");
 				}
 				

@@ -899,7 +899,7 @@ namespace AdventureAuthor.Conversations
         		parent = WriterWindow.Instance.CurrentPage.LineControls[WriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
 			}
 			else {
-        		parent = WriterWindow.Instance.CurrentPage.LeadInLine; // LeadInLine may be null i.e. root
+        		parent = WriterWindow.Instance.CurrentPage.LeadLine; // LeadInLine may be null i.e. root
 			}				
 			
 			if (parent == null) {

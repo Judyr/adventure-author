@@ -108,7 +108,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         protected override void OnClick_GoToPage(object sender, EventArgs ea)
         {
         	foreach (Page page in WriterWindow.Instance.Pages) {
-        		if (page.LeadInLine == this.nwn2Line) {
+        		if (page.LeadLine == this.nwn2Line) {
         			WriterWindow.Instance.DisplayPage(page);
         			WriterWindow.Instance.CentreGraph(false);
         			return;

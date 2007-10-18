@@ -51,20 +51,20 @@ namespace AdventureAuthor.Conversations
 			get { return children; }
 		}
 		    	    	
-		private NWN2ConversationConnector leadInLine; // the line in the parent Page that leads to this Page
-		public NWN2ConversationConnector LeadInLine {
-			get { return leadInLine; }
+		private NWN2ConversationConnector leadLine; // the line in the parent Page that leads to this Page
+		public NWN2ConversationConnector LeadLine {
+			get { return leadLine; }
 		}
 		
-    	private List<LineControl> lineControls;  	
+    	private List<LineControl> lineControls;  // should become List<Line>?	
 		public List<LineControl> LineControls {
 			get { return lineControls; }
 		}  
     	
-    	private bool isSelected;    	
-		public bool IsSelected {
-			get { return isSelected; }
-			set { isSelected = value; }
+    	private LeadingLine leadLineControl;    	
+		public LeadingLine LeadLineControl {
+			get { return leadLineControl; }
+			set { leadLineControl = value; }
 		}
     	
     	public bool IsEndPage {
@@ -76,10 +76,11 @@ namespace AdventureAuthor.Conversations
     	
 		public Page(NWN2ConversationConnector leadsFrom, Page parent)
 		{
-			this.leadInLine = leadsFrom;
+			this.leadLine = leadsFrom;
 			this.parent = parent;
 			this.children = new List<Page>();
 			this.lineControls = new List<LineControl>();
+			this.leadLineControl = null;
 			if (parent != null) {
 				parent.children.Add(this);
 			}
@@ -88,14 +89,14 @@ namespace AdventureAuthor.Conversations
 		
 		public override string ToString()
 		{
-			if (leadInLine == null) {
+			if (leadLine == null) {
 				return "Root";
 			}
-			else if (Conversation.GetStringFromOEIString(leadInLine.Line.Text).Length == 0) {
+			else if (Conversation.GetStringFromOEIString(leadLine.Line.Text).Length == 0) {
 				return "[Continue]";
 			}
 			else {
-				return UsefulTools.Truncate(Conversation.GetStringFromOEIString(leadInLine.Line.Text),30);
+				return UsefulTools.Truncate(Conversation.GetStringFromOEIString(leadLine.Line.Text),30);
 			}
 		}
     }

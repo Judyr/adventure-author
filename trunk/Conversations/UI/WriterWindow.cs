@@ -184,11 +184,12 @@ namespace AdventureAuthor.Conversations.UI
 								
 			// Check whether we are starting from the root:
 			NWN2ConversationConnectorCollection possibleNextLines;
-			if (currentPage.LeadInLine == null) { // root
+			if (currentPage.LeadLine == null) { // root
 				possibleNextLines = Conversation.CurrentConversation.NwnConv.StartingList;
 			}
 			else {
-				possibleNextLines = currentPage.LeadInLine.Line.Children;
+				ShowLeadingLine(currentPage.LeadLine);
+				possibleNextLines = currentPage.LeadLine.Line.Children;				
 			}
 			
 			// Display each line of dialogue until the page branches or the conversation ends:
@@ -207,6 +208,17 @@ namespace AdventureAuthor.Conversations.UI
 			else {
 				ShowBranch(possibleNextLines);
 			}
+		}
+		
+		
+		/// <summary>
+		/// Add the line of dialogue that leads to this page to the current page view, unless this is the root page.
+		/// </summary>
+		/// <param name="line">The leading line to add</param>
+		private void ShowLeadingLine(NWN2ConversationConnector line)
+		{
+			LeadingLine leadingLine = new LeadingLine(line);
+			LinesPanel.Children.Insert(0,leadingLine);
 		}
 		
 		
@@ -272,7 +284,7 @@ namespace AdventureAuthor.Conversations.UI
 						
 			pages = CreatePageTree(Conversation.CurrentConversation);
 			foreach (Page p in pages) {					
-				if (p.LeadInLine == currentPage.LeadInLine) {
+				if (p.LeadLine == currentPage.LeadLine) {
 					newVersionOfCurrentPage = p;						
 					break;
 				}
@@ -280,7 +292,7 @@ namespace AdventureAuthor.Conversations.UI
 							
 			if (previousPage != null) {
 				foreach (Page p in pages) {
-					if (p.LeadInLine == previousPage.LeadInLine) {
+					if (p.LeadLine == previousPage.LeadLine) {
 						newVersionOfPreviousPage = p;
 						break;
 					}
@@ -431,7 +443,7 @@ namespace AdventureAuthor.Conversations.UI
 			List<Page> pages = new List<Page>();
 			List<Page> pages2 = new List<Page>();
 			
-			NWN2ConversationConnector skippableLine = parentPage.LeadInLine;			
+			NWN2ConversationConnector skippableLine = parentPage.LeadLine;			
 			while (skippableLine.Line.Children.Count == 1) {
 				skippableLine = skippableLine.Line.Children[0];
 			}
@@ -919,7 +931,7 @@ namespace AdventureAuthor.Conversations.UI
 //						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
-						parentLine = currentPage.LeadInLine; // may be null (for root)
+						parentLine = currentPage.LeadLine; // may be null (for root)
 //						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
 					}
 					
