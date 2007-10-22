@@ -40,6 +40,7 @@ using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using Samples.DragDrop;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -53,7 +54,41 @@ namespace AdventureAuthor.Conversations.UI
     	
 		public WriterWindow()
 		{
-			InitializeComponent();    
+			InitializeComponent(); 
+			
+//			this.DragEnter += delegate(object sender, DragEventArgs e) { Say.Debug("DragEnter"); };
+//			
+//			this.DragLeave += delegate(object sender, DragEventArgs e) { Say.Debug("DragLeave"); };
+//			
+//			this.DragOver += delegate(object sender, DragEventArgs e) { Say.Debug("DragOver"); };
+//			
+//			this.Drop += delegate(object sender, DragEventArgs e) 
+//			{
+//				Say.Debug("Drop"); 
+//				if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+//	        		string[] fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+//	        		Conversation.CurrentConversation.AddSpeaker(fileNames[0]);
+//		        }
+//		        e.Handled = true;
+//			};
+			
+			
+			
+//			this.PreviewMouseDown += delegate { 
+//			try {
+//				if (Application.Current == null) {
+//					Say.Debug("Application.Current == null");
+//				}
+//				else if (Application.Current.MainWindow == null) {
+//					Say.Debug("Application.Current.MainWindow == null");
+//				}
+//				else if (Application.Current.MainWindow.Content == null) {
+//					Say.Debug("Application.Current.MainWindow.Content == null");
+//				}
+//			}
+//			catch (Exception e) {
+//				Say.Error(e);
+//			} };
 		}
 		
 		#endregion
@@ -346,14 +381,7 @@ namespace AdventureAuthor.Conversations.UI
         
         #endregion
 
-    	
-    	
-    	
-		
-		
-
-		
-		
+        
 		
 		
 		/// <summary>
@@ -385,8 +413,7 @@ namespace AdventureAuthor.Conversations.UI
 			OnViewedPage(new EventArgs());
 		}
 			
-		
-		
+				
 		/// <summary>
 		/// Creates and returns a tree of Pages from a conversation
 		/// </summary>
