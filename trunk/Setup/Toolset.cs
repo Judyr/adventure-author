@@ -46,6 +46,7 @@ using NWN2Toolset.Plugins;
 using OEIShared.Utils;
 using TD.SandBar;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using win = System.Windows;
 
 namespace AdventureAuthor.Setup
 {		
@@ -657,6 +658,12 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+//		public static void LaunchConversationWriterApplication()
+//		{
+//			AdventureAuthor.Conversations.UI.App.Main();
+//		}
+		
+		
 		/// <summary>
 		/// Bring up the Conversation Writer window.
 		/// <remarks>Note that a bug occurs where you can't enter text into LineControls if you use Show() rather than ShowDialog().</remarks>
@@ -667,11 +674,20 @@ namespace AdventureAuthor.Setup
 				Say.Error("Open or create an Adventure before trying to add a new conversation.");
 				return;
 			}
+//			
+//			LaunchConversationWriterApplication();
+//			return;
 			
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
 					WriterWindow.Instance = new WriterWindow();
 					WriterWindow.Instance.ShowDialog();
+					
+//					win.Application.Current.Activated  += delegate { Say.Debug("Application.Current Activated. " + win.Application.Current.ToString()); };
+//					win.Application.Current.Deactivated += delegate { Say.Debug("Application.Current Deactivated. " + win.Application.Current.ToString()); };
+//					win.Application.Current.Exit += delegate { Say.Debug("Application.Current Exit. " + win.Application.Current.ToString()); };
+//					win.Application.Current.LoadCompleted += delegate { Say.Debug("Application.Current LoadCompleted. " + win.Application.Current.ToString()); };
+//					win.Application.Current.Startup += delegate { Say.Debug("Application.Current Startup. " + win.Application.Current.ToString()); };
 				}
 				
 			}

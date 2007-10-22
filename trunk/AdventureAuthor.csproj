@@ -63,6 +63,10 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ReachFramework" />
+    <Reference Include="Samples.DragDrop">
+      <HintPath>..\Libraries\DragDrop\DragDrop\bin\Debug\Samples.DragDrop.exe</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="SandBar">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -93,6 +97,10 @@
     <Compile Include="Conversations\UI\AddSpeakerWindow.cs">
       <SubType>Code</SubType>
       <DependentUpon>AddSpeakerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\app.xaml.cs">
+      <DependentUpon>app.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Conversations\UI\ChooseSpeaker.xaml.cs">
       <SubType>Code</SubType>
@@ -145,6 +153,7 @@
       <SubType>Code</SubType>
       <DependentUpon>SoundWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conversations\UI\WriterWindowDragDropAdvisor.cs" />
     <Compile Include="Core\Adventure.cs" />
     <Compile Include="Core\Chapter.cs" />
     <Compile Include="Core\GameArea.cs" />
@@ -264,6 +273,7 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
+    <Page Include="Conversations\UI\app.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
     <Page Include="Conversations\UI\Controls\ChoiceControl.xaml" />
