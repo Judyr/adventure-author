@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Forms;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
@@ -43,19 +44,10 @@ namespace AdventureAuthor.Core.UI
         public OpenAdventureWindow()
         {
         	try {
-	        	string[] adventureData = Directory.GetFiles(Adventure.SerializedDir,"*.xml",SearchOption.TopDirectoryOnly);
-	        	string[] moduleData = Directory.GetDirectories(form.ModulesDirectory,"*", SearchOption.TopDirectoryOnly);
-				List<string> adventures = new List<string>(adventureData.Length);				
-	        	foreach (string s in adventureData) {
-	        		string name = Path.GetFileNameWithoutExtension(s);
-	        		foreach (string p in moduleData) {
-	        			if (name == Path.GetFileNameWithoutExtension(p)) {
-	        				adventures.Add(name);
-	        				break;
-	        			}
-	        		}
-	        	}
-				this.Resources.Add("adventurenames",adventures);			
+        		
+				string[] names = Directory.GetDirectories(form.ModulesDirectory,"*", SearchOption.TopDirectoryOnly);
+				
+				this.Resources.Add("adventurenames",names);
 	            InitializeComponent();
         	}
         	catch (DirectoryNotFoundException e) {
@@ -63,20 +55,33 @@ namespace AdventureAuthor.Core.UI
         	}
         }
 
+        
         private void OnClickCancel(object sender, EventArgs ea)
         {
         	this.Close();
         }
+        
         
         private void OnClickOK(object sender, EventArgs ea)
         {
         	if (adventuresList.SelectedItem == null) {
         		Say.Warning("Select an adventure, and then click OK.");
         	}
-        	else if (Adventure.Open((string)adventuresList.SelectedItem) == null) {
-        		Say.Error("Could not find a well-formed Adventure with the name '" + adventuresList.SelectedItem + "'.");
-        	}
         	else {
+        		string name = adventuresList.SelectedItem.ToString();
+        		string modulePath = Path.Combine(form.ModulesDirectory,name);        		
+        		string serializedPath = Path.Combine(modulePath,name+".xml");//modulePath + @"\" + name + ".xml";
+        			
+        		Say.Debug(modulePath);
+        		Say.Debug(serializedPath);
+	
+        		if (!Directory.Exists(modulePath)) {
+        			throw new DirectoryNotFoundException("Module at " + modulePath + " was not found.");
+        		}
+        		else if (!File.Exists(serializedPath)) {
+        			Say.Error("Couldn't find serialized info at " + serializedPath);
+        			//Say.Error("The module you have selected is not an Adventure Author created module, and may not work properly.");
+        		}
         		this.Close();
         	}
         }

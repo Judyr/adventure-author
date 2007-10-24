@@ -70,7 +70,6 @@ namespace AdventureAuthor.Core
 		private static readonly string debugDir = Path.Combine(adventureAuthorDir,"debugs");
 		private static readonly string imagesDir = Path.Combine(adventureAuthorDir,"images");			
 		private static readonly string logDir = Path.Combine(adventureAuthorDir,"logs");		
-		private static readonly string serializedDir = Path.Combine(adventureAuthorDir,"serialized");
 		
 		public static Adventure CurrentAdventure {
 			get { return currentAdventure; }
@@ -110,11 +109,7 @@ namespace AdventureAuthor.Core
 		internal static string LogDir {
 			get { return logDir; }
 		}
-		
-		internal static string SerializedDir {
-			get { return serializedDir; }
-		}	
-				
+						
 		public static User CurrentUser {
 			get { return currentUser; }
 		}				
@@ -218,7 +213,7 @@ namespace AdventureAuthor.Core
 		/// Open an Adventure in the toolset.
 		/// </summary>
 		/// <param name="name">Name of the Adventure to open.</param>
-		public static Adventure Open(string name)
+		public static bool Open(string name)
 		{
 			if (currentAdventure != null) {
 				currentAdventure.Close();
@@ -227,18 +222,21 @@ namespace AdventureAuthor.Core
 				Adventure a = new Adventure();
 				bool deserialized = a.Deserialize(name);				
 				if (!deserialized) {
-					return null;
+					throw new FileNotFoundException();
 				}
 				else {
 					currentAdventure = a;	
 					Toolset.UpdateTitleBar();
 					Toolset.UpdateChapterList();
-					return a;
+					return true;
 				}
 			}
 			catch (FileNotFoundException e) {
-				Say.Error("Adventure '" + name + "' contained an area which did not form part of a Chapter or Scratchpad.",e);
-				return null;
+				Say.Error("Adventure '" + name + "' contains an area without any Adventure Author data associated with it - cannot open.",e);
+				if (Adventure.CurrentAdventure != null) {
+					Adventure.CurrentAdventure.Close();
+				}				
+				return false;
 			}				
 		}			
 		
@@ -302,7 +300,7 @@ namespace AdventureAuthor.Core
 			}	
 					     
 			// Save the Adventure data:
-		    FileInfo f = new FileInfo(Path.Combine(Adventure.SerializedDir,module.FileName+".xml"));
+		    FileInfo f = new FileInfo(Path.Combine(Adventure.CurrentAdventure.ModulePath,module.FileName+".xml"));
 			Stream s = f.Open(FileMode.Create);	
 			XmlSerializer xml = new XmlSerializer(typeof(Adventure));
 			xml.Serialize(s,this);				
@@ -362,7 +360,7 @@ namespace AdventureAuthor.Core
 				
 				// Copy the Adventure file to the backup directory:
 				string serializedDataFilename = this.name + ".xml";
-				File.Copy(Path.Combine(Adventure.SerializedDir,serializedDataFilename),
+				File.Copy(Path.Combine(Adventure.CurrentAdventure.ModulePath,serializedDataFilename),
 				          Path.Combine(backupPath,serializedDataFilename));
 				
 				// If given a justification for the backup, write it to a file in the backup directory:
@@ -426,8 +424,9 @@ namespace AdventureAuthor.Core
 				c.Area.OEISerialize();
 			}			
 			this.scratch.Area.OEISerialize();
-			
-			FileInfo f = new FileInfo(Path.Combine(Adventure.SerializedDir,module.Name+".xml"));
+			string path = Path.Combine(Path.Combine(form.ModulesDirectory,module.Name),module.Name+".xml");
+			Say.Debug(path);
+			FileInfo f = new FileInfo(path);
 			Stream s = f.Open(FileMode.Create);	
 			XmlSerializer xml = new XmlSerializer(typeof(Adventure));
 			xml.Serialize(s,this);				
@@ -443,7 +442,7 @@ namespace AdventureAuthor.Core
 			// Deserialize the Adventure data:
 			Stream s = null;
 			try	{
-				FileInfo f = new FileInfo(Path.Combine(Adventure.SerializedDir,nameOfAdventure+".xml"));
+				FileInfo f = new FileInfo(Path.Combine(Path.Combine(form.ModulesDirectory,nameOfAdventure),nameOfAdventure+".xml"));
 				s = f.Open(FileMode.Open); // throws an exception if serialized data is missing			
 				XmlSerializer xml = new XmlSerializer(typeof(Adventure));			
 				Adventure adventure = (Adventure)xml.Deserialize(s);
@@ -455,8 +454,12 @@ namespace AdventureAuthor.Core
 				this.scratch = adventure.Scratch;
 				this.owningUser = adventure.OwningUser;				
 			}
+			catch (DirectoryNotFoundException e) {
+				Say.Error("Module '" + nameOfAdventure + "' could not be found.",e);
+				return false;
+			}
 			catch (FileNotFoundException e) {
-				Say.Error("AdventureAuthor data for '" + nameOfAdventure + "' could not be found.",e);
+				Say.Error("Serialized data for '" + nameOfAdventure + "' could not be found.",e);
 				return false;
 			}
 			finally {
@@ -764,8 +767,9 @@ namespace AdventureAuthor.Core
 		/// <returns>Returns false if a resource of the given type already exists with this name, true otherwise</returns>
 		public static bool IsAvailableAdventureName(string name)
 		{
-			DirectoryInfo moduleDir = new DirectoryInfo(Path.Combine(form.ModulesDirectory,name));			
-			string serializedDataPath = Path.Combine(SerializedDir,name+".xml");
+			string modulePath = Path.Combine(form.ModulesDirectory,name);
+			DirectoryInfo moduleDir = new DirectoryInfo(modulePath);	
+			string serializedDataPath = Path.Combine(modulePath,name+".xml");
 			if (moduleDir.Exists) {
 				if (File.Exists(serializedDataPath)) {
 					return false;
