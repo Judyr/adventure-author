@@ -570,15 +570,50 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
+		
 		private static void OpenAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure != null && !CloseAdventureDialog()) {
 				return; // if they change their mind when prompted to close the current adventure
 			}
 			
-			OpenAdventureWindow window = new OpenAdventureWindow();
-			window.ShowDialog();
+			FolderBrowserDialog openFolder = new FolderBrowserDialog();
+			openFolder.Description = "Choose a module (directory format only)";
+			openFolder.RootFolder = System.Environment.SpecialFolder.MyDocuments;
+			openFolder.ShowNewFolderButton = false;
+			DialogResult result = openFolder.ShowDialog(form.App);
+			if (result == DialogResult.OK) {
+				try {
+					string modulePath = openFolder.SelectedPath;
+					string moduleName = Path.GetFileNameWithoutExtension(modulePath);
+					string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
+					string moduleAAPath = Path.Combine(modulePath,moduleName+".xml");
+					Say.Debug("modulePath: " + modulePath);
+					Say.Debug("moduleName: " + moduleName);
+					Say.Debug("moduleIFOPath: " + moduleIFOPath);
+					Say.Debug("moduleAAPath: " + moduleAAPath);
+	        		if (!Directory.Exists(modulePath)) {
+	        			throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
+	        		}
+	        		else if (!File.Exists(moduleIFOPath)) {
+	        			throw new FileNotFoundException(modulePath + " is not a valid NWN2 module. (Missing module.IFO)");
+	        		}
+					else if (!File.Exists(moduleAAPath)) {
+						throw new FileNotFoundException(modulePath + " is not a valid Adventure Author module. (Missing modulename.XML)");
+					}
+					else {
+						Adventure.Open(moduleName);
+					}
+				}
+				catch (DirectoryNotFoundException e) {
+					Say.Error(e);
+				}
+				catch (FileNotFoundException e) {
+					Say.Error(e);
+				}
+			}			
 		}
+		
 		
 		private static void SaveAdventureDialog()
 		{

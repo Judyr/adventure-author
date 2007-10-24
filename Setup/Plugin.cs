@@ -92,9 +92,6 @@ namespace AdventureAuthor.Setup
 				
 				// Set up the Adventure Author toolset:
 				Toolset.SetupUI();
-				
-				// Temporary - open test module:
-				Adventure.Open("anymore");
 			}
 		}	
 		
@@ -141,12 +138,7 @@ namespace AdventureAuthor.Setup
 					Say.Error("Log directory could not be found - expected " + Adventure.LogDir + " to exist." +
 				              "Adventure Author will not function correctly.");
 					return false;
-				}				
-				else if (!Directory.Exists(Adventure.SerializedDir)) {
-					Say.Error("Serialization directory could not be found - expected " + Adventure.SerializedDir + " to exist." +
-				              "Adventure Author will not function correctly.");
-					return false;
-				}
+				}		
 				else {
 					return true;
 				}

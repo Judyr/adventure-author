@@ -65,16 +65,16 @@ namespace AdventureAuthor.Core.UI
 						return;
 					}
 					
-					new Adventure(textBox_NameOfNewAdventure.Text);
-					Adventure adventure = Adventure.Open(textBox_NameOfNewAdventure.Text);
-					if (adventure == null) {
-						Say.Error("Failed to open Adventure.");
-						return;
-					}
-					else {
+					string name = textBox_NameOfNewAdventure.Text;
+					new Adventure(name);
+					Adventure.Open(name);
+					if (Adventure.CurrentAdventure != null) {
 						Adventure.CurrentAdventure.Scratch.Open();
 						this.Close();
-					};
+					}
+					else {
+						Say.Error("Failed to create and open adventure.");
+					}
 				}
 			}
 			catch (IOException ioe) {
