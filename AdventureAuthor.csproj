@@ -166,9 +166,9 @@
     <Compile Include="Core\UI\NewAdventure_Form.Designer.cs">
       <DependentUpon>NewAdventure_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\UI\OpenAdventureWindow.xaml.cs">
-      <DependentUpon>OpenAdventureWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="Core\UI\reducedCreateChapter_Form.cs" />
+    <Compile Include="Core\UI\reducedCreateChapter_Form.Designer.cs">
+      <DependentUpon>reducedCreateChapter_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\UI\RunAdventure_Form.cs" />
     <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
@@ -284,7 +284,6 @@
     <Page Include="Conversations\UI\WriterWindow.xaml" />
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
-    <Page Include="Core\UI\OpenAdventureWindow.xaml" />
     <Page Include="Notebook\MyIdeas\UI\Balloon.xaml" />
     <Page Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml" />
     <Page Include="Notebook\MyIdeas\UI\Sky.xaml" />

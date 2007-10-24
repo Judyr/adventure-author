@@ -85,6 +85,7 @@ namespace AdventureAuthor.Setup
 				
 		public static void UpdateChapterList()
 		{
+			return;
 			// Clear the current list of chapters:
 			ListView listView = (ListView)chapterListContent.Control;
 			listView.Clear();
@@ -117,6 +118,13 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static void HideContent(Content c, EventArgs ea)
 		{
+			if (c.Control is NWN2ConversationViewer) {
+				dockingManager.HideContent(c);
+			}
+			
+			return;
+			
+			
 			if (c.Control is NWN2PropertyGrid) {
 				dockingManager.HideContent(c);
 			}
@@ -127,6 +135,7 @@ namespace AdventureAuthor.Setup
 		
 		private static void CreateChapterList()
 		{			
+			return;
 			ListView listView = new ListView();
 			listView.Width = 200;
 			listView.MinimumSize = new Size(500,500);
@@ -173,6 +182,7 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static void ChapterList_SelectedIndexChanged(object sender, EventArgs ea)
 		{	
+			return;
 			ListView list = (ListView)sender;
 			
 			// If there is no resource currently selected..:
@@ -209,46 +219,50 @@ namespace AdventureAuthor.Setup
 		{
 			fileMenu.Items.Clear();
 							
-			MenuButtonItem newAdventure = new MenuButtonItem("New");
+			MenuButtonItem newAdventure = new MenuButtonItem("New adventure");
 			newAdventure.Activate += delegate { NewAdventureDialog(); };
-			MenuButtonItem openAdventure = new MenuButtonItem("Open");
+			MenuButtonItem openAdventure = new MenuButtonItem("Open adventure");
 			openAdventure.Activate += delegate { OpenAdventureDialog(); };
-			MenuButtonItem saveAdventure = new MenuButtonItem("Save");
+			MenuButtonItem saveAdventure = new MenuButtonItem("Save adventure");
 			saveAdventure.Activate += delegate { SaveAdventureDialog(); };
-			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
-			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
-			MenuButtonItem runAdventure = new MenuButtonItem("Run");
+//			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
+//			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
+			MenuButtonItem runAdventure = new MenuButtonItem("Run adventure");
 			runAdventure.Activate += delegate { RunAdventureDialog(); };
-			MenuButtonItem closeAdventure = new MenuButtonItem("Close");
+			MenuButtonItem closeAdventure = new MenuButtonItem("Close adventure");
 			closeAdventure.Activate += delegate { CloseAdventureDialog(); };
 							
-			MenuButtonItem newChapter = new MenuButtonItem("New Chapter");
+			MenuButtonItem newChapter = new MenuButtonItem("New area");
 			newChapter.Activate += delegate { NewChapterDialog(); };
-			MenuButtonItem newConversation = new MenuButtonItem("Conversation Writer");
+			MenuButtonItem newConversation = new MenuButtonItem("Conversation writer");
 			newConversation.Activate += delegate { LaunchConversationWriter(); };
-			MenuButtonItem variableManager = new MenuButtonItem("Variables Manager");
+			MenuButtonItem variableManager = new MenuButtonItem("Variable manager");
 			variableManager.Activate += delegate { LaunchVariableManager(); };
 			
-			MenuButtonItem changeUser = new MenuButtonItem("Change User");
-			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
+//			MenuButtonItem changeUser = new MenuButtonItem("Change user");
+//			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
+			
+			newChapter.BeginGroup = true;
+			exitAdventureAuthor.BeginGroup = true;
 						
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newAdventure,
 			                           	openAdventure,
 			                           	saveAdventure,
-			                           	saveAdventureAs,
+//			                           	saveAdventureAs,
 			                           	runAdventure,
 			                           	closeAdventure,
 			                           	newChapter,
 			                           	newConversation,
 			                           	variableManager,
-			                           	changeUser,
+//			                           	changeUser,
 			                           	exitAdventureAuthor
 			                           });			
-		}
+		}							
 		
+				
 		/// <summary>
 		/// Dispose the [X] control and perform other modifications to the resource viewers window.
 		/// </summary>
@@ -295,11 +309,7 @@ namespace AdventureAuthor.Setup
 			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
 															  BindingFlags.NonPublic |
 			                                                  BindingFlags.Instance |
-			                                                  BindingFlags.Static);				
-			
-			//TODO: Uncomment this if you want to get the original NWN2 interface:
-//					DialogResult d = MessageBox.Show("Show original NWN2 layout?","Show all windows?",MessageBoxButtons.YesNo);
-					DialogResult d = DialogResult.No;
+			                                                  BindingFlags.Static);	
 					
 			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
 			foreach (FieldInfo fi in fields) {		
@@ -318,41 +328,39 @@ namespace AdventureAuthor.Setup
 			
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
-					dockingManager.ShowAllContents();
+					dockingManager.ShowAllContents();					
 					
-					// Hide everything except for the area contents and blueprints list:
-//					foreach (Content c in dockingManager.Contents) {
-//												
-//						// Lock the interface:
+					List<Content> contents = new List<Content>(5);
+					
+					foreach (Content c in dockingManager.Contents) {
+						if (c.FullTitle == "Conversations") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Campaign Conversations") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Campaign Scripts") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Search Results") {
+							contents.Add(c);
+						}
+						else if (c.Control is NWN2VerifyOutputControl) {
+							contents.Add(c);
+						}
+					}		
+					
+					foreach (Content c in contents) {
+						if (c.Visible) {
+							dockingManager.HideContent(c);
+						}
+					}
+					
+															
+//					// Lock the interface:
+//					foreach (Content c in dockingManager.Contents) {	
 //						c.HideButton = false;
 //						c.CloseButton = false;
-//						
-//						if (d == DialogResult.Yes) {
-//							dockingManager.ShowContent(c);
-//						}
-//						
-//						if (c.Control is NWN2AreaContentsView) {
-//							c.FullTitle = "Chapter Contents";
-//							if (!c.Visible) {
-//								dockingManager.ShowContent(c);
-//								leftZone = c.ParentWindowContent.ParentZone;
-//							}			
-//						}
-//						else if (c.Control is NWN2BlueprintView) {
-//							if (!c.Visible) {
-//								dockingManager.ShowContent(c);
-//							}
-//						}
-//						else if (c.Control is NWN2TerrainEditorForm) {
-//							if (!c.Visible) {
-//								dockingManager.ShowContent(c);
-//							}
-//						}
-//						else if (c.Control is NWN2TileView) {
-//							if (!c.Visible) {
-//								dockingManager.ShowContent(c);
-//							}
-//						}
 //					}					
 				
 					// If the Properties or Verify window is displayed, hide it again immediately:
@@ -373,7 +381,7 @@ namespace AdventureAuthor.Setup
 				
 				// Get rid of the graphics preferences toolbar:
 				else if (fi.FieldType == typeof(GraphicsPreferencesToolBar)) {
-					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
+//					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
 				}
 				
 				// Prevent the object manipulation toolbar from being modified or moved:
@@ -393,31 +401,31 @@ namespace AdventureAuthor.Setup
 				
 				// Get rid of "Show/Hide" and "Selection" menus on the object manipulation toolbar:
 				else if (fi.FieldType == typeof(DropDownMenuItem)) {
-					DropDownMenuItem dropDownMenuItem = fi.GetValue(form.App) as DropDownMenuItem;
-					if (dropDownMenuItem.Text == "Show/Hide" ||
-					    dropDownMenuItem.Text == "Selection") {
-						dropDownMenuItem.Dispose();
-					}
+//					DropDownMenuItem dropDownMenuItem = fi.GetValue(form.App) as DropDownMenuItem;
+//					if (dropDownMenuItem.Text == "Show/Hide" ||
+//					    dropDownMenuItem.Text == "Selection") {
+//						dropDownMenuItem.Dispose();
+//					}
 				}
 				
 				// Get rid of "Snap", "Paint Spawn Point", "Create Transition..." 
 				// and "Drag Selection" buttons on the object manipulation toolbar:
 				else if (fi.FieldType == typeof(ButtonItem)) {;
-					ButtonItem buttonItem = (ButtonItem)fi.GetValue(form.App);	
-					
-					string[] dispose = new string[] {"Snap",
-													 "Paint Spawn Point",
-													 "Create Transition...",
-													 "Drag Selection"};
-													 
-					foreach (string text in dispose) {
-						if (buttonItem.Text == text) {
-							buttonItem.Dispose();					
-						}						
-					}									
-					if (buttonItem != null) {
-						buttonItem.Font = Adventure.ADVENTURE_AUTHOR_FONT;
-					}
+//					ButtonItem buttonItem = (ButtonItem)fi.GetValue(form.App);	
+//					
+//					string[] dispose = new string[] {"Snap",
+//													 "Paint Spawn Point",
+//													 "Create Transition...",
+//													 "Drag Selection"};
+//													 
+//					foreach (string text in dispose) {
+//						if (buttonItem.Text == text) {
+//							buttonItem.Dispose();					
+//						}						
+//					}									
+//					if (buttonItem != null) {
+//						buttonItem.Font = Adventure.ADVENTURE_AUTHOR_FONT;
+//					}
 				}				
 				
 				// Get rid of various menu items:
@@ -443,9 +451,7 @@ namespace AdventureAuthor.Setup
 					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
 										
 					if (menuBarItem.Text == "&File") {	
-						if (d == DialogResult.No) {
-							SetupFileMenu(menuBarItem);
-						}
+						SetupFileMenu(menuBarItem);
 					}
 //					else if (menuBarItem.Text == "&Edit") {
 //						
@@ -464,32 +470,32 @@ namespace AdventureAuthor.Setup
 //					}
 				}
 				else if (fi.FieldType == typeof(ToolBarContainer)) {
-					try {
-						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
-						
-						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-						if (tbc.Name == "topSandBarDock") {
-							TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();	
-							tb.AddRemoveButtonsVisible = false;
-							tb.AllowMerge = true;
-							
-							ButtonItem cw = new ButtonItem();
-							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
-							cw.Image = b;	
-							cw.Text = "Conversation Writer";
-							cw.Activate += delegate { LaunchConversationWriter(); };
-							tb.Items.Add(cw);
-							
-							ButtonItem vm = new ButtonItem();
-							vm.Text = "Variable Manager";
-							vm.Activate += delegate { LaunchVariableManager(); };
-							tb.Items.Add(vm);
-							
-							tbc.Controls.Add(tb);
-						}
-					} catch (Exception e) {
-						Say.Error(e.ToString());
-					}
+//					try {
+//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
+//						
+//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+//						if (tbc.Name == "topSandBarDock") {
+//							TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();	
+//							tb.AddRemoveButtonsVisible = false;
+//							tb.AllowMerge = true;
+//							
+//							ButtonItem cw = new ButtonItem();
+//							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
+//							cw.Image = b;	
+//							cw.Text = "Conversation Writer";
+//							cw.Activate += delegate { LaunchConversationWriter(); };
+//							tb.Items.Add(cw);
+//							
+//							ButtonItem vm = new ButtonItem();
+//							vm.Text = "Variable Manager";
+//							vm.Activate += delegate { LaunchVariableManager(); };
+//							tb.Items.Add(vm);
+//							
+//							tbc.Controls.Add(tb);
+//						}
+//					} catch (Exception e) {
+//						Say.Error(e.ToString());
+//					}
 				}
 			}
 			
@@ -588,10 +594,6 @@ namespace AdventureAuthor.Setup
 					string moduleName = Path.GetFileNameWithoutExtension(modulePath);
 					string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
 					string moduleAAPath = Path.Combine(modulePath,moduleName+".xml");
-					Say.Debug("modulePath: " + modulePath);
-					Say.Debug("moduleName: " + moduleName);
-					Say.Debug("moduleIFOPath: " + moduleIFOPath);
-					Say.Debug("moduleAAPath: " + moduleAAPath);
 	        		if (!Directory.Exists(modulePath)) {
 	        			throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
 	        		}
@@ -618,7 +620,7 @@ namespace AdventureAuthor.Setup
 		private static void SaveAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No Adventure is open to be saved.");
+				Say.Error("Open an adventure first.");
 				return;
 			}
 			
@@ -633,7 +635,7 @@ namespace AdventureAuthor.Setup
 		private static void SaveAdventureAsDialog()
 		{		
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No Adventure is open to be saved.");
+				Say.Error("Open an adventure first.");
 				return;
 			}
 			
@@ -651,7 +653,8 @@ namespace AdventureAuthor.Setup
 		private static void RunAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("No Adventure is open to be run.");
+				Say.Error("Open an adventure first.");
+				return;
 			}
 			
 			RunAdventure_Form runAdventureForm = new RunAdventure_Form();
@@ -684,7 +687,7 @@ namespace AdventureAuthor.Setup
 		private static void NewChapterDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("Open or create an Adventure before trying to add a new Chapter.");
+				Say.Error("Open an adventure first.");
 				return;
 			}
 			
@@ -706,7 +709,7 @@ namespace AdventureAuthor.Setup
 		public static void LaunchConversationWriter() // Works
 		{
 			if (Adventure.CurrentAdventure == null) {
-				Say.Error("Open or create an Adventure before trying to add a new conversation.");
+				Say.Error("Open an adventure first.");
 				return;
 			}
 //			
@@ -737,6 +740,11 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public static void LaunchVariableManager() // Works
 		{
+			if (Adventure.CurrentAdventure == null) {
+				Say.Error("Open an adventure first.");
+				return;
+			}
+			
 			try {
 				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
@@ -763,8 +771,7 @@ namespace AdventureAuthor.Setup
 		}
 				
 		private static void ChapterList_Open(object sender, EventArgs ea)
-		{		
-			
+		{					
 			try {
 				string name = ((ListView)chapterListContent.Control).SelectedItems[0].Text;
 				
