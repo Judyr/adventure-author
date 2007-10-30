@@ -23,14 +23,17 @@
 <UserControl x:Class="AdventureAuthor.Conversations.UI.Controls.LineControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="clr-namespace:AdventureAuthor.Conversations.UI"
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
+    xmlns:dragdrop="clr-namespace:Samples.DragDrop"
 	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
-    Padding="6">
+    Padding="6" dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource DropAdvisor}"
+	>
 	
 	<UserControl.Resources>		
 		<ContextMenu x:Key="LineControlContextMenu">
-			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> <!--Broken-->
+			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> 
 			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
 			<MenuItem Header="Add an action" Name="MenuItem_AddAction">
 			<MenuItem.Items>

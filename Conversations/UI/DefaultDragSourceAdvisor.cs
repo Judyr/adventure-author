@@ -31,37 +31,45 @@ namespace AdventureAuthor.Conversations.UI
 
         public DataObject GetDataObject(UIElement draggedElt, Point offsetPoint)
 		{
-        	string serializedObject;
+//        	string serializedObject;
         	Say.Debug("GetDataObject");
         	Line line = draggedElt as Line;
         	if (line == null) {
         		throw new System.Exception("Dragged element was not line, was: " + line.GetType().ToString() + ". Returning.");
         	}
-        	else {
-        		if (line.Nwn2Line.Actions.Count > 0) {
-        			Say.Debug("This line has action controls on it.");
-        			Button btn = new Button();
-        			btn.Height = 80;
-        			btn.Width = 400;
-        			btn.Content = "I AM A BUTTON PLEASE LISTEN TO ME";
-        			btn.Background = System.Windows.Media.Brushes.Red;
-        			serializedObject = XamlWriter.Save(btn);
-        		}
-        		else {
-        			Say.Debug("Line has no actions.");
-        			serializedObject = XamlWriter.Save(draggedElt);
-        		}
-        	}
+//        	else {
+//        		if (line.Nwn2Line.Actions.Count > 0) {
+//        			Say.Debug("This line has action controls on it.");
+//        			Button btn = new Button();
+//        			btn.Height = 80;
+//        			btn.Width = 400;
+//        			btn.Content = "I AM A BUTTON PLEASE LISTEN TO ME";
+//        			btn.Background = System.Windows.Media.Brushes.Red;
+//        			serializedObject = XamlWriter.Save(btn);
+//        		}
+//        		else {
+//        			Say.Debug("Line has no actions.");
+//        			serializedObject = XamlWriter.Save(draggedElt);
+//        		}
+//        	}
         	
         	
 //			string serializedObject = XamlWriter.Save(draggedElt);
         	Say.Debug("bang");
+        	
 			DataObject data = new DataObject();
+			
         	Say.Debug("bang");
-            data.SetData(SupportedFormat.Name, serializedObject);
+        	
+//            data.SetData(SupportedFormat.Name, serializedObject);
+            data.SetData("nwn2line",line.Nwn2Line);
+            
         	Say.Debug("bang");
+        	
             data.SetData("point", offsetPoint);
+            
             Say.Debug("returning DataObject");
+            
 			return data;
 		}
 

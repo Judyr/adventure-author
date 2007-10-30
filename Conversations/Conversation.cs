@@ -683,6 +683,19 @@ namespace AdventureAuthor.Conversations
 		
 		#endregion
 		
+		#region Moving lines
+		
+		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPreceding)
+		{
+			Say.Debug("throng");
+			Conversation.CurrentConversation.NwnConv.ReparentNode(line,null);//newPreceding.Line);
+			Say.Debug("throng");
+			OnChanged(new ConversationChangedEventArgs(true)); // also temp - check whether it's a branch line to pass true or false
+			Say.Debug("throng");
+		}
+		
+		#endregion
+		
 		#region Saving
 		
 		/// <summary>
@@ -1085,7 +1098,7 @@ namespace AdventureAuthor.Conversations
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(newLine);
 				SetAsFillerLine(fillerLine);
 				newParent = fillerLine;
-				childToIgnore = newLine; // TODO - surely fillerLine must be the child to ignore?
+				childToIgnore = newLine; // edited - because surely fillerLine must be the child to ignore?
 //				Say.Debug("Added a filler line between the new line and its children since one didn't exist. The filler line is their new parent.");
 			}
 			else { // a fillerLine has already been created, between newLine and newLine's parent
