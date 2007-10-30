@@ -117,6 +117,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }	
         
+        
         public void OnClick_AddBranch(object sender, EventArgs ea)
         {
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
@@ -124,6 +125,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 				
         	WriterWindow.Instance.FocusOn(newLine);
         }	
+        
         
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
         {        	
@@ -161,6 +163,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	Conversation.CurrentConversation.DeleteEntireChoice(parentLine);
+        }
+        
+        
+        private void OnDrop(object sender, DragEventArgs e)
+        {
+        	Say.Debug("Dropped on " + this.typeOfSpeaker.ToString() + " choice control.");
         }
     }
 }

@@ -64,7 +64,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Clears the user interface after an Adventure has been closed.
 		/// </summary>
-		public static void Clear()
+		internal static void Clear()
 		{
 			tabbedGroupsCollection.RootSequence.Clear();
 			form.App.BlueprintView.Module = null; 	  // stop displaying custom blueprints specific to the old module
@@ -75,7 +75,7 @@ namespace AdventureAuthor.Setup
 			UpdateTitleBar();
 		}
 					
-		public static void UpdateTitleBar()
+		internal static void UpdateTitleBar()
 		{
 			form.App.Text = "Adventure Author";
 			if (NWN2ToolsetMainForm.App.Module != null && NWN2ToolsetMainForm.App.Module.LocationType == ModuleLocationType.Directory) {
@@ -83,7 +83,7 @@ namespace AdventureAuthor.Setup
 			}
 		}	
 				
-		public static void UpdateChapterList()
+		internal static void UpdateChapterList()
 		{
 			return;
 			// Clear the current list of chapters:

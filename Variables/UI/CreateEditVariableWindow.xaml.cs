@@ -13,8 +13,8 @@ namespace AdventureAuthor.Variables.UI
     {
     	#region Constants
     	
-    	private const string STRING_TERM = "String";
-    	private const string INTEGER_TERM = "Integer";
+    	private const string STRING_TERM = "Word(s)";
+    	private const string INTEGER_TERM = "Number";
     	private readonly string[] VARIABLE_TYPES = new string[]{STRING_TERM,INTEGER_TERM};
     	
     	#endregion

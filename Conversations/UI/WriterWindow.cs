@@ -40,7 +40,7 @@ using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using Samples.DragDrop;
+//using Samples.DragDrop;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -93,6 +93,17 @@ namespace AdventureAuthor.Conversations.UI
 		
 		#endregion
 		
+		
+		#region Drag-drop
+		
+		private void OnDrop(object sender, DragEventArgs e)
+        {
+        	Say.Debug("Dropped on page view.");
+        }
+		
+		#endregion
+		
+				
 		#region Events
 		
 		public event EventHandler ViewedPage;

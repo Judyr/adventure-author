@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
@@ -64,12 +65,7 @@ namespace AdventureAuthor.Core
 		private static User currentUser = new User("Anon");		
 		private static bool beQuiet = false;	
 		private static bool debug = true;
-		private static bool doBackups = true;
-		private static readonly string adventureAuthorDir = @"C:\AdventureAuthor\"; // TODO make settable
-		private static readonly string backupDir = Path.Combine(adventureAuthorDir,"backups");
-		private static readonly string debugDir = Path.Combine(adventureAuthorDir,"debugs");
-		private static readonly string imagesDir = Path.Combine(adventureAuthorDir,"images");			
-		private static readonly string logDir = Path.Combine(adventureAuthorDir,"logs");		
+		private static bool doBackups = true;	
 		
 		public static Adventure CurrentAdventure {
 			get { return currentAdventure; }
@@ -90,26 +86,37 @@ namespace AdventureAuthor.Core
 			set { doBackups = value; }
 		}
 		
-		internal static string AdventureAuthorDir {
-			get { return adventureAuthorDir; }
+		public static string AdventureAuthorDir {			
+			get {
+				return Path.Combine(System.Environment.CurrentDirectory,"AdventureAuthor");
+			}
 		}	
 		
-		internal static string BackupDir {
-			get { return backupDir; }
-		}		
+		public static string BackupDir {			
+			get {
+				return Path.Combine(AdventureAuthorDir,"backups");
+			}
+		}	
 		
-		internal static string DebugDir {
-			get { return debugDir; }
-		}
+		public static string DebugDir {			
+			get {
+				return Path.Combine(AdventureAuthorDir,"debugs");
+			}
+		}	
 				
-		internal static string ImagesDir {
-			get { return imagesDir; }
-		}
+		public static string ImagesDir {			
+			get {
+				return Path.Combine(AdventureAuthorDir,"images");
+			}
+		}	
 		
-		internal static string LogDir {
-			get { return logDir; }
-		}
-						
+		public static string LogDir {			
+			get {
+				return Path.Combine(AdventureAuthorDir,"logs");
+			}
+		}	
+		
+								
 		public static User CurrentUser {
 			get { return currentUser; }
 		}				

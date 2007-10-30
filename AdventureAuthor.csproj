@@ -63,16 +63,13 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ReachFramework" />
-    <Reference Include="Samples.DragDrop">
-      <HintPath>..\Libraries\DragDrop\DragDrop\bin\Debug\Samples.DragDrop.exe</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="SandBar">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -135,6 +132,9 @@
       <DependentUpon>SoundControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Conversations\UI\DefaultDragSourceAdvisor.cs" />
+    <Compile Include="Conversations\UI\DefaultDropTargetAdvisor.cs" />
+    <Compile Include="Conversations\UI\LineDropTargetAdvisor.cs" />
     <Compile Include="Conversations\UI\WriterWindow.cs">
       <SubType>Code</SubType>
       <DependentUpon>WriterWindow.xaml</DependentUpon>
@@ -239,6 +239,10 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\Debug.cs" />
+    <Compile Include="Utils\DragDropManager\DragDropManager.cs" />
+    <Compile Include="Utils\DragDropManager\DropPreviewAdorner.cs" />
+    <Compile Include="Utils\DragDropManager\IDragSourceAdvisor.cs" />
+    <Compile Include="Utils\DragDropManager\IDropTargetAdvisor.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
@@ -309,6 +313,7 @@
     <Folder Include="Core\UI" />
     <Folder Include="Journal" />
     <Folder Include="Journal\UI" />
+    <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
     <Folder Include="Notebook" />
     <Folder Include="Notebook\MyAdvice\UI" />
