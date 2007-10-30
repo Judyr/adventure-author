@@ -30,7 +30,7 @@
 	
 	<Window.Resources>
 		<uiw:DefaultDragSourceAdvisor x:Key="mysourceadvisor"/>
-		<uiw:DefaultDropTargetAdvisor x:Key="mytargetadvisor"/>
+		<!--<uiw:DefaultDropTargetAdvisor x:Key="mytargetadvisor"/>-->	
 	</Window.Resources>
 	
 	<Grid Name="WriterWindowGrid">
@@ -92,8 +92,7 @@
 		<Border Name="LinesPanelBorder" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1" >
 			<ScrollViewer Name="PageScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
 	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" AllowDrop="true"
-							dragdrop:DragDropManager.DragSourceAdvisor="{StaticResource mysourceadvisor}"
-							dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource mytargetadvisor}"/>
+							dragdrop:DragDropManager.DragSourceAdvisor="{StaticResource mysourceadvisor}"/>
 	    	</ScrollViewer>
 	    </Border>
 	</Grid>

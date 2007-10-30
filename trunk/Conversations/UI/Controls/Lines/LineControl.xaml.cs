@@ -93,6 +93,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
+        	this.Resources.Add("DropAdvisor",new AdventureAuthor.Conversations.UI.LineDropTargetAdvisor());
         	InitializeComponent();
             
         	// Set the image on the delete button:
@@ -138,9 +139,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 
         	WriterWindow.Instance.ViewedPage += new EventHandler(LineControl_OnViewedPage);
         	
-			
-        	
-        	
+		
         	// originally commented out:
 //			Dialogue.LostFocus += new RoutedEventHandler(New_DialogueLostFocus);
 //			Dialogue.GotFocus += new RoutedEventHandler(New_DialogueGotFocus);
