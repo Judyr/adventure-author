@@ -24,10 +24,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uiw="clr-namespace:AdventureAuthor.Conversations.UI"
-    xmlns:dragdrop="clr-namespace:Samples.DragDrop;assembly=Samples.DragDrop"
+    xmlns:dragdrop="clr-namespace:Samples.DragDrop"
     Title="Conversation Writer" Top="100" Left="100" Width="1600" Height="1000" Background="LightYellow" AllowDrop="true"
-    Loaded="OnLoaded" Closing="OnClosing" Closed="OnClosed" >
+    Loaded="OnLoaded" Closing="OnClosing" Closed="OnClosed">
 	
+	<Window.Resources>
+		<uiw:DefaultDragSourceAdvisor x:Key="mysourceadvisor"/>
+		<uiw:DefaultDropTargetAdvisor x:Key="mytargetadvisor"/>
+	</Window.Resources>
 	
 	<Grid Name="WriterWindowGrid">
 		<Grid.RowDefinitions>
@@ -87,15 +91,14 @@
 		</Border>
 		<Border Name="LinesPanelBorder" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1" >
 			<ScrollViewer Name="PageScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="false">
-	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" />
+	    		<StackPanel Name="LinesPanel" Orientation="Vertical" Margin="10" AllowDrop="true"
+							dragdrop:DragDropManager.DragSourceAdvisor="{StaticResource mysourceadvisor}"
+							dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource mytargetadvisor}"/>
 	    	</ScrollViewer>
 	    </Border>
 	</Grid>
 </Window>
 
-<!--	<Window.Resources>
-		<uiw:WriterWindowDragDropAdvisor x:Key="advisor"/>
-	</Window.Resources>-->
 
-						<!--	dragdrop:DragDropManager.DragSourceAdvisor="{StaticResource advisor}"
-							dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource advisor}"-->
+
+						

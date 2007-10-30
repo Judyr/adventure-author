@@ -177,6 +177,65 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #endregion Constructor
                 
+        
+        #region Drag-drop
+        
+//        private bool dragStarted = false;
+//        
+//		public bool DragStarted {
+//			get { 
+//        		Say.Debug("Checked DragStarted - was " + dragStarted + ".");
+//        		return dragStarted; 
+//        	}
+//			set { 
+//        		dragStarted = value; 
+//        		Say.Debug("Set DragStarted to be " + dragStarted + ".");
+//        	}
+//		}
+//        
+//        private void OnPreviewMouseMove(object sender, MouseEventArgs e)
+//        {
+//        	Say.Debug("OnPreviewMouseMove - originated at " + e.Timestamp);
+//        	if (DragStarted) {
+//        		DataObject data = GetDataObject();
+//        		Say.Debug("DataObject data = GetDataObject();");
+//        		Mouse.Capture(this);
+//        		Say.Debug("Mouse.Capture(this);");
+//        		DragDrop.DoDragDrop(this,data,DragDropEffects.Move);
+//        		Say.Debug("DragDrop.DoDragDrop(this,data,DragDropEffects.Move);");
+//        		Mouse.Capture(null);
+//        		Say.Debug("Mouse.Capture(null);");
+//        		DragStarted = false;
+//        		Say.Debug("DragStarted = false;");
+//        		base.OnPreviewMouseMove(e);
+//        		Say.Debug("base.OnPreviewMouseMove(e);");
+//        	}     
+//        	Say.Debug("end of OnPreviewMouseMove");
+//        }
+//        
+//        
+//        private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+//        {
+//        	Say.Debug("OnPreviewMouseDown");
+//        	DragStarted = true;
+//        	base.OnPreviewMouseDown(e);   
+//        	Say.Debug("end of OnPreviewMouseDown");    	
+//        }
+//        
+//	    
+//	    private DataObject GetDataObject()
+//	    {
+//	    	DataObject data = new DataObject();
+//	    	data.SetData(typeof(LineControl),this);
+//	    	return data;
+//	    }
+        
+        
+        
+        
+        #endregion Drag-drop        
+        
+        
         #region Event handlers
         
         /// <summary>

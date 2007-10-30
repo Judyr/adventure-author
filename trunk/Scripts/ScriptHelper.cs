@@ -196,11 +196,6 @@ namespace AdventureAuthor.Scripts
 			Trigger, 
 			Waypoint 
 		};
-						
-		public enum VariableType {
-			String,
-			Int
-		}
 		
 		#endregion
 		
@@ -544,8 +539,7 @@ namespace AdventureAuthor.Scripts
 					}
 					else {
 						moves = "WALKS";
-					}
-					
+					}					
 					return action.Parameters[0].ValueString + " " + moves + " TO " + action.Parameters[1].ValueString
 						+ " AND DISAPPEARS.";
 					
@@ -577,13 +571,13 @@ namespace AdventureAuthor.Scripts
 					return "PLAYER RECEIVES " + action.Parameters[0].ValueInt + " EXPERIENCE POINTS.";
 					
 				case "ga_module_float":
-					return "SET FLOAT VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
+					return "SET DECIMAL NUMBER VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 					
 				case "ga_module_int":
-					return "SET INTEGER VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
+					return "SET NUMBER VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 						
 				case "ga_module_string":
-					return "SET STRING VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
+					return "SET WORD(S) VARIABLE " + action.Parameters[0].ValueString + " TO VALUE " + action.Parameters[1].ValueString;
 					
 				case "ga_heal_pc":
 					if (action.Parameters[0].ValueInt == 100) {
@@ -784,72 +778,76 @@ namespace AdventureAuthor.Scripts
 			
 			switch (condition.Script.ResRef.Value) {
 				case "gc_align_chaotic":
-					return "IF THE PLAYER'S ALIGNMENT IS CHAOTIC";
+					return "IF THE PLAYER'S ALIGNMENT IS CHAOTIC THEN";
 					
 				case "gc_align_evil":
-					return "IF THE PLAYER IS EVIL";
+					return "IF THE PLAYER IS EVIL THEN";
 					
 				case "gc_align_good":
-					return "IF THE PLAYER IS GOOD";
+					return "IF THE PLAYER IS GOOD THEN";
 					
 				case "gc_align_lawful":
-					return "IF THE PLAYER'S ALIGNMENT IS LAWFUL";
+					return "IF THE PLAYER'S ALIGNMENT IS LAWFUL THEN";
 					
 				case "gc_check_gold":
-					return "IF THE PLAYER HAS AT LEAST " + condition.Parameters[0].ValueInt + " GOLD PIECES";
+					return "IF THE PLAYER HAS AT LEAST " + condition.Parameters[0].ValueInt + " GOLD PIECES THEN";
 					
 				case "gc_check_item":
-					return "IF THE PLAYER HAS THE ITEM " + condition.Parameters[0].ValueString;
+					return "IF THE PLAYER HAS THE ITEM " + condition.Parameters[0].ValueString + " THEN";
 					
 				case "gc_dead":
-					return "IF " + condition.Parameters[0].ValueString + " IS DEAD";					
+					return "IF " + condition.Parameters[0].ValueString + " IS DEAD THEN";				
 										
 				case "gc_distance_pc":
 					return "IF THE DISTANCE BETWEEN THE PLAYER AND " + condition.Parameters[0].ValueString + 
-						" IN METRES IS " + condition.Parameters[1].ValueString;						
+						" IN METRES IS " + condition.Parameters[1].ValueString + " THEN";				
 					
 				case "gc_distance":
 					return "IF THE DISTANCE BETWEEN " + condition.Parameters[0].ValueString + " AND " + condition.Parameters[1].ValueString +
-						" IN METRES IS " + condition.Parameters[2].ValueString;	
+						" IN METRES IS " + condition.Parameters[2].ValueString + " THEN";
 					
 				case "gc_equipped":
-					return "IF THE PLAYER HAS EQUIPPED ITEM " + condition.Parameters[0].ValueString + ".";
+					return "IF THE PLAYER HAS EQUIPPED ITEM " + condition.Parameters[0].ValueString + " THEN";
 					
 				case "gc_module_float":
-					return "IF FLOAT VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
+					return "IF DECIMAL NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + " THEN";
 					
 				case "gc_module_int":
-					return "IF INTEGER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
+					return "IF NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + " THEN";
 						
 				case "gc_module_string":
-					return "IF STRING VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + condition.Parameters[1].ValueString;
+					return "IF WORD(S) VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + " THEN";
 					
 				case "gc_henchman":
 					if (condition.Parameters[1].ValueString != String.Empty) {
-						return "IF " + condition.Parameters[0].ValueString + " IS AN ALLY OF " + condition.Parameters[1].ValueString;
+						return "IF " + condition.Parameters[0].ValueString + " IS AN ALLY OF " + 
+							condition.Parameters[1].ValueString + " THEN";
 					}
 					else {
-						return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S ALLY";
+						return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S ALLY THEN";
 					}
 					
 				case "gc_is_enemy_near":
-					return "IF A HOSTILE CREATURE IS WITHIN " + condition.Parameters[0].ValueFloat + " METRES OF THE PLAYER";
+					return "IF A HOSTILE CREATURE IS WITHIN " + condition.Parameters[0].ValueFloat + " METRES OF THE PLAYER THEN";
 					
 				case "gc_is_female":
-					return "IF THE PLAYER IS FEMALE";
+					return "IF THE PLAYER IS FEMALE THEN";
 					
 				case "gc_is_male":
-					return "IF THE PLAYER IS MALE";
+					return "IF THE PLAYER IS MALE THEN";
 					
 				case "gc_is_open": // not currently used
-					return "IF " + condition.Parameters[0].ValueString + " IS OPEN";
+					return "IF " + condition.Parameters[0].ValueString + " IS OPEN THEN";
 					
 				case "gc_item_count": // not currently used
 					return "IF THE PLAYER HAS " + condition.Parameters[1].ValueString + 
-						   " COPIES OF ITEM " + condition.Parameters[0].ValueString + "";
+						   " COPIES OF ITEM " + condition.Parameters[0].ValueString + " THEN";
 					
 				default:
-					return "SCRIPT: " + condition.ToString();
+					return "IF (SCRIPT: " + condition.ToString() + ") THEN";
 			}
 		}
 		

@@ -39,7 +39,7 @@ namespace AdventureAuthor.Setup
 	/// <summary>
 	/// Plugin for the NWN2Toolset modification Adventure Author.
 	/// </summary>
-	public class Plugin : INWN2Plugin
+	public class AdventureAuthorPlugin : INWN2Plugin
 	{	
 		#region INWN2Plugin
 		
@@ -64,86 +64,67 @@ namespace AdventureAuthor.Setup
 			get { return "Adventure Author"; }
 		}
 		
-		public void Startup(INWN2PluginHost cHost)
 		/// <summary>
 		/// Called when the plugin starts (after being clicked in the menu)
 		/// </summary>
 		/// <param name="cHost"></param>
+		public void Startup(INWN2PluginHost cHost)
 		{
 			
 		}		
 				
-		public void Load(INWN2PluginHost cHost)
 		/// <summary>
 		/// Called when the toolset starts
 		/// </summary>
 		/// <param name="cHost"></param>
+		public void Load(INWN2PluginHost cHost)
 		{
-			if (!DirectoriesExist() && !(bool)Say.Question("Continue loading Neverwinter Nights 2 toolset?",MessageBoxButtons.YesNo)) {
-				CloseToolset();
-			}
-			else {
-				// Instantiate windows now to speed things up later on:
-				WriterWindow.Instance = new WriterWindow();
+			try {
+				// Check directories:
+				if (!Directory.Exists(Adventure.AdventureAuthorDir)) {
+					throw new DirectoryNotFoundException("Adventure Author installation directory at " + Adventure.AdventureAuthorDir + 
+					                                     "was missing.");
+				}	
 				
 				// Start recording debug messages and user actions:
 				DebugLog.StartRecording();
-				Log.StartRecording();	
-				
+				Log.StartRecording();				
+					
+				// Instantiate windows now to speed things up later on:
+				WriterWindow.Instance = new WriterWindow();
+								
 				// Set up the Adventure Author toolset:
 				Toolset.SetupUI();
 			}
+			catch (DirectoryNotFoundException) {
+				MessageBox.Show("Required Adventure Author files were not found at the expected location (" + 
+				                Adventure.AdventureAuthorDir + "). Please re-install Adventure Author.");
+				CloseToolset();
+			}
 		}	
 		
-		public void Unload(INWN2PluginHost cHost)
 		/// <summary>
 		/// Called when the toolset closes
 		/// </summary>
 		/// <param name="cHost"></param>
+		public void Unload(INWN2PluginHost cHost)
 		{		
 			Log.StopRecording();
 			DebugLog.StopRecording();
 		}
 		
-		public void Shutdown(INWN2PluginHost cHost)
 		/// <summary>
 		/// Called when the plugin finishes
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		public void Shutdown(INWN2PluginHost cHost)
 		{
 			
 		}
 		
 		#endregion INWN2Plugin
 		
-		/// <summary>
-		/// Check that necessary Adventure Author directories already exist - if not, return false.
-		/// </summary>
-		/// <returns></returns>
-		private static bool DirectoriesExist()
-		{
-			if (!Directory.Exists(Adventure.AdventureAuthorDir)) {
-				Say.Error("Adventure Author directory could not be found - expected " + Adventure.AdventureAuthorDir + " to exist." +
-				          "Adventure Author will not function correctly.");
-				return false;				
-			}
-			else {
-				if (!Directory.Exists(Adventure.BackupDir)) {
-					Say.Error("Backup directory could not be found - expected " + Adventure.BackupDir + " to exist." +
-				               "Adventure Author will not function correctly.");
-					return false;
-				}
-				else if (!Directory.Exists(Adventure.LogDir)) {
-					Say.Error("Log directory could not be found - expected " + Adventure.LogDir + " to exist." +
-				              "Adventure Author will not function correctly.");
-					return false;
-				}		
-				else {
-					return true;
-				}
-			}
-		}
 	
 		private static void CloseToolset()
 		{

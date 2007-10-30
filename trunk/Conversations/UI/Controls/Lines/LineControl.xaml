@@ -104,7 +104,7 @@
 					<Separator/>
 					<!--<MenuItem Header="A float variable is set to a value" Click="OnClick_SetFloatVariable"/>-->
 					<MenuItem Header="A number variable is set to a value" Click="OnClick_SetIntVariable"/>
-					<MenuItem Header="A string variable is set to a value" Click="OnClick_SetStringVariable"/>
+					<MenuItem Header="A word(s) variable is set to a value" Click="OnClick_SetStringVariable"/>
 				</MenuItem.Items>
 				</MenuItem>
 			</MenuItem.Items>
@@ -131,7 +131,7 @@
 				<Separator/>		
 				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->
 				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
-				<MenuItem Header="If a string variable has a certain value" Click="OnClick_StringHasValue"/>
+				<MenuItem Header="If a word(s) variable has a certain value" Click="OnClick_StringHasValue"/>
 			</MenuItem.Items>
 			</MenuItem>
 			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" Name="MenuItem_SetCamera" IsEnabled="false" Visibility="Collapsed"/> <!--Not implemented-->
