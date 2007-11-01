@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -507,15 +508,22 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created branch</returns>
 		public NWN2ConversationConnector AddLineToChoice(NWN2ConversationConnector parent)
 		{
+			Log.WriteEffectiveAction(Log.EffectiveAction.added,"branch");
+			NWN2ConversationConnector createdLine = AddLineToChoice(parent);
+			OnChanged(new ConversationChangedEventArgs(true));
+			return createdLine;
+		}
+		
+		
+		/// <summary>
+		/// Add a new blank line to an existing choice.
+		/// </summary>
+		/// <param name="parent">The parent line of the choice</param>
+		/// <returns>The newly created branch</returns>
+		private NWN2ConversationConnector _AddLineToChoice(NWN2ConversationConnector parent)
+		{
 			string speaker = null;
-			NWN2ConversationConnectorCollection children;
-			
-			if (parent == null) { // add line to root
-				children = nwnConv.StartingList;
-			}
-			else {
-				children = parent.Line.Children;
-			}
+			NWN2ConversationConnectorCollection children = GetChildren(parent);
 			
 			foreach(NWN2ConversationConnector option in children) {
 				if (speaker == null) {
@@ -526,11 +534,11 @@ namespace AdventureAuthor.Conversations
 				}
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"branch");
 			NWN2ConversationConnector createdLine = CreateNewLine(parent,speaker,false);
-			OnChanged(new ConversationChangedEventArgs(true));
 			return createdLine;
 		}
+		
+		
 		
 		/// <summary>
 		/// Add a new blank line underneath the specified line.
@@ -544,92 +552,93 @@ namespace AdventureAuthor.Conversations
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
 			Log.WriteEffectiveAction(Log.EffectiveAction.added,"line",speaker);
-			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
+			NWN2ConversationConnector createdLine = AddLine(preceding,speaker);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
 		}
 		
+				
+		/// <summary>
+		/// Add a new blank line underneath the specified line.
+		/// </summary>
+		/// <remarks>To add a line to a choice, call AddLineToChoice instead.</remarks>
+		/// <param name="preceding">The existing line which the new line should follow. Pass null to add to root.
+		/// Note that this is the visible preceding line, rather than the parent line - filler lines do not
+		/// need to be accounted for.</param>
+		/// <param name="speaker">The tag of the line's speaker</param>
+		/// <returns>The newly created line</returns>
+		private NWN2ConversationConnector _AddLine(NWN2ConversationConnector preceding, string speaker)
+		{
+			NWN2ConversationConnector createdLine = CreateNewLine(preceding,speaker,true);
+			return createdLine;
+		}
+			
 		#endregion
 		
 		#region Deleting lines
 		
-		public void DeleteEntireChoice(NWN2ConversationConnector parentOfChoice)
+		public void DeleteEntireChoice(NWN2ConversationConnector parent)
 		{
 			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"choice");
-        	// Clear the children of the choice's parent line:
-        	if (parentOfChoice != null) {
-        		parentOfChoice.Line.Children.Clear();
-        	}
-        	else { // deleting the root choice, hence deleting the entire conversation
-        		Conversation.CurrentConversation.NwnConv.StartingList.Clear();
-        	}
+			GetChildren(parent).Clear();
         	OnChanged(new ConversationChangedEventArgs(true));
 		}
 		
-		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector Nwn2Line)
+		
+		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector line)
 		{			
-			// Checks:
-			if (!(this.Contains(Nwn2Line))) {
-				return null;
+			NWN2ConversationConnectorCollection siblings = GetChildren(line);
+			if (siblings.Count < 2) {
+				throw new InvalidOperationException("Tried to delete a line from a choice that had less than 2 options.");
 			}
-			else {
-				if (Nwn2Line.Parent == null) {
-					if (nwnConv.StartingList.Count < 2) {
-						throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
-					}
-				}
-				else if (Nwn2Line.Parent.Line.Children.Count < 2) {
-					throw new InvalidOperationException("Tried to delete a line from a branch that had less than 2 options.");
-				}
+			if (!(this.Contains(line))) {
+				return null;
 			}
 			
 			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"branch");
 			
-			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(Nwn2Line);
+			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(line);
 			
-			// If there is only one line left in the branch (i.e. the branch is removed), clear any conditions from the remaining line:
-			if (Nwn2Line.Parent == null) {
-        		if (NwnConv.StartingList.Count == 1) {
-					NwnConv.StartingList[0].Conditions.Clear();
-        		}
-        	}
-        	else if (Nwn2Line.Parent.Line.Children.Count == 1){
-				Nwn2Line.Parent.Line.Children[0].Conditions.Clear();
-        	} 
+			// If there is only one branch left, the choice will be removed, so clear any conditions:
+			if (siblings.Count == 1) {
+				siblings[0].Conditions.Clear();
+			}
 			
 			OnChanged(new ConversationChangedEventArgs(true));
 			return children;
 		}
-				
-		public void DeleteLine(NWN2ConversationConnector Nwn2Line)
-		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"line");
 			
+		
+		public void DeleteLine(NWN2ConversationConnector line)
+		{			
+			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"line");
+			DeleteLine(line);			
+			OnChanged(new ConversationChangedEventArgs(false));
+		}
+		
+		
+		private void _DeleteLine(NWN2ConversationConnector line)
+		{
 			Say.Debug("Ran DeleteLine");
-			if (Nwn2Line.Parent == null) { // root (line is therefore NPC starting entry)
-				Say.Debug("Dealing with first line in conversation (must be NPC).");
-				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
-					Say.Debug("Line has no children, so just delete it.");
-					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
-				}
-				else { // otherwise, if the line has children, make it a filler line, since root must always start with an NPC starting entry:
-					Say.Debug("Line has children, so set it as a filler line.");
-					SetAsFillerLine(Nwn2Line);
-				}				
+			if (HasSiblings(line)) {
+				throw new InvalidOperationException("Called DeleteLine illegally - call DeleteLineFromChoice if you want to " +
+					                                "delete a line which has siblings.");
 			}
-			else {
-				Say.Debug("Not dealing with first line in conversation.");
-				if (Nwn2Line.Line.Children.Count == 0) { // if the line has no children, just delete it:
-					Say.Debug("Line has no children, so just delete it.");
-					Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
-				}
-				// TODO refactor to check more explicitly how many children it has/whether single child is filler etc. - bit ratty.
-				else if (Nwn2Line.Line.Children.Count > 0) { // if the line has children:
-					Say.Debug("Line has children.");
-					NWN2ConversationConnector child = Nwn2Line.Line.Children[0];
+			
+			if (GetChildren(line).Count == 0) { // if the line has no children, just delete it
+				Say.Debug("Line has no children, so just delete it.");
+				Conversation.CurrentConversation.NwnConv.RemoveNode(line);
+			}
+			else { // otherwise, the line has children
+				if (line.Parent == null) { // the line must be an NPC starting entry, so just make it a filler line
+					Say.Debug("line must be an NPC starting entry, so just make it a filler line");
+					SetAsFillerLine(line);
+				}				
+				else { // TODO refactor to check more explicitly how many children it has/whether single child is filler etc. - bit ratty.
+					NWN2ConversationConnector child = line.Line.Children[0];
 					if (IsFiller(child)) { // if the child is a filler line, delete both the line and the child:	
 						Say.Debug("Line's child is a filler line.");
-						if (Nwn2Line.Line.Children.Count > 1) {
+						if (line.Line.Children.Count > 1) {
 							throw new InvalidDataException("A filler line formed part of a choice/check.");
 						}
 						else {
@@ -639,59 +648,155 @@ namespace AdventureAuthor.Conversations
 								linesToBeReparented.Add(lineToBeReparented);
 							}
 							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
-								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,Nwn2Line.Parent.Line);
+								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,line.Parent.Line);
 							}	
 							Conversation.CurrentConversation.NwnConv.RemoveNode(child);
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);
+							Conversation.CurrentConversation.NwnConv.RemoveNode(line);
 							// NB: Even if both line.Parent and the line's child are filler lines, we always choose to delete the child since
 							// the Parent may be a filler starting entry (by leaving it there, we can allow conversations to start with the PC.)
 						}
 					}
 					else { // if there is more than one child, or the single child is not a filler line:
 						Say.Debug("Line has more than one child, or the single child is not a filler line.");
-						if (IsFiller(Nwn2Line.Parent)) { // if the single child is a real line and the parent is a filler line, give the child to line.Parent.Parent:
+						if (IsFiller(line.Parent)) { // if the single child is a real line and the parent is a filler line, give the child to line.Parent.Parent:
 							Say.Debug("The child is a non-filler line and the parent is a filler line, so give the child to line.Parent.Parent, and remove the parent and the line.");
 							NWN2ConversationLine newParent;
-							if (Nwn2Line.Parent.Parent == null) {
+							if (line.Parent.Parent == null) {
 								newParent = null; // special case if the grandparent is root
 							}
 							else {
-								newParent = Nwn2Line.Parent.Parent.Line;
+								newParent = line.Parent.Parent.Line;
 							}							
 							
 							NWN2ConversationConnectorCollection linesToBeReparented = new NWN2ConversationConnectorCollection();
-							foreach (NWN2ConversationConnector lineToBeReparented in Nwn2Line.Line.Children) {
+							foreach (NWN2ConversationConnector lineToBeReparented in line.Line.Children) {
 								linesToBeReparented.Add(lineToBeReparented);
 							}
 							foreach(NWN2ConversationConnector lineToBeReparented in linesToBeReparented) {						
 								Conversation.CurrentConversation.NwnConv.ReparentNode(lineToBeReparented,newParent);
 							}	
 														
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line);						
-							Conversation.CurrentConversation.NwnConv.RemoveNode(Nwn2Line.Parent); // delete the line and its parent
+							Conversation.CurrentConversation.NwnConv.RemoveNode(line);						
+							Conversation.CurrentConversation.NwnConv.RemoveNode(line.Parent); // delete the line and its parent
 						}
 						else { // if the child(ren) and parent are real lines, make line a filler line:
 							Say.Debug("Both the children and the parent are real lines, so make the current line into a filler line.");
-							SetAsFillerLine(Nwn2Line);	
+							SetAsFillerLine(line);	
 						}						
 					}
 				}
 			}
-			
-			OnChanged(new ConversationChangedEventArgs(false));
 		}	
 		
 		#endregion
 		
 		#region Moving lines
 		
-		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPreceding)
+		/// <summary>
+		/// Copy the fields of one line to another. Necessary because we may wish to move a line to another location,
+		/// but 'deleting' it at its original location actually involves making it into a filler line, so we 
+		/// can't use the same object.
+		/// </summary>
+		/// <param name="original">The line to create a copy of</param>
+		/// <param name="copy">The (existing) line which will become a copy of the original</param>
+		private void Copy(NWN2ConversationConnector original, ref NWN2ConversationConnector copy)
 		{
-			Say.Debug("throng");
-			Conversation.CurrentConversation.NwnConv.ReparentNode(line,null);//newPreceding.Line);
-			Say.Debug("throng");
-			OnChanged(new ConversationChangedEventArgs(true)); // also temp - check whether it's a branch line to pass true or false
-			Say.Debug("throng");
+			PropertyInfo[] fields = typeof(NWN2ConversationConnector).GetProperties(BindingFlags.Public | 
+			                                                                 	 	BindingFlags.Instance);
+						
+			foreach (PropertyInfo f in fields) {
+				if (f.Name == "Comment" || f.Name == "ConnectorID" || f.Name == "Line" || 
+				    f.Name == "Parent" || f.Name == "TreeNode" || f.Name == "Type" ||
+				    f.Name == "Actions" || f.Name == "Conditions" || f.Name == "Text") {
+					Say.Debug("Skipped " + f.Name);
+				}	
+				else {
+					f.SetValue(copy,f.GetValue(original,null),null);
+					Say.Debug("Shallow copied " + f.Name);
+				}
+			}
+			
+			// Need deep-copy:
+			foreach (NWN2ScriptFunctor action in original.Actions) {
+				copy.Actions.Add(action);
+			}
+			foreach (NWN2ConditionalFunctor condition in original.Conditions) {
+				copy.Conditions.Add(condition);
+			}
+			copy.Text = (OEIExoLocString)original.Text.Clone();
+			// TODO - does CameraInfo require a deep copy as well?
+		}
+		
+		
+		public void MoveLineIntoChoice(NWN2ConversationConnector line, NWN2ConversationConnector choiceParent)
+		{
+			Say.Debug("MoveLineIntoChoice called.");
+			if (line == null) {			
+				throw new ArgumentNullException("line","Cannot move a null line.");
+			}
+			if (!Conversation.CurrentConversation.Contains(line)) {
+				throw new ArgumentException("line","Passed line does not exist in this conversation.");
+			}
+			if (GetChildren(choiceParent).Count < 2) {
+			    throw new InvalidOperationException("Illegal call to MoveLineIntoChoice - call MoveLine " +
+			    	                                "if you just want to move a line to a different (non-choice) position.");
+			}
+			if (HasSiblings(line)) {
+				throw new InvalidOperationException("Cannot move an existing branch line into another choice. " + 
+				                                    "Call MoveLineWithinChoice instead.");
+			}
+			if (line.Parent == choiceParent) {
+				throw new InvalidOperationException("Tried to move a line into a choice it was already a part of.");
+			}
+							
+			bool? result = Say.Question("You are about to make this line into a new branch of the choice at the bottom of the page. " +
+			             "This cannot be reversed. Continue?","Confirm",System.Windows.Forms.MessageBoxButtons.OKCancel);
+			if (result != null && (bool)result) {
+				// Create a new branch, copy the properties of the original and then delete it:
+				NWN2ConversationConnector copy = Conversation.CurrentConversation._AddLineToChoice(choiceParent);
+				Copy(line,ref copy);
+				_DeleteLine(line);
+				OnChanged(new ConversationChangedEventArgs(true));
+			}
+		}
+		
+		
+		public void MoveLineWithinChoice(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingBranch)
+		{
+			throw new NotImplementedException();
+		}				
+		
+		      
+		/// <summary>
+		/// Move a Line to another position on the same page.
+		/// </summary>
+		/// <remarks>Call MoveLine to rearrange the lines on a page, MoveLineWithinChoice to rearrange the branches
+		/// of a choice, and MoveLineIntoChoice to remove a line from the page and make it into a new branch on an 
+		/// existing choice.</remarks>
+		/// <param name="line">The line to move</param>
+		/// <param name="newPrecedingLine">The line that should now come before it (not necessarily the parent)</param>
+		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingLine)
+		{
+			if (line == null) {			
+				throw new ArgumentNullException("line","Cannot move a null line.");
+			}
+			if (!Conversation.CurrentConversation.Contains(line)) {
+				throw new ArgumentException("line","Passed line does not exist in this conversation.");
+			}
+			if (GetChildren(newPrecedingLine).Count > 1) {
+			    throw new InvalidOperationException("Illegal call to MoveLine - call MoveLineToChoice " +
+			    	                                "if you want to move a line into a choice.");
+			}
+			if (newPrecedingLine == line) {
+				return; // dragged over self
+			}
+			// TODO if trying to drop over the line's original preceding line, return as well
+					
+			// Create a new line, copy the properties of the original and then delete it:
+			NWN2ConversationConnector copy = _AddLine(newPrecedingLine,line.Speaker);
+			Copy(line,ref copy);
+			_DeleteLine(line);
+			OnChanged(new ConversationChangedEventArgs(false));
 		}
 		
 		#endregion
@@ -771,6 +876,7 @@ namespace AdventureAuthor.Conversations
 			return toCount.Split(' ').Length;
 		}
 		
+		
 		/// <summary>
 		/// Get the word, line and page count from either the whole conversation, or the conversation from a particular point.
 		/// </summary>
@@ -782,14 +888,12 @@ namespace AdventureAuthor.Conversations
 			int words = 0;
 			int lines = 0;
 			int pages = 0;
-			NWN2ConversationConnectorCollection children;
+			NWN2ConversationConnectorCollection children = GetChildren(parent);
 			
 			if (parent == null) {
-				children = nwnConv.StartingList;
 				pages += children.Count; // if we have reached a branch point, increment the number of pages
 			}
-			else {
-				children = parent.Line.Children;				
+			else {				
 				string text = GetStringFromOEIString(parent.Line.Text);
 				if (text.Length > 0) {
 					words += WordCount(text);
@@ -805,7 +909,8 @@ namespace AdventureAuthor.Conversations
 				
 			return totalCounts;
 		}
-				
+			
+		
 		public static OEIExoLocString GetOEIStringFromString(string text)
 		{			
 			OEIExoLocString str = new OEIExoLocString();
@@ -814,6 +919,7 @@ namespace AdventureAuthor.Conversations
 			str.Strings.Add(substr);
 			return str;
 		}
+		
 		
 		public static string GetStringFromOEIString(OEIExoLocString text)
 		{
@@ -824,6 +930,18 @@ namespace AdventureAuthor.Conversations
 				return text.Strings[0].Value;
 			}
 		}
+		
+		
+		public static bool AreSameSpeakerType(NWN2ConversationConnectorType a, NWN2ConversationConnectorType b)
+		{
+			if (a == NWN2ConversationConnectorType.Reply) {
+				return b == NWN2ConversationConnectorType.Reply;
+			}
+			else {
+				return b != NWN2ConversationConnectorType.Reply;
+			}
+		}
+		
 		
 		private static bool CanFollow(NWN2ConversationConnector line, NWN2ConversationConnectorType typeOfFollowingLine)
 		{
@@ -838,11 +956,51 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 		
+		
+		/// <summary>
+		/// Check whether a given line is contained within this conversation.
+		/// </summary>
+		/// <param name="line">The line to check for</param>
+		/// <returns>True if the line exists in this conversation; false otherwise</returns>
 		public bool Contains(NWN2ConversationConnector line)
 		{
-			return this.nwnConv.Entries.Contains(line.Line) || this.nwnConv.Replies.Contains(line.Line) || this.nwnConv.StartingList.Contains(line);
+			return this.nwnConv.Entries.Contains(line.Line) || 
+				this.nwnConv.Replies.Contains(line.Line) || 
+				this.nwnConv.StartingList.Contains(line);
 		}
 				
+		
+		/// <summary>
+		/// Check whether a given line has any siblings (i.e. the parent line has other children)
+		/// </summary>
+		/// <param name="line">The line to check for siblings for</param>
+		/// <returns>True if the line has siblings; false otherwise</returns>
+		public bool HasSiblings(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				throw new ArgumentNullException("Can't check whether a null line has siblings.");
+			}
+			
+			return GetChildren(line.Parent).Count > 1;
+		}
+		
+		
+		/// <summary>
+		/// Returns the children of a given line. 
+		/// </summary>
+		/// <param name="line">The line to return the children of. Null may be passed (as root) to get the starting list.</param>
+		/// <returns>The children of the line</returns>
+		public NWN2ConversationConnectorCollection GetChildren(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				return Conversation.CurrentConversation.NwnConv.StartingList;
+			}
+			else {
+				return line.Line.Children;
+			}
+		}
+		
+		
 		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
 		{			
 			int words = 0;
@@ -907,21 +1065,14 @@ namespace AdventureAuthor.Conversations
 			Log.WriteEffectiveAction(Log.EffectiveAction.added,"choice",speakerTag);
 			
         	NWN2ConversationConnector parent;
-        	NWN2ConversationConnectorCollection children;
         	if (WriterWindow.Instance.CurrentPage.LineControls.Count > 0) {
         		parent = WriterWindow.Instance.CurrentPage.LineControls[WriterWindow.Instance.CurrentPage.LineControls.Count-1].Nwn2Line;
 			}
 			else {
         		parent = WriterWindow.Instance.CurrentPage.LeadLine; // LeadInLine may be null i.e. root
-			}				
-			
-			if (parent == null) {
-				children = Conversation.CurrentConversation.NwnConv.StartingList;
-			}
-			else {
-				children = parent.Line.Children;
 			}			
-			
+        	NWN2ConversationConnectorCollection children = GetChildren(parent);	
+						
         	try {
 				if (children.Count > 0) { // shouldn't happen as we are at the end of the page
 					NWN2ConversationConnectorCollection childrenToRemove = new NWN2ConversationConnectorCollection();
@@ -1043,13 +1194,7 @@ namespace AdventureAuthor.Conversations
 		{
 			NWN2ConversationConnector newLine = null;
 			NWN2ConversationConnector fillerLine = null;
-			NWN2ConversationConnectorCollection children;
-			if (parent == null) { // root
-				children = Conversation.CurrentConversation.NwnConv.StartingList;
-			}
-			else {
-				children = parent.Line.Children;
-			}
+			NWN2ConversationConnectorCollection children = GetChildren(parent);
 		
 			if (addFillerBeforeNewLine) {
 				fillerLine = Conversation.CurrentConversation.NwnConv.InsertChild(parent);

@@ -130,13 +130,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
         {        	
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
-        	NWN2ConversationConnectorCollection children;
-        	if (parentLine == null) {
-        		children = Conversation.CurrentConversation.NwnConv.StartingList;
-        	}
-        	else {
-        		children = parentLine.Line.Children;
-        	}
+        	NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.GetChildren(parentLine);
         	
         	if (!Adventure.BeQuiet) { 	
         		Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(children);

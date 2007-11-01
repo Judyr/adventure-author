@@ -28,7 +28,7 @@
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
     xmlns:dragdrop="clr-namespace:Samples.DragDrop"
 	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
-    Padding="6" dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource DropAdvisor}"
+    Padding="6" AllowDrop="True" dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource DropAdvisor}"
 	>
 	
 	<UserControl.Resources>		
