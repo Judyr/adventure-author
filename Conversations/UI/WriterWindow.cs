@@ -40,7 +40,6 @@ using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-//using Samples.DragDrop;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -93,17 +92,7 @@ namespace AdventureAuthor.Conversations.UI
 		
 		#endregion
 		
-		
-		#region Drag-drop
-		
-		private void OnDrop(object sender, DragEventArgs e)
-        {
-        	Say.Debug("Dropped on page view.");
-        }
-		
-		#endregion
-		
-				
+						
 		#region Events
 		
 		public event EventHandler ViewedPage;
@@ -228,17 +217,13 @@ namespace AdventureAuthor.Conversations.UI
 			LinesPanel.Children.Clear();
 			currentPage.LineControls.Clear();
 								
-			// Check whether we are starting from the root:
-			NWN2ConversationConnectorCollection possibleNextLines;
-			if (currentPage.LeadLine == null) { // root
-				possibleNextLines = Conversation.CurrentConversation.NwnConv.StartingList;
-			}
-			else {
+			// Show the (disabled) first line of the previous page at the top of the page view:
+			if (currentPage.LeadLine != null) {
 				ShowLeadingLine(currentPage.LeadLine);
-				possibleNextLines = currentPage.LeadLine.Line.Children;				
 			}
 			
 			// Display each line of dialogue until the page branches or the conversation ends:
+			NWN2ConversationConnectorCollection possibleNextLines = Conversation.CurrentConversation.GetChildren(currentPage.LeadLine);
 			while (possibleNextLines.Count == 1) {
 				NWN2ConversationConnector currentLine = possibleNextLines[0];
 				if (!Conversation.IsFiller(currentLine)) {
@@ -297,7 +282,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 			// Create a LineControl for each line of dialogue in the branch:
 			foreach (NWN2ConversationConnector line in possibleLines) {
-				if (line.Type != speakerType) {
+				if (!Conversation.AreSameSpeakerType(line.Type,speakerType)) {					
 					throw new ArgumentException("Tried to create a branch with lines by both PC and NPC.");
 				}
 			}				
@@ -715,6 +700,12 @@ namespace AdventureAuthor.Conversations.UI
 			if (Conversation.CurrentConversation != null) {
 				Conversation.CurrentConversation.SaveToOriginal();
 			}			
+		}
+		
+		
+		private void OnClick_Print(object sender, EventArgs ea)
+		{
+			
 		}
 		
 		

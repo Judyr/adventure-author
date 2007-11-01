@@ -19,10 +19,9 @@ namespace AdventureAuthor.Conversations.UI
 
 		public bool IsValidDataObject(IDataObject obj)
 		{
-        	Say.Debug("IsValidDataObject");
+//        	Say.Debug("IsValidDataObject");
         	bool isValid = obj.GetDataPresent("nwn2line");
 //        	bool isValid = obj.GetDataPresent(SupportedFormat.Name);
-        	Say.Debug(isValid.ToString());
 			return isValid;
 		}
 
@@ -30,25 +29,20 @@ namespace AdventureAuthor.Conversations.UI
 		public void OnDropCompleted(IDataObject obj, Point dropPoint)
 		{
 			NWN2ConversationConnector line = obj.GetData("nwn2line") as NWN2ConversationConnector;
-			if (line != null) {
-				Say.Debug("Tried to move line to root.");
-				Conversation.CurrentConversation.MoveLine(line,null);
-				Say.Debug("Moved line to root.");
+			
+			if (TargetUI is BranchLine) {
+				Conversation.CurrentConversation.MoveLineIntoChoice(line,((LineControl)TargetUI).Nwn2Line.Parent);
+			}
+			else if (TargetUI is Line || TargetUI is LeadingLine) {
+				Conversation.CurrentConversation.MoveLine(line,((LineControl)TargetUI).Nwn2Line);
 			}
 			else {
-				Say.Debug("Couldn't find data in format nwn2line.");
+				throw new InvalidOperationException("This drop advisor should not be attached to anything other than a " + 
+				                                    "Line, BranchLine or LeadingLine (all subclasses of LineControl). " + 
+				                                    "Instead found TargetUI to be " + TargetUI.GetType().ToString() + ".");
 			}
 			
 			
-			
-			
-			
-//        	Say.Debug("OnDropCompleted");
-//			UIElement elt = ExtractElement(obj);
-//
-//			(TargetUI as StackPanel).Children.Add(elt);
-//			
-//			Say.Debug("finished OnDropCompleted");
 		}
 
 		public UIElement TargetUI

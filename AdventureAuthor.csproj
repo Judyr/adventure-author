@@ -95,10 +95,6 @@
       <SubType>Code</SubType>
       <DependentUpon>AddSpeakerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Conversations\UI\app.xaml.cs">
-      <DependentUpon>app.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Conversations\UI\ChooseSpeaker.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>ChooseSpeaker.xaml</DependentUpon>
@@ -276,7 +272,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
-    <Page Include="Conversations\UI\app.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
     <Page Include="Conversations\UI\Controls\ChoiceControl.xaml" />

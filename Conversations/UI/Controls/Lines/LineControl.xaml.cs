@@ -93,7 +93,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
-        	this.Resources.Add("DropAdvisor",new AdventureAuthor.Conversations.UI.LineDropTargetAdvisor());
+        	this.Resources.Add("DropAdvisor",new LineDropTargetAdvisor());
         	InitializeComponent();
             
         	// Set the image on the delete button:
@@ -176,64 +176,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #endregion Constructor
                 
-        
-        #region Drag-drop
-        
-//        private bool dragStarted = false;
-//        
-//		public bool DragStarted {
-//			get { 
-//        		Say.Debug("Checked DragStarted - was " + dragStarted + ".");
-//        		return dragStarted; 
-//        	}
-//			set { 
-//        		dragStarted = value; 
-//        		Say.Debug("Set DragStarted to be " + dragStarted + ".");
-//        	}
-//		}
-//        
-//        private void OnPreviewMouseMove(object sender, MouseEventArgs e)
-//        {
-//        	Say.Debug("OnPreviewMouseMove - originated at " + e.Timestamp);
-//        	if (DragStarted) {
-//        		DataObject data = GetDataObject();
-//        		Say.Debug("DataObject data = GetDataObject();");
-//        		Mouse.Capture(this);
-//        		Say.Debug("Mouse.Capture(this);");
-//        		DragDrop.DoDragDrop(this,data,DragDropEffects.Move);
-//        		Say.Debug("DragDrop.DoDragDrop(this,data,DragDropEffects.Move);");
-//        		Mouse.Capture(null);
-//        		Say.Debug("Mouse.Capture(null);");
-//        		DragStarted = false;
-//        		Say.Debug("DragStarted = false;");
-//        		base.OnPreviewMouseMove(e);
-//        		Say.Debug("base.OnPreviewMouseMove(e);");
-//        	}     
-//        	Say.Debug("end of OnPreviewMouseMove");
-//        }
-//        
-//        
-//        private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
-//        {
-//        	Say.Debug("OnPreviewMouseDown");
-//        	DragStarted = true;
-//        	base.OnPreviewMouseDown(e);   
-//        	Say.Debug("end of OnPreviewMouseDown");    	
-//        }
-//        
-//	    
-//	    private DataObject GetDataObject()
-//	    {
-//	    	DataObject data = new DataObject();
-//	    	data.SetData(typeof(LineControl),this);
-//	    	return data;
-//	    }
-        
-        
-        
-        
-        #endregion Drag-drop        
-        
+                
         
         #region Event handlers
         
@@ -322,15 +265,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         				WriterWindow.Instance.PageScroll.ScrollToBottom();
         			}
         			else { // if there are consequences, remind the user of them and ask them to confirm		
-        				string warning = String.Empty;  
-		       			if (nwn2Line.Parent == null) {
-		        			if (Conversation.CurrentConversation.NwnConv.StartingList.Count == 2) {
-		        				warning += "Deleting this line will remove the whole branch, changing the shape of the conversation tree. ";
-		        			}
-		        		}
-		        		else if (nwn2Line.Parent.Line.Children.Count == 2){
-		        			warning += "Deleting this line will remove the whole branch, changing the shape of the conversation tree. ";
-		        		}   										
+        				string warning = String.Empty; 
+        				if (Conversation.CurrentConversation.GetChildren(nwn2Line.Parent).Count == 2) {
+        					warning += "Deleting this line will remove the whole choice, changing the shape of the conversation tree. ";
+        				}  										
         				if (casualties.pages > 1) {
         					warning += "This will also delete " + casualties.pages + " page(s) and " + casualties.words + 
         						" word(s) of conversation.\n\n";
