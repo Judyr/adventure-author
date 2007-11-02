@@ -54,22 +54,11 @@ namespace AdventureAuthor.Conversations.UI
 //        	}
         	
         	
-//			string serializedObject = XamlWriter.Save(draggedElt);
-        	Say.Debug("bang");
-        	
+//			string serializedObject = XamlWriter.Save(draggedElt);        	
 			DataObject data = new DataObject();
-			
-        	Say.Debug("bang");
-        	
-//            data.SetData(SupportedFormat.Name, serializedObject);
+//          data.SetData(SupportedFormat.Name, serializedObject);
             data.SetData("nwn2line",line.Nwn2Line);
-            
-        	Say.Debug("bang");
-        	
             data.SetData("point", offsetPoint);
-            
-            Say.Debug("returning DataObject");
-            
 			return data;
 		}
 

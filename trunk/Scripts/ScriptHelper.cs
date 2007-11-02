@@ -851,7 +851,7 @@ namespace AdventureAuthor.Scripts
 			}
 		}
 		
-		private static string GetOwnerIfBlank(string tag)
+		internal static string GetOwnerIfBlank(string tag)
 		{
 			if (tag == String.Empty) {
 				return ownerName;
@@ -861,7 +861,7 @@ namespace AdventureAuthor.Scripts
 			}
 		}
 		
-		private static string GetPlayerIfBlank(string tag)
+		internal static string GetPlayerIfBlank(string tag)
 		{
 			if (tag == String.Empty) {
 				return "PLAYER";

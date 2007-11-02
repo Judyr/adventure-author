@@ -953,15 +953,15 @@ namespace AdventureAuthor.Conversations.UI
 					NWN2ConversationConnector parentLine;
 					if (SelectedLineControl != null && !(SelectedLineControl is BranchLine)) {
 						parentLine = SelectedLineControl.Nwn2Line; // add a new line after the current one
-//						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
+						Say.Debug("Found a selected line that was not part of a branch - make this the parent line.");
 					}
 					else if (currentPage.LineControls.Count > 0) { // add a line to the end of the page
 						parentLine = currentPage.LineControls[currentPage.LineControls.Count-1].Nwn2Line;
-//						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
+						Say.Debug("Found no selected lines. Use the last LineControl on the page.");
 					}
 					else { // add a line to the start of the page if there are no other lines
 						parentLine = currentPage.LeadLine; // may be null (for root)
-//						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
+						Say.Debug("Found no LineControls at all. Use the lead in line of the current page.");
 					}
 					
 					NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLine(parentLine,e.Speaker.Tag);
