@@ -552,7 +552,7 @@ namespace AdventureAuthor.Conversations
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
 			Log.WriteEffectiveAction(Log.EffectiveAction.added,"line",speaker);
-			NWN2ConversationConnector createdLine = AddLine(preceding,speaker);
+			NWN2ConversationConnector createdLine = _AddLine(preceding,speaker);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
 		}
@@ -587,9 +587,10 @@ namespace AdventureAuthor.Conversations
 		
 		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector line)
 		{			
-			NWN2ConversationConnectorCollection siblings = GetChildren(line);
+			NWN2ConversationConnectorCollection siblings = GetSiblings(line);
 			if (siblings.Count < 2) {
-				throw new InvalidOperationException("Tried to delete a line from a choice that had less than 2 options.");
+				throw new InvalidOperationException("Illegal call to DeleteLineFromChoice - given line was not part " +
+				                                   "of a choice. Call DeleteLine instead.");
 			}
 			if (!(this.Contains(line))) {
 				return null;
@@ -620,9 +621,9 @@ namespace AdventureAuthor.Conversations
 		private void _DeleteLine(NWN2ConversationConnector line)
 		{
 			Say.Debug("Ran DeleteLine");
-			if (HasSiblings(line)) {
+			if (GetSiblings(line).Count > 1) {
 				throw new InvalidOperationException("Called DeleteLine illegally - call DeleteLineFromChoice if you want to " +
-					                                "delete a line which has siblings.");
+					                                "delete a line which has siblings other than itself.");
 			}
 			
 			if (GetChildren(line).Count == 0) { // if the line has no children, just delete it
@@ -730,23 +731,33 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineIntoChoice(NWN2ConversationConnector line, NWN2ConversationConnector choiceParent)
 		{
-			Say.Debug("MoveLineIntoChoice called.");
+			NWN2ConversationConnectorCollection existingBranches = GetChildren(choiceParent);
+			
 			if (line == null) {			
-				throw new ArgumentNullException("line","Cannot move a null line.");
+				throw new ArgumentNullException("line","Cannot operate on a null line.");
+			}
+			if (choiceParent == null) {
+				throw new ArgumentNullException("choiceParent","Cannot operate on a null line.");
 			}
 			if (!Conversation.CurrentConversation.Contains(line)) {
 				throw new ArgumentException("line","Passed line does not exist in this conversation.");
 			}
-			if (GetChildren(choiceParent).Count < 2) {
+			if (existingBranches.Count < 2) {
 			    throw new InvalidOperationException("Illegal call to MoveLineIntoChoice - call MoveLine " +
 			    	                                "if you just want to move a line to a different (non-choice) position.");
 			}
-			if (HasSiblings(line)) {
+			if (GetSiblings(line).Count > 1) {
 				throw new InvalidOperationException("Cannot move an existing branch line into another choice. " + 
 				                                    "Call MoveLineWithinChoice instead.");
 			}
 			if (line.Parent == choiceParent) {
 				throw new InvalidOperationException("Tried to move a line into a choice it was already a part of.");
+			}
+			
+			if (line.Speaker != existingBranches[0].Speaker) {
+				Say.Warning("You can only add branches by the same speaker (" + 
+				            ScriptHelper.GetPlayerIfBlank(existingBranches[0].Speaker).ToLower() + ").");
+				return;
 			}
 							
 			bool? result = Say.Question("You are about to make this line into a new branch of the choice at the bottom of the page. " +
@@ -968,20 +979,20 @@ namespace AdventureAuthor.Conversations
 				this.nwnConv.Replies.Contains(line.Line) || 
 				this.nwnConv.StartingList.Contains(line);
 		}
-				
+						
 		
 		/// <summary>
-		/// Check whether a given line has any siblings (i.e. the parent line has other children)
+		/// Returns the siblings of a given line, AND the line itself. 
 		/// </summary>
-		/// <param name="line">The line to check for siblings for</param>
-		/// <returns>True if the line has siblings; false otherwise</returns>
-		public bool HasSiblings(NWN2ConversationConnector line)
+		/// <param name="line">The line to return the siblings of.</param>
+		/// <returns>The siblings of the line, AND the line itself (i.e. all of the line's parent's children)</returns>
+		public NWN2ConversationConnectorCollection GetSiblings(NWN2ConversationConnector line)
 		{
 			if (line == null) {
-				throw new ArgumentNullException("Can't check whether a null line has siblings.");
+				throw new ArgumentNullException("line","Can't operate on a null line.");
 			}
 			
-			return GetChildren(line.Parent).Count > 1;
+			return GetChildren(line.Parent);
 		}
 		
 		

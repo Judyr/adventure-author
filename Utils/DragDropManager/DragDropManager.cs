@@ -223,16 +223,13 @@ namespace Samples.DragDrop
 			DragDropEffects supportedEffects = advisor.SupportedEffects;
 
 			// Perform DragDrop
-			AdventureAuthor.Utils.Say.Debug("About to DoDragDrop");
 			DragDropEffects effects = System.Windows.DragDrop.DoDragDrop(_draggedElt, data, supportedEffects);
-			AdventureAuthor.Utils.Say.Debug("Dunned DoDragDrop");
 			advisor.FinishDrag(_draggedElt, effects);
 
 			// Clean up
 			RemovePreviewAdorner();
 			Mouse.Capture(null);
 			_draggedElt = null;
-			AdventureAuthor.Utils.Say.Debug("Dunned DragStarted method");
 		}
 
 		static bool IsDragGesture(Point point)
@@ -249,7 +246,6 @@ namespace Samples.DragDrop
 		 */
 		static UIElement GetTopContainer()
 		{
-			//return AdventureAuthor.Conversations.UI.WriterWindow.Instance.LinesPanel as UIElement;
 			return AdventureAuthor.Conversations.UI.WriterWindow.Instance as UIElement;
 			//return Application.Current.MainWindow.Content as UIElement;
 		}
