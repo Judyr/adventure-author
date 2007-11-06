@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using AdventureAuthor.Utils;
 
 namespace Samples.DragDrop
 {
@@ -111,6 +112,7 @@ namespace Samples.DragDrop
 		 */
 		static void DropTarget_PreviewDrop(object sender, DragEventArgs e)
 		{
+			
 			if (UpdateEffects(sender, e) == false) return;
 
 			IDropTargetAdvisor advisor = GetDropTargetAdvisor(sender as DependencyObject);
@@ -137,13 +139,21 @@ namespace Samples.DragDrop
 
 		static void DropTarget_PreviewDragOver(object sender, DragEventArgs e)
 		{
-			if (UpdateEffects(sender, e) == false) return;
+			Say.Debug("DropTarget_PreviewDragOver");
+			if (UpdateEffects(sender, e) == false) {
+				Say.Debug("UpdateEffects was false, returning.");
+				return;
+			}
 			// Update position of the preview Adorner
+			Say.Debug("About to update point.");
 			Point position = e.GetPosition(sender as UIElement);
+			Say.Debug("Left");
 			_overlayElt.Left = position.X - _offsetPoint.X;
+			Say.Debug("Top");
 			_overlayElt.Top = position.Y - _offsetPoint.Y;
 			
 			e.Handled = true;
+			Say.Debug("Finished");
 		}
 
 		static void DropTarget_PreviewDragEnter(object sender, DragEventArgs e)
