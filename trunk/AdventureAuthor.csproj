@@ -128,7 +128,7 @@
       <DependentUpon>SoundControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversations\UI\DefaultDragSourceAdvisor.cs" />
+    <Compile Include="Conversations\UI\LineDragSourceAdvisor.cs" />
     <Compile Include="Conversations\UI\LineDropTargetAdvisor.cs" />
     <Compile Include="Conversations\UI\WriterWindow.cs">
       <SubType>Code</SubType>

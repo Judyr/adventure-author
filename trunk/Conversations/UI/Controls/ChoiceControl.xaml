@@ -23,7 +23,7 @@
 <UserControl x:Class="AdventureAuthor.Conversations.UI.Controls.ChoiceControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid AllowDrop="true" Drop="OnDrop">
+    <Grid>
     	<Grid.RowDefinitions>
     		<RowDefinition MinHeight="100" Height="*"/>
     	</Grid.RowDefinitions>

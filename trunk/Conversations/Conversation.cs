@@ -509,7 +509,7 @@ namespace AdventureAuthor.Conversations
 		public NWN2ConversationConnector AddLineToChoice(NWN2ConversationConnector parent)
 		{
 			Log.WriteEffectiveAction(Log.EffectiveAction.added,"branch");
-			NWN2ConversationConnector createdLine = AddLineToChoice(parent);
+			NWN2ConversationConnector createdLine = _AddLineToChoice(parent);
 			OnChanged(new ConversationChangedEventArgs(true));
 			return createdLine;
 		}
@@ -538,8 +538,7 @@ namespace AdventureAuthor.Conversations
 			return createdLine;
 		}
 		
-		
-		
+				
 		/// <summary>
 		/// Add a new blank line underneath the specified line.
 		/// </summary>
@@ -774,7 +773,40 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineWithinChoice(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingBranch)
 		{
-			throw new NotImplementedException();
+			if (line == null) {			
+				throw new ArgumentNullException("line","Cannot operate on a null line.");
+			}
+			if (newPrecedingBranch == null) {
+				throw new ArgumentNullException("newPrecedingBranch","Cannot operate on a null line.");
+			}
+			if (line.Parent != newPrecedingBranch.Parent) {
+				throw new InvalidOperationException("The two lines were not part of the same choice.");
+			}
+			if (!Conversation.CurrentConversation.Contains(line)) {
+				throw new ArgumentException("line","Passed line does not exist in this conversation.");
+			}
+			if (!Conversation.CurrentConversation.Contains(newPrecedingBranch)) {
+				throw new ArgumentException("newPrecedingBranch","Passed line does not exist in this conversation.");
+			}
+			
+			NWN2ConversationConnectorCollection children = GetChildren(line.Parent);
+			Say.Debug(children.Count.ToString() + " children.");
+			children.Remove(line);
+			Say.Debug("Removed - now " + children.Count + " children.");
+			Say.Debug("New preceding branch is index " + children.IndexOf(newPrecedingBranch) + ".");
+			          
+			int index = children.IndexOf(newPrecedingBranch) + 1;
+			Say.Debug("Insert at index " + index + ".");
+			
+			if (index > (children.Count - 1)) { // if outside index bounds
+				Say.Debug("Index " + index + " is out of bounds (" + (children.Count -1) + " is final index.) Add line.");
+				children.Add(line);
+			}
+			else {
+				Say.Debug("Index " + index + " is in bounds (" + (children.Count -1) + " is final index.) Insert line.");
+				children.Insert(index,line);
+			}
+			OnChanged(new ConversationChangedEventArgs(true));
 		}				
 		
 		      
@@ -789,16 +821,15 @@ namespace AdventureAuthor.Conversations
 		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingLine)
 		{
 			if (line == null) {			
+				Say.Debug("line == null");
 				throw new ArgumentNullException("line","Cannot move a null line.");
 			}
 			if (!Conversation.CurrentConversation.Contains(line)) {
+				Say.Debug("!Conversation.CurrentConversation.Contains(line)");
 				throw new ArgumentException("line","Passed line does not exist in this conversation.");
 			}
-			if (GetChildren(newPrecedingLine).Count > 1) {
-			    throw new InvalidOperationException("Illegal call to MoveLine - call MoveLineToChoice " +
-			    	                                "if you want to move a line into a choice.");
-			}
 			if (newPrecedingLine == line) {
+				Say.Debug("Drag-dropped line over itself - do nothing.");
 				return; // dragged over self
 			}
 			// TODO if trying to drop over the line's original preceding line, return as well

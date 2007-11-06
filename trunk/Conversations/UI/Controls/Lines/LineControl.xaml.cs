@@ -94,6 +94,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
         	this.Resources.Add("DropAdvisor",new LineDropTargetAdvisor());
+        	this.Resources.Add("DragAdvisor",new LineDragSourceAdvisor());
         	InitializeComponent();
             
         	// Set the image on the delete button:
