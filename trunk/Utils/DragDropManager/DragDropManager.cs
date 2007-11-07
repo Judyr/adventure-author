@@ -112,8 +112,11 @@ namespace Samples.DragDrop
 		 */
 		static void DropTarget_PreviewDrop(object sender, DragEventArgs e)
 		{
-			
-			if (UpdateEffects(sender, e) == false) return;
+			Say.Debug("DropTarget_PreviewDrop");
+			if (UpdateEffects(sender, e) == false) {
+				Say.Debug("UpdateEffects was false, returning");
+				return;
+			}
 
 			IDropTargetAdvisor advisor = GetDropTargetAdvisor(sender as DependencyObject);
 			Point dropPoint = e.GetPosition(sender as UIElement);
@@ -126,6 +129,7 @@ namespace Samples.DragDrop
 			advisor.OnDropCompleted(e.Data, dropPoint);
 			RemovePreviewAdorner();
             _offsetPoint = new Point(0, 0);
+            Say.Debug("Ended DropTarget_PreviewDrop");
 
 		}
 
@@ -139,21 +143,21 @@ namespace Samples.DragDrop
 
 		static void DropTarget_PreviewDragOver(object sender, DragEventArgs e)
 		{
-			Say.Debug("DropTarget_PreviewDragOver");
+//			Say.Debug("DropTarget_PreviewDragOver");
 			if (UpdateEffects(sender, e) == false) {
-				Say.Debug("UpdateEffects was false, returning.");
+//				Say.Debug("UpdateEffects was false, returning.");
 				return;
 			}
 			// Update position of the preview Adorner
-			Say.Debug("About to update point.");
+//			Say.Debug("About to update point.");
 			Point position = e.GetPosition(sender as UIElement);
-			Say.Debug("Left");
+//			Say.Debug("Left");
 			_overlayElt.Left = position.X - _offsetPoint.X;
-			Say.Debug("Top");
+//			Say.Debug("Top");
 			_overlayElt.Top = position.Y - _offsetPoint.Y;
 			
 			e.Handled = true;
-			Say.Debug("Finished");
+//			Say.Debug("Finished");
 		}
 
 		static void DropTarget_PreviewDragEnter(object sender, DragEventArgs e)
@@ -203,13 +207,19 @@ namespace Samples.DragDrop
 		 */
 		static void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
+			Say.Debug("DragSource_PreviewMouseLeftButtonDown");
 			// Make this the new drag source
 			IDragSourceAdvisor advisor = GetDragSourceAdvisor(sender as DependencyObject);
 
-			if (advisor.IsDraggable(e.Source as UIElement) == false) return;
+			if (advisor.IsDraggable(e.Source as UIElement) == false) {
+				Say.Debug("Isn't draggable - returning");
+				return;
+			}
 
 			_draggedElt = e.Source as UIElement;
+			Say.Debug("about to call (from DragSource_PreviewMouseLeftButtonDown)");
 			_dragStartPoint = e.GetPosition(GetTopContainer());
+			Say.Debug("called (from DragSource_PreviewMouseLeftButtonDown)");
             _offsetPoint = e.GetPosition(_draggedElt);
 			_isMouseDown = true;
 
@@ -217,10 +227,12 @@ namespace Samples.DragDrop
 
 		static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
 		{
+			Say.Debug("about to call (from DragSource_PreviewMouseMove)");
 			if (_isMouseDown && IsDragGesture(e.GetPosition(GetTopContainer())))
 			{
 				DragStarted(sender as UIElement);
 			}
+			Say.Debug("called (from DragSource_PreviewMouseMove)");
 		}
 
 		static void DragStarted(UIElement uiElt)
@@ -255,8 +267,17 @@ namespace Samples.DragDrop
 		 * ____________________________________________________________________
 		 */
 		static UIElement GetTopContainer()
-		{
-			return AdventureAuthor.Conversations.UI.WriterWindow.Instance as UIElement;
+		{		
+			Say.Debug("GetTopContainer()");
+			UIElement topcontainer = AdventureAuthor.Conversations.UI.WriterWindow.Instance as UIElement;
+			if (topcontainer == null) {
+				Say.Debug("top container was null");
+			}
+			else {
+				Say.Debug("top container is not null");
+			}
+			
+			return topcontainer;
 			//return Application.Current.MainWindow.Content as UIElement;
 		}
 
@@ -265,7 +286,9 @@ namespace Samples.DragDrop
 			// Clear if there is an existing preview adorner
 			RemovePreviewAdorner();
 
+			Say.Debug("about to call (from CreatePreviewAdorner)");
 			AdornerLayer layer = AdornerLayer.GetAdornerLayer(GetTopContainer());
+			Say.Debug("called (from CreatePreviewAdorner)");
 			_overlayElt = new DropPreviewAdorner(feedbackUI, adornedElt);
 			layer.Add(_overlayElt);
 		}
@@ -274,7 +297,10 @@ namespace Samples.DragDrop
 		{
 			if (_overlayElt != null)
 			{
+				Say.Debug("about to call (from RemovePreviewAdorner)");
 				AdornerLayer.GetAdornerLayer(GetTopContainer()).Remove(_overlayElt);
+				Say.Debug("called (from RemovePreviewAdorner)");
+				
 				_overlayElt = null;
 			}
 		}
