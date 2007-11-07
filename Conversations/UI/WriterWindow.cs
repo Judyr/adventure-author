@@ -53,41 +53,12 @@ namespace AdventureAuthor.Conversations.UI
     	
 		public WriterWindow()
 		{
-			InitializeComponent(); 
-			
-//			this.DragEnter += delegate(object sender, DragEventArgs e) { Say.Debug("DragEnter"); };
-//			
-//			this.DragLeave += delegate(object sender, DragEventArgs e) { Say.Debug("DragLeave"); };
-//			
-//			this.DragOver += delegate(object sender, DragEventArgs e) { Say.Debug("DragOver"); };
-//			
-//			this.Drop += delegate(object sender, DragEventArgs e) 
-//			{
-//				Say.Debug("Drop"); 
-//				if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
-//	        		string[] fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-//	        		Conversation.CurrentConversation.AddSpeaker(fileNames[0]);
-//		        }
-//		        e.Handled = true;
-//			};
-			
-			
-			
-//			this.PreviewMouseDown += delegate { 
-//			try {
-//				if (Application.Current == null) {
-//					Say.Debug("Application.Current == null");
-//				}
-//				else if (Application.Current.MainWindow == null) {
-//					Say.Debug("Application.Current.MainWindow == null");
-//				}
-//				else if (Application.Current.MainWindow.Content == null) {
-//					Say.Debug("Application.Current.MainWindow.Content == null");
-//				}
-//			}
-//			catch (Exception e) {
-//				Say.Error(e);
-//			} };
+			InitializeComponent();
+			this.Loaded += delegate 
+			{  
+				NewOpenConversationWindow win = new NewOpenConversationWindow();
+				win.ShowDialog();
+			};
 		}
 		
 		#endregion
@@ -674,6 +645,12 @@ namespace AdventureAuthor.Conversations.UI
 		#endregion
 		
 		private void OnClick_Open(object sender, EventArgs ea)
+		{
+			OpenDialog();
+		}
+		
+		
+		internal void OpenDialog()
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
 			openFile.ValidateNames = true;

@@ -107,6 +107,8 @@ namespace AdventureAuthor.Conversations.UI
 //			Say.Debug("Dunned GetVisualFeedback");
 //			
 //			return elt;
+			
+			Say.Debug("End of GetVisualFeedback.");
 		}
 
 		

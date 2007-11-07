@@ -790,20 +790,13 @@ namespace AdventureAuthor.Conversations
 			}
 			
 			NWN2ConversationConnectorCollection children = GetChildren(line.Parent);
-			Say.Debug(children.Count.ToString() + " children.");
 			children.Remove(line);
-			Say.Debug("Removed - now " + children.Count + " children.");
-			Say.Debug("New preceding branch is index " + children.IndexOf(newPrecedingBranch) + ".");
-			          
 			int index = children.IndexOf(newPrecedingBranch) + 1;
-			Say.Debug("Insert at index " + index + ".");
 			
 			if (index > (children.Count - 1)) { // if outside index bounds
-				Say.Debug("Index " + index + " is out of bounds (" + (children.Count -1) + " is final index.) Add line.");
 				children.Add(line);
 			}
 			else {
-				Say.Debug("Index " + index + " is in bounds (" + (children.Count -1) + " is final index.) Insert line.");
 				children.Insert(index,line);
 			}
 			OnChanged(new ConversationChangedEventArgs(true));

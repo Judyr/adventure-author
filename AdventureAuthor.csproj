@@ -130,6 +130,10 @@
     </Compile>
     <Compile Include="Conversations\UI\LineDragSourceAdvisor.cs" />
     <Compile Include="Conversations\UI\LineDropTargetAdvisor.cs" />
+    <Compile Include="Conversations\UI\NewOpenConversationWindow.xaml.cs">
+      <DependentUpon>NewOpenConversationWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Conversations\UI\WriterWindow.cs">
       <SubType>Code</SubType>
       <DependentUpon>WriterWindow.xaml</DependentUpon>
@@ -278,6 +282,7 @@
     <Page Include="Conversations\UI\Controls\EndConversationControl.xaml" />
     <Page Include="Conversations\UI\Controls\Lines\LineControl.xaml" />
     <Page Include="Conversations\UI\Controls\SoundControl.xaml" />
+    <Page Include="Conversations\UI\NewOpenConversationWindow.xaml" />
     <Page Include="Conversations\UI\WriterWindow.xaml" />
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
