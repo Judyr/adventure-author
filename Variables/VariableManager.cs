@@ -48,6 +48,7 @@ namespace AdventureAuthor.Variables
 		/// <param name="variable">The variable to add</param>
 		public static void Add(NWN2ScriptVariable variable)
 		{
+			Log.WriteAction(Log.Action.added,"variable",variable.Name);
 	        Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Add(variable);
 			if (VariablesWindow.Instance != null) {
 				VariablesWindow.Instance.RefreshVariablesList();
@@ -61,8 +62,11 @@ namespace AdventureAuthor.Variables
 		/// <param name="variable">The variable to delete</param>
 		/// <param name="removeReferences">True to also remove all references in conversations and scripts, false to only delete the variable</param>
 		public static void Delete(NWN2ScriptVariable variable, bool removeReferences)
-		{
+		{			
+			Log.WriteAction(Log.Action.deleted,"variable",variable.Name);
+			
 			if (removeReferences) {
+				Log.WriteMessage("also deleted references to deleted variable " + variable.Name);
 				RemoveReferences(variable);
 			}
 			

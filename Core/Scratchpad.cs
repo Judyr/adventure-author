@@ -52,7 +52,11 @@ namespace AdventureAuthor.Core
 		[XmlIgnore]
 		public override NWN2GameArea Area {
 			get { return area; }
-			set { area = value; }
+			set 
+			{ 
+				area = value; 
+				LogChanges();
+			}
 		}		
 		
 		[XmlIgnore]
@@ -71,12 +75,12 @@ namespace AdventureAuthor.Core
 		
 		public Scratchpad(Adventure adventure)
 		{
-			this.area = new NWN2GameArea(this.Name,
-				                         adventure.Module.Repository.DirectoryName,
-				                         adventure.Module.Repository);	
-			this.area.HasTerrain = true;
+			this.Area = new NWN2GameArea(this.Name,
+				                     	 adventure.Module.Repository.DirectoryName,
+				                     	 adventure.Module.Repository);
+			this.Area.HasTerrain = true;
 			Size size = new Size(Adventure.MAX_AREA_LENGTH,Adventure.MAX_AREA_LENGTH);
-			this.area.Size = GameArea.GetValidSize(size);
+			this.Area.Size = GameArea.GetValidSize(size);
 			this.owningAdventure = adventure;
 		}
 		

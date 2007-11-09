@@ -108,7 +108,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         private void OnMouseDown(object sender, EventArgs ea)
         {
         	this.attachedTo.Focus();    
-        	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
+        	Log.WriteAction(Log.Action.selected,"line");
         }
     }
 }

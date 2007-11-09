@@ -116,6 +116,10 @@ namespace AdventureAuthor.Utils
 		/// <returns>A string representing the current time in hours, minutes and seconds</returns>
 		public static string GetTimeStamp(bool validForFilename)
 		{
+			if (!validForFilename) {
+				return GetNWN2StyleTimeStamp();
+			}
+			
 			DateTime d = DateTime.Now;
 			StringBuilder timestamp = new StringBuilder();
 			string divider;
@@ -149,6 +153,58 @@ namespace AdventureAuthor.Utils
 			}
 				
 			return timestamp.ToString();
+		}
+		
+		
+		public static string GetNWN2StyleTimeStamp()
+		{
+			// [Thu Nov 08 13:51:20]
+			DateTime d = DateTime.Now;			
+			return "[" + d.DayOfWeek.ToString() + " " + GetMonth(d.Month) + " " + Pad(d.Day.ToString(),2) + " " + 
+				Pad(d.Hour.ToString(),2) + ":" + Pad(d.Minute.ToString(),2) + ":" + Pad(d.Second.ToString(),2) + "]";
+		}
+		
+		
+		private static string Pad(string text, int desiredLength)
+		{
+			int diff = desiredLength - text.Length;
+			for (int i = 0; i < diff; i++) {
+				text = "0" + text;
+			}
+			return text;
+		}
+		
+		
+		private static string GetMonth(int month)
+		{
+			switch (month) {
+				case 1:
+					return "Jan";
+				case 2: 
+					return "Feb";
+				case 3:
+					return "Mar";
+				case 4: 
+					return "Apr";
+				case 5:
+					return "May";
+				case 6: 
+					return "Jun";
+				case 7:
+					return "Jul";
+				case 8: 
+					return "Aug";
+				case 9:
+					return "Sep";
+				case 10: 
+					return "Oct";
+				case 11:
+					return "Nov";
+				case 12: 
+					return "Dec";
+				default:
+					throw new ArgumentException("Not valid month number");
+			}
 		}
 	}
 }

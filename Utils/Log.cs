@@ -29,24 +29,14 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using AdventureAuthor.Core;
+using NWN2Toolset.NWN2.Views;
+using NWN2Toolset.Data;
+using NWN2Toolset.NWN2.Data.Instances;
 
 namespace AdventureAuthor.Utils
 {
 	public static class Log
 	{	
-		// TODO out of date:
-		// How to read log messages:
-			// GetNumber() // hour
-			// GetChar(":")
-			// GetNumber() // minute
-			// GetChar(":")			
-			// GetNumber() // second
-			// GetChar(":")
-			// GetString() //action
-			// if (GetChar("_")) {
-			//    GetString() // subject (might not always be present)
-			// }
-		
 		private static StreamWriter writer = null;
 				
 //		public enum UIAction {
@@ -63,7 +53,7 @@ namespace AdventureAuthor.Utils
 //			// Deferred?
 //		}
 		
-		public enum EffectiveAction {
+		public enum Action {
 			// applications or mini-applications e.g. conversationwriter, expandedgraph:
 			launched,
 			exited,
@@ -72,13 +62,14 @@ namespace AdventureAuthor.Utils
 			opened,
 			closed,
 			
-			
+			// other objects:
 			added,
 			edited,
 			renamed,
 			deleted,
 			saved,
 			set,
+			dragdropped,
 			
 			// selected just means giving it focus:
 			selected,
@@ -131,7 +122,7 @@ namespace AdventureAuthor.Utils
 		/// <param name="logMessage">The message to log. For unique user actions.</param>
 		public static void WriteMessage(string logMessage)
 		{
-			string message = UsefulTools.GetTimeStamp(false) + ": >" + logMessage;
+			string message = UsefulTools.GetTimeStamp(false) + " >" + logMessage;
 			writer.WriteLine(message);
 			writer.Flush();
 		}			
@@ -220,9 +211,9 @@ namespace AdventureAuthor.Utils
 		/// <remarks>Timestamp:EffectiveAction subject -optionalextrainfo</remarks>
 		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
 		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
-		public static void WriteEffectiveAction(EffectiveAction action, string subject)
+		public static void WriteAction(Action action, string subject)
 		{
-			WriteEffectiveAction(action,subject,null);
+			WriteAction(action,subject,null);
 		}		
 		
 		
@@ -233,20 +224,125 @@ namespace AdventureAuthor.Utils
 		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
 		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
 		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-		public static void WriteEffectiveAction(EffectiveAction action, string subject, string extraInfo)
+		public static void WriteAction(Action action, string subject, string extraInfo)
 		{
 			string message;
 			string subjectmsg = subject == null ? "<Subject not logged>" : subject;			
 			
-			if (extraInfo != null) {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
+			if (extraInfo != null && extraInfo != String.Empty) {
+				message = UsefulTools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
+				message = UsefulTools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg;
 			}
 				
 			writer.WriteLine(message);
 			writer.Flush();
+		}
+		
+		
+		public static void WritePropertyChange(NWN2PropertyValueChangedEventArgs e)
+		{
+			foreach (object o in e.ChangedObjects) {
+				string name = GetNWN2Name(o);
+				string type = GetNWN2TypeName(o);
+				string message;
+				if (e.PropertyName.ToLower() == "tag") {
+					message = "'" + e.PropertyName + "' on " + type + " '" + e.OldValue + "' to " + e.NewValue + " (was " + e.OldValue + ")";
+				}
+				else {
+					message = "'" + e.PropertyName + "' on " + type + " '" + name + "' to " + e.NewValue + " (was " + e.OldValue + ")";
+				}
+				
+				WriteAction(Action.set,"property",message);
+			}
+		}
+		
+		
+		public static string GetNWN2Name(object o)
+		{
+			IGameArea area = o as IGameArea;
+			IGameModule module = o as IGameModule;
+			INWN2Instance instance = o as INWN2Instance;
+			if (area != null) {
+				return area.Name;
+			}
+			else if (module != null) {
+				return module.Name;
+			}
+			else if (instance != null) {
+				return instance.Name;				
+			}
+			else {
+				return "<no name>";
+			}
+		}
+		
+		
+		public static string GetNWN2TypeName(object o)
+		{
+			if (o is IGameArea) {
+				return "area";
+			}
+			else if (o is IGameConversation) {
+				return "conversation";
+			}
+			else if (o is IGameModule) {
+				return "module";
+			}
+			else if (o is IGameScript) {
+				return "script";
+			}
+			else if (o is INWN2Instance) {
+				if (o is NWN2CreatureInstance) {
+					return "creature";
+				}
+				else if (o is NWN2DoorInstance) {
+					return "door";
+				}
+				else if (o is NWN2EncounterInstance) {
+					return "encounter";
+				}
+				else if (o is NWN2EnvironmentInstance) {
+					return "environment";
+				}
+				else if (o is NWN2ItemInstance) {
+					return "item";
+				}
+				else if (o is NWN2LightInstance) {
+					return "light";
+				}
+				else if (o is NWN2PlaceableInstance) {
+					return "placeable";
+				}
+				else if (o is NWN2PlacedEffectInstance) {
+					return "placedeffect";
+				}
+				else if (o is NWN2SoundInstance) {
+					return "sound";
+				}
+				else if (o is NWN2StaticCameraInstance) {
+					return "camera";
+				}
+				else if (o is NWN2StoreInstance) {
+					return "store";
+				}
+				else if (o is NWN2TreeInstance) {
+					return "tree";
+				}
+				else if (o is NWN2TriggerInstance) {
+					return "trigger";
+				}
+				else if (o is NWN2WaypointInstance) {
+					return "waypoint";
+				}
+				else {
+					return o.GetType().ToString();
+				}
+			}
+			else {
+				return o.GetType().ToString();
+			}
 		}
 	}
 }

@@ -37,6 +37,8 @@ using NWN2Toolset.NWN2.Views;
 using System.Xml.Serialization;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.Core;
+using AdventureAuthor.Utils;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.Core
 {
@@ -94,6 +96,14 @@ namespace AdventureAuthor.Core
 					
 		[XmlIgnore]
 		public abstract NWN2GameArea Area {	get; set; }
+		
+		internal void LogChanges()
+		{
+			foreach (NWN2InstanceCollection instances in this.Area.AllInstances) {
+				instances.Inserted += new OEICollectionWithEvents.ChangeHandler(AddedGameObject);
+				instances.Removed += new OEICollectionWithEvents.ChangeHandler(DeletedGameObject);
+			}
+		}
 		
 		[XmlIgnore]
 		public abstract Adventure OwningAdventure { get; set; }
@@ -204,5 +214,29 @@ namespace AdventureAuthor.Core
 			}	
 			return false;
 		}
+		
+		
+		private void AddedGameObject(OEICollectionWithEvents cList, int index, object value)
+		{
+			INWN2Instance instance = value as INWN2Instance;
+			if (instance != null) {
+				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value),instance.Name);
+			}
+			else {
+				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value));
+			}
+		}
+
+		
+		private void DeletedGameObject(OEICollectionWithEvents cList, int index, object value)
+		{
+			INWN2Instance instance = value as INWN2Instance;
+			if (instance != null) {
+				Log.WriteAction(Log.Action.deleted,Log.GetNWN2TypeName(value),instance.Name);
+			}
+			else {
+				Log.WriteAction(Log.Action.deleted,Log.GetNWN2TypeName(value));
+			}
+		}	
 	}
 }
