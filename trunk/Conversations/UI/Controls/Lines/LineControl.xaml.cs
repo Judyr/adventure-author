@@ -422,7 +422,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
-        	Log.WriteEffectiveAction(Log.EffectiveAction.selected,"line");
+        	Log.WriteAction(Log.Action.selected,"line");
         	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
         	SelectLine();
         }

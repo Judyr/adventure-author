@@ -5,36 +5,39 @@
 	Height="160"
 	Title="Welcome to the Conversation Writer"
 	WindowStartupLocation="CenterScreen">
-	<Grid>
+	<Grid
+		Background="LemonChiffon">
 		<Panel.Children>
 			<Button
 				Content="Start a new conversation"
-				FontSize="14"
 				Grid.Column="0"
-				Grid.ColumnSpan="2"
 				Grid.Row="0"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Top"
 				Margin="64,20,64,0"
 				Height="34"
 				Name="btn_NewConversation"
-				Click="OnClick_StartNewConversation" />
+				Click="OnClick_StartNewConversation"
+				Grid.ColumnSpan="3"
+				FontSize="14" />
 			<Button
 				FontSize="14"
 				Content="Open an existing conversation"
 				Grid.Column="0"
-				Grid.ColumnSpan="2"
 				Grid.Row="0"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Bottom"
 				Margin="64,0,63,28"
 				Height="34"
 				Name="btn_OpenConversation"
-				Click="OnClick_OpenExistingConversation" />
+				Click="OnClick_OpenExistingConversation"
+				Grid.ColumnSpan="3" />
 		</Panel.Children>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition
-				Width="0.651972157772622*" />
+				Width="0.295264623955432*" />
+			<ColumnDefinition
+				Width="0.35670753381719*" xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation" />
 			<ColumnDefinition
 				Width="0.348027842227378*" />
 		</Grid.ColumnDefinitions>

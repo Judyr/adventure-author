@@ -54,11 +54,6 @@ namespace AdventureAuthor.Conversations.UI
 		public WriterWindow()
 		{
 			InitializeComponent();
-			this.Loaded += delegate 
-			{  
-				NewOpenConversationWindow win = new NewOpenConversationWindow();
-				win.ShowDialog();
-			};
 		}
 		
 		#endregion
@@ -357,7 +352,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="page">The page to display</param>
 		public void DisplayPage(Page page)
 		{
-	        Log.WriteEffectiveAction(Log.EffectiveAction.viewed,"page");
+	        Log.WriteAction(Log.Action.viewed,"page");
 	        
 			// Update references to the currently and previously viewed pages:
 			if (currentPage != page) {
@@ -461,7 +456,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
-				Log.WriteEffectiveAction(Log.EffectiveAction.launched,"expandedgraph");
+				Log.WriteAction(Log.Action.launched,"expandedgraph");
 				expandedGraph = new GraphForm(true);
 				expandedGraph.Open(pages);
 				DisplayPage(currentPage);
@@ -517,7 +512,7 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.opened,"conversation",name);
+			Log.WriteAction(Log.Action.opened,"conversation",name);
 			
 			Open(name,false);
 		}
@@ -543,8 +538,8 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"conversation",name);
-			Log.WriteEffectiveAction(Log.EffectiveAction.opened,"conversation",name);
+			Log.WriteAction(Log.Action.added,"conversation",name);
+			Log.WriteAction(Log.Action.opened,"conversation",name);
 			
 			Open(name,true);
 		}
@@ -742,7 +737,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <remarks>These are usually deleted when they're done with, but will remain if there's a crash.</remarks>
 		private void OnClosed(object sender, EventArgs ea)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.exited,"conversationwriter");
+			Log.WriteAction(Log.Action.exited,"conversationwriter");
 			string path = Adventure.CurrentAdventure.Module.Repository.DirectoryName;
 			DirectoryInfo di = new DirectoryInfo(path);
 			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
@@ -783,7 +778,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 				Say.Debug("Close the conversation.");
 				
-				Log.WriteEffectiveAction(Log.EffectiveAction.closed,"conversation",this.originalFilename);
+				Log.WriteAction(Log.Action.closed,"conversation",this.originalFilename);
 				
 				CloseConversation();
 			}
@@ -845,7 +840,12 @@ namespace AdventureAuthor.Conversations.UI
 			
 			Grid.SetRow(host,0);
 			Grid.SetColumn(host,0);
-			GraphGrid.Children.Add(host);			
+			GraphGrid.Children.Add(host);	
+			
+			Log.WriteAction(Log.Action.launched,"conversationwriter");
+			
+			NewOpenConversationWindow win = new NewOpenConversationWindow();
+			win.ShowDialog();
 		}		
     
 		
@@ -905,9 +905,9 @@ namespace AdventureAuthor.Conversations.UI
 			TextBlock tb0 = new TextBlock();
 			TextBlock tb1 = new TextBlock();
 			TextBlock tb2 = new TextBlock();
-			tb0.FontSize = 22;
-			tb1.FontSize = 22;
-			tb2.FontSize = 22;
+//			tb0.FontSize = 22;
+//			tb1.FontSize = 22;
+//			tb2.FontSize = 22;
 			tb0.Foreground = Brushes.Black;
 			tb1.Foreground = e.Speaker.Colour;
 			tb2.Foreground = Brushes.Black;

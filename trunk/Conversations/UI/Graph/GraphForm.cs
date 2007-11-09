@@ -188,7 +188,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		protected override void OnClosed(EventArgs e)
 		{
 			if (TopLevel) {
-				Log.WriteEffectiveAction(Log.EffectiveAction.exited,"expandedgraph");
+				Log.WriteAction(Log.Action.exited,"expandedgraph");
 			}
 			base.OnClosed(e);
 		}

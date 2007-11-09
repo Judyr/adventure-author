@@ -104,9 +104,10 @@ namespace AdventureAuthor.Variables.UI
 	        				var.Name = VariableNameTextBox.Text;
 	        				var.VariableType = NWN2ScriptVariableType.Int;
         				}
-        				var.ValueInt = val;
-        				this.DialogResult = true;
-        				Close();
+        				if (var.ValueInt != val) {
+        					Log.WriteAction(Log.Action.edited,"variable","set starting value to " + val + " (was " + var.ValueInt + ")");
+        					var.ValueInt = val;
+        				}        				
         			}
         			catch (FormatException) {
         				Say.Warning("You didn't enter a valid number for the starting value.");
@@ -121,14 +122,18 @@ namespace AdventureAuthor.Variables.UI
 	 					var.Name = VariableNameTextBox.Text;
 	 					var.VariableType = NWN2ScriptVariableType.String;
         			}
- 					var.ValueString = VariableStartingValueTextBox.Text;
- 					this.DialogResult = true;
- 					Close();
+        			if (var.ValueString != VariableStartingValueTextBox.Text) {
+        				Log.WriteAction(Log.Action.edited,"variable","set starting value to " + VariableStartingValueTextBox.Text + 
+        				                " (was " + var.ValueString + ")");
+        				var.ValueString = VariableStartingValueTextBox.Text;
+        			}     
         		}
             	else {
             		throw new ArgumentException("Currently you can only add " + STRING_TERM + " and " + INTEGER_TERM + " variables - " 
             		                            + var.VariableType.ToString() + " is invalid.");            		
             	}
+        		this.DialogResult = true;
+        		Close();
         	}
         }
         

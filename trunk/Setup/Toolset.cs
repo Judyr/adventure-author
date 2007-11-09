@@ -39,6 +39,7 @@ using AdventureAuthor.Variables.UI;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
 using NWN2Toolset;
+using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
@@ -61,6 +62,285 @@ namespace AdventureAuthor.Setup
 		
 		#endregion Global variables	
 			
+
+		
+		private static bool temp2(Control c)
+		{
+			if (c == null) {
+				return false;
+			}
+			
+			
+				ContextMenu menu = c.ContextMenu;
+				
+				if (menu != null) {
+					foreach (MenuItem mi in menu.MenuItems) {
+						if (mi.Text == "Properties (new window)") {
+							Say.Debug(mi.ToString());
+							Say.Debug("Owned by: " + c.ToString() + " of size " + menu.MenuItems.Count + ", menu is named " + menu.Name);
+							c.ContextMenu = null;
+//							mi.Click += delegate { Log.WriteMessage("RARG I WUR CLICKED (context menu)"); };
+							return true;
+						}
+					}
+				}
+				
+				return false;
+		}
+		
+		/// <summary>
+		/// Performs a myriad of modifications to the user interface at launch.
+		/// </summary>
+		internal static void SetupUI()
+		{
+			// Nullify every original context menu
+			foreach (Control c in GetControls(form.App)) {
+				if (c.ContextMenu != null) {
+					c.ContextMenu.MenuItems.Clear();
+				}
+				if (c.ContextMenuStrip != null) {
+					c.ContextMenuStrip.Items.Clear();
+				}
+				
+//				temp2(c);
+//				if (temp2(c)) {
+//					// found it
+//					
+//				}
+				
+				
+//				c.ContextMenu = null;
+//				c.ContextMenuStrip = null;
+			}	
+			
+			// Set preferences:
+			NWN2ToolsetGeneralPreferences general = NWN2ToolsetPreferences.Instance.General;
+			NWN2ToolsetGraphicsPreferences gfx = NWN2ToolsetPreferences.Instance.Graphics;			
+			
+			general.Autosave = false;			
+
+			gfx.AmbientSound = false;			
+			gfx.Bloom = true;
+			gfx.DisplaySurfaceMesh = false;
+			gfx.FarPlane = 1000.0F;
+			gfx.Fog = false;
+			gfx.UseAreaFarPlane = false;
+						
+			// Get every field of NWN2ToolsetMainForm.App:
+			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
+															  BindingFlags.NonPublic |
+			                                                  BindingFlags.Instance |
+			                                                  BindingFlags.Static);	
+					
+			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
+			foreach (FieldInfo fi in fields) {		
+				
+				// Hide everything except for the area contents and blueprints, and add a chapter list:
+				
+				if (fi.FieldType == typeof(DockingManager)) {
+					dockingManager = fi.GetValue(form.App) as DockingManager;
+					
+					//TODO: try iterating through dockingManager object, copying every field
+					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
+					
+					// Lock the interface:
+//					dockingManager.AllowFloating = false;
+//					dockingManager.AllowRedocking = false;
+//					dockingManager.AllowResize = false;
+			
+					// NB: Trying to hide specific objects that are already hidden (or show those
+					// that are showing) seems to lead to an InvalidOperationException.
+					dockingManager.ShowAllContents();					
+					
+					List<Content> contents = new List<Content>(5);
+					
+					foreach (Content c in dockingManager.Contents) {
+						if (c.FullTitle == "Conversations") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Campaign Conversations") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Campaign Scripts") {
+							contents.Add(c);
+						}
+						else if (c.FullTitle == "Search Results") {
+							contents.Add(c);
+						}
+						else if (c.Control is NWN2VerifyOutputControl) {
+							contents.Add(c);
+						}
+					}		
+					
+					foreach (Content c in contents) {
+						if (c.Visible) {
+							dockingManager.HideContent(c);
+						}
+					}
+					
+															
+//					// Lock the interface:
+//					foreach (Content c in dockingManager.Contents) {	
+//						c.HideButton = false;
+//						c.CloseButton = false;
+//					}					
+				
+					// Certain windows should be automatically hidden if the toolset ever tries to display them:
+					dockingManager.ContentShown += new DockingManager.ContentHandler(HideContent);
+				}
+				
+				// Hide the resource viewer controls:
+				else if (fi.FieldType == typeof(TabbedGroups)) {
+					tabbedGroupsCollection = (TabbedGroups)fi.GetValue(form.App);
+					
+					// Hide the close [X] control, change the appearance:
+					SetupResourceViewersLeaf();					
+					
+					// When all resource viewers are closed, the resource viewers window (ActiveLeaf) is disposed 
+					// and then created again later on; so on ActiveLeafChanged, reapply UI modifications:
+					tabbedGroupsCollection.ActiveLeafChanged += delegate { SetupResourceViewersLeaf(); };
+				}
+				
+				else if (fi.FieldType == typeof(NWN2PropertyGrid)) {
+					NWN2PropertyGrid grid = (NWN2PropertyGrid)fi.GetValue(form.App);
+					grid.ValueChanged += delegate(object sender, NWN2PropertyValueChangedEventArgs e) { Log.WritePropertyChange(e); };
+					grid.PreviewStateChanged += delegate { Log.WriteMessage("Preview state changed on property grid (??)"); };
+				}
+				
+				// Get rid of the graphics preferences toolbar:
+				else if (fi.FieldType == typeof(GraphicsPreferencesToolBar)) {
+//					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
+				}
+				
+				// Prevent the object manipulation toolbar from being modified or moved:
+				else if (fi.FieldType == typeof(TD.SandBar.ToolBar)) {
+					TD.SandBar.ToolBar toolBar = fi.GetValue(form.App) as TD.SandBar.ToolBar;
+					toolBar.AddRemoveButtonsVisible = false;
+					toolBar.Movable = false;					
+				}
+								
+				// Get rid of the "Filters:" label on the object manipulation toolbar:
+				else if (fi.FieldType == typeof(LabelItem)) {
+//					LabelItem labelItem = fi.GetValue(form.App) as LabelItem;
+//					if (labelItem.Text == "Filters:") {
+//						labelItem.Dispose();
+//					}
+				}
+				
+				// Get rid of "Show/Hide" and "Selection" menus on the object manipulation toolbar:
+				else if (fi.FieldType == typeof(DropDownMenuItem)) {
+//					DropDownMenuItem dropDownMenuItem = fi.GetValue(form.App) as DropDownMenuItem;
+//					if (dropDownMenuItem.Text == "Show/Hide" ||
+//					    dropDownMenuItem.Text == "Selection") {
+//						dropDownMenuItem.Dispose();
+//					}
+				}
+				
+				// Get rid of "Snap", "Paint Spawn Point", "Create Transition..." 
+				// and "Drag Selection" buttons on the object manipulation toolbar:
+				else if (fi.FieldType == typeof(ButtonItem)) {;
+//					ButtonItem buttonItem = (ButtonItem)fi.GetValue(form.App);	
+//					
+//					string[] dispose = new string[] {"Snap",
+//													 "Paint Spawn Point",
+//													 "Create Transition...",
+//													 "Drag Selection"};
+//													 
+//					foreach (string text in dispose) {
+//						if (buttonItem.Text == text) {
+//							buttonItem.Dispose();					
+//						}						
+//					}									
+//					if (buttonItem != null) {
+//						buttonItem.Font = Adventure.ADVENTURE_AUTHOR_FONT;
+//					}
+				}				
+				
+				// Get rid of various menu items:
+				else if (fi.FieldType == typeof(MenuButtonItem)) {
+//					MenuButtonItem menuButtonItem = (MenuButtonItem)fi.GetValue(form.App);	
+//					
+//					string[] dispose = new string[] {"Create Transition...",
+//													 "Paint Spawn Point",
+//													 "Module &Properties",
+//													 "&Journal",
+//													 "&2DA File...",
+//													 "Mode"
+//													 };
+//					foreach (string text in dispose) {
+//						if (menuButtonItem.Text == text) {
+//							menuButtonItem.Dispose();
+//							continue;
+//						}						
+//					}
+				}
+				// Deal with MenuBarItems:
+				else if (fi.FieldType == typeof(MenuBarItem)) {
+					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
+										
+					if (menuBarItem.Text == "&File") {	
+						SetupFileMenu(menuBarItem);
+					}
+//					else if (menuBarItem.Text == "&Edit") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&View") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&Window") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&Plugins") {
+//						
+//					}
+//					else if (menuBarItem.Text == "&Help") {
+//						
+//					}
+				}
+				else if (fi.FieldType == typeof(ToolBarContainer)) {
+//					try {
+//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
+//						
+//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+//						if (tbc.Name == "topSandBarDock") {
+//							TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();	
+//							tb.AddRemoveButtonsVisible = false;
+//							tb.AllowMerge = true;
+//							
+//							ButtonItem cw = new ButtonItem();
+//							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
+//							cw.Image = b;	
+//							cw.Text = "Conversation Writer";
+//							cw.Activate += delegate { LaunchConversationWriter(); };
+//							tb.Items.Add(cw);
+//							
+//							ButtonItem vm = new ButtonItem();
+//							vm.Text = "Variable Manager";
+//							vm.Activate += delegate { LaunchVariableManager(); };
+//							tb.Items.Add(vm);
+//							
+//							tbc.Controls.Add(tb);
+//						}
+//					} catch (Exception e) {
+//						Say.Error(e.ToString());
+//					}
+				}
+			}
+			
+			// Create and show a chapter list window:
+			CreateChapterList();
+			UpdateChapterList();
+			
+			// Update title bar:
+			UpdateTitleBar();
+		}
+		
+		
+		
+		
+		
+		
+		
 		/// <summary>
 		/// Clears the user interface after an Adventure has been closed.
 		/// </summary>
@@ -114,23 +394,16 @@ namespace AdventureAuthor.Setup
 		}
 			
 		/// <summary>
-		/// If a Properties or Verify window is displayed, hide it again.
+		/// If a Verify window or the original conversation editor is displayed, hide it again.
 		/// </summary>
 		private static void HideContent(Content c, EventArgs ea)
 		{
 			if (c.Control is NWN2ConversationViewer) {
 				dockingManager.HideContent(c);
 			}
-			
-			return;
-			
-			
-			if (c.Control is NWN2PropertyGrid) {
-				dockingManager.HideContent(c);
-			}
 			if (form.App.VerifyContent.Visible) {
 				dockingManager.HideContent(form.App.VerifyContent);
-			}			
+			}	
 		}
 		
 		private static void CreateChapterList()
@@ -280,254 +553,6 @@ namespace AdventureAuthor.Setup
 			}
 		}
 				
-		
-		/// <summary>
-		/// Performs a myriad of modifications to the user interface at launch.
-		/// </summary>
-		internal static void SetupUI()
-		{
-			// Nullify every original context menu
-			foreach (Control c in GetControls(form.App)) {
-				c.ContextMenu = null;
-				c.ContextMenuStrip = null;
-			}	
-			
-			// Set preferences:
-			NWN2ToolsetGeneralPreferences general = NWN2ToolsetPreferences.Instance.General;
-			NWN2ToolsetGraphicsPreferences gfx = NWN2ToolsetPreferences.Instance.Graphics;			
-			
-			general.Autosave = false;			
-
-			gfx.AmbientSound = false;			
-			gfx.Bloom = true;
-			gfx.DisplaySurfaceMesh = false;
-			gfx.FarPlane = 1000.0F;
-			gfx.Fog = false;
-			gfx.UseAreaFarPlane = false;
-			
-			// Get every field of NWN2ToolsetMainForm.App:
-			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
-															  BindingFlags.NonPublic |
-			                                                  BindingFlags.Instance |
-			                                                  BindingFlags.Static);	
-					
-			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
-			foreach (FieldInfo fi in fields) {		
-				
-				// Hide everything except for the area contents and blueprints, and add a chapter list:
-				if (fi.FieldType == typeof(DockingManager)) {
-					dockingManager = fi.GetValue(form.App) as DockingManager;
-					
-					//TODO: try iterating through dockingManager object, copying every field
-					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
-					
-					// Lock the interface:
-//					dockingManager.AllowFloating = false;
-//					dockingManager.AllowRedocking = false;
-//					dockingManager.AllowResize = false;
-			
-					// NB: Trying to hide specific objects that are already hidden (or show those
-					// that are showing) seems to lead to an InvalidOperationException.
-					dockingManager.ShowAllContents();					
-					
-					List<Content> contents = new List<Content>(5);
-					
-					foreach (Content c in dockingManager.Contents) {
-						if (c.FullTitle == "Conversations") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Campaign Conversations") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Campaign Scripts") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Search Results") {
-							contents.Add(c);
-						}
-						else if (c.Control is NWN2VerifyOutputControl) {
-							contents.Add(c);
-						}
-					}		
-					
-					foreach (Content c in contents) {
-						if (c.Visible) {
-							dockingManager.HideContent(c);
-						}
-					}
-					
-															
-//					// Lock the interface:
-//					foreach (Content c in dockingManager.Contents) {	
-//						c.HideButton = false;
-//						c.CloseButton = false;
-//					}					
-				
-					// If the Properties or Verify window is displayed, hide it again immediately:
-					dockingManager.ContentShown += new DockingManager.ContentHandler(HideContent);
-				}
-				
-				// Hide the resource viewer controls:
-				else if (fi.FieldType == typeof(TabbedGroups)) {
-					tabbedGroupsCollection = (TabbedGroups)fi.GetValue(form.App);
-					
-					// Hide the close [X] control, change the appearance:
-					SetupResourceViewersLeaf();					
-					
-					// When all resource viewers are closed, the resource viewers window (ActiveLeaf) is disposed 
-					// and then created again later on; so on ActiveLeafChanged, reapply UI modifications:
-					tabbedGroupsCollection.ActiveLeafChanged += delegate { SetupResourceViewersLeaf(); };
-				}
-				
-				// Get rid of the graphics preferences toolbar:
-				else if (fi.FieldType == typeof(GraphicsPreferencesToolBar)) {
-//					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
-				}
-				
-				// Prevent the object manipulation toolbar from being modified or moved:
-				else if (fi.FieldType == typeof(TD.SandBar.ToolBar)) {
-					TD.SandBar.ToolBar toolBar = fi.GetValue(form.App) as TD.SandBar.ToolBar;
-					toolBar.AddRemoveButtonsVisible = false;
-					toolBar.Movable = false;					
-				}
-								
-				// Get rid of the "Filters:" label on the object manipulation toolbar:
-				else if (fi.FieldType == typeof(LabelItem)) {
-					LabelItem labelItem = fi.GetValue(form.App) as LabelItem;
-					if (labelItem.Text == "Filters:") {
-						labelItem.Dispose();
-					}
-				}
-				
-				// Get rid of "Show/Hide" and "Selection" menus on the object manipulation toolbar:
-				else if (fi.FieldType == typeof(DropDownMenuItem)) {
-//					DropDownMenuItem dropDownMenuItem = fi.GetValue(form.App) as DropDownMenuItem;
-//					if (dropDownMenuItem.Text == "Show/Hide" ||
-//					    dropDownMenuItem.Text == "Selection") {
-//						dropDownMenuItem.Dispose();
-//					}
-				}
-				
-				// Get rid of "Snap", "Paint Spawn Point", "Create Transition..." 
-				// and "Drag Selection" buttons on the object manipulation toolbar:
-				else if (fi.FieldType == typeof(ButtonItem)) {;
-//					ButtonItem buttonItem = (ButtonItem)fi.GetValue(form.App);	
-//					
-//					string[] dispose = new string[] {"Snap",
-//													 "Paint Spawn Point",
-//													 "Create Transition...",
-//													 "Drag Selection"};
-//													 
-//					foreach (string text in dispose) {
-//						if (buttonItem.Text == text) {
-//							buttonItem.Dispose();					
-//						}						
-//					}									
-//					if (buttonItem != null) {
-//						buttonItem.Font = Adventure.ADVENTURE_AUTHOR_FONT;
-//					}
-				}				
-				
-				// Get rid of various menu items:
-				else if (fi.FieldType == typeof(MenuButtonItem)) {
-//					MenuButtonItem menuButtonItem = (MenuButtonItem)fi.GetValue(form.App);	
-//					
-//					string[] dispose = new string[] {"Create Transition...",
-//													 "Paint Spawn Point",
-//													 "Module &Properties",
-//													 "&Journal",
-//													 "&2DA File...",
-//													 "Mode"
-//													 };
-//					foreach (string text in dispose) {
-//						if (menuButtonItem.Text == text) {
-//							menuButtonItem.Dispose();
-//							continue;
-//						}						
-//					}
-				}
-				// Deal with MenuBarItems:
-				else if (fi.FieldType == typeof(MenuBarItem)) {
-					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
-										
-					if (menuBarItem.Text == "&File") {	
-						SetupFileMenu(menuBarItem);
-					}
-//					else if (menuBarItem.Text == "&Edit") {
-//						
-//					}
-//					else if (menuBarItem.Text == "&View") {
-//						
-//					}
-//					else if (menuBarItem.Text == "&Window") {
-//						
-//					}
-//					else if (menuBarItem.Text == "&Plugins") {
-//						
-//					}
-//					else if (menuBarItem.Text == "&Help") {
-//						
-//					}
-				}
-				else if (fi.FieldType == typeof(ToolBarContainer)) {
-//					try {
-//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
-//						
-//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-//						if (tbc.Name == "topSandBarDock") {
-//							TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();	
-//							tb.AddRemoveButtonsVisible = false;
-//							tb.AllowMerge = true;
-//							
-//							ButtonItem cw = new ButtonItem();
-//							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
-//							cw.Image = b;	
-//							cw.Text = "Conversation Writer";
-//							cw.Activate += delegate { LaunchConversationWriter(); };
-//							tb.Items.Add(cw);
-//							
-//							ButtonItem vm = new ButtonItem();
-//							vm.Text = "Variable Manager";
-//							vm.Activate += delegate { LaunchVariableManager(); };
-//							tb.Items.Add(vm);
-//							
-//							tbc.Controls.Add(tb);
-//						}
-//					} catch (Exception e) {
-//						Say.Error(e.ToString());
-//					}
-				}
-			}
-			
-			// Create and show a chapter list window:
-			CreateChapterList();
-			UpdateChapterList();
-			
-			// Update title bar:
-			UpdateTitleBar();
-			
-			
-//			
-//								dockingManager.Dispose();
-//					
-//					DockingManager myDockingManager 
-//						= new DockingManager(chapterListContent,
-//						                     Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black);
-////					
-////					myDockingManager.Contents = dockingManager.Contents;
-////					myDockingManager.Factory = dockingManager.Factory;
-////					myDockingManager.FeedbackStyle = dockingManager.FeedbackStyle;
-////					myDockingManager.InnerControl = dockingManager.InnerControl;
-////					myDockingManager.InnerMinimum = dockingManager.InnerMinimum;
-////					myDockingManager.OuterControl = dockingManager.OuterControl;
-//					
-//					fi.SetValue(form.App,myDockingManager);
-//					                                                     
-//					dockingManager = fi.GetValue(form.App) as DockingManager;
-			
-			
-			
-		}
 		
 		/// <summary>
 		/// Returns all controls that are owned by a given control

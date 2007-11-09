@@ -29,14 +29,19 @@ using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
+using System.Reflection;
+using AdventureAuthor.Conversations;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Data;
+using NWN2Toolset.NWN2.Data.Factions;
+using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.Views;
 using OEIShared.UI;
+using OEIShared.Utils;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core
@@ -167,16 +172,72 @@ namespace AdventureAuthor.Core
 		[XmlIgnore]
 		public NWN2GameModule Module {
 			get { return module; }
-			set { 
+			set 
+			{ 
 				if (value.LocationType != ModuleLocationType.Directory) {
 					throw new InvalidOperationException("An Adventure's module must be directory-based - tried to assign a module " +
-					                                    "of type " + value.LocationType.ToString() + ".");
+				                                    	"of type " + value.LocationType.ToString() + ".");
 				}
-				else {				
-					module = value; 
-				}
+				module = value; 
+				LogChanges();
 			}
-		}				
+		}
+		
+		internal void LogChanges()
+		{
+			// this seems to get called 6 times every time you set the start location (??):
+			module.ModuleInfo.EntryPointChanged += delegate
+			{ 
+				Log.WriteAction(Log.Action.set,"startlocation"); 
+			};
+			module.ModuleExpanded += delegate 
+			{
+				Log.WriteMessage("module was 'expanded' (??)");
+			};
+			module.NameChanged += delegate(object sender, NameChangedEventArgs e) 
+			{  
+				if (e.OldName != e.NewName) { // ignore if this has been raised on a save
+					Log.WriteAction(Log.Action.renamed,"module","'" + e.NewName + "' from '" + e.OldName + "'");
+				}
+			};
+			
+			module.Areas.Inserted += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
+			{  
+				Log.WriteAction(Log.Action.added,"area",key.ToString());
+			};
+			module.Areas.Removed += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
+			{  
+				Log.WriteAction(Log.Action.deleted,"area",key.ToString());
+			};
+				
+			module.Scripts.Inserted += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
+			{  
+				Log.WriteAction(Log.Action.added,"script",key.ToString());
+			};
+			module.Scripts.Removed += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
+			{  
+				Log.WriteAction(Log.Action.deleted,"script",key.ToString());
+			};
+			
+			module.FactionData.Factions.Inserted += delegate(OEICollectionWithEvents cList, int index, object value)
+			{  
+				Log.WriteAction(Log.Action.added,"faction",((NWN2Faction)value).Name);
+			};				
+			module.FactionData.Factions.Removed += delegate(OEICollectionWithEvents cList, int index, object value)
+			{  
+				Log.WriteAction(Log.Action.deleted,"faction",((NWN2Faction)value).Name);
+			};	
+			
+			module.Journal.Categories.Inserted += delegate(OEICollectionWithEvents cList, int index, object value)
+			{  
+				Log.WriteAction(Log.Action.added,"journalcategory");
+			};				
+			module.Journal.Categories.Removed += delegate(OEICollectionWithEvents cList, int index, object value)
+			{  
+				Log.WriteAction(Log.Action.deleted,"journalcategory");
+			};	
+		}	
+		
 		
 		#endregion Fields
 		
@@ -201,9 +262,9 @@ namespace AdventureAuthor.Core
 			mod.FileName = Path.Combine(form.ModulesDirectory,mod.Name);	
 			mod.ModuleInfo.XPScale = 0; // player will gain no experience
 			
-			this.module = mod;
-			this.name = mod.Name;
-			this.modulePath = mod.FileName;
+			this.Module = mod;
+			this.name = Module.Name;
+			this.modulePath = Module.FileName;
 			this.owningUser = Adventure.CurrentUser;
 			this.Chapters = new SerializableDictionary<string,Chapter>();
 			this.scratch = new Scratchpad(this);
@@ -492,8 +553,8 @@ namespace AdventureAuthor.Core
 			}
 							
 			// Set up the Adventure and module to refer to each other again:
-			this.module = form.App.Module;
-			this.module.LocationType = ModuleLocationType.Directory;	
+			form.App.Module.LocationType = ModuleLocationType.Directory;	
+			this.Module = form.App.Module;
 							
 			foreach (NWN2GameArea area in this.module.Areas.Values) {	
 				if (Chapters.ContainsKey(area.Name)) {

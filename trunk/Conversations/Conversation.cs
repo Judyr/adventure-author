@@ -204,7 +204,10 @@ namespace AdventureAuthor.Conversations
 		{
 			Speaker existingSpeaker = GetSpeaker(tag);
 			if (existingSpeaker == null) {	
-				Log.WriteEffectiveAction(Log.EffectiveAction.added,"speaker",tag);
+				if (tag == String.Empty) {
+					tag = "player";
+				}
+				Log.WriteAction(Log.Action.added,"speaker",tag);
 				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
@@ -271,7 +274,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't add a null action.");
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.added,"action",ScriptHelper.GetDescriptionForAction(action));
+				Log.WriteAction(Log.Action.added,"action",ScriptHelper.GetDescriptionForAction(action));
 				line.Actions.Add(action);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -295,7 +298,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Can't add a null condition.");
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.added,"condition",ScriptHelper.GetDescriptionForCondition(condition));
+				Log.WriteAction(Log.Action.added,"condition",ScriptHelper.GetDescriptionForCondition(condition));
 				line.Conditions.Add(condition);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -319,7 +322,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Action " + action.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"action",ScriptHelper.GetDescriptionForAction(action));
+				Log.WriteAction(Log.Action.deleted,"action",ScriptHelper.GetDescriptionForAction(action));
 				line.Actions.Remove(action);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -377,7 +380,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Condition " + condition.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"condition",ScriptHelper.GetDescriptionForAction(condition));
+				Log.WriteAction(Log.Action.deleted,"condition",ScriptHelper.GetDescriptionForAction(condition));
 				line.Conditions.Remove(condition);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
@@ -387,7 +390,7 @@ namespace AdventureAuthor.Conversations
 		// TODO
 		public void SetCameraAngle(NWN2ConversationConnector line)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.set,"camera");
+			Log.WriteAction(Log.Action.set,"camera");
 			throw new NotImplementedException();
 //			OnChanged(new ConversationChangedEventArgs(false));
 		}		
@@ -412,7 +415,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Action " + originalAction.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"action",ScriptHelper.GetDescriptionForAction(newAction));
+				Log.WriteAction(Log.Action.edited,"action",ScriptHelper.GetDescriptionForAction(newAction));
 				line.Actions.Remove(originalAction);
 				line.Actions.Add(newAction);
 				OnChanged(new ConversationChangedEventArgs(false));
@@ -439,7 +442,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Condition " + originalCondition.Script.FullName + " does not exist on line + " + line.ToString());
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"condition",ScriptHelper.GetDescriptionForAction(newCondition));
+				Log.WriteAction(Log.Action.edited,"condition",ScriptHelper.GetDescriptionForAction(newCondition));
 				line.Conditions.Remove(originalCondition);
 				line.Conditions.Add(newCondition);
 				OnChanged(new ConversationChangedEventArgs(false));
@@ -461,7 +464,7 @@ namespace AdventureAuthor.Conversations
 				Say.Error("Cannot assign a null string to this line.");
 			}
 			else {
-				Log.WriteEffectiveAction(Log.EffectiveAction.edited,"linetext");//,newText);
+				Log.WriteAction(Log.Action.edited,"line");
 				line.Line.Text = GetOEIStringFromString(newText);
 				
 				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
@@ -487,10 +490,10 @@ namespace AdventureAuthor.Conversations
         	}
 			else {
         		if (sound == null) {
-        			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"sound");
+        			Log.WriteAction(Log.Action.deleted,"sound");
         		}
         		else {
-        			Log.WriteEffectiveAction(Log.EffectiveAction.set,"sound");
+        			Log.WriteAction(Log.Action.set,"sound");
         		}
 				line.Sound = sound; // valid for this to be null
 				OnChanged(new ConversationChangedEventArgs(false));
@@ -508,7 +511,7 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created branch</returns>
 		public NWN2ConversationConnector AddLineToChoice(NWN2ConversationConnector parent)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"branch");
+			Log.WriteAction(Log.Action.added,"branch");
 			NWN2ConversationConnector createdLine = _AddLineToChoice(parent);
 			OnChanged(new ConversationChangedEventArgs(true));
 			return createdLine;
@@ -550,7 +553,7 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created line</returns>
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"line",speaker);
+			Log.WriteAction(Log.Action.added,"line",speaker);
 			NWN2ConversationConnector createdLine = _AddLine(preceding,speaker);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
@@ -578,8 +581,9 @@ namespace AdventureAuthor.Conversations
 		
 		public void DeleteEntireChoice(NWN2ConversationConnector parent)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"choice");
-			GetChildren(parent).Clear();
+			NWN2ConversationConnectorCollection children = GetChildren(parent);
+			Log.WriteAction(Log.Action.deleted,"choice",ScriptHelper.GetPlayerIfBlank(children[0].Speaker));
+			children.Clear();
         	OnChanged(new ConversationChangedEventArgs(true));
 		}
 		
@@ -595,7 +599,7 @@ namespace AdventureAuthor.Conversations
 				return null;
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"branch");
+			Log.WriteAction(Log.Action.deleted,"branch");
 			
 			NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.nwnConv.RemoveNode(line);
 			
@@ -611,8 +615,8 @@ namespace AdventureAuthor.Conversations
 		
 		public void DeleteLine(NWN2ConversationConnector line)
 		{			
-			Log.WriteEffectiveAction(Log.EffectiveAction.deleted,"line");
-			DeleteLine(line);			
+			Log.WriteAction(Log.Action.deleted,"line");
+			_DeleteLine(line);			
 			OnChanged(new ConversationChangedEventArgs(false));
 		}
 		
@@ -730,6 +734,8 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineIntoChoice(NWN2ConversationConnector line, NWN2ConversationConnector choiceParent)
 		{
+			Log.WriteAction(Log.Action.dragdropped,"line","into choice, creating a new branch");
+			
 			NWN2ConversationConnectorCollection existingBranches = GetChildren(choiceParent);
 			
 			if (line == null) {			
@@ -773,6 +779,8 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineWithinChoice(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingBranch)
 		{
+			Log.WriteAction(Log.Action.dragdropped,"line","within choice, re-ordering existing branches");
+			                
 			if (line == null) {			
 				throw new ArgumentNullException("line","Cannot operate on a null line.");
 			}
@@ -813,6 +821,8 @@ namespace AdventureAuthor.Conversations
 		/// <param name="newPrecedingLine">The line that should now come before it (not necessarily the parent)</param>
 		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingLine)
 		{
+			Log.WriteAction(Log.Action.dragdropped,"line");
+			
 			if (line == null) {			
 				Say.Debug("line == null");
 				throw new ArgumentNullException("line","Cannot move a null line.");
@@ -847,7 +857,7 @@ namespace AdventureAuthor.Conversations
 				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.saved,"conversation");
+			Log.WriteAction(Log.Action.saved,"conversation");
 			
 			// Changes to a line's text are not saved immediately, so save changes before going any further:
 			if (WriterWindow.Instance.SelectedLineControl != null && !IsFiller(WriterWindow.Instance.SelectedLineControl.Nwn2Line)) {
@@ -1084,7 +1094,7 @@ namespace AdventureAuthor.Conversations
 		
 		public void MakeLineIntoChoice(NWN2ConversationConnector memberOfBranch)
 		{
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"choice","made existing line into choice");
+			Log.WriteAction(Log.Action.added,"choice",ScriptHelper.GetPlayerIfBlank(memberOfBranch.Speaker) + " (by making choice from an existing line)");
 			Conversation.CurrentConversation.InsertNewLineWithoutReparenting(memberOfBranch.Parent,memberOfBranch.Speaker);
 			OnChanged(new ConversationChangedEventArgs(true));
 		}
@@ -1097,7 +1107,7 @@ namespace AdventureAuthor.Conversations
 				throw new InvalidOperationException("Tried to add a branch at the end of a page that already had one.");
 			}
 			
-			Log.WriteEffectiveAction(Log.EffectiveAction.added,"choice",speakerTag);
+			Log.WriteAction(Log.Action.added,"choice",ScriptHelper.GetPlayerIfBlank(speakerTag) + " (by adding new choice)");
 			
         	NWN2ConversationConnector parent;
         	if (WriterWindow.Instance.CurrentPage.LineControls.Count > 0) {

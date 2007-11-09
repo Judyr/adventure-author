@@ -68,7 +68,11 @@ namespace AdventureAuthor.Core
 		[XmlIgnore]
 		public override NWN2GameArea Area {
 			get { return area; }
-			set { area = value; }
+			set 
+			{ 
+				area = value; 
+				LogChanges();
+			}
 		}
 		
 		[XmlIgnore]
@@ -96,9 +100,9 @@ namespace AdventureAuthor.Core
 		{
 			this.owningAdventure = adventure;
 			this.name = name; // name is set both here..
-			this.area = new NWN2GameArea(name, //..and here
-				                         adventure.Module.Repository.DirectoryName,
-				                         adventure.Module.Repository);
+			this.Area = new NWN2GameArea(name, //..and here
+				                     	 adventure.Module.Repository.DirectoryName,
+				                     	 adventure.Module.Repository);
 			this.introduction = String.Empty;
 		}
 				
@@ -116,8 +120,8 @@ namespace AdventureAuthor.Core
 			this.owningAdventure = adventure;
 			this.name = name;
 			this.introduction = introduction;
-			this.area.HasTerrain = exterior;	
-			this.area.Size = GameArea.GetValidSize(size);
+			this.Area.HasTerrain = exterior;	
+			this.Area.Size = GameArea.GetValidSize(size);
 		}
 	
 		#endregion Constructors
@@ -275,7 +279,7 @@ namespace AdventureAuthor.Core
 				}
 				else {
 					this.name = name;
-					this.area.Name = name;
+					this.Area.Name = name;
 					return true;
 				}
 			}
