@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -36,15 +37,24 @@ using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
-using Crownwood.DotNetMagic.Controls;
+using crown = Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
+using Crownwood.DotNetMagic.Common;
 using NWN2Toolset;
+using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.Factions;
+using NWN2Toolset.NWN2.Data.Journal;
+using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.Data.Instances;
+using NWN2Toolset.NWN2.Data.Templates;
+using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
 using NWN2Toolset.Plugins;
+using GlacialComponents.Controls.GlacialTreeList;
 using OEIShared.Utils;
+using OEIShared.IO.TwoDA;
 using TD.SandBar;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using win = System.Windows;
@@ -56,9 +66,11 @@ namespace AdventureAuthor.Setup
 		#region Global variables
 		
 		private static DockingManager dockingManager = null;		
-		private static Crownwood.DotNetMagic.Controls.TabbedGroups tabbedGroupsCollection = null; // owns the TabGroupLeaf which holds resource viewers		
+		private static Crownwood.DotNetMagic.Controls.TabbedGroups tabbedGroupsCollection = null; 
+		// owns the TabGroupLeaf which holds resource viewers
 		private static Content chapterListContent = null;
 		private static Zone leftZone = null;
+		private static NWN2AreaContentsView areaContentsView = null;
 		
 		#endregion Global variables	
 			
@@ -102,16 +114,23 @@ namespace AdventureAuthor.Setup
 					c.ContextMenuStrip.Items.Clear();
 				}
 				
+				
 //				temp2(c);
 //				if (temp2(c)) {
 //					// found it
 //					
 //				}
 				
-				
+			
 //				c.ContextMenu = null;
 //				c.ContextMenuStrip = null;
-			}	
+			}
+			
+			NWN2AreaViewer.MouseModeChanged += delegate
+			{
+				Log.WriteMessage("entered mode " + NWN2AreaViewer.MouseMode);
+			};
+			
 			
 			// Set preferences:
 			NWN2ToolsetGeneralPreferences general = NWN2ToolsetPreferences.Instance.General;
@@ -133,8 +152,8 @@ namespace AdventureAuthor.Setup
 			                                                  BindingFlags.Static);	
 					
 			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
-			foreach (FieldInfo fi in fields) {		
-				
+			foreach (FieldInfo fi in fields) {	
+								
 				// Hide everything except for the area contents and blueprints, and add a chapter list:
 				
 				if (fi.FieldType == typeof(DockingManager)) {
@@ -152,31 +171,31 @@ namespace AdventureAuthor.Setup
 					// that are showing) seems to lead to an InvalidOperationException.
 					dockingManager.ShowAllContents();					
 					
-					List<Content> contents = new List<Content>(5);
-					
-					foreach (Content c in dockingManager.Contents) {
-						if (c.FullTitle == "Conversations") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Campaign Conversations") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Campaign Scripts") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Search Results") {
-							contents.Add(c);
-						}
-						else if (c.Control is NWN2VerifyOutputControl) {
-							contents.Add(c);
-						}
-					}		
-					
-					foreach (Content c in contents) {
-						if (c.Visible) {
-							dockingManager.HideContent(c);
-						}
-					}
+//					List<Content> contents = new List<Content>(5);
+//					
+//					foreach (Content c in dockingManager.Contents) {
+//						if (c.FullTitle == "Conversations") {
+//							contents.Add(c);
+//						}
+//						else if (c.FullTitle == "Campaign Conversations") {
+//							contents.Add(c);
+//						}
+//						else if (c.FullTitle == "Campaign Scripts") {
+//							contents.Add(c);
+//						}
+//						else if (c.FullTitle == "Search Results") {
+//							contents.Add(c);
+//						}
+//						else if (c.Control is NWN2VerifyOutputControl) {
+//							contents.Add(c);
+//						}
+//					}		
+//					
+//					foreach (Content c in contents) {
+//						if (c.Visible) {
+//							dockingManager.HideContent(c);
+//						}
+//					}
 					
 															
 //					// Lock the interface:
@@ -190,15 +209,22 @@ namespace AdventureAuthor.Setup
 				}
 				
 				// Hide the resource viewer controls:
-				else if (fi.FieldType == typeof(TabbedGroups)) {
-					tabbedGroupsCollection = (TabbedGroups)fi.GetValue(form.App);
-					
+				else if (fi.FieldType == typeof(crown.TabbedGroups)) {
+					tabbedGroupsCollection = (crown.TabbedGroups)fi.GetValue(form.App);
+					tabbedGroupsCollection.ActiveLeaf.TabPages.Inserted += new CollectionChange(ResourceViewerOpened);					
+					tabbedGroupsCollection.ActiveLeaf.TabPages.Removing += new CollectionChange(ResourceViewerClosed);
+										
 					// Hide the close [X] control, change the appearance:
 					SetupResourceViewersLeaf();					
 					
 					// When all resource viewers are closed, the resource viewers window (ActiveLeaf) is disposed 
-					// and then created again later on; so on ActiveLeafChanged, reapply UI modifications:
-					tabbedGroupsCollection.ActiveLeafChanged += delegate { SetupResourceViewersLeaf(); };
+					// and then created again later on; so on ActiveLeafChanged, we need to redo some stuff:
+					tabbedGroupsCollection.ActiveLeafChanged += delegate 
+					{ 
+						SetupResourceViewersLeaf(); 
+						tabbedGroupsCollection.ActiveLeaf.TabPages.Inserted += new CollectionChange(ResourceViewerOpened);					
+						tabbedGroupsCollection.ActiveLeaf.TabPages.Removing += new CollectionChange(ResourceViewerClosed);
+					};
 				}
 				
 				else if (fi.FieldType == typeof(NWN2PropertyGrid)) {
@@ -207,6 +233,76 @@ namespace AdventureAuthor.Setup
 					grid.PreviewStateChanged += delegate { Log.WriteMessage("Preview state changed on property grid (??)"); };
 				}
 				
+				else if (fi.FieldType == typeof(NWN2TerrainEditorForm)) {
+					FieldInfo[] terrainEditorFields = typeof(NWN2TerrainEditorForm).GetFields(BindingFlags.NonPublic |
+					                                                                          BindingFlags.Public |
+					                                                                          BindingFlags.Instance);
+					foreach (FieldInfo terrainEditorField in terrainEditorFields) {
+						object o = terrainEditorField.GetValue((NWN2TerrainEditorForm)fi.GetValue(form.App));
+						Control c = o as Control;
+						if (c != null) {
+							c.Click += delegate { 
+								string extraInfo;
+								if (c.Text != null && c.Text != String.Empty) {
+									extraInfo = "(clicked " + c.Text + ")";
+								}
+								else {
+									extraInfo = String.Empty;
+								}
+								Log.WriteAction(Log.Action.set,"terraineditorsettings",extraInfo);
+							};
+						}
+					}
+				}
+				
+				else if (fi.FieldType == typeof(NWN2TileView)) {
+					NWN2TileView tileView = (NWN2TileView)fi.GetValue(form.App);
+					
+					foreach (FieldInfo f in typeof(NWN2TileView).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+						if (f.FieldType == typeof(NWN2TileTreeView)) {
+							NWN2TileTreeView tileTreeView = (NWN2TileTreeView)f.GetValue(tileView);
+							tileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
+							{  
+								Log.WriteAction(Log.Action.selected,"tile",e.TreeNode.Text);
+							};
+						}
+						else if (f.FieldType == typeof(NWN2MetaTileTreeView)) {
+							NWN2MetaTileTreeView metaTileTreeView = (NWN2MetaTileTreeView)f.GetValue(tileView);
+							metaTileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e)
+							{  
+								Log.WriteAction(Log.Action.selected,"metatile",e.TreeNode.Text);
+							};
+						}
+					}
+				}
+				
+				else if (fi.FieldType == typeof(NWN2BlueprintView)) {
+					NWN2BlueprintView blueprintView = (NWN2BlueprintView)fi.GetValue(form.App);
+					blueprintView.SelectionChanged += delegate(object sender, BlueprintSelectionChangedEventArgs e) 
+					{  
+						if (e.Selection.Length > 0 && e.Selection != e.OldSelection) {							
+							StringBuilder message = new StringBuilder("selection: ");
+							foreach (object o in e.Selection) {
+								INWN2Blueprint blueprint = (INWN2Blueprint)o;
+								message.Append(blueprint.Name + " (" + blueprint.ObjectType + ") ");
+							}							
+							Log.WriteAction(Log.Action.selected,"blueprint",message.ToString());
+						}
+					};
+				}
+				
+				else if (fi.FieldType == typeof(NWN2AreaContentsView)) {
+					areaContentsView = (NWN2AreaContentsView)fi.GetValue(form.App);
+					// it can't find the palette, I guess cos there has to be an ACTIVE palette for that to work
+					
+//					areaContentsView.ActivePalette.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
+//					{  
+//						Log.WriteAction(Log.Action.selected,"object",e.TreeNode.Text);
+//					};
+//					areaContentsView.Activated += delegate { Log.WriteAction(Log.Action.clicked,"areacontents"); };
+//					areaContentsView.Click += delegate { Log.WriteAction(Log.Action.clicked,"areacontents"); };
+				}
+												
 				// Get rid of the graphics preferences toolbar:
 				else if (fi.FieldType == typeof(GraphicsPreferencesToolBar)) {
 //					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
@@ -238,9 +334,10 @@ namespace AdventureAuthor.Setup
 				
 				// Get rid of "Snap", "Paint Spawn Point", "Create Transition..." 
 				// and "Drag Selection" buttons on the object manipulation toolbar:
-				else if (fi.FieldType == typeof(ButtonItem)) {;
+				else if (fi.FieldType == typeof(ButtonItem)) {
 //					ButtonItem buttonItem = (ButtonItem)fi.GetValue(form.App);	
-//					
+					
+//
 //					string[] dispose = new string[] {"Snap",
 //													 "Paint Spawn Point",
 //													 "Create Transition...",
@@ -259,7 +356,8 @@ namespace AdventureAuthor.Setup
 				// Get rid of various menu items:
 				else if (fi.FieldType == typeof(MenuButtonItem)) {
 //					MenuButtonItem menuButtonItem = (MenuButtonItem)fi.GetValue(form.App);	
-//					
+					
+					
 //					string[] dispose = new string[] {"Create Transition...",
 //													 "Paint Spawn Point",
 //													 "Module &Properties",
@@ -333,6 +431,83 @@ namespace AdventureAuthor.Setup
 			
 			// Update title bar:
 			UpdateTitleBar();
+		}
+
+		
+		private static void ResourceViewerOpened(int index, object value)
+		{
+			// by the time the Removing event is called on the tabbed pages collection, the resource viewer has already been
+			// disposed, which means we have the title of the tab page but not the resource type - setting the unused page.Text
+			// property to the string name of the resource type means we have this information when we log the closing operation
+			
+			crown.TabPage page = (crown.TabPage)value;						
+			INWN2Viewer viewer = page.Control as INWN2Viewer;
+			if (viewer != null && viewer.ViewedResource != null) {
+				if (viewer.ViewedResource is NWN2GameArea) {
+					NWN2GameArea area = (NWN2GameArea)viewer.ViewedResource;
+					Log.WriteAction(Log.Action.opened,"area",area.Name);
+					page.Text = "area";
+					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
+					areaViewer.ElectronPanel.SelectionChanged += delegate 
+					{
+						if (areaViewer.SelectedInstances.Count > 0) {							
+							StringBuilder message = new StringBuilder("selection: ");
+							foreach (object o in areaViewer.SelectedInstances) {
+								INWN2Instance instance = (INWN2Instance)o;
+								message.Append(instance.Name + " (" + instance.ObjectType + ") ");
+							}							
+							Log.WriteAction(Log.Action.selected,"object",message.ToString());
+						}
+					};
+				}
+				else if (viewer.ViewedResource is NWN2GameConversation) {
+					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
+					Say.Debug("Tried to open the original conversation editor - closing it again.");
+					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // old conversation editor so close	
+					LaunchConversationWriter();
+					WriterWindow.Instance.Open(conv.Name);
+				}
+				else if (viewer.ViewedResource is NWN2FactionData) {
+					NWN2FactionData factions = (NWN2FactionData)viewer.ViewedResource;
+					Log.WriteAction(Log.Action.opened,"factions");
+					page.Text = "faction";
+				}
+				else if (viewer.ViewedResource is NWN2Journal) {
+					//NWN2Journal journal = (NWN2Journal)viewer.ViewedResource;
+					Log.WriteAction(Log.Action.opened,"journal");
+					page.Text = "journal";
+				}
+				else if (viewer.ViewedResource is TwoDAFile) {
+					TwoDAFile twodafile = (TwoDAFile)viewer.ViewedResource;
+					Log.WriteAction(Log.Action.opened,"2dafile",twodafile.Name);
+					page.Text = "2dafile";
+				}
+				else if (viewer.ViewedResource is NWN2GameScript) {
+					NWN2GameScript script = (NWN2GameScript)viewer.ViewedResource;
+					Log.WriteAction(Log.Action.opened,"script",script.Name);
+					page.Text = "script";
+				}
+				else {
+					string type = viewer.ViewedResource.GetType().ToString();
+					Log.WriteAction(Log.Action.opened,type);
+					page.Text = type;
+				}
+			}
+		}
+		
+		
+		private static void ResourceViewerClosed(int index, object value)
+		{
+			crown.TabPage page = (crown.TabPage)value;
+			if (page.Text == null || page.Text == String.Empty) {
+				Log.WriteAction(Log.Action.closed,"<resource>",page.Title);
+			}
+			else if (page.Text == "2dafile" || page.Text == "script" || page.Text == "area") {
+				Log.WriteAction(Log.Action.closed,page.Text,page.Title);
+			}
+			else {
+				Log.WriteAction(Log.Action.closed,page.Text);
+			}
 		}
 		
 		

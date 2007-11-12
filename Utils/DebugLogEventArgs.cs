@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   This file is part of Adventure Author.
  *
  *   Adventure Author is copyright Heriot-Watt University 2006-2007.
@@ -25,33 +25,41 @@
  */
 
 using System;
-using System.IO;
-using System.Text;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
-	public static class DebugLog
-	{	
-		public static event EventHandler<DebugLogEventArgs> Message;
-		
-		private static void OnMessage(DebugLogEventArgs e)
-		{
-			EventHandler<DebugLogEventArgs> handler = Message;
-			if (handler != null) {
-				handler(null,e);
-			}
+	/// <summary>
+	/// Arguments to accompany a log message being sent.
+	/// </summary>
+	public class DebugLogEventArgs : EventArgs
+	{
+		/// <summary>
+		/// The message to log.
+		/// </summary>
+		private string message;		
+		public string Message {
+			get { return message; }
 		}
 		
-			
-		public static void Write(string message)
-		{
-			OnMessage(new DebugLogEventArgs(message,null));
+		
+		/// <summary>
+		/// The exception that was thrown.
+		/// </summary>
+		private Exception thrownException;		
+		public Exception ThrownException {
+			get { return thrownException; }
 		}
-			
-		public static void Write(Exception e)
+		
+		
+		/// <summary>
+		/// Create a new DebugLogEventArgs.
+		/// </summary>
+		/// <param name="message">The message to log</param>
+		/// <param name="exception">The exception that was thrown</param>
+		public DebugLogEventArgs(string message, Exception exception)
 		{
-			OnMessage(new DebugLogEventArgs(null,e));
-		}				
+			this.message = message;
+			this.thrownException = exception;
+		}
 	}
 }

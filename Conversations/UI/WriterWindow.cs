@@ -352,7 +352,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="page">The page to display</param>
 		public void DisplayPage(Page page)
 		{
-	        Log.WriteAction(Log.Action.viewed,"page");
+	        Log.WriteAction(Log.Action.selected,"page");
 	        
 			// Update references to the currently and previously viewed pages:
 			if (currentPage != page) {

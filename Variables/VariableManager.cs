@@ -48,7 +48,25 @@ namespace AdventureAuthor.Variables
 		/// <param name="variable">The variable to add</param>
 		public static void Add(NWN2ScriptVariable variable)
 		{
-			Log.WriteAction(Log.Action.added,"variable",variable.Name);
+			string startingValueMessage = null;
+			switch (variable.VariableType) {
+				case NWN2ScriptVariableType.String:
+					if (variable.ValueString != null) {
+						startingValueMessage = " (starting value: " + variable.ValueString + ")";
+					}
+					break;
+				case NWN2ScriptVariableType.Int:
+					startingValueMessage = " (starting value: " + variable.ValueInt + ")";
+					break;
+				default:
+					throw new ArgumentException("Variable of type " + variable.VariableType.ToString() + " is not supported.");
+			}
+			if (startingValueMessage != null) {
+				Log.WriteAction(Log.Action.added,"variable","'" + variable.Name + "'" + startingValueMessage);
+			}
+			else {
+				Log.WriteAction(Log.Action.added,"variable","'" + variable.Name + "'");
+			}
 	        Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Add(variable);
 			if (VariablesWindow.Instance != null) {
 				VariablesWindow.Instance.RefreshVariablesList();
@@ -66,7 +84,6 @@ namespace AdventureAuthor.Variables
 			Log.WriteAction(Log.Action.deleted,"variable",variable.Name);
 			
 			if (removeReferences) {
-				Log.WriteMessage("also deleted references to deleted variable " + variable.Name);
 				RemoveReferences(variable);
 			}
 			
@@ -77,7 +94,7 @@ namespace AdventureAuthor.Variables
 			}
 		}
 		
-		
+			
 		/// <summary>
 		/// Remove all references in conversation scripts and OnEvent scripts to a given variable
 		/// </summary>

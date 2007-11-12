@@ -43,10 +43,12 @@ namespace AdventureAuthor.Core.UI
 			label_CurrentUser.Text = "Current user:  " + Adventure.CurrentUser.Name;
 		}
 		
+		
 		void Button_Cancel_NewAdventureClick(object sender, EventArgs e)
 		{
 			this.Close(); 
 		}
+		
 		
 		void Button_OK_NewAdventureClick(object sender, EventArgs e)
 		{

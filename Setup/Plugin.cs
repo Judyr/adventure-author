@@ -87,8 +87,10 @@ namespace AdventureAuthor.Setup
 				}	
 				
 				// Start recording debug messages and user actions:
-				DebugLog.StartRecording();
-				Log.StartRecording();	
+				LogWindow logWindow = new LogWindow();
+				logWindow.Show();
+				DebugWriter.StartRecording();
+				LogWriter.StartRecording();	
 				Log.WriteAction(Log.Action.launched,"toolset");
 					
 				// Instantiate windows now to speed things up later on:
@@ -111,8 +113,8 @@ namespace AdventureAuthor.Setup
 		public void Unload(INWN2PluginHost cHost)
 		{		
 			Log.WriteAction(Log.Action.exited,"toolset");
-			Log.StopRecording();
-			DebugLog.StopRecording();
+			LogWriter.StopRecording();
+			DebugWriter.StopRecording();
 		}
 		
 		/// <summary>
