@@ -97,15 +97,21 @@ namespace AdventureAuthor.Variables.UI
         		Say.Warning("You haven't entered the starting value for this variable.");
         	}
         	else {
+        		if (!edit) { // if creating a new variable
+        			var.Name = VariableNameTextBox.Text;
+        		}
+        		
         		if ((string)VariableTypeComboBox.SelectedItem == INTEGER_TERM) {
         			try {
         				int val = int.Parse(VariableStartingValueTextBox.Text);
         				if (!edit) { // when editing these are fixed anyway
-	        				var.Name = VariableNameTextBox.Text;
 	        				var.VariableType = NWN2ScriptVariableType.Int;
         				}
         				if (var.ValueInt != val) {
-        					Log.WriteAction(Log.Action.edited,"variable","set starting value to " + val + " (was " + var.ValueInt + ")");
+							if (edit) {
+								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+								                "' was set to " + val + " (was " + var.ValueInt + ")");
+							}
         					var.ValueInt = val;
         				}        				
         			}
@@ -119,12 +125,19 @@ namespace AdventureAuthor.Variables.UI
         		}
         		else if ((string)VariableTypeComboBox.SelectedItem == STRING_TERM) {
         			if (!edit) { // when editing these are fixed anyway
-	 					var.Name = VariableNameTextBox.Text;
-	 					var.VariableType = NWN2ScriptVariableType.String;
+	 					var.VariableType = NWN2ScriptVariableType.String;	 					
         			}
         			if (var.ValueString != VariableStartingValueTextBox.Text) {
-        				Log.WriteAction(Log.Action.edited,"variable","set starting value to " + VariableStartingValueTextBox.Text + 
-        				                " (was " + var.ValueString + ")");
+        				if (edit) {
+							if (var.ValueString != null) {
+								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+							                "' set to " + VariableStartingValueTextBox.Text + " (was " + var.ValueString + ")");
+							}
+							else {
+								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+        						                "' set to " + VariableStartingValueTextBox.Text);
+							}
+        				}
         				var.ValueString = VariableStartingValueTextBox.Text;
         			}     
         		}

@@ -256,6 +256,8 @@ namespace AdventureAuthor.Core
 		/// <param name="name">The Adventure name</param>
 		public Adventure(string name)
 		{
+			Log.WriteAction(Log.Action.added,"module",name);
+			
 			NWN2GameModule mod = new NWN2GameModule();
 			mod.Name = name;
 			mod.LocationType = ModuleLocationType.Directory;
@@ -283,6 +285,8 @@ namespace AdventureAuthor.Core
 		/// <param name="name">Name of the Adventure to open.</param>
 		public static bool Open(string name)
 		{
+			Log.WriteAction(Log.Action.opened,"module",name);
+			
 			if (currentAdventure != null) {
 				currentAdventure.Close();
 			}
@@ -312,6 +316,8 @@ namespace AdventureAuthor.Core
 		public static bool Delete(string adventureName)
 		{	
 			throw new NotImplementedException();
+			
+			
 			
 			//TODO: 
 			
@@ -366,7 +372,9 @@ namespace AdventureAuthor.Core
 			else if (this != currentAdventure) {
 				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}	
-					     
+					
+			Log.WriteAction(Log.Action.saved,"module");
+			
 			// Save the Adventure data:
 		    FileInfo f = new FileInfo(Path.Combine(Adventure.CurrentAdventure.ModulePath,module.FileName+".xml"));
 			Stream s = f.Open(FileMode.Create);	
@@ -586,6 +594,8 @@ namespace AdventureAuthor.Core
 				throw new InvalidOperationException("Tried to operate on a closed Adventure.");
 			}
 			
+			Log.WriteAction(Log.Action.closed,"module",CurrentAdventure.Name);
+			
 			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {				
 				OEIShared.Actions.ActionManager.Manager.Clear(); // ??	
 				form.App.Module.CloseModule();            
@@ -630,8 +640,9 @@ namespace AdventureAuthor.Core
 			}		
 					
 			// Save, bake and run the module:	
-			Save();			
+			Save();						
 			form.App.DoBakeAll(false,false);
+			Log.WriteAction(Log.Action.launched,"game",CurrentAdventure.Name);
 			form.App.RunModule(waypoint,false,false,false);
 		}			
 							
@@ -751,7 +762,7 @@ namespace AdventureAuthor.Core
 				Say.Error("Could not add chapter named '" + name + "' - that name is already taken.");
 				return null;
 			}
-			
+					
 			Size validSize = new Size(width,height);
 			
 			Chapter c = new Chapter(this,name,introduction,exterior,validSize);

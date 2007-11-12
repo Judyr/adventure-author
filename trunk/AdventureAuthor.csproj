@@ -41,6 +41,10 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="GlacialTreeList">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="ManagedElectron">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\ManagedElectron.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -56,33 +60,70 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationCore">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="QWhale.Syntax">
       <HintPath>..\Program Files\Atari\Neverwinter Nights 2\QWhale.Syntax.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="ReachFramework" />
+    <Reference Include="ReachFramework">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="SandBar">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Printing" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="UIAutomationTypes" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Design">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.IdentityModel">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Printing">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UIAutomationProvider">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsFormsIntegration">
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
@@ -237,11 +278,19 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\Debug.cs" />
+    <Compile Include="Utils\DebugLogEventArgs.cs" />
+    <Compile Include="Utils\DebugWriter.cs" />
     <Compile Include="Utils\DragDropManager\DragDropManager.cs" />
     <Compile Include="Utils\DragDropManager\DropPreviewAdorner.cs" />
     <Compile Include="Utils\DragDropManager\IDragSourceAdvisor.cs" />
     <Compile Include="Utils\DragDropManager\IDropTargetAdvisor.cs" />
     <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\LogEventArgs.cs" />
+    <Compile Include="Utils\LogWindow.xaml.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\UsefulTools.cs" />
@@ -299,6 +348,7 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
+    <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />
@@ -330,10 +380,12 @@
     <ProjectReference Include="Diagramming.Core\Netron.Diagramming.Core.csproj">
       <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
       <Name>Netron.Diagramming.Core</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="Diagramming.Win\Netron.Diagramming.Win.csproj">
       <Project>{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}</Project>
       <Name>Netron.Diagramming.Win</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>

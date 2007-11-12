@@ -31,21 +31,24 @@ using System.Diagnostics;
 using AdventureAuthor.Core;
 using NWN2Toolset.NWN2.Views;
 using NWN2Toolset.Data;
+using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Utils
 {
 	public static class Log
 	{	
-		private static StreamWriter writer = null;
-				
-//		public enum UIAction {
-//			Clicked,
-//			DoubleClicked,
-//			RightClicked,
-//			PressedKey
-//		}
-//		
+		public static event EventHandler<LogEventArgs> Message;
+		
+		private static void OnMessage(LogEventArgs e)
+		{
+			EventHandler<LogEventArgs> handler = Message;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		                                        		
 //		public enum DialogAction {
 //			Started,
 //			Completed,
@@ -73,43 +76,13 @@ namespace AdventureAuthor.Utils
 			
 			// selected just means giving it focus:
 			selected,
-			
-			// viewed is selected when it causes properties etc. to appear, e.g. displaying a conversation page or viewing character details
-			viewed
+				
+			// deliberately non-specific, for when no further information has been gathered, e.g. when the user
+			// clicks something in the terrain editor window or area contents window 
+			clicked
 		}
 		
 		
-		public static void StartRecording()
-		{			
-			// Filename:
-			// Date_Username.log
-			// e.g. 05_05_07_JackStuart.log
-			// e.g. 05_05_07_JackStuart2.log
-			// Place in AdventureAuthor/logs
-			
-			string filename = UsefulTools.GetDateStamp() + "_" + Adventure.CurrentUser.Name;
-			string logpath = Path.Combine(Adventure.LogDir,filename+".log");
-			
-			// If the filename is already taken, add numbering ("<filename>2.log", "<filename>3.log" etc.):
-			int count = 1;
-			while (File.Exists(logpath)) {
-				count++;
-				string newfilename = filename + count.ToString();
-				logpath = Path.Combine(Adventure.LogDir,newfilename+".log");									
-			}			
-			FileInfo f = new FileInfo(logpath);			
-			Stream s = f.Open(FileMode.Create);
-			writer = new StreamWriter(s);
-			writer.AutoFlush = true;
-		}
-		
-		public static void StopRecording()
-		{
-			if (writer != null) {
-				writer.Flush();
-				writer.Close();
-			}
-		}
 		
 		
 		// TODO refactor all the redundant code below
@@ -123,50 +96,10 @@ namespace AdventureAuthor.Utils
 		public static void WriteMessage(string logMessage)
 		{
 			string message = UsefulTools.GetTimeStamp(false) + " >" + logMessage;
-			writer.WriteLine(message);
-			writer.Flush();
+			OnMessage(new LogEventArgs(message));
 		}			
 		
 
-//		/// <summary>
-//		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button'
-//		/// </summary>
-//		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
-//		/// <remarks>Completed indicates the user clicked OK to complete a wizard; 
-//		/// Cancelled indicates they clicked Cancel to cancel a wizard.</remarks>
-//		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, Completed, Cancelled</param>
-//		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
-//		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
-//		public static void WriteUIAction(UIAction interaction, string element)
-//		{
-//			WriteUIAction(interaction,element,null);
-//		}		
-//		
-//		
-//		/// <summary>
-//		/// Writes a log message in the form: '16:24:15: Clicked AddSpeaker_button -WOLF'
-//		/// </summary>
-//		/// <remarks>Timestamp:UIAction ElementName_elementtype -optionalextrainfo</remarks>
-//		/// <param name="interaction">The interaction with the user interface, e.g. Clicked, PressedKey, RightClicked, DoubleClicked</param>
-//		/// <param name="element">The UI element the interaction involved, in the form Name_SpecificElement.
-//		/// e.g. AddChoice_button, AddSpeaker_button, AddSpeaker_menuitem</param>
-//		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-//		public static void WriteUIAction(UIAction interaction, string element, string extraInfo)
-//		{
-//			string message;
-//			string subjectmsg = element == null ? "<Subject not logged>" : element;			
-//			
-//			if (extraInfo != null) {
-//				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg + " -" + extraInfo;
-//			}
-//			else {
-//				message = UsefulTools.GetTimeStamp(false) + ": " + interaction.ToString() + " " + subjectmsg;
-//			}
-//				
-//			writer.WriteLine(message);
-//			writer.Flush();
-//		}
-//				
 //		
 //		/// <summary>
 //		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard'
@@ -236,8 +169,7 @@ namespace AdventureAuthor.Utils
 				message = UsefulTools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg;
 			}
 				
-			writer.WriteLine(message);
-			writer.Flush();
+			OnMessage(new LogEventArgs(message));
 		}
 		
 		
@@ -339,6 +271,9 @@ namespace AdventureAuthor.Utils
 				else {
 					return o.GetType().ToString();
 				}
+			}
+			else if (o is NWN2GameAreaTileData) {
+				return "tile";
 			}
 			else {
 				return o.GetType().ToString();
