@@ -71,6 +71,9 @@ namespace AdventureAuthor.Setup
 		private static Content chapterListContent = null;
 		private static Zone leftZone = null;
 		private static NWN2AreaContentsView areaContentsView = null;
+		private static Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>> dictionaries 
+			= new Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>>(14);
+														   
 		
 		#endregion Global variables	
 			
@@ -263,14 +266,18 @@ namespace AdventureAuthor.Setup
 							NWN2TileTreeView tileTreeView = (NWN2TileTreeView)f.GetValue(tileView);
 							tileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
 							{  
-								Log.WriteAction(Log.Action.selected,"tile",e.TreeNode.Text);
+								if (e.NewValue) {
+									Log.WriteAction(Log.Action.selected,"tile",e.TreeNode.Text);
+								}
 							};
 						}
 						else if (f.FieldType == typeof(NWN2MetaTileTreeView)) {
 							NWN2MetaTileTreeView metaTileTreeView = (NWN2MetaTileTreeView)f.GetValue(tileView);
 							metaTileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e)
 							{  
-								Log.WriteAction(Log.Action.selected,"metatile",e.TreeNode.Text);
+								if (e.NewValue) {
+									Log.WriteAction(Log.Action.selected,"metatile",e.TreeNode.Text);
+								}
 							};
 						}
 					}
@@ -293,14 +300,113 @@ namespace AdventureAuthor.Setup
 				
 				else if (fi.FieldType == typeof(NWN2AreaContentsView)) {
 					areaContentsView = (NWN2AreaContentsView)fi.GetValue(form.App);
-					// it can't find the palette, I guess cos there has to be an ACTIVE palette for that to work
 					
-//					areaContentsView.ActivePalette.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
+					FieldInfo[] paletteFields = typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+					FieldInfo dictionaryField = null;
+					foreach (FieldInfo f in paletteFields) {
+						if (f.FieldType == typeof(Dictionary<INWN2Object,GTLTreeNode>)) {
+							dictionaryField = f;
+							break;
+						}
+					}
+					
+					Dictionary<string,NWN2PaletteTreeView> paletteTreeViews = new Dictionary<string,NWN2PaletteTreeView>(14);
+					paletteTreeViews.Add("waypoint",(NWN2PaletteTreeView)areaContentsView.Controls["panelWaypoints"].Controls["treeListWaypoints"]);
+					paletteTreeViews.Add("trigger",(NWN2PaletteTreeView)areaContentsView.Controls["panelTriggers"].Controls["treeListTriggers"]);
+					paletteTreeViews.Add("store",(NWN2PaletteTreeView)areaContentsView.Controls["panelStores"].Controls["treeListStores"]);
+					paletteTreeViews.Add("camera",(NWN2PaletteTreeView)areaContentsView.Controls["panelStaticCameras"].Controls["treeListStaticCameras"]);
+					paletteTreeViews.Add("sound",(NWN2PaletteTreeView)areaContentsView.Controls["panelSounds"].Controls["treeListSounds"]);
+					paletteTreeViews.Add("placeable",(NWN2PaletteTreeView)areaContentsView.Controls["panelPlaceables"].Controls["treeListPlaceables"]);
+					paletteTreeViews.Add("item",(NWN2PaletteTreeView)areaContentsView.Controls["panelItems"].Controls["treeListItems"]);
+					paletteTreeViews.Add("encounter",(NWN2PaletteTreeView)areaContentsView.Controls["panelEncounters"].Controls["treeListEncounters"]);
+					paletteTreeViews.Add("door",(NWN2PaletteTreeView)areaContentsView.Controls["panelDoors"].Controls["treeListDoors"]);
+					paletteTreeViews.Add("creature",(NWN2PaletteTreeView)areaContentsView.Controls["panelCreatures"].Controls["treeListCreatures"]);
+					paletteTreeViews.Add("tree",(NWN2PaletteTreeView)areaContentsView.Controls["panelTrees"].Controls["treeListTrees"]);
+					paletteTreeViews.Add("light",(NWN2PaletteTreeView)areaContentsView.Controls["panelLights"].Controls["treeListLights"]);
+					paletteTreeViews.Add("placedeffect",(NWN2PaletteTreeView)areaContentsView.Controls["panelPlacedEffects"].Controls["treeListPlacedEffects"]);
+					paletteTreeViews.Add("environmentobject",(NWN2PaletteTreeView)areaContentsView.Controls["panelEnvironmentObjects"].Controls["treeListEnvironmentObjects"]);
+					
+					foreach (string k in paletteTreeViews.Keys) {
+						string key = k;
+						NWN2PaletteTreeView view = paletteTreeViews[key];						
+						dictionaries.Add(key,(Dictionary<INWN2Object,GTLTreeNode>)dictionaryField.GetValue(view));
+						
+						view.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
+						{  
+							if (e.NewValue && dictionaries[key].ContainsValue(e.TreeNode)) {
+								Log.WriteAction(Log.Action.selected,key,e.TreeNode.Text);
+							}
+						};
+					}
+					
+					
+					
+					
+					
+//					dictionaries.Add("waypoint",(Dictionary<INWN2Object,GTLTreeNode>)dictionaryField.GetValue(waypointView));
+//					waypointView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
 //					{  
-//						Log.WriteAction(Log.Action.selected,"object",e.TreeNode.Text);
+//						if (e.NewValue && dictionaries["waypoint"].ContainsValue(e.TreeNode)) {
+//							Log.WriteAction(Log.Action.selected,"waypoint",e.TreeNode.Text);
+//						}
 //					};
-//					areaContentsView.Activated += delegate { Log.WriteAction(Log.Action.clicked,"areacontents"); };
-//					areaContentsView.Click += delegate { Log.WriteAction(Log.Action.clicked,"areacontents"); };
+					
+					
+					
+					
+					
+					
+												
+											
+						
+						
+						
+						
+						
+					
+//					FieldInfo[] areaContentsFields = typeof(NWN2AreaContentsView).GetFields(BindingFlags.Instance |
+//					                                                                        BindingFlags.NonPublic);
+//					foreach (FieldInfo field in areaContentsFields) {
+//						if (field.FieldType == typeof(Panel)) {
+//							Panel panel = (Panel)field.GetValue(areaContentsView);
+//							foreach (Control c in GetControls(panel)) {
+//								if (c is NWN2PaletteTreeView) {
+//									NWN2PaletteTreeView v = (NWN2PaletteTreeView)c;
+//									FieldInfo[] paletteFields = 
+//										typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+//									foreach (FieldInfo f in paletteFields) {
+//										if (f.FieldType == typeof(Dictionary<INWN2Object,GTLTreeNode>)) {
+//											Dictionary<INWN2Object,GTLTreeNode> objectDictionary = 
+//												(Dictionary<INWN2Object,GTLTreeNode>)f.GetValue(v);
+//											objectDictionaries.Add(objectDictionary);
+//											break;
+//										}
+//									}
+//									v.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e)
+//									{
+//										if (e.NewValue) {
+//											FieldInfo[] paletteFields = 
+//												typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+//											foreach (FieldInfo f in paletteFields) {
+//												if (f.FieldType == typeof(Dictionary<INWN2Object,GTLTreeNode>)) {
+//													Dictionary<INWN2Object,GTLTreeNode> objectDictionary = 
+//														(Dictionary<INWN2Object,GTLTreeNode>)f.GetValue(v);
+//													if (objectDictionary.ContainsValue(e.TreeNode)) {
+//														foreach (INWN2Object key in objectDictionary.Keys) {
+//															string typename = Log.GetNWN2TypeName(key);
+//															Log.WriteAction(Log.Action.selected,typename,e.TreeNode.Text);
+//															break;
+//														}														
+//													}
+//													return;
+//												}
+//											}
+//										}
+//									};
+//								}
+//							}
+//						}
+//					}
 				}
 												
 				// Get rid of the graphics preferences toolbar:
@@ -447,18 +553,21 @@ namespace AdventureAuthor.Setup
 					NWN2GameArea area = (NWN2GameArea)viewer.ViewedResource;
 					Log.WriteAction(Log.Action.opened,"area",area.Name);
 					page.Text = "area";
-					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
-					areaViewer.ElectronPanel.SelectionChanged += delegate 
-					{
-						if (areaViewer.SelectedInstances.Count > 0) {							
-							StringBuilder message = new StringBuilder("selection: ");
-							foreach (object o in areaViewer.SelectedInstances) {
-								INWN2Instance instance = (INWN2Instance)o;
-								message.Append(instance.Name + " (" + instance.ObjectType + ") ");
-							}							
-							Log.WriteAction(Log.Action.selected,"object",message.ToString());
-						}
-					};
+					
+					// now handled through area contents viewer events, which picks up selection events from the area viewer as well:
+					
+//					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
+//					areaViewer.ElectronPanel.SelectionChanged += delegate 
+//					{
+//						if (areaViewer.SelectedInstances.Count > 0) {							
+//							StringBuilder message = new StringBuilder("selection: ");
+//							foreach (object o in areaViewer.SelectedInstances) {
+//								INWN2Instance instance = (INWN2Instance)o;
+//								message.Append(instance.Name + " (" + instance.ObjectType + ") ");
+//							}							
+//							Log.WriteAction(Log.Action.selected,"object",message.ToString());
+//						}
+//					};
 				}
 				else if (viewer.ViewedResource is NWN2GameConversation) {
 					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
@@ -691,9 +800,12 @@ namespace AdventureAuthor.Setup
 //			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
+			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
+			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
 			newChapter.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
+			logWindow.BeginGroup = true;
 						
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newAdventure,
@@ -706,7 +818,8 @@ namespace AdventureAuthor.Setup
 			                           	newConversation,
 			                           	variableManager,
 //			                           	changeUser,
-			                           	exitAdventureAuthor
+			                           	exitAdventureAuthor,
+			                           	logWindow
 			                           });			
 		}							
 		

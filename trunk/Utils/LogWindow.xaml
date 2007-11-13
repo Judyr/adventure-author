@@ -14,7 +14,8 @@
 				VerticalAlignment="Stretch"
 				Margin="9,12,14,49">
 				<ListBox
-					Name="MessagesList"></ListBox>
+					Name="MessagesList">				
+				</ListBox>
 			</ScrollViewer>
 			<Button
 				Click="OnClick_GoToBottom"
@@ -36,6 +37,18 @@
 				Margin="0,0,138,10"
 				Width="100"
 				Height="30" xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation" />
+			<CheckBox
+				Content="Show debug"
+				Grid.Column="0"
+				Grid.Row="0"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Bottom"
+				Margin="19,0,0,3"
+				Width="155"
+				Height="29"
+				Name="ShowDebugCheckbox"
+				Unchecked="ShowDebugCheckboxUnchecked"
+				Checked="ShowDebugCheckboxChecked" xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation" />
 		</Panel.Children>
 	</Grid>
 </Window>
