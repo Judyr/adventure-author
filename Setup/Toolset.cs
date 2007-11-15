@@ -115,25 +115,25 @@ namespace AdventureAuthor.Setup
 		internal static void SetupUI()
 		{
 			// Nullify every original context menu
-			foreach (Control c in GetControls(form.App)) {
-				if (c.ContextMenu != null) {
-					c.ContextMenu.MenuItems.Clear();
-				}
-				if (c.ContextMenuStrip != null) {
-					c.ContextMenuStrip.Items.Clear();
-				}
-				
-				
-//				temp2(c);
-//				if (temp2(c)) {
-//					// found it
-//					
+//			foreach (Control c in GetControls(form.App)) {
+//				if (c.ContextMenu != null) {
+//					c.ContextMenu.MenuItems.Clear();
 //				}
-				
-			
-//				c.ContextMenu = null;
-//				c.ContextMenuStrip = null;
-			}
+//				if (c.ContextMenuStrip != null) {
+//					c.ContextMenuStrip.Items.Clear();
+//				}
+//				
+//				
+////				temp2(c);
+////				if (temp2(c)) {
+////					// found it
+////					
+////				}
+//				
+//			
+////				c.ContextMenu = null;
+////				c.ContextMenuStrip = null;
+//			}
 			
 			//
 			

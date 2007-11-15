@@ -205,7 +205,10 @@ namespace AdventureAuthor.Conversations
 			Speaker existingSpeaker = GetSpeaker(tag);
 			if (existingSpeaker == null) {	
 				if (tag == String.Empty) {
-					tag = "player";
+					Log.WriteAction(Log.Action.added,"speaker","player");
+				}
+				else {
+					Log.WriteAction(Log.Action.added,"speaker",tag);
 				}
 				Log.WriteAction(Log.Action.added,"speaker",tag);
 				Speaker speaker = new Speaker(tag);
