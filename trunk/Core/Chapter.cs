@@ -89,6 +89,28 @@ namespace AdventureAuthor.Core
 		{
 		}
 		
+		
+		/// <summary>
+		/// Constructor for a chapter object that takes an area, to create AA data for a non-AA-created module.
+		/// </summary>
+		/// <param name="adventure"></param>
+		/// <param name="name"></param>
+		internal Chapter(Adventure adventure, NWN2GameArea area)
+		{
+			this.owningAdventure = adventure;
+			this.name = area.Name;
+			this.Area = area;
+			this.introduction = String.Empty;			
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Area);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
+		}		
+		
+		
 		/// <summary>
 		/// Base constructor, for use by AddChapter only.
 		/// </summary>
@@ -110,6 +132,7 @@ namespace AdventureAuthor.Core
 				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
 			}
 		}
+		
 				
 		/// <summary>
 		/// For use by AddChapter only.
@@ -127,13 +150,6 @@ namespace AdventureAuthor.Core
 			this.introduction = introduction;
 			this.Area.HasTerrain = exterior;	
 			this.Area.Size = GameArea.GetValidSize(size);
-			
-			try {
-				ScriptHelper.ApplyDefaultScripts(this.Area);
-			}
-			catch (IOException e) {
-				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
-			}
 		}
 	
 		#endregion Constructors

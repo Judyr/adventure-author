@@ -76,6 +76,34 @@ namespace AdventureAuthor.Core
 		{			
 		}
 		
+		
+		/// <summary>
+		/// Constructor for a scratchpad object that takes an area, to create AA data for a non-AA-created module.
+		/// </summary>
+		/// <param name="adventure">The adventure to create the scratchpad on</param>
+		/// <param name="area">The area to make into a scratchpad</param>
+		public Scratchpad(Adventure adventure, NWN2GameArea area)
+		{
+			if (area.Name != Adventure.NAME_OF_SCRATCHPAD_AREA) {
+				area.Name = Adventure.NAME_OF_SCRATCHPAD_AREA; 
+			}
+			
+			this.Area = area;
+			this.owningAdventure = adventure;
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Area);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
+		}
+		
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="adventure"></param>
 		public Scratchpad(Adventure adventure)
 		{
 			this.Area = new NWN2GameArea(this.Name,
