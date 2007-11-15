@@ -32,6 +32,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Setup;
+using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Data;
@@ -270,6 +271,13 @@ namespace AdventureAuthor.Core
 			this.owningUser = Adventure.CurrentUser;
 			this.Chapters = new SerializableDictionary<string,Chapter>();
 			this.scratch = new Scratchpad(this);
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Module);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
 				
 			this.Serialize();
 		}	

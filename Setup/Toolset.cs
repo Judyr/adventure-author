@@ -103,6 +103,12 @@ namespace AdventureAuthor.Setup
 				return false;
 		}
 		
+		
+		
+		private static MouseMode? previousMouseMode = null;
+		
+		
+		
 		/// <summary>
 		/// Performs a myriad of modifications to the user interface at launch.
 		/// </summary>
@@ -129,9 +135,14 @@ namespace AdventureAuthor.Setup
 //				c.ContextMenuStrip = null;
 			}
 			
+			//
+			
 			NWN2AreaViewer.MouseModeChanged += delegate
 			{
-				Log.WriteMessage("entered mode " + NWN2AreaViewer.MouseMode);
+				if (previousMouseMode != NWN2AreaViewer.MouseMode) {
+					Log.WriteMessage("entered mode " + NWN2AreaViewer.MouseMode);
+					previousMouseMode = NWN2AreaViewer.MouseMode;
+				}
 			};
 			
 			
@@ -301,6 +312,7 @@ namespace AdventureAuthor.Setup
 				else if (fi.FieldType == typeof(NWN2AreaContentsView)) {
 					areaContentsView = (NWN2AreaContentsView)fi.GetValue(form.App);
 					
+					// All this is necessary to identify the object type of the thing you're selecting:
 					FieldInfo[] paletteFields = typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
 					FieldInfo dictionaryField = null;
 					foreach (FieldInfo f in paletteFields) {
@@ -338,75 +350,6 @@ namespace AdventureAuthor.Setup
 							}
 						};
 					}
-					
-					
-					
-					
-					
-//					dictionaries.Add("waypoint",(Dictionary<INWN2Object,GTLTreeNode>)dictionaryField.GetValue(waypointView));
-//					waypointView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
-//					{  
-//						if (e.NewValue && dictionaries["waypoint"].ContainsValue(e.TreeNode)) {
-//							Log.WriteAction(Log.Action.selected,"waypoint",e.TreeNode.Text);
-//						}
-//					};
-					
-					
-					
-					
-					
-					
-												
-											
-						
-						
-						
-						
-						
-					
-//					FieldInfo[] areaContentsFields = typeof(NWN2AreaContentsView).GetFields(BindingFlags.Instance |
-//					                                                                        BindingFlags.NonPublic);
-//					foreach (FieldInfo field in areaContentsFields) {
-//						if (field.FieldType == typeof(Panel)) {
-//							Panel panel = (Panel)field.GetValue(areaContentsView);
-//							foreach (Control c in GetControls(panel)) {
-//								if (c is NWN2PaletteTreeView) {
-//									NWN2PaletteTreeView v = (NWN2PaletteTreeView)c;
-//									FieldInfo[] paletteFields = 
-//										typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-//									foreach (FieldInfo f in paletteFields) {
-//										if (f.FieldType == typeof(Dictionary<INWN2Object,GTLTreeNode>)) {
-//											Dictionary<INWN2Object,GTLTreeNode> objectDictionary = 
-//												(Dictionary<INWN2Object,GTLTreeNode>)f.GetValue(v);
-//											objectDictionaries.Add(objectDictionary);
-//											break;
-//										}
-//									}
-//									v.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e)
-//									{
-//										if (e.NewValue) {
-//											FieldInfo[] paletteFields = 
-//												typeof(NWN2PaletteTreeView).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-//											foreach (FieldInfo f in paletteFields) {
-//												if (f.FieldType == typeof(Dictionary<INWN2Object,GTLTreeNode>)) {
-//													Dictionary<INWN2Object,GTLTreeNode> objectDictionary = 
-//														(Dictionary<INWN2Object,GTLTreeNode>)f.GetValue(v);
-//													if (objectDictionary.ContainsValue(e.TreeNode)) {
-//														foreach (INWN2Object key in objectDictionary.Keys) {
-//															string typename = Log.GetNWN2TypeName(key);
-//															Log.WriteAction(Log.Action.selected,typename,e.TreeNode.Text);
-//															break;
-//														}														
-//													}
-//													return;
-//												}
-//											}
-//										}
-//									};
-//								}
-//							}
-//						}
-//					}
 				}
 												
 				// Get rid of the graphics preferences toolbar:

@@ -54,9 +54,9 @@ namespace AdventureAuthor.Scripts
 		
 		private static string ownerName = "[OWNER]";		
 		
-		public enum Origin {
-			NWN2, // included with game - located at Neverwinter Nights 2/Data/Scripts.zip on the main drive
-			AdventureAuthor // included with Adventure Author - located at Neverwinter Nights 2/Override on the main drive
+		public enum Location {
+			Original, // included with game - located at Neverwinter Nights 2/Data/Scripts.zip on the main drive
+			Override // included with Adventure Author - located at Neverwinter Nights 2/Override on the main drive
 		}
 		
 		public enum FadeColour { 
@@ -207,7 +207,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. gc_item_count (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a conditional functor, or null if failed.</returns>
-		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, Origin origin)
+		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, Location origin)
 		{
 			NWN2ConditionalFunctor conditionalFunctor = GetFunctor(scriptName,args,origin);
 			
@@ -222,9 +222,9 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, Origin origin)
+		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, Location location)
 		{
-			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,origin);
+			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,location);
 			return scriptFunctor;
 		}
 		
@@ -234,10 +234,10 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, Origin origin)
+		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, Location location)
 		{
 			try {
-				NWN2GameScript script = GetScript(scriptName, origin);
+				NWN2GameScript script = new NWN2GameScript(GetScriptResource(scriptName, location));
 				if (script == null) {
 					Say.Error("Couldn't find a script named '" + scriptName + "'.");
 					return null;
@@ -280,42 +280,37 @@ namespace AdventureAuthor.Scripts
 			}
 		}	
 		
+		
 		/// <summary>
-		/// Retrieves a compiled (.NCS) script of a given name/resref.
+		/// Retrieves a compiled (.NCS) script of a given name/resref as a resource.
 		/// </summary>
 		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="origin">The origin of the script; i.e. a NWN2 game script, or an Adventure Author script</param>
-		/// <returns>Returns the compiled script, or null if no script was found.</returns>
-		private static NWN2GameScript GetScript(string name, Origin origin)
+		/// <returns>Returns the compiled script resource, or null if no script was found.</returns>
+		internal static IResourceEntry GetScriptResource(string name, Location location)
 		{
 			try {	
 				IResourceRepository scripts;
-				if (origin == Origin.NWN2) {
+				if (location == Location.Original) {
 					string path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
 					scripts = ResourceManager.Instance.GetRepositoryByName(path);
 				}
-				else if (origin == Origin.AdventureAuthor) {
+				else if (location == Location.Override) {
 					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT UserOverrideDirectory
 				}
 				else {
-					throw new ArgumentException("Invalid ScriptOrigin enum passed.");
+					throw new IOException("Unknown script location passed.");
 				}
 								
 				ushort ncs = BWResourceTypes.GetResourceType("ncs");
 				OEIResRef resRef = new OEIResRef(name);
-				IResourceEntry entry = scripts.FindResource(resRef,ncs);
-				NWN2GameScript script = new NWN2GameScript(entry);
-				return script;	
+				return scripts.FindResource(resRef,ncs);
 			}
 			catch (NullReferenceException e) {
-				Say.Error("Was unable to retrieve script named '" + name + "'.",e);
-				return null;
-			}
-			catch (ArgumentException e) {
-				Say.Error(e);
-				return null;
+				throw new IOException("Was unable to retrieve script named '" + name + "'.",e);
 			}
 		}
+		
 		
 		public static bool WriteScript(NWN2ScriptFunctor scriptFunctor, string filename)
 		{
@@ -328,6 +323,114 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		
+		/// <summary>
+		/// Apply default scripts for logging game events to a module.
+		/// </summary>
+		/// <param name="instance">The game module</param>
+		/// <exception cref="IOException">thrown if a script resource couldn't be found</exception>
+		internal static void ApplyDefaultScripts(NWN2GameModule module)
+		{
+			if (module == null) {
+				throw new ArgumentNullException("module","Module to attach scripts to cannot be null.");
+			}
+			
+			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			
+			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",loc);
+			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",loc);
+			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",loc);
+			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",loc);
+			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",loc);
+			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",loc);
+			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",loc);
+			//module.ModuleInfo.OnPlayerRespawn = ScriptHelper.GetScriptResource("module_onplayerrespawn",loc); doesn't work
+			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",loc);
+			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",loc);
+			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",loc);
+		}
+		
+		
+		/// <summary>
+		/// Apply default scripts for logging game events to an area.
+		/// </summary>
+		/// <param name="instance">The game area</param>
+		/// <exception cref="IOException">thrown if a script resource couldn't be found</exception>
+		internal static void ApplyDefaultScripts(NWN2GameArea area)
+		{
+			if (area == null) {
+				throw new ArgumentNullException("area","Area to attach scripts to cannot be null.");
+			}
+			
+			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			
+			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",loc);
+		}
+		
+		
+		/// <summary>
+		/// Apply default scripts for logging game events to a game object.
+		/// </summary>
+		/// <param name="instance">The newly created game object</param>
+		/// <exception cref="IOException">thrown if a script resource couldn't be found</exception>
+		internal static void ApplyDefaultScripts(INWN2Instance instance)
+		{
+			if (instance == null) {
+				throw new ArgumentNullException("instance","Instance to attach scripts to cannot be null.");
+			}
+			
+			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			
+			if (instance is NWN2CreatureInstance) {
+				NWN2CreatureInstance creature = (NWN2CreatureInstance)instance;
+				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",loc);
+				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",loc);
+				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",loc);
+				creature.OnSpawnIn = ScriptHelper.GetScriptResource("creature_onspawnin",loc); // TODO check against area_enter
+				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",loc);
+			}
+			else if (instance is NWN2DoorInstance) {
+				NWN2DoorInstance door = (NWN2DoorInstance)instance; 
+				door.OnOpen = ScriptHelper.GetScriptResource("onopen",loc);
+				door.OnClosed = ScriptHelper.GetScriptResource("onclosed",loc);
+				door.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
+				door.OnLock = ScriptHelper.GetScriptResource("onlock",loc);
+				door.OnUnlock = ScriptHelper.GetScriptResource("onunlock",loc);
+				door.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",loc);
+				door.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",loc);
+				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
+				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",loc);
+			}
+			else if (instance is NWN2EncounterInstance) {
+				NWN2EncounterInstance encounter = (NWN2EncounterInstance)instance;
+				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",loc);
+				encounter.OnExhausted = ScriptHelper.GetScriptResource("encounter_onexhausted",loc);
+			}
+			else if (instance is NWN2PlaceableInstance) {
+				NWN2PlaceableInstance placeable = (NWN2PlaceableInstance)instance;
+				placeable.OnClosed = ScriptHelper.GetScriptResource("onclosed",loc);
+				placeable.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",loc);
+				placeable.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",loc);
+				placeable.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
+				placeable.OnLeftClick = ScriptHelper.GetScriptResource("onleftclick",loc);
+				placeable.OnLock = ScriptHelper.GetScriptResource("onlock",loc);
+				placeable.OnOpen = ScriptHelper.GetScriptResource("onopened",loc);
+				placeable.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
+				placeable.OnUnlock = ScriptHelper.GetScriptResource("onunlock",loc);
+				placeable.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",loc);
+			}
+			else if (instance is NWN2StoreInstance) {
+				NWN2StoreInstance store = (NWN2StoreInstance)instance;
+				store.OnOpenStore = ScriptHelper.GetScriptResource("store_onopenstore",loc);
+				store.OnCloseStore = ScriptHelper.GetScriptResource("store_onclosestore",loc);
+			}
+			else if (instance is NWN2TriggerInstance) {
+				NWN2TriggerInstance trigger = (NWN2TriggerInstance)instance;
+				trigger.OnEnter = ScriptHelper.GetScriptResource("area_trigger_onenter",loc);
+				trigger.OnExit = ScriptHelper.GetScriptResource("trigger_onexit",loc);
+				trigger.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
+				trigger.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
+			}
+		}
 		
 		
 //		List<string> parameters = new List<string>(parameterscount);

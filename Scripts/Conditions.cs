@@ -46,7 +46,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sCreatureTag">The tag of the creature to check</param>
 		public static NWN2ConditionalFunctor CreatureIsDead(string sCreatureTag)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_dead",new object[]{sCreatureTag},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_dead",new object[]{sCreatureTag},ScriptHelper.Location.Original);
 		}
 		
 		/// <summary>
@@ -55,7 +55,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sObjectTag">The tag of the object to check</param>
 		public static NWN2ConditionalFunctor DoorOrContainerIsOpen(string sObjectTag)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_is_open",new object[]{sObjectTag},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_is_open",new object[]{sObjectTag},ScriptHelper.Location.Original);
 		}
 		
 		/// <summary>
@@ -65,7 +65,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor EnemyIsNearPlayer(float fRange)
 		{
 			int bLineOfSight = 0; // not useful
-			return ScriptHelper.GetConditionalFunctor("gc_is_enemy_near",new object[]{fRange,bLineOfSight},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_is_enemy_near",new object[]{fRange,bLineOfSight},ScriptHelper.Location.Original);
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sCheck">The value to check for, can use operators e.g. <5.0, >10.0, !0.0</param>
 		public static NWN2ConditionalFunctor FloatHasValue(string sVariable, string sCheck)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_module_float",new object[]{sVariable,sCheck},ScriptHelper.Origin.AdventureAuthor);
+			return ScriptHelper.GetConditionalFunctor("gc_module_float",new object[]{sVariable,sCheck},ScriptHelper.Location.Override);
 		}
 		
 		/// <summary>
@@ -85,7 +85,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sCheck">The value to check for, can use operators e.g. <5, >10, !0</param>
 		public static NWN2ConditionalFunctor IntHasValue(string sVariable, string sCheck)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_module_int",new object[]{sVariable,sCheck},ScriptHelper.Origin.AdventureAuthor);
+			return ScriptHelper.GetConditionalFunctor("gc_module_int",new object[]{sVariable,sCheck},ScriptHelper.Location.Override);
 		}
 		
 		/// <summary>
@@ -96,7 +96,7 @@ namespace AdventureAuthor.Scripts
 		{
 			string sTarget = String.Empty; // not useful (pass "$PARTY" to check entire party)
 			int bExactMatch = 1; // not useful
-			return ScriptHelper.GetConditionalFunctor("gc_equipped",new object[]{sItem,sTarget,bExactMatch},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_equipped",new object[]{sItem,sTarget,bExactMatch},ScriptHelper.Location.Original);
 		}	
 		
 		/// <summary>
@@ -106,7 +106,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sCheck">The value to check for</param>
 		public static NWN2ConditionalFunctor StringHasValue(string sVariable, string sCheck)
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_module_string",new object[]{sVariable,sCheck},ScriptHelper.Origin.AdventureAuthor);
+			return ScriptHelper.GetConditionalFunctor("gc_module_string",new object[]{sVariable,sCheck},ScriptHelper.Location.Override);
 		}
 		
 		/// <summary>
@@ -116,7 +116,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor PlayerHasGold(int nGold)
 		{
 			int nMP = 0; // not useful
-			return ScriptHelper.GetConditionalFunctor("gc_check_gold",new object[]{nGold,nMP},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_check_gold",new object[]{nGold,nMP},ScriptHelper.Location.Original);
 		}
 		
 		/// <summary>
@@ -126,7 +126,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor PlayerHasHenchman(string sTarget)
 		{
 			string sMaster = String.Empty; // not useful
-			return ScriptHelper.GetConditionalFunctor("gc_henchman",new object[]{sTarget,sMaster},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_henchman",new object[]{sTarget,sMaster},ScriptHelper.Location.Original);
 		}
 		
 		/// <summary>
@@ -136,7 +136,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor PlayerHasItem(string sItem)
 		{
 			int bCheckParty	= 1; // not useful 
-			return ScriptHelper.GetConditionalFunctor("gc_check_item",new object[]{sItem,bCheckParty},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_check_item",new object[]{sItem,bCheckParty},ScriptHelper.Location.Original);
 		}
 			
 		
@@ -154,7 +154,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ConditionalFunctor PlayerHasNumberOfItems(string sItemTag, string sCheck)
 		{
 			int bPCOnly = 0; // not useful		
-			return ScriptHelper.GetConditionalFunctor("gc_item_count",new object[]{sItemTag,sCheck,bPCOnly},ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_item_count",new object[]{sItemTag,sCheck,bPCOnly},ScriptHelper.Location.Original);
 		}						
 		
 		/// <summary>
@@ -162,7 +162,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsChaotic()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_align_chaotic",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_align_chaotic",null,ScriptHelper.Location.Original);
 		}	
 		
 		/// <summary>
@@ -170,7 +170,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsEvil()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_align_evil",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_align_evil",null,ScriptHelper.Location.Original);
 		}	
 		
 		/// <summary>
@@ -178,7 +178,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsFemale()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_is_female",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_is_female",null,ScriptHelper.Location.Original);
 		}
 		
 		/// <summary>
@@ -186,7 +186,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsGood()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_align_good",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_align_good",null,ScriptHelper.Location.Original);
 		}		
 				
 		/// <summary>
@@ -194,7 +194,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsLawful()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_align_lawful",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_align_lawful",null,ScriptHelper.Location.Original);
 		}			
 		
 		/// <summary>
@@ -202,7 +202,7 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		public static NWN2ConditionalFunctor PlayerIsMale()
 		{
-			return ScriptHelper.GetConditionalFunctor("gc_is_male",null,ScriptHelper.Origin.NWN2);
+			return ScriptHelper.GetConditionalFunctor("gc_is_male",null,ScriptHelper.Location.Original);
 		}	
 	}
 }
