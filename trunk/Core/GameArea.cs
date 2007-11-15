@@ -38,7 +38,9 @@ using System.Xml.Serialization;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Scripts;
 using OEIShared.Utils;
+using OEIShared.IO;
 
 namespace AdventureAuthor.Core
 {
@@ -221,13 +223,19 @@ namespace AdventureAuthor.Core
 			INWN2Instance instance = value as INWN2Instance;
 			if (instance != null) {
 				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value),instance.Name);
+				try {
+					ScriptHelper.ApplyDefaultScripts(instance);
+				}
+				catch (IOException e) {
+					Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+				}
 			}
 			else {
 				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value));
 			}
 		}
-
 		
+				
 		private void DeletedGameObject(OEICollectionWithEvents cList, int index, object value)
 		{
 			INWN2Instance instance = value as INWN2Instance;

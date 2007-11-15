@@ -25,12 +25,14 @@
  */
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
+using AdventureAuthor.Scripts;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core
@@ -41,11 +43,7 @@ namespace AdventureAuthor.Core
 	[Serializable]
 	[XmlRoot]	
 	public class Chapter : GameArea
-	{
-		// TODO: Decouple Chapter from Adventure. Make the Chapter constructors
-		// take an object of type Adventure, and then call AddChapter on that
-		// object.
-		
+	{		
 		#region Fields
 			
 		private string name;
@@ -103,7 +101,14 @@ namespace AdventureAuthor.Core
 			this.Area = new NWN2GameArea(name, //..and here
 				                     	 adventure.Module.Repository.DirectoryName,
 				                     	 adventure.Module.Repository);
-			this.introduction = String.Empty;
+			this.introduction = String.Empty;			
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Area);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
 		}
 				
 		/// <summary>
@@ -122,6 +127,13 @@ namespace AdventureAuthor.Core
 			this.introduction = introduction;
 			this.Area.HasTerrain = exterior;	
 			this.Area.Size = GameArea.GetValidSize(size);
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Area);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
 		}
 	
 		#endregion Constructors

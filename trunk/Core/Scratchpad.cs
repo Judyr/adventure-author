@@ -26,9 +26,12 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Xml.Serialization;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Instances;
+using AdventureAuthor.Scripts;
+using AdventureAuthor.Utils;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core
@@ -82,6 +85,13 @@ namespace AdventureAuthor.Core
 			Size size = new Size(Adventure.MAX_AREA_LENGTH,Adventure.MAX_AREA_LENGTH);
 			this.Area.Size = GameArea.GetValidSize(size);
 			this.owningAdventure = adventure;
+			
+			try {
+				ScriptHelper.ApplyDefaultScripts(this.Area);
+			}
+			catch (IOException e) {
+				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+			}
 		}
 		
 		#endregion Constructors
