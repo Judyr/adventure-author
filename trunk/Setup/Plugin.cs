@@ -87,23 +87,23 @@ namespace AdventureAuthor.Setup
 				}	
 				
 				// Start recording debug messages and user actions:
-				LogWindow logWindow = new LogWindow();
-				logWindow.Show();
+				//LogWindow logWindow = new LogWindow();
+				//logWindow.Show();
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording();	
 				Log.WriteAction(Log.Action.launched,"toolset");
+			}
+			catch (DirectoryNotFoundException e) {
+				MessageBox.Show("Required Adventure Author files were not found at the expected location - software may " +
+				                "not function correctly. \n\n" + e.ToString());
+				//CloseToolset();
+			}
 					
-				// Instantiate windows now to speed things up later on:
-				WriterWindow.Instance = new WriterWindow();
-								
-				// Set up the Adventure Author toolset:
-				Toolset.SetupUI();
-			}
-			catch (DirectoryNotFoundException) {
-				MessageBox.Show("Required Adventure Author files were not found at the expected location (" + 
-				                Adventure.AdventureAuthorDir + "). Please re-install Adventure Author.");
-				CloseToolset();
-			}
+			// Instantiate windows now to speed things up later on:
+			WriterWindow.Instance = new WriterWindow();
+							
+			// Set up the Adventure Author toolset:
+			Toolset.SetupUI();
 		}	
 		
 		/// <summary>

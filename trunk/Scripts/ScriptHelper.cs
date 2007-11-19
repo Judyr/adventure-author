@@ -385,7 +385,6 @@ namespace AdventureAuthor.Scripts
 				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",loc);
 				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",loc);
 				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",loc);
-				creature.OnSpawnIn = ScriptHelper.GetScriptResource("creature_onspawnin",loc); // TODO check against area_enter
 				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",loc);
 			}
 			else if (instance is NWN2DoorInstance) {
