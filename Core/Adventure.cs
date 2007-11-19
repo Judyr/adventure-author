@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Configuration;
 using System.Drawing;
 using System.IO;
@@ -118,7 +119,30 @@ namespace AdventureAuthor.Core
 		
 		public static string LogDir {			
 			get {
-				return Path.Combine(AdventureAuthorDir,"logs");
+				if (!Directory.Exists(@"C:\adventureauthorlogs")) {
+				    	
+				}
+				
+				return @"C:\adventureauthorlogs";
+				
+				
+				try {
+				StreamReader sr = new StreamReader(System.IO.File.Open(Path.Combine(System.Environment.CurrentDirectory,"logdirectory.txt"), FileMode.Open));
+				string logdir = sr.ReadLine();
+				if (logdir != null && logdir != String.Empty) {
+					return Path.Combine(logdir,"");
+				}
+				else {
+					Say.Error("No destination found for log files - in the file logdirectory.txt in the main NWN2 folder, " + 
+					          "please type in a valid path e.g. C:\adventureauthorlogs");
+					return Path.Combine(AdventureAuthorDir,"logs");
+				}
+				//return Path.Combine(AdventureAuthorDir,"logs");
+				}
+				catch (FileNotFoundException e) {
+					Say.Error("Could not find log directory.",e);
+					return Path.Combine(AdventureAuthorDir,"logs");
+				}
 			}
 		}	
 		
@@ -864,12 +888,47 @@ namespace AdventureAuthor.Core
 				// bits to the OnEnter script automatically)
 			}		
 					
-			// Save, bake and run the module:	
 			Save();						
-			form.App.DoBakeAll(false,false);
+			Bake();
+			
+			// create a copy of the log from the last game (otherwise it will be over-written):
+			ProcessStartInfo copylogStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"copylog.bat"));
+			Process.Start(copylogStartInfo);
+			
 			Log.WriteAction(Log.Action.launched,"game",CurrentAdventure.Name);
 			form.App.RunModule(waypoint,false,false,false);
-		}			
+		}
+		
+		
+		private static void RunNWN2()
+		{
+			// if .Exited delegate works, on the process exiting copy the log with an appropriate filename
+			
+			
+			// create a copy of the log from the last game (otherwise it will be over-written):
+			ProcessStartInfo copylogStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"copylog.bat"));
+			Process.Start(copylogStartInfo);
+			
+			// start the game:
+			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
+			nwn2mainStartInfo.RedirectStandardOutput = true;
+			nwn2mainStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			nwn2mainStartInfo.UseShellExecute = false;
+			Log.WriteAction(Log.Action.launched,"game");
+			Process nwn2main = new Process();
+			nwn2main.StartInfo = nwn2mainStartInfo;
+//			nwn2main.Disposed += delegate { Log.WriteAction(Log.Action.exited,"game",CurrentAdventure.Name); };
+			nwn2main.Start();
+		}
+		
+		
+		public void Bake()
+		{			
+			Log.WriteMessage("baking module");
+			form.App.DoBakeAll(false,false);
+			Log.WriteMessage("baked module");
+		}
+		
 							
 		//TODO: IMPLEMENT
 		/// <summary>

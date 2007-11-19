@@ -38,9 +38,10 @@ namespace AdventureAuthor.Utils
 			while (File.Exists(logpath)) {
 				count++;
 				string newfilename = filename + count.ToString();
-				logpath = Path.Combine(Adventure.LogDir,newfilename+".log");									
+				logpath = Path.Combine(Adventure.LogDir,newfilename+".log");								
 			}			
-			FileInfo f = new FileInfo(logpath);			
+			
+			FileInfo f = new FileInfo(logpath);				
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);
 			writer.AutoFlush = true;

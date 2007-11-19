@@ -151,7 +151,8 @@ namespace AdventureAuthor.Setup
 			NWN2ToolsetGraphicsPreferences gfx = NWN2ToolsetPreferences.Instance.Graphics;			
 			
 			general.Autosave = false;			
-
+			general.AllowPlugins = PluginSecurityPreference.All;
+			
 			gfx.AmbientSound = false;			
 			gfx.Bloom = true;
 			gfx.DisplaySurfaceMesh = false;
@@ -727,6 +728,8 @@ namespace AdventureAuthor.Setup
 			saveAdventure.Activate += delegate { SaveAdventureDialog(); };
 //			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
 //			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
+			MenuButtonItem bakeAdventure = new MenuButtonItem("Bake adventure");
+			bakeAdventure.Activate += delegate { BakeAdventureDialog(); };
 			MenuButtonItem runAdventure = new MenuButtonItem("Run adventure");
 			runAdventure.Activate += delegate { RunAdventureDialog(); };
 			MenuButtonItem closeAdventure = new MenuButtonItem("Close adventure");
@@ -743,12 +746,12 @@ namespace AdventureAuthor.Setup
 //			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
-			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
-			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
+//			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
+//			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
 			newChapter.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
-			logWindow.BeginGroup = true;
+//			logWindow.BeginGroup = true;
 						
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newAdventure,
@@ -756,13 +759,14 @@ namespace AdventureAuthor.Setup
 			                           	saveAdventure,
 //			                           	saveAdventureAs,
 			                           	runAdventure,
+			                           	bakeAdventure,
 			                           	closeAdventure,
 			                           	newChapter,
 			                           	newConversation,
 			                           	variableManager,
 //			                           	changeUser,
 			                           	exitAdventureAuthor,
-			                           	logWindow
+//			                           	logWindow
 			                           });			
 		}							
 		
@@ -906,6 +910,18 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
+		
+		private static void BakeAdventureDialog()
+		{
+			if (Adventure.CurrentAdventure == null) {
+				Say.Error("Open an adventure first.");
+				return;
+			}
+			
+			Adventure.CurrentAdventure.Bake();
+		}	
+		
+		
 		private static void RunAdventureDialog()
 		{
 			if (Adventure.CurrentAdventure == null) {
@@ -913,9 +929,12 @@ namespace AdventureAuthor.Setup
 				return;
 			}
 			
-			RunAdventure_Form runAdventureForm = new RunAdventure_Form();
-			runAdventureForm.ShowDialog(form.App);
+//			RunAdventure_Form runAdventureForm = new RunAdventure_Form();
+//			runAdventureForm.ShowDialog(form.App);
+			
+			Adventure.CurrentAdventure.Run(String.Empty,false,false);
 		}		
+		
 		
 		internal static bool CloseAdventureDialog()
 		{

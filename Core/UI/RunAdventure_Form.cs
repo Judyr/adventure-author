@@ -39,6 +39,7 @@ namespace AdventureAuthor.Core.UI
 		public RunAdventure_Form()
 		{
 			InitializeComponent();
+			
 			//TODO: Populate combobox with all waypoints in module
 		}
 		

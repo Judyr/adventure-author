@@ -217,9 +217,9 @@ namespace Samples.DragDrop
 			}
 
 			_draggedElt = e.Source as UIElement;
-			Say.Debug("about to call (from DragSource_PreviewMouseLeftButtonDown)");
+//			Say.Debug("about to call (from DragSource_PreviewMouseLeftButtonDown)");
 			_dragStartPoint = e.GetPosition(GetTopContainer());
-			Say.Debug("called (from DragSource_PreviewMouseLeftButtonDown)");
+//			Say.Debug("called (from DragSource_PreviewMouseLeftButtonDown)");
             _offsetPoint = e.GetPosition(_draggedElt);
 			_isMouseDown = true;
 
@@ -227,12 +227,12 @@ namespace Samples.DragDrop
 
 		static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
 		{
-			Say.Debug("about to call (from DragSource_PreviewMouseMove)");
+//			Say.Debug("about to call (from DragSource_PreviewMouseMove)");
 			if (_isMouseDown && IsDragGesture(e.GetPosition(GetTopContainer())))
 			{
 				DragStarted(sender as UIElement);
 			}
-			Say.Debug("called (from DragSource_PreviewMouseMove)");
+//			Say.Debug("called (from DragSource_PreviewMouseMove)");
 		}
 
 		static void DragStarted(UIElement uiElt)
