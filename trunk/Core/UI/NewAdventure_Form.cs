@@ -69,8 +69,9 @@ namespace AdventureAuthor.Core.UI
 					
 					string name = textBox_NameOfNewAdventure.Text;
 					new Adventure(name);
-					Adventure.Open(name);
-					if (Adventure.CurrentAdventure != null) {
+					bool opened = Adventure.Open(name);
+					
+					if (opened && Adventure.CurrentAdventure != null) {
 						Adventure.CurrentAdventure.Scratch.Open();
 						this.Close();
 					}

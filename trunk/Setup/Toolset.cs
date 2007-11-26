@@ -52,6 +52,8 @@ using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
 using NWN2Toolset.Plugins;
+using Netron.Diagramming.Win;
+using Netron.Diagramming.Core;
 using GlacialComponents.Controls.GlacialTreeList;
 using OEIShared.Utils;
 using OEIShared.IO.TwoDA;
@@ -746,10 +748,58 @@ namespace AdventureAuthor.Setup
 //			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
+			
+			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
+			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
+			mindMap.Activate += delegate 
+			{  
+				Form form = new Form();
+				Netron.Diagramming.Win.DiagramControl dc = new Netron.Diagramming.Win.DiagramControl();
+				form.Controls.Add(dc);
+				
+				
+				
+				
+				
+	            ((System.ComponentModel.ISupportInitialize)(dc)).BeginInit();
+	            dc.SuspendLayout();	
+	            
+	            SimpleEllipse ellipse = new SimpleEllipse();
+	            ellipse.Name = "myname";
+	            ellipse.Text = "i am a circle - a magic circle?";
+	            dc.AddShape(ellipse);
+	            
+	            SimpleEllipse rectangle = new SimpleEllipse();
+	            rectangle.Name = "rect";
+	            rectangle.Text = "lalalalalala";
+	            rectangle.Location = new Point(50,50);
+	            dc.AddShape(rectangle);
+	            
+	            // inexplicably required to get the root drawn if that's all there is:
+	            dc.AddConnection(ellipse.Connectors[0],ellipse.Connectors[0]); 
+	            dc.SetLayoutRoot(ellipse);         
+	            dc.Layout(LayoutType.RadialTree);
+	                        
+	            ((System.ComponentModel.ISupportInitialize)(dc)).EndInit();
+	            dc.ResumeLayout(false);
+	            dc.Invalidate();
+				
+				
+				
+				
+				form.Show();
+				
+				
+				
+				
+				
+			};
+			designersNotebook.Items.Add(mindMap);
 //			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 //			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
 			newChapter.BeginGroup = true;
+			designersNotebook.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
 //			logWindow.BeginGroup = true;
 						
@@ -766,6 +816,7 @@ namespace AdventureAuthor.Setup
 			                           	variableManager,
 //			                           	changeUser,
 			                           	exitAdventureAuthor,
+			                           	designersNotebook,
 //			                           	logWindow
 			                           });			
 		}							
@@ -864,7 +915,10 @@ namespace AdventureAuthor.Setup
 						throw new FileNotFoundException(modulePath + " is not a valid Adventure Author module. (Missing modulename.XML)");
 					}
 					else {
-						Adventure.Open(moduleName);
+						bool opened = Adventure.Open(moduleName);					
+						if (!opened || Adventure.CurrentAdventure == null) {
+							Say.Error("Failed to open adventure.");
+						}
 					}
 				}
 				catch (DirectoryNotFoundException e) {

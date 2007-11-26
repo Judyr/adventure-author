@@ -386,6 +386,7 @@ namespace AdventureAuthor.Scripts
 				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",loc);
 				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",loc);
 				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",loc);
+				//creature.FactionID = 2;
 			}
 			else if (instance is NWN2DoorInstance) {
 				NWN2DoorInstance door = (NWN2DoorInstance)instance; 

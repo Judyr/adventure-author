@@ -392,6 +392,10 @@ namespace AdventureAuthor.Core
 				Say.Error("Failed to open module.",e);
 				return false;
 			}
+			catch (FileNotFoundException e) {
+				Say.Error("Failed to open module.",e);
+				return false;
+			}
 		}			
 		
 		
@@ -576,20 +580,28 @@ namespace AdventureAuthor.Core
 		/// Used to persist changes to the Adventure.
 		/// </summary>
 		public void Serialize()
-		{			
-			this.module.OEISerialize(this.name);				
-						
-			foreach (Chapter c in this.Chapters.Values) {
-				c.Area.OEISerialize();
-			}			
-			this.scratch.Area.OEISerialize();
-			string path = Path.Combine(Path.Combine(form.ModulesDirectory,module.Name),module.Name+".xml");
-			Say.Debug(path);
-			FileInfo f = new FileInfo(path);
-			Stream s = f.Open(FileMode.Create);	
-			XmlSerializer xml = new XmlSerializer(typeof(Adventure));
-			xml.Serialize(s,this);				
-			s.Close();
+		{		
+			try {
+				this.module.OEISerialize(this.name);				
+							
+				foreach (Chapter c in this.Chapters.Values) {
+					c.Area.OEISerialize();
+				}			
+				this.scratch.Area.OEISerialize();
+				string path = Path.Combine(Path.Combine(form.ModulesDirectory,module.Name),module.Name+".xml");
+				Say.Debug(path);
+				FileInfo f = new FileInfo(path);
+				Stream s = f.Open(FileMode.Create);	
+				XmlSerializer xml = new XmlSerializer(typeof(Adventure));
+				xml.Serialize(s,this);				
+				s.Close();
+			}
+			catch (InvalidOperationException e) {
+				Say.Error("Serialization error",e);
+			}
+			catch (Exception ex) {
+				Say.Error(ex);
+			}
 		}			
 				
 		
