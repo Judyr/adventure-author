@@ -81,8 +81,8 @@ namespace AdventureAuthor.Setup
 		{
 			try {
 				// Check directories:
-				if (!Directory.Exists(Adventure.AdventureAuthorDir)) {
-					throw new DirectoryNotFoundException("Adventure Author installation directory at " + Adventure.AdventureAuthorDir + 
+				if (!Directory.Exists(ModuleHelper.AdventureAuthorDir)) {
+					throw new DirectoryNotFoundException("Adventure Author installation directory at " + ModuleHelper.AdventureAuthorDir + 
 					                                     "was missing.");
 				}	
 				

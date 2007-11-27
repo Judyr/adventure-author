@@ -38,7 +38,7 @@ namespace AdventureAuthor.Core
 	public class User
 	{
 		private string name;
-		private List<string> titlesOfAdventures; // names of all the Adventures this User owns
+		private List<string> moduleNames; // names of all the modules this User owns
 		
 		[XmlElement]
 		public string Name {
@@ -47,9 +47,9 @@ namespace AdventureAuthor.Core
 		}		
 		
 		[XmlArray]
-		public List<string> TitlesOfAdventures {
-			get { return titlesOfAdventures; }
-			set { titlesOfAdventures = value; }
+		public List<string> ModuleNames {
+			get { return moduleNames; }
+			set { moduleNames = value; }
 		}
 		
 		/// <summary>
@@ -63,7 +63,7 @@ namespace AdventureAuthor.Core
 		public User(string name)
 		{
 			this.name = name;
-			this.titlesOfAdventures = new List<string>();
+			this.moduleNames = new List<string>();
 		}
 	}
 }

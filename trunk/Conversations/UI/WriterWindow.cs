@@ -39,6 +39,7 @@ using AdventureAuthor.Utils;
 using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using NWN2Toolset.NWN2.IO;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Conversations.UI
@@ -498,12 +499,8 @@ namespace AdventureAuthor.Conversations.UI
 		/// <remarks>The conversation file must be located in the directory of the current Adventure.</remarks>
 		public void Open(string name)
 		{
-			if (Adventure.CurrentAdventure == null) {
+			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
 				Say.Error("Open an Adventure first.");
-				return;
-			}
-			else if (!Adventure.IsValidName(name)) {
-				Say.Error(name + " is not a valid name.");
 				return;
 			}
 			
@@ -524,12 +521,12 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="name">The filename of the conversation to create.</param>
 		public void CreateOpen(string name)
 		{
-			if (Adventure.CurrentAdventure == null) {
+			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
 				Say.Error("Open an Adventure first.");
 				return;
 			}
-			else if (!Adventure.IsValidName(name)) {
-				Say.Error(name + " is not a valid name.");
+			else if (!ModuleHelper.IsValidName(name)) {
+				Say.Error("'" + name + "' is not a valid name for a conversation.");
 				return;
 			}
 			
@@ -544,6 +541,7 @@ namespace AdventureAuthor.Conversations.UI
 			Open(name,true);
 		}
 		
+		
 		private void Open(string name, bool createAsNew)
 		{				
 			NWN2GameConversation conv = null;
@@ -552,16 +550,16 @@ namespace AdventureAuthor.Conversations.UI
 				
 				if (createAsNew) { // if the original conversation doesn't exist, create it:
 					conv = new NWN2GameConversation(originalFilename,
-					                         		Adventure.CurrentAdventure.Module.Repository.DirectoryName,
-						                     		Adventure.CurrentAdventure.Module.Repository);
-					Adventure.CurrentAdventure.Module.AddResource(conv); // necessary?
+					                         		form.App.Module.Repository.DirectoryName,
+						                     		form.App.Module.Repository);
+					form.App.Module.AddResource(conv); // necessary?
 				}
 					
 				// Create and open a working copy of the original conversation:
 				this.workingFilename = CreateWorkingCopy(originalFilename);
 				conv = new NWN2GameConversation(workingFilename,
-				                                Adventure.CurrentAdventure.Module.Repository.DirectoryName,
-					                            Adventure.CurrentAdventure.Module.Repository);		
+				                                form.App.Module.Repository.DirectoryName,
+					                            form.App.Module.Repository);		
 				
 				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
@@ -578,8 +576,8 @@ namespace AdventureAuthor.Conversations.UI
 				if (conv != null) {
 					conv.Release();
 				}
-				string originalPath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,originalFilename+".dlg");
-				string workingPath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,workingFilename+".dlg");
+				string originalPath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,originalFilename+".dlg");
+				string workingPath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,workingFilename+".dlg");
 				if (createAsNew && File.Exists(originalPath)) {
 					File.Delete(originalPath);
 				}
@@ -628,11 +626,11 @@ namespace AdventureAuthor.Conversations.UI
 			Random random = new Random();
 			do {
 				tempname = "~tmp" + random.Next();
-				temppath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,tempname+".dlg");
+				temppath = Path.Combine(form.App.Module.Repository.DirectoryName,tempname+".dlg");
 			}
 			while (File.Exists(temppath));		
 							
-			string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,originalFilename+".dlg");
+			string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,originalFilename+".dlg");
 			File.Copy(originalPath,temppath);
 			return tempname;			
 		}	
@@ -738,7 +736,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClosed(object sender, EventArgs ea)
 		{
 			Log.WriteAction(Log.Action.exited,"conversationwriter");
-			string path = Adventure.CurrentAdventure.Module.Repository.DirectoryName;
+			string path = form.App.Module.Repository.DirectoryName;
 			DirectoryInfo di = new DirectoryInfo(path);
 			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
 			foreach (FileInfo file in tempFiles) {
@@ -760,7 +758,7 @@ namespace AdventureAuthor.Conversations.UI
 				if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
 					SelectedLineControl.SaveChangesToText();
 				}	
-				if (!Adventure.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
+				if (!ModuleHelper.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
 					Say.Debug("IsDirty == true.");
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
@@ -799,7 +797,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void CloseConversation()
 		{
 			try {
-				string workingFilePath = System.IO.Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,this.workingFilename+".dlg");
+				string workingFilePath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,this.workingFilename+".dlg");
 				File.Delete(workingFilePath);
 				this.workingFilename = null;
 				this.originalFilename = null;

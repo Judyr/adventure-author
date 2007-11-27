@@ -40,6 +40,7 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using OEIShared.Utils;
 using OEIShared.IO;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Conversations
 {
@@ -869,8 +870,8 @@ namespace AdventureAuthor.Conversations
 			
 			lock (padlock) {				
 				NwnConv.OEISerialize(false);
-				string originalPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
-				string workingPath = Path.Combine(Adventure.CurrentAdventure.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
+				string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
+				string workingPath = Path.Combine(form.App.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
 				isDirty = false;
 				OnSaved(new EventArgs());

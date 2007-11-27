@@ -37,6 +37,7 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using OEIShared.IO;
 using OEIShared.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Variables
 {
@@ -67,7 +68,7 @@ namespace AdventureAuthor.Variables
 			else {
 				Log.WriteAction(Log.Action.added,"variable","'" + variable.Name + "'");
 			}
-	        Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Add(variable);
+	        form.App.Module.ModuleInfo.Variables.Add(variable);
 			if (VariablesWindow.Instance != null) {
 				VariablesWindow.Instance.RefreshVariablesList();
 			}
@@ -87,8 +88,8 @@ namespace AdventureAuthor.Variables
 				RemoveReferences(variable);
 			}
 			
-			Adventure.CurrentAdventure.Module.ModuleInfo.Variables.Remove(variable);
-			Adventure.CurrentAdventure.Save();
+			form.App.Module.ModuleInfo.Variables.Remove(variable);
+			ModuleHelper.Save();
 			if (VariablesWindow.Instance != null) {
 				VariablesWindow.Instance.RefreshVariablesList();
 			}
@@ -102,7 +103,7 @@ namespace AdventureAuthor.Variables
 		private static void RemoveReferences(NWN2ScriptVariable variable)
 		{			
 			// Remove all references to this variable in the module's conversations:
-        	IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(Adventure.CurrentAdventure.ModulePath);
+        	IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(form.App.Module.Repository.Name); // was modulepath
             if (moduleRepos == null) {
             	Say.Error("Couldn't locate the module as a resource repository.");
             	return;
@@ -191,7 +192,7 @@ namespace AdventureAuthor.Variables
         /// <returns>True if the name is available, false if there is already a variable by that name</returns>
         public static bool NameIsAvailable(string variableName)
         {
-        	return Adventure.CurrentAdventure.Module.ModuleInfo.Variables.GetVariable(variableName) == null;
+        	return form.App.Module.ModuleInfo.Variables.GetVariable(variableName) == null;
         }
         
         
@@ -207,7 +208,7 @@ namespace AdventureAuthor.Variables
         			return false;
         		}
         	}
-        	return variableName.Length <= Adventure.MAX_RESOURCE_NAME_LENGTH;
+        	return variableName.Length <= ModuleHelper.MAX_RESOURCE_NAME_LENGTH;
         }
 	}
 }

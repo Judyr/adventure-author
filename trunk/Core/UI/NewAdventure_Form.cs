@@ -29,6 +29,7 @@ using System.IO;
 using System.Windows.Forms;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core.UI
 {
@@ -40,7 +41,7 @@ namespace AdventureAuthor.Core.UI
 		public NewAdventure_Form()
 		{
 			InitializeComponent();			
-			label_CurrentUser.Text = "Current user:  " + Adventure.CurrentUser.Name;
+			label_CurrentUser.Text = "Current user:  unknown";
 		}
 		
 		
@@ -53,35 +54,28 @@ namespace AdventureAuthor.Core.UI
 		void Button_OK_NewAdventureClick(object sender, EventArgs e)
 		{
 			try {
-				if (!Adventure.IsValidName(textBox_NameOfNewAdventure.Text)) {
+				if (!ModuleHelper.IsValidName(textBox_NameOfNewAdventure.Text)) {
 					Say.Error("The name '" + textBox_NameOfNewAdventure.Text + "' is invalid. Adventure names " + 
 					          "must not contain the following characters ('<', '>', ':', '\', '\"', '/', '|', '.') " +
 					          "and must be between 1 and 32 characters in length.");
 				}
-				else if (!Adventure.IsAvailableAdventureName(textBox_NameOfNewAdventure.Text)) {
+				else if (!ModuleHelper.IsAvailableModuleName(textBox_NameOfNewAdventure.Text)) {
 					Say.Error("An Adventure called '" + textBox_NameOfNewAdventure.Text + "' already " +
 					          "exists: choose another name.");
 				}
 				else {
-					if (Adventure.CurrentAdventure != null && !Toolset.CloseAdventureDialog()) {
+					if (form.App.Module != null && !Toolset.CloseAdventureDialog()) {
 						return;
 					}
 					
 					string name = textBox_NameOfNewAdventure.Text;
-					new Adventure(name);
-					bool opened = Adventure.Open(name);
-					
-					if (opened && Adventure.CurrentAdventure != null) {
-						Adventure.CurrentAdventure.Scratch.Open();
-						this.Close();
-					}
-					else {
-						Say.Error("Failed to create and open adventure.");
-					}
+					ModuleHelper.CreateAndOpenModule(name);
+					this.Close();
 				}
 			}
 			catch (IOException ioe) {
 				Say.Error(ioe);
+				ModuleHelper.Close();
 			}
 		}
 	}

@@ -39,6 +39,7 @@ using NWN2Toolset.NWN2.Data.TypedCollections;
 using NWN2Toolset.NWN2.IO;
 using OEIShared.IO;
 using OEIShared.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Scripts
 {
@@ -980,7 +981,7 @@ namespace AdventureAuthor.Scripts
 				
 		public static SortedList<string,string> GetResRefs(TaggedType type)
 		{
-			if (Adventure.CurrentAdventure == null) {
+			if (!ModuleHelper.ModuleIsOpen()) {
 				return null;
 			}
 						
@@ -1057,13 +1058,13 @@ namespace AdventureAuthor.Scripts
 		
 		public static SortedList<string,string> GetTags(TaggedType type)
 		{
-			if (Adventure.CurrentAdventure == null) {
+			if (!ModuleHelper.ModuleIsOpen()) {
 				return null;
 			}
-			
+					
 			SortedList<string,string> tags = new SortedList<string,string>();
 			
-			foreach (NWN2GameArea area in Adventure.CurrentAdventure.Module.Areas.Values) {
+			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
 				switch (type) {
 					case TaggedType.AnyObject: // excludes journal					
 						foreach (NWN2InstanceCollection coll in area.AllInstances) {
@@ -1083,7 +1084,7 @@ namespace AdventureAuthor.Scripts
 						Merge(ref tags,GetTags(area.Items));
 						break;
 					case TaggedType.JournalCategory:
-						Merge(ref tags,GetTags(Adventure.CurrentAdventure.Module.Journal.Categories));
+						Merge(ref tags,GetTags(form.App.Module.Journal.Categories));
 						break;
 					case TaggedType.Light:
 						Merge(ref tags,GetTags(area.Lights));

@@ -193,10 +193,8 @@
       <SubType>Code</SubType>
       <DependentUpon>SoundWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Adventure.cs" />
-    <Compile Include="Core\Chapter.cs" />
-    <Compile Include="Core\GameArea.cs" />
-    <Compile Include="Core\Scratchpad.cs" />
+    <Compile Include="Core\ModuleHelper.cs" />
+    <Compile Include="Core\AreaHelper.cs" />
     <Compile Include="Core\UI\CreateChapter_Form.cs" />
     <Compile Include="Core\UI\CreateChapter_Form.Designer.cs">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
@@ -361,6 +359,7 @@
     <Folder Include="Core\UI" />
     <Folder Include="Journal" />
     <Folder Include="Journal\UI" />
+    <Folder Include="Notebook\Worksheets" />
     <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
     <Folder Include="Notebook" />

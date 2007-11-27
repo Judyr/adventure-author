@@ -41,6 +41,7 @@ using OEIShared.IO;
 using OEIShared.Utils;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -54,7 +55,7 @@ namespace AdventureAuthor.Conversations.UI
     	
         public SoundWindow(NWN2ConversationConnector line)
         {
-            IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(Adventure.CurrentAdventure.ModulePath);
+            IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(form.App.Module.Repository.Name); // was Adventure.CurrentAdventure.ModulePath
             if (moduleRepos == null) {
             	Say.Error("Couldn't locate the module as a resource repository.");
             	return;
