@@ -35,7 +35,7 @@ namespace AdventureAuthor.Utils
 	public static class Say
 	{		
 		public static void Debug(string message) {
-			if (Adventure.Debug) {
+			if (ModuleHelper.Debug) {
 				DebugLog.Write(message);
 			}
 		}
@@ -46,7 +46,7 @@ namespace AdventureAuthor.Utils
 		
 		public static void Error(string message, Exception e)
 		{
-			if (!Adventure.BeQuiet) {
+			if (!ModuleHelper.BeQuiet) {
 				if (e != null) {
 					message += "\n\n" + e.ToString();
 				}
@@ -68,14 +68,14 @@ namespace AdventureAuthor.Utils
 		
 		public static void Hint(string message)
 		{
-			if (!Adventure.BeQuiet) {
+			if (!ModuleHelper.BeQuiet) {
 				MessageBox.Show("HINT: \n\n " + message);
 			}
 		}
 		
 		public static void Information(string message)
 		{
-			if (!Adventure.BeQuiet) {
+			if (!ModuleHelper.BeQuiet) {
 				MessageBox.Show(message);
 			}
 		}
@@ -91,7 +91,7 @@ namespace AdventureAuthor.Utils
 				throw new NotImplementedException();
 			}
 			
-			if (!Adventure.BeQuiet) {
+			if (!ModuleHelper.BeQuiet) {
 				DialogResult result = MessageBox.Show(message,caption,buttons);
 				if (result == DialogResult.Cancel) {
 					return null;
@@ -110,7 +110,7 @@ namespace AdventureAuthor.Utils
 		
 		public static void Warning(string message)
 		{
-			if (!Adventure.BeQuiet) {
+			if (!ModuleHelper.BeQuiet) {
 				MessageBox.Show("WARNING: \n\n " + message);
 			}
 			

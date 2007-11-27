@@ -139,7 +139,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.GetChildren(parentLine);
         	Say.Debug("xax");
         	
-        	if (!Adventure.BeQuiet) { 	
+        	if (!ModuleHelper.BeQuiet) { 	
         	Say.Debug("xax");
         		Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(children);
         		

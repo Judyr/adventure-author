@@ -48,18 +48,9 @@ namespace AdventureAuthor.Core.UI
 		void CreateChapter_OK(object sender, EventArgs e)
 		{
 			string name = this.textBox_ChapterName.Text;
-			string intro = "intro";
 			bool exterior = this.radioButton_Outdoors.Checked;
-			int width = 16;
-			int height = 16;
 			
-			try {
-				Adventure.CurrentAdventure.AddChapter(name,intro,exterior,width,height);
-			}
-			catch (ArgumentException ae) {
-				Say.Error(ae);
-				return;
-			}
+			AreaHelper.CreateArea(name,exterior);
 			
 			this.Close();
 		}

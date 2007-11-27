@@ -84,7 +84,7 @@ namespace AdventureAuthor.Variables.UI
         		Say.Warning("You haven't given this variable a name.");
         	}
         	else if (!VariableManager.NameIsValid(VariableNameTextBox.Text)) {
-        		Say.Warning("You have chosen an invalid variable name. Names must be under " + Adventure.MAX_RESOURCE_NAME_LENGTH + 
+        		Say.Warning("You have chosen an invalid variable name. Names must be under " + ModuleHelper.MAX_RESOURCE_NAME_LENGTH + 
         		            " characters long, and contain none of the following characters: \" < > | : * ? " + @"\ / ");
         	}
         	else if (!edit && !VariableManager.NameIsAvailable(VariableNameTextBox.Text)) {

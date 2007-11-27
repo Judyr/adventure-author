@@ -6,6 +6,7 @@ using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using NWN2Toolset.NWN2.Data;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Scripts.UI
 {	
@@ -55,7 +56,7 @@ namespace AdventureAuthor.Scripts.UI
         private void PopulateVariableList()
         {
             SortedList<string,string> variables = new SortedList<string,string>();            
-            foreach (NWN2ScriptVariable variable in Adventure.CurrentAdventure.Module.ModuleInfo.Variables) {
+            foreach (NWN2ScriptVariable variable in form.App.Module.ModuleInfo.Variables) {
             	if (variable.VariableType == type && !variables.ContainsKey(variable.Name)) {
             		variables.Add(variable.Name,null);
             	}

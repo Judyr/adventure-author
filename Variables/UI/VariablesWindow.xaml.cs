@@ -3,6 +3,7 @@ using System.Windows;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Variables.UI
 {
@@ -56,7 +57,7 @@ namespace AdventureAuthor.Variables.UI
         /// </summary>
         internal void RefreshVariablesList()
         {        	
-            NWN2ScriptVarTable variables = Adventure.CurrentAdventure.Module.ModuleInfo.Variables;
+            NWN2ScriptVarTable variables = form.App.Module.ModuleInfo.Variables;
             VariablesStackPanel.Children.Clear();
             foreach (NWN2ScriptVariable var in variables) {
             	VariableControl varControl = new VariableControl(var);

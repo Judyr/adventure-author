@@ -58,7 +58,7 @@ namespace AdventureAuthor.Core.UI
 				waypoint = string.Empty;
 			}			
 			
-			Adventure.CurrentAdventure.Run(waypoint,checkBox_CanLaunchDebugWindow.Checked,checkBox_PlayerIsInvincible.Checked);
+			ModuleHelper.Run(waypoint,checkBox_CanLaunchDebugWindow.Checked,checkBox_PlayerIsInvincible.Checked);
 			this.Close();
 		}
 		

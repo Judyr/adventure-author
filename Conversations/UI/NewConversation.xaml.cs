@@ -48,11 +48,10 @@ namespace AdventureAuthor.Conversations.UI
         private void OnClickOK(object sender, EventArgs ea)
         {        	
         	string name = ConversationNameTextBox.Text;
-        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,Adventure.CurrentAdventure.Module.Repository.DirectoryName),name+".dlg"))) {
-        		Say.Warning("A conversation called '" + name + "' already exists in the Adventure '" + 
-        		            Adventure.CurrentAdventure.Name + "' - try another name.");
+        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,form.App.Module.Repository.DirectoryName),name+".dlg"))) {
+        		Say.Warning("A conversation called '" + name + "' already exists - try another name.");
         	}
-        	else if (!Adventure.IsValidName(name)) {
+        	else if (!ModuleHelper.IsValidName(name)) {
 				Say.Information("The name '" + name + "' is invalid. Conversation names " + 
 				        	    "must not contain the following characters ('<', '>', ':', '\', '\"', '/', '|', '.') " +
 				          		"and must be between 1 and 32 characters in length. Try another name.");

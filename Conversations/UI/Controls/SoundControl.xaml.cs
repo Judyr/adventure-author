@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Windows.Controls;
 using AdventureAuthor.Core;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
@@ -43,7 +44,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
             	throw new ArgumentException("Tried to create a SoundControl for a line without a sound.");
             }
             this.Description.Text = "PLAY SOUND " + owner.Nwn2Line.Sound.FullName;
-            string filename = Path.Combine(Adventure.CurrentAdventure.ModulePath,owner.Nwn2Line.Sound.FullName);
+            string filename = Path.Combine(form.App.Module.Repository.Name,owner.Nwn2Line.Sound.FullName); // .Name was ModulePath before
             SoundPlayer.Source = new Uri(filename);
         }
         

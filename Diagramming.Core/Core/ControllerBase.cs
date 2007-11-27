@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Windows.Forms;
 namespace Netron.Diagramming.Core

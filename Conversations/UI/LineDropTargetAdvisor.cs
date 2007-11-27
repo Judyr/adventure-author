@@ -108,7 +108,6 @@ namespace AdventureAuthor.Conversations.UI
 //			
 //			return elt;
 			
-			Say.Debug("End of GetVisualFeedback.");
 		}
 
 		
@@ -125,12 +124,12 @@ namespace AdventureAuthor.Conversations.UI
 			return new Button();
 			
 			
-        	Say.Debug("ExtractElement");
-			string xamlString = obj.GetData("ABCFormat") as string;
-			XmlReader reader = XmlReader.Create(new StringReader(xamlString));
-			UIElement elt = XamlReader.Load(reader) as UIElement;
-
-			return elt;
+//        	Say.Debug("ExtractElement");
+//			string xamlString = obj.GetData("ABCFormat") as string;
+//			XmlReader reader = XmlReader.Create(new StringReader(xamlString));
+//			UIElement elt = XamlReader.Load(reader) as UIElement;
+//
+//			return elt;
 		}
 	}
 }

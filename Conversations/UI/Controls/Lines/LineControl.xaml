@@ -62,7 +62,7 @@
 				<MenuItem Header="Creature actions">
 				<MenuItem.Items>
 					<MenuItem Header="A creature attacks the player" Click="OnClick_Attack"/>
-					<!--<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/>	-->			
+					<!--<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/> doesn't really work	-->			
 					<MenuItem Header="A creature dies" Click="OnClick_Kill"/>	
 					<MenuItem Header="A creature becomes unkillable" Click="OnClick_CreatureBecomesImmortal"/>			
 					<MenuItem Header="A creature becomes killable" Click="OnClick_CreatureBecomesMortal"/>	
