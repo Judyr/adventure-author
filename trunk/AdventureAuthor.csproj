@@ -203,16 +203,16 @@
     <Compile Include="Core\UI\NewAdventure_Form.Designer.cs">
       <DependentUpon>NewAdventure_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\UI\reducedCreateChapter_Form.cs" />
-    <Compile Include="Core\UI\reducedCreateChapter_Form.Designer.cs">
-      <DependentUpon>reducedCreateChapter_Form.cs</DependentUpon>
-    </Compile>
     <Compile Include="Core\UI\RunAdventure_Form.cs" />
     <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Notebook\MindMapForm.cs" />
+    <Compile Include="Notebook\MindMapForm.Designer.cs">
+      <DependentUpon>MindMapForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Notebook\MyIdeas\IdeaComment.cs" />
     <Compile Include="Notebook\MyIdeas\Idea.cs" />
     <Compile Include="Notebook\MyIdeas\UI\Balloon.xaml.cs">
@@ -316,6 +316,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notebook\MindMapForm.resx">
+      <DependentUpon>MindMapForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="EULA.txt" />
     <None Include="gpl.txt" />

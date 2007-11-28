@@ -141,8 +141,20 @@ namespace AdventureAuthor.Core
 				
 		
 		#endregion Global variables
-				
+					
+		#region Events
 		
+		public static event EventHandler<EventArgs> ModuleChanged;
+		
+		internal static void OnModuleChanged(EventArgs e)
+		{
+			EventHandler<EventArgs> handler = ModuleChanged;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}		
+		
+		#endregion
 		
 		internal static void LogChanges()
 		{
@@ -263,10 +275,10 @@ namespace AdventureAuthor.Core
 					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
 				}
 				catch (FileNotFoundException) { 
-					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + " in module '" + name + "', but couldn't find one.");
+					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + " in module '" + name + "', but there was no such area.");
 				}
 				
-				Toolset.UpdateTitleBar();
+				OnModuleChanged(new EventArgs());
 				return true;
 			}
 			catch (DirectoryNotFoundException e) {
@@ -300,7 +312,7 @@ namespace AdventureAuthor.Core
 		       	progress.ShowDialog(form.App);
 		    }
 		        
-		    Toolset.UpdateTitleBar();
+		    OnModuleChanged(new EventArgs());
 		}
 					
 		
@@ -404,8 +416,7 @@ namespace AdventureAuthor.Core
 			try {
 				toh = new ThreadedOpenHelper(form.App,name,ModuleLocationType.Directory);
 				toh.Go();
-				form.App.SetupHandlersForGameResourceContainer(form.App.Module);								
-				Toolset.UpdateTitleBar();					
+				form.App.SetupHandlersForGameResourceContainer(form.App.Module);
 			}
 			catch (DirectoryNotFoundException e) {
 				throw new DirectoryNotFoundException("Directory-based module '" + name + "' could not be found.",e);
@@ -428,8 +439,8 @@ namespace AdventureAuthor.Core
 			
 			Log.WriteAction(Log.Action.closed,"module",form.App.Module.Name);
 			
-			CloseModule();	           
-		    Toolset.Clear();
+			CloseModule();
+			OnModuleChanged(new EventArgs());
 		}
 		
 		
@@ -475,19 +486,14 @@ namespace AdventureAuthor.Core
 				// OnEnter script (or the other script which adds user-defined
 				// bits to the OnEnter script automatically)
 			}		
-					
-			Save();						
-			Bake();
-			
-			// create a copy of the log from the last game (otherwise it will be over-written):
-			ProcessStartInfo copylogStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"copylog.bat"));
-			Process.Start(copylogStartInfo);
-			
-			Log.WriteAction(Log.Action.launched,"game",form.App.Module.Name);
-			form.App.RunModule(waypoint,false,false,false);
+						
+			RunNWN2();
 		}
 		
 		
+		/// <summary>
+		/// Create a copy of the log from the previous game session, and then run Neverwinter Nights 2.
+		/// </summary>
 		private static void RunNWN2()
 		{
 			// create a copy of the log from the last game (otherwise it will be over-written):
@@ -495,15 +501,17 @@ namespace AdventureAuthor.Core
 			Process.Start(copylogStartInfo);
 			
 			// start the game:
-			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
-			nwn2mainStartInfo.RedirectStandardOutput = true;
-			nwn2mainStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			nwn2mainStartInfo.UseShellExecute = false;
 			Log.WriteAction(Log.Action.launched,"game");
-			Process nwn2main = new Process();
-			nwn2main.StartInfo = nwn2mainStartInfo;
-//			nwn2main.Disposed += delegate { Log.WriteAction(Log.Action.exited,"game",CurrentAdventure.Name); };
-			nwn2main.Start();
+			form.App.RunModule(String.Empty,false,false,false);
+			
+//			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
+//			nwn2mainStartInfo.RedirectStandardOutput = true;
+//			nwn2mainStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+//			nwn2mainStartInfo.UseShellExecute = false;
+//			Process nwn2main = new Process();
+//			nwn2main.StartInfo = nwn2mainStartInfo;
+//			nwn2main.Disposed += delegate { Log.WriteAction(Log.Action.exited,"game",CurrentAdventure.Name); }; doesn't seem to work
+//			nwn2main.Start();
 		}
 		
 		

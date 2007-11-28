@@ -104,7 +104,7 @@ namespace AdventureAuthor.Core
 		/// <returns>True if the area was successfully opened, false otherwise.</returns>
 		public static void Open(string name)		
 		{	
-			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
+			if (!ModuleHelper.ModuleIsOpen()) {
 				throw new InvalidOperationException("No game module is open to operate on.");
 			}			
 			

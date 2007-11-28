@@ -226,7 +226,7 @@ namespace AdventureAuthor.Setup
 //					}					
 				
 					// Certain windows should be automatically hidden if the toolset ever tries to display them:
-					dockingManager.ContentShown += new DockingManager.ContentHandler(HideContent);
+					dockingManager.ContentShown += new DockingManager.ContentHandler(OnContentShown);
 				}
 				
 				// Hide the resource viewer controls:
@@ -250,8 +250,7 @@ namespace AdventureAuthor.Setup
 				
 				else if (fi.FieldType == typeof(NWN2PropertyGrid)) {
 					NWN2PropertyGrid grid = (NWN2PropertyGrid)fi.GetValue(form.App);
-					grid.ValueChanged += delegate(object sender, NWN2PropertyValueChangedEventArgs e) { Log.WritePropertyChange(e); };
-					grid.PreviewStateChanged += delegate { Log.WriteMessage("Preview state changed on property grid (??)"); };
+					WatchForChanges(grid);
 				}
 				
 				// Replace the 'Add' item on the area list context menu, to block users from working with temporary modules:
@@ -519,6 +518,20 @@ namespace AdventureAuthor.Setup
 			}
 						
 			// Update title bar:
+			
+//			form.ModuleChanged += delegate
+//			{  
+//				UpdateTitleBar();
+//			};
+			
+			ModuleHelper.ModuleChanged += delegate 
+			{  
+				if (!ModuleHelper.ModuleIsOpen()) {
+					Clear();
+				}
+				UpdateTitleBar();
+			};
+			
 			UpdateTitleBar();
 		}
 
@@ -605,7 +618,7 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// Clears the user interface after an Adventure has been closed.
+		/// Clears the user interface after a module has been closed.
 		/// </summary>
 		internal static void Clear()
 		{
@@ -614,7 +627,6 @@ namespace AdventureAuthor.Setup
 			form.App.VerifyOutput.ClearVerifyOutput();  
 			// Close all Property Grids - not implemented.
 			form.App.CreateNewPropertyPanel(null, null, false, "Properties"); // create a fresh toolset Properties panel
-			UpdateTitleBar();
 		}
 					
 		
@@ -630,16 +642,31 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// If a Verify window or the original conversation editor is displayed, hide it again.
 		/// </summary>
-		private static void HideContent(Content c, EventArgs ea)
+		private static void OnContentShown(Content c, EventArgs ea)
 		{
 			if (c.Control is NWN2ConversationViewer) {
 				dockingManager.HideContent(c);
 			}
 			if (form.App.VerifyContent.Visible) {
 				dockingManager.HideContent(form.App.VerifyContent);
-			}	
+			}
+			if (c.Control is NWN2PropertyGrid) {
+				WatchForChanges((NWN2PropertyGrid)c.Control);
+			}
 		}
 		
+		
+		private static void WatchForChanges(NWN2PropertyGrid grid)
+		{
+			grid.ValueChanged += delegate(object sender, NWN2PropertyValueChangedEventArgs e) 
+			{ 
+				Log.WritePropertyChange(e); 
+			};
+			grid.PreviewStateChanged += delegate 
+			{ 
+				Log.WriteMessage("Preview state changed on property grid (??)"); 
+			};
+		}		
 		
 		
 		private static void SetupFileMenu(MenuBarItem fileMenu)
@@ -677,46 +704,8 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
 			mindMap.Activate += delegate 
 			{  
-				Form form = new Form();
-				Netron.Diagramming.Win.DiagramControl dc = new Netron.Diagramming.Win.DiagramControl();
-				form.Controls.Add(dc);
-				
-				
-				
-				
-				
-	            ((System.ComponentModel.ISupportInitialize)(dc)).BeginInit();
-	            dc.SuspendLayout();	
-	            
-	            SimpleEllipse ellipse = new SimpleEllipse();
-	            ellipse.Name = "myname";
-	            ellipse.Text = "i am a circle - a magic circle?";
-	            dc.AddShape(ellipse);
-	            
-	            SimpleEllipse rectangle = new SimpleEllipse();
-	            rectangle.Name = "rect";
-	            rectangle.Text = "lalalalalala";
-	            rectangle.Location = new Point(50,50);
-	            dc.AddShape(rectangle);
-	            
-	            // inexplicably required to get the root drawn if that's all there is:
-	            dc.AddConnection(ellipse.Connectors[0],ellipse.Connectors[0]); 
-	            dc.SetLayoutRoot(ellipse);         
-	            dc.Layout(LayoutType.RadialTree);
-	                        
-	            ((System.ComponentModel.ISupportInitialize)(dc)).EndInit();
-	            dc.ResumeLayout(false);
-	            dc.Invalidate();
-				
-				
-				
-				
-				form.Show();
-				
-				
-				
-				
-				
+				AdventureAuthor.Notebook.MindMapForm mindmapform = new AdventureAuthor.Notebook.MindMapForm(true);
+				mindmapform.ShowDialog();
 			};
 			designersNotebook.Items.Add(mindMap);
 //			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
@@ -835,7 +824,7 @@ namespace AdventureAuthor.Setup
 	        			throw new FileNotFoundException(modulePath + " is not a valid NWN2 module. (Missing module.IFO)");
 	        		}
 					else {
-						bool opened = ModuleHelper.Open(moduleName);					
+						bool opened = ModuleHelper.Open(moduleName);	
 						if (!opened || !ModuleHelper.ModuleIsOpen()) {
 							Say.Error("Failed to open module.");
 						}
