@@ -29,12 +29,12 @@ namespace Netron.Diagramming.Win.AdventureAuthor
         /// <summary>
         /// Minimum zoom level (no smaller than 14% of actual size)
         /// </summary>
-        public const int MIN_ZOOM = 14;
+        public int MIN_ZOOM = 14;
         
         /// <summary>
         /// Maximum zoom level (no bigger than 250% of actual size)0
         /// </summary>
-        public const int MAX_ZOOM = 250; 
+        public int MAX_ZOOM = 250; 
         
 		/// <summary>
 		/// The amount to offset the graph control by to hide the space left by the rulers.
