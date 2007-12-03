@@ -182,9 +182,6 @@ namespace Netron.Diagramming.Win.AdventureAuthor
             }
             
             float differenceInPixels = newMagnification.Height - Magnification.Height;
-//            MessageBox.Show("Original magnification height: "  + Magnification.Height + "\n\n" +
-//                            "New magnification height: " + newMagnification.Height + "\n\n" +
-//                            Magnification.Height + " - " + newMagnification.Height + " = " + differenceInPixels);
             
             Magnification = newMagnification;
             
@@ -194,6 +191,8 @@ namespace Netron.Diagramming.Win.AdventureAuthor
             // Resize the scrollbars proportionally to keep the actual canvas constant:
             s = new SizeF(AutoScrollMinSize.Width * alpha, AutoScrollMinSize.Height * alpha);
             AutoScrollMinSize = Size.Round(s);
+            
+            Invalidate();
 
             // Zoom out from the centre of the graph control:
 //			            Point v = e.Location;
@@ -224,7 +223,7 @@ namespace Netron.Diagramming.Win.AdventureAuthor
 //				newOrigin.Offset(-3,-3);
 //				Origin = newOrigin;
 //			}
-			Invalidate();
+//			Invalidate();
              
             #endregion   
             
