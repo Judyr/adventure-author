@@ -37,6 +37,7 @@ using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
+using AdventureAuthor.Notebook.Worksheets.UI;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
@@ -171,6 +172,9 @@ namespace AdventureAuthor.Setup
 															  BindingFlags.NonPublic |
 			                                                  BindingFlags.Instance |
 			                                                  BindingFlags.Static);	
+			
+			GraphicsPreferencesToolBar graphicsToolbar = null;
+			TD.SandBar.ToolBar objectsToolbar = null;
 					
 			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
 			foreach (FieldInfo fi in fields) {	
@@ -397,22 +401,23 @@ namespace AdventureAuthor.Setup
 												
 				// Get rid of the graphics preferences toolbar:
 				else if (fi.FieldType == typeof(GraphicsPreferencesToolBar)) {
-//					((GraphicsPreferencesToolBar)fi.GetValue(form.App)).Dispose();
+					graphicsToolbar = (GraphicsPreferencesToolBar)fi.GetValue(form.App);
+					graphicsToolbar.Dispose();
 				}
 				
 				// Prevent the object manipulation toolbar from being modified or moved:
 				else if (fi.FieldType == typeof(TD.SandBar.ToolBar)) {
-					TD.SandBar.ToolBar toolBar = fi.GetValue(form.App) as TD.SandBar.ToolBar;
-					toolBar.AddRemoveButtonsVisible = false;
-					toolBar.Movable = false;					
+					objectsToolbar = (TD.SandBar.ToolBar)fi.GetValue(form.App);
+					objectsToolbar.AddRemoveButtonsVisible = false;
+					objectsToolbar.Movable = false;					
 				}
 								
 				// Get rid of the "Filters:" label on the object manipulation toolbar:
 				else if (fi.FieldType == typeof(LabelItem)) {
-//					LabelItem labelItem = fi.GetValue(form.App) as LabelItem;
-//					if (labelItem.Text == "Filters:") {
-//						labelItem.Dispose();
-//					}
+					LabelItem labelItem = fi.GetValue(form.App) as LabelItem;
+					if (labelItem.Text == "Filters:") {
+						labelItem.Dispose();
+					}
 				}
 				
 				// Get rid of "Show/Hide" and "Selection" menus on the object manipulation toolbar:
@@ -517,12 +522,17 @@ namespace AdventureAuthor.Setup
 				}
 			}
 						
-			// Update title bar:
-			
-//			form.ModuleChanged += delegate
-//			{  
-//				UpdateTitleBar();
-//			};
+//			if (objectsToolbar != null && graphicsToolbar != null) {
+//				MenuBarItem graphicsOptionsItem = new MenuBarItem("Graphics Options");
+//				foreach (ToolbarItemBase item in graphicsToolbar.Items) {
+//					graphicsOptionsItem.Items.Add(item);
+//				}
+//				objectsToolbar.Items.Add(graphicsOptionsItem);
+//				graphicsToolbar.Dispose();				
+//			}
+//			else {
+//				Say.Warning("Failed to modify the UI toolbars.");
+//			}
 			
 			ModuleHelper.ModuleChanged += delegate 
 			{  
@@ -700,20 +710,31 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
 			
-			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
-			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
-			mindMap.Activate += delegate 
+			MenuButtonItem worksheets = new MenuButtonItem("Worksheets");
+			MenuButtonItem feedback = new MenuButtonItem("Feedback");
+			feedback.Activate += delegate 
 			{  
-				AdventureAuthor.Notebook.MindMapForm mindmapform = new AdventureAuthor.Notebook.MindMapForm(true);
-				mindmapform.ShowDialog();
+				FeedbackWorksheet worksheet= new FeedbackWorksheet();
+				worksheet.Show();
 			};
-			designersNotebook.Items.Add(mindMap);
-//			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
-//			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
+			worksheets.Items.Add(feedback);
+			
+			
+//			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
+//			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
+//			mindMap.Activate += delegate 
+//			{  
+//				AdventureAuthor.Notebook.MindMapForm mindmapform = new AdventureAuthor.Notebook.MindMapForm(true);
+//				mindmapform.ShowDialog();
+//			};
+//			designersNotebook.Items.Add(mindMap);
+			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
+			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
 			newChapter.BeginGroup = true;
-			designersNotebook.BeginGroup = true;
+//			designersNotebook.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
+			worksheets.BeginGroup = true;
 //			logWindow.BeginGroup = true;
 						
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
@@ -729,8 +750,9 @@ namespace AdventureAuthor.Setup
 			                           	variableManager,
 //			                           	changeUser,
 			                           	exitAdventureAuthor,
-			                           	designersNotebook,
-//			                           	logWindow
+			                           	worksheets,
+//			                           	designersNotebook,
+			                           	logWindow
 			                           });			
 		}							
 		

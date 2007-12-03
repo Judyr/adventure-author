@@ -56,6 +56,7 @@ namespace AdventureAuthor.Notebook
 			this.button1 = new System.Windows.Forms.Button();
 			this.layoutlabel = new System.Windows.Forms.Label();
 			this.button2 = new System.Windows.Forms.Button();
+			this.button3 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -85,17 +86,28 @@ namespace AdventureAuthor.Notebook
 			this.button2.UseVisualStyleBackColor = true;
 			this.button2.Click += new System.EventHandler(this.Button2Click);
 			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(346, 588);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(115, 31);
+			this.button3.TabIndex = 3;
+			this.button3.Text = "Add ";
+			this.button3.UseVisualStyleBackColor = true;
+			// 
 			// MindMapForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(838, 667);
+			this.Controls.Add(this.button3);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.layoutlabel);
 			this.Controls.Add(this.button1);
 			this.Name = "MindMapForm";
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Label layoutlabel;
 		private System.Windows.Forms.Button button1;

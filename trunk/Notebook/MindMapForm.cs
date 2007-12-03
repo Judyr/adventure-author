@@ -33,19 +33,15 @@ using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using Netron.Diagramming.Core;
 using Netron.Diagramming.Core.Layout;
+using Netron.Diagramming.Win;
 using Netron.Diagramming.Win.AdventureAuthor;
 
 namespace AdventureAuthor.Notebook
 {
 	public partial class MindMapForm : System.Windows.Forms.Form
 	{
-		/// <summary>
-		/// The graph control held by this form.
-		/// </summary>
-		private GraphControl graphControl;		
-		public GraphControl GraphControl {
-			get { return graphControl; }
-		}
+		//private MindMapControl diagramControl;
+		private DiagramControl diagramControl;
 		
 		/// <summary>
 		/// Create a new instance of a form that holds a graph control.
@@ -86,10 +82,10 @@ namespace AdventureAuthor.Notebook
 			// If a GraphControl object already exists, remember its origin and magnification:
 			Point origin;
 			SizeF magnification;
-			if (graphControl != null) {
-				origin = graphControl.Origin;
-				magnification = graphControl.Magnification;
-				graphControl.Dispose();
+			if (diagramControl != null) {
+				origin = diagramControl.Origin;
+				magnification = diagramControl.Magnification;
+				diagramControl.Dispose();
 			}
 			else {
 				origin = new Point(0,0);
@@ -97,18 +93,45 @@ namespace AdventureAuthor.Notebook
 			}
 			
 			// Create a new GraphControl object:	
-	        graphControl = new GraphControl();
+			diagramControl = new DiagramControl();//MindMapControl();
 				
-	        graphControl.Controller.AddTool(new AdventureAuthor.Conversations.UI.Graph.GraphTool("Graph Tool")); // the tool which governs clicks on the graph
-	        graphControl.Dock = System.Windows.Forms.DockStyle.None;
-	        graphControl.Location = new System.Drawing.Point(-GraphControl.RULER_OFFSET,-GraphControl.RULER_OFFSET); // hide the ruler space
-	        graphControl.Size = new Size(this.Width+GraphControl.RULER_OFFSET,this.Height+GraphControl.RULER_OFFSET);
+	        diagramControl.Dock = System.Windows.Forms.DockStyle.None;
+	        diagramControl.Location = new System.Drawing.Point(-GraphControl.RULER_OFFSET,-GraphControl.RULER_OFFSET); // hide the ruler space
+	        diagramControl.Size = new Size(this.Width+GraphControl.RULER_OFFSET,this.Height+GraphControl.RULER_OFFSET);
 	        
-	        graphControl.Origin = origin;
-	        graphControl.Magnification = magnification;
-	        graphControl.MIN_ZOOM = 1;
+	        diagramControl.Origin = origin;
+	        diagramControl.Magnification = magnification;
 	        
-	        this.Controls.Add(this.graphControl);
+	        this.Controls.Add(this.diagramControl);
+			
+			
+			
+//			// If a GraphControl object already exists, remember its origin and magnification:
+//			Point origin;
+//			SizeF magnification;
+//			if (graphControl != null) {
+//				origin = graphControl.Origin;
+//				magnification = graphControl.Magnification;
+//				graphControl.Dispose();
+//			}
+//			else {
+//				origin = new Point(0,0);
+//				magnification = new SizeF(100F,100F);
+//			}
+//			
+//			// Create a new GraphControl object:	
+//	        graphControl = new GraphControl();
+//				
+//	        graphControl.Controller.AddTool(new AdventureAuthor.Conversations.UI.Graph.GraphTool("Graph Tool")); // the tool which governs clicks on the graph
+//	        graphControl.Dock = System.Windows.Forms.DockStyle.None;
+//	        graphControl.Location = new System.Drawing.Point(-GraphControl.RULER_OFFSET,-GraphControl.RULER_OFFSET); // hide the ruler space
+//	        graphControl.Size = new Size(this.Width+GraphControl.RULER_OFFSET,this.Height+GraphControl.RULER_OFFSET);
+//	        
+//	        graphControl.Origin = origin;
+//	        graphControl.Magnification = magnification;
+//	        graphControl.MIN_ZOOM = 1;
+//	        
+//	        this.Controls.Add(this.graphControl);
 		}
 		
 	
@@ -122,21 +145,21 @@ namespace AdventureAuthor.Notebook
 			
 			this.ClearGraph();
 			
-            ((System.ComponentModel.ISupportInitialize)(this.graphControl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.diagramControl)).BeginInit();
             SuspendLayout();	
             
             rootshape = new SimpleEllipse();
-            graphControl.AddShape(rootshape);
+            diagramControl.AddShape(rootshape);
             
             // inexplicably required to get the root drawn if that's all there is:
-            graphControl.AddConnection(rootshape.Connectors[0],rootshape.Connectors[0]); 
-            graphControl.SetLayoutRoot(rootshape);
+            diagramControl.AddConnection(rootshape.Connectors[0],rootshape.Connectors[0]); 
+            diagramControl.SetLayoutRoot(rootshape);
             DrawChildren(rootshape);
-            graphControl.Layout(layout);
+            diagramControl.Layout(layout);
                         
-            ((System.ComponentModel.ISupportInitialize)(graphControl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(diagramControl)).EndInit();
             ResumeLayout(false);
-            graphControl.Invalidate();
+            diagramControl.Invalidate();
 		}
 		
 		private static SimpleEllipse rootshape = null;
@@ -145,12 +168,12 @@ namespace AdventureAuthor.Notebook
 		private void SetLayout(LayoutType layout)
 		{
 			SuspendLayout();
-			graphControl.Layout(layout);			
+			diagramControl.Layout(layout);			
 			ResumeLayout();
 			if (rootshape != null) {
-				graphControl.CentreOnShape(rootshape);
+				//diagramControl.CentreOnShape(rootshape);
 			}
-			graphControl.Invalidate();
+			diagramControl.Invalidate();
 			layoutlabel.Text = layout.ToString();
 		}
 		
@@ -174,9 +197,9 @@ namespace AdventureAuthor.Notebook
 			
 			for (int i = 0; i < randomNumber; i++) {
 				SimpleEllipse newshape = new SimpleEllipse();
-				graphControl.AddShape(newshape);
-				IConnection connection = graphControl.AddConnection(root.Connectors[2],newshape.Connectors[0]);	
-	            graphControl.Controller.Model.SendToBack(connection);
+				diagramControl.AddShape(newshape);
+				IConnection connection = diagramControl.AddConnection(root.Connectors[2],newshape.Connectors[0]);	
+	            diagramControl.Controller.Model.SendToBack(connection);
 	            total++;
 	            DrawChildren(newshape);
 			}
@@ -241,22 +264,22 @@ namespace AdventureAuthor.Notebook
 			SuspendLayout();
 			SimpleEllipse newshape = new SimpleEllipse();
 			newshape.Text = "Imogen Heap";
-			graphControl.AddShape(newshape);
+			diagramControl.AddShape(newshape);
 			total++;
 			
 			Random rnd = new Random();
 			int shapeid = rnd.Next(0,Math.Max(total-1,0));
-			IDiagramEntity entity = graphControl.Controller.Model.Paintables[shapeid];
+			IDiagramEntity entity = diagramControl.Controller.Model.Paintables[shapeid];
 			IShape oldshape = entity as IShape;
 			if (oldshape == null) {
 				Say.Error("couldn't cast to IShape");
 				return;
 			}
 			
-			IConnection connection = graphControl.AddConnection(oldshape.Connectors[0],newshape.Connectors[0]);
+			IConnection connection = diagramControl.AddConnection(oldshape.Connectors[0],newshape.Connectors[0]);
 			
 			ResumeLayout();
-			graphControl.Invalidate();
+			diagramControl.Invalidate();
 			
 
 		}

@@ -58,7 +58,6 @@ namespace Netron.Diagramming.Core
         /// <param name="e">The <see cref="T:System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
         public void MouseMove(MouseEventArgs e)
         {
-        	MessageBox.Show("Ran mousemove on HoverTool");
             if (!IsSuspended && this.Enabled)
             {
                 IHoverListener listener = null;
@@ -72,7 +71,6 @@ namespace Netron.Diagramming.Core
                     entity = paintables[k];
                     if(entity.Rectangle.Contains(e.Location)) //we caught an entity
                     {
-                    	MessageBox.Show("caught an entity");
                         //unhover the previous, if any
                         if(previousHovered != null)
                             previousHovered.Hovered = false;
@@ -80,7 +78,7 @@ namespace Netron.Diagramming.Core
                         //fetch the hovering service, if defined
                         listener = entity.GetService(typeof(IHoverListener)) as IHoverListener;
                         if(listener != null) //the caught entity does listen
-                        {        	MessageBox.Show("caught entity does listen");
+                        {        	
                             if(currentListener == listener) //it's the same as the previous time
                                 listener.MouseHover(e);
                             else //we moved from one entity to another listening entity
@@ -92,7 +90,7 @@ namespace Netron.Diagramming.Core
                             }
                         }
                         else //the caught entity does not listen
-                        {MessageBox.Show("caught entity does not listen");
+                        {
                             if(currentListener != null)
                             {
                                 currentListener.MouseLeave(e);

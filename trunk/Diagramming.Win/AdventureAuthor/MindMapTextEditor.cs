@@ -4,12 +4,12 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using Netron.Diagramming.Core;
-namespace Netron.Diagramming.Win
+namespace Netron.Diagramming.Win.AdventureAuthor
 {
     /// <summary>
     /// Utility class to edit the text of the <see cref="TextOnly"/> shape.
     /// </summary>
-    static class TextEditor
+    static class MindMapTextEditor
     {
         #region Fields
         /// <summary>
@@ -23,9 +23,7 @@ namespace Netron.Diagramming.Win
         /// <summary>
         /// the site 
         /// </summary>
-        private static DiagramControl diagramControl;
-        
-        
+        private static MindMapControl diagramControl;
         
         
         /// <summary>
@@ -71,7 +69,7 @@ namespace Netron.Diagramming.Win
         /// </summary>
         /// <remarks>Added for Adventure Author</remarks>
         /// <param name="parent">The parent.</param>
-        public static void Init(DiagramControl parent)
+        public static void Init(MindMapControl parent)
         {
             diagramControl = parent;
             parent.Controls.Add(Editor);
