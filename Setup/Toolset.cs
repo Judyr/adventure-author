@@ -31,7 +31,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using wpf = System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
@@ -66,47 +68,35 @@ namespace AdventureAuthor.Setup
 	{
 		#region Global variables
 		
-		private static DockingManager dockingManager = null;		
+		/// <summary>
+		/// The docking manager controls all docked controls on the main interface screen
+		/// </summary>
+		private static DockingManager dockingManager = null;
+		
+		/// <summary>
+		/// Owns the TabGroupLeaf which holds resource viewers
+		/// </summary>
 		private static Crownwood.DotNetMagic.Controls.TabbedGroups tabbedGroupsCollection = null; 
-		// owns the TabGroupLeaf which holds resource viewers
+		
+		/// <summary>
+		/// The area contents view control, which lists every object in the current game area
+		/// </summary>
 		private static NWN2AreaContentsView areaContentsView = null;
+		
+		/// <summary>
+		/// A list of all the game object dictionaries, one for each type of object (e.g. creature, door, placeable etc.)
+		/// </summary>
 		private static Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>> dictionaries 
-			= new Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>>(14);
-														   
+			= new Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>>(14);	
+		
+		/// <summary>
+		/// The mouse mode the user was previously in (e.g. Select Objects) - so that we only log genuine changes to the mouse mode
+		/// </summary>
+		private static MouseMode? previousMouseMode = null;					   
 		
 		#endregion Global variables	
 			
-
-		
-		private static bool temp2(Control c)
-		{
-			if (c == null) {
-				return false;
-			}
-			
-			
-				ContextMenu menu = c.ContextMenu;
 				
-				if (menu != null) {
-					foreach (MenuItem mi in menu.MenuItems) {
-						if (mi.Text == "Properties (new window)") {
-							Say.Debug(mi.ToString());
-							Say.Debug("Owned by: " + c.ToString() + " of size " + menu.MenuItems.Count + ", menu is named " + menu.Name);
-							c.ContextMenu = null;
-//							mi.Click += delegate { Log.WriteMessage("RARG I WUR CLICKED (context menu)"); };
-							return true;
-						}
-					}
-				}
-				
-				return false;
-		}
-		
-		
-		
-		private static MouseMode? previousMouseMode = null;
-		
-		
 		
 		/// <summary>
 		/// Performs a myriad of modifications to the user interface at launch.
@@ -141,9 +131,7 @@ namespace AdventureAuthor.Setup
 //					c.ContextMenuStrip = null;
 //				}
 //			}
-			
-			//
-			
+						
 			NWN2AreaViewer.MouseModeChanged += delegate
 			{
 				if (previousMouseMode != NWN2AreaViewer.MouseMode) {
@@ -493,6 +481,7 @@ namespace AdventureAuthor.Setup
 //					}
 				}
 				else if (fi.FieldType == typeof(ToolBarContainer)) {
+					
 //					try {
 //						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
 //						
@@ -683,20 +672,20 @@ namespace AdventureAuthor.Setup
 		{
 			fileMenu.Items.Clear();
 							
-			MenuButtonItem newAdventure = new MenuButtonItem("New adventure");
-			newAdventure.Activate += delegate { NewAdventureDialog(); };
-			MenuButtonItem openAdventure = new MenuButtonItem("Open adventure");
-			openAdventure.Activate += delegate { OpenAdventureDialog(); };
-			MenuButtonItem saveAdventure = new MenuButtonItem("Save adventure");
-			saveAdventure.Activate += delegate { SaveAdventureDialog(); };
+			MenuButtonItem newAdventure = new MenuButtonItem("New module");
+			newAdventure.Activate += delegate { NewModuleDialog(); };
+			MenuButtonItem openAdventure = new MenuButtonItem("Open module");
+			openAdventure.Activate += delegate { OpenModuleDialog(); };
+			MenuButtonItem saveAdventure = new MenuButtonItem("Save module");
+			saveAdventure.Activate += delegate { SaveModuleDialog(); };
 //			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
 //			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
-			MenuButtonItem bakeAdventure = new MenuButtonItem("Bake adventure");
-			bakeAdventure.Activate += delegate { BakeAdventureDialog(); };
-			MenuButtonItem runAdventure = new MenuButtonItem("Run adventure");
-			runAdventure.Activate += delegate { RunAdventureDialog(); };
-			MenuButtonItem closeAdventure = new MenuButtonItem("Close adventure");
-			closeAdventure.Activate += delegate { CloseAdventureDialog(); };
+			MenuButtonItem bakeAdventure = new MenuButtonItem("Bake module");
+			bakeAdventure.Activate += delegate { BakeModuleDialog(); };
+			MenuButtonItem runAdventure = new MenuButtonItem("Run module");
+			runAdventure.Activate += delegate { RunModuleDialog(); };
+			MenuButtonItem closeAdventure = new MenuButtonItem("Close module");
+			closeAdventure.Activate += delegate { CloseModuleDialog(); };
 							
 			MenuButtonItem newChapter = new MenuButtonItem("New area");
 			newChapter.Activate += delegate { NewAreaDialog(); };
@@ -714,8 +703,8 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem feedback = new MenuButtonItem("Feedback");
 			feedback.Activate += delegate 
 			{  
-				FeedbackWorksheet worksheet= new FeedbackWorksheet();
-				worksheet.Show();
+				FeedbackWorksheet worksheet = new FeedbackWorksheet();
+				worksheet.ShowDialog();
 			};
 			worksheets.Items.Add(feedback);
 			
@@ -811,21 +800,16 @@ namespace AdventureAuthor.Setup
 						
 		#region Event handlers
 				
-		private static void NewAdventureDialog()
+		private static void NewModuleDialog()
 		{
-//			if (Adventure.CurrentUser == null) {
-//				Say.Error("Log in to be able to create new adventures.");
-//			}
-//			else {
-				NewAdventure_Form newAdventureForm = new NewAdventure_Form();
-				newAdventureForm.ShowDialog(form.App);
-//			}
+			NewModule form = new NewModule();
+			form.ShowDialog();
 		}
 		
 		
-		private static void OpenAdventureDialog()
+		private static void OpenModuleDialog()
 		{
-			if (ModuleHelper.ModuleIsOpen() && !CloseAdventureDialog()) {
+			if (ModuleHelper.ModuleIsOpen() && !CloseModuleDialog()) {
 				return; // if they change their mind when prompted to close the current adventure
 			}
 			
@@ -862,7 +846,7 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		private static void SaveAdventureDialog()
+		private static void SaveModuleDialog()
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to save when no module was open.");
@@ -878,7 +862,7 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		private static void SaveAdventureAsDialog()
+		private static void SaveModuleAsDialog()
 		{		
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to save as when no module was open.");
@@ -897,7 +881,7 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		private static void BakeAdventureDialog()
+		private static void BakeModuleDialog()
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to bake when no module was open.");
@@ -909,7 +893,7 @@ namespace AdventureAuthor.Setup
 		}	
 		
 		
-		private static void RunAdventureDialog()
+		private static void RunModuleDialog()
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to run when no module was open.");
@@ -924,7 +908,7 @@ namespace AdventureAuthor.Setup
 		}		
 		
 		
-		internal static bool CloseAdventureDialog()
+		internal static bool CloseModuleDialog()
 		{
 			if (ModuleHelper.ModuleIsOpen()) {
 				if (!ModuleHelper.BeQuiet) {
@@ -1035,7 +1019,7 @@ namespace AdventureAuthor.Setup
 		
 		private static void ExitToolsetDialog()
 		{
-			if (!ModuleHelper.BeQuiet && ModuleHelper.ModuleIsOpen() && !CloseAdventureDialog()) {
+			if (!ModuleHelper.BeQuiet && ModuleHelper.ModuleIsOpen() && !CloseModuleDialog()) {
 				return; // cancel shutdown if they change their mind when asked to save the current adventure
 			}
 			

@@ -25,6 +25,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uiw="clr-namespace:AdventureAuthor.Conversations.UI"
     xmlns:dragdrop="clr-namespace:Samples.DragDrop"
+	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  	mc:Ignorable="PresentationOptions"
     Title="Conversation Writer" Top="100" Left="100" Width="1600" Height="1000" Background="LightYellow" AllowDrop="false"
     Loaded="OnLoaded" Closing="OnClosing" Closed="OnClosed">
 				
@@ -63,7 +66,7 @@
 						<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
 						<Setter Property="TextElement.Foreground">
 							<Setter.Value>
-								<SolidColorBrush>#FF7C4400</SolidColorBrush>
+								<SolidColorBrush PresentationOptions:Freeze="True">#FF7C4400</SolidColorBrush>
 							</Setter.Value>
 						</Setter>
 						<Setter Property="TextElement.FontSize" Value="16"/>
