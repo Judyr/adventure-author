@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.ComponentModel;
 using System.Windows.Forms;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
@@ -33,6 +34,7 @@ using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Utils;
 using NWN2Toolset.Plugins;
 using TD.SandBar;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Setup
 {
@@ -47,22 +49,30 @@ namespace AdventureAuthor.Setup
 			get { return null; }
 		}
 		
+		
 		public object Preferences {
 			get { return null; }
 			set {}
 		}
 		
+		
 		public string Name {
 			get { return "Adventure Author"; }
 		}
+		
 		
 		public string DisplayName {
 			get { return "Adventure Author"; }
 		}
 		
+		
 		public string MenuName {
 			get { return "Adventure Author"; }
 		}
+		
+		
+		private static string modulesDirectory = form.ModulesDirectory;
+		
 		
 		/// <summary>
 		/// Called when the plugin starts (after being clicked in the menu)
@@ -73,6 +83,7 @@ namespace AdventureAuthor.Setup
 			
 		}		
 				
+		
 		/// <summary>
 		/// Called when the toolset starts
 		/// </summary>
@@ -84,13 +95,17 @@ namespace AdventureAuthor.Setup
 				if (!Directory.Exists(ModuleHelper.AdventureAuthorDir)) {
 					throw new DirectoryNotFoundException("Adventure Author installation directory at " + ModuleHelper.AdventureAuthorDir + 
 					                                     "was missing.");
-				}	
+				}					
+				
+				// Delete temp modules created during previous sessions:
+				ClearTempModules();
 				
 				// Start recording debug messages and user actions:
 				//LogWindow logWindow = new LogWindow();
 				//logWindow.Show();
 				DebugWriter.StartRecording();
-				LogWriter.StartRecording();	
+				LogWriter.StartRecording();
+				
 				Log.WriteAction(Log.Action.launched,"toolset");
 			}
 			catch (DirectoryNotFoundException e) {
@@ -106,6 +121,7 @@ namespace AdventureAuthor.Setup
 			Toolset.SetupUI();
 		}	
 		
+		
 		/// <summary>
 		/// Called when the toolset closes
 		/// </summary>
@@ -116,6 +132,7 @@ namespace AdventureAuthor.Setup
 			LogWriter.StopRecording();
 			DebugWriter.StopRecording();
 		}
+		
 		
 		/// <summary>
 		/// Called when the plugin finishes
@@ -129,6 +146,26 @@ namespace AdventureAuthor.Setup
 		
 		#endregion INWN2Plugin
 		
+				
+		/// <summary>
+		/// Delete any temp modules in the modules directory.
+		/// </summary>
+		private static void ClearTempModules()
+		{
+			try {
+				string[] temppaths = Directory.GetDirectories(modulesDirectory,"temp*");
+				foreach (string path in temppaths) {
+					if (Directory.Exists(path)) {
+						DirectoryInfo dir = new DirectoryInfo(path);
+						dir.Delete(true);
+					}
+				}
+			}
+			catch (Exception ex) {
+				MessageBox.Show("Failed to delete temp modules on closing.\n\n\n" + ex.ToString());
+			}
+		}
+						
 	
 		private static void CloseToolset()
 		{

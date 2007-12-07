@@ -199,9 +199,9 @@
     <Compile Include="Core\UI\CreateChapter_Form.Designer.cs">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\UI\NewAdventure_Form.cs" />
-    <Compile Include="Core\UI\NewAdventure_Form.Designer.cs">
-      <DependentUpon>NewAdventure_Form.cs</DependentUpon>
+    <Compile Include="Core\UI\NewModule.xaml.cs">
+      <DependentUpon>NewModule.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Core\UI\RunAdventure_Form.cs" />
     <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
@@ -284,6 +284,10 @@
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Setup\UI\FriendlyToolTip.xaml.cs">
+      <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
@@ -321,9 +325,6 @@
     <EmbeddedResource Include="Core\UI\CreateChapter_Form.resx">
       <DependentUpon>CreateChapter_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\UI\NewAdventure_Form.resx">
-      <DependentUpon>NewAdventure_Form.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
@@ -346,6 +347,7 @@
     <Page Include="Conversations\UI\WriterWindow.xaml" />
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
+    <Page Include="Core\UI\NewModule.xaml" />
     <Page Include="Notebook\MyIdeas\UI\Balloon.xaml" />
     <Page Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml" />
     <Page Include="Notebook\MyIdeas\UI\Sky.xaml" />
@@ -361,6 +363,7 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
+    <Page Include="Setup\UI\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
@@ -376,6 +379,7 @@
     <Folder Include="Journal\UI" />
     <Folder Include="Notebook\Worksheets" />
     <Folder Include="Notebook\Worksheets\UI" />
+    <Folder Include="Setup\UI" />
     <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
     <Folder Include="Notebook" />

@@ -78,7 +78,7 @@ namespace AdventureAuthor.Notebook.Worksheets
 		private string designer;	
 		private string game;
 		private List<Point> points;	
-		private SerializableDictionary<string,int?> ratings;
+		private SerializableDictionary<string,int> ratings;
 		private List<Comment> comments;	
 		
 		[XmlAttribute]	
@@ -105,8 +105,8 @@ namespace AdventureAuthor.Notebook.Worksheets
 			set { points = value; }
 		}
 		
-		[XmlArray]		
-		public SerializableDictionary<string,int?> Ratings {
+		[XmlElement]		
+		public SerializableDictionary<string,int> Ratings {
 			get { return ratings; }
 			set { ratings = value; }
 		}
@@ -121,23 +121,17 @@ namespace AdventureAuthor.Notebook.Worksheets
 		/// <summary>
 		/// For the purposes of serialization.
 		/// </summary>
-		private Feedback()
+		public Feedback()
 		{
-			
-		}
-		
-		
-		public Feedback(string playtester, string designer, string game)
-		{
-			this.playtester = playtester;
-			this.designer = designer;
-			this.game = game;
+			this.playtester = String.Empty;
+			this.designer = String.Empty;
+			this.game = String.Empty;
 			this.points = new List<Point>(2);
-			this.ratings = new SerializableDictionary<string,int?>();
-			this.ratings.Add("Story",null);
-			this.ratings.Add("Gameplay",null);
-			this.ratings.Add("Design",null);
-			this.ratings.Add("Overall",null);
+			this.ratings = new SerializableDictionary<string,int>();
+			this.ratings.Add("Story",0);
+			this.ratings.Add("Gameplay",0);
+			this.ratings.Add("World",0);
+			this.ratings.Add("Overall",0);
 			this.comments = new List<Comment>(1);
 		}	
 	}
