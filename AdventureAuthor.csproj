@@ -232,6 +232,10 @@
       <DependentUpon>FeedbackWorksheet.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Notebook\Worksheets\UI\PointControl.xaml.cs">
+      <DependentUpon>PointControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Notebook\Worksheets\UI\StarRating.xaml.cs">
       <DependentUpon>StarRating.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -352,6 +356,7 @@
     <Page Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml" />
     <Page Include="Notebook\MyIdeas\UI\Sky.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
+    <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\StarRating.xaml" />
     <Page Include="Scripts\UI\BooleanQuestionPanel.xaml" />
     <Page Include="Scripts\UI\EnumQuestionPanel.xaml" />

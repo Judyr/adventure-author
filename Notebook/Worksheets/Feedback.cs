@@ -16,8 +16,8 @@ namespace AdventureAuthor.Notebook.Worksheets
 {
 	public enum PointType
 	{
-		Praise,
-		Criticism
+		Good,
+		Bad
 	}
 	
 	
@@ -36,7 +36,7 @@ namespace AdventureAuthor.Notebook.Worksheets
 			get { return type; }
 			set { type = value; }
 		}
-		
+				
 		
 		public Point(string message, PointType type)
 		{
@@ -46,29 +46,29 @@ namespace AdventureAuthor.Notebook.Worksheets
 	}
 	
 	
-	public struct Comment
-	{		
-		[XmlAttribute]
-		private string author;		
-		public string Author {
-			get { return author; }
-			set { author = value; }
-		}
-		
-		[XmlText]
-		private string message;			
-		public string Message {
-			get { return message; }
-			set { message = value; }
-		}
-		
-		
-		public Comment(string author, string message)
-		{
-			this.author = author;
-			this.message = message;
-		}
-	}
+//	public struct Comment
+//	{		
+//		[XmlAttribute]
+//		private string author;		
+//		public string Author {
+//			get { return author; }
+//			set { author = value; }
+//		}
+//		
+//		[XmlText]
+//		private string message;			
+//		public string Message {
+//			get { return message; }
+//			set { message = value; }
+//		}
+//		
+//		
+//		public Comment(string author, string message)
+//		{
+//			this.author = author;
+//			this.message = message;
+//		}
+//	}
 	
 	
 	[XmlRoot]
@@ -79,21 +79,22 @@ namespace AdventureAuthor.Notebook.Worksheets
 		private string game;
 		private List<Point> points;	
 		private SerializableDictionary<string,int> ratings;
-		private List<Comment> comments;	
+		private string response;
+//		private List<Comment> comments;	
 		
-		[XmlAttribute]	
+		[XmlElement]	
 		public string Playtester {
 			get { return playtester; }
 			set { playtester = value; }
 		}
 		
-		[XmlAttribute]	
+		[XmlElement]	
 		public string Designer {
 			get { return designer; }
 			set { designer = value; }
 		}
 		
-		[XmlAttribute]		
+		[XmlElement]		
 		public string Game {
 			get { return game; }
 			set { game = value; }
@@ -111,11 +112,17 @@ namespace AdventureAuthor.Notebook.Worksheets
 			set { ratings = value; }
 		}
 		
-		[XmlArray]		
-		public List<Comment> Comments {
-			get { return comments; }
-			set { comments = value; }
+		[XmlElement]
+		public string Response {
+			get { return response; }
+			set { value = response; }
 		}
+		
+//		[XmlArray]		
+//		public List<Comment> Comments {
+//			get { return comments; }
+//			set { comments = value; }
+//		}
 		
 		
 		/// <summary>
@@ -132,7 +139,8 @@ namespace AdventureAuthor.Notebook.Worksheets
 			this.ratings.Add("Gameplay",0);
 			this.ratings.Add("World",0);
 			this.ratings.Add("Overall",0);
-			this.comments = new List<Comment>(1);
+//			this.comments = new List<Comment>(1);
+			this.response = String.Empty;
 		}	
 	}
 }
