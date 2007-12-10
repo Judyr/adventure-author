@@ -42,7 +42,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="GlacialTreeList">
-      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ManagedElectron">
