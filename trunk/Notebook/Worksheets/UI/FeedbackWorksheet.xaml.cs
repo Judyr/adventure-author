@@ -43,23 +43,40 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         {
         	worksheetPath = String.Empty;
             InitializeComponent();
-            StoryRating.Tip = new FriendlyToolTip("Rate the story",
-                                                      "A game has a good story if you care about the characters, " +
-                                                      "and are interested in the plot and what happens next.");
-            GameplayRating.Tip = new FriendlyToolTip("Rate the gameplay",
-                                                         "A game has good gameplay if it is enjoyable to play. This could mean " +
-                                                         "it had exciting combat, fun exploration and treasure hunts, " + 
-                                                         "brain-bending riddles and clever puzzles.",
-                                                         "Remember that game balance is important. The game should be challenging, " + 
-                                                         "not easy enough that it's boring, or difficult enough that it's " +
-                                                         "frustrating.");
-            WorldRating.Tip = new FriendlyToolTip("Rate the world",
-                                                      "A game has a good game world if the world is well designed. This could mean " +
-                                                      "it has carefully crafted landscapes and cities, and creates atmosphere " + 
-                                                      "through the use of music, sound effects and lighting.");
-            OverallRating.Tip = new FriendlyToolTip("Rate the game overall",
-                                                        "A good game should have an interesting story, a carefully designed world, " +
-                                                        "and most importantly, some fun gameplay.");
+            
+            Point point = new Point("Main character was cool",PointType.Good);
+            Point point2 = new Point("Villain was really scary, had a cool backstory as well",PointType.Good);
+            Point point3 = new Point("Gameplay was a bit samey, lots of killing",PointType.Bad);
+            Point point4 = new Point("Couldn't get to the second area, transition didn't work, had to do in toolset",PointType.Bad);
+            Point point5 = new Point("Cliched setting",PointType.Bad);
+            	
+            PointsPanel.Children.Add(new PointControl(point));
+            PointsPanel.Children.Add(new PointControl(point2));
+            PointsPanel.Children.Add(new PointControl(point3));
+            PointsPanel.Children.Add(new PointControl(point4));
+            PointsPanel.Children.Add(new PointControl(point5));
+            
+            
+            
+            
+            
+//            StoryRating.Tip = new FriendlyToolTip("Rate the story",
+//                                                      "A game has a good story if you care about the characters, " +
+//                                                      "and are interested in the plot and what happens next.");
+//            GameplayRating.Tip = new FriendlyToolTip("Rate the gameplay",
+//                                                         "A game has good gameplay if it is enjoyable to play. This could mean " +
+//                                                         "it had exciting combat, fun exploration and treasure hunts, " + 
+//                                                         "brain-bending riddles and clever puzzles.",
+//                                                         "Remember that game balance is important. The game should be challenging, " + 
+//                                                         "not easy enough that it's boring, or difficult enough that it's " +
+//                                                         "frustrating.");
+//            WorldRating.Tip = new FriendlyToolTip("Rate the world",
+//                                                      "A game has a good game world if the world is well designed. This could mean " +
+//                                                      "it has carefully crafted landscapes and cities, and creates atmosphere " + 
+//                                                      "through the use of music, sound effects and lighting.");
+//            OverallRating.Tip = new FriendlyToolTip("Rate the game overall",
+//                                                        "A good game should have an interesting story, a carefully designed world, " +
+//                                                        "and most importantly, some fun gameplay.");
         }
         
         
@@ -182,10 +199,16 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         {
         	try {
 				object o = Serialization.Deserialize(path,typeof(Feedback));
-				Feedback f = (Feedback)o;	
-				Open(f);
-				worksheetPath = path;
-				Title = "Worksheet editor: " + Path.GetFileNameWithoutExtension(worksheetPath);
+				if (o is Feedback) {
+					Feedback f = (Feedback)o;	
+					Open(f);
+					worksheetPath = path;
+					Title = "Worksheet editor: " + Path.GetFileNameWithoutExtension(worksheetPath);					
+				}
+				// else if (o is...)
+				else {
+					Say.Warning("File at location " + path + " is not a valid worksheet file, and cannot be opened.");
+				}
         	}
         	catch (Exception e) {
         		throw new IOException("Couldn't open a worksheet at path " + path + "\n\n" + e);
@@ -203,10 +226,12 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         	Designer.Text = feedback.Designer;
         	Game.Text = feedback.Game;
         	
-        	StoryRating.Rating = feedback.Ratings["Story"];
-        	GameplayRating.Rating = feedback.Ratings["Gameplay"];
-        	WorldRating.Rating = feedback.Ratings["World"];
-        	OverallRating.Rating = feedback.Ratings["Overall"];
+//        	StoryRating.Rating = feedback.Ratings["Story"];
+//        	GameplayRating.Rating = feedback.Ratings["Gameplay"];
+//        	WorldRating.Rating = feedback.Ratings["World"];
+//        	OverallRating.Rating = feedback.Ratings["Overall"];
+        	
+        	
         }
         
         
@@ -222,12 +247,12 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
 			
         	feedback.Playtester = Playtester.Text;
         	feedback.Designer = Designer.Text;
-        	feedback.Game = Game.Text;        	
+        	feedback.Game = Game.Text;	
 			
-			feedback.Ratings["Story"] = StoryRating.Rating;
-			feedback.Ratings["Gameplay"] = GameplayRating.Rating;
-			feedback.Ratings["World"] = WorldRating.Rating;
-			feedback.Ratings["Overall"] = OverallRating.Rating;
+//			feedback.Ratings["Story"] = StoryRating.Rating;
+//			feedback.Ratings["Gameplay"] = GameplayRating.Rating;
+//			feedback.Ratings["World"] = WorldRating.Rating;
+//			feedback.Ratings["Overall"] = OverallRating.Rating;
 			
 			try {
 				Serialization.Serialize(path,feedback);

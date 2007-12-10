@@ -17,6 +17,10 @@
 			<GradientStop Offset="0" Color="NavajoWhite"/>
 			<GradientStop Offset="1.5" Color="White"/>
 		</LinearGradientBrush>
+		<Style TargetType="{x:Type Label}">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontFamily" Value="ComicSans"/>
+		</Style>
 		<Style TargetType="{x:Type MenuItem}">
 			<Setter Property="MenuItem.FontSize" Value="14"/>
 		</Style>
@@ -24,7 +28,7 @@
 			<Grid>
 				<Polygon
 					Name="OuterBox"
-					Points="2,2 2,20 20,20 20,2"
+					Points="3,3 3,19 19,19 19,3"
 					Fill="Black"
 					StrokeThickness="2"/>
 				<Polygon
@@ -34,15 +38,19 @@
 					StrokeThickness="2"/>
 				<Polyline
 					Name="StrokeOne"
-					Points="0,0 22,22"
+					Points="1,1 21,21"
 					Stroke="Red"
-					StrokeThickness="3"
+					StrokeThickness="4"
+					StrokeStartLineCap="Round"
+					StrokeEndLineCap="Triangle"
 					Visibility="Hidden"/>
 				<Polyline
 					Name="StrokeTwo"
 					Points="0,22 22,0"
 					Stroke="Red"
-					StrokeThickness="3"
+					StrokeThickness="4"
+					StrokeStartLineCap="Round"
+					StrokeEndLineCap="Triangle"
 					Visibility="Hidden"/>
 			</Grid>
 			<ControlTemplate.Triggers>
@@ -50,20 +58,29 @@
 					<Setter TargetName="StrokeOne" Property="Visibility" Value="Visible"/>
 					<Setter TargetName="StrokeTwo" Property="Visibility" Value="Visible"/>
 				</Trigger>
-				<!--<Trigger Property="CheckBox.IsMouseOver" Value="True">
-					<Setter TargetName="StarPolygon" Property="RenderTransform">
-						<Setter.Value>
-							<ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-						</Setter.Value>
-					</Setter>
-				</Trigger>-->
+			</ControlTemplate.Triggers>
+		</ControlTemplate>
+		<ControlTemplate x:Key="HandwrittenTextBox">
+			<Grid>
+				<Polyline
+					Name="Underline"
+					Points="0,30 10,30"
+					Stroke="Gray"
+					StrokeThickness="4"
+					StrokeStartLineCap="Round"
+					StrokeEndLineCap="Round"/>
+			</Grid>
+			<ControlTemplate.Triggers>
+				<Trigger Property="TextBox.IsMouseCaptured" Value="True">
+					<Setter TargetName="Underline" Property="Stroke" Value="Black"/>
+				</Trigger>
 			</ControlTemplate.Triggers>
 		</ControlTemplate>
 	</Window.Resources>
 	<Window.Background>
 		<StaticResource ResourceKey="PaperBrush"/>
 	</Window.Background>
-	<Canvas Background="{StaticResource PaperBrush}">
+	<StackPanel Orientation="Vertical" Background="{StaticResource PaperBrush}">
 		<Menu>
 			<MenuItem Header="File">
 				<MenuItem.Width>
@@ -78,110 +95,56 @@
 				<MenuItem Header="Close" Click="OnClick_Close"/>
 				<MenuItem Header="Exit" Click="OnClick_Exit"/>
 			</MenuItem>
-		</Menu>		
+		</Menu>
 			<Label
-				Content="Playtester"
-				FontSize="14"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
+				Content="Playtester feedback worksheet"
+				FontSize="32"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top"/>
+			<StackPanel
+				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
-				Margin="25,40,0,0"
-				Width="85"
-				Height="31" />
-			<Label
-				FontSize="14"
-				Content="Designer"
+				Orientation="Horizontal">
+				<Label
+					Content="Playtester:"
+					Width="85"
+					Height="31" 
+					Margin="4"/>
+				<TextBox
+					Name="Playtester"
+					Width="250"
+					Height="35" 
+					Margin="4"/>
+				<Label
+					Content="Designer:"
+					Width="85"
+					Height="31" 
+					Margin="4"/>
+				<TextBox
+					Name="Designer"
+					Width="150"
+					Height="35" 
+					Margin="4"/>
+				<Label
+					Content="Module:"
+					Width="85"
+					Height="31" 
+					Margin="4"/>
+				<TextBox
+					Name="Game"
+					Width="150"
+					Height="35"
+					Margin="4"/>
+			</StackPanel>
+				
+			<StackPanel
+				Name="PointsPanel"
 				Grid.Column="0"
 				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,72,0,0"
-				Width="85"
-				Height="31" />
-			<Label
-				FontSize="14"
-				Content="Game"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,104,0,0"
-				Width="85"
-				Height="31" />
-			<TextBox
-				Name="Playtester"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="119,42,0,0"
-				Width="250"
-				Height="25" />
-			<TextBox
-				Name="Designer"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="119,74,0,0"
-				Width="250"
-				Height="25" />
-			<TextBox
-				Name="Game"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="119,106,0,0"
-				Width="250"
-				Height="25" />
-			<worksheet:StarRating
-				x:Name="StoryRating"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,167,0,0"
-				Width="300"
-				Height="32"
-				TitleText="Story"/>
-			<worksheet:StarRating
-				x:Name="GameplayRating"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,207,0,0"
-				Width="300"
-				Height="32"
-				TitleText="Gameplay"/>
-			<worksheet:StarRating
-				x:Name="WorldRating"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,247,0,0"
-				Width="300"
-				Height="32"
-				TitleText="World"/>
-			<worksheet:StarRating
-				x:Name="OverallRating"
-				Grid.Column="0"
-				Grid.Row="0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Margin="25,287,0,0"
-				Width="300"
-				Height="32"
-				TitleText="Overall"/>	
-			<CheckBox
-				Grid.Column="0"
-				Grid.Row="0"
-				Margin="500,400"
-				Width="30"
-				Height="30"
-				Template="{StaticResource TickTemplate}"/>
-	</Canvas>
+				Orientation="Vertical"
+				Height="300"
+				MinWidth="500" MaxWidth="800">
+			</StackPanel>
+				
+	</StackPanel>
 </Window>
