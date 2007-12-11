@@ -20,6 +20,13 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
 
     public partial class PointControl : UserControl
     {
+    	private Window owner = null;     // hack!	
+		public Window Owner {
+			get { return owner; }
+			set { owner = value; }
+		}
+    	
+    	
         private Point representedPoint;        
 		public Point RepresentedPoint {
 			get { return representedPoint; }
@@ -38,16 +45,11 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
 	        	}				
 			}
 		}
+                
         
-        
-        public PointControl()
+        public PointControl(Point point) 
         {
-            InitializeComponent();
-        }
-        
-        
-        public PointControl(Point point) : this()
-        {
+        	InitializeComponent();
         	RepresentedPoint = point;
         }
         
@@ -72,6 +74,7 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         {
         	PointTextBox.Background = Brushes.White;
         	PointTextBox.BorderBrush = Brushes.Black;
+        	((FeedbackWorksheet)Owner).selected = this;
         }
         
         

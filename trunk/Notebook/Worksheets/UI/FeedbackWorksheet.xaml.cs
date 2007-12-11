@@ -35,6 +35,9 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
 			get { return worksheetPath; }
 		}
     	
+    	internal PointControl selected = null;
+    	
+    	
     	
     	private const string XMLFILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     									 
@@ -44,39 +47,23 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         	worksheetPath = String.Empty;
             InitializeComponent();
             
-            Point point = new Point("Main character was cool",PointType.Good);
-            Point point2 = new Point("Villain was really scary, had a cool backstory as well",PointType.Good);
-            Point point3 = new Point("Gameplay was a bit samey, lots of killing",PointType.Bad);
-            Point point4 = new Point("Couldn't get to the second area, transition didn't work, had to do in toolset",PointType.Bad);
-            Point point5 = new Point("Cliched setting",PointType.Bad);
-            	
-            PointsPanel.Children.Add(new PointControl(point));
-            PointsPanel.Children.Add(new PointControl(point2));
-            PointsPanel.Children.Add(new PointControl(point3));
-            PointsPanel.Children.Add(new PointControl(point4));
-            PointsPanel.Children.Add(new PointControl(point5));
-            
-            
-            
-            
-            
-//            StoryRating.Tip = new FriendlyToolTip("Rate the story",
-//                                                      "A game has a good story if you care about the characters, " +
-//                                                      "and are interested in the plot and what happens next.");
-//            GameplayRating.Tip = new FriendlyToolTip("Rate the gameplay",
-//                                                         "A game has good gameplay if it is enjoyable to play. This could mean " +
-//                                                         "it had exciting combat, fun exploration and treasure hunts, " + 
-//                                                         "brain-bending riddles and clever puzzles.",
-//                                                         "Remember that game balance is important. The game should be challenging, " + 
-//                                                         "not easy enough that it's boring, or difficult enough that it's " +
-//                                                         "frustrating.");
-//            WorldRating.Tip = new FriendlyToolTip("Rate the world",
-//                                                      "A game has a good game world if the world is well designed. This could mean " +
-//                                                      "it has carefully crafted landscapes and cities, and creates atmosphere " + 
-//                                                      "through the use of music, sound effects and lighting.");
-//            OverallRating.Tip = new FriendlyToolTip("Rate the game overall",
-//                                                        "A good game should have an interesting story, a carefully designed world, " +
-//                                                        "and most importantly, some fun gameplay.");
+            StoryRating.Tip = new FriendlyToolTip("Rate the story",
+                                                      "A game has a good story if you care about the characters, " +
+                                                      "and are interested in the plot and what happens next.");
+            GameplayRating.Tip = new FriendlyToolTip("Rate the gameplay",
+                                                         "A game has good gameplay if it is enjoyable to play. This could mean " +
+                                                         "it had exciting combat, fun exploration and treasure hunts, " + 
+                                                         "brain-bending riddles and clever puzzles.",
+                                                         "Remember that game balance is important. The game should be challenging, " + 
+                                                         "not easy enough that it's boring, or difficult enough that it's " +
+                                                         "frustrating.");
+            WorldRating.Tip = new FriendlyToolTip("Rate the world",
+                                                      "A game has a good game world if the world is well designed. This could mean " +
+                                                      "it has carefully crafted landscapes and cities, and creates atmosphere " + 
+                                                      "through the use of music, sound effects and lighting.");
+            OverallRating.Tip = new FriendlyToolTip("Rate the game overall",
+                                                        "A good game should have an interesting story, a carefully designed world, " +
+                                                        "and most importantly, some fun gameplay.");
         }
         
         
@@ -144,7 +131,7 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         	save.InitialDirectory = form.ModulesDirectory;
         	save.RestoreDirectory = false;
         	save.Title = "Save worksheet as";
-        	save.ValidateNames = true;        	
+        	save.ValidateNames = false;        	
         	
         	save.FileOk += delegate
         	{  
@@ -226,11 +213,17 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         	Designer.Text = feedback.Designer;
         	Game.Text = feedback.Game;
         	
-//        	StoryRating.Rating = feedback.Ratings["Story"];
-//        	GameplayRating.Rating = feedback.Ratings["Gameplay"];
-//        	WorldRating.Rating = feedback.Ratings["World"];
-//        	OverallRating.Rating = feedback.Ratings["Overall"];
+        	StoryRating.Rating = feedback.Ratings["Story"];
+        	GameplayRating.Rating = feedback.Ratings["Gameplay"];
+        	WorldRating.Rating = feedback.Ratings["World"];
+        	OverallRating.Rating = feedback.Ratings["Overall"];
         	
+        	PointsPanel.Children.Clear();
+        	foreach (Point p in feedback.Points) {
+				PointControl pc = new PointControl(p);
+				pc.Owner = this;
+				PointsPanel.Children.Add(pc);
+        	}
         	
         }
         
@@ -249,10 +242,15 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         	feedback.Designer = Designer.Text;
         	feedback.Game = Game.Text;	
 			
-//			feedback.Ratings["Story"] = StoryRating.Rating;
-//			feedback.Ratings["Gameplay"] = GameplayRating.Rating;
-//			feedback.Ratings["World"] = WorldRating.Rating;
-//			feedback.Ratings["Overall"] = OverallRating.Rating;
+			feedback.Ratings["Story"] = StoryRating.Rating;
+			feedback.Ratings["Gameplay"] = GameplayRating.Rating;
+			feedback.Ratings["World"] = WorldRating.Rating;
+			feedback.Ratings["Overall"] = OverallRating.Rating;
+        	
+        	foreach (PointControl pc in PointsPanel.Children) {
+        		Point p = new Point(pc.PointTextBox.Text,pc.RepresentedPoint.Type);
+        		feedback.Points.Add(p);
+        	}
 			
 			try {
 				Serialization.Serialize(path,feedback);
@@ -267,5 +265,54 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         {
         	return MessageBox.Show("Save changes before closing?","Save?",MessageBoxButton.YesNoCancel);
         }
+        
+        
+        #region Feedback worksheet
+                
+        private void OnClick_Delete(object sender, EventArgs e)
+        {
+        	bool removeSelected = false;
+        	foreach (PointControl pc in PointsPanel.Children) {
+        		if (pc == selected) {
+        			MessageBoxResult result = MessageBox.Show("Delete this point?","Delete?",MessageBoxButton.OKCancel);
+        			if (result == MessageBoxResult.OK) {
+        				removeSelected = true;        				
+        			}
+        			break;
+        		}
+        	}
+        	if (removeSelected) {
+        		PointsPanel.Children.Remove(selected);
+        		selected = null;
+        	}
+        }
+        
+        
+        private void OnClick_AddLike(object sender, EventArgs e)
+        {
+        	AddPoint(PointType.Good);
+        }
+        
+        
+        private void OnClick_AddDislike(object sender, EventArgs e)
+        {
+        	AddPoint(PointType.Bad);
+        }
+        
+        
+        private void AddPoint(PointType pointType)
+        {
+        	Point point = new Point(String.Empty,pointType);
+        	PointControl pc = new PointControl(point);
+        	pc.Owner = this;
+        	pc.PointTextBox.GotMouseCapture += delegate 
+        	{ 
+        		selected = pc;        		
+        	};
+        	PointsPanel.Children.Add(pc);
+        }
+        
+        
+        #endregion
     }
 }
