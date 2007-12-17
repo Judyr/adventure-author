@@ -14,8 +14,8 @@
 	<Window.Resources>
 		<LinearGradientBrush 
 			x:Key="PaperBrush" StartPoint="0,0" EndPoint="0,1" PresentationOptions:Freeze="True">
-			<GradientStop Offset="0" Color="NavajoWhite"/>
-			<GradientStop Offset="1.5" Color="White"/>
+			<GradientStop Offset="0" Color="LightBlue"/>
+			<GradientStop Offset="2" Color="White"/>
 		</LinearGradientBrush>
 		<Style TargetType="{x:Type Label}">
 			<Setter Property="FontSize" Value="16"/>
@@ -84,9 +84,6 @@
 			</ControlTemplate.Triggers>
 		</ControlTemplate>
 	</Window.Resources>
-	<Window.Background>
-		<StaticResource ResourceKey="PaperBrush"/>
-	</Window.Background>
 	<StackPanel Orientation="Vertical" Background="{StaticResource PaperBrush}">
 		<Menu>
 			<MenuItem Header="File">
@@ -162,18 +159,14 @@
 					TitleText="Overall"/>
 			</StackPanel>
 				
-			<Border Padding="10" BorderBrush="Black" BorderThickness="2" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1" >
+			<Border Padding="10" BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ZIndex="1" >
 				<StackPanel Orientation="Vertical">
 					<ScrollViewer Name="PointsScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" 
 					              Focusable="false">
 						<StackPanel
 							Name="PointsPanel"
-							Grid.Column="0"
-							Grid.Row="0"
 							Orientation="Vertical"
-							Height="250"
-							Margin="5">
-						</StackPanel>
+							Height="300"/>
 			    	</ScrollViewer>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 						<Button Content="Add like" Click="OnClick_AddLike" Padding="2"/>
@@ -182,6 +175,5 @@
 					</StackPanel>
 			    </StackPanel>
 		    </Border>
-				
 	</StackPanel>
 </Window>

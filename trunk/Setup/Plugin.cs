@@ -161,8 +161,8 @@ namespace AdventureAuthor.Setup
 					}
 				}
 			}
-			catch (Exception ex) {
-				MessageBox.Show("Failed to delete temp modules on closing.\n\n\n" + ex.ToString());
+			catch (Exception) {
+				//MessageBox.Show("Failed to delete temp modules on loading.\n\n\n" + ex.ToString());
 			}
 		}
 						
