@@ -50,6 +50,10 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.DirectX" />
+    <Reference Include="NWN2PluginToolsLibrary">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\NWN2PluginToolsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="NWN2Toolset">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -127,6 +131,20 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
+    <Compile Include="Analysis\AreaMapControl.xaml.cs">
+      <DependentUpon>AreaMapControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Combat.cs" />
+    <Compile Include="Analysis\CombatMap.xaml.cs">
+      <DependentUpon>CombatMap.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\HostileGroup.cs" />
+    <Compile Include="Analysis\UI\CreatureMarker.xaml.cs">
+      <DependentUpon>CreatureMarker.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Conversations\Conversation.cs" />
     <Compile Include="Conversations\ConversationChangedEventArgs.cs" />
     <Compile Include="Conversations\Page.cs" />
@@ -207,7 +225,6 @@
     <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\User.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Notebook\MindMapForm.cs" />
     <Compile Include="Notebook\MindMapForm.Designer.cs">
@@ -306,6 +323,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\LogWriter.cs" />
+    <Compile Include="Utils\Measurement.cs" />
+    <Compile Include="Utils\RGBPicker.xaml.cs">
+      <DependentUpon>RGBPicker.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\Serialization.cs" />
@@ -339,6 +361,9 @@
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Analysis\AreaMapControl.xaml" />
+    <Page Include="Analysis\CombatMap.xaml" />
+    <Page Include="Analysis\UI\CreatureMarker.xaml" />
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
@@ -370,9 +395,11 @@
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
     <Page Include="Setup\UI\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
+    <Page Include="Utils\RGBPicker.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />
+    <Folder Include="Analysis\UI" />
     <Folder Include="Conversations\UI" />
     <Folder Include="Conversations\UI\Controls\Lines" />
     <Folder Include="Conversations\UI\Graph" />
@@ -382,6 +409,7 @@
     <Folder Include="Core\UI" />
     <Folder Include="Journal" />
     <Folder Include="Journal\UI" />
+    <Folder Include="Analysis" />
     <Folder Include="Notebook\Worksheets" />
     <Folder Include="Notebook\Worksheets\UI" />
     <Folder Include="Setup\UI" />

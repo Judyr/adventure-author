@@ -40,6 +40,7 @@ using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Notebook.Worksheets.UI;
+using AdventureAuthor.Analysis;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
@@ -51,6 +52,7 @@ using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Factions;
 using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data.Templates;
+using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
@@ -61,6 +63,7 @@ using OEIShared.Utils;
 using TD.SandBar;
 using crown = Crownwood.DotNetMagic.Controls;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using Microsoft.DirectX;
 
 namespace AdventureAuthor.Setup
 {		
@@ -96,7 +99,7 @@ namespace AdventureAuthor.Setup
 		
 		#endregion Global variables	
 			
-				
+			
 		
 		/// <summary>
 		/// Performs a myriad of modifications to the user interface at launch.
@@ -176,7 +179,7 @@ namespace AdventureAuthor.Setup
 					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
 					
 					// Lock the interface:
-//					dockingManager.AllowFloating = false;
+					dockingManager.AllowFloating = false;
 //					dockingManager.AllowRedocking = false;
 //					dockingManager.AllowResize = false;
 			
@@ -708,6 +711,23 @@ namespace AdventureAuthor.Setup
 			};
 			worksheets.Items.Add(feedback);
 			
+			MenuButtonItem misc = new MenuButtonItem("Miscellaneous");
+			MenuButtonItem difficulty = new MenuButtonItem("Analyse hostiles");
+			difficulty.Activate += delegate { 
+				if (ModuleHelper.ModuleIsOpen() && form.App.Module.Areas.Count > 0) {
+					CombatMap combatMap = new CombatMap(); 
+					combatMap.Show(); 
+				}
+			};
+			misc.Items.Add(difficulty);
+			
+			MenuButtonItem colourPicker = new MenuButtonItem("Colour picker");
+			colourPicker.Activate += delegate { 
+				RGBPicker picker = new RGBPicker();
+				picker.ShowDialog();
+			};
+			misc.Items.Add(colourPicker);
+			
 			
 //			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
 //			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
@@ -723,6 +743,7 @@ namespace AdventureAuthor.Setup
 			newChapter.BeginGroup = true;
 //			designersNotebook.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
+			misc.BeginGroup = true;
 			worksheets.BeginGroup = true;
 //			logWindow.BeginGroup = true;
 						
@@ -741,7 +762,8 @@ namespace AdventureAuthor.Setup
 			                           	exitAdventureAuthor,
 			                           	worksheets,
 //			                           	designersNotebook,
-			                           	logWindow
+			                           	logWindow,
+			                           	misc
 			                           });			
 		}							
 		
@@ -758,7 +780,7 @@ namespace AdventureAuthor.Setup
 				// Dispose the [<], [>] and [X] controls:
 				List<Control> controls = GetControls(tabbedGroupsCollection.ActiveLeaf.TabControl);
 				for (int i = 0; i < 3; i++) {
-					controls[i].Dispose(); //innocent
+					controls[i].Dispose(); 
 				}		
 			}
 		}

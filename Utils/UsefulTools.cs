@@ -33,7 +33,7 @@ namespace AdventureAuthor.Utils
 	/// Useful functions for Adventure Author.
 	/// </summary>
 	public static class UsefulTools
-	{	
+	{		
 		// TODO make the string methods into Automatic Methods on string
 		
 		/// <summary>
