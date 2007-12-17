@@ -64,14 +64,10 @@ namespace AdventureAuthor.Analysis
         	map.LoadArea(area);
         	
         	foreach (UIElement element in map.AreaMapCanvas.Children) {
-        		Log.WriteMessage("child");
         		if (element is CreatureMarker) {
-        			Log.WriteMessage("child is creaturemarker");
         			CreatureMarker marker = (CreatureMarker)element;
-        			marker.MouseDown += delegate { Say.Information("RAR!"); };
         			marker.MouseEnter += new MouseEventHandler(OnMouseEnter_Marker);
         			marker.MouseLeave += new MouseEventHandler(OnMouseLeave_Marker);
-        			Log.WriteMessage("attached handlers");
         		}
         	}
         	
@@ -81,7 +77,7 @@ namespace AdventureAuthor.Analysis
         
         private void Refresh()
         {
-        	map.LoadArea(map.Area);
+        	Open(map.Area);
         }
         
         #endregion Methods        
@@ -91,20 +87,15 @@ namespace AdventureAuthor.Analysis
                         
         private void OnMouseEnter_Marker(object sender, MouseEventArgs e)
         {
-        	Log.WriteMessage("start enter");
         	CreatureInfoText.Text = sender.ToString();
-        	this.Background = ((CreatureMarker)sender).Background;
-        	Log.WriteMessage("finish enter");
         }
         
         
         private void OnMouseLeave_Marker(object sender, MouseEventArgs e)
         {
-        	Log.WriteMessage("start leave");
         	if (CreatureInfoText.Text == sender.ToString()) {
         		CreatureInfoText.Text = String.Empty;
         	}
-        	Log.WriteMessage("finish enter");
         }
         
         #endregion
