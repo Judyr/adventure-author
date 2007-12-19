@@ -87,15 +87,33 @@ namespace AdventureAuthor.Analysis
                         
         private void OnMouseEnter_Marker(object sender, MouseEventArgs e)
         {
-        	CreatureInfoText.Text = sender.ToString();
+        	if (sender is CreatureMarker) {
+        		CreatureMarker marker = (CreatureMarker)sender;
+        		CreatureInfoText.Text = GetDescription(new CreatureInfo(marker.Creature));
+        	}
         }
         
         
         private void OnMouseLeave_Marker(object sender, MouseEventArgs e)
         {
-        	if (CreatureInfoText.Text == sender.ToString()) {
-        		CreatureInfoText.Text = String.Empty;
+        	if (sender is CreatureMarker) {
+        		CreatureMarker marker = (CreatureMarker)sender;
+        		string infoText = GetDescription(new CreatureInfo(marker.Creature));
+        		if (CreatureInfoText.Text == infoText) {
+        			CreatureInfoText.Text = String.Empty;
+        		}
         	}
+        }
+        
+        
+        private string GetDescription(CreatureInfo info)
+        {
+        	StringBuilder s = new StringBuilder(info.Name + "\n(" + info.Tag + ")\n\n" + info.FactionName);
+        	if (info.FactionName == Combat.GetFactionName(Combat.HOSTILE)) {
+        		s.Append(" (CR: " + info.ChallengeRating + ")");
+        	}
+        	
+        	return s.ToString();
         }
         
         #endregion

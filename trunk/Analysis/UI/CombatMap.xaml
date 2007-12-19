@@ -33,7 +33,7 @@
     	</StackPanel>	
 	
 		<StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical">
-			<TextBlock Name="CreatureInfoText" FontSize="16" TextWrapping="Wrap" Height="500" Width="150"/>
+			<TextBlock Name="CreatureInfoText" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" Height="500" Width="150"/>
 		</StackPanel>
 	
 	</Grid>

@@ -1,9 +1,0 @@
-﻿<UserControl x:Class="AdventureAuthor.Notebook.MyIdeas.UI.Balloon"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Canvas>
-    	<Ellipse Name="BalloonEllipse" Canvas.Top="0" Canvas.Left="0" Width="60" Height="80" Fill="Teal">
-	
-		</Ellipse>
-    </Canvas>
-</UserControl>

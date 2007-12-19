@@ -41,6 +41,7 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Notebook.Worksheets.UI;
 using AdventureAuthor.Analysis;
+using AdventureAuthor.Notebook.MyIdeas;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
@@ -106,6 +107,9 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		internal static void SetupUI()
 		{
+			
+			
+			
 			// Nullify every original context menu
 //			foreach (Control c in GetControls(form.App)) {
 //				
@@ -175,6 +179,46 @@ namespace AdventureAuthor.Setup
 				if (fi.FieldType == typeof(DockingManager)) {
 					dockingManager = (DockingManager)fi.GetValue(form.App);
 					
+					
+//					ManagerContentCollection cc = dockingManager.Contents;
+//					dockingManager.Contents = new ManagerContentCollection(dockingManager);
+					
+					
+					
+					
+
+
+			// Add 'add idea' content:
+			
+			ElementHost host = new ElementHost();
+			AdventureAuthor.Notebook.MyIdeas.LightweightIdeaControl ideacontrol 
+				= new AdventureAuthor.Notebook.MyIdeas.LightweightIdeaControl();
+			ideacontrol.Width = 300;
+			ideacontrol.Height = 200;
+			host.Child = ideacontrol;
+			Content content = new Content(dockingManager,host,"Record an idea");
+			
+			
+			dockingManager.Contents.Add(content);	
+			dockingManager.AddContentWithState(content,State.DockLeft);
+			//dockingManager.AddContentToZone(content,null,0);
+			dockingManager.ShowContent(content);	
+			
+			
+//			foreach (Content c in cc) {				
+//				dockingManager.Contents.Add(c);
+//				dockingManager.AddContentWithState(c,State.DockLeft);
+//				dockingManager.ShowContent(c);	
+//			}
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					//TODO: try iterating through dockingManager object, copying every field
 					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
 					
@@ -205,20 +249,17 @@ namespace AdventureAuthor.Setup
 						else if (c.Control is NWN2VerifyOutputControl) {
 							contents.Add(c);
 						}
+						
+						// Lock the interface:
+						//c.HideButton = false;
+						//c.CloseButton = false;
 					}		
 					
 					foreach (Content c in contents) {
 						if (c.Visible) {
 							dockingManager.HideContent(c);
 						}
-					}
-					
-															
-//					// Lock the interface:
-//					foreach (Content c in dockingManager.Contents) {	
-//						c.HideButton = false;
-//						c.CloseButton = false;
-//					}					
+					}			
 				
 					// Certain windows should be automatically hidden if the toolset ever tries to display them:
 					dockingManager.ContentShown += new DockingManager.ContentHandler(OnContentShown);
@@ -535,8 +576,10 @@ namespace AdventureAuthor.Setup
 			};
 			
 			UpdateTitleBar();
+			
+			
 		}
-
+		
 		
 		private static void ResourceViewerOpened(int index, object value)
 		{
@@ -752,8 +795,8 @@ namespace AdventureAuthor.Setup
 			                           	openAdventure,
 			                           	saveAdventure,
 //			                           	saveAdventureAs,
-			                           	runAdventure,
 			                           	bakeAdventure,
+			                           	runAdventure,
 			                           	closeAdventure,
 			                           	newChapter,
 			                           	newConversation,
