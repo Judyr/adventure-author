@@ -131,16 +131,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
-    <Compile Include="Analysis\AreaMapControl.xaml.cs">
+    <Compile Include="Analysis\Combat.cs" />
+    <Compile Include="Analysis\CreatureInfo.cs" />
+    <Compile Include="Analysis\HostileGroup.cs" />
+    <Compile Include="Analysis\UI\AreaMapControl.xaml.cs">
       <DependentUpon>AreaMapControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\Combat.cs" />
-    <Compile Include="Analysis\CombatMap.xaml.cs">
+    <Compile Include="Analysis\UI\CombatMap.xaml.cs">
       <DependentUpon>CombatMap.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\HostileGroup.cs" />
     <Compile Include="Analysis\UI\CreatureMarker.xaml.cs">
       <DependentUpon>CreatureMarker.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -230,18 +231,9 @@
     <Compile Include="Notebook\MindMapForm.Designer.cs">
       <DependentUpon>MindMapForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notebook\MyIdeas\IdeaComment.cs" />
-    <Compile Include="Notebook\MyIdeas\Idea.cs" />
-    <Compile Include="Notebook\MyIdeas\UI\Balloon.xaml.cs">
-      <DependentUpon>Balloon.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml.cs">
-      <DependentUpon>MyIdeasWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Notebook\MyIdeas\UI\Sky.xaml.cs">
-      <DependentUpon>Sky.xaml</DependentUpon>
+    <Compile Include="Notebook\MyIdeas\IdeaFragment.cs" />
+    <Compile Include="Notebook\MyIdeas\LightweightIdeaControl.xaml.cs">
+      <DependentUpon>LightweightIdeaControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Notebook\Worksheets\Feedback.cs" />
@@ -361,8 +353,8 @@
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Analysis\AreaMapControl.xaml" />
-    <Page Include="Analysis\CombatMap.xaml" />
+    <Page Include="Analysis\UI\AreaMapControl.xaml" />
+    <Page Include="Analysis\UI\CombatMap.xaml" />
     <Page Include="Analysis\UI\CreatureMarker.xaml" />
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
@@ -377,9 +369,7 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
-    <Page Include="Notebook\MyIdeas\UI\Balloon.xaml" />
-    <Page Include="Notebook\MyIdeas\UI\MyIdeasWindow.xaml" />
-    <Page Include="Notebook\MyIdeas\UI\Sky.xaml" />
+    <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
     <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\StarRating.xaml" />
@@ -418,7 +408,6 @@
     <Folder Include="Notebook" />
     <Folder Include="Notebook\MyAdvice\UI" />
     <Folder Include="Notebook\MyIdeas" />
-    <Folder Include="Notebook\MyIdeas\UI" />
     <Folder Include="Notebook\MyNotes" />
     <Folder Include="Notebook\MyAdvice" />
     <Folder Include="Notebook\MyNotes\UI" />

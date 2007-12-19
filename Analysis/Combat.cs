@@ -33,6 +33,7 @@ namespace AdventureAuthor.Analysis
 		/// <summary>
 		/// Calculates the challenge rating of a creature object/blueprint.
 		/// </summary>
+		/// <remarks>From GrinningFool's NWN2PluginToolsLibrary</remarks>
 		private static CreatureCRCalculator challengeRatingCalculator = new CreatureCRCalculator();		
 				
 		
@@ -75,19 +76,19 @@ namespace AdventureAuthor.Analysis
 		}		
 		
 		
-		public static string GetFaction(ushort factionID)
+		public static string GetFactionName(ushort factionID)
 		{
 			switch (factionID) {
 				case 0:
 					return "?0?";
 				case 1:
-					return "hostile";
+					return "Hostile";
 				case 2:
-					return "commoner";
+					return "Commoner";
 				case 3:
 					return "?3?";
 				default:
-					return "faction id: " + factionID.ToString();
+					return "Faction ID: " + factionID.ToString();
 			}
 		}
 	}
