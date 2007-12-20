@@ -22,6 +22,8 @@ namespace AdventureAuthor.Analysis
 {
     public partial class AreaMapControl : UserControl
     {    	
+    	#region Constants
+    	
     	/// <summary>
     	/// Amount to magnify the overall map by. 
     	/// <remarks>Note that there is also a zoom on the map, but this method stops the map markers
@@ -41,6 +43,12 @@ namespace AdventureAuthor.Analysis
     	/// </summary>
     	private const double OUT_OF_BOUNDS_WIDTH = 80 * SIZE_MULTIPLIER;
     	
+    	
+    	private const int ZINDEX_CREATURE = 3;
+    	private const int ZINDEX_TRIGGER = 2;
+    	private const int ZINDEX_TILE = 1;
+    	
+    	#endregion
     	
     	/// <summary>
     	/// The area this map represents.
@@ -92,42 +100,132 @@ namespace AdventureAuthor.Analysis
             			rect.Height = tile.TileHeight * TILE_SIZE_MULTIPLER;
             			Canvas.SetLeft(rect,tile.TileXPosition * TILE_SIZE_MULTIPLER);
             			Canvas.SetBottom(rect,tile.TileYPosition * TILE_SIZE_MULTIPLER);
-            			Canvas.SetZIndex(rect,1); // behind markers
-            			rect.Fill = Brushes.DarkGray;
-            			rect.Stroke = Brushes.Black;
-            			//rect.StrokeThickness = 1;
-	        			AreaMapCanvas.Children.Add(rect);
+            			Canvas.SetZIndex(rect,ZINDEX_TILE); // behind markers
+            			rect.Fill = GetTileFill(tile);
+            			rect.StrokeThickness = 0;
+            			AreaMapCanvas.Children.Add(rect); 
             		}
             	}
             }
             
-            Populate();
+            PopulateCreatures();
+            PopulateTriggers();
+        }
+        
+        
+        /// <summary>
+        /// Get the fill colour of this tile, so tiles are never adjacent to another tile of the same colour.
+        /// </summary>
+        /// <param name="tile">The tile to return the fill colour for</param>
+        /// <returns>The brush to fill this tile</returns>
+        private Brush GetTileFill(NWN2GameAreaTileData tile) 
+        {
+        	Brush a = Brushes.DarkGray;
+        	Brush b = Brushes.Gray;
+        	
+        	if (tile.TileXPosition % 2 == 0) {
+        		if (tile.TileYPosition % 2 == 0) {
+        			return a;
+        		}
+        		else {
+        			return b;
+        		}
+        	}
+        	else {
+        		if (tile.TileYPosition % 2 == 0) {
+        			return b;
+        		}
+        		else {
+        			return a;
+        		}
+        	}
         }
 
         
         /// <summary>
         /// Populate the map with creature markers.
         /// </summary>
-        public void Populate()
+        public void PopulateCreatures()
         {
-        	foreach (NWN2CreatureInstance creature in area.Creatures) {
-        		try {
-        			CreatureMarker marker = new CreatureMarker(creature);   
-        			double fromLeft = creature.Position.X * SIZE_MULTIPLIER - (marker.Radius / 2);
-        			double fromBottom = creature.Position.Y * SIZE_MULTIPLIER - (marker.Radius / 2);
-        			if (area.HasTerrain) {
-        				fromLeft -= OUT_OF_BOUNDS_WIDTH;
-        				fromBottom -= OUT_OF_BOUNDS_WIDTH;
-        			}
-        			Canvas.SetLeft(marker,fromLeft);
-        			Canvas.SetBottom(marker,fromBottom);
-        			Canvas.SetZIndex(marker,2); // in front of tiles
-	        		AreaMapCanvas.Children.Add(marker);
-        		}
-        		catch (Exception e) {
-        			Say.Error(e);
+        	try {
+        		foreach (NWN2CreatureInstance creature in area.Creatures) {
+        			Mark(creature);
         		}
         	}
+        	catch (Exception e) {
+        		Say.Error(e);
+        	}
         }
+
+                
+        /// <summary>
+        /// Populate the map with trigger markers.
+        /// </summary>
+        public void PopulateTriggers()
+        {
+        	try {
+        		foreach (NWN2TriggerInstance trigger in area.Triggers) {
+        			Mark(trigger);
+        		}
+        	}
+        	catch (Exception e) {
+        		Say.Error(e);
+        	}
+        }        
+        
+        
+        private void Mark(NWN2CreatureInstance creature) 
+        {
+        	CreatureMarker marker = new CreatureMarker(creature);
+        	double offset = marker.Radius / 2;
+        	Place(marker,creature.Position.X,creature.Position.Y,offset);
+        }
+        
+        
+        private void Mark(NWN2TriggerInstance trigger) 
+        {
+        	TriggerMarker marker = new TriggerMarker(trigger);
+        	double offset = 0;
+        	Place(marker,trigger.Position.X,trigger.Position.Y,offset);
+        }
+        
+        
+        private void Place(Control marker, double x, double y, double offset)
+        {
+        	double fromLeft, fromBottom;
+        	fromLeft = x * SIZE_MULTIPLIER - offset;
+        	fromBottom = y * SIZE_MULTIPLIER - offset;
+        	if (area.HasTerrain) {
+        		fromLeft -= OUT_OF_BOUNDS_WIDTH;
+        		fromBottom -= OUT_OF_BOUNDS_WIDTH;
+        	}
+        	Canvas.SetLeft(marker,fromLeft);
+        	Canvas.SetBottom(marker,fromBottom);
+        	Canvas.SetZIndex(marker,GetZIndex(marker));
+	        AreaMapCanvas.Children.Add(marker);
+        }
+        
+        
+        private int GetZIndex(Control c) 
+        {
+        	if (c is CreatureMarker) {
+        		return ZINDEX_CREATURE;
+        	}
+        	else if (c is TriggerMarker) {
+        		return ZINDEX_TRIGGER;
+        	}
+        	else {
+        		return ZINDEX_TILE;
+        	}
+//        	else {
+//        		deal with tile type	TODO
+//        	}
+        }
+        
+        
+        // NB: Different Canvas layers with transparent Backgrounds, e.g. TriggerLayer, CreatureLayer,
+        // that can then be made visible or invisible according to map preferences. Or might be better to
+        // bind visibility of individual markers to the preference properties? Not sure which would be more
+        // efficient.
     }
 }

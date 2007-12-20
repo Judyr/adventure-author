@@ -79,14 +79,14 @@ namespace AdventureAuthor.Analysis
 		public static string GetFactionName(ushort factionID)
 		{
 			switch (factionID) {
-				case 0:
-					return "?0?";
 				case 1:
 					return "Hostile";
 				case 2:
 					return "Commoner";
 				case 3:
-					return "?3?";
+					return "Merchant";
+				case 4:
+					return "Defender";
 				default:
 					return "Faction ID: " + factionID.ToString();
 			}
