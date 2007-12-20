@@ -146,6 +146,14 @@
       <DependentUpon>CreatureMarker.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\UI\KeyControl.xaml.cs">
+      <DependentUpon>KeyControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\UI\TriggerMarker.xaml.cs">
+      <DependentUpon>TriggerMarker.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Conversations\Conversation.cs" />
     <Compile Include="Conversations\ConversationChangedEventArgs.cs" />
     <Compile Include="Conversations\Page.cs" />
@@ -356,6 +364,8 @@
     <Page Include="Analysis\UI\AreaMapControl.xaml" />
     <Page Include="Analysis\UI\CombatMap.xaml" />
     <Page Include="Analysis\UI\CreatureMarker.xaml" />
+    <Page Include="Analysis\UI\KeyControl.xaml" />
+    <Page Include="Analysis\UI\TriggerMarker.xaml" />
     <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
     <Page Include="Conversations\UI\Controls\ActionControl.xaml" />

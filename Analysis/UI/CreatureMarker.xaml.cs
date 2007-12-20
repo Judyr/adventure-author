@@ -20,17 +20,30 @@ namespace AdventureAuthor.Analysis.UI
     /// Interaction logic for CreatureMarker.xaml
     /// </summary>
 
+   	public enum DangerLevel {
+   		Friendly,
+   		Weak,
+    	Medium,
+    	Strong,
+    	Impossible
+    }
+    
+    
     public partial class CreatureMarker : UserControl
     {    	
     	#region Constants
     	
-    	internal readonly Brush FRIENDLY_BRUSH = Brushes.LightBlue;
-    	internal readonly Brush WEAK_BRUSH = Brushes.LightGreen;
-    	internal readonly Brush MEDIUM_BRUSH = Brushes.Yellow;
-    	internal readonly Brush STRONG_BRUSH = Brushes.Red;
+    	internal static readonly Brush DEFAULT_BRUSH = Brushes.Silver;
+    	internal static readonly Brush FRIENDLY_BRUSH = Brushes.WhiteSmoke;
+    	internal static readonly Brush WEAK_BRUSH = Brushes.Lime;
+    	internal static readonly Brush MEDIUM_BRUSH = Brushes.Yellow;
+    	internal static readonly Brush STRONG_BRUSH = Brushes.Red;
+    	internal static readonly Brush IMPOSSIBLE_BRUSH = Brushes.Purple;
     	
-    	private const float WEAK_RATING = 5;
-    	private const float MEDIUM_RATING = 15;
+    	internal const float WEAK_RATING = 5;
+    	internal const float MEDIUM_RATING = 15;
+    	internal const float STRONG_RATING = 35;
+    	
     	
     	#endregion
     	
@@ -44,6 +57,37 @@ namespace AdventureAuthor.Analysis.UI
     	private float challengeRating;    	
 		public float ChallengeRating {
 			get { return challengeRating; }
+		}
+    	
+    	
+    	private DangerLevel danger;    	
+		public DangerLevel Danger {
+			get { return danger; }
+			set { 
+				danger = value;				
+		       	Brush brush;
+				switch (danger) {
+		       		case DangerLevel.Friendly:
+		        		brush = FRIENDLY_BRUSH;
+		        		break;
+		        	case DangerLevel.Weak:
+		        		brush = WEAK_BRUSH;
+		        		break;
+		        	case DangerLevel.Medium:
+		        		brush = MEDIUM_BRUSH;
+		        		break;
+		        	case DangerLevel.Strong:
+		        		brush = STRONG_BRUSH;
+		        		break;
+		        	case DangerLevel.Impossible:
+		        		brush = IMPOSSIBLE_BRUSH;
+		        		break;
+		        	default:
+		        		brush = DEFAULT_BRUSH;
+		        		break;
+		       	}
+		        MarkerBrush = brush;
+			}
 		}
     	    	
     	
@@ -81,12 +125,27 @@ namespace AdventureAuthor.Analysis.UI
     	//private static ColorAnimation pulseAnimation = new ColorAnimation(Colors.AliceBlue,Colors.White,Duration.Forever);
         //pulseAnimation.AutoReverse = true;  
         //this.BeginAnimation(ellipse.Fill,pulseAnimation);
-    	
+        
+        
+        
+        /// <summary>
+        /// For creating a functionless visual marker, usable in keys. Not for public consumption.
+        /// </summary>
+        /// <param name="danger">The danger level of the creature represented, from Weak to Impossible, or alternatively Friendly.</param>
+        internal CreatureMarker(DangerLevel danger)
+        {
+        	Radius = 5;
+        	MarkerBrush = DEFAULT_BRUSH;
+        	this.creature = null;
+        	this.danger = danger;
+        	InitializeComponent();
+        }
         
         
         public CreatureMarker(NWN2CreatureInstance creature)
         {
         	Radius = 5;
+        	MarkerBrush = DEFAULT_BRUSH;
         	this.creature = creature;        	
         	UpdateChallengeRating();
             InitializeComponent();
@@ -95,29 +154,37 @@ namespace AdventureAuthor.Analysis.UI
                 
         private void UpdateChallengeRating()
         {
-        	Brush brush;
-        	if (creature.FactionID != Combat.HOSTILE) {
-        		brush = FRIENDLY_BRUSH;
-        	}
-        	else {
-	        	challengeRating = Combat.GetChallengeRating(creature);
-	        	if (challengeRating <= WEAK_RATING) {
-	        		brush = WEAK_BRUSH;
-	        	}
-	        	else if (challengeRating <= MEDIUM_RATING) {
-	        		brush = MEDIUM_BRUSH;
+        	if (creature != null) {
+	        	if (creature.FactionID != Combat.HOSTILE) {
+	        		Danger = DangerLevel.Friendly;
 	        	}
 	        	else {
-	        		brush = STRONG_BRUSH;
+		        	challengeRating = Combat.GetChallengeRating(creature);
+		        	if (challengeRating <= WEAK_RATING) {
+	        			Danger = DangerLevel.Weak;
+		        	}
+		        	else if (challengeRating <= MEDIUM_RATING) {
+	        			Danger = DangerLevel.Medium;
+		        	}
+		        	else if (challengeRating <= STRONG_RATING) {
+	        			Danger = DangerLevel.Strong;
+		        	}
+		        	else {
+	        			Danger = DangerLevel.Impossible;
+		        	}
 	        	}
         	}
-        	MarkerBrush = brush;
         }
-        
+                
         
         public override string ToString()
         {
-        	return creature.Name + " (" + creature.Tag + ")";
+        	if (creature == null) {
+        		return GetType().ToString();
+        	}
+        	else {
+        		return creature.Name + " (" + creature.Tag + ")";
+        	}
         }
     }
 }

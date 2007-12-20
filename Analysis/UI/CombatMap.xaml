@@ -1,7 +1,7 @@
 <Window x:Class="AdventureAuthor.Analysis.CombatMap"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:analysis="clr-namespace:AdventureAuthor.Analysis;assembly="
+    xmlns:analysis="clr-namespace:AdventureAuthor.Analysis.UI;assembly="
     Title="Map" Background="Silver">
 	<Window.Resources>
 		<Style x:Key="GenericControlStyle" TargetType="{x:Type Control}">
@@ -33,7 +33,13 @@
     	</StackPanel>	
 	
 		<StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical">
-			<TextBlock Name="CreatureInfoText" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" Height="500" Width="150"/>
+			<Border>
+				<TextBlock Name="CreatureInfoText" Background="WhiteSmoke" TextAlignment="Center" FontSize="16" TextWrapping="Wrap" 
+					   	   Height="300" Width="150"/>
+			</Border>
+			<Border>
+				<analysis:KeyControl x:Name="MapKey" Height="300" Width="200"/>
+			</Border>
 		</StackPanel>
 	
 	</Grid>
