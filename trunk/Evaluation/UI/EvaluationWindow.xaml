@@ -1,6 +1,0 @@
-﻿<Window x:Class="AdventureAuthor.Evaluation.UI.EvaluationWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Evaluation">
-    <StackPanel Name="EvaluationSectionsPanel" Orientation="Vertical"/>
-</Window>

@@ -21,6 +21,17 @@ namespace AdventureAuthor.Evaluation.UI
             InitializeComponent();
         }
 
+        
+        public EvidenceButton(string location) : this()
+        {
+        	// TODO: check that file exists, and display either a broken link icon or a link icon
+        }
+        
+        
+        public EvidenceButton(Evidence evidence) : this(evidence.Value)
+        {        	
+        }
+        
 		
 		private void OnClick_AddEvidence(object sender, RoutedEventArgs e)
 		{
@@ -30,7 +41,7 @@ namespace AdventureAuthor.Evaluation.UI
 		
 		public object Answer {
 			get {
-				return null; // TODO: return a reference to a file
+				return String.Empty; // TODO: return a reference to a file
 			}
 		}
     }

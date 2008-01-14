@@ -38,6 +38,18 @@ namespace AdventureAuthor.Evaluation.UI
         }
         
         
+        public StarRating(Rating rating) : this(rating.Max)
+        {
+        	try {
+	        	int ratingValue = int.Parse(rating.Value);
+	        	Rating = ratingValue;
+        	}
+			catch (Exception) {
+				throw new ArgumentException(rating.Value + " is not a valid numerical rating.");
+        	}
+        }
+        
+        
         /// <summary>
         /// Highlight all the stars prior to and including the one that's been clicked
         /// </summary>

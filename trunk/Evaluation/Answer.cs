@@ -8,15 +8,22 @@
  */
 
 using System;
+using System.Xml.Serialization;
+using System.Windows;
+using AdventureAuthor.Scripts.UI;
 
 namespace AdventureAuthor.Evaluation
 {
 	public abstract class Answer
 	{
+		[XmlElement]
 		private string val;		
 		public string Value {
 			get { return val; }
 			set { val = value; }
 		}
+		
+		
+		public abstract IQuestionPanel GetUIControl();
 	}
 }

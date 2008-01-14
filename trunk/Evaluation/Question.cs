@@ -9,15 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Evaluation
 {
+	[XmlRoot]
 	public class Question
 	{
 		/// <summary>
 		/// The text of this question.
 		/// </summary>
+		[XmlAttribute]
 		private string text;		
 		public string Text {
 			get { return text; }
@@ -30,10 +33,17 @@ namespace AdventureAuthor.Evaluation
 		/// </summary>
 		/// <remarks>A worksheet question may require multiple answers
 		/// e.g. a star rating, a comment, and the URL of supporting evidence</remarks>
-		private List<Answer> answers = new List<Answer>(1);		
+		[XmlArray]
+		private List<Answer> answers;
 		public List<Answer> Answers {
 			get { return answers; }
 		}
 		
+		
+		public Question(string text)
+		{
+			this.text = text;
+			answers = new List<Answer>(1);	
+		}
 	}
 }

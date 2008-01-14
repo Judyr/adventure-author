@@ -31,30 +31,31 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using wpf = System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using AdventureAuthor.Analysis;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
+using AdventureAuthor.Evaluation;
+using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Notebook.MyIdeas;
+using AdventureAuthor.Notebook.Worksheets.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
-using AdventureAuthor.Notebook.Worksheets.UI;
-using AdventureAuthor.Analysis;
-using AdventureAuthor.Notebook.MyIdeas;
-using AdventureAuthor.Evaluation.UI;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
+using Microsoft.DirectX;
 using Netron.Diagramming.Core;
 using NWN2Toolset;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Factions;
+using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data.Templates;
-using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
@@ -65,7 +66,7 @@ using OEIShared.Utils;
 using TD.SandBar;
 using crown = Crownwood.DotNetMagic.Controls;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using Microsoft.DirectX;
+using wpf = System.Windows.Controls;
 
 namespace AdventureAuthor.Setup
 {		
@@ -774,25 +775,30 @@ namespace AdventureAuthor.Setup
 			
 			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
 			evaluation.Activate += delegate { 
-				object[] parameters = new object[3];
-				EvaluationWindow eval = new EvaluationWindow(ref parameters,"Evaluation");
+				Worksheet worksheet = new Worksheet("Playtester's worksheet (Intermediate 2)",
+				                                   	"Keiron Nicholson",
+				                                  	"14.01.2008");
+				Section choice = new Section("Choice");
+				Question q1 = new Question("How interactive is this module?");
+				Question q2 = new Question("How much choice does the player have in ending the game?");
+				q1.Answers.Add(new Rating(5));
+				q2.Answers.Add(new Comment("i really hated this"));
+				q2.Answers.Add(new Rating(7,1));
+				q2.Answers.Add(new Evidence());
+				choice.Questions.Add(q1);
+				choice.Questions.Add(q2);
+				Section dialogue = new Section("Dialogue");
+				worksheet.Sections.Add(choice);
+				worksheet.Sections.Add(dialogue);
+				WorksheetWindow eval = new WorksheetWindow(worksheet);
 				eval.ShowDialog();
 			};
 			misc.Items.Add(evaluation);
 			
-//			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
-//			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");
-//			mindMap.Activate += delegate 
-//			{  
-//				AdventureAuthor.Notebook.MindMapForm mindmapform = new AdventureAuthor.Notebook.MindMapForm(true);
-//				mindmapform.ShowDialog();
-//			};
-//			designersNotebook.Items.Add(mindMap);
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
 			newChapter.BeginGroup = true;
-//			designersNotebook.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
 			misc.BeginGroup = true;
 			worksheets.BeginGroup = true;
@@ -812,7 +818,6 @@ namespace AdventureAuthor.Setup
 //			                           	changeUser,
 			                           	exitAdventureAuthor,
 			                           	worksheets,
-//			                           	designersNotebook,
 			                           	logWindow,
 			                           	misc
 			                           });			

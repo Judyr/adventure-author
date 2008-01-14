@@ -8,18 +8,34 @@
  */
 
 using System;
+using System.Xml.Serialization;
+using System.Windows;
 using AdventureAuthor.Evaluation;
+using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Scripts.UI;
 
 namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
 	/// Description of Comment.
 	/// </summary>
+	[XmlRoot]
 	public class Comment : Answer
 	{
+		public Comment()
+		{			
+		}
+		
+		
 		public Comment(string comment)
 		{
 			this.Value = comment;
+		}
+		
+		
+		public override IQuestionPanel GetUIControl()
+		{
+			return new CommentBox(this);
 		}
 	}
 }
