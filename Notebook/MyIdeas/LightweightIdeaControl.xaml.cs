@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Timers;
+using System.Xml.Serialization;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Notebook.MyIdeas;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Notebook.MyIdeas
 {
@@ -22,47 +17,28 @@ namespace AdventureAuthor.Notebook.MyIdeas
 
     public partial class LightweightIdeaControl : UserControl
     {
-    	private List<IdeaFragment> ideas = new List<IdeaFragment>();
+    	[XmlElement]
+    	private List<IdeaFragment> ideas;
     	
     	
         public LightweightIdeaControl()
-        {        	
+        {       
+        	// TODO obviously doesn't work cos there's no module open when this loads
+        	try {
+	        	object o = Serialization.Deserialize(Path.Combine(form.App.Module.Repository.DirectoryName,"ideas.xml"),
+	        	                                     typeof(List<IdeaFragment>));
+	        	ideas = (List<IdeaFragment>)o;
+        	}
+        	catch (Exception) {
+        		ideas = new List<IdeaFragment>();
+        	}
             InitializeComponent();
-            
-//            Timer timer = new Timer(4000);
-//            timer.Elapsed += delegate {  };
-//            
-//        	timer.Elapsed += delegate	
-//        	{  
-//        		Log.WriteMessage("Tick");
-//        		opacity = Math.Max(opacity - 0.1,0.0);
-//        		Log.WriteMessage("Opacity is now " + opacity);
-//        		if (opacity <= 0.0) {
-//        			Log.WriteMessage("Opacity reached 0.0 - stopping timer");
-//        			timer.Stop();
-//        			IdeaSavedLabel.Opacity = 0.0;
-//        			opacity = 2.0;
-//        		}
-//        		else if (opacity <= 1.0) {
-//        			lock (padlock) {
-//        				Log.WriteMessage("Opacity less than 1.0. About to set real opacity: " + IdeaSavedLabel.Opacity + " to " +
-//        				                 " calculated opacity: " + opacity);
-//        				IdeaSavedLabel.Opacity = opacity;
-//        				Log.WriteMessage("Done.");
-//        			}
-//        		}
-//        	};
         }
         
         
         private void OnClick_RecordIdea(object sender, EventArgs e)
         {
-        	if (IdeaTextBox.Text != String.Empty) {
-        		IdeaFragment idea = new IdeaFragment(IdeaTextBox.Text);
-        		ideas.Add(idea);
-        		IdeaTextBox.Clear();
-        		IdeaTextBox.Focus();
-        	}
+        	RecordIdea();
         }
         
         
@@ -74,11 +50,39 @@ namespace AdventureAuthor.Notebook.MyIdeas
         
         private void OnClick_OpenIdeaScrapbook(object sender, EventArgs e)
         {
+        	
+        	
+        	
         	StringBuilder s = new StringBuilder("Ideas:\n");
         	foreach (IdeaFragment idea in ideas) {
         		s.Append("\n" + idea.Text);
         	}
         	Say.Information(s.ToString());
+        }
+        
+        
+        private void OnKeyDown_IdeaTextBox(object sender, KeyEventArgs e)
+        {
+        	if (e.Key == Key.Return) {
+        		RecordIdea();
+        	}
+        }
+        
+        
+        private void RecordIdea()
+        {
+        	if (ModuleHelper.ModuleIsOpen() && IdeaTextBox.Text != String.Empty) {
+        		IdeaFragment idea = new IdeaFragment(IdeaTextBox.Text);
+        		ideas.Add(idea);
+        		IdeaTextBox.Clear();
+        		IdeaTextBox.Focus();
+        		
+        		// TODO: Open Scrapbook should flash to indicate an idea has 'gone in'
+        		
+        		// Save idea:
+        		
+        		Serialization.Serialize(Path.Combine(form.App.Module.Repository.DirectoryName,"ideas.xml"),ideas);
+        	}
         }
     }
 }

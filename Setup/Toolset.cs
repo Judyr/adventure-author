@@ -1,7 +1,7 @@
 /*
  *   This file is part of Adventure Author.
  *
- *   Adventure Author is copyright Heriot-Watt University 2006-2007.
+ *   Adventure Author is copyright Heriot-Watt University 2006-2008.
  *
  *   This copyright and licence apply to all source code, compiled code,
  *   documentation, graphics and auxiliary files, except where otherwise stated.
@@ -42,6 +42,7 @@ using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Notebook.Worksheets.UI;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Notebook.MyIdeas;
+using AdventureAuthor.Evaluation.UI;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
@@ -771,6 +772,13 @@ namespace AdventureAuthor.Setup
 			};
 			misc.Items.Add(colourPicker);
 			
+			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
+			evaluation.Activate += delegate { 
+				object[] parameters = new object[3];
+				EvaluationWindow eval = new EvaluationWindow(ref parameters,"Evaluation");
+				eval.ShowDialog();
+			};
+			misc.Items.Add(evaluation);
 			
 //			MenuButtonItem designersNotebook = new MenuButtonItem("Designer's notebook");
 //			MenuButtonItem mindMap = new MenuButtonItem("Mind-mapping");

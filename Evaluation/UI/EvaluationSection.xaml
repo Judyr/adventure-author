@@ -1,0 +1,22 @@
+<UserControl x:Class="AdventureAuthor.Evaluation.UI.EvaluationSection"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border>
+		<Grid>
+	    	<Grid.RowDefinitions>
+				<RowDefinition Height="40"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+	    	<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+    	
+			<Border Grid.Row="0" Grid.Column="0">
+	    		<Label Name="SectionTitle"
+				       FontSize="16" FontWeight="Bold" Background="LightBlue"/>
+			</Border>
+    		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"
+    					Background="LightGreen"/>    	
+    	</Grid>
+	</Border>
+</UserControl>
