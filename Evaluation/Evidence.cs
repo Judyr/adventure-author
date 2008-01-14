@@ -19,6 +19,7 @@ namespace AdventureAuthor.Evaluation
 	/// <summary>
 	/// Description of Evidence.
 	/// </summary>
+	[Serializable]
 	[XmlRoot]
 	public class Evidence : Answer
 	{

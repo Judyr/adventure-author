@@ -265,7 +265,6 @@
       <DependentUpon>StarRating.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\StatementQuestionPanel.cs" />
     <Compile Include="Evaluation\UI\WorksheetWindow.xaml.cs">
       <DependentUpon>WorksheetWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

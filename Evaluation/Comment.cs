@@ -19,6 +19,7 @@ namespace AdventureAuthor.Evaluation
 	/// <summary>
 	/// Description of Comment.
 	/// </summary>
+	[Serializable]
 	[XmlRoot]
 	public class Comment : Answer
 	{

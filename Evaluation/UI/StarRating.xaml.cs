@@ -45,7 +45,8 @@ namespace AdventureAuthor.Evaluation.UI
 	        	Rating = ratingValue;
         	}
 			catch (Exception) {
-				throw new ArgumentException(rating.Value + " is not a valid numerical rating.");
+				Say.Error(rating.Value + " is not a valid numerical rating.");
+				Rating = 0;
         	}
         }
         

@@ -14,7 +14,9 @@ using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Evaluation
 {
+	[Serializable]
 	[XmlRoot]
+	[XmlInclude(typeof(Rating)), XmlInclude(typeof(Evidence)), XmlInclude(typeof(Comment))]
 	public class Question
 	{
 		/// <summary>
@@ -40,10 +42,15 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Question(string text)
+		public Question()
+		{			
+			answers = new List<Answer>(1);	
+		}
+		
+		
+		public Question(string text) : this()
 		{
 			this.text = text;
-			answers = new List<Answer>(1);	
 		}
 	}
 }
