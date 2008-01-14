@@ -6,6 +6,7 @@ using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Evaluation
 {
+	[Serializable]
 	[XmlRoot]
 	public class Worksheet
 	{
@@ -39,13 +40,21 @@ namespace AdventureAuthor.Evaluation
 			get { return sections; }
 		}
 		
+				
+		/// <summary>
+		/// Default constructor for the purposes of serialization.
+		/// </summary>
+		public Worksheet()
+		{			
+			this.sections = new List<Section>(1);
+		}
 		
-		public Worksheet(string title, string name, string date)
+		
+		public Worksheet(string title, string name, string date) : this()
 		{
 			this.title = title;
 			this.name = name;
 			this.date = date;
-			this.sections = new List<Section>(1);
 		}
 	
 		

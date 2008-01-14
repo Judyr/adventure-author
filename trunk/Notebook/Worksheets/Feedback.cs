@@ -126,7 +126,7 @@ namespace AdventureAuthor.Notebook.Worksheets
 		
 		
 		/// <summary>
-		/// For the purposes of serialization.
+		/// Default constructor for the purposes of serialization.
 		/// </summary>
 		public Feedback()
 		{

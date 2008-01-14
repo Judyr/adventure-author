@@ -17,6 +17,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
+	[Serializable]
 	[XmlRoot]
 	public class Rating : Answer
 	{
@@ -24,6 +25,11 @@ namespace AdventureAuthor.Evaluation
 		private int max;		
 		public int Max {
 			get { return max; }
+		}
+		
+		
+		public Rating()
+		{			
 		}
 		
 		

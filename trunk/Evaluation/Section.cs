@@ -17,6 +17,7 @@ namespace AdventureAuthor.Evaluation
 	/// <summary>
 	/// Description of Section.
 	/// </summary>
+	[Serializable]
 	[XmlRoot]
 	public class Section
 	{
@@ -35,10 +36,15 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Section(string title)
+		public Section()
+		{			
+			questions = new List<Question>();
+		}
+		
+		
+		public Section(string title) : this()
 		{
 			this.title = title;
-			questions = new List<Question>();
 		}
 	}
 }
