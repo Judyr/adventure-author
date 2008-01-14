@@ -1,0 +1,4 @@
+﻿1001	LIKERT		CHARACTERS		"Thought has been given to the appearance of the characters"	
+1002	LIKERT		CHARACTERS		"Animations have been used to bring characters to life"			
+1003	LIKERT		STORY			"Player is involved in how the story plays out"	
+1004	TEXTBOX		MISC			"Further comments:"

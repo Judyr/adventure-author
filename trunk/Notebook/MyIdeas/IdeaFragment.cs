@@ -32,6 +32,15 @@ namespace AdventureAuthor.Notebook.MyIdeas
 		}
 		
 		
+		/// <summary>
+		/// For serialization.
+		/// </summary>
+		private IdeaFragment()
+		{
+			
+		}
+		
+		
 		public IdeaFragment(string text)
 		{
 			this.text = text;
