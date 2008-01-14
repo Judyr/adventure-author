@@ -24,7 +24,12 @@ namespace AdventureAuthor.Evaluation.UI
         
         public CommentBox(string text) : this()
         {
-        	CommentLabel.Content = text;
+        	CommentTextBox.Text = text;
+        }
+        
+        
+        public CommentBox(Comment comment) : this(comment.Value)
+        {        	
         }
 
         

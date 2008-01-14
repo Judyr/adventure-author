@@ -8,34 +8,45 @@
  */
 
 using System;
+using System.Xml.Serialization;
+using System.Windows;
 using AdventureAuthor.Evaluation;
+using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
+	[XmlRoot]
 	public class Rating : Answer
 	{
-		private int min;		
-		public int Min {
-			get { return min; }
-		}
-		
-		
+		[XmlAttribute]
 		private int max;		
 		public int Max {
 			get { return max; }
 		}
 		
 		
-		public Rating(int val, int min, int max)
+		public Rating(int max)
 		{
-			if (val < min || val > max) {
-				throw new ArgumentException(val.ToString() + " is not in the range " + 
-				                            min + " to " + max + ".");
+			this.max = max;
+			this.Value = "0";
+		}
+		
+		
+		public Rating(int max, int val) : this(max)
+		{
+			if (val > max) {
+				throw new ArgumentException(val.ToString() + " is not in the range 1 to " + max + ".");
 			}
 			
 			this.Value = val.ToString();
-			this.min = min;
-			this.max = max;
+		}
+		
+		
+		public override IQuestionPanel GetUIControl()
+		{
+			return new StarRating(this);
 		}
 	}
 }

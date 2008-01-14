@@ -10,18 +10,31 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AdventureAuthor.Evaluation;
 using AdventureAuthor.Evaluation.UI;
 using AdventureAuthor.Scripts.UI;
 
 namespace AdventureAuthor.Evaluation.UI
 {
-    public partial class EvaluationSection : UserControl
+    public partial class SectionControl : UserControl
     {
-        public EvaluationSection(string title)
+        public SectionControl(string title)
         {
             InitializeComponent();
             SectionTitle.Content = title;
         }   
+        
+        
+        public SectionControl(Section section) : this(section.Title)
+        {
+        	foreach (Question question in section.Questions) {
+        		CompositeQuestionPanel panel = new CompositeQuestionPanel(question.Text);
+        		foreach (Answer answer in question.Answers) {
+        			panel.AddSubQuestion(answer.GetUIControl());
+        		}        	
+        		AddField(panel);
+        	}
+        }
                                
         
         public void AddField(IQuestionPanel field)
@@ -34,7 +47,7 @@ namespace AdventureAuthor.Evaluation.UI
         		element.Background = Brushes.LightGreen;
         	}
         	else {
-        		element.Background = Brushes.LightSeaGreen;
+        		element.Background = Brushes.LimeGreen;
         	}
         	QuestionsPanel.Children.Add(element);
         }

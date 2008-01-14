@@ -1,0 +1,15 @@
+<Window x:Class="AdventureAuthor.Evaluation.UI.WorksheetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Evaluation"
+    >
+    <StackPanel Orientation="Vertical">
+		<StackPanel Orientation="Horizontal">
+    		<Label Content="Name" Padding="5"/>
+			<TextBox Name="NameField" Width="200" Padding="5"/>
+    		<Label Content="Date" Padding="5"/>
+			<TextBox Name="DateField" Width="150" Padding="5"/>
+    	</StackPanel>
+		<StackPanel Name="EvaluationSectionsPanel" Orientation="Vertical"/>
+	</StackPanel>
+</Window>

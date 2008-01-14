@@ -249,12 +249,8 @@
       <DependentUpon>CommentBox.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\EvaluationSection.xaml.cs">
-      <DependentUpon>EvaluationSection.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Evaluation\UI\EvaluationWindow.cs">
-      <DependentUpon>EvaluationWindow.xaml</DependentUpon>
+    <Compile Include="Evaluation\UI\SectionControl.cs">
+      <DependentUpon>SectionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation\UI\EvidenceButton.xaml.cs">
@@ -270,6 +266,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation\UI\StatementQuestionPanel.cs" />
+    <Compile Include="Evaluation\UI\WorksheetWindow.xaml.cs">
+      <DependentUpon>WorksheetWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Notebook\MindMapForm.cs" />
     <Compile Include="Notebook\MindMapForm.Designer.cs">
@@ -417,11 +417,11 @@
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
     <Page Include="Evaluation\UI\CommentBox.xaml" />
-    <Page Include="Evaluation\UI\EvaluationSection.xaml" />
-    <Page Include="Evaluation\UI\EvaluationWindow.xaml" />
+    <Page Include="Evaluation\UI\SectionControl.xaml" />
     <Page Include="Evaluation\UI\EvidenceButton.xaml" />
     <Page Include="Evaluation\UI\CompositeQuestionPanel.xaml" />
     <Page Include="Evaluation\UI\StarRating.xaml" />
+    <Page Include="Evaluation\UI\WorksheetWindow.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
     <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
@@ -463,11 +463,7 @@
     <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
     <Folder Include="Notebook" />
-    <Folder Include="Notebook\MyAdvice\UI" />
     <Folder Include="Notebook\MyIdeas" />
-    <Folder Include="Notebook\MyNotes" />
-    <Folder Include="Notebook\MyAdvice" />
-    <Folder Include="Notebook\MyNotes\UI" />
     <Folder Include="Notebook\MyTasks" />
     <Folder Include="Notebook\MyTasks\UI" />
     <Folder Include="Scripts" />
