@@ -249,16 +249,17 @@
       <DependentUpon>CommentBox.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Evaluation\UI\IAnswerControl.cs" />
+    <Compile Include="Evaluation\UI\QuestionControl.xaml.cs">
+      <DependentUpon>QuestionControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Evaluation\UI\SectionControl.cs">
       <DependentUpon>SectionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation\UI\EvidenceButton.xaml.cs">
       <DependentUpon>EvidenceButton.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Evaluation\UI\CompositeQuestionPanel.xaml.cs">
-      <DependentUpon>CompositeQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation\UI\StarRating.xaml.cs">
@@ -315,7 +316,7 @@
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Scripts\UI\IQuestionPanel.cs" />
+    <Compile Include="Scripts\UI\IParameterPanel.cs" />
     <Compile Include="Scripts\UI\ResRefQuestionPanel.xaml.cs">
       <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -416,9 +417,9 @@
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
     <Page Include="Evaluation\UI\CommentBox.xaml" />
+    <Page Include="Evaluation\UI\QuestionControl.xaml" />
     <Page Include="Evaluation\UI\SectionControl.xaml" />
     <Page Include="Evaluation\UI\EvidenceButton.xaml" />
-    <Page Include="Evaluation\UI\CompositeQuestionPanel.xaml" />
     <Page Include="Evaluation\UI\StarRating.xaml" />
     <Page Include="Evaluation\UI\WorksheetWindow.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />

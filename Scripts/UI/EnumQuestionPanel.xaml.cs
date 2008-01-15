@@ -18,7 +18,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by an enum value.
 	/// </summary>
-    public partial class EnumQuestionPanel : UserControl, IQuestionPanel
+    public partial class EnumQuestionPanel : UserControl, IParameterPanel
     {
     	/// <summary>
     	/// The type of enum to provide possible answers from.

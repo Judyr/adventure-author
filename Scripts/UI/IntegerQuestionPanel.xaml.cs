@@ -17,7 +17,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by an integer value.
 	/// </summary>
-    public partial class IntegerQuestionPanel : UserControl, IQuestionPanel
+    public partial class IntegerQuestionPanel : UserControl, IParameterPanel
     {
     	/// <summary>
     	/// The minimum allowed value for this answer

@@ -10,11 +10,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Evaluation.UI;
 
 namespace AdventureAuthor.Evaluation.UI
 {
-    public partial class EvidenceButton : UserControl, IQuestionPanel
+    public partial class EvidenceButton : UserControl, IAnswerControl
     {
         public EvidenceButton()
         {
@@ -39,10 +39,9 @@ namespace AdventureAuthor.Evaluation.UI
 		}
 		
 		
-		public object Answer {
-			get {
-				return String.Empty; // TODO: return a reference to a file
-			}
+		public Answer GetAnswer() 
+		{
+			return new Evidence(String.Empty); // TODO: return a reference to a file
 		}
     }
 }

@@ -13,7 +13,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value corresponding to the name of a game variable. 
 	/// </summary>
-    public partial class VariableQuestionPanel : UserControl, IQuestionPanel
+    public partial class VariableQuestionPanel : UserControl, IParameterPanel
     {
     	/// <summary>
     	/// The type of variable which the user can select from (e.g. int, string).

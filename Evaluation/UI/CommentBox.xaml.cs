@@ -10,11 +10,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Evaluation.UI;
 
 namespace AdventureAuthor.Evaluation.UI
 {
-    public partial class CommentBox : UserControl, IQuestionPanel
+    public partial class CommentBox : IAnswerControl
     {
         public CommentBox()
         {
@@ -33,10 +33,9 @@ namespace AdventureAuthor.Evaluation.UI
         }
 
         
-		public object Answer {
-			get {
-				return CommentTextBox.Text;
-			}
+        public Answer GetAnswer()
+        {
+			return new Comment(CommentTextBox.Text);
 		}
     }
 }

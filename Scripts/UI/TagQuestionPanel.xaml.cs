@@ -18,7 +18,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value corresponding to the tag of a game object.
 	/// </summary>
-    public partial class TagQuestionPanel : UserControl, IQuestionPanel
+    public partial class TagQuestionPanel : UserControl, IParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a string value corresponding to the tag of a game object.

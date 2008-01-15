@@ -10,7 +10,7 @@
 using System;
 using System.Xml.Serialization;
 using System.Windows;
-using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Evaluation.UI;
 
 namespace AdventureAuthor.Evaluation
 {
@@ -24,6 +24,6 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public abstract IQuestionPanel GetUIControl();
+		public abstract IAnswerControl GetAnswerControl();
 	}
 }

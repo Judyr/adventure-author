@@ -775,22 +775,7 @@ namespace AdventureAuthor.Setup
 			
 			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
 			evaluation.Activate += delegate { 
-				Worksheet worksheet = new Worksheet("Playtester's worksheet (Intermediate 2)",
-				                                   	"Keiron Nicholson",
-				                                  	"14.01.2008");
-				Section choice = new Section("Choice");
-				Question q1 = new Question("How interactive is this module?");
-				Question q2 = new Question("How much choice does the player have in ending the game?");
-				q1.Answers.Add(new Rating(5));
-				q2.Answers.Add(new Comment("i really hated this"));
-				q2.Answers.Add(new Rating(7,1));
-				q2.Answers.Add(new Evidence());
-				choice.Questions.Add(q1);
-				choice.Questions.Add(q2);
-				Section dialogue = new Section("Dialogue");
-				worksheet.Sections.Add(choice);
-				worksheet.Sections.Add(dialogue);
-				WorksheetWindow eval = new WorksheetWindow(worksheet);
+				WorksheetWindow eval = new WorksheetWindow(new Worksheet("Evaluation",String.Empty,String.Empty));
 				eval.ShowDialog();
 			};
 			misc.Items.Add(evaluation);

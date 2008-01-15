@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Evaluation.UI;
-using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation.UI
 {
@@ -28,28 +28,50 @@ namespace AdventureAuthor.Evaluation.UI
         public SectionControl(Section section) : this(section.Title)
         {
         	foreach (Question question in section.Questions) {
-        		CompositeQuestionPanel panel = new CompositeQuestionPanel(question.Text);
+        		QuestionControl qc = new QuestionControl(question.Text);         		
         		foreach (Answer answer in question.Answers) {
-        			panel.AddSubQuestion(answer.GetUIControl());
+        			qc.AddAnswerField(answer.GetAnswerControl());
         		}        	
-        		AddField(panel);
+        		AddQuestionControl(qc);
         	}
         }
-                               
         
-        public void AddField(IQuestionPanel field)
-        {           	
-        	ContentControl element = field as ContentControl;
-        	if (element == null) {
-        		throw new ArgumentException("Field must be a ContentControl.");
-        	}
+        
+        public Section GetSection()
+        {
+        	bool reportedError = false;
+   			Section section;
+   			try {
+   				section = new Section((string)SectionTitle.Content);
+   			}
+   			catch (Exception) {
+   				if (!reportedError) { // only report this once
+   					Say.Error("Invalid section title(s) in worksheet.");
+   					reportedError = true;
+   				}
+   				section = new Section("<Unknown section>");
+   			}
+   			
+   			foreach (UIElement element in QuestionsPanel.Children) {
+   				QuestionControl qc = element as QuestionControl;
+   				if (qc != null) {
+   					section.Questions.Add(qc.GetQuestion());
+   				}
+   			}
+   			
+   			return section;
+        }
+        
+        
+        private void AddQuestionControl(QuestionControl control)
+        {
         	if (QuestionsPanel.Children.Count % 2 == 0) {
-        		element.Background = Brushes.LightGreen;
+        		control.Background = Brushes.LightGreen;
         	}
         	else {
-        		element.Background = Brushes.LimeGreen;
+        		control.Background = Brushes.LimeGreen;
         	}
-        	QuestionsPanel.Children.Add(element);
+        	QuestionsPanel.Children.Add(control);
         }
     }
 }

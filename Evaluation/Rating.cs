@@ -12,7 +12,6 @@ using System.Xml.Serialization;
 using System.Windows;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Evaluation.UI;
-using AdventureAuthor.Scripts.UI;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
@@ -29,7 +28,8 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		public Rating()
-		{			
+		{	
+			this.max = 5;
 		}
 		
 		
@@ -50,7 +50,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IQuestionPanel GetUIControl()
+		public override IAnswerControl GetAnswerControl()
 		{
 			return new StarRating(this);
 		}
