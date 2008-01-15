@@ -3,6 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Orientation="Horizontal">
 		<Label Name="CommentLabel"/>
-		<TextBox Name="CommentTextBox" Width="200" Padding="8"/>
+		<TextBox Name="CommentTextBox" Width="200" Padding="8" TextWrapping="Wrap"/>
 	</StackPanel>
 </UserControl>
