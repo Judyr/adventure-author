@@ -12,7 +12,6 @@ using System.Xml.Serialization;
 using System.Windows;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Evaluation.UI;
-using AdventureAuthor.Scripts.UI;
 
 namespace AdventureAuthor.Evaluation
 {
@@ -34,7 +33,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IQuestionPanel GetUIControl()
+		public override IAnswerControl GetAnswerControl()
 		{
 			return new CommentBox(this);
 		}

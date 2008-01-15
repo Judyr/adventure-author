@@ -284,7 +284,7 @@ namespace AdventureAuthor.Scripts.UI
         	
         	bool incomplete = false;
         	for (int i = 0; i < QuestionsPanel.Children.Count; i++) {
-        		IQuestionPanel panel = (IQuestionPanel)QuestionsPanel.Children[i];
+        		IParameterPanel panel = (IParameterPanel)QuestionsPanel.Children[i];
          		if (panel.Answer == null) {        			
         			incomplete = true;
         			break;

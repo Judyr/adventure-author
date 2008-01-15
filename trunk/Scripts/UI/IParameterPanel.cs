@@ -29,13 +29,13 @@ using System;
 namespace AdventureAuthor.Scripts.UI
 {
 	/// <summary>
-	/// A panel that asks a question of the user, and can return the user's answer. 
+	/// A panel that elicits a value for a script parameter from the user by posing the user a question.
 	/// </summary>
-	public interface IQuestionPanel
+	public interface IParameterPanel
 	{
 		/// <summary>
 		/// Returns an object representing the answer to the question posed by the panel, based on user input.
 		/// </summary>
-		object Answer { get; }
+		object Answer { get; }		
 	}
 }

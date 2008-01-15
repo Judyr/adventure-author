@@ -16,7 +16,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value.
 	/// </summary>
-    public partial class StringQuestionPanel : UserControl, IQuestionPanel
+    public partial class StringQuestionPanel : UserControl, IParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a string value.

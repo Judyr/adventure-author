@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Scripts.UI;
+using AdventureAuthor.Evaluation.UI;
 
 namespace AdventureAuthor.Evaluation.UI
 {
@@ -19,34 +19,56 @@ namespace AdventureAuthor.Evaluation.UI
     /// Interaction logic for StarRating.xaml
     /// </summary>
 
-    public partial class StarRating : UserControl, IQuestionPanel
+    public partial class StarRating : UserControl, IAnswerControl
     {
+    	#region Fields
+    	
+    	private int maxStars;    	
+		public int MaxStars {
+			get { return maxStars; }
+		}
+    	
+    	#endregion
+    	
     	public StarRating() : this(5)
     	{
         }
         
         
-        public StarRating(int stars)
+        public StarRating(int max)
         {
             InitializeComponent();
+            LoadStars(max);
+        }
+        
+        
+        public StarRating(Rating rating)
+        {
+        	if (rating == null) {
+        		throw new ArgumentNullException("Cannot operate on a null Rating.");
+        	}
+        	InitializeComponent();
+        	LoadStars(rating.Max);
+        	
+        	try {
+	        	int ratingValue = int.Parse(rating.Value);
+	        	SelectedStars = ratingValue;
+        	}
+			catch (Exception) {
+				Say.Error(rating.Value + " is not a valid numerical rating.");
+				SelectedStars = 0;
+        	}
+        }
+        
+        
+        private void LoadStars(int stars)
+        {
+        	maxStars = stars;
         	for (int i = 0; i < stars; i++) {
         		CheckBox button = new CheckBox();
         		button.Template = (ControlTemplate)Resources["StarTemplate"];
         		button.Click += new RoutedEventHandler(OnClick);
         		StarsPanel.Children.Add(button);
-        	}
-        }
-        
-        
-        public StarRating(Rating rating) : this(rating.Max)
-        {
-        	try {
-	        	int ratingValue = int.Parse(rating.Value);
-	        	Rating = ratingValue;
-        	}
-			catch (Exception) {
-				Say.Error(rating.Value + " is not a valid numerical rating.");
-				Rating = 0;
         	}
         }
         
@@ -69,7 +91,7 @@ namespace AdventureAuthor.Evaluation.UI
         }
            
         
-        public int Rating
+        public int SelectedStars
         {
         	get {    
         		int rating = 0;        		
@@ -103,10 +125,9 @@ namespace AdventureAuthor.Evaluation.UI
         }
     	
         
-		public object Answer {
-			get {
-				return Rating;
-			}
+        public Answer GetAnswer()
+        {
+        	return new Rating(maxStars,SelectedStars);
 		}
     }
 }

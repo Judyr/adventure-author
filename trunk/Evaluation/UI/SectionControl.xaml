@@ -15,8 +15,7 @@
 	    		<Label Name="SectionTitle"
 				       FontSize="16" FontWeight="Bold" Background="LightBlue"/>
 			</Border>
-    		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"
-    					Background="LightGreen"/>    	
+    		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"/>    	
     	</Grid>
 	</Border>
 </UserControl>

@@ -8,6 +8,7 @@
 			<MenuItem Header="File" FontSize="14">
 				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
 				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
+				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
 			</MenuItem>
 		</Menu>
 		<StackPanel Orientation="Horizontal">

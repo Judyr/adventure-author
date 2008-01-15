@@ -19,7 +19,7 @@ namespace AdventureAuthor.Scripts.UI
     /// Interaction logic for StringQuestionPanel.xaml
     /// </summary>
 
-    public partial class IntegerAsStringQuestionPanel : UserControl, IQuestionPanel
+    public partial class IntegerAsStringQuestionPanel : UserControl, IParameterPanel
     {
     	private CheckType checkType;
     	

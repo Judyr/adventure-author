@@ -16,7 +16,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a boolean value.
 	/// </summary>
-    public partial class BooleanQuestionPanel : UserControl, IQuestionPanel
+    public partial class BooleanQuestionPanel : UserControl, IParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a boolean value.

@@ -17,7 +17,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a float value.
 	/// </summary>
-    public partial class FloatQuestionPanel : UserControl, IQuestionPanel
+    public partial class FloatQuestionPanel : UserControl, IParameterPanel
     {
     	/// <summary>
     	/// The minimum allowed value for this answer

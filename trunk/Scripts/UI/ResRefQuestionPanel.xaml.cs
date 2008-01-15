@@ -18,7 +18,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value corresponding to the resref of a game object blueprint. 
 	/// </summary>
-    public partial class ResRefQuestionPanel : UserControl, IQuestionPanel
+    public partial class ResRefQuestionPanel : UserControl, IParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a string value corresponding to the resref of a game object blueprint.
