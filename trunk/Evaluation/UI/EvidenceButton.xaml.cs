@@ -15,7 +15,22 @@ using AdventureAuthor.Evaluation.UI;
 namespace AdventureAuthor.Evaluation.UI
 {
     public partial class EvidenceButton : UserControl, IAnswerControl
-    {
+    {    	
+    	#region Events
+    	
+    	public event EventHandler AnswerChanged;  
+    	
+		protected virtual void OnAnswerChanged(EventArgs e)
+		{
+			EventHandler handler = AnswerChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+    	
+    	#endregion
+		
+		
         public EvidenceButton()
         {
             InitializeComponent();
@@ -36,6 +51,9 @@ namespace AdventureAuthor.Evaluation.UI
 		private void OnClick_AddEvidence(object sender, RoutedEventArgs e)
 		{
 			// TODO: allow user to browse to a file
+			
+			
+        	// TODO: if appropriate call OnAnswerChanged(new EventArgs());
 		}
 		
 		

@@ -8,14 +8,16 @@
 			<MenuItem Header="File" FontSize="14">
 				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
 				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
+				<MenuItem Header="Save As" Click="OnClick_SaveAs" FontSize="14"/>
 				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
+				<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>
 		</Menu>
 		<StackPanel Orientation="Horizontal">
-    		<Label Content="Name" Padding="5"/>
-			<TextBox Name="NameField" Width="200" Padding="5"/>
-    		<Label Content="Date" Padding="5"/>
-			<TextBox Name="DateField" Width="150" Padding="5"/>
+    		<Label Name="NameLabel" Content="Name" Padding="5" Visibility="Hidden"/>
+			<TextBox Name="NameField" Width="200" Padding="5" Visibility="Hidden"/>
+    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
+			<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"/>
     	</StackPanel>
 		<StackPanel Name="EvaluationSectionsPanel" Orientation="Vertical"/>
 	</StackPanel>

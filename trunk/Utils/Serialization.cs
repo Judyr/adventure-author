@@ -20,22 +20,40 @@ namespace AdventureAuthor.Utils
 	{
 		public static void Serialize(string path, object o)
 		{
-			FileInfo f = new FileInfo(path);
-			Stream s = f.Open(FileMode.Create);
-			XmlSerializer xml = new XmlSerializer(o.GetType());
-			xml.Serialize(s,o);
-			s.Close();
+			Stream s = null;
+			try {
+				FileInfo f = new FileInfo(path);
+				s = f.Open(FileMode.Create);
+				XmlSerializer xml = new XmlSerializer(o.GetType());
+				xml.Serialize(s,o);
+				s.Close();
+			}
+			catch (Exception e) {
+				if (s != null) {
+					s.Dispose();
+				}
+				throw new Exception("Error in serialization",e);
+			}
 		}
 		
 		
 		public static object Deserialize(string path, Type type)
 		{
-			FileInfo f = new FileInfo(path);
-			Stream s = f.Open(FileMode.Open);
-			XmlSerializer xml = new XmlSerializer(type);
-			object o = xml.Deserialize(s);				
-			s.Close();
-			return o;
+			Stream s = null;
+			try {
+				FileInfo f = new FileInfo(path);
+				s = f.Open(FileMode.Open);
+				XmlSerializer xml = new XmlSerializer(type);
+				object o = xml.Deserialize(s);				
+				s.Close();
+				return o;
+			}
+			catch (Exception e) {
+				if (s != null) {
+					s.Dispose();
+				}
+				throw new Exception("Error in deserialization",e);
+			}
 		}
 	}
 }

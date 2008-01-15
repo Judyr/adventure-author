@@ -22,5 +22,9 @@ namespace AdventureAuthor.Evaluation.UI
 		/// Get the answer to the question posed by the panel, based on user input.
 		/// </summary>
 		Answer GetAnswer();
+		
+		
+		
+		event EventHandler AnswerChanged;
 	}
 }
