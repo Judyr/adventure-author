@@ -70,7 +70,7 @@ namespace AdventureAuthor.Evaluation.UI
 	        	SelectedStars = ratingValue;
         	}
 			catch (Exception) {
-				Say.Error(rating.Value + " is not a valid numerical rating.");
+				Say.Debug(rating.Value + " is not a valid numerical rating.");
 				SelectedStars = 0;
         	}
         }
