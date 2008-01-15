@@ -19,7 +19,7 @@ namespace AdventureAuthor.Evaluation.UI
     /// </summary>
 
     public partial class QuestionControl : UserControl
-    {
+    {    	
         public QuestionControl(string question)
         {
             InitializeComponent();
@@ -37,8 +37,8 @@ namespace AdventureAuthor.Evaluation.UI
         	}
         	AnswersPanel.Children.Add((UIElement)control);
         }
-        
-        
+			
+			
         public void AddAnswerField(Answer answer)
         {
         	if (answer == null) {

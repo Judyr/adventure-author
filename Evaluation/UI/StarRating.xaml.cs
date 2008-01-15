@@ -20,7 +20,22 @@ namespace AdventureAuthor.Evaluation.UI
     /// </summary>
 
     public partial class StarRating : UserControl, IAnswerControl
-    {
+    {    	
+    	#region Events
+    	
+    	public event EventHandler AnswerChanged;  
+    	
+		protected virtual void OnAnswerChanged(EventArgs e)
+		{
+			EventHandler handler = AnswerChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+    	
+    	#endregion
+		
+		
     	#region Fields
     	
     	private int maxStars;    	
@@ -78,16 +93,8 @@ namespace AdventureAuthor.Evaluation.UI
         /// </summary>
         private void OnClick(object sender, RoutedEventArgs e)
         {
-        	bool shouldCheck = true;
-        	foreach (UIElement uielement in StarsPanel.Children) {
-        		if (uielement is CheckBox) {        		
-	        		CheckBox star = (CheckBox)uielement;
-	        		star.IsChecked = shouldCheck;	        			
-		        	if (shouldCheck && star == sender) {
-		        		shouldCheck = false;
-		        	}
-        		}
-        	}
+        	UIElement element = (UIElement)sender;
+	        SelectedStars = StarsPanel.Children.IndexOf(element) + 1;
         }
            
         
@@ -121,6 +128,8 @@ namespace AdventureAuthor.Evaluation.UI
 		        		}
 	        		}
 	        	}
+        		
+        		OnAnswerChanged(new EventArgs());
         	}
         }
     	

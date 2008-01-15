@@ -775,7 +775,7 @@ namespace AdventureAuthor.Setup
 			
 			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
 			evaluation.Activate += delegate { 
-				WorksheetWindow eval = new WorksheetWindow(new Worksheet("Evaluation",String.Empty,String.Empty));
+				WorksheetWindow eval = new WorksheetWindow();
 				eval.ShowDialog();
 			};
 			misc.Items.Add(evaluation);

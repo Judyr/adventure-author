@@ -15,10 +15,26 @@ using AdventureAuthor.Evaluation.UI;
 namespace AdventureAuthor.Evaluation.UI
 {
     public partial class CommentBox : IAnswerControl
-    {
+    {    	
+    	#region Events
+    	
+    	public event EventHandler AnswerChanged;  
+    	
+		protected virtual void OnAnswerChanged(EventArgs e)
+		{
+			EventHandler handler = AnswerChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+    	
+    	#endregion
+		
+		
         public CommentBox()
         {
             InitializeComponent();
+            CommentTextBox.TextChanged += delegate { OnAnswerChanged(new EventArgs()); };
         }
         
         
