@@ -249,6 +249,7 @@
       <DependentUpon>CommentBox.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Evaluation\UI\EvaluationOptions.cs" />
     <Compile Include="Evaluation\UI\IAnswerControl.cs" />
     <Compile Include="Evaluation\UI\QuestionControl.xaml.cs">
       <DependentUpon>QuestionControl.xaml</DependentUpon>

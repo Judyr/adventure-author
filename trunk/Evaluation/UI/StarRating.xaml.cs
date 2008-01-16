@@ -85,6 +85,7 @@ namespace AdventureAuthor.Evaluation.UI
         		button.Click += new RoutedEventHandler(OnClick);
         		StarsPanel.Children.Add(button);
         	}
+        	Width = maxStars * 40;
         }
         
         

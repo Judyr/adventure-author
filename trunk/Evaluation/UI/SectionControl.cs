@@ -66,10 +66,10 @@ namespace AdventureAuthor.Evaluation.UI
         private void AddQuestionControl(QuestionControl control)
         {
         	if (QuestionsPanel.Children.Count % 2 == 0) {
-        		control.Background = Brushes.LightGreen;
+        		control.Background = (Brush)Resources["Stripe1Brush"];
         	}
         	else {
-        		control.Background = Brushes.LimeGreen;
+        		control.Background = (Brush)Resources["Stripe2Brush"];
         	}
         	QuestionsPanel.Children.Add(control);
         }

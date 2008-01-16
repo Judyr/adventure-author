@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.ComponentModel;
 using System.Windows;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
@@ -18,9 +19,10 @@ namespace AdventureAuthor.Evaluation.UI
     	#region Constants
     	
     	private string DEFAULT_TITLE = "Evaluation";
+    	private const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	
     	#endregion
-    	
+    	    	
     	#region Fields
     	
     	private Worksheet originalWorksheet;
@@ -51,20 +53,37 @@ namespace AdventureAuthor.Evaluation.UI
 		}
     	
     	#endregion
-    	
-    	
-    	#region Constants
-    	
-    	private const string XMLFILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
-    	
-    	#endregion
-    	
-    	
+    	    	    	    	
     	#region Constructors    	   	
     	
     	public WorksheetWindow()
     	{
     		InitializeComponent();
+    		this.Closing += new CancelEventHandler(WorksheetWindow_Closing);
+    		EvaluationOptions.ChangedDefaultImageApplication += 
+    			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);
+    	}
+
+    	private void WorksheetWindow_Closing(object sender, CancelEventArgs e)
+    	{	
+			if (!CloseWorksheetDialog()) {
+				e.Cancel = true;
+			}
+    	}
+
+    	
+    	private void EvaluationOptions_ChangedDefaultImageApplication(object sender, EventArgs e)
+    	{
+    		switch (EvaluationOptions.ApplicationToOpenImages) {
+    			case EvaluationOptions.ImageApps.Default:
+    				UseDefaultMenuItem.IsChecked = true;
+    				UsePaintMenuItem.IsChecked = false;
+    				break;
+    			case EvaluationOptions.ImageApps.MicrosoftPaint:
+    				UseDefaultMenuItem.IsChecked = false;
+    				UsePaintMenuItem.IsChecked = true;
+    				break;
+    		}
     	}
     	
     	
@@ -80,8 +99,7 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	#endregion
-    	
-    	
+    	    	
     	#region Methods
     	
     	public void Open(Worksheet worksheet)
@@ -104,13 +122,16 @@ namespace AdventureAuthor.Evaluation.UI
 	    					answerControl.AnswerChanged += delegate { worksheet_AnswerChanged(); };
 	    				}
 	    			}
-	    			DateField.TextChanged += delegate { worksheet_AnswerChanged(); };
-	    			NameField.TextChanged += delegate { worksheet_AnswerChanged(); };
-	    			NameLabel.Visibility = Visibility.Visible;
-	    			DateLabel.Visibility = Visibility.Visible;
-		    		NameField.Visibility = Visibility.Visible;
-		    		DateField.Visibility = Visibility.Visible;
 	    		}
+	    		
+	    		DateField.TextChanged += delegate { worksheet_AnswerChanged(); };
+	    		NameField.TextChanged += delegate { worksheet_AnswerChanged(); };
+	    		NameLabel.Visibility = Visibility.Visible;
+	    		DateLabel.Visibility = Visibility.Visible;
+		    	NameField.Visibility = Visibility.Visible;
+		    	DateField.Visibility = Visibility.Visible;
+		    	
+		    	Dirty = false; // ignore the TextChanged event caused by DateField/NameField being created
     		}
     		catch (Exception e) {
     			Say.Error("Was unable to open worksheet.",e);
@@ -141,16 +162,18 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	
-    	public void Save()
+    	public bool Save()
     	{
     		if (originalWorksheet == null || filename == null) {
     			Say.Debug("Save failed: Should not have called Save without setting a filename or opening a worksheet.");
+    			return false;
     		}
     		else {
 	    		AdventureAuthor.Utils.Serialization.Serialize(filename,GetWorksheet());
 	    		if (Dirty) {
 	    			Dirty = false;
 	    		}
+	    		return true;
     		}
     	}
     	    	
@@ -173,8 +196,16 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	
+    	/// <summary>
+    	/// Construct a worksheet object (including the user's entries)
+    	/// </summary>
+    	/// <returns>A worksheet object, or null if no worksheet is open</returns>
     	public Worksheet GetWorksheet()
     	{
+    		if (originalWorksheet == null) {
+    			return null;
+    		}
+    		
     		Worksheet ws = new Worksheet(originalWorksheet.Title,NameField.Text,DateField.Text);    		
     		foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
     			ws.Sections.Add(sc.GetSection());
@@ -183,8 +214,7 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	#endregion
-    	
-    	
+    	    	
     	#region Event handlers
     	
     	private void OnClick_Open(object sender, EventArgs e)
@@ -197,11 +227,10 @@ namespace AdventureAuthor.Evaluation.UI
     	{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = XMLFILTER;
-    		openFileDialog.Filter = XMLFILTER;
-			openFileDialog.Title = "Select a worksheet file";
+    		openFileDialog.DefaultExt = XML_FILTER;
+    		openFileDialog.Filter = XML_FILTER;
+			openFileDialog.Title = "Select a worksheet file to open";
 			openFileDialog.Multiselect = false;
-			//openFileDialog.InitialDirectory = form.App.Module.Repository.DirectoryName;
 			openFileDialog.RestoreDirectory = false;	
 			
   			bool ok = (bool)openFileDialog.ShowDialog();  				
@@ -228,12 +257,17 @@ namespace AdventureAuthor.Evaluation.UI
     	
     	private bool SaveAsDialog()
     	{
+    		if (originalWorksheet == null) {
+    			return false;
+    		}
+    		
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = XMLFILTER;
-    		saveFileDialog.Filter = XMLFILTER;
+    		saveFileDialog.DefaultExt = XML_FILTER;
+    		saveFileDialog.Filter = XML_FILTER;
   			saveFileDialog.ValidateNames = true;
+  			saveFileDialog.Title = "Select location to save worksheet to";
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
 	  			filename = saveFileDialog.FileName;
@@ -248,14 +282,15 @@ namespace AdventureAuthor.Evaluation.UI
     	
     	private bool SaveDialog() 
     	{    		
-    		// Get a filename to save to if there isn't one already:
-    		if (filename == null) { 
+    		if (originalWorksheet == null) {
+    			return false;
+    		}
+    		else if (filename == null) { // get a filename to save to if there isn't one already    		
     			return SaveAsDialog();
     		}
     		else {
 	    		try {
-	    			Save();
-	    			return true;
+	    			return Save();
 	    		}
 	    		catch (Exception e) {
 	    			Say.Error("Failed to save worksheet.",e);
@@ -295,11 +330,33 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	
+    	private void OnClick_MakeBlankCopy(object sender, EventArgs e)
+    	{
+  			Worksheet original = GetWorksheet();
+  			if (original == null) {
+  				return;
+  			}
+	    	Worksheet blankCopy = original.GetBlankCopy(); 
+	    	
+    		SaveFileDialog saveFileDialog = new SaveFileDialog();
+    		saveFileDialog.AddExtension = true;
+    		saveFileDialog.CheckPathExists = true;
+    		saveFileDialog.DefaultExt = XML_FILTER;
+    		saveFileDialog.Filter = XML_FILTER;
+  			saveFileDialog.ValidateNames = true;
+  			saveFileDialog.Title = "Select location to save blank copy to";
+  			bool ok = (bool)saveFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string filename = saveFileDialog.FileName;  
+	    		AdventureAuthor.Utils.Serialization.Serialize(filename,blankCopy);
+	    		Say.Information("Created blank copy at " + filename);
+  			}
+    	}    	
+    	
+    	
     	private void OnClick_Exit(object sender, EventArgs e)
     	{
-    		if (CloseWorksheetDialog()) {
-    			Close();
-    		}    		
+    		Close();
     	}
     	
     	
@@ -308,6 +365,18 @@ namespace AdventureAuthor.Evaluation.UI
     		if (!Dirty) {
     			Dirty = true;
     		}
+    	}
+    	
+    	
+    	private void OnChecked_UsePaint(object sender, EventArgs e)
+    	{
+    		EvaluationOptions.ApplicationToOpenImages = EvaluationOptions.ImageApps.MicrosoftPaint;
+    	}
+    	
+    	
+    	private void OnChecked_UseDefault(object sender, EventArgs e)
+    	{
+    		EvaluationOptions.ApplicationToOpenImages = EvaluationOptions.ImageApps.Default;
     	}
     	
     	#endregion
