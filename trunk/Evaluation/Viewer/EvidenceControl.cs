@@ -17,7 +17,7 @@ using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation.UI
 {
-    public partial class EvidenceButton : UserControl, IAnswerControl
+    public partial class EvidenceControl : UserControl, IAnswerControl
     {    	
     	#region Constants
     	
@@ -61,19 +61,29 @@ namespace AdventureAuthor.Evaluation.UI
     		set {
     			status = value;
     			switch (status) {
-    				case EvidenceStatus.NoLink:
-    					ViewButton.Visibility = Visibility.Collapsed;
-    					ViewButton.ToolTip = String.Empty;
+    				case EvidenceStatus.NoLink:   
+    					ViewLink.Visibility = Visibility.Collapsed;
+    					ViewLink.ToolTip = String.Empty; 					
+    					SelectLinkText.Text = "Attach evidence...";
+    					ClearLink.Visibility = Visibility.Collapsed;
     					break;
     				case EvidenceStatus.Link:
-    					ViewButton.Visibility = Visibility.Visible;
-    					ViewButton.Foreground = Brushes.Black;
-    					ViewButton.ToolTip = filename;
+    					ViewLink.Visibility = Visibility.Visible;
+    					ViewLink.ToolTip = filename;
+    					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
+    					ViewLinkText.TextDecorations.Clear();
+    					ViewLinkText.TextDecorations.Add(TextDecorations.Underline);
+    					SelectLinkText.Text = "Change";
+    					ClearLink.Visibility = Visibility.Visible;
     					break;
     				case EvidenceStatus.BrokenLink:
-    					ViewButton.Visibility = Visibility.Visible;
-    					ViewButton.Foreground = Brushes.Red;
-    					ViewButton.ToolTip = filename;
+    					ViewLink.Visibility = Visibility.Visible;
+    					ViewLink.ToolTip = filename;
+    					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
+    					ViewLinkText.TextDecorations.Clear();
+    					ViewLinkText.TextDecorations.Add(TextDecorations.Strikethrough);
+    					SelectLinkText.Text = "Change";
+    					ClearLink.Visibility = Visibility.Visible;
     					break;
     				default:
     					break;
@@ -99,21 +109,21 @@ namespace AdventureAuthor.Evaluation.UI
 		    	
     	#region Constructors
 		
-        public EvidenceButton()
+        public EvidenceControl()
         {
             InitializeComponent();
             Filename = null;
         }
 
         
-        public EvidenceButton(string location)
+        public EvidenceControl(string location)
         {
             InitializeComponent();
         	Filename = location;
         }
         
         
-        public EvidenceButton(Evidence evidence)
+        public EvidenceControl(Evidence evidence)
         {        
             InitializeComponent();
         	Filename = evidence.Value;
@@ -220,6 +230,17 @@ namespace AdventureAuthor.Evaluation.UI
 				}
 			}
 			return false;
+		}
+		
+		
+		private void OnClick_ClearEvidence(object sender, EventArgs e)
+		{
+			MessageBoxResult result = MessageBox.Show(Filename+"\n\nRemove this evidence?",
+			                                          "Remove evidence?", 
+			                                          MessageBoxButton.OKCancel);
+			if (result == MessageBoxResult.OK) {
+				Filename = String.Empty;				
+			}
 		}
 		
 		#endregion

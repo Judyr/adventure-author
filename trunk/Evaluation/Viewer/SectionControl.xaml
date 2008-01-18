@@ -5,7 +5,7 @@
 		<Brush x:Key="Stripe1Brush">#B4C8FF</Brush>
 		<Brush x:Key="Stripe2Brush">#96AFFF</Brush>
 	</UserControl.Resources>
-    <Border BorderThickness="2" BorderBrush="Black">
+    <Border Name="SectionBorder" BorderThickness="2,2,2,0" BorderBrush="Black">
 		<Grid>
 	    	<Grid.RowDefinitions>
 				<RowDefinition Height="40"/>

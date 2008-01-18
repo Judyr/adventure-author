@@ -35,7 +35,7 @@ namespace AdventureAuthor.Evaluation
 		
 		public override IAnswerControl GetAnswerControl()
 		{
-			return new EvidenceButton(this);
+			return new EvidenceControl(this);
 		}
 	}
 }
