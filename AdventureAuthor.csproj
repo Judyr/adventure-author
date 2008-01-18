@@ -245,31 +245,31 @@
     <Compile Include="Evaluation\Question.cs" />
     <Compile Include="Evaluation\Rating.cs" />
     <Compile Include="Evaluation\Section.cs" />
-    <Compile Include="Evaluation\UI\CommentBox.xaml.cs">
+    <Compile Include="Evaluation\Viewer\CommentBox.xaml.cs">
+      <SubType>Code</SubType>
       <DependentUpon>CommentBox.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\EvaluationOptions.cs" />
-    <Compile Include="Evaluation\UI\IAnswerControl.cs" />
-    <Compile Include="Evaluation\UI\QuestionControl.xaml.cs">
+    <Compile Include="Evaluation\Viewer\EvaluationOptions.cs" />
+    <Compile Include="Evaluation\Viewer\EvidenceControl.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EvidenceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Evaluation\Viewer\IAnswerControl.cs" />
+    <Compile Include="Evaluation\Viewer\QuestionControl.xaml.cs">
+      <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\SectionControl.cs">
+    <Compile Include="Evaluation\Viewer\SectionControl.cs">
+      <SubType>Code</SubType>
       <DependentUpon>SectionControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\EvidenceButton.xaml.cs">
-      <DependentUpon>EvidenceButton.xaml</DependentUpon>
+    <Compile Include="Evaluation\Viewer\StarRating.xaml.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Evaluation\UI\StarRating.xaml.cs">
       <DependentUpon>StarRating.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluation\UI\WorksheetWindow.xaml.cs">
-      <DependentUpon>WorksheetWindow.xaml</DependentUpon>
+    <Compile Include="Evaluation\Viewer\WorksheetWindow.xaml.cs">
       <SubType>Code</SubType>
+      <DependentUpon>WorksheetWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Notebook\MindMapForm.cs" />
@@ -417,12 +417,12 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
-    <Page Include="Evaluation\UI\CommentBox.xaml" />
-    <Page Include="Evaluation\UI\QuestionControl.xaml" />
-    <Page Include="Evaluation\UI\SectionControl.xaml" />
-    <Page Include="Evaluation\UI\EvidenceButton.xaml" />
-    <Page Include="Evaluation\UI\StarRating.xaml" />
-    <Page Include="Evaluation\UI\WorksheetWindow.xaml" />
+    <Page Include="Evaluation\Viewer\CommentBox.xaml" />
+    <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
+    <Page Include="Evaluation\Viewer\QuestionControl.xaml" />
+    <Page Include="Evaluation\Viewer\SectionControl.xaml" />
+    <Page Include="Evaluation\Viewer\StarRating.xaml" />
+    <Page Include="Evaluation\Viewer\WorksheetWindow.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
     <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
@@ -452,7 +452,8 @@
     <Folder Include="Core" />
     <Folder Include="Conversations" />
     <Folder Include="Core\UI" />
-    <Folder Include="Evaluation\UI" />
+    <Folder Include="Evaluation\Editor" />
+    <Folder Include="Evaluation\Viewer" />
     <Folder Include="Journal" />
     <Folder Include="Journal\UI" />
     <Folder Include="Analysis" />

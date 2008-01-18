@@ -124,6 +124,11 @@ namespace AdventureAuthor.Evaluation.UI
 	    			}
 	    		}
 	    		
+	    		// 'Seal off' the very end of the worksheet with a border:
+	    		SectionControl finalSectionControl = 
+	    			(SectionControl)EvaluationSectionsPanel.Children[EvaluationSectionsPanel.Children.Count-1];
+	    		finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
+	    			    		
 	    		DateField.TextChanged += delegate { worksheet_AnswerChanged(); };
 	    		NameField.TextChanged += delegate { worksheet_AnswerChanged(); };
 	    		NameLabel.Visibility = Visibility.Visible;
@@ -218,13 +223,13 @@ namespace AdventureAuthor.Evaluation.UI
     	#region Event handlers
     	
     	private void OnClick_Open(object sender, EventArgs e)
-    	{
+    	{    		
     		OpenDialog();
     	}
     	
     	
     	private void OpenDialog()
-    	{
+    	{    				
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
     		openFileDialog.DefaultExt = XML_FILTER;
