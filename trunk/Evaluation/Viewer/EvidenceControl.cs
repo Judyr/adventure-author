@@ -11,11 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class EvidenceControl : UserControl, IAnswerControl
     {    	

@@ -10,9 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class CommentBox : IAnswerControl
     {    	

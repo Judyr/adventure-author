@@ -267,9 +267,9 @@
       <SubType>Code</SubType>
       <DependentUpon>StarRating.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\WorksheetWindow.xaml.cs">
+    <Compile Include="Evaluation\Viewer\WorksheetViewer.cs">
       <SubType>Code</SubType>
-      <DependentUpon>WorksheetWindow.xaml</DependentUpon>
+      <DependentUpon>WorksheetViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Notebook\MindMapForm.cs" />
@@ -422,7 +422,7 @@
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />
     <Page Include="Evaluation\Viewer\SectionControl.xaml" />
     <Page Include="Evaluation\Viewer\StarRating.xaml" />
-    <Page Include="Evaluation\Viewer\WorksheetWindow.xaml" />
+    <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
     <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
@@ -452,7 +452,6 @@
     <Folder Include="Core" />
     <Folder Include="Conversations" />
     <Folder Include="Core\UI" />
-    <Folder Include="Evaluation\Editor" />
     <Folder Include="Evaluation\Viewer" />
     <Folder Include="Journal" />
     <Folder Include="Journal\UI" />

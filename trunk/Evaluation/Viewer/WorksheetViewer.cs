@@ -4,22 +4,22 @@ using System.ComponentModel;
 using System.Windows;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Scripts.UI;
 using Microsoft.Win32;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
 	/// <summary>
 	/// A window which provides a number of criteria for evaluating a module
 	/// and elicits a response from the user as to how well they have been met.
 	/// </summary>
-    public partial class WorksheetWindow : Window
+    public partial class WorksheetViewer : Window
     {    	
     	#region Constants
     	
     	private string DEFAULT_TITLE = "Evaluation";
-    	private const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
+    	internal const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	
     	#endregion
     	    	
@@ -56,7 +56,7 @@ namespace AdventureAuthor.Evaluation.UI
     	    	    	    	
     	#region Constructors    	   	
     	
-    	public WorksheetWindow()
+    	public WorksheetViewer()
     	{
     		InitializeComponent();
     		this.Closing += new CancelEventHandler(WorksheetWindow_Closing);
@@ -87,13 +87,13 @@ namespace AdventureAuthor.Evaluation.UI
     	}
     	
     	
-    	public WorksheetWindow(Worksheet worksheet) : this()
+    	public WorksheetViewer(Worksheet worksheet) : this()
     	{
     		Open(worksheet);
     	}
     	
     	
-    	public WorksheetWindow(string filename) : this()
+    	public WorksheetViewer(string filename) : this()
     	{
     		Open(filename);
     	}
@@ -155,7 +155,6 @@ namespace AdventureAuthor.Evaluation.UI
     		try {
 	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(Worksheet));
 	    		Worksheet worksheet = (Worksheet)o;
-    			CloseWorksheetDialog();    		
 	    		Open(worksheet);
 	    		this.filename = filename;
     		}

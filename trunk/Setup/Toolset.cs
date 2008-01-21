@@ -38,7 +38,7 @@ using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
 using AdventureAuthor.Evaluation;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Notebook.MyIdeas;
 using AdventureAuthor.Notebook.Worksheets.UI;
 using AdventureAuthor.Utils;
@@ -667,7 +667,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Clears the user interface after a module has been closed.
 		/// </summary>
-		internal static void Clear()
+		private static void Clear()
 		{
 			tabbedGroupsCollection.RootSequence.Clear();
 			form.App.BlueprintView.Module = null; 	  // stop displaying custom blueprints specific to the old module
@@ -677,7 +677,7 @@ namespace AdventureAuthor.Setup
 		}
 					
 		
-		internal static void UpdateTitleBar()
+		private static void UpdateTitleBar()
 		{
 			form.App.Text = "Adventure Author";
 			if (NWN2ToolsetMainForm.App.Module != null && NWN2ToolsetMainForm.App.Module.LocationType == ModuleLocationType.Directory) {
@@ -773,12 +773,18 @@ namespace AdventureAuthor.Setup
 			};
 			misc.Items.Add(colourPicker);
 			
-			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
+			MenuButtonItem evaluation = new MenuButtonItem("Worksheet viewer");
 			evaluation.Activate += delegate { 
-				WorksheetWindow eval = new WorksheetWindow();
+				WorksheetViewer eval = new WorksheetViewer();
 				eval.ShowDialog();
 			};
 			misc.Items.Add(evaluation);
+			
+			MenuButtonItem worksheetDesigner = new MenuButtonItem("Worksheet designer");
+			worksheetDesigner.Activate += delegate { 
+				
+			};
+			misc.Items.Add(worksheetDesigner);
 			
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };

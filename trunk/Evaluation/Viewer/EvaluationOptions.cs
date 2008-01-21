@@ -9,7 +9,7 @@
 
 using System;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
 	/// <summary>
 	/// Description of EvaluationOptions.

@@ -4,7 +4,7 @@
 	Exact star: Points="13,0 17,9 26,9 19,15 24,24 13,19 2,24 7,15 0,9 9,9"-->
 
 <UserControl
-	x:Class="AdventureAuthor.Evaluation.UI.StarRating" 
+	x:Class="AdventureAuthor.Evaluation.Viewer.StarRating" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Height="32" Width="200" Margin="5">
