@@ -11,7 +11,7 @@ using System;
 using System.Windows.Controls;
 using AdventureAuthor.Evaluation;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
 	/// <summary>
 	/// A panel that asks a question of the user, and can return the user's answer. 

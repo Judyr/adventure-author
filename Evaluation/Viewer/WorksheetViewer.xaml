@@ -1,4 +1,4 @@
-<Window x:Class="AdventureAuthor.Evaluation.UI.WorksheetWindow"
+<Window x:Class="AdventureAuthor.Evaluation.Viewer.WorksheetViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Evaluation"
@@ -17,10 +17,9 @@
 				<MenuItem Header="File" FontSize="14">
 					<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
 					<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
-					<MenuItem Header="Save As" Click="OnClick_SaveAs" FontSize="14"/>
+					<MenuItem Header="Save as" Click="OnClick_SaveAs" FontSize="14"/>
+					<MenuItem Header="Save blank copy" Click="OnClick_MakeBlankCopy" FontSize="14"/>
 					<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
-					<Separator/>
-					<MenuItem Header="Make a blank copy" Click="OnClick_MakeBlankCopy" FontSize="14"/>
 					<Separator/>
 					<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 				</MenuItem>

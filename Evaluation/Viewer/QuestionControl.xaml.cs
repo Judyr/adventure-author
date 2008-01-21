@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
     /// <summary>
     /// Interaction logic for QuestionControl.xaml

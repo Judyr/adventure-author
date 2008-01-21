@@ -11,7 +11,7 @@ using System;
 using System.Xml.Serialization;
 using System.Windows;
 using AdventureAuthor.Evaluation;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation

@@ -11,10 +11,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Evaluation;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.Evaluation.UI
+namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class SectionControl : UserControl
     {

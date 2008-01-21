@@ -10,7 +10,7 @@
 using System;
 using System.Xml.Serialization;
 using System.Windows;
-using AdventureAuthor.Evaluation.UI;
+using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation
 {
