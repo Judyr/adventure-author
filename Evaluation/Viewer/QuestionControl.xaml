@@ -10,7 +10,7 @@
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
 	
-		<TextBlock Name="QuestionText" Grid.Row="0" Grid.Column="0" 
+		<TextBlock Name="QuestionTitle" Grid.Row="0" Grid.Column="0" 
     	           FontSize="14" Margin="3" Padding="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
 		<StackPanel Name="AnswersPanel" Grid.Row="0" Grid.Column="1"
 					Orientation="Horizontal" VerticalAlignment="Center"/>

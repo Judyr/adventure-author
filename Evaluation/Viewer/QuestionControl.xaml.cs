@@ -23,11 +23,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         public QuestionControl(string question)
         {
             InitializeComponent();
-            QuestionText.Text = question;
+            QuestionTitle.Text = question;
         }
 
         
-        public void AddAnswerField(IAnswerControl control)
+        private void AddAnswerField(IAnswerControl control)
         {
         	if (control == null) {
         		throw new ArgumentNullException("Can't add a null answer field.");
@@ -37,27 +37,31 @@ namespace AdventureAuthor.Evaluation.Viewer
         	}
         	AnswersPanel.Children.Add((UIElement)control);
         }
-			
+			        
 			
         public void AddAnswerField(Answer answer)
         {
         	if (answer == null) {
         		throw new ArgumentNullException("Can't add a null answer field.");
         	}
-        	IAnswerControl control = answer.GetAnswerControl();        	
-        	if (!(control is UIElement)) {
-        		throw new ArgumentException("The answer control must be a UIElement.");
+        	IAnswerControl answerControl;
+        	if (!WorksheetViewer.DesignerMode) {
+        		answerControl = answer.GetAnswerControl();
         	}
-        	AnswersPanel.Children.Add((UIElement)control);
+        	else {
+        		ActivatedAnswerControl aac = new ActivatedAnswerControl(answer.GetAnswerControl(),answer.Include);
+        		answerControl = aac;
+        	}        	
+        	AddAnswerField(answerControl);
         }
         
         
         public Question GetQuestion()
         {
-        	Question question = new Question(QuestionText.Text);
+        	Question question = new Question(QuestionTitle.Text);
         	foreach (UIElement element in AnswersPanel.Children) {
         		IAnswerControl ac = element as IAnswerControl;
-        		if (ac != null) {
+        		if (ac != null) {        	
         			question.Answers.Add(ac.GetAnswer());
         		}
         	}

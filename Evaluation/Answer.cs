@@ -14,8 +14,16 @@ using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation
 {
-	public abstract class Answer
-	{
+	public abstract class Answer : IExcludable
+	{	
+		[XmlAttribute]
+		private bool include = true;
+		public bool Include {
+			get { return include; }
+			set { include = value; }
+		}
+		
+		
 		[XmlElement]
 		private string val;		
 		public string Value {

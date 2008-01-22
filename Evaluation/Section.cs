@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using AdventureAuthor.Evaluation;
+using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation
 {
@@ -19,8 +20,16 @@ namespace AdventureAuthor.Evaluation
 	/// </summary>
 	[Serializable]
 	[XmlRoot]
-	public class Section
-	{
+	public class Section : IExcludable
+	{	
+		[XmlAttribute]
+		private bool include = true;
+		public bool Include {
+			get { return include; }
+			set { include = value; }
+		}
+		
+		
 		[XmlAttribute]
 		private string title;		
 		public string Title {

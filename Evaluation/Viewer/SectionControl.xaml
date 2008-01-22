@@ -16,9 +16,9 @@
 			</Grid.ColumnDefinitions>    	
 			<Border Grid.Row="0" Grid.Column="0" 
 			        BorderThickness="0,0,0,2" BorderBrush="Black">
-	    		<Label Name="SectionTitle"
-				       FontSize="20" Background="LightGreen"
-					   VerticalAlignment="Center"/>
+	    		<TextBlock Name="SectionTitleTextBlock"
+				       	   FontSize="20" Background="LightGreen"
+					   	   VerticalAlignment="Center"/>
 			</Border>
     		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"/>    	
     	</Grid>

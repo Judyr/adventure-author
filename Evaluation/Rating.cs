@@ -19,7 +19,7 @@ namespace AdventureAuthor.Evaluation
 	[Serializable]
 	[XmlRoot]
 	public class Rating : Answer
-	{
+	{		
 		[XmlAttribute]
 		private int max;		
 		public int Max {

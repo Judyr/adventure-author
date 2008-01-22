@@ -23,8 +23,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		/// </summary>
 		Answer GetAnswer();
 		
-		
-		
+			
 		event EventHandler AnswerChanged;
 	}
 }

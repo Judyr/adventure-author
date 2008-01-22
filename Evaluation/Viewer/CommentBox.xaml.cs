@@ -30,7 +30,22 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	#endregion
 		
-		
+
+    	private bool isActive;    	
+		public bool IsActive {
+			get { return isActive; }
+			set { 
+				isActive = value;
+				if (isActive) {
+					Opacity = 1.0f;
+				}
+				else {
+					Opacity = 0.2f;
+				}
+			}
+		}
+    	
+    	
         public CommentBox()
         {
             InitializeComponent();
