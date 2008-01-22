@@ -7,6 +7,7 @@
 	<Grid.RowDefinitions>
 		<RowDefinition Height="30"/>
 		<RowDefinition/>
+		<RowDefinition Height="30"/>
 	</Grid.RowDefinitions>
 	<Grid.ColumnDefinitions>
 		<ColumnDefinition/>
@@ -15,15 +16,16 @@
 					Orientation="Horizontal" Height="28">
 			<Menu VerticalAlignment="Top" HorizontalAlignment="Left">
 				<MenuItem Header="File" FontSize="14">
+					<MenuItem Header="New" Click="OnClick_New" FontSize="14" Name="NewMenuItem"/>
 					<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
 					<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
 					<MenuItem Header="Save as" Click="OnClick_SaveAs" FontSize="14"/>
-					<MenuItem Header="Save blank copy" Click="OnClick_MakeBlankCopy" FontSize="14"/>
+					<MenuItem Header="Save blank copy" Click="OnClick_MakeBlankCopy" FontSize="14" Name="SaveBlankMenuItem"/>
 					<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
 					<Separator/>
 					<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 				</MenuItem>
-				<MenuItem Header="Options" FontSize="14">
+				<MenuItem Name="OptionsMenu" Header="Options" FontSize="14">
 					<MenuItem Name="UsePaintMenuItem" IsCheckable="true" Checked="OnChecked_UsePaint" 
 					          Header="Open pictures in Microsoft Paint" FontSize="14"
 							  IsChecked="true"/>
@@ -37,6 +39,8 @@
 					  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Focusable="false">
 	    	<StackPanel Orientation="Vertical">
 				<StackPanel Orientation="Horizontal" Margin="10">
+		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="TitleField" Width="150" Padding="5" Visibility="Hidden"/>
 		    		<Label Name="NameLabel" Content="Name" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="NameField" Width="200" Padding="5" Visibility="Hidden"/>
 		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
@@ -45,5 +49,8 @@
 	    		<StackPanel Name="EvaluationSectionsPanel" Orientation="Vertical"/>
 			</StackPanel>
 		</ScrollViewer>
+		<StackPanel Grid.Row="2" Grid.Column="0">
+			<TextBlock Name="FileNameTextBlock"/>
+		</StackPanel>
 	</Grid>
 </Window>

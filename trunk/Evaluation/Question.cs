@@ -11,14 +11,23 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using AdventureAuthor.Evaluation;
+using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation
 {
 	[Serializable]
 	[XmlRoot]
 	[XmlInclude(typeof(Rating)), XmlInclude(typeof(Evidence)), XmlInclude(typeof(Comment))]
-	public class Question
-	{
+	public class Question : IExcludable
+	{			
+		[XmlAttribute]
+		private bool include = true;
+		public bool Include {
+			get { return include; }
+			set { include = value; }
+		}
+		
+		
 		/// <summary>
 		/// The text of this question.
 		/// </summary>

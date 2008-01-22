@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using AdventureAuthor.Evaluation.Viewer;
@@ -25,12 +27,26 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    	
     	#region Fields
     	
+    	private static bool designerMode;
+    	public static bool DesignerMode {
+    		get { return designerMode; }
+    	}
+    	
     	private Worksheet originalWorksheet;
     	
     	private string filename;    	
 		public string Filename {
 			get { return filename; }
-			set { filename = value; }
+			set { 
+				filename = value;
+				if (filename == null) {
+					FileNameTextBlock.Text = "<null>";
+				}
+				else {
+					FileNameTextBlock.Text = filename;
+				}
+				Log.WriteMessage(FileNameTextBlock.Text);
+			}
 		}
     	
     	/// <summary>
@@ -40,15 +56,19 @@ namespace AdventureAuthor.Evaluation.Viewer
 		internal bool Dirty {
 			get { return dirty; }
 			set { 
-				dirty = value; 
-				if (originalWorksheet != null) {
-					if (dirty) {
-						Title = originalWorksheet.Title + "*";
+				if (dirty != value) {
+					if (Filename == null || Filename == String.Empty) {
+						Title = "temp";
 					}
 					else {
-						Title = originalWorksheet.Title;
+						Title = Filename;
+					}					
+					if (value) {
+						Title += "*";
 					}
 				}
+				
+				dirty = value; 
 			}
 		}
     	
@@ -56,13 +76,37 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    	    	    	
     	#region Constructors    	   	
     	
-    	public WorksheetViewer()
+    	public WorksheetViewer(bool UseDesignerMode)
     	{
     		InitializeComponent();
     		this.Closing += new CancelEventHandler(WorksheetWindow_Closing);
     		EvaluationOptions.ChangedDefaultImageApplication += 
     			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);
+    		designerMode = UseDesignerMode;
+    		
+    		// Edit worksheet titles in designer mode only; fill in name and date in working mode only
+    		TitleField.IsEnabled = designerMode;
+    		NameField.IsEnabled = !designerMode;
+    		DateField.IsEnabled = !designerMode;    		
+    		
+    		if (designerMode) {
+    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
+    			NewMenuItem.Visibility = Visibility.Visible;
+    			OptionsMenu.Visibility = Visibility.Collapsed;
+    		}
+    		else {
+    			SaveBlankMenuItem.Visibility = Visibility.Visible;
+    			NewMenuItem.Visibility = Visibility.Collapsed;
+    			OptionsMenu.Visibility = Visibility.Visible;
+    		}
     	}
+    	
+    	
+    	public WorksheetViewer() : this(false)
+    	{
+    		
+    	}
+    	
 
     	private void WorksheetWindow_Closing(object sender, CancelEventArgs e)
     	{	
@@ -86,18 +130,6 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-    	
-    	public WorksheetViewer(Worksheet worksheet) : this()
-    	{
-    		Open(worksheet);
-    	}
-    	
-    	
-    	public WorksheetViewer(string filename) : this()
-    	{
-    		Open(filename);
-    	}
-    	
     	#endregion
     	    	
     	#region Methods
@@ -106,37 +138,65 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		CloseWorksheetDialog();
     		
+    		if (DesignerMode && !worksheet.IsBlank()) {
+    			MessageBoxResult result = MessageBox.Show("The worksheet you are trying to open has been partially " +
+    			                                          "filled in, and cannot be re-designed.\n\n" +
+    			                                          "Would you like to create a blank copy to work on?",
+    			                                          "Create blank copy?",
+    			                                          MessageBoxButton.OKCancel);
+    			if (result == MessageBoxResult.OK) {
+    				worksheet = worksheet.GetBlankCopy();
+    				Filename = null;
+    			}
+    			else {
+    				return;
+    			}    			
+    		}
+    		
     		try {
 	    		originalWorksheet = worksheet;
-	    		Title = worksheet.Title;
+	    		TitleField.Text = worksheet.Title;
 	    		DateField.Text = worksheet.Date;
 	    		NameField.Text = worksheet.Name;
 	    		    		
-	    		foreach (Section section in worksheet.Sections) {
-	    			SectionControl sectionControl = new SectionControl(section);
-	    			EvaluationSectionsPanel.Children.Add(sectionControl);
-	    			
-	    			// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
-	    			foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-	    				foreach (IAnswerControl answerControl in questionControl.AnswersPanel.Children) {
-	    					answerControl.AnswerChanged += delegate { worksheet_AnswerChanged(); };
-	    				}
+	    		foreach (Section section in worksheet.Sections) {	    			
+	    			if (DesignerMode || section.Include) {
+			    		SectionControl sectionControl = new SectionControl(section);
+			    		AddSection(sectionControl);
+			    		
+			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
+			    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
+			    			foreach (IAnswerControl answerControl in questionControl.AnswersPanel.Children) {
+			    				answerControl.AnswerChanged += delegate { worksheet_AnswerChanged(); };
+			    			}
+			    		}
 	    			}
 	    		}
 	    		
 	    		// 'Seal off' the very end of the worksheet with a border:
-	    		SectionControl finalSectionControl = 
-	    			(SectionControl)EvaluationSectionsPanel.Children[EvaluationSectionsPanel.Children.Count-1];
-	    		finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
-	    			    		
+	    		if (EvaluationSectionsPanel.Children.Count > 0) {
+		    		SectionControl finalSectionControl = 
+		    			(SectionControl)EvaluationSectionsPanel.Children[EvaluationSectionsPanel.Children.Count-1];
+	    			finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
+	    		}
+	    		
 	    		DateField.TextChanged += delegate { worksheet_AnswerChanged(); };
 	    		NameField.TextChanged += delegate { worksheet_AnswerChanged(); };
+	    		TitleField.TextChanged += delegate { worksheet_AnswerChanged(); };
+	    		TitleLabel.Visibility = Visibility.Visible;
 	    		NameLabel.Visibility = Visibility.Visible;
 	    		DateLabel.Visibility = Visibility.Visible;
+	    		TitleField.Visibility = Visibility.Visible;
 		    	NameField.Visibility = Visibility.Visible;
 		    	DateField.Visibility = Visibility.Visible;
 		    	
-		    	Dirty = false; // ignore the TextChanged event caused by DateField/NameField being created
+		    	if (Filename == null || Filename == String.Empty) {
+		    		Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
+		    	}
+		    	else {
+		    		Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
+		    					   // meaningless TextChanged event when the Title, Name and Date fields are created
+		    	}
     		}
     		catch (Exception e) {
     			Say.Error("Was unable to open worksheet.",e);
@@ -156,24 +216,35 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(Worksheet));
 	    		Worksheet worksheet = (Worksheet)o;
 	    		Open(worksheet);
-	    		this.filename = filename;
+	    		this.Filename = filename;
     		}
     		catch (Exception e) {
     			Say.Error("The selected file was not a valid worksheet.",e);
     			CloseWorksheet();
-    			this.filename = null;
+    			this.Filename = null;
     		}
+    	}
+    	
+    	
+    	private void AddSection(SectionControl sectionControl)
+    	{
+    		foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
+    			if (sc.SectionTitle == sectionControl.SectionTitle) {
+    				throw new ArgumentException("Cannot add more than one section with the title " + sc.SectionTitle + ".");
+    			}
+    		}
+    		EvaluationSectionsPanel.Children.Add(sectionControl);
     	}
     	
     	
     	public bool Save()
     	{
-    		if (originalWorksheet == null || filename == null) {
+    		if (originalWorksheet == null || Filename == null) {
     			Say.Debug("Save failed: Should not have called Save without setting a filename or opening a worksheet.");
     			return false;
     		}
     		else {
-	    		AdventureAuthor.Utils.Serialization.Serialize(filename,GetWorksheet());
+	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,GetWorksheet());
 	    		if (Dirty) {
 	    			Dirty = false;
 	    		}
@@ -184,15 +255,18 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	public void CloseWorksheet()
     	{
-    		filename = null;
+    		Filename = null;
     		originalWorksheet = null;
     		
+    		TitleField.Clear();
     		NameField.Clear();
     		DateField.Clear();
     		Title = DEFAULT_TITLE;
+    		TitleLabel.Visibility = Visibility.Hidden;
 	    	NameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
-		    NameField.Visibility = Visibility.Hidden;
+		    TitleField.Visibility = Visibility.Hidden;
+	    	NameField.Visibility = Visibility.Hidden;
 		    DateField.Visibility = Visibility.Hidden;
     		EvaluationSectionsPanel.Children.Clear();
     		
@@ -210,9 +284,50 @@ namespace AdventureAuthor.Evaluation.Viewer
     			return null;
     		}
     		
-    		Worksheet ws = new Worksheet(originalWorksheet.Title,NameField.Text,DateField.Text);    		
-    		foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
-    			ws.Sections.Add(sc.GetSection());
+    		Worksheet ws;
+    		if (DesignerMode) {
+	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text); 
+		    	foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
+		    		ws.Sections.Add(sc.GetSection());
+		    	}
+	    		return ws;
+    		}
+    		else {
+    			if (originalWorksheet == null) {
+    				throw new ArgumentException("Could not find object representing the opened worksheet.");
+    			}    			
+    			ws = originalWorksheet.GetCopy();
+    			if (ws.Title != TitleField.Text) {
+    				ws.Title = TitleField.Text;
+    			}
+    			if (ws.Name != NameField.Text) {
+    				ws.Name = NameField.Text;
+    			}
+    			if (ws.Date != DateField.Text) {
+    				ws.Date = DateField.Text;
+    			}
+    			
+    			foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
+    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
+    					Question question = originalWorksheet.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitle);
+    					Question question2 = qc.GetQuestion();
+    					if (question != null && question2 != null) {
+    						if (question.Text != question2.Text) {
+    							question.Text = question2.Text;
+    						}
+    						foreach (Answer answer2 in question2.Answers) {
+    							foreach (Answer answer in question.Answers) {
+    								if (answer2.GetType() == answer.GetType()) {
+    									answer.Value = answer2.Value;
+    									continue;
+    								}
+    							}
+    						}
+    					}
+    					else {
+    					}
+    				}
+    			}
     		}
     		return ws;
     	}
@@ -220,6 +335,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	    	
     	#region Event handlers
+    	
+    	private void OnClick_New(object sender, EventArgs e)
+    	{
+    		Open(new Worksheet());
+    	}
+    	
     	
     	private void OnClick_Open(object sender, EventArgs e)
     	{    		
@@ -261,10 +382,6 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private bool SaveAsDialog()
     	{
-    		if (originalWorksheet == null) {
-    			return false;
-    		}
-    		
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
@@ -274,9 +391,9 @@ namespace AdventureAuthor.Evaluation.Viewer
   			saveFileDialog.Title = "Select location to save worksheet to";
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
-	  			filename = saveFileDialog.FileName;
-	  			Save();
-	  			return true;
+  				Filename = saveFileDialog.FileName;
+		  		Save();
+		  		return true;
   			}
   			else {
   				return false;
@@ -289,7 +406,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (originalWorksheet == null) {
     			return false;
     		}
-    		else if (filename == null) { // get a filename to save to if there isn't one already    		
+    		else if (Filename == null) { // get a filename to save to if there isn't one already    		
     			return SaveAsDialog();
     		}
     		else {

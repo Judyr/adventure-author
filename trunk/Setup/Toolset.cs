@@ -775,14 +775,15 @@ namespace AdventureAuthor.Setup
 			
 			MenuButtonItem evaluation = new MenuButtonItem("Worksheet viewer");
 			evaluation.Activate += delegate { 
-				WorksheetViewer eval = new WorksheetViewer();
+				WorksheetViewer eval = new WorksheetViewer(false);
 				eval.ShowDialog();
 			};
 			misc.Items.Add(evaluation);
 			
 			MenuButtonItem worksheetDesigner = new MenuButtonItem("Worksheet designer");
 			worksheetDesigner.Activate += delegate { 
-				
+				WorksheetViewer design = new WorksheetViewer(true);
+				design.ShowDialog();
 			};
 			misc.Items.Add(worksheetDesigner);
 			

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using AdventureAuthor.Evaluation;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
@@ -60,29 +61,92 @@ namespace AdventureAuthor.Evaluation
 		
 		#region Methods
 		
+		public Section GetSection(string sectionName)
+		{
+			foreach (Section section in sections) {
+				if (section.Title == sectionName) {
+					return section;
+				}
+			}
+			return null;
+		}
+		
+		
+		public Question GetQuestion(string questionName)
+		{
+			foreach (Section section in sections) {
+				Question question = GetQuestion(questionName,section.Title);
+				if (question != null) {
+					return question;
+				}
+			}
+			return null;
+		}
+		
+		
+		public Question GetQuestion(string questionName, string sectionName)
+		{
+			Section section = GetSection(sectionName);
+			if (section == null) {
+				return null;
+			}
+			
+			foreach (Question question in section.Questions) {
+				if (question.Text == questionName) {
+					return question;
+				}
+			}
+			return null;
+		}
+		
+		
 		/// <summary>
 		/// Create a blank copy of this worksheet in which all the fields are blank.
 		/// </summary>
 		/// <returns>Returns a blank copy of an existing worksheet, in which all the fields are blank</returns>
 		public Worksheet GetBlankCopy()
 		{
-			Worksheet worksheet = (Worksheet)this.MemberwiseClone();
-			worksheet.ClearFields();
-			return worksheet;
-		}
-		
-		
-		private void ClearFields()
-		{
-			Name = String.Empty;
-			Date = String.Empty;
-			foreach (Section section in sections) {
+			Worksheet worksheet = GetCopy();
+			worksheet.Name = String.Empty;
+			worksheet.Date = String.Empty;			
+			foreach (Section section in worksheet.sections) {
 				foreach (Question question in section.Questions) {
 					foreach (Answer answer in question.Answers) {
 						answer.Value = String.Empty;
 					}
 				}
 			}
+			return worksheet;
+		}
+		
+		
+		public Worksheet GetCopy()
+		{
+			return (Worksheet)MemberwiseClone();
+		}
+		
+		
+		/// <summary>
+		/// Check whether a worksheet has had any of its fields filled in.
+		/// </summary>
+		/// <returns>True if the fields of this worksheet are entirely blank; false otherwise</returns>
+		public bool IsBlank()
+		{
+			if ((Name != null && Name != String.Empty) || (Date != null && Date != String.Empty)) {
+				return false;
+			}
+			
+			foreach (Section section in sections) {
+				foreach (Question question in section.Questions) {
+					foreach (Answer answer in question.Answers) {
+						if (answer.Value != null && answer.Value != String.Empty) {
+							return false;
+						}
+					}
+				}
+			}
+			
+			return true;
 		}
 		
 		#endregion

@@ -18,47 +18,48 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class SectionControl : UserControl
     {
+    	public string SectionTitle {
+    		get {    			
+	   			return SectionTitleTextBlock.Text;
+    		}
+    		set {
+    			SectionTitleTextBlock.Text = value;
+    		}
+    	}
+    	
+    	
         public SectionControl(string title)
         {
             InitializeComponent();
-            SectionTitle.Content = title;
+            SectionTitle = title;
         }   
         
         
         public SectionControl(Section section) : this(section.Title)
         {
         	foreach (Question question in section.Questions) {
-        		QuestionControl qc = new QuestionControl(question.Text);         		
-        		foreach (Answer answer in question.Answers) {
-        			qc.AddAnswerField(answer.GetAnswerControl());
-        		}        	
-        		AddQuestionControl(qc);
+        		if (WorksheetViewer.DesignerMode || question.Include) {	    			
+		        	QuestionControl qc = new QuestionControl(question.Text);         		
+		        	foreach (Answer answer in question.Answers) {
+		        		if (WorksheetViewer.DesignerMode || answer.Include) {
+		        			qc.AddAnswerField(answer);
+		        		}
+		        	}        	
+		        	AddQuestionControl(qc);
+        		}
         	}
         }
         
         
         public Section GetSection()
         {
-        	bool reportedError = false;
-   			Section section;
-   			try {
-   				section = new Section((string)SectionTitle.Content);
-   			}
-   			catch (Exception) {
-   				if (!reportedError) { // only report this once
-   					Say.Error("Invalid section title(s) in worksheet.");
-   					reportedError = true;
-   				}
-   				section = new Section("<Unknown section>");
-   			}
-   			
+        	Section section = new Section(SectionTitle);   			
    			foreach (UIElement element in QuestionsPanel.Children) {
    				QuestionControl qc = element as QuestionControl;
    				if (qc != null) {
    					section.Questions.Add(qc.GetQuestion());
    				}
-   			}
-   			
+   			}   			
    			return section;
         }
         
