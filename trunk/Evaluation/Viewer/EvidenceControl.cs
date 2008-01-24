@@ -17,7 +17,7 @@ using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class EvidenceControl : AnswerControl
+    public partial class EvidenceControl : OptionalWorksheetPartControl
     {    	
     	#region Constants
     	
@@ -43,7 +43,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				else {
 					Status = EvidenceStatus.BrokenLink;
 				}
-				OnAnswerChanged(new EventArgs());
+				OnChanged(new EventArgs());
 			}
 		}
     	
@@ -278,10 +278,18 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
         
-        protected override Answer GetAnswerObject()
+        protected override OptionalWorksheetPart GetWorksheetPartObject()
 		{
 			return new Evidence(filename);
 		}
+        
+        
+        protected override List<Control> GetActivationControls()
+        {
+        	List<Control> activationControls = new List<Control>(1);
+        	activationControls.Add(ActivateCheckBox);
+        	return activationControls;
+        }
 		
 		#endregion
     }

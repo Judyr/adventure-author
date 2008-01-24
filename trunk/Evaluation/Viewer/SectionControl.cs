@@ -16,7 +16,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class SectionControl : UserControl
+    public partial class SectionControl : OptionalWorksheetPartControl
     {        
     	#region Events
     	
@@ -42,57 +42,61 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-    	
-        public SectionControl(string title)
-        {
-            InitializeComponent();
-            SectionTitle = title;
-            if (!WorksheetViewer.DesignerMode) {
-            	DeleteSectionButton.Visibility = Visibility.Collapsed;
-            	//ActiveCheckBox.Visibility = Visibility.Collapsed;
-            }
-        }   
         
-        
-        public SectionControl(Section section) : this(section.Title)
+        public SectionControl(Section section, bool designerMode) 	
         {
+        	if (section == null) {
+        		section = new Section();
+        	}
+        	
+            InitializeComponent();            
+            SectionTitle = section.Title;   
+            
         	foreach (Question question in section.Questions) {
-        		if (WorksheetViewer.DesignerMode || question.Include) {	    			
-		        	QuestionControl qc = new QuestionControl(question.Text);         		
-		        	foreach (Answer answer in question.Answers) {
-		        		if (WorksheetViewer.DesignerMode || answer.Include) {
-		        			qc.AddAnswerField(answer);
-		        		}
-		        	}        	
-		        	AddQuestionControl(qc);
+        		if (WorksheetViewer.DesignerMode || question.Include) {	
+		        	AddQuestionField(question);
         		}
         	}
-        }
+                   
+            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            	ActivateCheckBox.Visibility = Visibility.Visible;
+	    		if (section.Include) {
+	    			ActivationStatus = ControlStatus.Active;
+	    		}
+	    		else {
+	    			ActivationStatus = ControlStatus.Inactive;
+	    		}
+            }
+            else { // hide 'Active?' control, and set status to Not Applicable
+        		ActivationStatus = ControlStatus.NA;
+            }
+        }         
         
         
-        public Section GetSection()
+        private void AddQuestionField(QuestionControl control)
         {
-        	Section section = new Section(SectionTitle);   			
-   			foreach (UIElement element in QuestionsPanel.Children) {
-   				QuestionControl qc = element as QuestionControl;
-   				if (qc != null) {
-   					Question question = qc.GetQuestion();
-   					section.Questions.Add(question);
-   				}
-   			}   			
-   			return section;
-        }
-        
-        
-        private void AddQuestionControl(QuestionControl control)
-        {
+        	if (control == null) {
+        		throw new ArgumentNullException("Can't add a null question field.");
+        	}   
+        	
         	if (QuestionsPanel.Children.Count % 2 == 0) {
         		control.Background = (Brush)Resources["Stripe1Brush"];
         	}
         	else {
         		control.Background = (Brush)Resources["Stripe2Brush"];
-        	}
+        	}         	
         	QuestionsPanel.Children.Add(control);
+        }
+			        
+			
+        public void AddQuestionField(Question question)
+        {
+        	if (question == null) {
+        		throw new ArgumentNullException("Can't add a null question field.");
+        	}
+        	
+        	QuestionControl control = (QuestionControl)question.GetControl(WorksheetViewer.DesignerMode);
+        	AddQuestionField(control);
         }
         
         
@@ -112,6 +116,68 @@ namespace AdventureAuthor.Evaluation.Viewer
         	if (result == MessageBoxResult.OK) {
         		OnDeleting(new DeletingEventArgs(this));
         	}
+        }        
+        
+        
+        private void OnChecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Active;
+        }
+        
+        
+        private void OnUnchecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Inactive;
+        }
+
+        
+    	protected override void Enable()
+    	{    		
+    		ActivatableControl.Enable(this);
+    	}
+    	
+    	
+    	protected override void Activate()
+    	{	
+    		ActivatableControl.Activate(SectionTitleTextBlock);
+    		ActivatableControl.Activate(QuestionsPanel);
+    		ActivatableControl.Enable(ActivateCheckBox);
+    		if ((bool)!ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = true;
+    		}
+    	}
+    	
+        
+    	protected override void Deactivate()
+    	{
+    		ActivatableControl.Deactivate(SectionTitleTextBlock);
+    		ActivatableControl.Deactivate(QuestionsPanel);
+    		ActivatableControl.Enable(ActivateCheckBox);
+    		if ((bool)ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = false;
+    		}
+    	}
+        
+        
+        protected override OptionalWorksheetPart GetWorksheetPartObject()
+        {
+        	Section section = new Section(SectionTitle);   			
+   			foreach (UIElement element in QuestionsPanel.Children) {
+   				QuestionControl qc = element as QuestionControl;
+   				if (qc != null) {
+   					Question question = (Question)qc.GetWorksheetPart();
+   					section.Questions.Add(question);
+   				}
+   			}   			
+   			return section;
+        }
+        
+        
+        protected override List<Control> GetActivationControls()
+        {
+        	List<Control> activationControls = new List<Control>(1);
+        	activationControls.Add(ActivateCheckBox);
+        	return activationControls;
         }
     }
 }

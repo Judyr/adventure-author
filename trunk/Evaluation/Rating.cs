@@ -49,7 +49,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override AnswerControl GetAnswerControl(bool designerMode)
+		public override OptionalWorksheetPartControl GetControl(bool designerMode)
 		{
 			StarRating rating = new StarRating(this,designerMode);			
 			return rating;

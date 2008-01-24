@@ -170,14 +170,14 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		    		
 	    		foreach (Section section in worksheet.Sections) {	    			
 	    			if (DesignerMode || section.Include) {
-			    		SectionControl sectionControl = new SectionControl(section);
+			    		SectionControl sectionControl = new SectionControl(section,WorksheetViewer.DesignerMode);
 			    		sectionControl.Deleting += new EventHandler<DeletingEventArgs>(sectionControl_Deleting);
 			    		AddSection(sectionControl);
 			    		
 			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
 			    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-			    			foreach (AnswerControl answerControl in questionControl.AnswersPanel.Children) {
-			    				answerControl.AnswerChanged += delegate { worksheet_Changed(); };
+			    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
+			    				answerControl.Changed += delegate { worksheet_Changed(); };
 			    				answerControl.Activated += delegate { worksheet_Changed(); };
 			    				answerControl.Deactivated += delegate { worksheet_Changed(); };
 			    			}
@@ -308,7 +308,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (DesignerMode) {
 	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text); 
 		    	foreach (SectionControl sc in SectionsPanel.Children) {
-	    			Section section = sc.GetSection();
+	    			Section section = (Section)sc.GetWorksheetPart();
 		    		ws.Sections.Add(section);
 		    	}
 	    		return ws;
@@ -331,7 +331,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     			foreach (SectionControl sc in SectionsPanel.Children) {
     				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
     					Question question = originalWorksheet.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitle);
-    					Question question2 = qc.GetQuestion();
+    					Question question2 = (Question)qc.GetWorksheetPart();
     					if (question != null && question2 != null) {
     						if (question.Text != question2.Text) {
     							question.Text = question2.Text;

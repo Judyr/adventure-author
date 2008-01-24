@@ -18,21 +18,13 @@ namespace AdventureAuthor.Evaluation
 	[Serializable]
 	[XmlRoot]
 	[XmlInclude(typeof(Rating)), XmlInclude(typeof(Evidence)), XmlInclude(typeof(Comment))]
-	public class Question : IExcludable
-	{			
-		[XmlAttribute]
-		private bool include = true;
-		public bool Include {
-			get { return include; }
-			set { include = value; }
-		}
-		
-		
+	public class Question : OptionalWorksheetPart
+	{				
 		/// <summary>
 		/// The text of this question.
 		/// </summary>
 		[XmlAttribute]
-		private string text;		
+		protected string text;		
 		public string Text {
 			get { return text; }
 			set { text = value; }
@@ -60,6 +52,23 @@ namespace AdventureAuthor.Evaluation
 		public Question(string text) : this()
 		{
 			this.text = text;
+		}
+		
+		
+		public override OptionalWorksheetPartControl GetControl(bool designerMode)
+		{
+			return new QuestionControl(this,designerMode);
+		}
+		
+		
+		public override bool IsBlank()
+		{
+			foreach (Answer answer in answers) {
+				if (!answer.IsBlank()) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }

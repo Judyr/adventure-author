@@ -19,7 +19,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     /// Interaction logic for StarRating.xaml
     /// </summary>
 
-    public partial class StarRating : AnswerControl
+    public partial class StarRating : OptionalWorksheetPartControl
     {    		
     	#region Fields
     	
@@ -135,7 +135,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 	        		}
 	        	}
         		
-        		OnAnswerChanged(new EventArgs());
+        		OnChanged(new EventArgs());
         	}
         }
         
@@ -164,9 +164,17 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
         
-        protected override Answer GetAnswerObject()
+        protected override OptionalWorksheetPart GetWorksheetPartObject()
         {
         	return new Rating(maxStars,SelectedStars);
 		}
+        
+        
+        protected override List<Control> GetActivationControls()
+        {
+        	List<Control> activationControls = new List<Control>(1);
+        	activationControls.Add(ActivateCheckBox);
+        	return activationControls;
+        }
     }
 }

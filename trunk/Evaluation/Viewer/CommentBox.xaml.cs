@@ -1,75 +1,84 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AdventureAuthor.Evaluation.Viewer;
+using System.Collections.Generic;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class CommentBox : AnswerControl
+    public partial class CommentBox : OptionalWorksheetPartControl
     {    	
-        public CommentBox()
-        {
+        public CommentBox(Comment comment, bool designerMode)
+        {    		
+        	if (comment == null) {
+    			comment = new Comment();
+    		}
+    		
             InitializeComponent();
-            CommentTextBox.TextChanged += delegate { OnAnswerChanged(new EventArgs()); };
+            
+            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            	ActivateCheckBox.Visibility = Visibility.Visible;
+	    		if (comment.Include) {
+	    			ActivationStatus = ControlStatus.Active;
+	    		}
+	    		else {
+	    			ActivationStatus = ControlStatus.Inactive;
+	    		}
+            }
+            else { // hide 'Active?' control, and set status to Not Applicable
+        		ActivationStatus = ControlStatus.NA;
+            }
+            
+            CommentTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };
         }
         
         
-        public CommentBox(string text) : this()
+        private void OnChecked(object sender, EventArgs e)
         {
-        	CommentTextBox.Text = text;
+        	ActivationStatus = ControlStatus.Active;
         }
         
         
-        public CommentBox(Comment comment) : this(comment.Value)
-        {        	
+        private void OnUnchecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Inactive;
         }
 
         
     	protected override void Enable()
     	{    		
-//    		if (!StarsPanel.IsEnabled) {
-//    			StarsPanel.IsEnabled = true;
-//    		}
-//    		StarsPanel.Opacity = 1.0f;
+    		ActivatableControl.Enable(CommentPanel);
     	}
     	
     	
     	protected override void Activate()
     	{	
-//    		if (StarsPanel.IsEnabled) {
-//    			StarsPanel.IsEnabled = false;
-//    		}
-//    		if ((bool)!ActivateCheckBox.IsChecked) {
-//    			ActivateCheckBox.IsChecked = true;
-//    		}
-//    		StarsPanel.Opacity = 1.0f;
+    		ActivatableControl.Activate(CommentPanel);
+    		if ((bool)!ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = true;
+    		}
     	}
     	
         
     	protected override void Deactivate()
     	{
-//    		if (StarsPanel.IsEnabled) {
-//    			StarsPanel.IsEnabled = false;
-//    		}
-//    		if ((bool)ActivateCheckBox.IsChecked) {
-//    			ActivateCheckBox.IsChecked = false;
-//    		}
-//    		StarsPanel.Opacity = 0.2f;
+    		ActivatableControl.Deactivate(CommentPanel);
+    		if ((bool)ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = false;
+    		}
     	}
     	
         
-        protected override Answer GetAnswerObject()
+        protected override OptionalWorksheetPart GetWorksheetPartObject()
         {
 			return new Comment(CommentTextBox.Text);
 		}
+        
+        
+        protected override List<Control> GetActivationControls()
+        {
+        	List<Control> activationControls = new List<Control>(1);
+        	activationControls.Add(ActivateCheckBox);
+        	return activationControls;
+        }
     }
 }

@@ -1,11 +1,17 @@
-<local:AnswerControl x:Class="AdventureAuthor.Evaluation.Viewer.CommentBox"
+<local:OptionalWorksheetPartControl x:Class="AdventureAuthor.Evaluation.Viewer.CommentBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer">
-    <StackPanel Orientation="Horizontal">
-		<Label Name="CommentLabel"/>
-		<TextBox Name="CommentTextBox" 
-    	         Width="200" MinHeight="30" Margin="5" Padding="3" TextWrapping="Wrap"
-    			 FontFamily="ComicSans"/>
+	<StackPanel Orientation="Vertical">
+	    <StackPanel Name="CommentPanel" Orientation="Horizontal">
+			<Label Name="CommentLabel" Content="Comment: "
+	    		   FontSize="14" Foreground="Black"/>
+			<TextBox Name="CommentTextBox" 
+	    	         Width="200" MinHeight="30" Margin="5" Padding="3" TextWrapping="Wrap"
+	    			 FontFamily="ComicSans"/>
+		</StackPanel>
+		<CheckBox Name="ActivateCheckBox"
+		    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+				  Margin="8" Visibility="Collapsed" HorizontalAlignment="Right"/>
 	</StackPanel>
-</local:AnswerControl>
+</local:OptionalWorksheetPartControl>

@@ -117,7 +117,23 @@ namespace AdventureAuthor.Evaluation.Viewer
     			element.IsEnabled = false;
     		}
     		element.Opacity = 0.2f;
-		}    	
+		}    
+		
+		
+		protected void SetIncludeStatus(OptionalWorksheetPart part)
+		{
+        	switch (ActivationStatus) {
+        		case ControlStatus.Active:
+        			part.Include = true;
+        			break;
+        		case ControlStatus.Inactive:
+        			part.Include = false;
+        			break;
+        		case ControlStatus.NA:
+        			part.Include = true;
+        			break;
+        	}
+		}
 		
 		#endregion
 	}

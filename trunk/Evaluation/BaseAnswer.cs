@@ -1,0 +1,27 @@
+/*
+ * Created by SharpDevelop.
+ * User: Kirn
+ * Date: 14/01/2008
+ * Time: 12:56
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+
+using System;
+using System.Xml.Serialization;
+using System.Windows;
+using AdventureAuthor.Evaluation.Viewer;
+
+namespace AdventureAuthor.Evaluation
+{
+	[XmlRoot]
+	public abstract class Answer : OptionalWorksheetPart
+	{	
+		[XmlElement]
+		protected string val;		
+		public string Value {
+			get { return val; }
+			set { val = value; }
+		}
+	}
+}
