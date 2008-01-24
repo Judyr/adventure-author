@@ -14,6 +14,7 @@ using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation
 {
+	[XmlRoot]
 	public abstract class Answer : IExcludable
 	{	
 		[XmlAttribute]
@@ -32,6 +33,9 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public abstract IAnswerControl GetAnswerControl();
+		public abstract IAnswerControl GetAnswerControl(bool designerMode);
+		
+		
+		public abstract bool IsBlank();
 	}
 }

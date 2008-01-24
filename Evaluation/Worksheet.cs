@@ -139,7 +139,7 @@ namespace AdventureAuthor.Evaluation
 			foreach (Section section in sections) {
 				foreach (Question question in section.Questions) {
 					foreach (Answer answer in question.Answers) {
-						if (answer.Value != null && answer.Value != String.Empty) {
+						if (!answer.IsBlank()) {
 							return false;
 						}
 					}

@@ -3,11 +3,12 @@
 <!--Wonky star: Points="13,0 19,9 29,8 20,15 23,25 14,20 7,25 8,15 0,8 9,8"
 	Exact star: Points="13,0 17,9 26,9 19,15 24,24 13,19 2,24 7,15 0,9 9,9"-->
 
-<UserControl
+<local:ActivatableControl 
 	x:Class="AdventureAuthor.Evaluation.Viewer.StarRating" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	Height="32" Width="200" Margin="5">
+	xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer"
+	Width="200" Margin="5">
 	<UserControl.Resources>
 		<LinearGradientBrush x:Key="GoldBrush" StartPoint="0,0" EndPoint="1,1">
 			<GradientStop Offset="0" Color="Yellow"/>
@@ -41,5 +42,11 @@
 			</ControlTemplate.Triggers>
 		</ControlTemplate>
 	</UserControl.Resources>
-	<StackPanel Name="StarsPanel" Orientation="Horizontal" Grid.Row="0" Grid.Column="1"/>
-</UserControl>
+	<StackPanel Orientation="Vertical">
+		<StackPanel Name="StarsPanel"
+					Orientation="Horizontal"/>
+		<CheckBox Name="ActivateCheckBox"
+		    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+				  Margin="8" Visibility="Collapsed" VerticalAlignment="Right"/>
+	</StackPanel>
+</local:ActivatableControl>

@@ -28,7 +28,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	
     	#region Fields
-    	
+    	    	
     	private string filename;    	
 		public string Filename {
 			get { return filename; }
@@ -108,25 +108,16 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
 		    	
     	#region Constructors
-		
-        public EvidenceControl()
-        {
-            InitializeComponent();
-            Filename = null;
-        }
-
-        
-        public EvidenceControl(string location)
-        {
-            InitializeComponent();
-        	Filename = location;
-        }
-        
-        
+    			
         public EvidenceControl(Evidence evidence)
         {        
             InitializeComponent();
-        	Filename = evidence.Value;
+            if (evidence == null) {
+            	Filename = null;
+            }
+            else {
+            	Filename = evidence.Value;
+            }
         }
         
         #endregion

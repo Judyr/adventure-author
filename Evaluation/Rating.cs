@@ -27,9 +27,8 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Rating()
+		public Rating() : this(5)
 		{	
-			this.max = 5;
 		}
 		
 		
@@ -50,9 +49,16 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IAnswerControl GetAnswerControl()
+		public override IAnswerControl GetAnswerControl(bool designerMode)
 		{
-			return new StarRating(this);
+			StarRating rating = new StarRating(this,designerMode);			
+			return rating;
+		}
+		
+		
+		public override bool IsBlank()
+		{
+			return Value == null || Value == String.Empty || Value == "0";
 		}
 	}
 }

@@ -81,7 +81,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		InitializeComponent();
     		this.Closing += new CancelEventHandler(WorksheetWindow_Closing);
     		EvaluationOptions.ChangedDefaultImageApplication += 
-    			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);
+    			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);    		    			
     		designerMode = UseDesignerMode;
     		
     		// Edit worksheet titles in designer mode only; fill in name and date in working mode only
@@ -134,7 +134,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    	
     	#region Methods
     	
-    	public void Open(Worksheet worksheet)
+    	/// <summary>
+    	/// Open a worksheet.
+    	/// </summary>
+    	/// <param name="worksheet">The worksheet to open</param>
+    	/// <param name="sourceFilename">The filename this worksheet was deserialized from,
+    	/// or null if the worksheet was created in code</param>
+    	private void Open(Worksheet worksheet, string sourceFilename)
     	{
     		CloseWorksheetDialog();
     		
@@ -152,6 +158,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     				return;
     			}    			
     		}
+    		else {
+    			Filename = sourceFilename;
+    		}
     		
     		try {
 	    		originalWorksheet = worksheet;
@@ -162,6 +171,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		foreach (Section section in worksheet.Sections) {	    			
 	    			if (DesignerMode || section.Include) {
 			    		SectionControl sectionControl = new SectionControl(section);
+			    		sectionControl.Deleting += new EventHandler<DeletingEventArgs>(sectionControl_Deleting);
 			    		AddSection(sectionControl);
 			    		
 			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
@@ -174,9 +184,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
 	    		
 	    		// 'Seal off' the very end of the worksheet with a border:
-	    		if (EvaluationSectionsPanel.Children.Count > 0) {
+	    		if (SectionsPanel.Children.Count > 0) {
 		    		SectionControl finalSectionControl = 
-		    			(SectionControl)EvaluationSectionsPanel.Children[EvaluationSectionsPanel.Children.Count-1];
+		    			(SectionControl)SectionsPanel.Children[SectionsPanel.Children.Count-1];
 	    			finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
 	    		}
 	    		
@@ -204,6 +214,19 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	} 
 
+    	
+    	private void sectionControl_Deleting(object sender, DeletingEventArgs e)
+    	{
+    		if (SectionsPanel.Children.Contains(e.SectionControl)) {
+    			SectionsPanel.Children.Remove(e.SectionControl);
+    		}
+    		else {
+    			throw new InvalidOperationException("Received instruction to delete a section control " + 
+    			                                    "( " + e.SectionControl.SectionTitle + ") that was not " +
+    			                                    "a part of this worksheet.");
+    		}
+    	}
+
     	    	
     	public void Open(string filename)
     	{
@@ -215,8 +238,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		try {
 	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(Worksheet));
 	    		Worksheet worksheet = (Worksheet)o;
-	    		Open(worksheet);
-	    		this.Filename = filename;
+	    		Open(worksheet,filename);
     		}
     		catch (Exception e) {
     			Say.Error("The selected file was not a valid worksheet.",e);
@@ -228,12 +250,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void AddSection(SectionControl sectionControl)
     	{
-    		foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
+    		foreach (SectionControl sc in SectionsPanel.Children) {
     			if (sc.SectionTitle == sectionControl.SectionTitle) {
     				throw new ArgumentException("Cannot add more than one section with the title " + sc.SectionTitle + ".");
     			}
     		}
-    		EvaluationSectionsPanel.Children.Add(sectionControl);
+    		SectionsPanel.Children.Add(sectionControl);
     	}
     	
     	
@@ -268,7 +290,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    TitleField.Visibility = Visibility.Hidden;
 	    	NameField.Visibility = Visibility.Hidden;
 		    DateField.Visibility = Visibility.Hidden;
-    		EvaluationSectionsPanel.Children.Clear();
+    		SectionsPanel.Children.Clear();
     		
     		dirty = false;
     	}
@@ -280,15 +302,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     	/// <returns>A worksheet object, or null if no worksheet is open</returns>
     	public Worksheet GetWorksheet()
     	{
-    		if (originalWorksheet == null) {
-    			return null;
-    		}
-    		
     		Worksheet ws;
     		if (DesignerMode) {
 	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text); 
-		    	foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
-		    		ws.Sections.Add(sc.GetSection());
+		    	foreach (SectionControl sc in SectionsPanel.Children) {
+	    			Section section = sc.GetSection();
+		    		ws.Sections.Add(section);
 		    	}
 	    		return ws;
     		}
@@ -307,7 +326,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     				ws.Date = DateField.Text;
     			}
     			
-    			foreach (SectionControl sc in EvaluationSectionsPanel.Children) {
+    			foreach (SectionControl sc in SectionsPanel.Children) {
     				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
     					Question question = originalWorksheet.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitle);
     					Question question2 = qc.GetQuestion();
@@ -324,21 +343,19 @@ namespace AdventureAuthor.Evaluation.Viewer
     							}
     						}
     					}
-    					else {
-    					}
     				}
     			}
     		}
     		return ws;
     	}
-    	
+    	    	
     	#endregion
     	    	
     	#region Event handlers
     	
     	private void OnClick_New(object sender, EventArgs e)
     	{
-    		Open(new Worksheet());
+    		Open(new Worksheet(),null);
     	}
     	
     	

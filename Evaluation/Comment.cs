@@ -33,9 +33,15 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IAnswerControl GetAnswerControl()
+		public override IAnswerControl GetAnswerControl(bool designerMode)
 		{
 			return new CommentBox(this);
+		}
+		
+		
+		public override bool IsBlank()
+		{
+			return Value == null || Value == String.Empty;
 		}
 	}
 }

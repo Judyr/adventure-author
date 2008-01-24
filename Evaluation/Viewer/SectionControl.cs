@@ -17,7 +17,22 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class SectionControl : UserControl
-    {
+    {        
+    	#region Events
+    	
+    	public event EventHandler<DeletingEventArgs> Deleting;  
+    	
+		protected virtual void OnDeleting(DeletingEventArgs e)
+		{
+			EventHandler<DeletingEventArgs> handler = Deleting;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+    	
+    	#endregion
+    	
+    	
     	public string SectionTitle {
     		get {    			
 	   			return SectionTitleTextBlock.Text;
@@ -32,6 +47,10 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
             InitializeComponent();
             SectionTitle = title;
+            if (!WorksheetViewer.DesignerMode) {
+            	DeleteSectionButton.Visibility = Visibility.Collapsed;
+            	//ActiveCheckBox.Visibility = Visibility.Collapsed;
+            }
         }   
         
         
@@ -57,7 +76,8 @@ namespace AdventureAuthor.Evaluation.Viewer
    			foreach (UIElement element in QuestionsPanel.Children) {
    				QuestionControl qc = element as QuestionControl;
    				if (qc != null) {
-   					section.Questions.Add(qc.GetQuestion());
+   					Question question = qc.GetQuestion();
+   					section.Questions.Add(question);
    				}
    			}   			
    			return section;
@@ -73,6 +93,25 @@ namespace AdventureAuthor.Evaluation.Viewer
         		control.Background = (Brush)Resources["Stripe2Brush"];
         	}
         	QuestionsPanel.Children.Add(control);
+        }
+        
+        
+        private void OnClick_DeleteSection(object sender, EventArgs e)
+        {
+        	if (!WorksheetViewer.DesignerMode) {
+        		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
+        	}
+        	
+        	MessageBoxResult result = MessageBox.Show("This section contains " + QuestionsPanel.Children.Count +
+        	                                          " questions - are you sure you want to permanently delete it?",
+        	                                          "Delete section?",
+        	                                          MessageBoxButton.OKCancel,
+        	                                          MessageBoxImage.Warning,
+        	                                          MessageBoxResult.Cancel,
+        	                                          MessageBoxOptions.None);
+        	if (result == MessageBoxResult.OK) {
+        		OnDeleting(new DeletingEventArgs(this));
+        	}
         }
     }
 }

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace AdventureAuthor.Evaluation.Viewer
+namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
 	/// Description of IExcludable.
