@@ -33,7 +33,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IAnswerControl GetAnswerControl(bool designerMode)
+		public override AnswerControl GetAnswerControl(bool designerMode)
 		{
 			return new CommentBox(this);
 		}

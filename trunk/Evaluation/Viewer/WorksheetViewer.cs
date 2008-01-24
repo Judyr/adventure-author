@@ -176,8 +176,10 @@ namespace AdventureAuthor.Evaluation.Viewer
 			    		
 			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
 			    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-			    			foreach (IAnswerControl answerControl in questionControl.AnswersPanel.Children) {
-			    				answerControl.AnswerChanged += delegate { worksheet_AnswerChanged(); };
+			    			foreach (AnswerControl answerControl in questionControl.AnswersPanel.Children) {
+			    				answerControl.AnswerChanged += delegate { worksheet_Changed(); };
+			    				answerControl.Activated += delegate { worksheet_Changed(); };
+			    				answerControl.Deactivated += delegate { worksheet_Changed(); };
 			    			}
 			    		}
 	    			}
@@ -190,9 +192,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
 	    		}
 	    		
-	    		DateField.TextChanged += delegate { worksheet_AnswerChanged(); };
-	    		NameField.TextChanged += delegate { worksheet_AnswerChanged(); };
-	    		TitleField.TextChanged += delegate { worksheet_AnswerChanged(); };
+	    		DateField.TextChanged += delegate { worksheet_Changed(); };
+	    		NameField.TextChanged += delegate { worksheet_Changed(); };
+	    		TitleField.TextChanged += delegate { worksheet_Changed(); };
 	    		TitleLabel.Visibility = Visibility.Visible;
 	    		NameLabel.Visibility = Visibility.Visible;
 	    		DateLabel.Visibility = Visibility.Visible;
@@ -498,7 +500,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	
-    	private void worksheet_AnswerChanged()
+    	private void worksheet_Changed()
     	{
     		if (!Dirty) {
     			Dirty = true;

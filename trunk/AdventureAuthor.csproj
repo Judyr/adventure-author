@@ -248,6 +248,7 @@
     <Compile Include="Evaluation\Section.cs" />
     <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
+    <Compile Include="Evaluation\Viewer\AnswerControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentBox.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>CommentBox.xaml</DependentUpon>
@@ -258,7 +259,6 @@
       <SubType>Code</SubType>
       <DependentUpon>EvidenceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\IAnswerControl.cs" />
     <Compile Include="Evaluation\Viewer\QuestionControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>

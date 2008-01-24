@@ -33,7 +33,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public abstract IAnswerControl GetAnswerControl(bool designerMode);
+		public abstract AnswerControl GetAnswerControl(bool designerMode);
 		
 		
 		public abstract bool IsBlank();

@@ -14,38 +14,8 @@ using AdventureAuthor.Evaluation.Viewer;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class CommentBox : IAnswerControl
+    public partial class CommentBox : AnswerControl
     {    	
-    	#region Events
-    	
-    	public event EventHandler AnswerChanged;  
-    	
-		protected virtual void OnAnswerChanged(EventArgs e)
-		{
-			EventHandler handler = AnswerChanged;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-    	
-    	#endregion
-		
-
-    	private bool isActive;    	
-		public bool IsActive {
-			get { return isActive; }
-			set { 
-				isActive = value;
-				if (isActive) {
-					Opacity = 1.0f;
-				}
-				else {
-					Opacity = 0.2f;
-				}
-			}
-		}
-    	
-    	
         public CommentBox()
         {
             InitializeComponent();
@@ -64,7 +34,40 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
 
         
-        public Answer GetAnswer()
+    	protected override void Enable()
+    	{    		
+//    		if (!StarsPanel.IsEnabled) {
+//    			StarsPanel.IsEnabled = true;
+//    		}
+//    		StarsPanel.Opacity = 1.0f;
+    	}
+    	
+    	
+    	protected override void Activate()
+    	{	
+//    		if (StarsPanel.IsEnabled) {
+//    			StarsPanel.IsEnabled = false;
+//    		}
+//    		if ((bool)!ActivateCheckBox.IsChecked) {
+//    			ActivateCheckBox.IsChecked = true;
+//    		}
+//    		StarsPanel.Opacity = 1.0f;
+    	}
+    	
+        
+    	protected override void Deactivate()
+    	{
+//    		if (StarsPanel.IsEnabled) {
+//    			StarsPanel.IsEnabled = false;
+//    		}
+//    		if ((bool)ActivateCheckBox.IsChecked) {
+//    			ActivateCheckBox.IsChecked = false;
+//    		}
+//    		StarsPanel.Opacity = 0.2f;
+    	}
+    	
+        
+        protected override Answer GetAnswerObject()
         {
 			return new Comment(CommentTextBox.Text);
 		}

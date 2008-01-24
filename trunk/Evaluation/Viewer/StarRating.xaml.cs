@@ -19,23 +19,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     /// Interaction logic for StarRating.xaml
     /// </summary>
 
-    public partial class StarRating : ActivatableControl, IAnswerControl
-    {    	
-    	#region Events
-    	
-    	public event EventHandler AnswerChanged;  
-    	
-		protected virtual void OnAnswerChanged(EventArgs e)
-		{
-			EventHandler handler = AnswerChanged;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-    	
-    	#endregion
-    	
-		
+    public partial class StarRating : AnswerControl
+    {    		
     	#region Fields
     	
     	private int maxStars;    	
@@ -52,7 +37,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	public StarRating(Rating rating, bool designerMode)
         {
     		if (rating == null) {
-    			throw new ArgumentException("Cannot construct a star rating from a null rating.");
+    			rating = new Rating();
     		}
     		
             InitializeComponent();
@@ -157,54 +142,31 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	protected override void Enable()
     	{    		
-    		if (!StarsPanel.IsEnabled) {
-    			StarsPanel.IsEnabled = true;
-    		}
-    		StarsPanel.Opacity = 1.0f;
+    		ActivatableControl.Enable(StarsPanel);
     	}
     	
     	
     	protected override void Activate()
     	{	
-    		if (StarsPanel.IsEnabled) {
-    			StarsPanel.IsEnabled = false;
-    		}
+    		ActivatableControl.Activate(StarsPanel);
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
-    		StarsPanel.Opacity = 1.0f;
     	}
     	
         
     	protected override void Deactivate()
     	{
-    		if (StarsPanel.IsEnabled) {
-    			StarsPanel.IsEnabled = false;
-    		}
+    		ActivatableControl.Deactivate(StarsPanel);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
-    		StarsPanel.Opacity = 0.2f;
     	}
     	
         
-        public Answer GetAnswer()
+        protected override Answer GetAnswerObject()
         {
-        	Rating rating = new Rating(maxStars,SelectedStars);
-        	
-        	switch (this.ActivationStatus) {
-        		case ControlStatus.Active:
-        			rating.Include = true;
-        			break;
-        		case ControlStatus.Inactive:
-        			rating.Include = false;
-        			break;
-        		case ControlStatus.NA:
-        			rating.Include = true;
-        			break;
-        	}
-        	        	
-        	return rating;
+        	return new Rating(maxStars,SelectedStars);
 		}
     }
 }
