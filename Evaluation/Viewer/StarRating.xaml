@@ -3,7 +3,7 @@
 <!--Wonky star: Points="13,0 19,9 29,8 20,15 23,25 14,20 7,25 8,15 0,8 9,8"
 	Exact star: Points="13,0 17,9 26,9 19,15 24,24 13,19 2,24 7,15 0,9 9,9"-->
 
-<local:AnswerControl 
+<local:OptionalWorksheetPartControl 
 	x:Class="AdventureAuthor.Evaluation.Viewer.StarRating" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -49,4 +49,4 @@
 		    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
 				  Margin="8" Visibility="Collapsed" HorizontalAlignment="Right"/>
 	</StackPanel>
-</local:AnswerControl>
+</local:OptionalWorksheetPartControl>

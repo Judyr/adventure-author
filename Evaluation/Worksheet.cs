@@ -134,19 +134,14 @@ namespace AdventureAuthor.Evaluation
 		{
 			if ((Name != null && Name != String.Empty) || (Date != null && Date != String.Empty)) {
 				return false;
-			}
+			}			
 			
 			foreach (Section section in sections) {
-				foreach (Question question in section.Questions) {
-					foreach (Answer answer in question.Answers) {
-						if (!answer.IsBlank()) {
-							return false;
-						}
-					}
+				if (!section.IsBlank()) {
+					return false;
 				}
 			}
-			
-			return true;
+			return true;		
 		}
 		
 		#endregion

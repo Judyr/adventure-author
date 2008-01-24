@@ -20,22 +20,14 @@ namespace AdventureAuthor.Evaluation
 	/// </summary>
 	[Serializable]
 	[XmlRoot]
-	public class Section : IExcludable
-	{	
+	public class Section : OptionalWorksheetPart
+	{					
 		[XmlAttribute]
-		private bool include = true;
-		public bool Include {
-			get { return include; }
-			set { include = value; }
-		}
-		
-		
-		[XmlAttribute]
-		private string title;		
+		protected string title;		
 		public string Title {
 			get { return title; }
 			set { title = value; }
-		}
+		}	
 		
 		
 		[XmlArray]
@@ -46,14 +38,31 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		public Section()
-		{			
-			questions = new List<Question>();
+		{
+			questions = new List<Question>();			
 		}
 		
 		
 		public Section(string title) : this()
+		{			
+			Title = title;
+		}
+						
+		
+		public override OptionalWorksheetPartControl GetControl(bool designerMode)
 		{
-			this.title = title;
+			return new SectionControl(this,designerMode);
+		}
+		
+		
+		public override bool IsBlank()
+		{
+			foreach (Question question in questions) {
+				if (!question.IsBlank()) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }
