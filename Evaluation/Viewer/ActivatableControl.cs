@@ -92,6 +92,33 @@ namespace AdventureAuthor.Evaluation.Viewer
 		protected abstract void Activate();		
 		protected abstract void Deactivate();
 		
+		
+		protected static void Enable(UIElement element)
+		{		
+    		if (!element.IsEnabled) {
+    			element.IsEnabled = true;
+    		}
+    		element.Opacity = 1.0f;
+		}
+		
+		
+		protected static void Activate(UIElement element)
+		{
+    		if (element.IsEnabled) {
+    			element.IsEnabled = false;
+    		}
+    		element.Opacity = 1.0f;
+		}
+		
+		
+		protected static void Deactivate(UIElement element)
+		{
+    		if (element.IsEnabled) {
+    			element.IsEnabled = false;
+    		}
+    		element.Opacity = 0.2f;
+		}    	
+		
 		#endregion
 	}
 }

@@ -49,7 +49,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override IAnswerControl GetAnswerControl(bool designerMode)
+		public override AnswerControl GetAnswerControl(bool designerMode)
 		{
 			StarRating rating = new StarRating(this,designerMode);			
 			return rating;

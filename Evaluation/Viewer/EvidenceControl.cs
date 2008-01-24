@@ -17,7 +17,7 @@ using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class EvidenceControl : UserControl, IAnswerControl
+    public partial class EvidenceControl : AnswerControl
     {    	
     	#region Constants
     	
@@ -92,26 +92,30 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	#endregion
-    	    	
-    	#region Events
-    	
-    	public event EventHandler AnswerChanged;  
-    	
-		protected virtual void OnAnswerChanged(EventArgs e)
-		{
-			EventHandler handler = AnswerChanged;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-    	
-    	#endregion
-		    	
+    	    			    	
     	#region Constructors
     			
-        public EvidenceControl(Evidence evidence)
+        public EvidenceControl(Evidence evidence, bool designerMode)
         {        
+    		if (evidence == null) {
+        		evidence = new Evidence();
+    		}
+    		
             InitializeComponent();
+            
+            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            	ActivateCheckBox.Visibility = Visibility.Visible;
+	    		if (evidence.Include) {
+	    			ActivationStatus = ControlStatus.Active;
+	    		}
+	    		else {
+	    			ActivationStatus = ControlStatus.Inactive;
+	    		}
+            }
+            else { // hide 'Active?' control, and set status to Not Applicable
+        		ActivationStatus = ControlStatus.NA;
+            }
+            
             if (evidence == null) {
             	Filename = null;
             }
@@ -233,12 +237,48 @@ namespace AdventureAuthor.Evaluation.Viewer
 				Filename = String.Empty;				
 			}
 		}
+        
+        
+        private void OnChecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Active;
+        }
+        
+        
+        private void OnUnchecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Inactive;
+        }
 		
 		#endregion
 				
 		#region Methods
 		
-		public Answer GetAnswer() 
+    	protected override void Enable()
+    	{    		
+    		ActivatableControl.Enable(ButtonsPanel);
+    	}
+    	
+    	
+    	protected override void Activate()
+    	{	
+    		ActivatableControl.Activate(ButtonsPanel);
+    		if ((bool)!ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = true;
+    		}
+    	}
+    	
+        
+    	protected override void Deactivate()
+    	{
+    		ActivatableControl.Deactivate(ButtonsPanel);
+    		if ((bool)ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = false;
+    		}
+    	}
+    	
+        
+        protected override Answer GetAnswerObject()
 		{
 			return new Evidence(filename);
 		}

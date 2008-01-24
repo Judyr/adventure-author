@@ -1,17 +1,9 @@
-<UserControl x:Class="AdventureAuthor.Evaluation.Viewer.EvidenceControl"
+<local:AnswerControl x:Class="AdventureAuthor.Evaluation.Viewer.EvidenceControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:evalviewer="clr-namespace:AdventureAuthor.Evaluation.Viewer">
-	<Grid Name="MainGrid">
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-	    <StackPanel Name="MainControl" Grid.Row="0" Grid.Column="0" 
-		            Orientation="Horizontal">
+    xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer">
+	<StackPanel Orientation="Vertical">
+	    <StackPanel Name="ButtonsPanel" Orientation="Horizontal">
 			<Button Name="ViewLink" Click="OnClick_ViewEvidence" 
 	    	        Height="30" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ViewLinkText" 
@@ -29,5 +21,8 @@
 				           Text="Clear" FontSize="12" TextDecorations="Underline" Foreground="Black" Background="Transparent"/>
 	    	</Button>
 	    </StackPanel>
-	 </Grid>
-</UserControl>
+		<CheckBox Name="ActivateCheckBox"
+			    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+					  Margin="8" Visibility="Collapsed" HorizontalAlignment="Right"/>
+	</StackPanel>
+</local:AnswerControl>
