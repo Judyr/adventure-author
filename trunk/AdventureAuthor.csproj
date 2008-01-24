@@ -242,24 +242,23 @@
     <Compile Include="Evaluation\Answer.cs" />
     <Compile Include="Evaluation\Comment.cs" />
     <Compile Include="Evaluation\Evidence.cs" />
+    <Compile Include="Evaluation\IExcludable.cs" />
     <Compile Include="Evaluation\Question.cs" />
     <Compile Include="Evaluation\Rating.cs" />
     <Compile Include="Evaluation\Section.cs" />
-    <Compile Include="Evaluation\Viewer\ActivatedAnswerControl.xaml.cs">
-      <DependentUpon>ActivatedAnswerControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
+    <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\CommentBox.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>CommentBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Evaluation\Viewer\DeletingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\EvaluationOptions.cs" />
     <Compile Include="Evaluation\Viewer\EvidenceControl.cs">
       <SubType>Code</SubType>
       <DependentUpon>EvidenceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Evaluation\Viewer\IAnswerControl.cs" />
-    <Compile Include="Evaluation\Viewer\IExcludable.cs" />
     <Compile Include="Evaluation\Viewer\QuestionControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>
@@ -422,7 +421,6 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
-    <Page Include="Evaluation\Viewer\ActivatedAnswerControl.xaml" />
     <Page Include="Evaluation\Viewer\CommentBox.xaml" />
     <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />

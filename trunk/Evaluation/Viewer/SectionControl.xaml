@@ -16,9 +16,22 @@
 			</Grid.ColumnDefinitions>    	
 			<Border Grid.Row="0" Grid.Column="0" 
 			        BorderThickness="0,0,0,2" BorderBrush="Black">
-	    		<TextBlock Name="SectionTitleTextBlock"
-				       	   FontSize="20" Background="LightGreen"
-					   	   VerticalAlignment="Center"/>
+				<Grid Background="LightGreen">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+		    		<TextBlock Name="SectionTitleTextBlock" Grid.Row="0" Grid.Column="0"
+					       	   FontSize="20" VerticalAlignment="Center"/>
+					<Grid Grid.Row="0" Grid.Column="1">
+						<Button Name="DeleteSectionButton" 
+						        Content="Delete" Click="OnClick_DeleteSection"
+							   	VerticalAlignment="Center" HorizontalAlignment="Right"/>
+					</Grid>
+				</Grid>
 			</Border>
     		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"/>    	
     	</Grid>

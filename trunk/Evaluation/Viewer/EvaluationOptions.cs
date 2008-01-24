@@ -15,7 +15,22 @@ namespace AdventureAuthor.Evaluation.Viewer
 	/// Description of EvaluationOptions.
 	/// </summary>
 	public static class EvaluationOptions
-	{
+	{		
+		#region Events
+		
+		public static event EventHandler ChangedDefaultImageApplication;
+		
+		private static void OnChangedDefaultImageApplication(EventArgs e) 
+		{
+			EventHandler handler = ChangedDefaultImageApplication;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		
+		#endregion 
+		
+		
 		public enum ImageApps {
 			MicrosoftPaint,
 			Default
@@ -29,16 +44,5 @@ namespace AdventureAuthor.Evaluation.Viewer
 				OnChangedDefaultImageApplication(new EventArgs());
 			}
 		}
-		
-		public static event EventHandler ChangedDefaultImageApplication;
-		
-		private static void OnChangedDefaultImageApplication(EventArgs e) 
-		{
-			EventHandler handler = ChangedDefaultImageApplication;
-			if (handler != null) {
-				handler(null,e);
-			}
-		}
-		
 	}
 }

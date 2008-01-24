@@ -4,15 +4,18 @@
     <Grid>
     	<Grid.RowDefinitions>
     		<RowDefinition/>
+    		<RowDefinition/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="400"/>
     		<ColumnDefinition/>
+    		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
 	
-		<TextBlock Name="QuestionTitle" Grid.Row="0" Grid.Column="0" 
-    	           FontSize="14" Margin="3" Padding="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
-		<StackPanel Name="AnswersPanel" Grid.Row="0" Grid.Column="1"
+		<TextBlock Name="QuestionTitle" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+	    	       FontSize="14" Margin="3" Padding="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
+    	
+		<StackPanel Name="AnswersPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
 					Orientation="Horizontal" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

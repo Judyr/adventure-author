@@ -46,7 +46,7 @@
 		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"/>
 		    	</StackPanel>			
-	    		<StackPanel Name="EvaluationSectionsPanel" Orientation="Vertical"/>
+	    		<StackPanel Name="SectionsPanel" Orientation="Vertical"/>
 			</StackPanel>
 		</ScrollViewer>
 		<StackPanel Grid.Row="2" Grid.Column="0">

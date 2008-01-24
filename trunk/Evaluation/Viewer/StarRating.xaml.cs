@@ -19,7 +19,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     /// Interaction logic for StarRating.xaml
     /// </summary>
 
-    public partial class StarRating : UserControl, IAnswerControl
+    public partial class StarRating : ActivatableControl, IAnswerControl
     {    	
     	#region Events
     	
@@ -44,36 +44,44 @@ namespace AdventureAuthor.Evaluation.Viewer
 		}
     	
     	#endregion
+                
     	
-    	public StarRating() : this(5)
-    	{
-        }
+    	#region Constructors
         
         
-        public StarRating(int max)
+    	public StarRating(Rating rating, bool designerMode)
         {
+    		if (rating == null) {
+    			throw new ArgumentException("Cannot construct a star rating from a null rating.");
+    		}
+    		
             InitializeComponent();
-            LoadStars(max);
-        }
-        
-        
-        public StarRating(Rating rating)
-        {
-        	if (rating == null) {
-        		throw new ArgumentNullException("Cannot operate on a null Rating.");
-        	}
-        	InitializeComponent();
-        	LoadStars(rating.Max);
-        	
+            LoadStars(rating.Max);
+            
+            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            	ActivateCheckBox.Visibility = Visibility.Visible;
+	    		if (rating.Include) {
+	    			ActivationStatus = ControlStatus.Active;
+	    		}
+	    		else {
+	    			ActivationStatus = ControlStatus.Inactive;
+	    		}
+            }
+            else { // hide 'Active?' control, and set status to Not Applicable
+        		ActivationStatus = ControlStatus.NA;
+            }
         	try {
 	        	int ratingValue = int.Parse(rating.Value);
 	        	SelectedStars = ratingValue;
         	}
 			catch (Exception) {
-				Say.Debug(rating.Value + " is not a valid numerical rating.");
+    			Say.Debug(rating.Value + " is not a valid numerical rating.");
 				SelectedStars = 0;
         	}
         }
+    	
+    	
+    	#endregion
         
         
         private void LoadStars(int stars)
@@ -96,6 +104,18 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
         	UIElement element = (UIElement)sender;
 	        SelectedStars = StarsPanel.Children.IndexOf(element) + 1;
+        }
+        
+        
+        private void OnChecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Active;
+        }
+        
+        
+        private void OnUnchecked(object sender, EventArgs e)
+        {
+        	ActivationStatus = ControlStatus.Inactive;
         }
            
         
@@ -133,11 +153,58 @@ namespace AdventureAuthor.Evaluation.Viewer
         		OnAnswerChanged(new EventArgs());
         	}
         }
+        
+    	
+    	protected override void Enable()
+    	{    		
+    		if (!StarsPanel.IsEnabled) {
+    			StarsPanel.IsEnabled = true;
+    		}
+    		StarsPanel.Opacity = 1.0f;
+    	}
+    	
+    	
+    	protected override void Activate()
+    	{	
+    		if (StarsPanel.IsEnabled) {
+    			StarsPanel.IsEnabled = false;
+    		}
+    		if ((bool)!ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = true;
+    		}
+    		StarsPanel.Opacity = 1.0f;
+    	}
+    	
+        
+    	protected override void Deactivate()
+    	{
+    		if (StarsPanel.IsEnabled) {
+    			StarsPanel.IsEnabled = false;
+    		}
+    		if ((bool)ActivateCheckBox.IsChecked) {
+    			ActivateCheckBox.IsChecked = false;
+    		}
+    		StarsPanel.Opacity = 0.2f;
+    	}
     	
         
         public Answer GetAnswer()
         {
-        	return new Rating(maxStars,SelectedStars);
+        	Rating rating = new Rating(maxStars,SelectedStars);
+        	
+        	switch (this.ActivationStatus) {
+        		case ControlStatus.Active:
+        			rating.Include = true;
+        			break;
+        		case ControlStatus.Inactive:
+        			rating.Include = false;
+        			break;
+        		case ControlStatus.NA:
+        			rating.Include = true;
+        			break;
+        	}
+        	        	
+        	return rating;
 		}
     }
 }
