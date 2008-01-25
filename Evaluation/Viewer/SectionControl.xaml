@@ -18,23 +18,15 @@
     		<StackPanel Name="QuestionsPanel" Grid.Row="1" Grid.Column="0"/>    	
 			<Border Grid.Row="0" Grid.Column="0" 
 			        BorderThickness="0,0,0,2" BorderBrush="Black">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+				<StackPanel Orientation="Horizontal"
+							Background="LightGreen">
 		    		<TextBlock Name="SectionTitleTextBlock" Grid.Row="0" Grid.Column="0"
-					       	   FontSize="20" VerticalAlignment="Center" Background="LightGreen"/>
-					<Grid Grid.Row="0" Grid.Column="1"
-						  Background="LightGreen">
-						<CheckBox Name="ActivateCheckBox"
-						    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-								  Margin="8" Visibility="Collapsed" HorizontalAlignment="Right"/>
-					</Grid>
-				</Grid>
+					       	   FontSize="20" VerticalAlignment="Center" />						
+					<CheckBox Name="ActivateCheckBox"
+						      Height="65" Width="65"
+						      IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+							  Margin="8" Visibility="Collapsed" VerticalAlignment="Center"/>
+				</StackPanel>
 			</Border>  	
     	</Grid>
 	</Border>

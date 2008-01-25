@@ -35,7 +35,7 @@ namespace AdventureAuthor.Evaluation
 		
 		public override OptionalWorksheetPartControl GetControl(bool designerMode)
 		{
-			return new CommentBox(this,designerMode);
+			return new CommentControl(this,designerMode);
 		}
 		
 		

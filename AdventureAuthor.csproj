@@ -239,7 +239,7 @@
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Evaluation\BaseAnswer.cs" />
+    <Compile Include="Evaluation\Answer.cs" />
     <Compile Include="Evaluation\Comment.cs" />
     <Compile Include="Evaluation\Evidence.cs" />
     <Compile Include="Evaluation\Question.cs" />
@@ -249,9 +249,9 @@
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\AnswerControl.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
-    <Compile Include="Evaluation\Viewer\CommentBox.xaml.cs">
+    <Compile Include="Evaluation\Viewer\CommentControl.cs">
       <SubType>Code</SubType>
-      <DependentUpon>CommentBox.xaml</DependentUpon>
+      <DependentUpon>CommentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Evaluation\Viewer\DeletingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\EvaluationOptions.cs" />
@@ -267,9 +267,9 @@
       <SubType>Code</SubType>
       <DependentUpon>SectionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\StarRating.xaml.cs">
+    <Compile Include="Evaluation\Viewer\RatingControl.xaml.cs">
       <SubType>Code</SubType>
-      <DependentUpon>StarRating.xaml</DependentUpon>
+      <DependentUpon>RatingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Evaluation\Viewer\WorksheetViewer.cs">
       <SubType>Code</SubType>
@@ -422,11 +422,11 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
-    <Page Include="Evaluation\Viewer\CommentBox.xaml" />
+    <Page Include="Evaluation\Viewer\CommentControl.xaml" />
     <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />
     <Page Include="Evaluation\Viewer\SectionControl.xaml" />
-    <Page Include="Evaluation\Viewer\StarRating.xaml" />
+    <Page Include="Evaluation\Viewer\RatingControl.xaml" />
     <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />

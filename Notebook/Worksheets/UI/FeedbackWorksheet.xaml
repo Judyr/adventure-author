@@ -145,16 +145,16 @@
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				Orientation="Horizontal">
-				<worksheet:StarRating
+				<worksheet:RatingControl
 					x:Name="StoryRating"
 					TitleText="Story"/>
-				<worksheet:StarRating
+				<worksheet:RatingControl
 					x:Name="GameplayRating"
 					TitleText="Gameplay"/>
-				<worksheet:StarRating
+				<worksheet:RatingControl
 					x:Name="WorldRating"
 					TitleText="World"/>
-				<worksheet:StarRating
+				<worksheet:RatingControl
 					x:Name="OverallRating"
 					TitleText="Overall"/>
 			</StackPanel>

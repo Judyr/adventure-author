@@ -16,10 +16,10 @@ using AdventureAuthor.Evaluation.Viewer;
 namespace AdventureAuthor.Evaluation.Viewer
 {
     /// <summary>
-    /// Interaction logic for StarRating.xaml
+    /// Interaction logic for RatingControl.xaml
     /// </summary>
 
-    public partial class StarRating : OptionalWorksheetPartControl
+    public partial class RatingControl : OptionalWorksheetPartControl
     {    		
     	#region Fields
     	
@@ -34,7 +34,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constructors
         
         
-    	public StarRating(Rating rating, bool designerMode)
+    	public RatingControl(Rating rating, bool designerMode)
         {
     		if (rating == null) {
     			rating = new Rating();
