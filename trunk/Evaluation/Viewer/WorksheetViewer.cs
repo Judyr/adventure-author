@@ -171,15 +171,15 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		foreach (Section section in worksheet.Sections) {	    			
 	    			if (DesignerMode || section.Include) {
 			    		SectionControl sectionControl = new SectionControl(section,WorksheetViewer.DesignerMode);
+			    		MonitorChanges(sectionControl);
 			    		sectionControl.Deleting += new EventHandler<DeletingEventArgs>(sectionControl_Deleting);
 			    		AddSection(sectionControl);
 			    		
 			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
 			    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
+			    			MonitorChanges(questionControl);
 			    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
-			    				answerControl.Changed += delegate { worksheet_Changed(); };
-			    				answerControl.Activated += delegate { worksheet_Changed(); };
-			    				answerControl.Deactivated += delegate { worksheet_Changed(); };
+			    				MonitorChanges(answerControl);
 			    			}
 			    		}
 	    			}
@@ -396,6 +396,14 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void OnClick_SaveAs(object sender, EventArgs e)
     	{
     		SaveAsDialog();
+    	}
+    	
+    	
+    	private void MonitorChanges(OptionalWorksheetPartControl control)
+    	{
+    		control.Activated += delegate { worksheet_Changed(); };
+    		control.Deactivated += delegate { worksheet_Changed(); };
+    		control.Changed += delegate { worksheet_Changed(); };
     	}
     	
     	

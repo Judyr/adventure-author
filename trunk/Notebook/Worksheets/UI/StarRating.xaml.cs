@@ -15,10 +15,10 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Notebook.Worksheets.UI
 {
     /// <summary>
-    /// Interaction logic for StarRating.xaml
+    /// Interaction logic for RatingControl.xaml
     /// </summary>
 
-    public partial class StarRating : UserControl
+    public partial class RatingControl : UserControl
     {
     	public string TitleText {
     		get {
@@ -40,12 +40,12 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
     	}
     	
     	    	
-    	public StarRating() : this(5)
+    	public RatingControl() : this(5)
     	{
         }
         
         
-        public StarRating(int stars)
+        public RatingControl(int stars)
         {
             InitializeComponent();
         	for (int i = 0; i < stars; i++) {
@@ -57,7 +57,7 @@ namespace AdventureAuthor.Notebook.Worksheets.UI
         }
         
         
-        public StarRating(int stars, string subject) : this(stars)
+        public RatingControl(int stars, string subject) : this(stars)
         {
         	TitleText = subject;
         }

@@ -14,12 +14,13 @@
 		<StackPanel x:Name="AnswersPanel" Grid.Row="0" Grid.Column="1"
 					Orientation="Horizontal" VerticalAlignment="Center"/>
 	
-    	<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+    	<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
 			<TextBlock Name="QuestionTitle"
 		    	       FontSize="14" Margin="3" Padding="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			<CheckBox Name="ActivateCheckBox"
-			    	  Content="Active?" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-					  Margin="8" Visibility="Collapsed" HorizontalAlignment="Right"/>
+			          Height="25" Width="25"
+			    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+					  Margin="8" Visibility="Collapsed" VerticalAlignment="Center"/>
     	</StackPanel>
 	
     </Grid>

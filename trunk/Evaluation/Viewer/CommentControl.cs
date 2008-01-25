@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
-    public partial class CommentBox : OptionalWorksheetPartControl
+    public partial class CommentControl : OptionalWorksheetPartControl
     {    	
-        public CommentBox(Comment comment, bool designerMode)
+        public CommentControl(Comment comment, bool designerMode)
         {    		
         	if (comment == null) {
     			comment = new Comment();
