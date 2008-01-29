@@ -25,6 +25,9 @@
 					<Separator/>
 					<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 				</MenuItem>
+				<MenuItem Name="EditMenu" Header="Edit" FontSize="14">
+					<MenuItem Name="AddSectionMenuItem" Header="Add section" Click="OnClick_AddSection"/>
+				</MenuItem>
 				<MenuItem Name="OptionsMenu" Header="Options" FontSize="14">
 					<MenuItem Name="UsePaintMenuItem" IsCheckable="true" Checked="OnChecked_UsePaint" 
 					          Header="Open pictures in Microsoft Paint" FontSize="14"
@@ -40,11 +43,14 @@
 	    	<StackPanel Orientation="Vertical">
 				<StackPanel Orientation="Horizontal" Margin="10">
 		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="TitleField" Width="150" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="TitleField" Width="150" Padding="5" Visibility="Hidden" 
+					         FontFamily="Comic Sans MS" FontSize="12"/>
 		    		<Label Name="NameLabel" Content="Name" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="NameField" Width="200" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="NameField" Width="200" Padding="5" Visibility="Hidden"
+					         FontFamily="Comic Sans MS" FontSize="12"/>
 		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"
+					         FontFamily="Comic Sans MS" FontSize="12"/>
 		    	</StackPanel>			
 	    		<StackPanel Name="SectionsPanel" Orientation="Vertical"/>
 			</StackPanel>

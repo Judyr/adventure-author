@@ -247,7 +247,6 @@
     <Compile Include="Evaluation\Section.cs" />
     <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
-    <Compile Include="Evaluation\Viewer\AnswerControl.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentControl.cs">
       <SubType>Code</SubType>
@@ -373,7 +372,7 @@
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\Serialization.cs" />
-    <Compile Include="Utils\UsefulTools.cs" />
+    <Compile Include="Utils\Tools.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -400,7 +399,6 @@
       <DependentUpon>MindMapForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="EULA.txt" />
-    <Resource Include="Evaluation\questions.txt" />
     <None Include="gpl.txt" />
   </ItemGroup>
   <ItemGroup>

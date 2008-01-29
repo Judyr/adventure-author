@@ -1,29 +1,38 @@
 <local:OptionalWorksheetPartControl x:Class="AdventureAuthor.Evaluation.Viewer.EvidenceControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer">
+    xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer"
+	VerticalAlignment="Center">
 	<StackPanel Orientation="Horizontal">
 	    <StackPanel Name="ButtonsPanel" Orientation="Horizontal">
 			<Button Name="ViewLink" Click="OnClick_ViewEvidence" 
 	    	        Height="30" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ViewLinkText" 
-				           FontSize="12" Foreground="Red" Background="Transparent"/>
+				           FontFamily="Arial" FontSize="12" 
+	    		           Foreground="Red" Background="Transparent"/>
 	    	</Button>
 			<Button Name="SelectLink" Click="OnClick_SelectEvidence" 
 	    	        Height="30" FontSize="12" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="SelectLinkText" 
-				           FontSize="12" TextDecorations="Underline" Foreground="Black" Background="Transparent"
+				           FontFamily="Arial" FontSize="12" TextDecorations="Underline" 
+	    		           Foreground="Black" Background="Transparent"
 						   HorizontalAlignment="Left"/>
 	    	</Button>
 			<Button Name="ClearLink" Click="OnClick_ClearEvidence" 
 	    	        Height="30" FontSize="12" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ClearLinkText" 
-				           Text="Clear" FontSize="12" TextDecorations="Underline" Foreground="Black" Background="Transparent"/>
+				           FontFamily="Arial" Text="Clear" FontSize="12" TextDecorations="Underline" 
+	    		           Foreground="Black" Background="Transparent"/>
 	    	</Button>
 	    </StackPanel>
 		<CheckBox Name="ActivateCheckBox"
-		          Height="25" Width="25"
+		          Height="45" Width="45"
 		    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-				  Margin="8" Visibility="Collapsed" VerticalAlignment="Center"/>
+				  Margin="8" Visibility="Collapsed">
+			<CheckBox.LayoutTransform>
+				<ScaleTransform ScaleX="1.7" 
+		                        ScaleY="1.7"/>
+		    </CheckBox.LayoutTransform>   
+		</CheckBox>
 	</StackPanel>
 </local:OptionalWorksheetPartControl>

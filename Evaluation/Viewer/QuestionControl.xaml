@@ -7,7 +7,7 @@
     		<RowDefinition/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="300"/>
+    		<ColumnDefinition Width="340"/>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
     	
@@ -15,12 +15,17 @@
 					Orientation="Horizontal" VerticalAlignment="Center"/>
 	
     	<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-			<TextBlock Name="QuestionTitle"
-		    	       FontSize="14" Margin="3" Padding="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
+			<TextBox Name="QuestionTitle"
+		    	     FontSize="16" FontFamily="Arial" Margin="3" Padding="3" AcceptsReturn="false"
+			         Width="300" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			<CheckBox Name="ActivateCheckBox"
-			          Height="25" Width="25"
 			    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-					  Margin="8" Visibility="Collapsed" VerticalAlignment="Center"/>
+					  Margin="8" Visibility="Collapsed" VerticalAlignment="Center">
+				<CheckBox.LayoutTransform>
+					<ScaleTransform ScaleX="1.7" 
+			                        ScaleY="1.7"/>
+			    </CheckBox.LayoutTransform>   
+    		</CheckBox>
     	</StackPanel>
 	
     </Grid>

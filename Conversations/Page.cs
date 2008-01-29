@@ -96,7 +96,7 @@ namespace AdventureAuthor.Conversations
 				return "[Continue]";
 			}
 			else {
-				return UsefulTools.Truncate(Conversation.GetStringFromOEIString(leadLine.Line.Text),30);
+				return Tools.Truncate(Conversation.GetStringFromOEIString(leadLine.Line.Text),30);
 			}
 		}
     }

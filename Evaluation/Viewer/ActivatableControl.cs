@@ -10,6 +10,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -20,38 +21,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 	{
 		#region Fields
 		
-		public enum ControlStatus {
-			NA,
-			Active,
-			Inactive
-		}
-		
-		private ControlStatus activationStatus;
-		public ControlStatus ActivationStatus {
-			get {
-				return activationStatus;
-			}
-			set {				
-				switch (value) {
-					case ControlStatus.NA:
-						Enable();
-						break;
-					case ControlStatus.Active:
-						Activate();
-						OnActivated(new ActivationEventArgs(this));
-						break;
-					case ControlStatus.Inactive:
-						Deactivate();
-						OnDeactivated(new ActivationEventArgs(this));
-						break;
-					default:
-						throw new ArgumentException(value.ToString() + " was not known.");
-				}
+		protected bool active;
 				
-				activationStatus = value;
-			}
-		}
-		
 		#endregion
 		
 		#region Events
@@ -87,52 +58,67 @@ namespace AdventureAuthor.Evaluation.Viewer
 		#endregion
 		
 		#region Methods
+				
+		public void Enable()
+		{
+			PerformEnable();
+			active = true; 
+		}
 		
-		protected abstract void Enable();
-		protected abstract void Activate();		
-		protected abstract void Deactivate();
+		public void Activate()
+		{
+			PerformActivate();
+			active = true;
+			OnActivated(new ActivationEventArgs(this));
+		}
+		
+		public void Deactivate(bool preventReactivation)
+		{
+			PerformDeactivate(preventReactivation);
+			active = false;
+			OnDeactivated(new ActivationEventArgs(this));
+		}
+		
+		protected abstract void PerformEnable();
+		protected abstract void PerformActivate();
+		/// <summary>
+		/// Deactivate this control.
+		/// </summary>
+		/// <param name="preventReactivation">True if the controls that allow activation and deactivation
+		/// should also be deactivated; false otherwise</param>
+		protected abstract void PerformDeactivate(bool preventReactivation);
 		
 		
-		protected static void Enable(UIElement element)
+		internal static void EnableElement(UIElement element)
 		{		
-    		if (!element.IsEnabled) {
-    			element.IsEnabled = true;
-    		}
-    		element.Opacity = 1.0f;
+			if (element != null) {				
+	    		if (!element.IsEnabled) {
+	    			element.IsEnabled = true;
+	    		}
+	    		element.Opacity = 1.0f;
+			}
 		}
 		
 		
-		protected static void Activate(UIElement element)
+		internal static void ActivateElement(UIElement element)
 		{
-    		if (element.IsEnabled) {
-    			element.IsEnabled = false;
-    		}
-    		element.Opacity = 1.0f;
+			if (element != null) {	
+	    		if (element.IsEnabled) {
+	    			element.IsEnabled = false;
+	    		}
+	    		element.Opacity = 1.0f;
+			}
 		}
 		
 		
-		protected static void Deactivate(UIElement element)
+		internal static void DeactivateElement(UIElement element)
 		{
-    		if (element.IsEnabled) {
-    			element.IsEnabled = false;
-    		}
-    		element.Opacity = 0.2f;
-		}    
-		
-		
-		protected void SetIncludeStatus(OptionalWorksheetPart part)
-		{
-        	switch (ActivationStatus) {
-        		case ControlStatus.Active:
-        			part.Include = true;
-        			break;
-        		case ControlStatus.Inactive:
-        			part.Include = false;
-        			break;
-        		case ControlStatus.NA:
-        			part.Include = true;
-        			break;
-        	}
+			if (element != null) {	
+	    		if (element.IsEnabled) {
+	    			element.IsEnabled = false;
+	    		}
+	    		element.Opacity = 0.2f;
+			}
 		}
 		
 		#endregion

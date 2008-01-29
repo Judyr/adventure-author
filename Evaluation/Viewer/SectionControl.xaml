@@ -9,7 +9,7 @@
     <Border Name="SectionBorder" BorderThickness="2,2,2,0" BorderBrush="Black">
 		<Grid>
 	    	<Grid.RowDefinitions>
-				<RowDefinition Height="40"/>
+				<RowDefinition Height="65"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 	    	<Grid.ColumnDefinitions>
@@ -19,13 +19,22 @@
 			<Border Grid.Row="0" Grid.Column="0" 
 			        BorderThickness="0,0,0,2" BorderBrush="Black">
 				<StackPanel Orientation="Horizontal"
-							Background="LightGreen">
-		    		<TextBlock Name="SectionTitleTextBlock" Grid.Row="0" Grid.Column="0"
-					       	   FontSize="20" VerticalAlignment="Center" />						
+							Background="LightGreen" Margin="8" VerticalAlignment="Center">   						
+		    		<TextBox Name="SectionTitleTextBox" Grid.Row="0" Grid.Column="0"
+					       	 FontFamily="Arial" FontSize="18" Margin="8"
+							 AcceptsReturn="false" VerticalAlignment="Center"/>
 					<CheckBox Name="ActivateCheckBox"
-						      Height="65" Width="65"
 						      IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-							  Margin="8" Visibility="Collapsed" VerticalAlignment="Center"/>
+							  Margin="8" Visibility="Collapsed" VerticalAlignment="Center">
+						<CheckBox.LayoutTransform>
+							<ScaleTransform ScaleX="1.7" 
+					                        ScaleY="1.7"/>
+					    </CheckBox.LayoutTransform>                    
+					</CheckBox>
+					<StackPanel Name="AdditionalControlsPanel" Orientation="Horizontal">
+						<Button Name="AddQuestionButton" Content="Add question" Click="OnClick_AddQuestion"
+								Height="25" Width="140" Visibility="Collapsed"/>
+					</StackPanel>
 				</StackPanel>
 			</Border>  	
     	</Grid>

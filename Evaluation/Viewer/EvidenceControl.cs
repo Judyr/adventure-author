@@ -106,14 +106,14 @@ namespace AdventureAuthor.Evaluation.Viewer
             if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
             	ActivateCheckBox.Visibility = Visibility.Visible;
 	    		if (evidence.Include) {
-	    			ActivationStatus = ControlStatus.Active;
+	    			Activate();
 	    		}
 	    		else {
-	    			ActivationStatus = ControlStatus.Inactive;
+	    			Deactivate(false);
 	    		}
             }
             else { // hide 'Active?' control, and set status to Not Applicable
-        		ActivationStatus = ControlStatus.NA;
+            	Enable();
             }
             
             if (evidence == null) {
@@ -241,39 +241,43 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnChecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Active;
+        	Activate();
         }
         
         
         private void OnUnchecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Inactive;
+        	Deactivate(false);
         }
 		
 		#endregion
 				
 		#region Methods
 		
-    	protected override void Enable()
+    	protected override void PerformEnable()
     	{    		
-    		ActivatableControl.Enable(ButtonsPanel);
+    		ActivatableControl.EnableElement(ButtonsPanel);
     	}
     	
-    	
-    	protected override void Activate()
+    	    	
+    	protected override void PerformActivate()
     	{	
-    		ActivatableControl.Activate(ButtonsPanel);
+    		ActivatableControl.ActivateElement(ButtonsPanel);
+    		ActivatableControl.EnableElement(ActivateCheckBox);
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
     	}
     	
         
-    	protected override void Deactivate()
+    	protected override void PerformDeactivate(bool preventReactivation)
     	{
-    		ActivatableControl.Deactivate(ButtonsPanel);
+    		ActivatableControl.DeactivateElement(ButtonsPanel);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
+    		}
+    		if (preventReactivation) {
+    			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
     	
@@ -282,14 +286,6 @@ namespace AdventureAuthor.Evaluation.Viewer
 		{
 			return new Evidence(filename);
 		}
-        
-        
-        protected override List<Control> GetActivationControls()
-        {
-        	List<Control> activationControls = new List<Control>(1);
-        	activationControls.Add(ActivateCheckBox);
-        	return activationControls;
-        }
 		
 		#endregion
     }

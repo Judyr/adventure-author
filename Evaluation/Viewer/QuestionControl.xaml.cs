@@ -24,6 +24,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	
             InitializeComponent();            
             QuestionTitle.Text = question.Text;    
+            QuestionTitle.TextChanged += delegate { OnChanged(new EventArgs()); };
             
 		    foreach (Answer answer in question.Answers) {
 		    	if (WorksheetViewer.DesignerMode || answer.Include) {
@@ -34,14 +35,14 @@ namespace AdventureAuthor.Evaluation.Viewer
             if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
             	ActivateCheckBox.Visibility = Visibility.Visible;
 	    		if (question.Include) {
-	    			ActivationStatus = ControlStatus.Active;
+	    			Activate();
 	    		}
 	    		else {
-	    			ActivationStatus = ControlStatus.Inactive;
+	    			Deactivate(false);
 	    		}
             }
-            else { // hide 'Active?' control, and set status to Not Applicable
-        		ActivationStatus = ControlStatus.NA;
+            else { // hide 'Active?' control
+            	Enable();
             }
         }
 
@@ -68,42 +69,83 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnChecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Active;
+        	Activate();
         }
         
         
         private void OnUnchecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Inactive;
+        	Deactivate(false);
         }
 
         
-    	protected override void Enable()
+    	protected override void PerformEnable()
     	{    		
-    		ActivatableControl.Enable(QuestionTitle);
-    		ActivatableControl.Enable(AnswersPanel);
+    		Tools.PreventEditingOfTextBox(QuestionTitle);
+    		QuestionTitle.Opacity = 1.0f;
+    		ActivatableControl.EnableElement(ActivateCheckBox);
+    		EnableChildren();
     	}
     	
     	
-    	protected override void Activate()
+    	protected void EnableChildren()
+    	{
+    		foreach (UIElement element in AnswersPanel.Children) {
+    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			if (part != null) {
+    				part.Enable();
+    			}
+    		}
+    	}
+    	
+    	
+    	protected override void PerformActivate()
     	{	
-    		ActivatableControl.Activate(QuestionTitle);
-    		ActivatableControl.Activate(AnswersPanel);
+    		ActivatableControl.EnableElement(QuestionTitle);
+    		QuestionTitle.IsReadOnly = false;
+    		ActivatableControl.EnableElement(ActivateCheckBox);
+    		ActivateChildren();
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
     	}
     	
-        
-    	protected override void Deactivate()
+    	
+    	protected void ActivateChildren()
     	{
-    		ActivatableControl.Deactivate(QuestionTitle);
-    		ActivatableControl.Deactivate(AnswersPanel);
+    		foreach (UIElement element in AnswersPanel.Children) {
+    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			if (part != null) {
+    				part.Activate();
+    			}
+    		}
+    	}
+    	
+        
+    	protected override void PerformDeactivate(bool preventReactivation)
+    	{
+    		ActivatableControl.DeactivateElement(QuestionTitle);
+    		QuestionTitle.IsReadOnly = true;
+    		DeactivateChildren();
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
+    		if (preventReactivation) {
+    			ActivatableControl.DeactivateElement(ActivateCheckBox);
+    		}
     	}
-        
+    	
+    	
+    	protected void DeactivateChildren()
+    	{
+    		foreach (UIElement element in AnswersPanel.Children) {
+    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			if (part != null) {
+    				part.Deactivate(true);
+    			}
+    		}
+    	}
+    	        
     	
         protected override OptionalWorksheetPart GetWorksheetPartObject()
         {
@@ -116,14 +158,6 @@ namespace AdventureAuthor.Evaluation.Viewer
         		}
         	}
         	return question;
-        }
-        
-        
-        protected override List<Control> GetActivationControls()
-        {
-        	List<Control> activationControls = new List<Control>(1);
-        	activationControls.Add(ActivateCheckBox);
-        	return activationControls;
         }
     }
 }

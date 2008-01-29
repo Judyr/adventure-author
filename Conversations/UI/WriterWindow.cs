@@ -909,7 +909,7 @@ namespace AdventureAuthor.Conversations.UI
 			tb0.Foreground = Brushes.Black;
 			tb1.Foreground = e.Speaker.Colour;
 			tb2.Foreground = Brushes.Black;
-			if (e.Speaker.Name.Length > 0 && UsefulTools.StartsWithVowel(e.Speaker.Name)) {
+			if (e.Speaker.Name.Length > 0 && Tools.StartsWithVowel(e.Speaker.Name)) {
 				tb0.Text = "Add an ";
 			}
 			else {
