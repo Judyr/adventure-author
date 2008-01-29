@@ -573,7 +573,7 @@ namespace AdventureAuthor.Scripts
 					return "ALL THE PLAYER'S ALLIES ARE REMOVED FROM THE AREA.";
 
 				case "ga_display_message":
-					string message = Utils.UsefulTools.Truncate(action.Parameters[0].ValueString,60);					
+					string message = Utils.Tools.Truncate(action.Parameters[0].ValueString,60);					
 					if (message.Length < action.Parameters[0].ValueString.Length) {
 						return "DISPLAY MESSAGE \"" + message + "...\"";
 					}

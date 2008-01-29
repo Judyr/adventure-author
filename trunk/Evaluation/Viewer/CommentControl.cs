@@ -15,17 +15,17 @@ namespace AdventureAuthor.Evaluation.Viewer
     		
             InitializeComponent();
             
-            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            if (designerMode) { // show 'Active?' control
             	ActivateCheckBox.Visibility = Visibility.Visible;
 	    		if (comment.Include) {
-	    			ActivationStatus = ControlStatus.Active;
+            		Activate();
 	    		}
 	    		else {
-	    			ActivationStatus = ControlStatus.Inactive;
+            		Deactivate(false);
 	    		}
             }
-            else { // hide 'Active?' control, and set status to Not Applicable
-        		ActivationStatus = ControlStatus.NA;
+            else { // hide 'Active?' control
+            	Enable();
             }
             
             CommentTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };
@@ -34,36 +34,40 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnChecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Active;
+        	Activate();
         }
         
         
         private void OnUnchecked(object sender, EventArgs e)
         {
-        	ActivationStatus = ControlStatus.Inactive;
+        	Deactivate(false);
         }
 
         
-    	protected override void Enable()
+    	protected override void PerformEnable()
     	{    		
-    		ActivatableControl.Enable(CommentPanel);
+    		ActivatableControl.EnableElement(CommentPanel);
     	}
     	
     	
-    	protected override void Activate()
+    	protected override void PerformActivate()
     	{	
-    		ActivatableControl.Activate(CommentPanel);
+    		ActivatableControl.ActivateElement(CommentPanel);
+    		ActivatableControl.EnableElement(ActivateCheckBox);
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
     	}
     	
         
-    	protected override void Deactivate()
+    	protected override void PerformDeactivate(bool preventReactivation)
     	{
-    		ActivatableControl.Deactivate(CommentPanel);
+    		ActivatableControl.DeactivateElement(CommentPanel);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
+    		}
+    		if (preventReactivation) {
+    			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
     	
@@ -72,13 +76,5 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
 			return new Comment(CommentTextBox.Text);
 		}
-        
-        
-        protected override List<Control> GetActivationControls()
-        {
-        	List<Control> activationControls = new List<Control>(1);
-        	activationControls.Add(ActivateCheckBox);
-        	return activationControls;
-        }
     }
 }

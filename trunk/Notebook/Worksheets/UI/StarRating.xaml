@@ -50,7 +50,7 @@
 			<ColumnDefinition Name="StarsColumn" Width="180"/>
 		</Grid.ColumnDefinitions>
 		<TextBlock Name="TitleBlock" Grid.Row="0" Grid.Column="0" 
-		           FontFamily="ComicSans" FontSize="16" TextAlignment="Right" Width="90" Margin="0,6,15,6"/>
+		           FontFamily="Arial" FontSize="16" TextAlignment="Right" Width="90" Margin="0,6,15,6"/>
 		<StackPanel Name="StarsPanel" Orientation="Horizontal" Grid.Row="0" Grid.Column="1"/>
 	</Grid>
 </UserControl>

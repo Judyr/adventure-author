@@ -138,7 +138,7 @@
 //			// 
 //			// button_Cancel_StoryPanel
 //			// 
-//			this.button_Cancel_StoryPanel.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.button_Cancel_StoryPanel.Font = new System.Drawing.Font("Arial", 10F);
 //			this.button_Cancel_StoryPanel.Location = new System.Drawing.Point(431, 379);
 //			this.button_Cancel_StoryPanel.Name = "button_Cancel_StoryPanel";
 //			this.button_Cancel_StoryPanel.Size = new System.Drawing.Size(115, 37);
@@ -149,7 +149,7 @@
 //			// 
 //			// button_OK_StoryPanel
 //			// 
-//			this.button_OK_StoryPanel.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.button_OK_StoryPanel.Font = new System.Drawing.Font("Arial", 10F);
 //			this.button_OK_StoryPanel.Location = new System.Drawing.Point(561, 379);
 //			this.button_OK_StoryPanel.Name = "button_OK_StoryPanel";
 //			this.button_OK_StoryPanel.Size = new System.Drawing.Size(115, 37);
@@ -160,7 +160,7 @@
 //			// 
 //			// textBox_IntroductionToChapter
 //			// 
-//			this.textBox_IntroductionToChapter.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.textBox_IntroductionToChapter.Font = new System.Drawing.Font("Arial", 10F);
 //			this.textBox_IntroductionToChapter.Location = new System.Drawing.Point(19, 299);
 //			this.textBox_IntroductionToChapter.Multiline = true;
 //			this.textBox_IntroductionToChapter.Name = "textBox_IntroductionToChapter";
@@ -169,7 +169,7 @@
 //			// 
 //			// label_WriteYourIntroductionToThisChapter
 //			// 
-//			this.label_WriteYourIntroductionToThisChapter.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.label_WriteYourIntroductionToThisChapter.Font = new System.Drawing.Font("Arial", 10F);
 //			this.label_WriteYourIntroductionToThisChapter.Location = new System.Drawing.Point(19, 273);
 //			this.label_WriteYourIntroductionToThisChapter.Name = "label_WriteYourIntroductionToThisChapter";
 //			this.label_WriteYourIntroductionToThisChapter.Size = new System.Drawing.Size(307, 23);
@@ -178,7 +178,7 @@
 //			// 
 //			// label_HowDoYouWantThePlayerToFeelDuringThisChapter
 //			// 
-//			this.label_HowDoYouWantThePlayerToFeelDuringThisChapter.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.label_HowDoYouWantThePlayerToFeelDuringThisChapter.Font = new System.Drawing.Font("Arial", 10F);
 //			this.label_HowDoYouWantThePlayerToFeelDuringThisChapter.Location = new System.Drawing.Point(423, 143);
 //			this.label_HowDoYouWantThePlayerToFeelDuringThisChapter.Name = "label_HowDoYouWantThePlayerToFeelDuringThisChapter";
 //			this.label_HowDoYouWantThePlayerToFeelDuringThisChapter.Size = new System.Drawing.Size(146, 85);
@@ -187,7 +187,7 @@
 //			// 
 //			// label_WhatStoryEventsTakePlaceInThisChapter
 //			// 
-//			this.label_WhatStoryEventsTakePlaceInThisChapter.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.label_WhatStoryEventsTakePlaceInThisChapter.Font = new System.Drawing.Font("Arial", 10F);
 //			this.label_WhatStoryEventsTakePlaceInThisChapter.Location = new System.Drawing.Point(19, 88);
 //			this.label_WhatStoryEventsTakePlaceInThisChapter.Name = "label_WhatStoryEventsTakePlaceInThisChapter";
 //			this.label_WhatStoryEventsTakePlaceInThisChapter.Size = new System.Drawing.Size(342, 23);
@@ -196,7 +196,7 @@
 //			// 
 //			// listBox_Emotions
 //			// 
-//			this.listBox_Emotions.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.listBox_Emotions.Font = new System.Drawing.Font("Arial", 10F);
 //			this.listBox_Emotions.FormattingEnabled = true;
 //			this.listBox_Emotions.ItemHeight = 18;
 //			this.listBox_Emotions.Items.AddRange(new object[] {
@@ -212,7 +212,7 @@
 //			// 
 //			// button_AddNewStoryEvent
 //			// 
-//			this.button_AddNewStoryEvent.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.button_AddNewStoryEvent.Font = new System.Drawing.Font("Arial", 10F);
 //			this.button_AddNewStoryEvent.Location = new System.Drawing.Point(226, 215);
 //			this.button_AddNewStoryEvent.Name = "button_AddNewStoryEvent";
 //			this.button_AddNewStoryEvent.Size = new System.Drawing.Size(154, 31);
@@ -222,7 +222,7 @@
 //			// 
 //			// button_RemoveStoryEvent
 //			// 
-//			this.button_RemoveStoryEvent.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.button_RemoveStoryEvent.Font = new System.Drawing.Font("Arial", 10F);
 //			this.button_RemoveStoryEvent.Location = new System.Drawing.Point(71, 215);
 //			this.button_RemoveStoryEvent.Name = "button_RemoveStoryEvent";
 //			this.button_RemoveStoryEvent.Size = new System.Drawing.Size(149, 31);
@@ -232,7 +232,7 @@
 //			// 
 //			// listBox_StoryEvents
 //			// 
-//			this.listBox_StoryEvents.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.listBox_StoryEvents.Font = new System.Drawing.Font("Arial", 10F);
 //			this.listBox_StoryEvents.FormattingEnabled = true;
 //			this.listBox_StoryEvents.ItemHeight = 18;
 //			this.listBox_StoryEvents.Items.AddRange(new object[] {
@@ -246,7 +246,7 @@
 //			// 
 //			// radioButton_Outdoors
 //			// 
-//			this.radioButton_Outdoors.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.radioButton_Outdoors.Font = new System.Drawing.Font("Arial", 10F);
 //			this.radioButton_Outdoors.Location = new System.Drawing.Point(431, 37);
 //			this.radioButton_Outdoors.Name = "radioButton_Outdoors";
 //			this.radioButton_Outdoors.Size = new System.Drawing.Size(104, 24);
@@ -257,7 +257,7 @@
 //			// 
 //			// radioButton_Indoors
 //			// 
-//			this.radioButton_Indoors.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.radioButton_Indoors.Font = new System.Drawing.Font("Arial", 10F);
 //			this.radioButton_Indoors.Location = new System.Drawing.Point(541, 37);
 //			this.radioButton_Indoors.Name = "radioButton_Indoors";
 //			this.radioButton_Indoors.Size = new System.Drawing.Size(104, 24);
@@ -268,7 +268,7 @@
 //			// 
 //			// label_WhereDoesItTakePlace
 //			// 
-//			this.label_WhereDoesItTakePlace.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.label_WhereDoesItTakePlace.Font = new System.Drawing.Font("Arial", 10F);
 //			this.label_WhereDoesItTakePlace.Location = new System.Drawing.Point(431, 15);
 //			this.label_WhereDoesItTakePlace.Name = "label_WhereDoesItTakePlace";
 //			this.label_WhereDoesItTakePlace.Size = new System.Drawing.Size(196, 23);
@@ -277,7 +277,7 @@
 //			// 
 //			// label_WhatIsTheNameOfThisChapter
 //			// 
-//			this.label_WhatIsTheNameOfThisChapter.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.label_WhatIsTheNameOfThisChapter.Font = new System.Drawing.Font("Arial", 10F);
 //			this.label_WhatIsTheNameOfThisChapter.Location = new System.Drawing.Point(19, 15);
 //			this.label_WhatIsTheNameOfThisChapter.Name = "label_WhatIsTheNameOfThisChapter";
 //			this.label_WhatIsTheNameOfThisChapter.Size = new System.Drawing.Size(245, 23);
@@ -286,7 +286,7 @@
 //			// 
 //			// textBox_ChapterName
 //			// 
-//			this.textBox_ChapterName.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.textBox_ChapterName.Font = new System.Drawing.Font("Arial", 10F);
 //			this.textBox_ChapterName.Location = new System.Drawing.Point(19, 41);
 //			this.textBox_ChapterName.Name = "textBox_ChapterName";
 //			this.textBox_ChapterName.Size = new System.Drawing.Size(361, 26);
@@ -316,7 +316,7 @@
 //			// 
 //			// button_Cancel_GameplayPanel
 //			// 
-//			this.button_Cancel_GameplayPanel.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.button_Cancel_GameplayPanel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.button_Cancel_GameplayPanel.Location = new System.Drawing.Point(431, 379);
 //			this.button_Cancel_GameplayPanel.Name = "button_Cancel_GameplayPanel";
 //			this.button_Cancel_GameplayPanel.Size = new System.Drawing.Size(115, 37);
@@ -327,7 +327,7 @@
 //			// 
 //			// button_OK_GameplayPanel
 //			// 
-//			this.button_OK_GameplayPanel.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.button_OK_GameplayPanel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.button_OK_GameplayPanel.Location = new System.Drawing.Point(561, 379);
 //			this.button_OK_GameplayPanel.Name = "button_OK_GameplayPanel";
 //			this.button_OK_GameplayPanel.Size = new System.Drawing.Size(115, 37);
@@ -339,7 +339,7 @@
 //			// label_AdventureAuthorThinks_DifficultyOfChapter
 //			// 
 //			this.label_AdventureAuthorThinks_DifficultyOfChapter.Enabled = false;
-//			this.label_AdventureAuthorThinks_DifficultyOfChapter.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label_AdventureAuthorThinks_DifficultyOfChapter.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label_AdventureAuthorThinks_DifficultyOfChapter.Location = new System.Drawing.Point(19, 350);
 //			this.label_AdventureAuthorThinks_DifficultyOfChapter.Name = "label_AdventureAuthorThinks_DifficultyOfChapter";
 //			this.label_AdventureAuthorThinks_DifficultyOfChapter.Size = new System.Drawing.Size(229, 66);
@@ -352,7 +352,7 @@
 //			this.groupBox_StartingEvents.Controls.Add(this.radioButton1);
 //			this.groupBox_StartingEvents.Controls.Add(this.radioButton3);
 //			this.groupBox_StartingEvents.Controls.Add(this.radioButton2);
-//			this.groupBox_StartingEvents.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.groupBox_StartingEvents.Font = new System.Drawing.Font("Arial", 10F);
 //			this.groupBox_StartingEvents.Location = new System.Drawing.Point(310, 226);
 //			this.groupBox_StartingEvents.Name = "groupBox_StartingEvents";
 //			this.groupBox_StartingEvents.Size = new System.Drawing.Size(366, 147);
@@ -392,7 +392,7 @@
 //			// 
 //			// label_Average
 //			// 
-//			this.label_Average.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label_Average.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label_Average.Location = new System.Drawing.Point(38, 260);
 //			this.label_Average.Name = "label_Average";
 //			this.label_Average.Size = new System.Drawing.Size(79, 30);
@@ -401,7 +401,7 @@
 //			// 
 //			// label_VeryHard
 //			// 
-//			this.label_VeryHard.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label_VeryHard.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label_VeryHard.Location = new System.Drawing.Point(38, 210);
 //			this.label_VeryHard.Name = "label_VeryHard";
 //			this.label_VeryHard.Size = new System.Drawing.Size(79, 26);
@@ -410,7 +410,7 @@
 //			// 
 //			// label_VeryEasy
 //			// 
-//			this.label_VeryEasy.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label_VeryEasy.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label_VeryEasy.Location = new System.Drawing.Point(38, 309);
 //			this.label_VeryEasy.Name = "label_VeryEasy";
 //			this.label_VeryEasy.Size = new System.Drawing.Size(79, 27);
@@ -430,7 +430,7 @@
 //			// 
 //			// label1
 //			// 
-//			this.label1.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label1.Location = new System.Drawing.Point(19, 155);
 //			this.label1.Name = "label1";
 //			this.label1.Size = new System.Drawing.Size(213, 43);
@@ -440,7 +440,7 @@
 //			// groupBox_GameplayStyleExplanation
 //			// 
 //			this.groupBox_GameplayStyleExplanation.Controls.Add(this.richTextBox_GameplayStyleExplanation);
-//			this.groupBox_GameplayStyleExplanation.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+//			this.groupBox_GameplayStyleExplanation.Font = new System.Drawing.Font("Arial", 10F);
 //			this.groupBox_GameplayStyleExplanation.Location = new System.Drawing.Point(310, 15);
 //			this.groupBox_GameplayStyleExplanation.Name = "groupBox_GameplayStyleExplanation";
 //			this.groupBox_GameplayStyleExplanation.Size = new System.Drawing.Size(366, 183);
@@ -461,7 +461,7 @@
 //			// 
 //			// comboBox_GameplayStyles
 //			// 
-//			this.comboBox_GameplayStyles.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.comboBox_GameplayStyles.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.comboBox_GameplayStyles.FormattingEnabled = true;
 //			this.comboBox_GameplayStyles.Items.AddRange(new object[] {
 //									"Exploration",
@@ -482,7 +482,7 @@
 //			// 
 //			// label_WhatGameplayStyleDoesThisChapterMainlyUse
 //			// 
-//			this.label_WhatGameplayStyleDoesThisChapterMainlyUse.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.label_WhatGameplayStyleDoesThisChapterMainlyUse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.label_WhatGameplayStyleDoesThisChapterMainlyUse.Location = new System.Drawing.Point(19, 15);
 //			this.label_WhatGameplayStyleDoesThisChapterMainlyUse.Name = "label_WhatGameplayStyleDoesThisChapterMainlyUse";
 //			this.label_WhatGameplayStyleDoesThisChapterMainlyUse.Size = new System.Drawing.Size(247, 47);
@@ -515,7 +515,7 @@
 //			this.groupBox_MusicAndSound.Controls.Add(this.label4);
 //			this.groupBox_MusicAndSound.Controls.Add(this.label3);
 //			this.groupBox_MusicAndSound.Controls.Add(this.label2);
-//			this.groupBox_MusicAndSound.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.groupBox_MusicAndSound.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.groupBox_MusicAndSound.Location = new System.Drawing.Point(351, 16);
 //			this.groupBox_MusicAndSound.Name = "groupBox_MusicAndSound";
 //			this.groupBox_MusicAndSound.Size = new System.Drawing.Size(314, 341);
@@ -629,7 +629,7 @@
 //			this.groupBox_Visuals.Controls.Add(this.comboBox4);
 //			this.groupBox_Visuals.Controls.Add(this.radioButton5);
 //			this.groupBox_Visuals.Controls.Add(this.radioButton4);
-//			this.groupBox_Visuals.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.groupBox_Visuals.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.groupBox_Visuals.Location = new System.Drawing.Point(21, 16);
 //			this.groupBox_Visuals.Name = "groupBox_Visuals";
 //			this.groupBox_Visuals.Size = new System.Drawing.Size(314, 341);
@@ -682,7 +682,7 @@
 //			// 
 //			// button_Cancel_AudioVisualPanel
 //			// 
-//			this.button_Cancel_AudioVisualPanel.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.button_Cancel_AudioVisualPanel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.button_Cancel_AudioVisualPanel.Location = new System.Drawing.Point(431, 379);
 //			this.button_Cancel_AudioVisualPanel.Name = "button_Cancel_AudioVisualPanel";
 //			this.button_Cancel_AudioVisualPanel.Size = new System.Drawing.Size(115, 37);
@@ -693,7 +693,7 @@
 //			// 
 //			// button_OK_AudioVisualPanel
 //			// 
-//			this.button_OK_AudioVisualPanel.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+//			this.button_OK_AudioVisualPanel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 //			this.button_OK_AudioVisualPanel.Location = new System.Drawing.Point(561, 379);
 //			this.button_OK_AudioVisualPanel.Name = "button_OK_AudioVisualPanel";
 //			this.button_OK_AudioVisualPanel.Size = new System.Drawing.Size(115, 37);

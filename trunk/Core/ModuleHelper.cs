@@ -358,7 +358,7 @@ namespace AdventureAuthor.Core
 					StreamWriter sw = new StreamWriter(reasonForBackup.OpenWrite());					
 					sw.WriteLine("Reason for backup:  " + reason);
 					sw.WriteLine();					
-					sw.WriteLine("Created " + UsefulTools.GetDateStamp());	
+					sw.WriteLine("Created " + Tools.GetDateStamp());	
 					sw.Flush();
 					sw.Close();
 				}
@@ -371,7 +371,7 @@ namespace AdventureAuthor.Core
 		
 		private static string GetDirectoryPathForBackup()
 		{
-			string path = Path.Combine(ModuleHelper.BackupDir,form.App.Module.Name+"_"+UsefulTools.GetDateStamp()+"___");			
+			string path = Path.Combine(ModuleHelper.BackupDir,form.App.Module.Name+"_"+Tools.GetDateStamp()+"___");			
 			int count = 1;	
 			string newpath = path;
 			while (Directory.Exists(newpath)) { // keep trying directory names until one is not taken

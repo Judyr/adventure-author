@@ -19,11 +19,11 @@
 		</LinearGradientBrush>
 		<Style TargetType="{x:Type Label}">
 			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="FontFamily" Value="ComicSans"/>
+			<Setter Property="FontFamily" Value="Arial"/>
 		</Style>
 		<Style TargetType="{x:Type TextBox}">
 			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="FontFamily" Value="ComicSans"/>
+			<Setter Property="FontFamily" Value="Arial"/>
 		</Style>
 		<Style TargetType="{x:Type Button}">
 			<Setter Property="FontSize" Value="14"/>

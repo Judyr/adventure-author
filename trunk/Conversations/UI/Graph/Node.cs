@@ -112,7 +112,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 					this.Text = "...";
 				}
 				else {
-					string shorttext = UsefulTools.Truncate(newText,30);
+					string shorttext = Tools.Truncate(newText,30);
 					if (shorttext.Length < newText.Length) {
 						this.Text = shorttext + "...";
 					}

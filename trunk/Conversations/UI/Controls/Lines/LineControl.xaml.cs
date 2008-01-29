@@ -523,7 +523,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
 		public override string ToString()
 		{
-			return "LineControl: " + SpeakerLabel.Text + " - " + UsefulTools.Truncate(Dialogue.Text,60) + "...";
+			return "LineControl: " + SpeakerLabel.Text + " - " + Tools.Truncate(Dialogue.Text,60) + "...";
 		}
     }
 }

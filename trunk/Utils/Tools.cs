@@ -26,13 +26,15 @@
 
 using System;
 using System.Text;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace AdventureAuthor.Utils
 {
 	/// <summary>
 	/// Useful functions for Adventure Author.
 	/// </summary>
-	public static class UsefulTools
+	public static class Tools
 	{		
 		// TODO make the string methods into Automatic Methods on string
 		
@@ -206,5 +208,21 @@ namespace AdventureAuthor.Utils
 					throw new ArgumentException("Not valid month number");
 			}
 		}
+		
+		
+		public static void AllowEditingOfTextBox(TextBox textbox)
+		{
+        	textbox.Background = Brushes.White;
+        	textbox.BorderBrush = Brushes.Black;
+        	textbox.IsReadOnly = false;
+		}      
+		
+		
+		public static void PreventEditingOfTextBox(TextBox textbox)
+		{
+        	textbox.Background = Brushes.Transparent;
+        	textbox.BorderBrush = Brushes.Transparent;
+			textbox.IsReadOnly = true;
+		} 
 	}
 }

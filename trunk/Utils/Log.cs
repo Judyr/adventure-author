@@ -95,7 +95,7 @@ namespace AdventureAuthor.Utils
 		/// <param name="logMessage">The message to log. For unique user actions.</param>
 		public static void WriteMessage(string logMessage)
 		{
-			string message = UsefulTools.GetTimeStamp(false) + " >" + logMessage;
+			string message = Tools.GetTimeStamp(false) + " >" + logMessage;
 			OnMessage(new LogEventArgs(message));
 		}			
 		
@@ -163,10 +163,10 @@ namespace AdventureAuthor.Utils
 			string subjectmsg = subject == null ? "<Subject not logged>" : subject;			
 			
 			if (extraInfo != null && extraInfo != String.Empty) {
-				message = UsefulTools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
+				message = Tools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = UsefulTools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg;
+				message = Tools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg;
 			}
 				
 			OnMessage(new LogEventArgs(message));

@@ -30,7 +30,7 @@ namespace AdventureAuthor.Utils
 			// e.g. 05_05_07_JackStuart2.log
 			// Place in AdventureAuthor/logs
 			
-			string filename = UsefulTools.GetDateStamp();// + "_" + username
+			string filename = Tools.GetDateStamp();// + "_" + username
 			string logpath = Path.Combine(ModuleHelper.LogDir,filename+".log");
 			
 			// If the filename is already taken, add numbering ("<filename>2.log", "<filename>3.log" etc.):
