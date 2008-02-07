@@ -1,0 +1,10 @@
+<local:Board x:Class="AdventureAuthor.Ideas.MagnetBoard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AdventureAuthor.Ideas"
+    Width="800" Height="600"
+    >
+    <Canvas Name="MagneticCanvas" Background="LightBlue">
+        
+    </Canvas>
+</local:Board>
