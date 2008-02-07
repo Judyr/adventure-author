@@ -45,9 +45,10 @@
 			<MenuItem Header="File" FontSize="14">
 				<MenuItem Header="New" Click="OnClick_New" FontSize="14"/>
 				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
-				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14" Name="SaveMenuItem"/>
+				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
 				<!--<MenuItem Header="Save As" IsEnabled="false" FontSize="14"/>--><!--
 				<MenuItem Header="Print" Click="OnClick_Print" FontSize="14"/>-->
+				<MenuItem Header="Export" Click="OnClick_Export" FontSize="14"/>
 				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
 				<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>

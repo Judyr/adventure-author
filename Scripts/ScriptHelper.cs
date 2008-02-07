@@ -867,7 +867,7 @@ namespace AdventureAuthor.Scripts
 				return "Was given a blank set of conditions.";
 			}
 			if (conditions.Count > 1) {
-				Say.Error("Tried to describe a line with more than one condition attached to it - only the first will be described.");
+				Say.Warning("Tried to describe a line with more than one condition attached to it - only the first will be described.");
 			}
 			
 			NWN2ConditionalFunctor condition = conditions[0];
