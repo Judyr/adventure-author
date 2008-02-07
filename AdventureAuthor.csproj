@@ -247,6 +247,11 @@
     <Compile Include="Evaluation\Section.cs" />
     <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
+    <Compile Include="Evaluation\Viewer\EvidenceButton.xaml.cs">
+      <DependentUpon>EvidenceButton.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Evaluation\Viewer\MovingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentControl.cs">
       <SubType>Code</SubType>
@@ -262,6 +267,10 @@
       <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Evaluation\Viewer\ReplyControl.xaml.cs">
+      <DependentUpon>ReplyControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Evaluation\Viewer\SectionControl.cs">
       <SubType>Code</SubType>
       <DependentUpon>SectionControl.xaml</DependentUpon>
@@ -269,6 +278,10 @@
     <Compile Include="Evaluation\Viewer\RatingControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>RatingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Evaluation\Viewer\SelectModeWindow.xaml.cs">
+      <DependentUpon>SelectModeWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation\Viewer\WorksheetViewer.cs">
       <SubType>Code</SubType>
@@ -422,10 +435,13 @@
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
     <Page Include="Evaluation\Viewer\CommentControl.xaml" />
+    <Page Include="Evaluation\Viewer\EvidenceButton.xaml" />
     <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />
+    <Page Include="Evaluation\Viewer\ReplyControl.xaml" />
     <Page Include="Evaluation\Viewer\SectionControl.xaml" />
     <Page Include="Evaluation\Viewer\RatingControl.xaml" />
+    <Page Include="Evaluation\Viewer\SelectModeWindow.xaml" />
     <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
@@ -462,7 +478,6 @@
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
-    <Folder Include="Ideas" />
     <Folder Include="Notebook\Worksheets" />
     <Folder Include="Notebook\Worksheets\UI" />
     <Folder Include="Setup\UI" />

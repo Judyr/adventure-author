@@ -43,5 +43,11 @@ namespace AdventureAuthor.Evaluation
 		{
 			return Value == null || Value == String.Empty;
 		}
+		
+		
+		public override string ToString()
+		{
+			return Value;
+		}
 	}
 }

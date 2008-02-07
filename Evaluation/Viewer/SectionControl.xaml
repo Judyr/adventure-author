@@ -4,12 +4,13 @@
     xmlns:local="clr-namespace:AdventureAuthor.Evaluation.Viewer">
 	<UserControl.Resources>
 		<Brush x:Key="Stripe1Brush">#B4C8FF</Brush>
-		<Brush x:Key="Stripe2Brush">#96AFFF</Brush>
+		<Brush x:Key="Stripe2Brush">#D6EAFF</Brush>
+		<Brush x:Key="OriginalStripe2Brush">#96AFFF</Brush>
 	</UserControl.Resources>
     <Border Name="SectionBorder" BorderThickness="2,2,2,0" BorderBrush="Black">
 		<Grid>
 	    	<Grid.RowDefinitions>
-				<RowDefinition Height="65"/>
+				<RowDefinition/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 	    	<Grid.ColumnDefinitions>
@@ -19,9 +20,9 @@
 			<Border Grid.Row="0" Grid.Column="0" 
 			        BorderThickness="0,0,0,2" BorderBrush="Black">
 				<StackPanel Orientation="Horizontal"
-							Background="LightGreen" Margin="8" VerticalAlignment="Center">   						
+							Background="LightGreen" VerticalAlignment="Center">   						
 		    		<TextBox Name="SectionTitleTextBox" Grid.Row="0" Grid.Column="0"
-					       	 FontFamily="Arial" FontSize="18" Margin="8"
+					       	 FontFamily="Arial" FontSize="20" Margin="8" Width="250"
 							 AcceptsReturn="false" VerticalAlignment="Center"/>
 					<CheckBox Name="ActivateCheckBox"
 						      IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
@@ -31,9 +32,16 @@
 					                        ScaleY="1.7"/>
 					    </CheckBox.LayoutTransform>                    
 					</CheckBox>
-					<StackPanel Name="AdditionalControlsPanel" Orientation="Horizontal">
+					<StackPanel Name="AdditionalControlsPanel" Orientation="Horizontal"
+								Margin="30,5,5,5">
 						<Button Name="AddQuestionButton" Content="Add question" Click="OnClick_AddQuestion"
-								Height="25" Width="140" Visibility="Collapsed"/>
+								Height="25" Visibility="Collapsed" Margin="8" FontSize="12"/>
+						<Button Name="MoveSectionUpButton" Content="up" Click="OnClick_MoveUp"
+								Height="25" Visibility="Collapsed" Margin="8" FontSize="12"/>
+						<Button Name="MoveSectionDownButton" Content="down" Click="OnClick_MoveDown"
+								Height="25" Visibility="Collapsed" Margin="8" FontSize="12"/>
+						<Button Name="DeleteSectionButton" Content="del" Click="OnClick_DeleteSection"
+								Height="25" Visibility="Collapsed" Margin="8" FontSize="12"/>
 					</StackPanel>
 				</StackPanel>
 			</Border>  	

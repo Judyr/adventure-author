@@ -7,20 +7,29 @@
     		<RowDefinition/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="340"/>
+    		<ColumnDefinition Name="QuestionAndControlsColumn"/>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
     	
 		<StackPanel x:Name="AnswersPanel" Grid.Row="0" Grid.Column="1"
 					Orientation="Horizontal" VerticalAlignment="Center"/>
 	
-    	<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+    	<StackPanel x:Name="QuestionAndControls" Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+    		<StackPanel x:Name="ControlPanel" Orientation="Horizontal">    		
+				<Button Name="MoveUpButton" Content="up" Click="OnClick_MoveUp"
+						Height="25" Margin="4" FontSize="12"/>
+				<Button Name="MoveDownButton" Content="down" Click="OnClick_MoveDown"
+						Height="25" Margin="4" FontSize="12"/>
+				<Button Name="DeleteQuestionButton" Content="del" Click="OnClick_DeleteQuestion"
+						Height="25" Margin="8" FontSize="12"/>
+    		</StackPanel>
 			<TextBox Name="QuestionTitle"
-		    	     FontSize="16" FontFamily="Arial" Margin="3" Padding="3" AcceptsReturn="false"
+		    	     FontSize="16" FontFamily="Arial" 
+					 Padding="3" AcceptsReturn="false" Margin="8"
 			         Width="300" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			<CheckBox Name="ActivateCheckBox"
-			    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-					  Margin="8" Visibility="Collapsed" VerticalAlignment="Center">
+			    	  Margin="8,8,30,8" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+					  Visibility="Collapsed" VerticalAlignment="Center">
 				<CheckBox.LayoutTransform>
 					<ScaleTransform ScaleX="1.7" 
 			                        ScaleY="1.7"/>

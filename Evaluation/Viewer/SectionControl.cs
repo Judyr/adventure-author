@@ -20,6 +20,17 @@ namespace AdventureAuthor.Evaluation.Viewer
 			}
 		}
     	
+		
+    	public event EventHandler<MovingEventArgs> Moving;  
+    	
+		protected virtual void OnMoving(MovingEventArgs e)
+		{
+			EventHandler<MovingEventArgs> handler = Moving;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}  
+    	
     	#endregion
     	    	
         
@@ -31,25 +42,20 @@ namespace AdventureAuthor.Evaluation.Viewer
         	
             InitializeComponent();            
             SectionTitleTextBox.Text = section.Title;
-            SectionTitleTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };            
+            SectionTitleTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };  
+            SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
-        		if (WorksheetViewer.DesignerMode || question.Include) {	
+        		if (designerMode || question.Include) {	
 		        	AddQuestion(question);
         		}
         	}
-                   
-            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
-            	ActivateCheckBox.Visibility = Visibility.Visible;
-	    		if (section.Include) {
-	    			Activate();
-	    		}
-	    		else {
-	    			Deactivate(false);
-	    		}
-            }
-            else { // hide 'Active?' control
-            	Enable();
+                           
+            if (designerMode) {
+            	AddQuestionButton.Visibility = Visibility.Visible;
+            	DeleteSectionButton.Visibility = Visibility.Visible;
+            	MoveSectionDownButton.Visibility = Visibility.Visible;
+            	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
         }  
 			        
@@ -72,14 +78,55 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new ArgumentNullException("Can't add a null question field.");
         	}   
         	
-        	if (QuestionsPanel.Children.Count % 2 == 0) {
+        	if (QuestionsPanel.Children.Count % 2 != 0) {
         		control.Background = (Brush)Resources["Stripe1Brush"];
         	}
         	else {
         		control.Background = (Brush)Resources["Stripe2Brush"];
         	}         	
-        	QuestionsPanel.Children.Add(control);
+        	QuestionsPanel.Children.Add(control);    	
+    		control.Deleting += new EventHandler<DeletingEventArgs>(questionControl_Deleting);
+    		control.Moving += new EventHandler<MovingEventArgs>(questionControl_Moving);
+        	control.BringIntoView();
         }
+        
+        
+        private void SetBackgrounds()
+        {
+        	bool even = false;
+        	foreach (QuestionControl questionControl in QuestionsPanel.Children) {
+        		if (even) {
+        			questionControl.Background = (Brush)Resources["Stripe1Brush"];
+	        	}
+	        	else {
+	        		questionControl.Background = (Brush)Resources["Stripe2Brush"];
+	        	}     
+        		even = !even;
+        	}	
+        }
+    	
+    	
+    	private void questionControl_Moving(object sender, MovingEventArgs e)
+    	{
+    		WorksheetViewer.MoveWithin(e.MovingControl,QuestionsPanel.Children,e.MoveUp);
+    		SetBackgrounds();
+    		OnChanged(new EventArgs());
+    	}
+    	    	
+    	
+    	private void questionControl_Deleting(object sender, DeletingEventArgs e)
+    	{
+    		if (QuestionsPanel.Children.Contains(e.DeletingControl)) {
+    			QuestionsPanel.Children.Remove(e.DeletingControl);
+    			SetBackgrounds();
+        		OnChanged(new EventArgs());
+    		}
+    		else {
+    			throw new InvalidOperationException("Received instruction to delete a control " + 
+    			                                    "( " + e.DeletingControl.ToString() +
+    			                                    ") that was not a part of this worksheet.");
+    		}
+    	}
         
         
         private void OnClick_DeleteSection(object sender, EventArgs e)
@@ -88,8 +135,15 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
         	}
         	
-        	MessageBoxResult result = MessageBox.Show("This section contains " + QuestionsPanel.Children.Count +
-        	                                          " questions - are you sure you want to permanently delete it?",
+        	string message;
+        	if (QuestionsPanel.Children.Count == 0) {
+        		message = "Are you sure you want to delete this section?";
+        	}
+        	else {
+        		message = "This section contains " + QuestionsPanel.Children.Count +
+        	              " questions - are you sure you want to permanently delete it?";
+        	}        	
+        	MessageBoxResult result = MessageBox.Show(message,
         	                                          "Delete section?",
         	                                          MessageBoxButton.OKCancel,
         	                                          MessageBoxImage.Warning,
@@ -99,6 +153,18 @@ namespace AdventureAuthor.Evaluation.Viewer
         		OnDeleting(new DeletingEventArgs(this));
         	}
         }        
+        
+        
+        private void OnClick_MoveUp(object sender, EventArgs e)
+        {
+        	OnMoving(new MovingEventArgs(this,true));
+        }
+        
+        
+        private void OnClick_MoveDown(object sender, EventArgs e)
+        {
+        	OnMoving(new MovingEventArgs(this,false));
+        }
         
         
         private void OnChecked(object sender, EventArgs e)
@@ -113,6 +179,18 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
         
         
+        internal void AddNewQuestion()
+        {        	
+        	Question question = new Question("New question");
+        	question.Answers.Add(new Rating());
+        	question.Answers.Add(new Comment());
+        	question.Answers.Add(new Evidence());
+        	QuestionControl control = new QuestionControl(question,true);
+        	AddQuestionControl(control);
+        	OnChanged(new EventArgs());
+        }
+        
+        
         private void OnClick_AddQuestion(object sender, EventArgs e)
         {
         	if (!WorksheetViewer.DesignerMode) {
@@ -120,14 +198,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		                                    "when not in designer mode.");
         	}
         	
-        	Question question = new Question("Enter your question here...");
-        	question.Answers.Add(new Rating());
-        	question.Answers.Add(new Comment());
-        	question.Answers.Add(new Evidence());
-        	QuestionControl control = new QuestionControl(question,true);
-        	AddQuestionControl(control);
-        	control.QuestionTitle.Focus();
-        	control.QuestionTitle.SelectAll();        	
+        	AddNewQuestion();
         }
         
         
@@ -150,7 +221,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     			}
     		}
     	}
-    	
+    	    	
     	
     	protected override void PerformActivate()
     	{	    		
@@ -159,6 +230,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     		Tools.AllowEditingOfTextBox(SectionTitleTextBox);
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		ActivatableControl.EnableElement(AddQuestionButton);
+    		ActivatableControl.EnableElement(MoveSectionDownButton);
+    		ActivatableControl.EnableElement(MoveSectionUpButton);
+    		ActivatableControl.EnableElement(DeleteSectionButton);
     		ActivateChildren();
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
@@ -177,15 +251,18 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
         
-    	protected override void PerformDeactivate(bool preventReactivation)
+    	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
     		ActivatableControl.DeactivateElement(SectionTitleTextBox);
     		ActivatableControl.DeactivateElement(AddQuestionButton);
+    		ActivatableControl.DeactivateElement(MoveSectionDownButton);
+    		ActivatableControl.DeactivateElement(MoveSectionUpButton);
+    		ActivatableControl.DeactivateElement(DeleteSectionButton);
     		DeactivateChildren();
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
-    		if (preventReactivation) {
+    		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
@@ -200,6 +277,16 @@ namespace AdventureAuthor.Evaluation.Viewer
     			}
     		}
     	}
+    	
+		protected override void ShowActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Visible;
+		}
+		
+		protected override void HideActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Collapsed;
+		}
         
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()
@@ -213,6 +300,6 @@ namespace AdventureAuthor.Evaluation.Viewer
    				}
    			}   			
    			return section;
-        }
+        }	
     }
 }

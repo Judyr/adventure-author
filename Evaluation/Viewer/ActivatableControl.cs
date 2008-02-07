@@ -21,7 +21,10 @@ namespace AdventureAuthor.Evaluation.Viewer
 	{
 		#region Fields
 		
-		protected bool active;
+		protected bool isActive;		
+		public bool IsActive {
+			get { return isActive; }
+		}
 				
 		#endregion
 		
@@ -62,20 +65,20 @@ namespace AdventureAuthor.Evaluation.Viewer
 		public void Enable()
 		{
 			PerformEnable();
-			active = true; 
+			isActive = true; 
 		}
 		
 		public void Activate()
 		{
 			PerformActivate();
-			active = true;
+			isActive = true;
 			OnActivated(new ActivationEventArgs(this));
 		}
 		
-		public void Deactivate(bool preventReactivation)
+		public void Deactivate(bool parentIsDeactivated)
 		{
-			PerformDeactivate(preventReactivation);
-			active = false;
+			PerformDeactivate(parentIsDeactivated);
+			isActive = false;
 			OnDeactivated(new ActivationEventArgs(this));
 		}
 		
@@ -84,10 +87,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 		/// <summary>
 		/// Deactivate this control.
 		/// </summary>
-		/// <param name="preventReactivation">True if the controls that allow activation and deactivation
+		/// <param name="parentIsDeactivated">True if the controls that allow activation and deactivation
 		/// should also be deactivated; false otherwise</param>
-		protected abstract void PerformDeactivate(bool preventReactivation);
-		
+		protected abstract void PerformDeactivate(bool parentIsDeactivated);
 		
 		internal static void EnableElement(UIElement element)
 		{		

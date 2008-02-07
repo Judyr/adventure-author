@@ -16,6 +16,31 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class QuestionControl : OptionalWorksheetPartControl
     {    	
+    	#region Events
+    	
+    	public event EventHandler<DeletingEventArgs> Deleting;  
+    	
+		protected virtual void OnDeleting(DeletingEventArgs e)
+		{
+			EventHandler<DeletingEventArgs> handler = Deleting;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+		
+    	public event EventHandler<MovingEventArgs> Moving;  
+    	
+		protected virtual void OnMoving(MovingEventArgs e)
+		{
+			EventHandler<MovingEventArgs> handler = Moving;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}  
+    	
+    	#endregion
+    	
+    	
         public QuestionControl(Question question, bool designerMode)
         {
         	if (question == null) {
@@ -25,24 +50,27 @@ namespace AdventureAuthor.Evaluation.Viewer
             InitializeComponent();            
             QuestionTitle.Text = question.Text;    
             QuestionTitle.TextChanged += delegate { OnChanged(new EventArgs()); };
+            SetInitialActiveStatus(question);
             
 		    foreach (Answer answer in question.Answers) {
 		    	if (WorksheetViewer.DesignerMode || answer.Include) {
 		    		AddAnswerField(answer);
 		    	}
-		    }        	
-                   
-            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
-            	ActivateCheckBox.Visibility = Visibility.Visible;
-	    		if (question.Include) {
-	    			Activate();
-	    		}
-	    		else {
-	    			Deactivate(false);
-	    		}
+		    }
+                 
+            if (designerMode) {
+            	ControlPanel.Visibility = Visibility.Visible;
+            	ControlPanel.Width = 120;
+            	ControlPanel.MaxWidth = 120;
+            	QuestionAndControlsColumn.MaxWidth = 500;
+            	QuestionAndControlsColumn.Width = new GridLength(500);
             }
-            else { // hide 'Active?' control
-            	Enable();
+            else {
+            	ControlPanel.Visibility = Visibility.Collapsed;
+            	ControlPanel.Width = 0;
+            	ControlPanel.MaxWidth=0;
+            	QuestionAndControlsColumn.MaxWidth = 350;
+            	QuestionAndControlsColumn.Width = new GridLength(350);
             }
         }
 
@@ -77,6 +105,36 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
         	Deactivate(false);
         }
+        
+        
+        private void OnClick_DeleteQuestion(object sender, EventArgs e)
+        {
+        	if (!WorksheetViewer.DesignerMode) {
+        		throw new InvalidOperationException("Should not have been possible to try to delete a question.");
+        	}
+        	
+        	MessageBoxResult result = MessageBox.Show("Are you sure you want to permanently delete this question?",
+        	                                          "Delete question?",
+        	                                          MessageBoxButton.OKCancel,
+        	                                          MessageBoxImage.Warning,
+        	                                          MessageBoxResult.Cancel,
+        	                                          MessageBoxOptions.None);
+        	if (result == MessageBoxResult.OK) {
+        		OnDeleting(new DeletingEventArgs(this));
+        	}
+        }    
+        
+        
+        private void OnClick_MoveUp(object sender, EventArgs e)
+        {
+        	OnMoving(new MovingEventArgs(this,true));
+        }
+        
+        
+        private void OnClick_MoveDown(object sender, EventArgs e)
+        {
+        	OnMoving(new MovingEventArgs(this,false));
+        }
 
         
     	protected override void PerformEnable()
@@ -102,9 +160,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     	protected override void PerformActivate()
     	{	
     		ActivatableControl.EnableElement(QuestionTitle);
-    		QuestionTitle.IsReadOnly = false;
     		ActivatableControl.EnableElement(ActivateCheckBox);
+    		ActivatableControl.EnableElement(MoveUpButton);
+    		ActivatableControl.EnableElement(MoveDownButton);
+    		ActivatableControl.EnableElement(DeleteQuestionButton);
     		ActivateChildren();
+    		QuestionTitle.IsReadOnly = false;
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
@@ -122,15 +183,18 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
         
-    	protected override void PerformDeactivate(bool preventReactivation)
+    	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
     		ActivatableControl.DeactivateElement(QuestionTitle);
+    		ActivatableControl.DeactivateElement(MoveUpButton);
+    		ActivatableControl.DeactivateElement(MoveDownButton);
+    		ActivatableControl.DeactivateElement(DeleteQuestionButton);
     		QuestionTitle.IsReadOnly = true;
     		DeactivateChildren();
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
-    		if (preventReactivation) {
+    		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
@@ -145,6 +209,16 @@ namespace AdventureAuthor.Evaluation.Viewer
     			}
     		}
     	}
+    	
+		protected override void ShowActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Visible;
+		}
+		
+		protected override void HideActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Collapsed;
+		}
     	        
     	
         protected override OptionalWorksheetPart GetWorksheetPartObject()

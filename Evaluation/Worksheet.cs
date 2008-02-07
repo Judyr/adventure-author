@@ -72,18 +72,6 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Question GetQuestion(string questionName)
-		{
-			foreach (Section section in sections) {
-				Question question = GetQuestion(questionName,section.Title);
-				if (question != null) {
-					return question;
-				}
-			}
-			return null;
-		}
-		
-		
 		public Question GetQuestion(string questionName, string sectionName)
 		{
 			Section section = GetSection(sectionName);
