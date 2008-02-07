@@ -169,6 +169,11 @@ namespace AdventureAuthor.Conversations
 		/// </summary>
 		private List<Brush> unassignedColours;
 		
+		/// <summary>
+		/// For the purposes of exporting a conversation file into text form.
+		/// </summary>
+		private StreamWriter sw = null;
+		
 		#endregion Fields
 		
 		#region Constructors 
@@ -914,6 +919,67 @@ namespace AdventureAuthor.Conversations
 		#endregion
 					
 		#region General methods
+		
+		public void ExportToTextFile(string filename)
+		{
+			FileInfo fi = new FileInfo(filename);
+			if (sw != null) {
+				sw.Dispose();
+			}
+			sw = fi.CreateText();
+			sw.AutoFlush = false;
+			
+			foreach (NWN2ConversationConnector line in nwnConv.StartingList) {
+				if (line.Conditions.Count > 0) {
+					sw.WriteLine(ScriptHelper.GetDescriptionForCondition(line.Conditions));			
+				}
+				WriteToFile(line,String.Empty);
+			}
+			
+			sw.Flush();
+			sw.Close();
+			sw.Dispose();
+			Say.Information("Exported conversation to " + filename);
+		}		
+		
+		
+		private void WriteToFile(NWN2ConversationConnector line, string indent)
+		{
+			if (line == null) {
+				throw new ArgumentNullException("Tried to write a null line to file.");
+			}
+			
+			string newIndent = indent;
+					
+			if (!IsFiller(line)) {	
+				
+				string speakerName;
+				if (line.Type == NWN2ConversationConnectorType.Reply) {
+					speakerName = "PLAYER";
+				}
+				else if (line.Speaker == null || line.Speaker == String.Empty) {
+					speakerName = "[OWNER]";
+				}
+				else {
+					speakerName = line.Speaker.ToUpper();
+				}
+				sw.WriteLine(indent + speakerName + "\t\t" + GetStringFromOEIString(line.Text));
+				
+				foreach (NWN2ScriptFunctor action in line.Actions) {
+					sw.WriteLine(indent + ScriptHelper.GetDescriptionForAction(action));
+				}
+				
+				newIndent = "   " + newIndent;
+			}
+			
+			foreach (NWN2ConversationConnector child in line.Line.Children) {
+				if (child.Conditions.Count > 0) {
+					sw.WriteLine(indent + ScriptHelper.GetDescriptionForCondition(child.Conditions));			
+				}
+				WriteToFile(child,newIndent);
+			}
+		}
+		
 			
 		/// <summary>
 		/// Get the number of words in a sentence.
