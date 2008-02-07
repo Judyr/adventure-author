@@ -247,10 +247,6 @@
     <Compile Include="Evaluation\Section.cs" />
     <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
-    <Compile Include="Evaluation\Viewer\EvidenceButton.xaml.cs">
-      <DependentUpon>EvidenceButton.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Evaluation\Viewer\MovingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentControl.cs">
@@ -289,6 +285,17 @@
     </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Evaluation\OptionalWorksheetPart.cs" />
+    <Compile Include="Ideas\Board.cs" />
+    <Compile Include="Ideas\BoardObject.cs" />
+    <Compile Include="Ideas\IAppearance.cs" />
+    <Compile Include="Ideas\Idea.cs" />
+    <Compile Include="Ideas\IDragBehaviour.cs" />
+    <Compile Include="Ideas\IDropBehaviour.cs" />
+    <Compile Include="Ideas\LightweightIdeaControl.xaml.cs" />
+    <Compile Include="Ideas\Magnet.xaml.cs" />
+    <Compile Include="Ideas\MagnetBoard.xaml.cs" />
+    <Compile Include="Ideas\MagnetBoardViewer.xaml.cs" />
+    <Compile Include="Ideas\MagnetList.xaml.cs" />
     <Compile Include="Notebook\MindMapForm.cs" />
     <Compile Include="Notebook\MindMapForm.Designer.cs">
       <DependentUpon>MindMapForm.cs</DependentUpon>
@@ -435,7 +442,6 @@
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
     <Page Include="Evaluation\Viewer\CommentControl.xaml" />
-    <Page Include="Evaluation\Viewer\EvidenceButton.xaml" />
     <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />
     <Page Include="Evaluation\Viewer\ReplyControl.xaml" />
@@ -443,6 +449,11 @@
     <Page Include="Evaluation\Viewer\RatingControl.xaml" />
     <Page Include="Evaluation\Viewer\SelectModeWindow.xaml" />
     <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
+    <Page Include="Ideas\LightweightIdeaControl.xaml" />
+    <Page Include="Ideas\Magnet.xaml" />
+    <Page Include="Ideas\MagnetBoard.xaml" />
+    <Page Include="Ideas\MagnetBoardViewer.xaml" />
+    <Page Include="Ideas\MagnetList.xaml" />
     <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
     <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
     <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
@@ -478,6 +489,7 @@
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
+    <Folder Include="Ideas" />
     <Folder Include="Notebook\Worksheets" />
     <Folder Include="Notebook\Worksheets\UI" />
     <Folder Include="Setup\UI" />
