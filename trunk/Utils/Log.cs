@@ -48,13 +48,6 @@ namespace AdventureAuthor.Utils
 				handler(null,e);
 			}
 		}
-		                                        		
-//		public enum DialogAction {
-//			Started,
-//			Completed,
-//			Aborted
-//			// Deferred?
-//		}
 		
 		public enum Action {
 			// applications or mini-applications e.g. conversationwriter, expandedgraph:

@@ -33,27 +33,19 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using AdventureAuthor.Analysis;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
-using AdventureAuthor.Evaluation;
-using AdventureAuthor.Evaluation.Viewer;
-using AdventureAuthor.Notebook.MyIdeas;
-using AdventureAuthor.Notebook.Worksheets.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
-using Microsoft.DirectX;
-using Netron.Diagramming.Core;
 using NWN2Toolset;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Factions;
-using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.IO;
@@ -66,11 +58,10 @@ using OEIShared.Utils;
 using TD.SandBar;
 using crown = Crownwood.DotNetMagic.Controls;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
-using wpf = System.Windows.Controls;
 
 namespace AdventureAuthor.Setup
 {		
-	public static class Toolset
+	public static partial class Toolset
 	{
 		#region Global variables
 		
@@ -193,8 +184,8 @@ namespace AdventureAuthor.Setup
 			// Add 'add idea' content:
 			
 			ElementHost host = new ElementHost();
-			AdventureAuthor.Notebook.MyIdeas.LightweightIdeaControl ideacontrol 
-				= new AdventureAuthor.Notebook.MyIdeas.LightweightIdeaControl();
+			AdventureAuthor.Ideas.LightweightIdeaControl ideacontrol 
+				= new AdventureAuthor.Ideas.LightweightIdeaControl();
 			ideacontrol.Width = 300;
 			ideacontrol.Height = 200;
 			host.Child = ideacontrol;
@@ -713,106 +704,6 @@ namespace AdventureAuthor.Setup
 			{ 
 				Log.WriteMessage("Preview state changed on property grid (??)"); 
 			};
-		}		
-		
-		
-		private static void SetupFileMenu(MenuBarItem fileMenu)
-		{
-			fileMenu.Items.Clear();
-							
-			MenuButtonItem newAdventure = new MenuButtonItem("New module");
-			newAdventure.Activate += delegate { NewModuleDialog(); };
-			MenuButtonItem openAdventure = new MenuButtonItem("Open module");
-			openAdventure.Activate += delegate { OpenModuleDialog(); };
-			MenuButtonItem saveAdventure = new MenuButtonItem("Save module");
-			saveAdventure.Activate += delegate { SaveModuleDialog(); };
-//			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
-//			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
-			MenuButtonItem bakeAdventure = new MenuButtonItem("Bake module");
-			bakeAdventure.Activate += delegate { BakeModuleDialog(); };
-			MenuButtonItem runAdventure = new MenuButtonItem("Run module");
-			runAdventure.Activate += delegate { RunModuleDialog(); };
-			MenuButtonItem closeAdventure = new MenuButtonItem("Close module");
-			closeAdventure.Activate += delegate { CloseModuleDialog(); };
-							
-			MenuButtonItem newChapter = new MenuButtonItem("New area");
-			newChapter.Activate += delegate { NewAreaDialog(); };
-			MenuButtonItem newConversation = new MenuButtonItem("Conversation writer");
-			newConversation.Activate += delegate { LaunchConversationWriter(); };
-			MenuButtonItem variableManager = new MenuButtonItem("Variable manager");
-			variableManager.Activate += delegate { LaunchVariableManager(); };
-			
-//			MenuButtonItem changeUser = new MenuButtonItem("Change user");
-//			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
-			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
-			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
-			
-			MenuButtonItem worksheets = new MenuButtonItem("Worksheets");
-			MenuButtonItem feedback = new MenuButtonItem("Feedback");
-			feedback.Activate += delegate 
-			{  
-				FeedbackWorksheet worksheet = new FeedbackWorksheet();
-				worksheet.ShowDialog();
-			};
-			worksheets.Items.Add(feedback);
-			
-			MenuButtonItem misc = new MenuButtonItem("Miscellaneous");
-			MenuButtonItem difficulty = new MenuButtonItem("Analyse hostiles");
-			difficulty.Activate += delegate { 
-				if (ModuleHelper.ModuleIsOpen() && form.App.Module.Areas.Count > 0) {
-					CombatMap combatMap = new CombatMap(); 
-					combatMap.Show(); 
-				}
-			};
-			misc.Items.Add(difficulty);
-			
-			MenuButtonItem colourPicker = new MenuButtonItem("Colour picker");
-			colourPicker.Activate += delegate { 
-				RGBPicker picker = new RGBPicker();
-				picker.ShowDialog();
-			};
-			misc.Items.Add(colourPicker);
-			
-			MenuButtonItem evaluation = new MenuButtonItem("Worksheet viewer");
-			evaluation.Activate += delegate { 
-				WorksheetViewer eval = new WorksheetViewer(false);
-				eval.ShowDialog();
-			};
-			misc.Items.Add(evaluation);
-			
-			MenuButtonItem worksheetDesigner = new MenuButtonItem("Worksheet designer");
-			worksheetDesigner.Activate += delegate { 
-				WorksheetViewer design = new WorksheetViewer(true);
-				design.ShowDialog();
-			};
-			misc.Items.Add(worksheetDesigner);
-			
-			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
-			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
-			
-			newChapter.BeginGroup = true;
-			exitAdventureAuthor.BeginGroup = true;
-			misc.BeginGroup = true;
-			worksheets.BeginGroup = true;
-//			logWindow.BeginGroup = true;
-						
-			fileMenu.Items.AddRange( new MenuButtonItem[] {
-			                           	newAdventure,
-			                           	openAdventure,
-			                           	saveAdventure,
-//			                           	saveAdventureAs,
-			                           	bakeAdventure,
-			                           	runAdventure,
-			                           	closeAdventure,
-			                           	newChapter,
-			                           	newConversation,
-			                           	variableManager,
-//			                           	changeUser,
-			                           	exitAdventureAuthor,
-			                           	worksheets,
-			                           	logWindow,
-			                           	misc
-			                           });			
 		}							
 		
 				

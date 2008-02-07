@@ -49,33 +49,13 @@ namespace AdventureAuthor.Conversations.UI
     /// </summary>
 
     public sealed partial class WriterWindow : Window
-    {    
-    	#region Constructors 
+    {   
+    	#region Constants
+    	    	
+    	private const string TXT_FILTER = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
     	
-		public WriterWindow()
-		{
-			InitializeComponent();
-		}
-		
-		#endregion
-		
-						
-		#region Events
-		
-		public event EventHandler ViewedPage;
-		
-		private void OnViewedPage(EventArgs e)
-		{
-			Say.Debug("Conversation.ViewedPage event raised.");
-			EventHandler handler = ViewedPage;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-		
-		#endregion
-		
-    	
+    	#endregion
+    
     	#region Fields    	
     	
     	/// <summary>
@@ -163,7 +143,31 @@ namespace AdventureAuthor.Conversations.UI
 		}    	
     	
     	#endregion Fields
-    	        
+    	  						
+		#region Events
+		
+		public event EventHandler ViewedPage;
+		
+		private void OnViewedPage(EventArgs e)
+		{
+			Say.Debug("Conversation.ViewedPage event raised.");
+			EventHandler handler = ViewedPage;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+		
+		#endregion
+		    	      	
+    	#region Constructors 
+    	
+		public WriterWindow()
+		{
+			InitializeComponent();
+		}
+		
+		#endregion
+		
         #region Page view
           
         /// <summary>
@@ -673,9 +677,34 @@ namespace AdventureAuthor.Conversations.UI
 		}
 		
 		
-		private void OnClick_Print(object sender, EventArgs ea)
+		private void OnClick_Export(object sender, EventArgs ea)
 		{
-			
+			if (Conversation.CurrentConversation != null) {	
+				if (Conversation.CurrentConversation.IsDirty) {
+					MessageBoxResult result = MessageBox.Show("Save?", 
+					                                          "Save changes to this conversation?", 
+					                                          MessageBoxButton.YesNoCancel);
+					if (result == MessageBoxResult.Yes) {		
+						Conversation.CurrentConversation.SaveToOriginal();
+					}
+					else if (result == MessageBoxResult.Cancel) {
+						return;
+					}
+				}
+				
+	    		SaveFileDialog saveFileDialog = new SaveFileDialog();
+	    		saveFileDialog.AddExtension = true;
+	    		saveFileDialog.CheckPathExists = true;
+	    		saveFileDialog.DefaultExt = TXT_FILTER;
+	    		saveFileDialog.Filter = TXT_FILTER;
+	  			saveFileDialog.ValidateNames = true;
+	  			saveFileDialog.Title = "Select location to export conversation to";
+	  			bool ok = (bool)saveFileDialog.ShowDialog();  				
+	  			if (ok) {	  				
+	  				string filename = saveFileDialog.FileName;
+	  				Conversation.CurrentConversation.ExportToTextFile(filename);
+	  			}
+			}	
 		}
 		
 		

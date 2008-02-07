@@ -343,6 +343,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Setup\Plugin.cs" />
+    <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
@@ -461,6 +462,7 @@
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
+    <Folder Include="Ideas" />
     <Folder Include="Notebook\Worksheets" />
     <Folder Include="Notebook\Worksheets\UI" />
     <Folder Include="Setup\UI" />
