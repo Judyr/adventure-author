@@ -60,5 +60,16 @@ namespace AdventureAuthor.Evaluation
 		{
 			return Value == null || Value == String.Empty || Value == "0";
 		}
+		
+		
+		public override string ToString()
+		{
+			if (Value == null) {
+				return "0 out of " + max;
+			}
+			else {
+				return Value + " out of " + max;
+			}
+		}
 	}
 }

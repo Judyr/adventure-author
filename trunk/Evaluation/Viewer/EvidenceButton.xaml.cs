@@ -11,13 +11,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Evaluation.UI;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 
-namespace AdventureAuthor.Evaluation.Viewer
+namespace AdventureAuthor.Evaluation.UI
 {
-    public partial class EvidenceControl : OptionalWorksheetPartControl
+    public partial class EvidenceButton : UserControl, IAnswerControl
     {    	
     	#region Constants
     	
@@ -28,7 +28,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	
     	#region Fields
-    	    	
+    	
     	private string filename;    	
 		public string Filename {
 			get { return filename; }
@@ -43,7 +43,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				else {
 					Status = EvidenceStatus.BrokenLink;
 				}
-				OnChanged(new EventArgs());
+				OnAnswerChanged(new EventArgs());
 			}
 		}
     	
@@ -61,29 +61,22 @@ namespace AdventureAuthor.Evaluation.Viewer
     		set {
     			status = value;
     			switch (status) {
-    				case EvidenceStatus.NoLink:   
-    					ViewLink.Visibility = Visibility.Collapsed;
-    					ViewLink.ToolTip = String.Empty; 					
-    					SelectLinkText.Text = "Attach evidence...";
-    					ClearLink.Visibility = Visibility.Collapsed;
+    				case EvidenceStatus.NoLink:
+    					ViewButton.Visibility = Visibility.Collapsed;
+    					ViewButton.ToolTip = String.Empty;
+    					ClearButton.Visibility = Visibility.Collapsed;
     					break;
     				case EvidenceStatus.Link:
-    					ViewLink.Visibility = Visibility.Visible;
-    					ViewLink.ToolTip = filename;
-    					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
-    					ViewLinkText.TextDecorations.Clear();
-    					ViewLinkText.TextDecorations.Add(TextDecorations.Underline);
-    					SelectLinkText.Text = "Change";
-    					ClearLink.Visibility = Visibility.Visible;
+    					ViewButton.Visibility = Visibility.Visible;
+    					ViewButton.Foreground = Brushes.Black;
+    					ViewButton.ToolTip = filename;
+    					ClearButton.Visibility = Visibility.Visible;
     					break;
     				case EvidenceStatus.BrokenLink:
-    					ViewLink.Visibility = Visibility.Visible;
-    					ViewLink.ToolTip = filename;
-    					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
-    					ViewLinkText.TextDecorations.Clear();
-    					ViewLinkText.TextDecorations.Add(TextDecorations.Strikethrough);
-    					SelectLinkText.Text = "Change";
-    					ClearLink.Visibility = Visibility.Visible;
+    					ViewButton.Visibility = Visibility.Visible;
+    					ViewButton.Foreground = Brushes.Red;
+    					ViewButton.ToolTip = filename;
+    					ClearButton.Visibility = Visibility.Visible;
     					break;
     				default:
     					break;
@@ -92,24 +85,41 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	#endregion
-    	    			    	
+    	    	
+    	#region Events
+    	
+    	public event EventHandler AnswerChanged;  
+    	
+		protected virtual void OnAnswerChanged(EventArgs e)
+		{
+			EventHandler handler = AnswerChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+    	
+    	#endregion
+		    	
     	#region Constructors
-    			
-        public EvidenceControl(Evidence evidence, bool designerMode)
-        {        
-    		if (evidence == null) {
-        		evidence = new Evidence();
-    		}
-    		
+		
+        public EvidenceButton()
+        {
             InitializeComponent();
-            SetInitialActiveStatus(evidence);
-            
-            if (evidence == null) {
-            	Filename = null;
-            }
-            else {
-            	Filename = evidence.Value;
-            }
+            Filename = null;
+        }
+
+        
+        public EvidenceButton(string location)
+        {
+            InitializeComponent();
+        	Filename = location;
+        }
+        
+        
+        public EvidenceButton(Evidence evidence)
+        {        
+            InitializeComponent();
+        	Filename = evidence.Value;
         }
         
         #endregion
@@ -225,62 +235,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 				Filename = String.Empty;				
 			}
 		}
-        
-        
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
 		
 		#endregion
 				
 		#region Methods
 		
-    	protected override void PerformEnable()
-    	{    		
-    		ActivatableControl.EnableElement(ButtonsPanel);
-    	}
-    	
-    	    	
-    	protected override void PerformActivate()
-    	{	
-    		ActivatableControl.ActivateElement(ButtonsPanel);
-    		ActivatableControl.EnableElement(ActivateCheckBox);
-    		if ((bool)!ActivateCheckBox.IsChecked) {
-    			ActivateCheckBox.IsChecked = true;
-    		}
-    	}
-    	
-        
-    	protected override void PerformDeactivate(bool parentIsDeactivated)
-    	{
-    		ActivatableControl.DeactivateElement(ButtonsPanel);
-    		if ((bool)ActivateCheckBox.IsChecked) {
-    			ActivateCheckBox.IsChecked = false;
-    		}
-    		if (parentIsDeactivated) {
-    			ActivatableControl.DeactivateElement(ActivateCheckBox);
-    		}
-    	}
-    	
-		protected override void ShowActivationControls()
-		{
-			ActivateCheckBox.Visibility = Visibility.Visible;
-		}
-		
-		protected override void HideActivationControls()
-		{
-			ActivateCheckBox.Visibility = Visibility.Collapsed;
-		}
-    	
-        
-        protected override OptionalWorksheetPart GetWorksheetPartObject()
+		public Answer GetAnswer() 
 		{
 			return new Evidence(filename);
 		}

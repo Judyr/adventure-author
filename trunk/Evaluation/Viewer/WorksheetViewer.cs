@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Utils;
 using AdventureAuthor.Scripts.UI;
 using Microsoft.Win32;
 
@@ -20,12 +20,23 @@ namespace AdventureAuthor.Evaluation.Viewer
     {    	
     	#region Constants
     	
+//    	public enum Mode {
+//    		Pupil,
+//    		Teacher,
+//    		Constructor
+//    	}
+    	
     	private string DEFAULT_TITLE = "Evaluation";
     	internal const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	
     	#endregion
     	    	
     	#region Fields
+    	
+//    	private static Mode appMode;    	
+//		public static Mode AppMode {
+//			get { return appMode; }
+//		}
     	
     	private static bool designerMode;
     	public static bool DesignerMode {
@@ -39,15 +50,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 			get { return filename; }
 			set { 
 				filename = value;
-				if (filename == null) {
-					FileNameTextBlock.Text = "<null>";
-				}
-				else {
-					FileNameTextBlock.Text = filename;
-				}
-				Log.WriteMessage(FileNameTextBlock.Text);
+				UpdateTitleBar();
 			}
-		}
+		}    	
     	
     	/// <summary>
     	/// True if the worksheet fields have been changed since the last save; false otherwise.
@@ -55,23 +60,15 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private bool dirty = false;    	
 		internal bool Dirty {
 			get { return dirty; }
-			set { 
-				if (dirty != value) {
-					if (Filename == null || Filename == String.Empty) {
-						Title = "temp";
-					}
-					else {
-						Title = Filename;
-					}					
-					if (value) {
-						Title += "*";
-					}
+			set {
+				bool updateTitleBar = (dirty != value); // update title bar if dirty status changes
+				dirty = value;
+				if (updateTitleBar) {
+					UpdateTitleBar();
 				}
-				
-				dirty = value; 
 			}
 		}
-    	
+    	    	
     	#endregion
     	    	    	    	
     	#region Constructors    	   	
@@ -93,13 +90,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
     			NewMenuItem.Visibility = Visibility.Visible;
     			OptionsMenu.Visibility = Visibility.Collapsed;
-    			EditMenu.Visibility = Visibility.Visible;
     		}
     		else {
     			SaveBlankMenuItem.Visibility = Visibility.Visible;
     			NewMenuItem.Visibility = Visibility.Collapsed;
     			OptionsMenu.Visibility = Visibility.Visible;
-    			EditMenu.Visibility = Visibility.Collapsed;
     		}
     	}
     	
@@ -144,7 +139,35 @@ namespace AdventureAuthor.Evaluation.Viewer
     	/// or null if the worksheet was created in code</param>
     	private void Open(Worksheet worksheet, string sourceFilename)
     	{
-    		CloseWorksheetDialog();
+    		CloseWorksheetDialog();	    					
+    		    		
+    		if (!DesignerMode) {    			
+    			string warning = "This worksheet contains duplicate sections or questions " +
+						    	 "and cannot be opened. Try opening and then saving the worksheet " +
+						    	 "in designer mode to fix this problem.";    			
+    			List<string> sectionTitles = new List<string>(worksheet.Sections.Count);
+	    		foreach (Section section in worksheet.Sections) {
+    				if (sectionTitles.Contains(section.Title)) {
+	    				Say.Error(warning);
+	    				CloseWorksheet();
+    					return;
+	    			}
+	    			else {
+	    				sectionTitles.Add(section.Title);
+	    			}
+    				List<string> questionTitles = new List<string>(section.Questions.Count);
+    				foreach (Question question in section.Questions) {
+	    				if (questionTitles.Contains(question.Text)) {
+		    				Say.Error(warning);
+	    					CloseWorksheet();
+	    					return;
+		    			}
+		    			else {
+		    				questionTitles.Add(question.Text);
+		    			}
+    				}
+	    		}
+    		}    		
     		
     		if (DesignerMode && !worksheet.IsBlank()) {
     			MessageBoxResult result = MessageBox.Show("The worksheet you are trying to open has been partially " +
@@ -164,72 +187,63 @@ namespace AdventureAuthor.Evaluation.Viewer
     			Filename = sourceFilename;
     		}
     		
-    		try {
-	    		originalWorksheet = worksheet;
-	    		TitleField.Text = worksheet.Title;
-	    		DateField.Text = worksheet.Date;
-	    		NameField.Text = worksheet.Name;
-	    		    		
-	    		foreach (Section section in worksheet.Sections) {	    			
-	    			if (DesignerMode || section.Include) {
-			    		SectionControl sectionControl = new SectionControl(section,WorksheetViewer.DesignerMode);
-			    		AddSectionControl(sectionControl);
-			    		WatchForChanges(sectionControl);
-			    		
-			    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
-			    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-			    			WatchForChanges(questionControl);
-			    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
-			    				WatchForChanges(answerControl);
-			    			}
-			    		}
+	    	originalWorksheet = worksheet;
+	    	TitleField.Text = worksheet.Title;
+	    	DateField.Text = worksheet.Date;
+	    	NameField.Text = worksheet.Name;
+	    	    		
+	    	foreach (Section section in worksheet.Sections) {	    			
+	    		if (DesignerMode || section.Include) {
+	    			try {	    					
+		    			SectionControl sectionControl = AddSection(section);
+		    			if (sectionControl != null) {					    		
+				    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
+				    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
+				    			if (DesignerMode && !sectionControl.IsActive) {
+				    				questionControl.Deactivate(true);
+				    			}
+				    			WatchForChanges(questionControl);
+				    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
+				    				if (DesignerMode && !questionControl.IsActive) {
+				    					answerControl.Deactivate(true);
+				    				}
+				    				WatchForChanges(answerControl);
+				    			}
+				    		}
+		    			}
+	    			}
+	    			catch (InvalidDataException e) {
+	    				CloseWorksheet();
+	    				Say.Error(e);
+	    				return;
 	    			}
 	    		}
-	    		
-	    		// 'Seal off' the very end of the worksheet with a border:
-	    		if (SectionsPanel.Children.Count > 0) {
-		    		SectionControl finalSectionControl = 
-		    			(SectionControl)SectionsPanel.Children[SectionsPanel.Children.Count-1];
-	    			finalSectionControl.SectionBorder.BorderThickness = new Thickness(2);
-	    		}
-	    		
-	    		DateField.TextChanged += delegate { worksheet_Changed(); };
-	    		NameField.TextChanged += delegate { worksheet_Changed(); };
-	    		TitleField.TextChanged += delegate { worksheet_Changed(); };
-	    		TitleLabel.Visibility = Visibility.Visible;
-	    		NameLabel.Visibility = Visibility.Visible;
-	    		DateLabel.Visibility = Visibility.Visible;
-	    		TitleField.Visibility = Visibility.Visible;
-		    	NameField.Visibility = Visibility.Visible;
-		    	DateField.Visibility = Visibility.Visible;
-		    	
-		    	if (Filename == null || Filename == String.Empty) {
-		    		Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
-		    	}
-		    	else {
-		    		Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
-		    					   // meaningless TextChanged event when the Title, Name and Date fields are created
-		    	}
-    		}
-    		catch (Exception e) {
-    			Say.Error("Was unable to open worksheet.",e);
-    			CloseWorksheet();
-    		}
+	    	}
+	    		    	
+	    	DateField.TextChanged += delegate { worksheet_Changed(); };
+	    	NameField.TextChanged += delegate { worksheet_Changed(); };
+	    	TitleField.TextChanged += delegate { worksheet_Changed(); };
+	    	TitleLabel.Visibility = Visibility.Visible;
+	    	NameLabel.Visibility = Visibility.Visible;
+	    	DateLabel.Visibility = Visibility.Visible;
+	    	TitleField.Visibility = Visibility.Visible;
+		    NameField.Visibility = Visibility.Visible;
+		    DateField.Visibility = Visibility.Visible;
+		    BorderClosingRectangle.Visibility = Visibility.Visible;
+		    
+		    if (DesignerMode) {
+		    	EditMenu.Visibility = Visibility.Visible;
+		    }
+		    
+		    if (Filename == null || Filename == String.Empty) {
+		    	Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
+		    }
+		    else {
+		    	Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
+		    				   // meaningless TextChanged event when the Title, Name and Date fields are created
+		    }    		
     	} 
-
     	
-    	private void sectionControl_Deleting(object sender, DeletingEventArgs e)
-    	{
-    		if (SectionsPanel.Children.Contains(e.SectionControl)) {
-    			SectionsPanel.Children.Remove(e.SectionControl);
-    		}
-    		else {
-    			throw new InvalidOperationException("Received instruction to delete a section control " + 
-    			                                    "( " + e.SectionControl.SectionTitleTextBox.Text + 
-    			                                    ") that was not a part of this worksheet.");
-    		}
-    	}
-
     	    	
     	public void Open(string filename)
     	{
@@ -244,41 +258,157 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		Open(worksheet,filename);
     		}
     		catch (Exception e) {
-    			Say.Error("The selected file was not a valid worksheet.",e);
+    			Say.Error("Was unable to open worksheet.",e);
     			CloseWorksheet();
     			this.Filename = null;
     		}
     	}
     	
     	
-    	public SectionControl AddSection(Section section)
+    	private string GetTitle(OptionalWorksheetPartControl control)
+    	{
+    		if (control is SectionControl) {
+    			return ((SectionControl)control).SectionTitleTextBox.Text;
+    		}
+    		else if (control is QuestionControl) {
+    			return ((QuestionControl)control).QuestionTitle.Text;
+    		}
+    		else {
+    			throw new ArgumentException("Can only get titles of sections and questions, not " +
+    			                            control.GetType().ToString() + ".");
+    		}
+    	}
+    	
+    	
+    	private void SetTitle(OptionalWorksheetPartControl control, string title)
+    	{
+    		if (control is SectionControl) {
+    			((SectionControl)control).SectionTitleTextBox.Text = title;
+    		}
+    		else if (control is QuestionControl) {
+    			((QuestionControl)control).QuestionTitle.Text = title;
+    		}
+    		else {
+    			throw new ArgumentException("Can only set titles of sections and questions, not " +
+    			                            control.GetType().ToString() + ".");
+    		}
+    	}
+    	
+    	
+		private void ValidateTitles(UIElementCollection controls)
+    	{
+			List<string> titles = new List<string>(controls.Count);
+    		List<OptionalWorksheetPartControl> controlsWithDuplicateTitles 
+    			= new List<OptionalWorksheetPartControl>(controls.Count);
+    		foreach (OptionalWorksheetPartControl control in controls) {
+    			string title = GetTitle(control);    			
+    			if (titles.Contains(title)) {
+    				controlsWithDuplicateTitles.Add(control);
+    			}
+    			else {
+    				titles.Add(title);
+    			}
+    		}
+    		
+    		foreach (OptionalWorksheetPartControl control in controlsWithDuplicateTitles) {
+    			string originalTitle = GetTitle(control);
+    			string newTitle = originalTitle;
+    			int count = 1;
+    			while (titles.Contains(newTitle)) {
+    				count++;
+    				newTitle = originalTitle + " (" + count + ")";
+    			}
+    			SetTitle(control,newTitle);
+    			titles.Add(newTitle);    			
+    		}
+    	}  
+		
+		
+		private void ValidateTitles()
+		{
+			ValidateTitles(SectionsPanel.Children);
+			foreach (SectionControl sectionControl in SectionsPanel.Children) {
+				ValidateTitles(sectionControl.QuestionsPanel.Children);
+			}
+		}
+    	
+    	
+//		private void ValidateSectionTitles()
+//    	{
+//			List<string> titles = new List<string>(SectionsPanel.Children.Count);
+//    		List<SectionControl> sectionsWithDuplicateTitles = new List<SectionControl>(SectionsPanel.Children.Count);
+//    		foreach (SectionControl sectionControl in SectionsPanel.Children) {
+//    			string title = sectionControl.SectionTitleTextBox.Text;
+//    			if (titles.Contains(title)) {
+//    				sectionsWithDuplicateTitles.Add(sectionControl);
+//    			}
+//    			else {
+//    				titles.Add(title);
+//    			}
+//    		}
+//    		
+//    		foreach (SectionControl sectionControl in sectionsWithDuplicateTitles) {
+//    			string originalTitle = sectionControl.SectionTitleTextBox.Text;
+//    			string newTitle = originalTitle;
+//    			int count = 1;
+//    			while (titles.Contains(newTitle)) {
+//    				count++;
+//    				newTitle = originalTitle + " (" + count + ")";
+//    			}
+//    			sectionControl.SectionTitleTextBox.Text = newTitle;
+//    			titles.Add(newTitle);    			
+//    		}
+//    	}   
+    	
+    	
+    	public void AddNewSection()
+    	{
+    		try {
+	    		SectionControl sectionControl = AddSection(new Section("New section"));
+	    		sectionControl.AddNewQuestion();
+	    		worksheet_Changed();
+    		}
+    		catch (Exception e) {
+    			Say.Error("Failed to add new section.",e);
+    		}
+    	}
+    	
+    	
+    	private SectionControl AddSection(Section section)
     	{
     		if (section == null) {
         		throw new ArgumentNullException("Can't add a null section field.");
         	}
-        	
-        	SectionControl control = (SectionControl)section.GetControl(WorksheetViewer.DesignerMode);
-        	AddSectionControl(control);
-        	return control;
-    	}
-    	
-    	
-    	private void AddSectionControl(SectionControl sectionControl)
-    	{
-    		foreach (SectionControl sc in SectionsPanel.Children) {
-    			if (sc.SectionTitleTextBox.Text == sectionControl.SectionTitleTextBox.Text) {
-    				throw new ArgumentException("Cannot add more than one section with the title " 
-    				                            + sc.SectionTitleTextBox.Text + ".");
-    			}
+    		if (!DesignerMode) { // check that this section actually has some active questions to display
+	    		bool hasQuestions = false;
+	    		foreach (Question question in section.Questions) {
+	    			if (question.Include) {
+	    				hasQuestions = true;
+	    				break;
+	    			}
+	    		}
+	    		if (!hasQuestions) {
+	    			Say.Debug("Section '" + section.Title + "' had no questions - did not display.");
+	    			return null;
+	    		}
     		}
-    		SectionsPanel.Children.Add(sectionControl);
+    		        	
+        	SectionControl sc = (SectionControl)section.GetControl(WorksheetViewer.DesignerMode);
+    		SectionsPanel.Children.Add(sc);
+    		sc.BringIntoView(); // bring the new section into view
+    		WatchForChanges(sc);
+    		return sc;
     	}
-    	
-    	
+    	    	
+    	    	
     	public bool Save()
     	{
-    		if (originalWorksheet == null || Filename == null) {
-    			Say.Debug("Save failed: Should not have called Save without setting a filename or opening a worksheet.");
+    		if (originalWorksheet == null) {
+    			Say.Error("Save failed: Should not have called Save without opening a worksheet.");
+    			return false;
+    		}
+    		else if (filename == null) {
+    			Say.Error("Save failed: Should not have called Save without giving a filename.");
     			return false;
     		}
     		else {
@@ -306,6 +436,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    TitleField.Visibility = Visibility.Hidden;
 	    	NameField.Visibility = Visibility.Hidden;
 		    DateField.Visibility = Visibility.Hidden;
+		    EditMenu.Visibility = Visibility.Collapsed;
+		   	BorderClosingRectangle.Visibility = Visibility.Collapsed;
     		SectionsPanel.Children.Clear();
     		
     		dirty = false;
@@ -320,10 +452,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		Worksheet ws;
     		if (DesignerMode) {
-	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text); 
+	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text);	    		
+	    		ValidateTitles(); // ensure all section and question names are unique
 		    	foreach (SectionControl sc in SectionsPanel.Children) {
-	    			Section section = (Section)sc.GetWorksheetPart();
-		    		ws.Sections.Add(section);
+	    			ws.Sections.Add((Section)sc.GetWorksheetPart());
 		    	}
 	    		return ws;
     		}
@@ -364,14 +496,43 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     		return ws;
     	}
+    	
+    	
+    	private void UpdateTitleBar()
+    	{
+    		string fn;
+			if (filename == null || filename == String.Empty) {
+    			fn = "Untitled";
+			}
+			else {
+    			fn = Path.GetFileName(filename);
+	    		if (dirty) {
+	    			fn += "*";
+	    		}
+			}
+    		if (DesignerMode) {
+    			fn += " - Evaluation (Designer mode)";
+    		}
+    		else {
+    			fn += " - Evaluation";
+    		}    		
+    		Title = fn;
+    	}
     	    	
     	#endregion
     	    	
     	#region Event handlers
     	
     	private void OnClick_New(object sender, EventArgs e)
-    	{
-    		Open(new Worksheet(),null);
+    	{    		
+    		try {
+    			Open(new Worksheet(),null);
+    			AddNewSection();
+    		}
+    		catch (Exception ex) {
+    			Say.Error("Was unable to open worksheet.",ex);
+    			CloseWorksheet();
+    		}
     	}
     	
     	
@@ -416,6 +577,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void WatchForChanges(SectionControl control)
     	{
     		control.Deleting += new EventHandler<DeletingEventArgs>(sectionControl_Deleting);
+    		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
     		WatchForChanges((OptionalWorksheetPartControl)control);
     	}
     	
@@ -425,6 +587,64 @@ namespace AdventureAuthor.Evaluation.Viewer
     		control.Activated += delegate { worksheet_Changed(); };
     		control.Deactivated += delegate { worksheet_Changed(); };
     		control.Changed += delegate { worksheet_Changed(); };
+    	}
+    	
+    	
+    	private void sectionControl_Deleting(object sender, DeletingEventArgs e)
+    	{
+    		DeleteFrom(e.DeletingControl,SectionsPanel.Children);
+    	}
+    	
+    	
+    	private void DeleteFrom(OptionalWorksheetPartControl deleting, UIElementCollection siblings)
+    	{
+    		if (siblings.Contains(deleting)) {
+    			siblings.Remove(deleting);
+    			worksheet_Changed(); // TODO would be better to raise a WorksheetControl.Changed event
+    		}
+    		else {
+    			throw new InvalidOperationException("Received instruction to delete a control " + 
+    			                                    "( " + deleting.ToString() +
+    			                                    ") that was not a part of this worksheet.");
+    		}
+    	}
+    	
+    	
+    	private void sectionControl_Moving(object sender, MovingEventArgs e)
+    	{
+    		MoveWithin(e.MovingControl,SectionsPanel.Children,e.MoveUp);
+    		worksheet_Changed(); // TODO would be better to raise a WorksheetControl.Changed event
+    	}
+    	
+    	
+    	internal static void MoveWithin(OptionalWorksheetPartControl moving, UIElementCollection siblings, bool moveUp)
+    	{    		
+    		if (siblings.Contains(moving)) {
+    			if (siblings.Count > 1) {   
+    				int currentIndex = siblings.IndexOf(moving);
+    				int newIndex = currentIndex;
+    				if (moveUp) {		
+    					newIndex--;
+    					if (newIndex < 0) {
+    						return; // as low as it can go, so do nothing
+    					}    	
+    				}
+    				else {
+    					newIndex++;
+    					if (newIndex == siblings.Count) {
+    						return; // as high as it can go, so do nothing
+    					}		
+    				}    				
+    				siblings.RemoveAt(currentIndex);
+    				siblings.Insert(newIndex,moving);
+    				moving.BringIntoView();    				
+    			}
+    		}
+    		else {
+    			throw new InvalidOperationException("Received instruction to move a control " + 
+    			                                    "( " + moving +
+    			                                    ") that was not a part of this worksheet.");
+    		}
     	}
     	
     	
@@ -540,15 +760,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         private void OnClick_AddSection(object sender, EventArgs e)
         {
         	if (!WorksheetViewer.DesignerMode) {
-        		throw new InvalidOperationException("Should not have been possible to call Add Section " +
+        		throw new InvalidOperationException("Should not have been possible to click this " +
         		                                    "when not in designer mode.");
         	}
         	
-        	Section section = new Section("Enter the section title here...");
-        	SectionControl control = new SectionControl(section,true);
-        	AddSectionControl(control);
-        	control.SectionTitleTextBox.Focus();
-        	control.SectionTitleTextBox.SelectAll();        	
+        	AddNewSection();
         }
     	
     	

@@ -6,32 +6,34 @@
 	<StackPanel Orientation="Horizontal">
 	    <StackPanel Name="ButtonsPanel" Orientation="Horizontal">
 			<Button Name="ViewLink" Click="OnClick_ViewEvidence" 
-	    	        Height="30" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
+	    	        Height="30" Margin="5" 
+			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ViewLinkText" 
 				           FontFamily="Arial" FontSize="12" 
 	    		           Foreground="Red" Background="Transparent"/>
 	    	</Button>
 			<Button Name="SelectLink" Click="OnClick_SelectEvidence" 
-	    	        Height="30" FontSize="12" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
+	    	        Height="30" FontSize="12" Margin="5" 
+			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="SelectLinkText" 
 				           FontFamily="Arial" FontSize="12" TextDecorations="Underline" 
 	    		           Foreground="Black" Background="Transparent"
 						   HorizontalAlignment="Left"/>
 	    	</Button>
 			<Button Name="ClearLink" Click="OnClick_ClearEvidence" 
-	    	        Height="30" FontSize="12" Margin="5" Foreground="Transparent" Background="Transparent" BorderThickness="0">
+	    	        Height="30" FontSize="12" Margin="5" 
+			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ClearLinkText" 
 				           FontFamily="Arial" Text="Clear" FontSize="12" TextDecorations="Underline" 
 	    		           Foreground="Black" Background="Transparent"/>
 	    	</Button>
 	    </StackPanel>
 		<CheckBox Name="ActivateCheckBox"
-		          Height="45" Width="45"
 		    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
-				  Margin="8" Visibility="Collapsed">
+				  Margin="8" Visibility="Collapsed" VerticalAlignment="Center">
 			<CheckBox.LayoutTransform>
-				<ScaleTransform ScaleX="1.7" 
-		                        ScaleY="1.7"/>
+				<ScaleTransform ScaleX="1.4" 
+		                        ScaleY="1.4"/>
 		    </CheckBox.LayoutTransform>   
 		</CheckBox>
 	</StackPanel>

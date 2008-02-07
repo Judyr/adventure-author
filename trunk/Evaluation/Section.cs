@@ -64,5 +64,11 @@ namespace AdventureAuthor.Evaluation
 			}
 			return true;
 		}
+		
+		
+		public override string ToString()
+		{
+			return title;
+		}
 	}
 }

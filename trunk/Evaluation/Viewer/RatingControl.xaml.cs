@@ -40,21 +40,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     			rating = new Rating();
     		}
     		
-            InitializeComponent();
+    		InitializeComponent();
             LoadStars(rating.Max);
+            SetInitialActiveStatus(rating);
             
-            if (designerMode) { // show 'Active?' control, and assume that control is Active to begin with
-            	ActivateCheckBox.Visibility = Visibility.Visible;
-	    		if (rating.Include) {
-	    			Activate();
-	    		}
-	    		else {
-	    			Deactivate(false);
-	    		}
-            }
-            else { // hide 'Active?' control, and set status to Not Applicable
-            	Enable();
-            }
         	try {
 	        	int ratingValue = int.Parse(rating.Value);
 	        	SelectedStars = ratingValue;
@@ -78,7 +67,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         		button.Click += new RoutedEventHandler(OnClick);
         		StarsPanel.Children.Add(button);
         	}
-        	Width = maxStars * 40;
+        	int width = maxStars * 40;
+        	if (WorksheetViewer.DesignerMode) {
+        		width += 30; // leave space for the activation checkbox
+        	}
+        	Width = width;
         }
         
         
@@ -156,29 +149,31 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	    	    	
         
-    	protected override void PerformDeactivate(bool preventReactivation)
+    	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
     		ActivatableControl.DeactivateElement(StarsPanel);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
-    		if (preventReactivation) {
+    		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
+    	
+		protected override void ShowActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Visible;
+		}
+		
+		protected override void HideActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Collapsed;
+		}
     	
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()
         {
         	return new Rating(maxStars,SelectedStars);
 		}
-        
-        
-//        protected override List<Control> GetActivationControls()
-//        {
-//        	List<Control> activationControls = new List<Control>(1);
-//        	activationControls.Add(ActivateCheckBox);
-//        	return activationControls;
-//        }
     }
 }

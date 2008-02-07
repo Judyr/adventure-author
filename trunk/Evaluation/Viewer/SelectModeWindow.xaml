@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="AdventureAuthor.Evaluation.Viewer.SelectModeWindow" 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Width="369"
+	Height="160"
+	Title="Welcome to the Conversation Writer"
+	WindowStartupLocation="CenterScreen">
+	<StackPanel Margin="8" Orientation="Vertical">
+		<Label Margin="15" Content="Would you like to..."/>
+		<Button
+			Content="Complete a worksheet (kids)"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Height="34"
+			Click="OnClick_PupilMode"
+			FontSize="14" />
+		<Button
+			IsEnabled="false"
+			Content="Mark a worksheet (teachers)"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Height="34"
+			Click="OnClick_TeacherMode"
+			FontSize="14" />
+		<Button
+			FontSize="14"
+			Content="Design or edit a worksheet (teachers)"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Bottom"
+			Height="34"
+			Click="OnClick_DesignerMode" />
+	</StackPanel>
+</Window>

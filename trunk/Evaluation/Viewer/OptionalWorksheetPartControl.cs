@@ -35,11 +35,13 @@ namespace AdventureAuthor.Evaluation.Viewer
 		protected OptionalWorksheetPartControl()
 		{
 		}
-		
+				
 		#endregion
 			
 		#region Methods
-			
+		
+		protected abstract void ShowActivationControls();
+		protected abstract void HideActivationControls();			
 		protected abstract OptionalWorksheetPart GetWorksheetPartObject();
 		
 		public OptionalWorksheetPart GetWorksheetPart()
@@ -50,8 +52,31 @@ namespace AdventureAuthor.Evaluation.Viewer
 			}      
 			
 			// This worksheet part should only be included if its control has been set to 'active':
-			part.Include = this.active;
+			part.Include = this.isActive;
 			return part;
+		}		
+		
+				
+		protected void SetInitialActiveStatus(OptionalWorksheetPart representedWorksheetPart)
+		{          
+            if (WorksheetViewer.DesignerMode) { // show 'Active?' control, and assume that control is Active to begin with
+				ShowActivationControls();
+	    		if (representedWorksheetPart.Include) {
+					Activate();
+	    		}
+	    		else {
+	    			Deactivate(false);
+	    		}
+            }
+            else { // hide 'Active?' control
+            	Enable();
+            }
+		}        
+		
+        
+		public override string ToString()
+		{
+			return GetWorksheetPartObject().ToString();
 		}
 		
 		#endregion

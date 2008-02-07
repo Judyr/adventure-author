@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   This file is part of Adventure Author.
  *
  *   Adventure Author is copyright Heriot-Watt University 2006-2008.
@@ -30,21 +30,21 @@ using AdventureAuthor.Evaluation.Viewer;
 namespace AdventureAuthor.Evaluation.Viewer
 {
 	/// <summary>
-	/// Arguments to accompany the event of a request for a worksheet part to be deleted.
+	/// Arguments to accompany the event of a request for a worksheet part to be moved to a different position.
 	/// </summary>
-	public class DeletingEventArgs : EventArgs
+	public class MovingEventArgs : EventArgs
 	{
 		/// <summary>
-		/// The control to be deleted.
+		/// The control to be moved.
 		/// </summary>
-		private OptionalWorksheetPartControl deletingControl;			
-		public OptionalWorksheetPartControl DeletingControl {
-			get { return deletingControl; }
+		private OptionalWorksheetPartControl movingControl;			
+		public OptionalWorksheetPartControl MovingControl {
+			get { return movingControl; }
 		}
 		
 		
 		/// <summary>
-		/// The owner of the control to be deleted.
+		/// The owner of the control to be moved.
 		/// </summary>
 		private OptionalWorksheetPartControl parentControl;		
 		public OptionalWorksheetPartControl ParentControl {
@@ -53,22 +53,34 @@ namespace AdventureAuthor.Evaluation.Viewer
 		
 		
 		/// <summary>
-		/// Create a new DeletingEventArgs.
+		/// True if the control is requesting a move up; false if the control is requesting a move down.
 		/// </summary>
-		/// <param name="deletingControl">The control to be deleted</param>
-		public DeletingEventArgs(OptionalWorksheetPartControl deletingControl) : this(deletingControl,null)
+		private bool moveUp;		
+		public bool MoveUp {
+			get { return moveUp; }
+		}
+		
+		
+		/// <summary>
+		/// Create a new MovingEventArgs.
+		/// </summary>
+		/// <param name="movingControl">The control to be moved</param>
+		/// <param name="moveUp">True if the control is requesting a move up; false if it's requesting a move down</param>
+		public MovingEventArgs(OptionalWorksheetPartControl movingControl, bool moveUp) : this(movingControl,moveUp,null)
 		{
 		}
 		
 		
 		/// <summary>
-		/// Create a new DeletingEventArgs.
+		/// Create a new MovingEventArgs.
 		/// </summary>
-		/// <param name="deletingControl">The control to be deleted</param>
-		/// <param name="parentControl">The owner of the control to be deleted</param>
-		public DeletingEventArgs(OptionalWorksheetPartControl deletingControl, OptionalWorksheetPartControl parentControl)
+		/// <param name="movingControl">The control to be moved</param>
+		/// <param name="moveUp">True if the control is requesting a move up; false if it's requesting a move down</param>
+		/// <param name="parentControl">The owner of the control to be moved</param>
+		public MovingEventArgs(OptionalWorksheetPartControl movingControl, bool moveUp, OptionalWorksheetPartControl parentControl)
 		{
-			this.deletingControl = deletingControl;
+			this.movingControl = movingControl;
+			this.moveUp = moveUp;
 			this.parentControl = parentControl;
 		}
 	}

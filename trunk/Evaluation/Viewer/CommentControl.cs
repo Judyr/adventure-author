@@ -7,26 +7,15 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class CommentControl : OptionalWorksheetPartControl
     {    	
-        public CommentControl(Comment comment, bool designerMode)
+    	public CommentControl(Comment comment, bool designerMode)
         {    		
         	if (comment == null) {
     			comment = new Comment();
     		}
     		
-            InitializeComponent();
-            
-            if (designerMode) { // show 'Active?' control
-            	ActivateCheckBox.Visibility = Visibility.Visible;
-	    		if (comment.Include) {
-            		Activate();
-	    		}
-	    		else {
-            		Deactivate(false);
-	    		}
-            }
-            else { // hide 'Active?' control
-            	Enable();
-            }
+            InitializeComponent();          
+            CommentTextBox.Text = comment.Value;
+            SetInitialActiveStatus(comment);
             
             CommentTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };
         }
@@ -60,17 +49,26 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
         
-    	protected override void PerformDeactivate(bool preventReactivation)
+    	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
     		ActivatableControl.DeactivateElement(CommentPanel);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}
-    		if (preventReactivation) {
+    		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
     	}
     	
+		protected override void ShowActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Visible;
+		}
+		
+		protected override void HideActivationControls()
+		{
+			ActivateCheckBox.Visibility = Visibility.Collapsed;
+		}
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()
         {
