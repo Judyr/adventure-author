@@ -43,9 +43,24 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
+		/// <summary>
+		/// A series of replies made to this question once it has been answered.
+		/// </summary>
+		/// <remarks>Usually the initial comment will relate directly to the answers for this question,
+		/// for example a teacher marking a pupil's answers, or a designer responding to a playtester's
+		/// criticisms. Subsequent comments may directly reply to previous comments, or simply to the
+		/// question in general.</remarks>
+		[XmlElement]
+		private List<Reply> replies;			
+		public List<Reply> Replies {
+			get { return replies; }
+		}		
+		
+		
 		public Question()
 		{			
-			answers = new List<Answer>(1);	
+			answers = new List<Answer>(1);
+			replies = new List<Reply>(0);
 		}
 		
 		

@@ -21,9 +21,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constants
     	
 //    	public enum Mode {
-//    		Pupil,
-//    		Teacher,
-//    		Constructor
+//    		DesignWorksheet,
+//    		CompleteWorksheet,
+//    		DiscussWorksheet
 //    	}
     	
     	private string DEFAULT_TITLE = "Evaluation";
