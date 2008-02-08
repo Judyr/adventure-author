@@ -5,9 +5,11 @@
     <Grid>
     	<Grid.RowDefinitions>
     		<RowDefinition/>
+    		<RowDefinition MinHeight="0"/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Name="QuestionAndControlsColumn"/>
+    		<ColumnDefinition/>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
     	
@@ -36,6 +38,15 @@
 			    </CheckBox.LayoutTransform>   
     		</CheckBox>
     	</StackPanel>
+	
+		<StackPanel Grid.Row="0" Grid.Column="2" 
+    	            Orientation="Horizontal" FlowDirection="RightToLeft">
+    		<Button Name="AddReplyButton" Content="Add reply" Click="OnClick_AddReply"
+					Height="30" Width="90" Margin="8"/>
+    	</StackPanel>
+	
+		<StackPanel Name="RepliesPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+    				Orientation="Vertical"/>
 	
     </Grid>
 </local:OptionalWorksheetPartControl>

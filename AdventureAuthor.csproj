@@ -244,9 +244,14 @@
     <Compile Include="Evaluation\Evidence.cs" />
     <Compile Include="Evaluation\Question.cs" />
     <Compile Include="Evaluation\Rating.cs" />
+    <Compile Include="Evaluation\Reply.cs" />
     <Compile Include="Evaluation\Section.cs" />
     <Compile Include="Evaluation\Viewer\ActivatableControl.cs" />
     <Compile Include="Evaluation\Viewer\ActivationEventArgs.cs" />
+    <Compile Include="Evaluation\Viewer\AddReplyWindow.xaml.cs">
+      <DependentUpon>AddReplyWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Evaluation\Viewer\MovingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentControl.cs">
@@ -263,6 +268,7 @@
       <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Evaluation\Viewer\ReplyAddedEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\ReplyControl.xaml.cs">
       <DependentUpon>ReplyControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -441,6 +447,7 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
+    <Page Include="Evaluation\Viewer\AddReplyWindow.xaml" />
     <Page Include="Evaluation\Viewer\CommentControl.xaml" />
     <Page Include="Evaluation\Viewer\EvidenceControl.xaml" />
     <Page Include="Evaluation\Viewer\QuestionControl.xaml" />

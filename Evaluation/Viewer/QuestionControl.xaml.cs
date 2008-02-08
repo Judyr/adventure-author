@@ -137,6 +137,24 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
 
         
+        private void OnClick_AddReply(object sender, EventArgs e)
+        {
+        	AddReplyWindow window = new AddReplyWindow();
+        	window.ReplyAdded += new EventHandler<ReplyAddedEventArgs>(ReplyAdded);
+        	window.ShowDialog();        	
+        }
+
+        
+        private void ReplyAdded(object sender, ReplyAddedEventArgs e)
+        {
+        	ReplyControl replyControl = new ReplyControl(e.Reply);
+        	RepliesPanel.Children.Add(replyControl);
+//        	if (AddReplyButton.Visibility == Visibility.Visible) {
+//        		AddReplyButton.Visibility == Visibility.Collapsed);
+//        	}
+        }
+        
+        
     	protected override void PerformEnable()
     	{    		
     		Tools.PreventEditingOfTextBox(QuestionTitle);
