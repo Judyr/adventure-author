@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
-
+using System.Windows.Controls;
+using System.IO;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation.Viewer
@@ -10,11 +12,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     {     	
     	#region Events
     	
-    	public event EventHandler<DeletingEventArgs> Deleting;  
+    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleting;  
     	
-		protected virtual void OnDeleting(DeletingEventArgs e)
+		protected virtual void OnDeleting(OptionalWorksheetPartControlEventArgs e)
 		{
-			EventHandler<DeletingEventArgs> handler = Deleting;
+			EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleting;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -39,6 +41,17 @@ namespace AdventureAuthor.Evaluation.Viewer
         	if (section == null) {
         		section = new Section();
         	}
+        	
+        	// Set the image on the delete button:
+        	
+//            Image image = new Image();
+//            ImageSourceConverter s = new ImageSourceConverter();
+//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"downarrow.bmp"));            
+//            MoveSectionDownButton.Content = image;
+//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"uparrow.bmp"));  
+//            MoveSectionUpButton.Content = image;
+//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"delete.jpg"));  
+//            DeleteSectionButton.Content = image;
         	
             InitializeComponent();            
             SectionTitleTextBox.Text = section.Title;
@@ -85,7 +98,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		control.Background = (Brush)Resources["Stripe2Brush"];
         	}         	
         	QuestionsPanel.Children.Add(control);    	
-    		control.Deleting += new EventHandler<DeletingEventArgs>(questionControl_Deleting);
+    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(questionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(questionControl_Moving);
         	control.BringIntoView();
         }
@@ -108,22 +121,22 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void questionControl_Moving(object sender, MovingEventArgs e)
     	{
-    		WorksheetViewer.MoveWithin(e.MovingControl,QuestionsPanel.Children,e.MoveUp);
+    		WorksheetViewer.MoveWithin(e.Control,QuestionsPanel.Children,e.MoveUp);
     		SetBackgrounds();
     		OnChanged(new EventArgs());
     	}
     	    	
     	
-    	private void questionControl_Deleting(object sender, DeletingEventArgs e)
+    	private void questionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
     	{
-    		if (QuestionsPanel.Children.Contains(e.DeletingControl)) {
-    			QuestionsPanel.Children.Remove(e.DeletingControl);
+    		if (QuestionsPanel.Children.Contains(e.Control)) {
+    			QuestionsPanel.Children.Remove(e.Control);
     			SetBackgrounds();
         		OnChanged(new EventArgs());
     		}
     		else {
     			throw new InvalidOperationException("Received instruction to delete a control " + 
-    			                                    "( " + e.DeletingControl.ToString() +
+    			                                    "( " + e.Control.ToString() +
     			                                    ") that was not a part of this worksheet.");
     		}
     	}
@@ -150,7 +163,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	                                          MessageBoxResult.Cancel,
         	                                          MessageBoxOptions.None);
         	if (result == MessageBoxResult.OK) {
-        		OnDeleting(new DeletingEventArgs(this));
+        		OnDeleting(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }        
         

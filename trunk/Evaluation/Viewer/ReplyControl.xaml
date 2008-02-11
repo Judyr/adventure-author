@@ -7,16 +7,25 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition MaxWidth="200"/>
+			<ColumnDefinition MinWidth="200" MaxWidth="200"/>
+			<ColumnDefinition MinWidth="620" MaxWidth="620"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
+		
 		<TextBlock Name="replyAuthorTextBlock" Grid.Row="0" Grid.Column="0" 
-		           FontSize="20" FontFamily="Comic Sans MS"
-		           TextWrapping="Wrap" Margin="15" TextAlignment="Right"
-				   MinWidth="200" MaxWidth="200" VerticalAlignment="Top"/>
+		   	       FontSize="20" FontFamily="Comic Sans MS"
+		       	   TextWrapping="Wrap" Margin="10" TextAlignment="Right"
+				   MinWidth="200" MaxWidth="200" VerticalAlignment="Top"/>	
+
 		<TextBlock Name="replyBodyTextBlock" Grid.Row="0" Grid.Column="1" 
 		           FontSize="16" FontFamily="Comic Sans MS" 
-		           TextWrapping="Wrap" Margin="15" Padding="4"
+		           TextWrapping="Wrap" Margin="10" Padding="4"
 		           MaxWidth="600" TextAlignment="Left" HorizontalAlignment="Left"/>
+		
+		<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+			<Button Content="del" Click="OnClick_Delete" Margin="4" Height="25"/>
+			<Button Content="Edit" Click="OnClick_Edit" Margin="4" Height="25"/>
+		</StackPanel>
+	
 	</Grid>	
 </local:OptionalWorksheetPartControl>

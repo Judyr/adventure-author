@@ -19,13 +19,22 @@ namespace AdventureAuthor.Evaluation.Viewer
 
     public partial class AddReplyWindow : Window
     {
+    	#region Constants
+    	
+    	private string[] REPLIER_TYPES = new string[4] { "a teacher", 
+												    	 "a playtester", 
+												   		 "the game's designer", 
+												   		 "someone else" };
+    	
+    	#endregion
+    	
     	#region Events
     	
-    	public EventHandler<ReplyAddedEventArgs> ReplyAdded;
+    	public EventHandler<OptionalWorksheetPartEventArgs> ReplyAdded;
     	
-    	protected virtual void OnReplyAdded(ReplyAddedEventArgs e)
+    	protected virtual void OnReplyAdded(OptionalWorksheetPartEventArgs e)
     	{
-    		EventHandler<ReplyAddedEventArgs> handler = ReplyAdded;
+    		EventHandler<OptionalWorksheetPartEventArgs> handler = ReplyAdded;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -36,10 +45,30 @@ namespace AdventureAuthor.Evaluation.Viewer
         public AddReplyWindow()
         {
             InitializeComponent();
-            RespondantRoleComboBox.Items.Add("a teacher");
-            RespondantRoleComboBox.Items.Add("a playtester");
-            RespondantRoleComboBox.Items.Add("the game's designer");
-            RespondantRoleComboBox.Items.Add("someone else");
+            foreach (string role in REPLIER_TYPES) {
+            	RespondantRoleComboBox.Items.Add(role);
+            }
+        }
+        
+        
+        public AddReplyWindow(Reply editingReply) : this()
+        {
+        	NameTextBox.Text = editingReply.Replier;
+        	ReplyTextBox.Text = editingReply.Text;
+        	switch (editingReply.ReplierType) {
+        		case Reply.ReplierRole.Designer:
+        			RespondantRoleComboBox.SelectedItem = "the game's designer";
+        			break;
+        		case Reply.ReplierRole.Playtester:
+        			RespondantRoleComboBox.SelectedItem = "a playtester";
+        			break;
+        		case Reply.ReplierRole.Teacher:
+        			RespondantRoleComboBox.SelectedItem = "a teacher";
+        			break;
+        		case Reply.ReplierRole.Other:
+        			RespondantRoleComboBox.SelectedItem = "someone else";
+        			break;
+        	}
         }
 
         
@@ -54,7 +83,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	else if (ReplyTextBox.Text == String.Empty) {
         		Say.Warning("You forgot to enter your reply!");
         	}
-        	else {        	
+        	else {   
 	        	Reply reply = new Reply();
 	        	reply.Replier = NameTextBox.Text;
 	        	reply.Text = ReplyTextBox.Text;
@@ -71,7 +100,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 	        		reply.ReplierType = Reply.ReplierRole.Other;
 	        	}
 	        	
-	        	OnReplyAdded(new ReplyAddedEventArgs(reply));
+	        	// Check that the user is a teacher before allowing them to add a teacher response:
+	        	if (reply.ReplierType == Reply.ReplierRole.Teacher && !Tools.TeacherHasSignedIn(false)) {
+	        		return;
+	        	}
+	        	
+	        	OnReplyAdded(new OptionalWorksheetPartEventArgs(reply));
 	        	Close();
         	}
         }

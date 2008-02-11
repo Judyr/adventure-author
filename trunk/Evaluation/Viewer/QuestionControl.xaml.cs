@@ -18,11 +18,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     {    	
     	#region Events
     	
-    	public event EventHandler<DeletingEventArgs> Deleting;  
+    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleting;  
     	
-		protected virtual void OnDeleting(DeletingEventArgs e)
+		protected virtual void OnDeleting(OptionalWorksheetPartControlEventArgs e)
 		{
-			EventHandler<DeletingEventArgs> handler = Deleting;
+			EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleting;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -57,6 +57,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		AddAnswerField(answer);
 		    	}
 		    }
+            
+            foreach (Reply reply in question.Replies) {
+            	if (!WorksheetViewer.DesignerMode) {
+            		AddReplyField(reply);
+            	}
+            }
                  
             if (designerMode) {
             	ControlPanel.Visibility = Visibility.Visible;
@@ -81,6 +87,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new ArgumentNullException("Can't add a null answer field.");
         	}            	
         	AnswersPanel.Children.Add(control);
+        	OnChanged(new EventArgs());
         }
 			        
 			
@@ -92,6 +99,42 @@ namespace AdventureAuthor.Evaluation.Viewer
         	
         	OptionalWorksheetPartControl control = answer.GetControl(WorksheetViewer.DesignerMode);
         	AddAnswerField(control);
+        }
+        
+        
+        private void AddReplyField(ReplyControl control)
+        {
+        	if (control == null) {
+        		throw new ArgumentNullException("Can't add a null reply field.");
+        	}            	
+        	RepliesPanel.Children.Add(control);
+        	control.Deleted += new EventHandler<OptionalWorksheetPartControlEventArgs>(replyControl_Deleted);
+        	OnChanged(new EventArgs());
+        }
+
+        
+        private void replyControl_Deleted(object sender, OptionalWorksheetPartControlEventArgs e)
+        {
+        	if (e.Control == null) {
+        		throw new ArgumentNullException("Tried to delete a null reply.");
+        	}
+        	else if (!RepliesPanel.Children.Contains(e.Control)) {
+        		throw new ArgumentNullException("Tried to delete a reply that did not exist in this question.");
+        	}
+        	
+        	RepliesPanel.Children.Remove((UIElement)e.Control);
+        	OnChanged(new EventArgs());
+        }
+			        
+			
+        public void AddReplyField(Reply reply)
+        {
+        	if (reply == null) {
+        		throw new ArgumentNullException("Can't add a null reply field.");
+        	}
+        	
+        	ReplyControl control = (ReplyControl)reply.GetControl(WorksheetViewer.DesignerMode);
+        	AddReplyField(control);
         }
         
         
@@ -120,7 +163,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	                                          MessageBoxResult.Cancel,
         	                                          MessageBoxOptions.None);
         	if (result == MessageBoxResult.OK) {
-        		OnDeleting(new DeletingEventArgs(this));
+        		OnDeleting(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }    
         
@@ -140,18 +183,14 @@ namespace AdventureAuthor.Evaluation.Viewer
         private void OnClick_AddReply(object sender, EventArgs e)
         {
         	AddReplyWindow window = new AddReplyWindow();
-        	window.ReplyAdded += new EventHandler<ReplyAddedEventArgs>(ReplyAdded);
+        	window.ReplyAdded += new EventHandler<OptionalWorksheetPartEventArgs>(ReplyAdded);
         	window.ShowDialog();        	
         }
 
         
-        private void ReplyAdded(object sender, ReplyAddedEventArgs e)
+        private void ReplyAdded(object sender, OptionalWorksheetPartEventArgs e)
         {
-        	ReplyControl replyControl = new ReplyControl(e.Reply);
-        	RepliesPanel.Children.Add(replyControl);
-//        	if (AddReplyButton.Visibility == Visibility.Visible) {
-//        		AddReplyButton.Visibility == Visibility.Collapsed);
-//        	}
+        	AddReplyField((Reply)e.Part);
         }
         
         
@@ -246,7 +285,14 @@ namespace AdventureAuthor.Evaluation.Viewer
         		OptionalWorksheetPartControl control = element as OptionalWorksheetPartControl;
         		if (control != null) {      
         			Answer answer = (Answer)control.GetWorksheetPart();
-        			question.Answers.Add(answer);
+        			question.Answers.Add(answer);        			
+        		}
+        	}
+        	foreach (UIElement element in RepliesPanel.Children) {
+        		OptionalWorksheetPartControl control = element as OptionalWorksheetPartControl;
+        		if (control != null) {      
+        			Reply reply = (Reply)control.GetWorksheetPart();
+        			question.Replies.Add(reply);        			
         		}
         	}
         	return question;

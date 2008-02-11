@@ -40,6 +40,7 @@ namespace AdventureAuthor.Evaluation
 		private List<Answer> answers;
 		public List<Answer> Answers {
 			get { return answers; }
+			set { answers = value; }
 		}
 		
 		
@@ -54,6 +55,7 @@ namespace AdventureAuthor.Evaluation
 		private List<Reply> replies;			
 		public List<Reply> Replies {
 			get { return replies; }
+			set { replies = value; }
 		}		
 		
 		
@@ -78,6 +80,10 @@ namespace AdventureAuthor.Evaluation
 		
 		public override bool IsBlank()
 		{
+			if (replies.Count > 0) {
+				return false; // Reply does define an IsBlank() method, but if a Question
+							  // has any replies at all it is not really blank
+			}
 			foreach (Answer answer in answers) {
 				if (!answer.IsBlank()) {
 					return false;

@@ -224,5 +224,30 @@ namespace AdventureAuthor.Utils
         	textbox.BorderBrush = Brushes.Transparent;
 			textbox.IsReadOnly = true;
 		} 
+		
+		
+		public static bool TeacherHasSignedIn(bool silent)
+		{
+			// TODO - replace with a check on the current user, and if they're not,
+			// allow them to switch to being a teacher if they type in the password. (Switch User screen).
+			
+//			if (!user.IsTeacher() && silent) {
+//				return false;
+//			}
+//			
+//			
+//			while (!user.IsTeacher()) {
+//				give them the chance to switch users indefinitely until they become a teacher or close the dialog
+//			}
+//			return true;
+//			
+//			
+//				return false;
+//			}
+			
+			TeacherPasswordDialog dialog = new TeacherPasswordDialog();
+			dialog.ShowDialog();
+			return dialog.ReceivedCorrectPassword;
+		}
 	}
 }

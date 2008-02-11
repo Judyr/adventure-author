@@ -61,7 +61,7 @@ namespace AdventureAuthor.Evaluation
 		
 		public override OptionalWorksheetPartControl GetControl(bool designerMode)
 		{
-			ReplyControl replyControl = new ReplyControl(this);//TODO proper
+			ReplyControl replyControl = new ReplyControl(this,designerMode);
 			return replyControl;
 		}
 	}

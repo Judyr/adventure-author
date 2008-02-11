@@ -34,6 +34,7 @@ namespace AdventureAuthor.Evaluation
 		private List<Question> questions;
 		public List<Question> Questions {
 			get { return questions; }
+			set { questions = value; }
 		}
 		
 		
