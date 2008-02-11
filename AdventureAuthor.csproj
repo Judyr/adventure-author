@@ -258,17 +258,17 @@
       <SubType>Code</SubType>
       <DependentUpon>CommentControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\DeletingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\EvaluationOptions.cs" />
     <Compile Include="Evaluation\Viewer\EvidenceControl.cs">
       <SubType>Code</SubType>
       <DependentUpon>EvidenceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControlEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\QuestionControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>QuestionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\ReplyAddedEventArgs.cs" />
+    <Compile Include="Evaluation\Viewer\ReplyEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\ReplyControl.xaml.cs">
       <DependentUpon>ReplyControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -399,6 +399,10 @@
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\Serialization.cs" />
+    <Compile Include="Utils\TeacherPasswordDialog.xaml.cs">
+      <DependentUpon>TeacherPasswordDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
@@ -478,6 +482,7 @@
     <Page Include="Setup\UI\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Utils\RGBPicker.xaml" />
+    <Page Include="Utils\TeacherPasswordDialog.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />

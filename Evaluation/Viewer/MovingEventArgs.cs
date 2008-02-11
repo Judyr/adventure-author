@@ -32,26 +32,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 	/// <summary>
 	/// Arguments to accompany the event of a request for a worksheet part to be moved to a different position.
 	/// </summary>
-	public class MovingEventArgs : EventArgs
+	public class MovingEventArgs : OptionalWorksheetPartControlEventArgs
 	{
-		/// <summary>
-		/// The control to be moved.
-		/// </summary>
-		private OptionalWorksheetPartControl movingControl;			
-		public OptionalWorksheetPartControl MovingControl {
-			get { return movingControl; }
-		}
-		
-		
-		/// <summary>
-		/// The owner of the control to be moved.
-		/// </summary>
-		private OptionalWorksheetPartControl parentControl;		
-		public OptionalWorksheetPartControl ParentControl {
-			get { return parentControl; }
-		}
-		
-		
 		/// <summary>
 		/// True if the control is requesting a move up; false if the control is requesting a move down.
 		/// </summary>
@@ -66,22 +48,11 @@ namespace AdventureAuthor.Evaluation.Viewer
 		/// </summary>
 		/// <param name="movingControl">The control to be moved</param>
 		/// <param name="moveUp">True if the control is requesting a move up; false if it's requesting a move down</param>
-		public MovingEventArgs(OptionalWorksheetPartControl movingControl, bool moveUp) : this(movingControl,moveUp,null)
-		{
-		}
-		
-		
-		/// <summary>
-		/// Create a new MovingEventArgs.
-		/// </summary>
-		/// <param name="movingControl">The control to be moved</param>
-		/// <param name="moveUp">True if the control is requesting a move up; false if it's requesting a move down</param>
 		/// <param name="parentControl">The owner of the control to be moved</param>
-		public MovingEventArgs(OptionalWorksheetPartControl movingControl, bool moveUp, OptionalWorksheetPartControl parentControl)
+		public MovingEventArgs(OptionalWorksheetPartControl control, 
+		                       bool moveUp) : base(control)
 		{
-			this.movingControl = movingControl;
 			this.moveUp = moveUp;
-			this.parentControl = parentControl;
 		}
 	}
 }

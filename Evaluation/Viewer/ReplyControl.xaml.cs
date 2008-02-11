@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -18,24 +19,58 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constants
     	
     	private static readonly Brush TEACHER_BRUSH = Brushes.Crimson;
-    	private static readonly Brush PLAYTESTER_BRUSH = Brushes.Black;
+    	private static readonly Brush PLAYTESTER_BRUSH = Brushes.DarkMagenta;
     	private static readonly Brush DESIGNER_BRUSH = Brushes.DarkSlateBlue;
     	private static readonly Brush SOMEONEELSE_BRUSH = Brushes.Black;
     	
     	#endregion
     	
-        public ReplyControl(Reply reply)
+    	#region Fields
+    	
+    	private Reply.ReplierRole authorType;
+    	
+    	private string authorName;
+    	
+    	#endregion
+    	
+    	#region Events
+    	
+    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleted;
+    	
+    	protected virtual void OnDeleted(OptionalWorksheetPartControlEventArgs e)
+    	{
+    		EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleted;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    	
+    	#endregion
+    	
+        public ReplyControl(Reply reply, bool designerMode)
         {
+        	// TODO use designerMode variable
+        	
             InitializeComponent();
-            if (reply.ReplierType == Reply.ReplierRole.Other) {
-            	replyAuthorTextBlock.Text = reply.Replier;
-            }
-            else {
+            Open(reply);
+        }
+        
+        
+        private void Open(Reply reply)
+        {
+        	authorName = reply.Replier;
+            authorType = reply.ReplierType;
+            replyAuthorTextBlock.Text = reply.Replier;
+            if (reply.ReplierType != Reply.ReplierRole.Other) {
             	replyAuthorTextBlock.Text = reply.Replier + " (" + reply.ReplierType.ToString().ToLower() + ")";
             }
+            else {
+            	replyAuthorTextBlock.Text = reply.Replier;
+            }
+            
             switch (reply.ReplierType) {
             	case Reply.ReplierRole.Designer:
-            		replyAuthorTextBlock.Foreground = DESIGNER_BRUSH;
+            		replyAuthorTextBlock.Foreground = DESIGNER_BRUSH;        		
             		break;
             	case Reply.ReplierRole.Teacher:
             		replyAuthorTextBlock.Foreground = TEACHER_BRUSH;
@@ -48,6 +83,32 @@ namespace AdventureAuthor.Evaluation.Viewer
             		break;
             }
             replyBodyTextBlock.Text = reply.Text;
+        	OnChanged(new EventArgs());
+        }
+        
+        
+        private void OnClick_Delete(object sender, RoutedEventArgs e)
+        {
+        	if (Tools.TeacherHasSignedIn(false)) {
+        		OnDeleted(new OptionalWorksheetPartControlEventArgs(this));
+        	}
+        }
+        
+        
+        private void OnClick_Edit(object sender, RoutedEventArgs e)
+        {
+        	if (Tools.TeacherHasSignedIn(false)) {
+        		AddReplyWindow window = new AddReplyWindow((Reply)GetWorksheetPart());
+        		window.ReplyAdded += new EventHandler<OptionalWorksheetPartEventArgs>(ReplyEdited);
+        		window.ShowDialog();
+        	}
+        }
+
+        
+        private void ReplyEdited(object sender, OptionalWorksheetPartEventArgs e)
+        {
+        	Reply reply = (Reply)e.Part;
+        	Open(reply);
         }
 		
         
@@ -91,8 +152,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()
 		{
-        	throw new Exception();
-//			return new Evidence(filename);
+        	Reply reply = new Reply();
+        	reply.Replier = authorName;
+        	reply.ReplierType = authorType;
+        	reply.Text = replyBodyTextBlock.Text;
+        	return reply;
 		}
     }
 }

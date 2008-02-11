@@ -14,17 +14,17 @@ namespace AdventureAuthor.Evaluation.Viewer
 	/// <summary>
 	/// Description of ReplyAddedEventArgs.
 	/// </summary>
-	public class ReplyAddedEventArgs : EventArgs
+	public class OptionalWorksheetPartEventArgs : EventArgs
 	{
-		private Reply reply;		
-		public Reply Reply {
-			get { return reply; }
+		private OptionalWorksheetPart part;		
+		public OptionalWorksheetPart Part {
+			get { return part; }
 		}
+				
 		
-		
-		public ReplyAddedEventArgs(Reply reply)
+		public OptionalWorksheetPartEventArgs(OptionalWorksheetPart part)
 		{
-			this.reply = reply;
+			this.part = part;
 		}
 	}
 }

@@ -475,9 +475,20 @@ namespace AdventureAuthor.Evaluation.Viewer
     			}
     			
     			foreach (SectionControl sc in SectionsPanel.Children) {
+    				
+    				// Questions and answers can both be excluded - i.e. we don't want them to be displayed
+    				// on the UI, but we do still want to save their information. As a result we can't just
+    				// save all the questions and answers on the UI, as we will end up losing the ones that
+    				// have been excluded. Instead, we find the worksheet part that each control corresponds 
+    				// to, and if it has a new value, we save it over the original value. The exception is
+    				// replies, since these can't be deactivated individually - if the worksheet viewer is in
+    				// Discuss mode, we just save the replies that are on the screen, and otherwise we ignore
+    				// them.
+    				
     				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
-    					Question question = originalWorksheet.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
+    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
     					Question question2 = (Question)qc.GetWorksheetPart();
+    					
     					if (question != null && question2 != null) {
     						if (question.Text != question2.Text) {
     							question.Text = question2.Text;
@@ -489,6 +500,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     									continue;
     								}
     							}
+    						}
+    						if (!DesignerMode) { // if (Mode == ViewerMode.Discuss)
+    							question.Replies = question2.Replies;
     						}
     					}
     				}
@@ -576,7 +590,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void WatchForChanges(SectionControl control)
     	{
-    		control.Deleting += new EventHandler<DeletingEventArgs>(sectionControl_Deleting);
+    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(sectionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
     		WatchForChanges((OptionalWorksheetPartControl)control);
     	}
@@ -590,9 +604,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	
-    	private void sectionControl_Deleting(object sender, DeletingEventArgs e)
+    	private void sectionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
     	{
-    		DeleteFrom(e.DeletingControl,SectionsPanel.Children);
+    		DeleteFrom(e.Control,SectionsPanel.Children);
     	}
     	
     	
@@ -612,7 +626,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void sectionControl_Moving(object sender, MovingEventArgs e)
     	{
-    		MoveWithin(e.MovingControl,SectionsPanel.Children,e.MoveUp);
+    		MoveWithin(e.Control,SectionsPanel.Children,e.MoveUp);
     		worksheet_Changed(); // TODO would be better to raise a WorksheetControl.Changed event
     	}
     	
