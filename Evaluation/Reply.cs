@@ -18,14 +18,6 @@ namespace AdventureAuthor.Evaluation
 	[Serializable]
 	public class Reply : OptionalWorksheetPart
 	{
-		public enum ReplierRole {
-			Teacher,
-			Playtester,
-			Designer,
-			Other
-		}
-		
-		
 		private string replier;			
 		public string Replier {
 			get { return replier; }
@@ -33,8 +25,8 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		private ReplierRole replierType;		
-		public ReplierRole ReplierType {
+		private Role replierType;		
+		public Role ReplierType {
 			get { return replierType; }
 			set { replierType = value; }
 		}
@@ -59,9 +51,16 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override OptionalWorksheetPartControl GetControl(bool designerMode)
+		public override void Clear()
 		{
-			ReplyControl replyControl = new ReplyControl(this,designerMode);
+			text = String.Empty;
+			replier = String.Empty;
+		}
+		
+		
+		public override OptionalWorksheetPartControl GetControl()
+		{
+			ReplyControl replyControl = new ReplyControl(this);
 			return replyControl;
 		}
 	}

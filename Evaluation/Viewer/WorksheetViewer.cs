@@ -19,13 +19,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     public partial class WorksheetViewer : Window
     {    	
     	#region Constants
-    	
-//    	public enum Mode {
-//    		DesignWorksheet,
-//    		CompleteWorksheet,
-//    		DiscussWorksheet
-//    	}
-    	
+    	    	
     	private string DEFAULT_TITLE = "Evaluation";
     	internal const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	
@@ -33,15 +27,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    	
     	#region Fields
     	
-//    	private static Mode appMode;    	
-//		public static Mode AppMode {
-//			get { return appMode; }
-//		}
-    	
-    	private static bool designerMode;
-    	public static bool DesignerMode {
-    		get { return designerMode; }
-    	}
+    	private static Mode evaluationMode;    	
+		public static Mode EvaluationMode {
+			get { return evaluationMode; }
+		}
     	
     	private Worksheet originalWorksheet;
     	
@@ -70,42 +59,77 @@ namespace AdventureAuthor.Evaluation.Viewer
 		}
     	    	
     	#endregion
+    	
+    	#region Events
+    	
+    	public static event EventHandler Changed;    	
+    	protected static void OnChanged(EventArgs e)
+    	{
+    		EventHandler handler = Changed;
+    		if (handler != null) {
+    			handler(null,e);
+    		}
+    	}
+    	
+    	#endregion
     	    	    	    	
     	#region Constructors    	   	
     	
-    	public WorksheetViewer(bool UseDesignerMode)
+    	public WorksheetViewer(Mode mode)
     	{
     		InitializeComponent();
-    		this.Closing += new CancelEventHandler(WorksheetWindow_Closing);
+    		this.Closing += new CancelEventHandler(WorksheetClosing);
+    		Changed += new EventHandler(WorksheetChanged);
     		EvaluationOptions.ChangedDefaultImageApplication += 
     			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);    		    			
-    		designerMode = UseDesignerMode;
+    		evaluationMode = mode;
     		
-    		// Edit worksheet titles in designer mode only; fill in name and date in viewer mode only
-    		TitleField.IsEnabled = designerMode;
-    		NameField.IsEnabled = !designerMode;
-    		DateField.IsEnabled = !designerMode;    		
-    		
-    		if (designerMode) {
-    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
-    			NewMenuItem.Visibility = Visibility.Visible;
-    			OptionsMenu.Visibility = Visibility.Collapsed;
+    		// Edit worksheet titles in design mode only; fill in name and date in complete/discuss mode only
+    		switch (EvaluationMode) {
+    				
+    			case Mode.Design:
+	    			TitleField.IsEnabled = true;
+		    		NameField.IsEnabled = false;
+		    		DateField.IsEnabled = false;
+		    		
+	    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
+	    			NewMenuItem.Visibility = Visibility.Visible;
+	    			OptionsMenu.Visibility = Visibility.Collapsed;
+	    			
+	    			EditMenu.Visibility = Visibility.Visible;
+	    			
+    				break;
+    				
+    			case Mode.Complete:
+	    			TitleField.IsEnabled = false;
+		    		NameField.IsEnabled = true;
+		    		DateField.IsEnabled = true;
+		    		
+	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
+	    			NewMenuItem.Visibility = Visibility.Collapsed;
+	    			OptionsMenu.Visibility = Visibility.Visible;
+	    			
+	    			EditMenu.Visibility = Visibility.Collapsed;
+	    			
+		    		break;
+    				
+    			case Mode.Discuss:
+	    			TitleField.IsEnabled = false;
+		    		NameField.IsEnabled = false;
+		    		DateField.IsEnabled = false;
+		    		
+	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
+	    			NewMenuItem.Visibility = Visibility.Collapsed;
+	    			OptionsMenu.Visibility = Visibility.Visible;
+	    			
+	    			EditMenu.Visibility = Visibility.Collapsed;
+    			
+		    		break;
     		}
-    		else {
-    			SaveBlankMenuItem.Visibility = Visibility.Visible;
-    			NewMenuItem.Visibility = Visibility.Collapsed;
-    			OptionsMenu.Visibility = Visibility.Visible;
-    		}
-    	}
-    	
-    	
-    	public WorksheetViewer() : this(false)
-    	{
-    		
     	}
     	
 
-    	private void WorksheetWindow_Closing(object sender, CancelEventArgs e)
+    	private void WorksheetClosing(object sender, CancelEventArgs e)
     	{	
 			if (!CloseWorksheetDialog()) {
 				e.Cancel = true;
@@ -141,7 +165,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		CloseWorksheetDialog();	    					
     		    		
-    		if (!DesignerMode) {    			
+    		// Check whether there are duplicated question or section titles - if there are, then
+    		// prevent the user from opening the worksheet unless they're in design mode (it's 
+    		// relatively easy to fix when the whole worksheet is displayed, but more of a pain
+    		// when some parts of the worksheet are inactive and do not have on-screen controls.)
+    		if (EvaluationMode != Mode.Design) {    			
     			string warning = "This worksheet contains duplicate sections or questions " +
 						    	 "and cannot be opened. Try opening and then saving the worksheet " +
 						    	 "in designer mode to fix this problem.";    			
@@ -169,7 +197,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
     		}    		
     		
-    		if (DesignerMode && !worksheet.IsBlank()) {
+    		if (EvaluationMode == Mode.Design && !worksheet.IsBlank()) {
     			MessageBoxResult result = MessageBox.Show("The worksheet you are trying to open has been partially " +
     			                                          "filled in, and cannot be re-designed.\n\n" +
     			                                          "Would you like to create a blank copy to work on?",
@@ -193,21 +221,26 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    	NameField.Text = worksheet.Name;
 	    	    		
 	    	foreach (Section section in worksheet.Sections) {	    			
-	    		if (DesignerMode || section.Include) {
+	    		if (EvaluationMode == Mode.Design || section.Include) {
 	    			try {	    					
 		    			SectionControl sectionControl = AddSection(section);
 		    			if (sectionControl != null) {					    		
-				    		// Mark the worksheet as 'dirty' (different from saved copy) if an answer changes:
 				    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-				    			if (DesignerMode && !sectionControl.IsActive) {
+				    			if (EvaluationMode == Mode.Design && !sectionControl.IsActive) {
 				    				questionControl.Deactivate(true);
 				    			}
-				    			WatchForChanges(questionControl);
+		    					else if (EvaluationMode == Mode.Discuss) {
+		    						questionControl.Activate();
+		    						questionControl.HideActivationControls();
+		    					}
 				    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
-				    				if (DesignerMode && !questionControl.IsActive) {
+				    				if (EvaluationMode == Mode.Design && !questionControl.IsActive) {
 				    					answerControl.Deactivate(true);
 				    				}
-				    				WatchForChanges(answerControl);
+		    						else if (EvaluationMode == Mode.Discuss) {
+		    							answerControl.Activate();
+		    							answerControl.HideActivationControls();
+		    						}
 				    			}
 				    		}
 		    			}
@@ -220,9 +253,10 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
 	    	}
 	    		    	
-	    	DateField.TextChanged += delegate { worksheet_Changed(); };
-	    	NameField.TextChanged += delegate { worksheet_Changed(); };
-	    	TitleField.TextChanged += delegate { worksheet_Changed(); };
+	    	DateField.TextChanged += delegate { OnChanged(new EventArgs()); };
+	    	NameField.TextChanged += delegate { OnChanged(new EventArgs()); };
+	    	TitleField.TextChanged += delegate { OnChanged(new EventArgs()); };
+	    	
 	    	TitleLabel.Visibility = Visibility.Visible;
 	    	NameLabel.Visibility = Visibility.Visible;
 	    	DateLabel.Visibility = Visibility.Visible;
@@ -230,10 +264,13 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    NameField.Visibility = Visibility.Visible;
 		    DateField.Visibility = Visibility.Visible;
 		    BorderClosingRectangle.Visibility = Visibility.Visible;
-		    
-		    if (DesignerMode) {
-		    	EditMenu.Visibility = Visibility.Visible;
-		    }
+		  
+		    SaveMenuItem.IsEnabled = true;
+		    SaveAsMenuItem.IsEnabled = true;
+		    SaveBlankMenuItem.IsEnabled = true;
+		    CloseMenuItem.IsEnabled = true;
+		    EditMenu.IsEnabled = true;
+		    OptionsMenu.IsEnabled = true;
 		    
 		    if (Filename == null || Filename == String.Empty) {
 		    	Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
@@ -333,40 +370,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 		}
     	
     	
-//		private void ValidateSectionTitles()
-//    	{
-//			List<string> titles = new List<string>(SectionsPanel.Children.Count);
-//    		List<SectionControl> sectionsWithDuplicateTitles = new List<SectionControl>(SectionsPanel.Children.Count);
-//    		foreach (SectionControl sectionControl in SectionsPanel.Children) {
-//    			string title = sectionControl.SectionTitleTextBox.Text;
-//    			if (titles.Contains(title)) {
-//    				sectionsWithDuplicateTitles.Add(sectionControl);
-//    			}
-//    			else {
-//    				titles.Add(title);
-//    			}
-//    		}
-//    		
-//    		foreach (SectionControl sectionControl in sectionsWithDuplicateTitles) {
-//    			string originalTitle = sectionControl.SectionTitleTextBox.Text;
-//    			string newTitle = originalTitle;
-//    			int count = 1;
-//    			while (titles.Contains(newTitle)) {
-//    				count++;
-//    				newTitle = originalTitle + " (" + count + ")";
-//    			}
-//    			sectionControl.SectionTitleTextBox.Text = newTitle;
-//    			titles.Add(newTitle);    			
-//    		}
-//    	}   
-    	
-    	
     	public void AddNewSection()
     	{
     		try {
 	    		SectionControl sectionControl = AddSection(new Section("New section"));
 	    		sectionControl.AddNewQuestion();
-	    		worksheet_Changed();
+	    		OnChanged(new EventArgs());
     		}
     		catch (Exception e) {
     			Say.Error("Failed to add new section.",e);
@@ -374,12 +383,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	
-    	private SectionControl AddSection(Section section)
+    	public SectionControl AddSection(Section section)
     	{
     		if (section == null) {
         		throw new ArgumentNullException("Can't add a null section field.");
         	}
-    		if (!DesignerMode) { // check that this section actually has some active questions to display
+    		if (EvaluationMode != Mode.Design) { // check that this section actually has some active questions to display
 	    		bool hasQuestions = false;
 	    		foreach (Question question in section.Questions) {
 	    			if (question.Include) {
@@ -393,13 +402,27 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
     		}
     		        	
-        	SectionControl sc = (SectionControl)section.GetControl(WorksheetViewer.DesignerMode);
-    		SectionsPanel.Children.Add(sc);
-    		sc.BringIntoView(); // bring the new section into view
-    		WatchForChanges(sc);
+        	SectionControl sc = (SectionControl)section.GetControl();
+        	AddSectionField(sc);
     		return sc;
     	}
-    	    	
+    	
+    	
+    	private void AddSectionField(SectionControl control)
+    	{
+        	if (control == null) {
+        		throw new ArgumentNullException("Can't add a null section field.");
+        	}   
+    		SectionsPanel.Children.Add(control);
+    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(sectionControl_Deleting);
+    		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
+    		control.Activated += delegate { OnChanged(new EventArgs()); };
+    		control.Deactivated += delegate { OnChanged(new EventArgs()); };
+    		control.Changed += delegate { OnChanged(new EventArgs()); };
+    		control.BringIntoView();
+    		OnChanged(new EventArgs());
+    	}
+        
     	    	
     	public bool Save()
     	{
@@ -429,15 +452,24 @@ namespace AdventureAuthor.Evaluation.Viewer
     		TitleField.Clear();
     		NameField.Clear();
     		DateField.Clear();
+    		
     		Title = DEFAULT_TITLE;
+    		
     		TitleLabel.Visibility = Visibility.Hidden;
 	    	NameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
 		    TitleField.Visibility = Visibility.Hidden;
 	    	NameField.Visibility = Visibility.Hidden;
 		    DateField.Visibility = Visibility.Hidden;
-		    EditMenu.Visibility = Visibility.Collapsed;
 		   	BorderClosingRectangle.Visibility = Visibility.Collapsed;
+		   	
+		    SaveMenuItem.IsEnabled = false;
+		    SaveAsMenuItem.IsEnabled = false;
+		    SaveBlankMenuItem.IsEnabled = false;
+		    CloseMenuItem.IsEnabled = false;
+		    EditMenu.IsEnabled = false;
+		    OptionsMenu.IsEnabled = false;
+		    
     		SectionsPanel.Children.Clear();
     		
     		dirty = false;
@@ -450,64 +482,100 @@ namespace AdventureAuthor.Evaluation.Viewer
     	/// <returns>A worksheet object, or null if no worksheet is open</returns>
     	public Worksheet GetWorksheet()
     	{
-    		Worksheet ws;
-    		if (DesignerMode) {
-	    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text);	    		
-	    		ValidateTitles(); // ensure all section and question names are unique
-		    	foreach (SectionControl sc in SectionsPanel.Children) {
-	    			ws.Sections.Add((Section)sc.GetWorksheetPart());
-		    	}
-	    		return ws;
-    		}
-    		else {
-    			if (originalWorksheet == null) {
-    				throw new ArgumentException("Could not find object representing the opened worksheet.");
-    			}    			
-    			ws = originalWorksheet.GetCopy();
-    			if (ws.Title != TitleField.Text) {
-    				ws.Title = TitleField.Text;
-    			}
-    			if (ws.Name != NameField.Text) {
-    				ws.Name = NameField.Text;
-    			}
-    			if (ws.Date != DateField.Text) {
-    				ws.Date = DateField.Text;
-    			}
-    			
-    			foreach (SectionControl sc in SectionsPanel.Children) {
+    		Worksheet ws = null;
+    		
+    		switch (EvaluationMode) {
+    		
+	    		// In design mode, everything in the worksheet is displayed on the screen, even the parts
+	    		// which are inactive, so we can just save everything that's represented by a control.
+	    		
+    			case Mode.Design:
     				
-    				// Questions and answers can both be excluded - i.e. we don't want them to be displayed
-    				// on the UI, but we do still want to save their information. As a result we can't just
-    				// save all the questions and answers on the UI, as we will end up losing the ones that
-    				// have been excluded. Instead, we find the worksheet part that each control corresponds 
-    				// to, and if it has a new value, we save it over the original value. The exception is
-    				// replies, since these can't be deactivated individually - if the worksheet viewer is in
-    				// Discuss mode, we just save the replies that are on the screen, and otherwise we ignore
-    				// them.
+		    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text);	    		
+		    		ValidateTitles(); // ensure all section and question names are unique
+			    	foreach (SectionControl sc in SectionsPanel.Children) {
+		    			ws.Sections.Add((Section)sc.GetWorksheetPart());
+			    	}
+		    		break;
+		    		
+	    		// When not in design mode, some worksheet parts are excluded - i.e. they're not displayed
+	    		// on the UI, but we still want to remember their existence. As a result we can't just
+	    		// save only the questions and answers on the UI, as we will end up losing the ones that
+	    		// have been excluded. Instead, we find the original worksheet part that each control corresponds 
+	    		// to, and if the control has a new value, we save it over the original value. (This only applies in
+	    		// complete mode, since this is the only mode in which answers can get new values.)
+		    		
+		    	case Mode.Complete:
+	    		
+	    			if (originalWorksheet == null) {
+	    				throw new ArgumentException("Could not find object representing the opened worksheet.");
+	    			}    			
+	    			ws = originalWorksheet.GetCopy();
+	    			if (ws.Title != TitleField.Text) {
+	    				ws.Title = TitleField.Text;
+	    			}
+	    			if (ws.Name != NameField.Text) {
+	    				ws.Name = NameField.Text;
+	    			}
+	    			if (ws.Date != DateField.Text) {
+	    				ws.Date = DateField.Text;
+	    			}
+	    			
+	    			foreach (SectionControl sc in SectionsPanel.Children) {
+	    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
+	    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
+	    					Question question2 = (Question)qc.GetWorksheetPart();
+	    					
+	    					if (question != null && question2 != null) {
+	    						if (question.Text != question2.Text) {
+	    							question.Text = question2.Text;
+	    						}
+	    						foreach (Answer answer2 in question2.Answers) {
+	    							foreach (Answer answer in question.Answers) {
+	    								if (answer2.GetType() == answer.GetType()) {
+	    									answer.Value = answer2.Value;
+	    									continue;
+	    								}
+	    							}
+	    						}
+	    					}
+	    				}
+	    			}
+	    			
+	    			break;
+	    			
+	    		// Finally in discuss mode, the only things that can change are the replies and
+	    		// the date. Replies can't be excluded, so if we can't find a control representing a reply,
+	    		// we can just assume that reply has been permanently deleted - all we have to do is replace
+	    		// each question's set of replies with the replies represented on the interface.
+		    		
+		    	case Mode.Discuss:
+	    		
+	    			if (originalWorksheet == null) {
+	    				throw new ArgumentException("Could not find object representing the opened worksheet.");
+	    			}    			
+	    			ws = originalWorksheet.GetCopy();
+	    			if (ws.Date != DateField.Text) {
+	    				ws.Date = DateField.Text;
+	    			}
+	    			
+	    			foreach (SectionControl sc in SectionsPanel.Children) {
+	    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
+	    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
+	    					
+	    					if (question != null) {
+	    						question.Replies.Clear();
+	    						foreach (ReplyControl rc in qc.RepliesPanel.Children) {
+	    							Reply reply = (Reply)rc.GetWorksheetPart();
+	    							question.Replies.Add(reply);
+	    						}
+	    					}
+	    				}
+	    			}
+    		
+		    		break;
+    		}    				
     				
-    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
-    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
-    					Question question2 = (Question)qc.GetWorksheetPart();
-    					
-    					if (question != null && question2 != null) {
-    						if (question.Text != question2.Text) {
-    							question.Text = question2.Text;
-    						}
-    						foreach (Answer answer2 in question2.Answers) {
-    							foreach (Answer answer in question.Answers) {
-    								if (answer2.GetType() == answer.GetType()) {
-    									answer.Value = answer2.Value;
-    									continue;
-    								}
-    							}
-    						}
-    						if (!DesignerMode) { // if (Mode == ViewerMode.Discuss)
-    							question.Replies = question2.Replies;
-    						}
-    					}
-    				}
-    			}
-    		}
     		return ws;
     	}
     	
@@ -523,13 +591,20 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		if (dirty) {
 	    			fn += "*";
 	    		}
-			}
-    		if (DesignerMode) {
-    			fn += " - Evaluation (Designer mode)";
-    		}
-    		else {
     			fn += " - Evaluation";
-    		}    		
+			}
+    		switch (EvaluationMode) {
+    			case Mode.Complete:
+    				fn += " (Filling in worksheets)";
+    				break;
+    			case Mode.Design:
+    				fn += " (Building worksheets)";
+    				break;
+    			case Mode.Discuss:
+    				fn += " (Discussing completed worksheets)";
+    				break;
+    		}
+    		
     		Title = fn;
     	}
     	    	
@@ -586,23 +661,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		SaveAsDialog();
     	}
-    	
-    	
-    	private void WatchForChanges(SectionControl control)
-    	{
-    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(sectionControl_Deleting);
-    		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
-    		WatchForChanges((OptionalWorksheetPartControl)control);
-    	}
-    	
-    	
-    	private void WatchForChanges(OptionalWorksheetPartControl control)
-    	{
-    		control.Activated += delegate { worksheet_Changed(); };
-    		control.Deactivated += delegate { worksheet_Changed(); };
-    		control.Changed += delegate { worksheet_Changed(); };
-    	}
-    	
+    	    	
     	
     	private void sectionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
     	{
@@ -610,11 +669,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	
-    	private void DeleteFrom(OptionalWorksheetPartControl deleting, UIElementCollection siblings)
+    	internal static void DeleteFrom(OptionalWorksheetPartControl deleting, UIElementCollection siblings)
     	{
     		if (siblings.Contains(deleting)) {
     			siblings.Remove(deleting);
-    			worksheet_Changed(); // TODO would be better to raise a WorksheetControl.Changed event
+    			OnChanged(new EventArgs());
     		}
     		else {
     			throw new InvalidOperationException("Received instruction to delete a control " + 
@@ -627,7 +686,6 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void sectionControl_Moving(object sender, MovingEventArgs e)
     	{
     		MoveWithin(e.Control,SectionsPanel.Children,e.MoveUp);
-    		worksheet_Changed(); // TODO would be better to raise a WorksheetControl.Changed event
     	}
     	
     	
@@ -651,7 +709,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     				}    				
     				siblings.RemoveAt(currentIndex);
     				siblings.Insert(newIndex,moving);
-    				moving.BringIntoView();    				
+    				moving.BringIntoView();   
+    				OnChanged(new EventArgs());
     			}
     		}
     		else {
@@ -763,7 +822,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
     	
-    	private void worksheet_Changed()
+    	private void WorksheetChanged(object sender, EventArgs e)
     	{
     		if (!Dirty) {
     			Dirty = true;
@@ -773,10 +832,13 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_AddSection(object sender, EventArgs e)
         {
-        	if (!WorksheetViewer.DesignerMode) {
+        	if (EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to click this " +
         		                                    "when not in designer mode.");
-        	}
+        	}  			
+        	else if (GetWorksheet() == null) {
+  				return;
+  			}
         	
         	AddNewSection();
         }

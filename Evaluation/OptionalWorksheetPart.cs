@@ -23,9 +23,12 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public abstract OptionalWorksheetPartControl GetControl(bool designerMode);
+		public abstract OptionalWorksheetPartControl GetControl();
 		
 		
 		public abstract bool IsBlank();		
+		
+		
+		public abstract void Clear();
 	}
 }

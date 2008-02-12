@@ -41,7 +41,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	
     	
-        public QuestionControl(Question question, bool designerMode)
+        public QuestionControl(Question question)
         {
         	if (question == null) {
         		question = new Question();
@@ -53,18 +53,18 @@ namespace AdventureAuthor.Evaluation.Viewer
             SetInitialActiveStatus(question);
             
 		    foreach (Answer answer in question.Answers) {
-		    	if (WorksheetViewer.DesignerMode || answer.Include) {
+		    	if (WorksheetViewer.EvaluationMode == Mode.Design || answer.Include) {
 		    		AddAnswerField(answer);
 		    	}
 		    }
             
             foreach (Reply reply in question.Replies) {
-            	if (!WorksheetViewer.DesignerMode) {
+            	if (WorksheetViewer.EvaluationMode != Mode.Design) {
             		AddReplyField(reply);
             	}
             }
                  
-            if (designerMode) {
+            if (WorksheetViewer.EvaluationMode == Mode.Design) {
             	ControlPanel.Visibility = Visibility.Visible;
             	ControlPanel.Width = 120;
             	ControlPanel.MaxWidth = 120;
@@ -74,9 +74,16 @@ namespace AdventureAuthor.Evaluation.Viewer
             else {
             	ControlPanel.Visibility = Visibility.Collapsed;
             	ControlPanel.Width = 0;
-            	ControlPanel.MaxWidth=0;
+            	ControlPanel.MaxWidth = 0;
             	QuestionAndControlsColumn.MaxWidth = 350;
             	QuestionAndControlsColumn.Width = new GridLength(350);
+            }
+            	
+            if (WorksheetViewer.EvaluationMode == Mode.Discuss) {
+            	AddReplyButton.Visibility = Visibility.Visible;
+            }
+            else {
+            	AddReplyButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -87,6 +94,9 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new ArgumentNullException("Can't add a null answer field.");
         	}            	
         	AnswersPanel.Children.Add(control);
+        	control.Changed += delegate { OnChanged(new EventArgs()); };
+        	control.Activated += delegate { OnChanged(new EventArgs()); };
+        	control.Deactivated += delegate { OnChanged(new EventArgs()); };
         	OnChanged(new EventArgs());
         }
 			        
@@ -97,19 +107,8 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new ArgumentNullException("Can't add a null answer field.");
         	}
         	
-        	OptionalWorksheetPartControl control = answer.GetControl(WorksheetViewer.DesignerMode);
+        	OptionalWorksheetPartControl control = answer.GetControl();
         	AddAnswerField(control);
-        }
-        
-        
-        private void AddReplyField(ReplyControl control)
-        {
-        	if (control == null) {
-        		throw new ArgumentNullException("Can't add a null reply field.");
-        	}            	
-        	RepliesPanel.Children.Add(control);
-        	control.Deleted += new EventHandler<OptionalWorksheetPartControlEventArgs>(replyControl_Deleted);
-        	OnChanged(new EventArgs());
         }
 
         
@@ -125,6 +124,18 @@ namespace AdventureAuthor.Evaluation.Viewer
         	RepliesPanel.Children.Remove((UIElement)e.Control);
         	OnChanged(new EventArgs());
         }
+        
+        
+        private void AddReplyField(ReplyControl control)
+        {
+        	if (control == null) {
+        		throw new ArgumentNullException("Can't add a null reply field.");
+        	}            	
+        	RepliesPanel.Children.Add(control);
+        	control.Changed += delegate { OnChanged(new EventArgs()); };;
+        	control.Deleted += new EventHandler<OptionalWorksheetPartControlEventArgs>(replyControl_Deleted);
+        	OnChanged(new EventArgs());
+        }
 			        
 			
         public void AddReplyField(Reply reply)
@@ -133,7 +144,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		throw new ArgumentNullException("Can't add a null reply field.");
         	}
         	
-        	ReplyControl control = (ReplyControl)reply.GetControl(WorksheetViewer.DesignerMode);
+        	ReplyControl control = (ReplyControl)reply.GetControl();
         	AddReplyField(control);
         }
         
@@ -152,7 +163,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_DeleteQuestion(object sender, EventArgs e)
         {
-        	if (!WorksheetViewer.DesignerMode) {
+        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a question.");
         	}
         	
@@ -267,12 +278,14 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-		protected override void ShowActivationControls()
+    	
+		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		
+		public override void HideActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}

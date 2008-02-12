@@ -22,27 +22,29 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
 
         
-        private void OnClick_PupilMode(object sender, EventArgs e)
+        private void OnClick_CompleteMode(object sender, EventArgs e)
         {
-        	Launch(false);//(WorksheetViewer.Mode.Pupil);
+        	Launch(Mode.Complete);
         }
         
         
-        private void OnClick_TeacherMode(object sender, EventArgs e)
+        private void OnClick_DiscussMode(object sender, EventArgs e)
         {
-        	//Launch(WorksheetViewer.Mode.Teacher);
+        	Launch(Mode.Discuss);
         }
 
         
-        private void OnClick_DesignerMode(object sender, EventArgs e)
+        private void OnClick_DesignMode(object sender, EventArgs e)
         {
-        	Launch(true);//(WorksheetViewer.Mode.Constructor);
+        	if (Tools.TeacherHasSignedIn(false)) {
+        		Launch(Mode.Design);
+        	}
         }
         
         
-        private void Launch(bool designer)//WorksheetViewer.Mode mode)
+        private void Launch(Mode evaluationMode)
         {
-        	WorksheetViewer viewer = new WorksheetViewer(designer);
+        	WorksheetViewer viewer = new WorksheetViewer(evaluationMode);
         	viewer.ShowDialog();
         	Close();
         }
