@@ -6,14 +6,14 @@
 	<StackPanel Orientation="Horizontal">
 	    <StackPanel Name="ButtonsPanel" Orientation="Horizontal">
 			<Button Name="ViewLink" Click="OnClick_ViewEvidence" 
-	    	        Height="30" Margin="5" 
+	    	        Height="30" Margin="5" Padding="3"
 			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ViewLinkText" 
 				           FontFamily="Arial" FontSize="12" 
 	    		           Foreground="Red" Background="Transparent"/>
 	    	</Button>
 			<Button Name="SelectLink" Click="OnClick_SelectEvidence" 
-	    	        Height="30" FontSize="12" Margin="5" 
+	    	        Height="30" FontSize="12" Margin="5" Padding="3"
 			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="SelectLinkText" 
 				           FontFamily="Arial" FontSize="12" TextDecorations="Underline" 
@@ -21,7 +21,7 @@
 						   HorizontalAlignment="Left"/>
 	    	</Button>
 			<Button Name="ClearLink" Click="OnClick_ClearEvidence" 
-	    	        Height="30" FontSize="12" Margin="5" 
+	    	        Height="30" FontSize="12" Margin="5" Padding="3" 
 			        Foreground="Transparent" Background="Transparent" BorderThickness="0">
 	    		<TextBlock Name="ClearLinkText" 
 				           FontFamily="Arial" Text="Clear" FontSize="12" TextDecorations="Underline" 

@@ -5,16 +5,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Would you like to..."
 	WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
-	<StackPanel Orientation="Vertical" Margin="30">
-		<Button
-			FontSize="14"
-			Content="Create/edit a worksheet (teachers only)"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Bottom"
-			Height="34"
-			Width="370"
-			Margin="4"
-			Click="OnClick_DesignMode"/>
+	<StackPanel Orientation="Vertical" Margin="20">
 		<Button
 			Content="Fill in a worksheet"
 			HorizontalAlignment="Stretch"
@@ -26,12 +17,12 @@
 			Click="OnClick_CompleteMode"/>
 		<Button
 			FontSize="14"
-			Content="Discuss a completed worksheet"
+			Content="Construct a worksheet (teachers only)"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Bottom"
 			Height="34"
 			Width="370"
 			Margin="4"
-			Click="OnClick_DiscussMode"/>
+			Click="OnClick_DesignMode"/>
 	</StackPanel>
 </Window>

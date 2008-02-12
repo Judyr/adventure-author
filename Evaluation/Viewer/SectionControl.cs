@@ -40,20 +40,10 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
         	if (section == null) {
         		section = new Section();
-        	}
+        	}  	
         	
-        	// Set the image on the delete button:
-        	
-//            Image image = new Image();
-//            ImageSourceConverter s = new ImageSourceConverter();
-//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"downarrow.bmp"));            
-//            MoveSectionDownButton.Content = image;
-//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"uparrow.bmp"));  
-//            MoveSectionUpButton.Content = image;
-//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"delete.jpg"));  
-//            DeleteSectionButton.Content = image;
-        	
-            InitializeComponent();            
+            InitializeComponent();   
+            
             SectionTitleTextBox.Text = section.Title;
             SectionTitleTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };  
             SetInitialActiveStatus(section); 
@@ -70,6 +60,10 @@ namespace AdventureAuthor.Evaluation.Viewer
             	MoveSectionDownButton.Visibility = Visibility.Visible;
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
+            
+            Tools.SetButtonImage(DeleteSectionButton,"01.png","delete");
+            Tools.SetButtonImage(MoveSectionDownButton,"07.png","down");
+            Tools.SetButtonImage(MoveSectionUpButton,"08.png","up");
         }  
 			        
 			
@@ -240,11 +234,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		ActivatableControl.EnableElement(AddQuestionButton);
     		ActivatableControl.EnableElement(MoveSectionDownButton);
     		ActivatableControl.EnableElement(MoveSectionUpButton);
-    		ActivatableControl.EnableElement(DeleteSectionButton);
+    		ActivatableControl.EnableElement(DeleteSectionButton);    		
     		ActivateChildren();
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
+    		ActivateCheckBox.ToolTip = "Click to deactivate this section\n(will not appear in worksheet)";
     	}
     	
     	
@@ -273,6 +268,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
+    		ActivateCheckBox.ToolTip = "Click to activate this section\n(will appear in worksheet)";
     	}
     	
     	

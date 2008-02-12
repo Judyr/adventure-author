@@ -10,7 +10,7 @@
 	    		   	   FontSize="14" Foreground="Black" Margin="5"/>-->
 			<TextBox Name="CommentTextBox" 
 	    	         Width="350" MinHeight="30" Margin="5" Padding="3" TextWrapping="Wrap"
-	    			 FontSize="12" FontFamily="Comic Sans MS"/>
+	    			 FontSize="14" FontFamily="Comic Sans MS"/>
 		</StackPanel>
 		<CheckBox Name="ActivateCheckBox"
 		    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"

@@ -28,6 +28,8 @@ using System;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.IO;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -248,6 +250,21 @@ namespace AdventureAuthor.Utils
 			TeacherPasswordDialog dialog = new TeacherPasswordDialog();
 			dialog.ShowDialog();
 			return dialog.ReceivedCorrectPassword;
+		}
+		
+		
+		internal static void SetButtonImage(Button button, string filename, string alternateText)
+		{
+        	try {
+	            ImageSourceConverter s = new ImageSourceConverter();	            
+	            Image image = new Image();
+	            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,filename));            
+	            button.Content = image; 
+        	}
+        	catch (Exception e) {
+        		Say.Debug("Couldn't assign image for interface button: " + e);
+        		button.Content = alternateText;
+        	}
 		}
 	}
 }

@@ -26,12 +26,6 @@ namespace AdventureAuthor.Evaluation.Viewer
         {
         	Launch(Mode.Complete);
         }
-        
-        
-        private void OnClick_DiscussMode(object sender, EventArgs e)
-        {
-        	Launch(Mode.Discuss);
-        }
 
         
         private void OnClick_DesignMode(object sender, EventArgs e)

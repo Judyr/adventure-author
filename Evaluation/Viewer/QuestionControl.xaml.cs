@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -66,8 +60,8 @@ namespace AdventureAuthor.Evaluation.Viewer
                  
             if (WorksheetViewer.EvaluationMode == Mode.Design) {
             	ControlPanel.Visibility = Visibility.Visible;
-            	ControlPanel.Width = 120;
-            	ControlPanel.MaxWidth = 120;
+            	ControlPanel.Width = 80;
+            	ControlPanel.MaxWidth = 80;
             	QuestionAndControlsColumn.MaxWidth = 500;
             	QuestionAndControlsColumn.Width = new GridLength(500);
             }
@@ -85,6 +79,11 @@ namespace AdventureAuthor.Evaluation.Viewer
             else {
             	AddReplyButton.Visibility = Visibility.Collapsed;
             }
+            
+            Tools.SetButtonImage(DeleteQuestionButton,"01.png","delete");
+            Tools.SetButtonImage(MoveDownButton,"07.png","down");
+            Tools.SetButtonImage(MoveUpButton,"08.png","up");
+            Tools.SetButtonImage(AddReplyButton,"29.png","Add comment");
         }
 
         
@@ -237,6 +236,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
+    		ActivateCheckBox.ToolTip = "Click to deactivate this question\n(will not appear in worksheet)";
     	}
     	
     	
@@ -265,6 +265,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
+    		ActivateCheckBox.ToolTip = "Click to activate this question\n(will appear in worksheet)";
     	}
     	
     	

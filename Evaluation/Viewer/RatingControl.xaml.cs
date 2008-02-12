@@ -146,6 +146,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
+    		ActivateCheckBox.ToolTip = "Click to deactivate this answer field\n(will not appear in worksheet)";
     	}
     	    	    	
         
@@ -158,6 +159,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
+    		ActivateCheckBox.ToolTip = "Click to activate this answer field\n(will appear in worksheet)";
     	}
     	
 		public override void ShowActivationControls()

@@ -55,6 +55,10 @@ namespace AdventureAuthor.Evaluation.Viewer
             	EditButton.Visibility = Visibility.Collapsed;
             }            
             Open(reply);
+            
+            Tools.SetButtonImage(DeleteButton,"01.png","delete");
+            DeleteButton.ToolTip = "Delete this comment\n(teachers only)";
+            EditButton.ToolTip = "Edit this comment\n(teachers only)";
         }
         
         
@@ -142,6 +146,20 @@ namespace AdventureAuthor.Evaluation.Viewer
 		
 		#endregion
     	
+		
+		public void ShowEditControls()
+		{
+			EditButton.Visibility = Visibility.Visible;
+			DeleteButton.Visibility = Visibility.Visible;
+		}
+		
+		
+		public void HideEditControls()
+		{
+			EditButton.Visibility = Visibility.Collapsed;
+			DeleteButton.Visibility = Visibility.Collapsed;
+		}
+		
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()
 		{

@@ -97,7 +97,6 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			OptionsMenu.Visibility = Visibility.Collapsed;
 	    			
 	    			EditMenu.Visibility = Visibility.Visible;
-	    			
     				break;
     				
     			case Mode.Complete:
@@ -109,8 +108,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
-	    			EditMenu.Visibility = Visibility.Collapsed;
-	    			
+	    			EditMenu.Visibility = Visibility.Collapsed;	    		
+    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
+    				OpenDialog();
 		    		break;
     				
     			case Mode.Discuss:
@@ -122,8 +122,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
-	    			EditMenu.Visibility = Visibility.Collapsed;
-    			
+	    			EditMenu.Visibility = Visibility.Collapsed; 		
+    				SwitchModesMenuItem.Header = "Switch to Complete mode";
+    				OpenDialog();
 		    		break;
     		}
     	}
@@ -237,10 +238,24 @@ namespace AdventureAuthor.Evaluation.Viewer
 				    				if (EvaluationMode == Mode.Design && !questionControl.IsActive) {
 				    					answerControl.Deactivate(true);
 				    				}
-		    						else if (EvaluationMode == Mode.Discuss) {
-		    							answerControl.Activate();
-		    							answerControl.HideActivationControls();
-		    						}
+			    					else if (EvaluationMode == Mode.Discuss) {
+			    						if (answerControl is EvidenceControl) {
+			    							EvidenceControl ec = (EvidenceControl)answerControl;
+			    							ec.ViewLink.IsEnabled = true;
+			    							ec.SelectLink.IsEnabled = false;
+			    							ec.ClearLink.IsEnabled = false;
+			    						}
+			    						else {
+			    							// activating a control should usually make the worksheet dirty,
+			    							// but not in this case:
+			    							bool isDirty = Dirty;
+				    						answerControl.Activate();    						
+				    						answerControl.HideActivationControls();
+				    						if (isDirty == false) {
+				    							Dirty = false;
+				    						}
+			    						}
+			    					}
 				    			}
 				    		}
 		    			}
@@ -502,10 +517,11 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		// on the UI, but we still want to remember their existence. As a result we can't just
 	    		// save only the questions and answers on the UI, as we will end up losing the ones that
 	    		// have been excluded. Instead, we find the original worksheet part that each control corresponds 
-	    		// to, and if the control has a new value, we save it over the original value. (This only applies in
-	    		// complete mode, since this is the only mode in which answers can get new values.)
+	    		// to, and if the control has a new value, we save it over the original value. The exception
+	    		// is replies, since these cannot be excluded, so we don't have to check them against an original
+	    		// value.
 		    		
-		    	case Mode.Complete:
+		    	default:
 	    		
 	    			if (originalWorksheet == null) {
 	    				throw new ArgumentException("Could not find object representing the opened worksheet.");
@@ -538,42 +554,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    								}
 	    							}
 	    						}
+	    						question.Replies = question2.Replies;
 	    					}
 	    				}
 	    			}
 	    			
 	    			break;
-	    			
-	    		// Finally in discuss mode, the only things that can change are the replies and
-	    		// the date. Replies can't be excluded, so if we can't find a control representing a reply,
-	    		// we can just assume that reply has been permanently deleted - all we have to do is replace
-	    		// each question's set of replies with the replies represented on the interface.
-		    		
-		    	case Mode.Discuss:
-	    		
-	    			if (originalWorksheet == null) {
-	    				throw new ArgumentException("Could not find object representing the opened worksheet.");
-	    			}    			
-	    			ws = originalWorksheet.GetCopy();
-	    			if (ws.Date != DateField.Text) {
-	    				ws.Date = DateField.Text;
-	    			}
-	    			
-	    			foreach (SectionControl sc in SectionsPanel.Children) {
-	    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
-	    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
-	    					
-	    					if (question != null) {
-	    						question.Replies.Clear();
-	    						foreach (ReplyControl rc in qc.RepliesPanel.Children) {
-	    							Reply reply = (Reply)rc.GetWorksheetPart();
-	    							question.Replies.Add(reply);
-	    						}
-	    					}
-	    				}
-	    			}
-    		
-		    		break;
     		}    				
     				
     		return ws;
@@ -584,7 +570,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		string fn;
 			if (filename == null || filename == String.Empty) {
-    			fn = "Untitled";
+    			fn = "Untitled*";
 			}
 			else {
     			fn = Path.GetFileName(filename);
@@ -593,21 +579,75 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
     			fn += " - Evaluation";
 			}
-    		switch (EvaluationMode) {
-    			case Mode.Complete:
-    				fn += " (Filling in worksheets)";
-    				break;
-    			case Mode.Design:
-    				fn += " (Building worksheets)";
-    				break;
-    			case Mode.Discuss:
-    				fn += " (Discussing completed worksheets)";
-    				break;
+    		if (EvaluationMode == Mode.Design) {
+    			fn += " (Designer Mode)";
     		}
     		
     		Title = fn;
     	}
-    	    	
+    	    
+    	
+    	private void SwitchTo(Mode mode)
+    	{
+    		switch (mode) {
+    			case Mode.Complete:
+    				DateField.IsEnabled = true;
+    				NameField.IsEnabled = true;
+    				break;
+    			case Mode.Discuss:
+    				DateField.IsEnabled = false;
+    				NameField.IsEnabled = false;
+    				break;
+    			case Mode.Design:
+    				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
+    		}
+    		
+    		foreach (SectionControl sc in SectionsPanel.Children) {
+    			foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
+    				foreach (OptionalWorksheetPartControl ac in qc.AnswersPanel.Children) {
+    					if (mode == Mode.Complete) {
+    						ac.Enable();    						
+    					}
+    					else if (mode == Mode.Discuss) {
+    						if (ac is EvidenceControl) {
+    							EvidenceControl ec = (EvidenceControl)ac;
+    							ec.ViewLink.IsEnabled = true;
+    							ec.SelectLink.IsEnabled = false;
+    							ec.ClearLink.IsEnabled = false;
+    						}
+    						else {
+    							// activating a control should usually make the worksheet dirty,
+    							// but not in this case:
+    							bool isDirty = Dirty;
+	    						ac.Activate();    						
+	    						ac.HideActivationControls();
+	    						if (isDirty == false) {
+	    							Dirty = false;
+	    						}
+    						}
+    					}
+    				}
+    				foreach (ReplyControl rc in qc.RepliesPanel.Children) {
+    					if (mode == Mode.Complete) {
+    						rc.HideEditControls();
+    					}
+    					else if (mode == Mode.Discuss) {
+    						rc.ShowEditControls();
+    					}
+    				}
+    				if (mode == Mode.Complete) {
+    					qc.AddReplyButton.Visibility = Visibility.Collapsed;
+    				}
+    				else if (mode == Mode.Discuss) {
+    					qc.AddReplyButton.Visibility = Visibility.Visible;
+    				}
+    			}
+    		}
+    		
+    		evaluationMode = mode;
+    		UpdateTitleBar();    		
+    	}    	
+    	
     	#endregion
     	    	
     	#region Event handlers
@@ -642,10 +682,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			openFileDialog.RestoreDirectory = false;	
 			
   			bool ok = (bool)openFileDialog.ShowDialog();  				
-  			if (!ok) {
-  				return;
-  			}  				
-  			else {
+  			if (ok) {
   				Open(openFileDialog.FileName);
   			}
     	}
@@ -853,6 +890,23 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void OnChecked_UseDefault(object sender, EventArgs e)
     	{
     		EvaluationOptions.ApplicationToOpenImages = EvaluationOptions.ImageApps.Default;
+    	}
+    	
+    	
+    	private void OnClick_SwitchMode(object sender, EventArgs e)
+    	{
+    		switch (EvaluationMode) {
+    			case Mode.Design:
+    				throw new InvalidOperationException("Cannot switch to another mode from design mode.");
+    			case Mode.Complete:
+    				SwitchTo(Mode.Discuss);
+    				SwitchModesMenuItem.Header = "Switch to Complete mode";
+    				break;
+    			case Mode.Discuss:
+    				SwitchTo(Mode.Complete);
+    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
+    				break;
+    		}
     	}
     	
     	#endregion
