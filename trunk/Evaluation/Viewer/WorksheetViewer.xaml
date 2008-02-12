@@ -41,12 +41,15 @@
 					<MenuItem Name="UseDefaultMenuItem" IsCheckable="true" Checked="OnChecked_UseDefault"  
 					          Header="Open pictures in default program" FontSize="14"
 							  IsChecked="false"/>
+					<Separator/>
+					<MenuItem Name="SwitchModesMenuItem" Click="OnClick_SwitchMode"
+							  FontSize="14"/>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
 		<ScrollViewer Name="Scroller" Grid.Row="1" Grid.Column="0"
 					  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Focusable="false">
-	    	<StackPanel Orientation="Vertical">
+	    	<StackPanel Orientation="Vertical">				
 				<StackPanel Orientation="Horizontal" Margin="20">
 		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="TitleField" Width="250" Padding="5" Visibility="Hidden" 
@@ -55,9 +58,20 @@
 					<TextBox Name="NameField" Width="250" Padding="5" Visibility="Hidden"
 					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
 		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"
+					<TextBox Name="DateField" Width="250" Padding="5" Visibility="Hidden"
 					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
-		    	</StackPanel>		
+		    	</StackPanel>	
+				<!--<StackPanel Orientation="Horizontal" Margin="20">
+		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="TitleField" Width="250" Padding="5" Visibility="Hidden" 
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
+		    		<Label Name="NameLabel" Content="Name" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="NameField" Width="250" Padding="5" Visibility="Hidden"
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
+		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
+					<TextBox Name="DateField" Width="250" Padding="5" Visibility="Hidden"
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
+		    	</StackPanel>	-->	
 	    		<StackPanel Orientation="Vertical">
 	    			<StackPanel Name="SectionsPanel" Orientation="Vertical"/>
 	    			<Rectangle Name="BorderClosingRectangle" Fill="Black" Height="2" Visibility="Collapsed"/>

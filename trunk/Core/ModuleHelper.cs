@@ -86,9 +86,15 @@ namespace AdventureAuthor.Core
 			set { doBackups = value; }
 		}
 		
+		private static string nwn2InstallDir = @"C:\Program Files\Atari\Neverwinter Nights 2";	
+		public static string Nwn2InstallDir {
+			get { return nwn2InstallDir; }
+			set { nwn2InstallDir = value; }
+		}
+		
 		public static string AdventureAuthorDir {			
 			get {
-				return Path.Combine(System.Environment.CurrentDirectory,"AdventureAuthor");
+				return Path.Combine(Nwn2InstallDir,"AdventureAuthor");
 			}
 		}	
 		
