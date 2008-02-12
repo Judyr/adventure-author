@@ -36,7 +36,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	    	
         
-        public SectionControl(Section section, bool designerMode) 	
+        public SectionControl(Section section) 	
         {
         	if (section == null) {
         		section = new Section();
@@ -59,12 +59,12 @@ namespace AdventureAuthor.Evaluation.Viewer
             SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
-        		if (designerMode || question.Include) {	
-		        	AddQuestion(question);
+        		if (WorksheetViewer.EvaluationMode == Mode.Design || question.Include) {	
+		        	AddQuestionField(question);
         		}
         	}
                            
-            if (designerMode) {
+            if (WorksheetViewer.EvaluationMode == Mode.Design) {
             	AddQuestionButton.Visibility = Visibility.Visible;
             	DeleteSectionButton.Visibility = Visibility.Visible;
             	MoveSectionDownButton.Visibility = Visibility.Visible;
@@ -73,19 +73,19 @@ namespace AdventureAuthor.Evaluation.Viewer
         }  
 			        
 			
-        public QuestionControl AddQuestion(Question question)
+        public QuestionControl AddQuestionField(Question question)
         {
         	if (question == null) {
         		throw new ArgumentNullException("Can't add a null question field.");
         	}
         	
-        	QuestionControl control = (QuestionControl)question.GetControl(WorksheetViewer.DesignerMode);
-        	AddQuestionControl(control);
+        	QuestionControl control = (QuestionControl)question.GetControl();
+        	AddQuestionField(control);
         	return control;
         } 
         
         
-        private void AddQuestionControl(QuestionControl control)
+        private void AddQuestionField(QuestionControl control)
         {
         	if (control == null) {
         		throw new ArgumentNullException("Can't add a null question field.");
@@ -100,7 +100,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         	QuestionsPanel.Children.Add(control);    	
     		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(questionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(questionControl_Moving);
+    		control.Activated += delegate { OnChanged(new EventArgs()); };
+    		control.Deactivated += delegate { OnChanged(new EventArgs()); };
+    		control.Changed += delegate { OnChanged(new EventArgs()); };
         	control.BringIntoView();
+        	OnChanged(new EventArgs());
         }
         
         
@@ -123,28 +127,19 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		WorksheetViewer.MoveWithin(e.Control,QuestionsPanel.Children,e.MoveUp);
     		SetBackgrounds();
-    		OnChanged(new EventArgs());
     	}
     	    	
     	
     	private void questionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
     	{
-    		if (QuestionsPanel.Children.Contains(e.Control)) {
-    			QuestionsPanel.Children.Remove(e.Control);
-    			SetBackgrounds();
-        		OnChanged(new EventArgs());
-    		}
-    		else {
-    			throw new InvalidOperationException("Received instruction to delete a control " + 
-    			                                    "( " + e.Control.ToString() +
-    			                                    ") that was not a part of this worksheet.");
-    		}
+    		WorksheetViewer.DeleteFrom(e.Control,QuestionsPanel.Children);
+    		SetBackgrounds();
     	}
         
         
         private void OnClick_DeleteSection(object sender, EventArgs e)
         {
-        	if (!WorksheetViewer.DesignerMode) {
+        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
         	}
         	
@@ -198,15 +193,15 @@ namespace AdventureAuthor.Evaluation.Viewer
         	question.Answers.Add(new Rating());
         	question.Answers.Add(new Comment());
         	question.Answers.Add(new Evidence());
-        	QuestionControl control = new QuestionControl(question,true);
-        	AddQuestionControl(control);
+        	QuestionControl control = new QuestionControl(question);
+        	AddQuestionField(control);
         	OnChanged(new EventArgs());
         }
         
         
         private void OnClick_AddQuestion(object sender, EventArgs e)
         {
-        	if (!WorksheetViewer.DesignerMode) {
+        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to call Add Question " +
         		                                    "when not in designer mode.");
         	}
@@ -291,12 +286,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-		protected override void ShowActivationControls()
+		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		public override void HideActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}

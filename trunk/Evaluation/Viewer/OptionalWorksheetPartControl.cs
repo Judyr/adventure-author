@@ -40,8 +40,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 			
 		#region Methods
 		
-		protected abstract void ShowActivationControls();
-		protected abstract void HideActivationControls();			
+		public abstract void ShowActivationControls();
+		public abstract void HideActivationControls();			
 		protected abstract OptionalWorksheetPart GetWorksheetPartObject();
 		
 		public OptionalWorksheetPart GetWorksheetPart()
@@ -59,7 +59,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				
 		protected void SetInitialActiveStatus(OptionalWorksheetPart representedWorksheetPart)
 		{          
-            if (WorksheetViewer.DesignerMode) { // show 'Active?' control, and assume that control is Active to begin with
+            if (WorksheetViewer.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
 				ShowActivationControls();
 	    		if (representedWorksheetPart.Include) {
 					Activate();

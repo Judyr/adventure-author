@@ -7,7 +7,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class CommentControl : OptionalWorksheetPartControl
     {    	
-    	public CommentControl(Comment comment, bool designerMode)
+    	public CommentControl(Comment comment)
         {    		
         	if (comment == null) {
     			comment = new Comment();
@@ -60,12 +60,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-		protected override void ShowActivationControls()
+		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		public override void HideActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}

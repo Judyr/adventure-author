@@ -19,7 +19,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constants
     	
     	private static readonly Brush TEACHER_BRUSH = Brushes.Crimson;
-    	private static readonly Brush PLAYTESTER_BRUSH = Brushes.DarkMagenta;
+    	private static readonly Brush PLAYTESTER_BRUSH = Brushes.Black;
     	private static readonly Brush DESIGNER_BRUSH = Brushes.DarkSlateBlue;
     	private static readonly Brush SOMEONEELSE_BRUSH = Brushes.Black;
     	
@@ -27,7 +27,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	#region Fields
     	
-    	private Reply.ReplierRole authorType;
+    	private Role authorType;
     	
     	private string authorName;
     	
@@ -47,11 +47,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	#endregion
     	
-        public ReplyControl(Reply reply, bool designerMode)
+        public ReplyControl(Reply reply)
         {
-        	// TODO use designerMode variable
-        	
             InitializeComponent();
+            if (WorksheetViewer.EvaluationMode == Mode.Complete) {
+            	DeleteButton.Visibility = Visibility.Collapsed;
+            	EditButton.Visibility = Visibility.Collapsed;
+            }            
             Open(reply);
         }
         
@@ -61,7 +63,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	authorName = reply.Replier;
             authorType = reply.ReplierType;
             replyAuthorTextBlock.Text = reply.Replier;
-            if (reply.ReplierType != Reply.ReplierRole.Other) {
+            if (reply.ReplierType != Role.Other) {
             	replyAuthorTextBlock.Text = reply.Replier + " (" + reply.ReplierType.ToString().ToLower() + ")";
             }
             else {
@@ -69,13 +71,13 @@ namespace AdventureAuthor.Evaluation.Viewer
             }
             
             switch (reply.ReplierType) {
-            	case Reply.ReplierRole.Designer:
+            	case Role.Designer:
             		replyAuthorTextBlock.Foreground = DESIGNER_BRUSH;        		
             		break;
-            	case Reply.ReplierRole.Teacher:
+            	case Role.Teacher:
             		replyAuthorTextBlock.Foreground = TEACHER_BRUSH;
             		break;
-            	case Reply.ReplierRole.Playtester:
+            	case Role.Playtester:
             		replyAuthorTextBlock.Foreground = PLAYTESTER_BRUSH;
             		break;
             	default:
@@ -112,42 +114,33 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
 		
         
+        #region Redundant
+        
     	protected override void PerformEnable()
     	{    		
-//    		ActivatableControl.EnableElement(ButtonsPanel);
     	}
     	
     	    	
     	protected override void PerformActivate()
     	{	
-//    		ActivatableControl.ActivateElement(ButtonsPanel);
-//    		ActivatableControl.EnableElement(ActivateCheckBox);
-//    		if ((bool)!ActivateCheckBox.IsChecked) {
-//    			ActivateCheckBox.IsChecked = true;
-//    		}
     	}
     	
         
     	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
-//    		ActivatableControl.DeactivateElement(ButtonsPanel);
-//    		if ((bool)ActivateCheckBox.IsChecked) {
-//    			ActivateCheckBox.IsChecked = false;
-//    		}
-//    		if (parentIsDeactivated) {
-//    			ActivatableControl.DeactivateElement(ActivateCheckBox);
-//    		}
     	}
     	
-		protected override void ShowActivationControls()
+    	
+		public override void ShowActivationControls()
 		{
-//			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		
+		public override void HideActivationControls()
 		{
-//			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}
+		
+		#endregion
     	
         
         protected override OptionalWorksheetPart GetWorksheetPartObject()

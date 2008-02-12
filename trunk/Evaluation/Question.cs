@@ -72,9 +72,9 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override OptionalWorksheetPartControl GetControl(bool designerMode)
+		public override OptionalWorksheetPartControl GetControl()
 		{
-			return new QuestionControl(this,designerMode);
+			return new QuestionControl(this);
 		}
 		
 		
@@ -90,6 +90,15 @@ namespace AdventureAuthor.Evaluation
 				}
 			}
 			return true;
+		}
+		
+		
+		public override void Clear()
+		{
+			replies.Clear(); // simply remove all replies, instead of blanking them individually
+			foreach (Answer answer in answers) {
+				answer.Clear();
+			}
 		}
 		
 		

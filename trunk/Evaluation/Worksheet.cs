@@ -95,16 +95,18 @@ namespace AdventureAuthor.Evaluation
 		public Worksheet GetBlankCopy()
 		{
 			Worksheet worksheet = GetCopy();
-			worksheet.Name = String.Empty;
-			worksheet.Date = String.Empty;			
-			foreach (Section section in worksheet.sections) {
-				foreach (Question question in section.Questions) {
-					foreach (Answer answer in question.Answers) {
-						answer.Value = String.Empty;
-					}
-				}
-			}
+			worksheet.Clear();
 			return worksheet;
+		}
+		
+		
+		public void Clear()
+		{
+			Name = String.Empty;
+			Date = String.Empty;			
+			foreach (Section section in sections) {
+				section.Clear();
+			}
 		}
 		
 		

@@ -240,6 +240,7 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Evaluation\Answer.cs" />
+    <Compile Include="Evaluation\Role.cs" />
     <Compile Include="Evaluation\Comment.cs" />
     <Compile Include="Evaluation\Evidence.cs" />
     <Compile Include="Evaluation\Question.cs" />
@@ -252,6 +253,7 @@
       <DependentUpon>AddReplyWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Evaluation\Viewer\Mode.cs" />
     <Compile Include="Evaluation\Viewer\MovingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
     <Compile Include="Evaluation\Viewer\CommentControl.cs">

@@ -23,5 +23,11 @@ namespace AdventureAuthor.Evaluation
 			get { return val; }
 			set { val = value; }
 		}
+		
+		
+		public override void Clear()
+		{
+			val = String.Empty;
+		}
 	}
 }

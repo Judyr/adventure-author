@@ -14,19 +14,27 @@
 					Orientation="Horizontal" Height="28">
 			<Menu VerticalAlignment="Top" HorizontalAlignment="Left">
 				<MenuItem Header="File" FontSize="14">
-					<MenuItem Header="New" Click="OnClick_New" FontSize="14" Name="NewMenuItem"/>
-					<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
-					<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
-					<MenuItem Header="Save as" Click="OnClick_SaveAs" FontSize="14"/>
-					<MenuItem Header="Save blank copy" Click="OnClick_MakeBlankCopy" FontSize="14" Name="SaveBlankMenuItem"/>
-					<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
+					<MenuItem Name="NewMenuItem" Header="New" 
+					          Click="OnClick_New" FontSize="14"/>
+					<MenuItem Name="OpenMenuItem" Header="Open" 
+					          Click="OnClick_Open" FontSize="14"/>
+					<MenuItem Name="SaveMenuItem" Header="Save" 
+					          Click="OnClick_Save" FontSize="14" IsEnabled="false"/>
+					<MenuItem Name="SaveAsMenuItem" Header="Save as" 
+					          Click="OnClick_SaveAs" FontSize="14" IsEnabled="false"/>
+					<MenuItem Name="SaveBlankMenuItem" Header="Save blank copy" 
+					          Click="OnClick_MakeBlankCopy" FontSize="14" IsEnabled="false"/>
+					<MenuItem Name="CloseMenuItem" Header="Close" 
+					          Click="OnClick_Close" FontSize="14" IsEnabled="false"/>
 					<Separator/>
-					<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
+					<MenuItem Name="ExitMenuItem" Header="Exit" 
+					          Click="OnClick_Exit" FontSize="14"/>
 				</MenuItem>
-				<MenuItem Name="EditMenu" Header="Edit" FontSize="14" Visibility="Collapsed">
-					<MenuItem Name="AddSectionMenuItem" Header="Add section" Click="OnClick_AddSection"/>
+				<MenuItem Name="EditMenu" Header="Edit" FontSize="14" Visibility="Collapsed" IsEnabled="false">
+					<MenuItem Name="AddSectionMenuItem" Header="Add section" 
+					          Click="OnClick_AddSection"/>
 				</MenuItem>
-				<MenuItem Name="OptionsMenu" Header="Options" FontSize="14">
+				<MenuItem Name="OptionsMenu" Header="Options" FontSize="14" IsEnabled="false">
 					<MenuItem Name="UsePaintMenuItem" IsCheckable="true" Checked="OnChecked_UsePaint" 
 					          Header="Open pictures in Microsoft Paint" FontSize="14"
 							  IsChecked="true"/>
@@ -42,13 +50,13 @@
 				<StackPanel Orientation="Horizontal" Margin="20">
 		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="TitleField" Width="250" Padding="5" Visibility="Hidden" 
-					         FontFamily="Comic Sans MS" FontSize="14"/>
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
 		    		<Label Name="NameLabel" Content="Name" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="NameField" Width="250" Padding="5" Visibility="Hidden"
-					         FontFamily="Comic Sans MS" FontSize="14"/>
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
 		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
 					<TextBox Name="DateField" Width="150" Padding="5" Visibility="Hidden"
-					         FontFamily="Comic Sans MS" FontSize="14"/>
+					         FontFamily="Comic Sans MS" FontSize="14" Margin="8"/>
 		    	</StackPanel>		
 	    		<StackPanel Orientation="Vertical">
 	    			<StackPanel Name="SectionsPanel" Orientation="Vertical"/>

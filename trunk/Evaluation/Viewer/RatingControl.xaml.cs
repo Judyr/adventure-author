@@ -34,7 +34,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constructors
         
         
-    	public RatingControl(Rating rating, bool designerMode)
+    	public RatingControl(Rating rating)
         {
     		if (rating == null) {
     			rating = new Rating();
@@ -68,7 +68,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		StarsPanel.Children.Add(button);
         	}
         	int width = maxStars * 40;
-        	if (WorksheetViewer.DesignerMode) {
+        	if (WorksheetViewer.EvaluationMode == Mode.Design) {
         		width += 30; // leave space for the activation checkbox
         	}
         	Width = width;
@@ -160,12 +160,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-		protected override void ShowActivationControls()
+		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		public override void HideActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}

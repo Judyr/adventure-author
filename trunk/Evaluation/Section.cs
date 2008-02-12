@@ -50,9 +50,9 @@ namespace AdventureAuthor.Evaluation
 		}
 						
 		
-		public override OptionalWorksheetPartControl GetControl(bool designerMode)
+		public override OptionalWorksheetPartControl GetControl()
 		{
-			return new SectionControl(this,designerMode);
+			return new SectionControl(this);
 		}
 		
 		
@@ -64,6 +64,14 @@ namespace AdventureAuthor.Evaluation
 				}
 			}
 			return true;
+		}
+		
+		
+		public override void Clear()
+		{
+			foreach (Question question in questions) {
+				question.Clear();
+			}
 		}
 		
 		

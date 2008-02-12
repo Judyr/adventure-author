@@ -95,7 +95,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    			    	
     	#region Constructors
     			
-        public EvidenceControl(Evidence evidence, bool designerMode)
+        public EvidenceControl(Evidence evidence)
         {        
     		if (evidence == null) {
         		evidence = new Evidence();
@@ -269,12 +269,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		}
     	}
     	
-		protected override void ShowActivationControls()
+		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
 		
-		protected override void HideActivationControls()
+		public override void HideActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Collapsed;
 		}

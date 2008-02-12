@@ -56,16 +56,16 @@ namespace AdventureAuthor.Evaluation.Viewer
         	NameTextBox.Text = editingReply.Replier;
         	ReplyTextBox.Text = editingReply.Text;
         	switch (editingReply.ReplierType) {
-        		case Reply.ReplierRole.Designer:
+        		case Role.Designer:
         			RespondantRoleComboBox.SelectedItem = "the game's designer";
         			break;
-        		case Reply.ReplierRole.Playtester:
+        		case Role.Playtester:
         			RespondantRoleComboBox.SelectedItem = "a playtester";
         			break;
-        		case Reply.ReplierRole.Teacher:
+        		case Role.Teacher:
         			RespondantRoleComboBox.SelectedItem = "a teacher";
         			break;
-        		case Reply.ReplierRole.Other:
+        		case Role.Other:
         			RespondantRoleComboBox.SelectedItem = "someone else";
         			break;
         	}
@@ -88,20 +88,20 @@ namespace AdventureAuthor.Evaluation.Viewer
 	        	reply.Replier = NameTextBox.Text;
 	        	reply.Text = ReplyTextBox.Text;
 	        	if (RespondantRoleComboBox.Text == "a teacher") {
-	        		reply.ReplierType = Reply.ReplierRole.Teacher;
+	        		reply.ReplierType = Role.Teacher;
 	        	}
 	        	else if (RespondantRoleComboBox.Text == "a playtester") {
-	        		reply.ReplierType = Reply.ReplierRole.Playtester;
+	        		reply.ReplierType = Role.Playtester;
 	        	}
 	        	else if (RespondantRoleComboBox.Text == "the game's designer") {
-	        		reply.ReplierType = Reply.ReplierRole.Designer;
+	        		reply.ReplierType = Role.Designer;
 	        	}
 	        	else if (RespondantRoleComboBox.Text == "someone else") {
-	        		reply.ReplierType = Reply.ReplierRole.Other;
+	        		reply.ReplierType = Role.Other;
 	        	}
 	        	
 	        	// Check that the user is a teacher before allowing them to add a teacher response:
-	        	if (reply.ReplierType == Reply.ReplierRole.Teacher && !Tools.TeacherHasSignedIn(false)) {
+	        	if (reply.ReplierType == Role.Teacher && !Tools.TeacherHasSignedIn(false)) {
 	        		return;
 	        	}
 	        	
