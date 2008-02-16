@@ -56,7 +56,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             }            
             Open(reply);
             
-            Tools.SetButtonImage(DeleteButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(DeleteButton,"01.png","delete");
             DeleteButton.ToolTip = "Delete this comment\n(teachers only)";
             EditButton.ToolTip = "Edit this comment\n(teachers only)";
         }

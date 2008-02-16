@@ -64,11 +64,11 @@ namespace AdventureAuthor.Evaluation
 		
 		public override string ToString()
 		{
-			if (Value == null) {
-				return "0 out of " + max;
+			if (IsBlank()) {
+				return "Star rating:";
 			}
 			else {
-				return Value + " out of " + max;
+				return "Star rating: " + Value + " out of " + max;
 			}
 		}
 	}

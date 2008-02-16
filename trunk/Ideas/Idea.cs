@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace AdventureAuthor.Ideas
 {
-	[SerializableAttribute]
+	[Serializable]
 	public class Idea : IComparable
 	{
 		#region Fields
@@ -40,11 +40,11 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-		[XmlArray]
-		private List<string> categories;		
-		public List<string> Categories {
-			get { return categories; }
-			set { categories = value; }
+		[XmlAttribute]
+		private IdeaCategory category;			
+		public IdeaCategory Category {
+			get { return category; }
+			set { category = value; }
 		}
 		
 		#endregion
@@ -54,24 +54,34 @@ namespace AdventureAuthor.Ideas
 		/// <summary>
 		/// For serialization.
 		/// </summary>
-		private Idea()
+		public Idea()
 		{
 			
 		}
 		
-		
-		public Idea(string text, string author) : this (text,author,DateTime.Now)
+		public Idea(string text) : this(text,IdeaCategory.Unassigned) 
 		{
 		}
 		
 		
-		public Idea(string text, string author, DateTime created)
+		public Idea(string text, IdeaCategory category) : this(text,category,String.Empty) 
+		{
+		}
+		
+		
+		public Idea(string text, IdeaCategory category, string author) : this(text,category,author,DateTime.Now)
+		{			
+		}
+		
+		
+		public Idea(string text, IdeaCategory category, string author, DateTime created)
 		{
 			this.text = text;
+			this.category = category;
 			this.author = author;
 			this.created = created;
 		}
-		
+				
 		#endregion
 		
 		#region Methods
@@ -79,15 +89,13 @@ namespace AdventureAuthor.Ideas
 		public int CompareTo(object obj)
 		{
 			Idea idea = obj as Idea;
-			if (idea == null || 
-			    author != idea.author || 
-			    text != idea.text ||
-			    created != idea.created ||
-			    categories != idea.categories) 
+			if (idea == null || author != idea.author || text != idea.text || 
+			    created != idea.created || category != idea.category) 
 			{
 				return 0;
 			}
-			else {
+			else 
+			{
 				return 1;
 			}
 		}

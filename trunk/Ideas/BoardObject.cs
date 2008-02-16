@@ -9,31 +9,24 @@
 
 using System;
 using System.Windows.Controls;
+using System.Xml.Serialization;
 
 namespace AdventureAuthor.Ideas
 {
 	/// <summary>
 	/// Description of BoardObject.
 	/// </summary>
-	public abstract class BoardObject : UserControl
+	[Serializable]
+	public abstract class BoardObject : UnserializableControl
 	{				
+		[XmlElement]
 		public abstract double X {
 			get; set;
 		}
 		
+		
+		[XmlElement]
 		public abstract double Y {
-			get; set;
-		}
-		
-		public abstract double Angle {
-			get; set;
-		}
-		
-		public abstract IDragBehaviour DragBehaviour {
-			get; set;
-		}
-		
-		public abstract IDropBehaviour DropBehaviour {
 			get; set;
 		}
 	}

@@ -21,8 +21,6 @@ namespace AdventureAuthor.Evaluation.Viewer
     {    	
     	#region Constants
     	
-    	private const string EVIDENCE_FILTER = "Pictures (*.jpg;*.jpeg;*.bmp;*.gif)|*.jpg;*.jpeg;*.bmp;*.gif" + "|" +
-    										   "All files (*.*)|*.*";
     	private readonly string[] PICTURE_EXTENSIONS = new string[] {".jpg",".jpeg",".bmp",".gif"};
     	
     	#endregion
@@ -65,7 +63,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     					ViewLink.Visibility = Visibility.Collapsed;
     					ViewLink.ToolTip = String.Empty; 					
     					SelectLinkText.Text = "Attach evidence...";
-    					ClearLink.Visibility = Visibility.Collapsed;
+    					ClearLink.Visibility = Visibility.Collapsed;            
+			            SelectLink.ToolTip = "Add a piece of evidence which " +
+			            					 "supports your other answers.";
     					break;
     				case EvidenceStatus.Link:
     					ViewLink.Visibility = Visibility.Visible;
@@ -75,6 +75,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     					ViewLinkText.TextDecorations.Add(TextDecorations.Underline);
     					SelectLinkText.Text = "Change";
     					ClearLink.Visibility = Visibility.Visible;
+			            ViewLink.ToolTip = "View supporting evidence\n" +
+			            				   "(" + Filename + ")";
+			            SelectLink.ToolTip = "Choose a different piece\n" +
+			            					 "of supporting evidence.";
     					break;
     				case EvidenceStatus.BrokenLink:
     					ViewLink.Visibility = Visibility.Visible;
@@ -84,6 +88,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     					ViewLinkText.TextDecorations.Add(TextDecorations.Strikethrough);
     					SelectLinkText.Text = "Change";
     					ClearLink.Visibility = Visibility.Visible;
+			            ViewLink.ToolTip = "View supporting evidence - link broken\n" +
+			            				   "(" + Filename + ")";
+			            SelectLink.ToolTip = "Choose a different piece\n" +
+			            					 "of supporting evidence.";
     					break;
     				default:
     					break;
@@ -110,6 +118,8 @@ namespace AdventureAuthor.Evaluation.Viewer
             else {
             	Filename = evidence.Value;
             }
+			
+            ClearLink.ToolTip = "Remove supporting evidence";
         }
         
         #endregion
@@ -126,8 +136,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = EVIDENCE_FILTER;
-    		openFileDialog.Filter = EVIDENCE_FILTER;
+    		openFileDialog.DefaultExt = Filters.WORKSHEET_EVIDENCE;
+    		openFileDialog.Filter = Filters.WORKSHEET_EVIDENCE;
 			openFileDialog.Title = "Select a file to attach as evidence";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;
@@ -150,26 +160,30 @@ namespace AdventureAuthor.Evaluation.Viewer
 		
 		private void OnClick_ViewEvidence(object sender, RoutedEventArgs e)
 		{
-    		switch (status) {
-    			case EvidenceStatus.NoLink:
-					Say.Error("'View evidence' button should not have been visible.");
-					break;
-    			case EvidenceStatus.Link:
+			if (status == EvidenceStatus.NoLink) {
+				throw new InvalidOperationException("'View evidence' button should not have been visible.");
+			}
+			
+			if (status == EvidenceStatus.Link) {
+				try {
 					OpenEvidence(filename);
-    				break;
-    			case EvidenceStatus.BrokenLink:
-    				MessageBoxResult result = MessageBox.Show("There doesn't appear to be a file at this location:\n" +
-    				                                          filename +"\n\n" +
-    				                                          "Do you want to browse to locate the file?",
-    				                                          "Evidence file missing", 
-    				                                          MessageBoxButton.OKCancel);
-    				if (result == MessageBoxResult.OK) {
-    					SelectEvidenceDialog();
-    				}    				                                          
-    				break;
-    			default:
-    				break;
-    		}
+					return; // only get this far if no exception has been raised
+				}
+				catch (IOException) {
+					// Open the evidence if it's there, and return. If trying to open it throws an IOException,
+					// it isn't there, so DON'T return - go on to the BrokenLink handling code instead.
+					Status = EvidenceStatus.BrokenLink;
+				}
+			}
+			
+			MessageBoxResult result = MessageBox.Show("There doesn't appear to be a file at this location:\n" +
+    				                                  filename +"\n\n" +
+    				                                  "Do you want to browse to locate the file?",
+    				                                  "Evidence file missing", 
+    				                                  MessageBoxButton.OKCancel);    				
+			if (result == MessageBoxResult.OK) {
+    			SelectEvidenceDialog();
+    		}    		
 		}
 		
 		
@@ -244,13 +258,17 @@ namespace AdventureAuthor.Evaluation.Viewer
 		
     	protected override void PerformEnable()
     	{    		
-    		ActivatableControl.EnableElement(ButtonsPanel);
+    		ActivatableControl.EnableElement(ViewLink);
+    		ActivatableControl.EnableElement(SelectLink);
+    		ActivatableControl.EnableElement(ClearLink);
     	}
     	
     	    	
     	protected override void PerformActivate()
     	{	
-    		ActivatableControl.ActivateElement(ButtonsPanel);
+    		ActivatableControl.ActivateElement(ViewLink);
+    		ActivatableControl.ActivateElement(SelectLink);
+    		ActivatableControl.ActivateElement(ClearLink);
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
@@ -261,7 +279,9 @@ namespace AdventureAuthor.Evaluation.Viewer
         
     	protected override void PerformDeactivate(bool parentIsDeactivated)
     	{
-    		ActivatableControl.DeactivateElement(ButtonsPanel);
+    		ActivatableControl.DeactivateElement(ViewLink);
+    		ActivatableControl.DeactivateElement(SelectLink);
+    		ActivatableControl.DeactivateElement(ClearLink);
     		if ((bool)ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = false;
     		}

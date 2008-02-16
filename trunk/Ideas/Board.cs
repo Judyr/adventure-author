@@ -10,16 +10,15 @@
 using System;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace AdventureAuthor.Ideas
 {
 	/// <summary>
 	/// Description of IBoard.
 	/// </summary>
-	public abstract class Board : UserControl
+	[Serializable]
+	public abstract class Board : UnserializableControl
 	{
-		protected abstract List<BoardObject> BoardObjects {
-			get;
-		}
 	}
 }

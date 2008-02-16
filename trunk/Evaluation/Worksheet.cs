@@ -20,10 +20,18 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		[XmlAttribute]
-		private string name;		
-		public string Name {
-			get { return name; }
-			set { name = value; }
+		private string designerName;		
+		public string DesignerName {
+			get { return designerName; }
+			set { designerName = value; }
+		}
+		
+		
+		[XmlAttribute]
+		private string evaluatorName;		
+		public string EvaluatorName {
+			get { return evaluatorName; }
+			set { evaluatorName = value; }
 		}
 		
 		
@@ -51,10 +59,11 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Worksheet(string title, string name, string date) : this()
+		public Worksheet(string title, string designerName, string evaluatorName, string date) : this()
 		{
 			this.title = title;
-			this.name = name;
+			this.designerName = designerName;
+			this.evaluatorName = evaluatorName;
 			this.date = date;
 		}
 	
@@ -102,7 +111,8 @@ namespace AdventureAuthor.Evaluation
 		
 		public void Clear()
 		{
-			Name = String.Empty;
+			EvaluatorName = String.Empty;
+			DesignerName = String.Empty;
 			Date = String.Empty;			
 			foreach (Section section in sections) {
 				section.Clear();
@@ -122,7 +132,10 @@ namespace AdventureAuthor.Evaluation
 		/// <returns>True if the fields of this worksheet are entirely blank; false otherwise</returns>
 		public bool IsBlank()
 		{
-			if ((Name != null && Name != String.Empty) || (Date != null && Date != String.Empty)) {
+			if ((EvaluatorName != null && EvaluatorName != String.Empty) || 
+			    (Date != null && Date != String.Empty) ||
+			    (DesignerName != null && DesignerName != String.Empty))
+			{
 				return false;
 			}			
 			

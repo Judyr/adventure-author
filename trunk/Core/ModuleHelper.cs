@@ -26,22 +26,16 @@
 
 using System;
 using System.Diagnostics;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
-using System.Reflection;
-using AdventureAuthor.Conversations;
-using AdventureAuthor.Setup;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Data;
-using NWN2Toolset.NWN2.Data.Factions;
-using NWN2Toolset.NWN2.Data.Journal;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.Factions;
 using NWN2Toolset.NWN2.IO;
-using NWN2Toolset.NWN2.Views;
 using OEIShared.UI;
 using OEIShared.Utils;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
@@ -150,15 +144,36 @@ namespace AdventureAuthor.Core
 					
 		#region Events
 		
-		public static event EventHandler<EventArgs> ModuleChanged;
+		public static event EventHandler ModuleSaved;
+		public static event EventHandler ModuleOpened;
+		public static event EventHandler ModuleClosed;
 		
-		internal static void OnModuleChanged(EventArgs e)
+		
+		private static void OnModuleSaved(EventArgs e)
 		{
-			EventHandler<EventArgs> handler = ModuleChanged;
+			EventHandler handler = ModuleSaved;
 			if (handler != null) {
 				handler(null,e);
 			}
-		}		
+		}
+		
+		
+		private static void OnModuleOpened(EventArgs e)
+		{
+			EventHandler handler = ModuleOpened;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		
+		
+		private static void OnModuleClosed(EventArgs e)
+		{
+			EventHandler handler = ModuleClosed;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}	
 		
 		#endregion
 		
@@ -281,10 +296,11 @@ namespace AdventureAuthor.Core
 					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
 				}
 				catch (FileNotFoundException) { 
-					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + " in module '" + name + "', but there was no such area.");
+					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + 
+					          " in module '" + name + "', but there was no such area.");
 				}
 				
-				OnModuleChanged(new EventArgs());
+				OnModuleOpened(new EventArgs());
 				return true;
 			}
 			catch (DirectoryNotFoundException e) {
@@ -318,7 +334,7 @@ namespace AdventureAuthor.Core
 		       	progress.ShowDialog(form.App);
 		    }
 		        
-		    OnModuleChanged(new EventArgs());
+		    OnModuleSaved(new EventArgs());
 		}
 					
 		
@@ -446,7 +462,7 @@ namespace AdventureAuthor.Core
 			Log.WriteAction(Log.Action.closed,"module",form.App.Module.Name);
 			
 			CloseModule();
-			OnModuleChanged(new EventArgs());
+			OnModuleClosed(new EventArgs());
 		}
 		
 		

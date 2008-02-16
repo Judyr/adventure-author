@@ -47,7 +47,12 @@ namespace AdventureAuthor.Evaluation
 		
 		public override string ToString()
 		{
-			return Value;
+			if (IsBlank()) {
+				return "Written answer:";
+			}
+			else {
+				return "Written answer: \"" + Value + "\"";
+			}
 		}
 	}
 }

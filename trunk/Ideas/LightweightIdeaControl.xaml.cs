@@ -72,7 +72,7 @@ namespace AdventureAuthor.Ideas
         private void RecordIdea()
         {
         	if (ModuleHelper.ModuleIsOpen() && IdeaTextBox.Text != String.Empty) {
-        		Idea idea = new Idea(IdeaTextBox.Text,"anon");
+        		Idea idea = new Idea(IdeaTextBox.Text);
         		ideas.Add(idea);
         		IdeaTextBox.Clear();
         		IdeaTextBox.Focus();

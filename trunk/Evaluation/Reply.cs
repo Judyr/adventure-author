@@ -63,5 +63,16 @@ namespace AdventureAuthor.Evaluation
 			ReplyControl replyControl = new ReplyControl(this);
 			return replyControl;
 		}
+					
+		
+		public override string ToString()
+		{
+			if (ReplierType == Role.Other) {
+				return replier + " says: " + text;
+			}
+			else {
+				return replier + " (" + replierType.ToString().ToLower() + ") says: \"" + text + "\"";
+			}
+		}
 	}
 }

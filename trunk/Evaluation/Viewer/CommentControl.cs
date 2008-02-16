@@ -18,6 +18,8 @@ namespace AdventureAuthor.Evaluation.Viewer
             SetInitialActiveStatus(comment);
             
             CommentTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };
+            
+            ToolTip = "Write your answer here.";
         }
         
         
