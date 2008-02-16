@@ -61,9 +61,9 @@ namespace AdventureAuthor.Evaluation.Viewer
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
             
-            Tools.SetButtonImage(DeleteSectionButton,"01.png","delete");
-            Tools.SetButtonImage(MoveSectionDownButton,"07.png","down");
-            Tools.SetButtonImage(MoveSectionUpButton,"08.png","up");
+            Tools.SetXAMLButtonImage(DeleteSectionButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(MoveSectionDownButton,"07.png","down");
+            Tools.SetXAMLButtonImage(MoveSectionUpButton,"08.png","up");
         }  
 			        
 			

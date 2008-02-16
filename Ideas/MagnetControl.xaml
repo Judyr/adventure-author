@@ -1,15 +1,17 @@
-<local:BoardObject x:Class="AdventureAuthor.Ideas.Magnet"
+<local:BoardObject x:Class="AdventureAuthor.Ideas.MagnetControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:AdventureAuthor.Ideas">
-    <Grid Background="Pink">
+    <Grid>
         <Grid.RowDefinitions>
     		<RowDefinition/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
-    	<TextBox Name="IdeaLabel" Grid.Row="0" Grid.Column="0"
-    	         Margin="20" MaxWidth="100" TextWrapping="Wrap"/>
+    	<Border BorderThickness="3" BorderBrush="Black">
+	    	<TextBox Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
+	    	         Margin="15" MaxWidth="100" TextWrapping="Wrap" TextAlignment="Center"/>
+    	</Border>
     </Grid>
 </local:BoardObject>

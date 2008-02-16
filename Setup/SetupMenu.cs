@@ -15,27 +15,30 @@ namespace AdventureAuthor.Setup
 	/// </summary>
 	public static partial class Toolset
 	{			
-		private static void SetupFileMenu(MenuBarItem fileMenu)
+		private static MenuBarItem mainFileMenu;
+		private static ToolBar aaToolbar;		
+		
+		private static MenuBarItem SetupFileMenu(MenuBarItem fileMenu)
 		{
-			fileMenu.Items.Clear();
-							
-			MenuButtonItem newAdventure = new MenuButtonItem("New module");
-			newAdventure.Activate += delegate { NewModuleDialog(); };
-			MenuButtonItem openAdventure = new MenuButtonItem("Open module");
-			openAdventure.Activate += delegate { OpenModuleDialog(); };
-			MenuButtonItem saveAdventure = new MenuButtonItem("Save module");
-			saveAdventure.Activate += delegate { SaveModuleDialog(); };
+			mainFileMenu = fileMenu;
+			fileMenu.Items.Clear();							
+			MenuButtonItem newModule = new MenuButtonItem("New module");
+			newModule.Activate += delegate { NewModuleDialog(); };
+			MenuButtonItem openModule = new MenuButtonItem("Open module");
+			openModule.Activate += delegate { OpenModuleDialog(); };
+			MenuButtonItem saveModule = new MenuButtonItem("Save module");
+			saveModule.Activate += delegate { SaveModuleDialog(); };
 //			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
 //			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
-			MenuButtonItem bakeAdventure = new MenuButtonItem("Bake module");
-			bakeAdventure.Activate += delegate { BakeModuleDialog(); };
-			MenuButtonItem runAdventure = new MenuButtonItem("Run module");
-			runAdventure.Activate += delegate { RunModuleDialog(); };
-			MenuButtonItem closeAdventure = new MenuButtonItem("Close module");
-			closeAdventure.Activate += delegate { CloseModuleDialog(); };
+			MenuButtonItem bakeModule = new MenuButtonItem("Bake module");
+			bakeModule.Activate += delegate { BakeModuleDialog(); };
+			MenuButtonItem runModule = new MenuButtonItem("Run module");
+			runModule.Activate += delegate { RunModuleDialog(); };
+			MenuButtonItem closeModule = new MenuButtonItem("Close module");
+			closeModule.Activate += delegate { CloseModuleDialog(); };
 							
-			MenuButtonItem newChapter = new MenuButtonItem("New area");
-			newChapter.Activate += delegate { NewAreaDialog(); };
+			MenuButtonItem newArea = new MenuButtonItem("New area");
+			newArea.Activate += delegate { NewAreaDialog(); };
 			MenuButtonItem newConversation = new MenuButtonItem("Conversation writer");
 			newConversation.Activate += delegate { LaunchConversationWriter(); };
 			MenuButtonItem variableManager = new MenuButtonItem("Variable manager");
@@ -83,19 +86,18 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			
-			newChapter.BeginGroup = true;
+			newArea.BeginGroup = true;
 			exitAdventureAuthor.BeginGroup = true;
 			misc.BeginGroup = true;
 						
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
-			                           	newAdventure,
-			                           	openAdventure,
-			                           	saveAdventure,
-//			                           	saveAdventureAs,
-			                           	bakeAdventure,
-			                           	runAdventure,
-			                           	closeAdventure,
-			                           	newChapter,
+			                           	newModule,
+			                           	openModule,
+			                           	saveModule,
+			                           	bakeModule,
+			                           	runModule,
+			                           	closeModule,
+			                           	newArea,
 			                           	newConversation,
 			                           	variableManager,
 //			                           	changeUser,
@@ -104,7 +106,66 @@ namespace AdventureAuthor.Setup
 			                           	misc,
 			                           	evaluation,
 			                           	magnets
-			                           });			
-		}	
+			                           });	
+			
+			return fileMenu;
+		}
+		
+		
+		public static ToolBar SetupAdventureAuthorToolBar(ToolBar toolbar)
+		{
+			aaToolbar = toolbar;
+			aaToolbar.AddRemoveButtonsVisible = false;
+			aaToolbar.AllowMerge = true;							
+			aaToolbar.Text = "Adventure Author applications";			
+							
+			ButtonItem conversationButton = new ButtonItem();							
+			conversationButton.Activate += delegate { LaunchConversationWriter(); };
+			conversationButton.ToolTipText = "Write interactive conversations for game characters";
+			Tools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
+			aaToolbar.Items.Add(conversationButton);
+							
+			ButtonItem variableButton = new ButtonItem();
+			variableButton.Activate += delegate { LaunchVariableManager(); };
+			variableButton.ToolTipText = "Manage game variables";
+			Tools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
+			aaToolbar.Items.Add(variableButton);
+							
+			ButtonItem ideasButton = new ButtonItem();
+			ideasButton.Activate += delegate {
+				MagnetBoardViewer mbv = new MagnetBoardViewer();
+				mbv.ShowDialog();
+			};
+			ideasButton.ToolTipText = "Record and review your ideas";
+			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
+			aaToolbar.Items.Add(ideasButton);
+							
+			ButtonItem analysisButton = new ButtonItem();
+			analysisButton.Activate += delegate { };
+			Tools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
+			analysisButton.Enabled = false;
+			aaToolbar.Items.Add(analysisButton);
+						
+			ButtonItem evaluationButton = new ButtonItem();
+			evaluationButton.Activate += delegate { 
+			// if (user.HasAdminRights) {
+					SelectModeWindow selectModeWindow = new SelectModeWindow();
+					selectModeWindow.ShowDialog();
+			// }
+			// else {
+			// 		WorksheetViewer(WorksheetViewer.Mode.PupilMode);
+			// } 
+			};
+			Tools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
+			aaToolbar.Items.Add(evaluationButton);
+														
+			ButtonItem achievementsButton = new ButtonItem();
+			achievementsButton.Activate += delegate { };
+			Tools.SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
+			achievementsButton.Enabled = false;
+			aaToolbar.Items.Add(achievementsButton);
+			
+			return aaToolbar;
+		}
 	}
 }

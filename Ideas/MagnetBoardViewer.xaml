@@ -7,17 +7,41 @@
     <Grid>
         <Grid.RowDefinitions>
     		<RowDefinition Height="25"/>
+    		<RowDefinition />
     		<RowDefinition Height="600"/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="800"/>
     		<ColumnDefinition Width="200"/>
     	</Grid.ColumnDefinitions>
-		<local:MagnetBoard x:Name="MagneticSurface" Grid.Row="1" Grid.Column="0"/>
-		<StackPanel Name="ControlPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<MenuItem Header="File" FontSize="14">
+<!--				<MenuItem Name="NewMenuItem" Header="New" 
+				          Click="OnClick_New" FontSize="14"/>-->
+				<MenuItem Name="OpenMenuItem" Header="Open" 
+				          Click="OnClick_Open" FontSize="14"/>
+				<MenuItem Name="SaveMenuItem" Header="Save" 
+				          Click="OnClick_Save" FontSize="14"/>
+				<MenuItem Name="SaveAsMenuItem" Header="Save as" 
+				          Click="OnClick_SaveAs" FontSize="14"/>
+<!--				<MenuItem Name="SaveBlankMenuItem" Header="Save blank copy" 
+				          Click="OnClick_MakeBlankCopy" FontSize="14" IsEnabled="false"/>
+				<MenuItem Name="ExportMenuItem" Header="Export" 
+				          Click="OnClick_Export" FontSize="14" IsEnabled="false"/>
+				<MenuItem Name="CloseMenuItem" Header="Close" 
+				          Click="OnClick_Close" FontSize="14" IsEnabled="false"/>
+				<Separator/>
+				<MenuItem Name="ExitMenuItem" Header="Exit" 
+				          Click="OnClick_Exit" FontSize="14"/>-->
+			</MenuItem>
+		</Menu>
+		<local:MagnetBoardControl x:Name="magneticSurface" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"/>
+		<StackPanel Name="ControlPanel" Grid.Row="1" Grid.Column="1"
     				Margin="10">
-			<TextBox Name="IdeaEntryBox" Height="30" Width="100"/>
-    		<Button Content="Add magnet" Click="OnClick_AddMagnet"/>
+			<TextBox Name="IdeaEntryBox" Height="30" Width="100" Margin="5"/>
+			<ComboBox Name="IdeaCategoryComboBox" Height="30" Width="100" Margin="5"/>
+    		<Button Content="Add magnet" Click="OnClick_AddMagnet" Margin="5"/>
     	</StackPanel>
+		<local:MagnetList x:Name="magnetList" Grid.Row="2" Grid.Column="1" Background="Coral"/>
     </Grid>
 </Window>

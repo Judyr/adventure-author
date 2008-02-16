@@ -80,10 +80,10 @@ namespace AdventureAuthor.Evaluation.Viewer
             	AddReplyButton.Visibility = Visibility.Collapsed;
             }
             
-            Tools.SetButtonImage(DeleteQuestionButton,"01.png","delete");
-            Tools.SetButtonImage(MoveDownButton,"07.png","down");
-            Tools.SetButtonImage(MoveUpButton,"08.png","up");
-            Tools.SetButtonImage(AddReplyButton,"29.png","Add comment");
+            Tools.SetXAMLButtonImage(DeleteQuestionButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(MoveDownButton,"07.png","down");
+            Tools.SetXAMLButtonImage(MoveUpButton,"08.png","up");
+            Tools.SetXAMLButtonImage(AddReplyButton,"29.png","Add comment");
         }
 
         

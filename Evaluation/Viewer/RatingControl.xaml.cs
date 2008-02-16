@@ -52,6 +52,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     			Say.Debug(rating.Value + " is not a valid numerical rating.");
 				SelectedStars = 0;
         	}
+            
+            ToolTip = "How well do you agree with the question?\n" +
+            		  "1 star - I do not agree at all.\n" +
+            		  "5 stars - I agree completely.";
         }
     	
     	

@@ -36,6 +36,7 @@ using System.Windows.Forms.Integration;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
+using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using Crownwood.DotNetMagic.Common;
@@ -89,7 +90,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The mouse mode the user was previously in (e.g. Select Objects) - so that we only log genuine changes to the mouse mode
 		/// </summary>
-		private static MouseMode? previousMouseMode = null;					   
+		private static MouseMode? previousMouseMode = null;	
 		
 		#endregion Global variables	
 			
@@ -517,34 +518,20 @@ namespace AdventureAuthor.Setup
 //						
 //					}
 				}
-				else if (fi.FieldType == typeof(ToolBarContainer)) {
-					
-//					try {
-//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, plus the ToolBar i'm currently creating below.
-//						
-//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-//						if (tbc.Name == "topSandBarDock") {
-//							TD.SandBar.ToolBar tb = new TD.SandBar.ToolBar();	
-//							tb.AddRemoveButtonsVisible = false;
-//							tb.AllowMerge = true;
-//							
-//							ButtonItem cw = new ButtonItem();
-//							Bitmap b = new Bitmap(Path.Combine(Adventure.ImagesDir,"conversationwriter.bmp"));
-//							cw.Image = b;	
-//							cw.Text = "Conversation Writer";
-//							cw.Activate += delegate { LaunchConversationWriter(); };
-//							tb.Items.Add(cw);
-//							
-//							ButtonItem vm = new ButtonItem();
-//							vm.Text = "Variable Manager";
-//							vm.Activate += delegate { LaunchVariableManager(); };
-//							tb.Items.Add(vm);
-//							
-//							tbc.Controls.Add(tb);
-//						}
-//					} catch (Exception e) {
-//						Say.Error(e.ToString());
-//					}
+				else if (fi.FieldType == typeof(ToolBarContainer)) {					
+					try {
+						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
+						// plus the ToolBar i'm currently creating below.						
+						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+						if (tbc.Name == "topSandBarDock") {
+							TD.SandBar.ToolBar toolbar = new TD.SandBar.ToolBar();
+							SetupAdventureAuthorToolBar(toolbar);
+							tbc.Controls.Add(toolbar);
+						}
+					} 
+					catch (Exception e) {
+						Say.Error(e.ToString());
+					}
 				}
 			}
 						
@@ -560,18 +547,39 @@ namespace AdventureAuthor.Setup
 //				Say.Warning("Failed to modify the UI toolbars.");
 //			}
 			
-			ModuleHelper.ModuleChanged += delegate 
-			{  
-				if (!ModuleHelper.ModuleIsOpen()) {
-					Clear();
-				}
-				UpdateTitleBar();
-			};
+			ModuleHelper.ModuleSaved += new EventHandler(ModuleHelper_ModuleSaved);
+			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
+			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
 			UpdateTitleBar();
 			
 			
 		}
+
+		
+		private static void ModuleHelper_ModuleClosed(object sender, EventArgs e)
+		{
+			if (!ModuleHelper.ModuleIsOpen()) {
+				Clear();
+				
+			}
+			UpdateTitleBar();
+		}
+
+		
+		private static void ModuleHelper_ModuleOpened(object sender, EventArgs e)
+		{
+			if (!ModuleHelper.ModuleIsOpen()) {
+				
+			}
+			UpdateTitleBar();
+		}
+		
+		
+		private static void ModuleHelper_ModuleSaved(object sender, EventArgs e)
+		{
+			UpdateTitleBar();			
+		}		
 		
 		
 		private static void ResourceViewerOpened(int index, object value)
@@ -671,8 +679,8 @@ namespace AdventureAuthor.Setup
 		private static void UpdateTitleBar()
 		{
 			form.App.Text = "Adventure Author";
-			if (NWN2ToolsetMainForm.App.Module != null && NWN2ToolsetMainForm.App.Module.LocationType == ModuleLocationType.Directory) {
-				NWN2ToolsetMainForm.App.Text += ": " + NWN2ToolsetMainForm.App.Module.Name;
+			if (form.App.Module != null && form.App.Module.LocationType == ModuleLocationType.Directory) {
+				form.App.Text += ": " + form.App.Module.Name;
 			}
 		}	
 				

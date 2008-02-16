@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using NWN2Toolset.NWN2.Data;
@@ -21,7 +22,6 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#region Constants
     	    	
     	private string DEFAULT_TITLE = "Evaluation";
-    	internal const string XML_FILTER = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	
     	#endregion
     	    	
@@ -89,7 +89,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     				
     			case Mode.Design:
 	    			TitleField.IsEnabled = true;
-		    		NameField.IsEnabled = false;
+		    		DesignerNameField.IsEnabled = false;
+		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
 		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
@@ -101,7 +102,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     				
     			case Mode.Complete:
 	    			TitleField.IsEnabled = false;
-		    		NameField.IsEnabled = true;
+		    		DesignerNameField.IsEnabled = true;
+		    		EvaluatorNameField.IsEnabled = true;
 		    		DateField.IsEnabled = true;
 		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
@@ -115,7 +117,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     				
     			case Mode.Discuss:
 	    			TitleField.IsEnabled = false;
-		    		NameField.IsEnabled = false;
+		    		DesignerNameField.IsEnabled = false;
+		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
 		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
@@ -219,7 +222,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    	originalWorksheet = worksheet;
 	    	TitleField.Text = worksheet.Title;
 	    	DateField.Text = worksheet.Date;
-	    	NameField.Text = worksheet.Name;
+	    	DesignerNameField.Text = worksheet.DesignerName;
+	    	EvaluatorNameField.Text = worksheet.EvaluatorName;
 	    	    		
 	    	foreach (Section section in worksheet.Sections) {	    			
 	    		if (EvaluationMode == Mode.Design || section.Include) {
@@ -269,20 +273,26 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    	}
 	    		    	
 	    	DateField.TextChanged += delegate { OnChanged(new EventArgs()); };
-	    	NameField.TextChanged += delegate { OnChanged(new EventArgs()); };
+	    	DesignerNameField.TextChanged += delegate { OnChanged(new EventArgs()); };
+	    	EvaluatorNameField.TextChanged += delegate { OnChanged(new EventArgs()); };
 	    	TitleField.TextChanged += delegate { OnChanged(new EventArgs()); };
 	    	
 	    	TitleLabel.Visibility = Visibility.Visible;
-	    	NameLabel.Visibility = Visibility.Visible;
+	    	DesignerNameLabel.Visibility = Visibility.Visible;
+	    	EvaluatorNameLabel.Visibility = Visibility.Visible;
 	    	DateLabel.Visibility = Visibility.Visible;
+	    	
 	    	TitleField.Visibility = Visibility.Visible;
-		    NameField.Visibility = Visibility.Visible;
+		    DesignerNameField.Visibility = Visibility.Visible;
+		    EvaluatorNameField.Visibility = Visibility.Visible;
 		    DateField.Visibility = Visibility.Visible;
+		    
 		    BorderClosingRectangle.Visibility = Visibility.Visible;
 		  
 		    SaveMenuItem.IsEnabled = true;
 		    SaveAsMenuItem.IsEnabled = true;
 		    SaveBlankMenuItem.IsEnabled = true;
+		    ExportMenuItem.IsEnabled = true;
 		    CloseMenuItem.IsEnabled = true;
 		    EditMenu.IsEnabled = true;
 		    OptionsMenu.IsEnabled = true;
@@ -293,7 +303,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    else {
 		    	Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
 		    				   // meaningless TextChanged event when the Title, Name and Date fields are created
-		    }    		
+		    }    
+		    
+		    Scroller.ScrollToTop();
     	} 
     	
     	    	
@@ -439,7 +451,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
         
     	    	
-    	public bool Save()
+    	private bool Save()
     	{
     		if (originalWorksheet == null) {
     			Say.Error("Save failed: Should not have called Save without opening a worksheet.");
@@ -465,29 +477,35 @@ namespace AdventureAuthor.Evaluation.Viewer
     		originalWorksheet = null;
     		
     		TitleField.Clear();
-    		NameField.Clear();
+    		DesignerNameField.Clear();
+    		EvaluatorNameField.Clear();
     		DateField.Clear();
     		
     		Title = DEFAULT_TITLE;
     		
     		TitleLabel.Visibility = Visibility.Hidden;
-	    	NameLabel.Visibility = Visibility.Hidden;
+	    	DesignerNameLabel.Visibility = Visibility.Hidden;
+	    	EvaluatorNameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
+	    	
 		    TitleField.Visibility = Visibility.Hidden;
-	    	NameField.Visibility = Visibility.Hidden;
+	    	DesignerNameField.Visibility = Visibility.Hidden;
+	    	EvaluatorNameField.Visibility = Visibility.Hidden;
 		    DateField.Visibility = Visibility.Hidden;
+		    
 		   	BorderClosingRectangle.Visibility = Visibility.Collapsed;
 		   	
 		    SaveMenuItem.IsEnabled = false;
 		    SaveAsMenuItem.IsEnabled = false;
 		    SaveBlankMenuItem.IsEnabled = false;
 		    CloseMenuItem.IsEnabled = false;
+		    ExportMenuItem.IsEnabled = false;
 		    EditMenu.IsEnabled = false;
 		    OptionsMenu.IsEnabled = false;
 		    
     		SectionsPanel.Children.Clear();
     		
-    		dirty = false;
+    		Dirty = false;
     	}
     	
     	
@@ -506,7 +524,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		
     			case Mode.Design:
     				
-		    		ws = new Worksheet(TitleField.Text,NameField.Text,DateField.Text);	    		
+		    		ws = new Worksheet(TitleField.Text,DesignerNameField.Text,EvaluatorNameField.Text,DateField.Text);	    		
 		    		ValidateTitles(); // ensure all section and question names are unique
 			    	foreach (SectionControl sc in SectionsPanel.Children) {
 		    			ws.Sections.Add((Section)sc.GetWorksheetPart());
@@ -530,8 +548,11 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			if (ws.Title != TitleField.Text) {
 	    				ws.Title = TitleField.Text;
 	    			}
-	    			if (ws.Name != NameField.Text) {
-	    				ws.Name = NameField.Text;
+	    			if (ws.EvaluatorName != EvaluatorNameField.Text) {
+	    				ws.EvaluatorName = EvaluatorNameField.Text;
+	    			}
+	    			if (ws.DesignerName != DesignerNameField.Text) {
+	    				ws.DesignerName = DesignerNameField.Text;
 	    			}
 	    			if (ws.Date != DateField.Text) {
 	    				ws.Date = DateField.Text;
@@ -592,11 +613,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     		switch (mode) {
     			case Mode.Complete:
     				DateField.IsEnabled = true;
-    				NameField.IsEnabled = true;
+    				DesignerNameField.IsEnabled = true;
+    				EvaluatorNameField.IsEnabled = true;
     				break;
     			case Mode.Discuss:
     				DateField.IsEnabled = false;
-    				NameField.IsEnabled = false;
+    				DesignerNameField.IsEnabled = false;
+    				EvaluatorNameField.IsEnabled = false;
     				break;
     			case Mode.Design:
     				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
@@ -675,8 +698,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{    				
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = XML_FILTER;
-    		openFileDialog.Filter = XML_FILTER;
+    		openFileDialog.DefaultExt = Filters.XML;
+    		openFileDialog.Filter = Filters.XML;
 			openFileDialog.Title = "Select a worksheet file to open";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;	
@@ -698,7 +721,97 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		SaveAsDialog();
     	}
-    	    	
+    	
+    	
+    	private void OnClick_Export(object sender, EventArgs ea)
+    	{    	
+    	    SaveFileDialog saveFileDialog = new SaveFileDialog();
+    		saveFileDialog.AddExtension = true;
+    		saveFileDialog.CheckPathExists = true;
+    		saveFileDialog.DefaultExt = Filters.TXT;
+    		saveFileDialog.Filter = Filters.TXT;
+  			saveFileDialog.ValidateNames = true;
+  			saveFileDialog.Title = "Select location to export worksheet to";
+  			bool ok = (bool)saveFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string exportFilename = saveFileDialog.FileName;
+  				try {
+  					ExportToTextFile(exportFilename);
+  					Process.Start(exportFilename);
+  				}
+  				catch (IOException e) {
+  					Say.Error("Failed to export worksheet.",e);
+  				}
+  			}
+    	}
+    	
+    	
+
+		public void ExportToTextFile(string filename)
+		{
+			FileInfo fi = new FileInfo(filename);
+			StreamWriter sw = fi.CreateText();
+			sw.AutoFlush = false;
+			
+			Worksheet worksheet = GetWorksheet();
+			sw.WriteLine("Worksheet:\t" + worksheet.Title);
+			sw.WriteLine("Game designer:\t" + worksheet.DesignerName);
+			sw.WriteLine("Evaluator:\t" + worksheet.EvaluatorName);
+			sw.WriteLine("Filled in on:\t" + worksheet.Date);
+			sw.WriteLine();
+			sw.WriteLine();
+						
+			foreach (Section section in worksheet.Sections) {
+				// Check that a section has not been excluded, either because it has been excluded explicitly
+				// or because it has no questions which are to be included:
+				if (!section.Include) {
+					continue;
+				}
+				else {
+					bool sectionHasQuestions = false;
+					foreach (Question question in section.Questions) {
+						if (question.Include) {
+							sectionHasQuestions = true;
+							break;
+						}
+					}
+					if (!sectionHasQuestions) {
+						continue;
+					}
+				}
+				
+				int questionCount = 0;
+				sw.WriteLine(">>>>> " + section.Title + " <<<<<");
+				sw.WriteLine();
+				foreach (Question question in section.Questions) {
+					if (question.Include) {
+						questionCount++;
+						sw.WriteLine("Q" + questionCount + ": " + question.Text);
+						sw.WriteLine();
+						sw.WriteLine("Answer(s):");
+						foreach (Answer answer in question.Answers) {
+							if (answer.Include) {
+								sw.WriteLine("- " + answer.ToString());
+							}
+						}
+						if (question.Replies.Count > 0) {
+							sw.WriteLine();
+							sw.WriteLine("Comments:");
+							foreach (Reply reply in question.Replies) {
+								sw.WriteLine("- " + reply.ToString());
+							}
+						}
+						sw.WriteLine();
+						sw.WriteLine();
+					}
+				}
+			}
+						
+			sw.Flush();
+			sw.Close();
+			sw.Dispose();
+		}		
+  			   	    	    	
     	
     	private void sectionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
     	{
@@ -763,8 +876,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = XML_FILTER;
-    		saveFileDialog.Filter = XML_FILTER;
+    		saveFileDialog.DefaultExt = Filters.XML;
+    		saveFileDialog.Filter = Filters.XML;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save worksheet to";
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
@@ -840,8 +953,8 @@ namespace AdventureAuthor.Evaluation.Viewer
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = XML_FILTER;
-    		saveFileDialog.Filter = XML_FILTER;
+    		saveFileDialog.DefaultExt = Filters.XML;
+    		saveFileDialog.Filter = Filters.XML;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save blank copy to";
   			bool ok = (bool)saveFileDialog.ShowDialog();  				

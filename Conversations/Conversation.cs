@@ -148,6 +148,8 @@ namespace AdventureAuthor.Conversations
 			get { return nwnConv; }
 		}
 		
+		private StreamWriter sw;
+		
 		/// <summary>
 		/// Characters who can speak in this conversation. Always includes the player.
 		/// </summary>
@@ -168,11 +170,6 @@ namespace AdventureAuthor.Conversations
 		/// Colours to assign to speakers as they are added.
 		/// </summary>
 		private List<Brush> unassignedColours;
-		
-		/// <summary>
-		/// For the purposes of exporting a conversation file into text form.
-		/// </summary>
-		private StreamWriter sw = null;
 		
 		#endregion Fields
 		
@@ -939,7 +936,6 @@ namespace AdventureAuthor.Conversations
 			sw.Flush();
 			sw.Close();
 			sw.Dispose();
-			Say.Information("Exported conversation to " + filename);
 		}		
 		
 		

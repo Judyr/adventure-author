@@ -47,7 +47,7 @@ namespace AdventureAuthor.Evaluation
 		
 		public override string ToString()
 		{
-			return Value;
+			return "Supporting evidence: " + Value;
 		}
 	}
 }

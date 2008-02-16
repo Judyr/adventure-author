@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -49,13 +50,7 @@ namespace AdventureAuthor.Conversations.UI
     /// </summary>
 
     public sealed partial class WriterWindow : Window
-    {   
-    	#region Constants
-    	    	
-    	private const string TXT_FILTER = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-    	
-    	#endregion
-    
+    {       
     	#region Fields    	
     	
     	/// <summary>
@@ -695,14 +690,20 @@ namespace AdventureAuthor.Conversations.UI
 	    		SaveFileDialog saveFileDialog = new SaveFileDialog();
 	    		saveFileDialog.AddExtension = true;
 	    		saveFileDialog.CheckPathExists = true;
-	    		saveFileDialog.DefaultExt = TXT_FILTER;
-	    		saveFileDialog.Filter = TXT_FILTER;
+	    		saveFileDialog.DefaultExt = Filters.TXT;
+	    		saveFileDialog.Filter = Filters.TXT;
 	  			saveFileDialog.ValidateNames = true;
 	  			saveFileDialog.Title = "Select location to export conversation to";
 	  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 	  			if (ok) {	  				
 	  				string filename = saveFileDialog.FileName;
-	  				Conversation.CurrentConversation.ExportToTextFile(filename);
+	  				try {
+	  					Conversation.CurrentConversation.ExportToTextFile(filename);
+	  					Process.Start(filename);
+	  				}
+	  				catch (IOException e) {
+	  					Say.Error("Failed to export conversation.",e);
+	  				}
 	  			}
 			}	
 		}
