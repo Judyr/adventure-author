@@ -28,7 +28,25 @@ namespace AdventureAuthor.Ideas
 				filename = value;
 				//UpdateTitleBar();
 			}
-		}    	
+		}    
+    	
+    	
+    	private MagnetControl selectedMagnet;     	
+		public MagnetControl SelectedMagnet {
+			get { return selectedMagnet; }
+			set {
+	    		if (selectedMagnet != value) {
+					if (selectedMagnet != null) {
+		    			selectedMagnet.Deselect();
+					}
+		    		selectedMagnet = value;
+		    		selectedMagnet.Select();
+	    		}
+			}
+		}
+    	
+    	
+    	private Random random = new Random();
     	
     	#endregion
     	
@@ -77,13 +95,6 @@ namespace AdventureAuthor.Ideas
         	if (magnet == null) {
         		throw new ArgumentNullException("Tried to add a null object to the board.");
         	}
-        	
-//        	if (Canvas.GetLeft(boardObject) > MagneticCanvas.Width) {
-//        		Canvas.SetLeft(boardObject,MagneticCanvas.Width);
-//        	}
-//        	if (Canvas.GetTop(boardObject) > MagneticCanvas.Height) {
-//        		Canvas.SetTop(boardObject,MagneticCanvas.Height);
-//        	}
 
 			if (randomPosition) {
 	        	Point location = GetRandomLocation();
@@ -93,13 +104,17 @@ namespace AdventureAuthor.Ideas
 	        	magnet.Angle = angle;
 			}        	
 	
+			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
+			BringInsideBoard(magnet);
+			
+			magnet.MouseDown += new MouseButtonEventHandler(MagnetControl_MouseDown);
+			
 			mainCanvas.Children.Add(magnet);
         }
         
         
         private double GetRandomAngle()
         {
-        	Random random = new Random();
         	double angle = (30 * random.NextDouble());    
         	if (DateTime.Now.Millisecond % 2 == 0) {
         		angle = 360 - angle; // randomly angle to the left instead of the right
@@ -110,10 +125,27 @@ namespace AdventureAuthor.Ideas
         
         private Point GetRandomLocation()
         {
-        	Random random = new Random();
-        	double x = random.NextDouble() * ActualWidth;
+        	double x = random.NextDouble() * (ActualWidth - MagnetControl.MAGNET_MAX_WIDTH);
         	double y = random.NextDouble() * ActualHeight;
         	return new Point(x,y);
+        }
+        
+        
+        /// <summary>
+        /// Changes a magnet's position so that it doesn't extend over the edge of this board.
+        /// </summary>
+        /// <param name="magnet">The magnet to change the position of</param>
+        private void BringInsideBoard(MagnetControl magnet)
+        {
+        	double rightmost = Canvas.GetLeft(magnet) + magnet.Width;
+        	double bottommost = Canvas.GetTop(magnet) + magnet.Height;
+        	
+        	if (rightmost > mainCanvas.Width) {
+        		Canvas.SetLeft(magnet,mainCanvas.Width - MagnetControl.MAGNET_MAX_WIDTH);
+        	}
+        	if (bottommost > mainCanvas.Height) {
+        		Canvas.SetTop(magnet,mainCanvas.Height - 50);
+        	}
         }
                  
         
@@ -135,12 +167,30 @@ namespace AdventureAuthor.Ideas
 //	    		}
     		}
     	}
+    	
+    	
+    	public bool HasMagnet(MagnetControl magnet)
+    	{
+    		return mainCanvas.Children.Contains(magnet);
+    	}
         
         
     	public override ISerializableData GetSerializable()
     	{
     		return new MagnetBoardInfo(this);
     	}
+        
+        #endregion
+        
+        #region Event handlers
+        
+        private void MagnetControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+        	MagnetControl magnet = (MagnetControl)e.Source;
+        	if (HasMagnet(magnet)) {
+        		SelectedMagnet = magnet;
+        	}
+        }
         
         #endregion
     }

@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -19,14 +20,18 @@ namespace AdventureAuthor.Ideas
     {       
     	#region Constants
     	
-    	protected static Brush CHARACTERS_BRUSH = Brushes.LightCoral;
-    	protected static Brush ITEMS_BRUSH = Brushes.LightYellow;
-    	protected static Brush PLOT_BRUSH = Brushes.LightGreen;
-    	protected static Brush QUESTS_BRUSH = Brushes.LightBlue;
-    	protected static Brush SETTING_BRUSH = Brushes.BurlyWood;
-    	protected static Brush OTHER_BRUSH = Brushes.DimGray;
-    	protected static Brush UNASSIGNED_BRUSH = Brushes.White;
-    	protected static Brush USERDEFINED_BRUSH = Brushes.Chocolate;
+    	public const double MAGNET_MAX_WIDTH = 150;
+    	
+    	protected static readonly Brush CHARACTERS_BRUSH = Brushes.LightCoral;
+    	protected static readonly Brush ITEMS_BRUSH = Brushes.LightYellow;
+    	protected static readonly Brush PLOT_BRUSH = Brushes.LightGreen;
+    	protected static readonly Brush QUESTS_BRUSH = Brushes.LightBlue;
+    	protected static readonly Brush SETTING_BRUSH = Brushes.BurlyWood;
+    	protected static readonly Brush OTHER_BRUSH = Brushes.DimGray;
+    	protected static readonly Brush UNASSIGNED_BRUSH = Brushes.White;
+    	protected static readonly Brush USERDEFINED_BRUSH = Brushes.Chocolate;
+    	
+    	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
     	
     	#endregion    	
     	
@@ -106,6 +111,19 @@ namespace AdventureAuthor.Ideas
     	#endregion    	
     	
     	#region Constructors
+    	    	
+    	public MagnetControl()
+    	{
+    		glow.GlowColor = Colors.Blue;
+    		glow.GlowSize = 15;
+    		glow.Opacity = 0.3;
+            InitializeComponent();    		
+    		
+            MaxWidth = MAGNET_MAX_WIDTH;
+            IdeaTextBox.IsEditable = false; //Tools.PreventEditingOfTextBox(IdeaTextBox);
+            RenderTransform = new RotateTransform();
+    	}
+    	
     	
     	public MagnetControl(MagnetInfo magnetInfo) : this()
     	{
@@ -113,14 +131,6 @@ namespace AdventureAuthor.Ideas
     		Y = magnetInfo.Y;
     		Angle = magnetInfo.Angle;
     		Idea = magnetInfo.Idea;
-    	}
-    	
-    	
-    	public MagnetControl()
-    	{
-            InitializeComponent();
-            Tools.PreventEditingOfTextBox(IdeaTextBox);
-            RenderTransform = new RotateTransform();
     	}
     	
     	
@@ -176,11 +186,31 @@ namespace AdventureAuthor.Ideas
     			Visibility = Visibility.Visible;
     		}
     	}
+    	
+    	
+    	internal void Select()
+    	{
+//    		OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
+//    		glow.GlowColor = Colors.Blue;
+//    		glow.GlowSize = 10;
+    		BitmapEffect = glow;
+    	}    	  
+    	
+    	
+    	internal void Deselect()
+    	{
+    		BitmapEffect = null;
+    	}
+    	
+    	
+		public override string ToString()
+		{
+			return idea.Text;
+		}		
         
         #endregion
         
-        #region Event handlers
-    	
+        #region Event handlers   
         
         #endregion
     }

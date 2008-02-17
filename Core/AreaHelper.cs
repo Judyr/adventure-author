@@ -53,7 +53,7 @@ namespace AdventureAuthor.Core
 		
 		public static void CreateArea(string name, bool exterior)
 		{
-			CreateArea(name,exterior,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);
+			CreateArea(name,exterior,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);		
 		}
 				
 		

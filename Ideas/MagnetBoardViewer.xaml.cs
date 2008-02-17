@@ -34,7 +34,9 @@ namespace AdventureAuthor.Ideas
         
         private void magnetList_MagnetLeavingList(object sender, MagnetEventArgs e)
         {
-        	magneticSurface.AddMagnet(e.Magnet,true);
+        	if (!magneticSurface.HasMagnet(e.Magnet)) {
+        		magneticSurface.AddMagnet(e.Magnet,true);
+        	}        	
         }
     	
     	#endregion
@@ -157,8 +159,19 @@ namespace AdventureAuthor.Ideas
         	else {
         		idea = new Idea(IdeaEntryBox.Text);
         	}
-        	
         	magnetList.Add(idea);
+        }
+        
+        
+        private void OnClick_Scatter(object sender, RoutedEventArgs e)
+        {
+        	List<MagnetControl> magnets = new List<MagnetControl>(magnetList.magnetsPanel.Children.Count);
+        	foreach (MagnetControl magnet in magnetList.magnetsPanel.Children) {
+        		magnets.Add(magnet);
+        	}
+        	foreach (MagnetControl magnet in magnets) {
+        		magnetList.MoveMagnetFromList(magnet);
+        	}
         }
         
         #endregion
