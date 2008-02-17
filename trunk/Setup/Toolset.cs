@@ -36,7 +36,6 @@ using System.Windows.Forms.Integration;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
-using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using Crownwood.DotNetMagic.Common;

@@ -405,6 +405,7 @@
     <Compile Include="Utils\Say.cs" />
     <Compile Include="Utils\SerializableDictionary.cs" />
     <Compile Include="Utils\Serialization.cs" />
+    <Compile Include="Utils\SwitchableTextBox.cs" />
     <Compile Include="Utils\TeacherPasswordDialog.xaml.cs">
       <DependentUpon>TeacherPasswordDialog.xaml</DependentUpon>
       <SubType>Code</SubType>

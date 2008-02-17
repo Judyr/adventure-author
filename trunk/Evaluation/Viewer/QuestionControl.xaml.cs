@@ -41,8 +41,8 @@ namespace AdventureAuthor.Evaluation.Viewer
         		question = new Question();
         	}
         	
-            InitializeComponent();            
-            QuestionTitle.Text = question.Text;    
+            InitializeComponent(); 
+            this.QuestionTitle.Text = question.Text;    
             QuestionTitle.TextChanged += delegate { OnChanged(new EventArgs()); };
             SetInitialActiveStatus(question);
             
@@ -206,7 +206,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
     	protected override void PerformEnable()
     	{    		
-    		Tools.PreventEditingOfTextBox(QuestionTitle);
+    		QuestionTitle.IsEditable = false;//    		Tools.PreventEditingOfTextBox(QuestionTitle);
     		QuestionTitle.Opacity = 1.0f;
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		EnableChildren();

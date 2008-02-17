@@ -207,7 +207,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	protected override void PerformEnable()
     	{    		
     		// DON'T enable the title - otherwise it's editable outside of designer mode:
-    		Tools.PreventEditingOfTextBox(SectionTitleTextBox);
+    		SectionTitleTextBox.IsEditable = false; //Tools.PreventEditingOfTextBox(SectionTitleTextBox);
     		SectionTitleTextBox.Opacity = 1.0f;
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		EnableChildren();
@@ -229,7 +229,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{	    		
     		SectionTitleTextBox.Opacity = 1.0f;
     		SectionTitleTextBox.IsEnabled = true;
-    		Tools.AllowEditingOfTextBox(SectionTitleTextBox);
+    		SectionTitleTextBox.IsEditable = true; //Tools.AllowEditingOfTextBox(SectionTitleTextBox);
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		ActivatableControl.EnableElement(AddQuestionButton);
     		ActivatableControl.EnableElement(MoveSectionDownButton);

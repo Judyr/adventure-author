@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
@@ -19,8 +20,22 @@ namespace AdventureAuthor.Ideas
 
     public partial class MagnetList : UserControl
     {
-    	#region Fields
-    	    	
+    	#region Fields    	
+    	
+    	private MagnetControl selectedMagnet;     	
+		public MagnetControl SelectedMagnet {
+			get { return selectedMagnet; }
+			set {
+	    		if (selectedMagnet != value) {
+					if (selectedMagnet != null) {
+		    			selectedMagnet.Deselect();
+					}
+		    		selectedMagnet = value;
+		    		selectedMagnet.Select();
+	    		}
+			}
+		}
+    	
     	#endregion
     	
     	#region Events
@@ -34,10 +49,21 @@ namespace AdventureAuthor.Ideas
     		}
     	}
     	
+    	
     	public event EventHandler<MagnetEventArgs> MagnetLeavingList;    	
     	protected virtual void OnMagnetLeavingList(MagnetEventArgs e)
     	{
     		EventHandler<MagnetEventArgs> handler = MagnetLeavingList;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    	
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetDeleted;    	
+    	protected virtual void OnMagnetDeleted(MagnetEventArgs e)
+    	{
+    		EventHandler<MagnetEventArgs> handler = MagnetDeleted;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -89,10 +115,13 @@ namespace AdventureAuthor.Ideas
         /// Add a magnet representing an idea to the list
         /// </summary>
         /// <param name="magnet">The magnet to add</param>
+        /// <remarks>All Add methods ultimately call this method</remarks>
         public void Add(MagnetControl magnet)
         {
         	magnetsPanel.Children.Add(magnet);
         	magnet.MouseDoubleClick += new MouseButtonEventHandler(MagnetControl_MouseDoubleClick);
+        	magnet.MouseDown += new MouseButtonEventHandler(MagnetControl_MouseDown);        		
+        	magnet.Margin = new Thickness(5);
         	OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
@@ -109,10 +138,29 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        public void Remove(MagnetControl magnet)
+        /// <summary>
+        /// Remove a magnet from the list
+        /// </summary>
+        /// <param name="magnet"></param>
+        /// <remarks>A magnet being 'removed' rather than 'deleted' means it has been moved
+        /// to a magnet board rather than being deleted permanently - MagnetLeavingList event is launched</remarks>
+        public void MoveMagnetFromList(MagnetControl magnet)
         {
-        	magnetsPanel.Children.Remove(magnet); // TODO careful about adding MagnetRemoved event cos
-        	// you might be moving it to the main screen rather than deleting it
+        	magnetsPanel.Children.Remove(magnet);
+    		OnMagnetLeavingList(new MagnetEventArgs(magnet));
+        }
+        
+        
+        /// <summary>
+        /// Delete a magnet from the list
+        /// </summary>
+        /// <param name="magnet"></param>
+        /// <remarks>A magnet being 'deleted' rather than 'removed' means it has been deleted permanently rather
+        /// than being moved to a magnet board - MagnetDeleted event is launched</remarks>
+        public void Delete(MagnetControl magnet)
+        {
+        	magnetsPanel.Children.Remove(magnet);
+    		OnMagnetDeleted(new MagnetEventArgs(magnet));
         }
                 
         
@@ -172,6 +220,12 @@ namespace AdventureAuthor.Ideas
         		}
         	}
         }
+    	
+    	
+    	public bool HasMagnet(MagnetControl magnet)
+    	{
+    		return magnetsPanel.Children.Contains(magnet);
+    	}
                 
         #endregion
         
@@ -180,9 +234,19 @@ namespace AdventureAuthor.Ideas
     	private void MagnetControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     	{
     		MagnetControl magnet = (MagnetControl)e.Source;
-    		Remove(magnet);
-    		OnMagnetLeavingList(new MagnetEventArgs(magnet));
+    		if (magnetsPanel.Children.Contains(magnet)) {
+    			MoveMagnetFromList(magnet);
+    		}
     	}
+
+        
+        private void MagnetControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+        	MagnetControl magnet = (MagnetControl)e.Source;
+        	if (HasMagnet(magnet)) {
+        		SelectedMagnet = magnet;
+        	}
+        }
     		
         #endregion
     }

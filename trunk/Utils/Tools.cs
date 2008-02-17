@@ -213,22 +213,6 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		public static void AllowEditingOfTextBox(TextBox textbox)
-		{
-        	textbox.Background = Brushes.White;
-        	textbox.BorderBrush = Brushes.Black;
-        	textbox.IsReadOnly = false;
-		}      
-		
-		
-		public static void PreventEditingOfTextBox(TextBox textbox)
-		{
-        	textbox.Background = Brushes.Transparent;
-        	textbox.BorderBrush = Brushes.Transparent;
-			textbox.IsReadOnly = true;
-		} 
-		
-		
 		public static bool TeacherHasSignedIn(bool silent)
 		{
 			// TODO - replace with a check on the current user, and if they're not,
