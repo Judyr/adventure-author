@@ -80,7 +80,7 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem magnets = new MenuButtonItem("Magnets");
 			magnets.Activate += delegate { 
 				MagnetBoardViewer mbv = new MagnetBoardViewer();
-				mbv.ShowDialog();
+				mbv.Show();//Dialog();
 			};
 			
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
@@ -134,7 +134,7 @@ namespace AdventureAuthor.Setup
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate {
 				MagnetBoardViewer mbv = new MagnetBoardViewer();
-				mbv.ShowDialog();
+				mbv.Show();
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
 			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");

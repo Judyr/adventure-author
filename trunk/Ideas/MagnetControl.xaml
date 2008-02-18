@@ -2,10 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:AdventureAuthor.Ideas"
-	xmlns:utils="clr-namespace:AdventureAuthor.Utils">
-	<local:BoardObject.BitmapEffect>    			
-		<BevelBitmapEffect BevelWidth="5"/>
-	</local:BoardObject.BitmapEffect>
+	xmlns:utils="clr-namespace:AdventureAuthor.Utils"
+	MouseDown="MagnetControl_OnMouseDown">
     <Grid>
         <Grid.RowDefinitions>
     		<RowDefinition/>

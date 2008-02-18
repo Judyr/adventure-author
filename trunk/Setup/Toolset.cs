@@ -33,11 +33,13 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using AdventureAuthor.Conversations;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
+using AdventureAuthor.Ideas;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using GlacialComponents.Controls.GlacialTreeList;
@@ -81,6 +83,11 @@ namespace AdventureAuthor.Setup
 		private static NWN2AreaContentsView areaContentsView = null;
 		
 		/// <summary>
+		/// The blueprints view control, which lists every available blueprint
+		/// </summary>
+		private static NWN2BlueprintView blueprintView = null;
+		
+		/// <summary>
 		/// A list of all the game object dictionaries, one for each type of object (e.g. creature, door, placeable etc.)
 		/// </summary>
 		private static Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>> dictionaries 
@@ -94,14 +101,26 @@ namespace AdventureAuthor.Setup
 		#endregion Global variables	
 			
 			
+		#region Events
+		
+		public static event EventHandler<IdeaEventArgs> IdeaSubmitted;		
+		private static void OnIdeaSubmitted(IdeaEventArgs e)
+		{
+			EventHandler<IdeaEventArgs> handler = IdeaSubmitted;
+			if (handler != null) {
+				handler(null, e);
+			}
+		}
+		
+		#endregion
+		
 		
 		/// <summary>
 		/// Performs a myriad of modifications to the user interface at launch.
 		/// </summary>
 		internal static void SetupUI()
 		{
-			
-			
+			#region Nullify context menus (commented out)			
 			
 			// Nullify every original context menu
 //			foreach (Control c in GetControls(form.App)) {
@@ -131,7 +150,11 @@ namespace AdventureAuthor.Setup
 //					c.ContextMenuStrip = null;
 //				}
 //			}
-						
+			
+			#endregion
+		
+			#region Mouse mode changes
+			
 			NWN2AreaViewer.MouseModeChanged += delegate
 			{
 				if (previousMouseMode != NWN2AreaViewer.MouseMode) {
@@ -140,6 +163,9 @@ namespace AdventureAuthor.Setup
 				}
 			};
 			
+			#endregion
+			
+			#region Setting general/graphics preferences
 			
 			// Set preferences:
 			NWN2ToolsetGeneralPreferences general = NWN2ToolsetPreferences.Instance.General;
@@ -154,7 +180,9 @@ namespace AdventureAuthor.Setup
 			gfx.FarPlane = 1000.0F;
 			gfx.Fog = false;
 			gfx.UseAreaFarPlane = false;
-						
+			
+			#endregion
+			
 			// Get every field of NWN2ToolsetMainForm.App:
 			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
 															  BindingFlags.NonPublic |
@@ -367,18 +395,49 @@ namespace AdventureAuthor.Setup
 				}
 				
 				else if (fi.FieldType == typeof(NWN2BlueprintView)) {
-					NWN2BlueprintView blueprintView = (NWN2BlueprintView)fi.GetValue(form.App);
-					blueprintView.SelectionChanged += delegate(object sender, BlueprintSelectionChangedEventArgs e) 
-					{  
-						if (e.Selection.Length > 0 && e.Selection != e.OldSelection) {							
-							StringBuilder message = new StringBuilder("selection: ");
-							foreach (object o in e.Selection) {
-								INWN2Blueprint blueprint = (INWN2Blueprint)o;
-								message.Append(blueprint.Name + " (" + blueprint.ObjectType + ") ");
-							}							
-							Log.WriteAction(Log.Action.selected,"blueprint",message.ToString());
+					try {
+						blueprintView = (NWN2BlueprintView)fi.GetValue(form.App);						
+						blueprintView.MultiSelect = false;
+						
+						// Users can send blueprints to their ideas list. NB: For some reason adding this
+						// to each NWN2PaletteTreeView you find will lead to all of them having many
+						// copies of this MenuItem, so just add it to the first one and break:
+						List<Control> controls = GetControls(blueprintView);
+						foreach (Control c in controls) {
+							if (c is NWN2PaletteTreeView) {
+								NWN2PaletteTreeView pt = (NWN2PaletteTreeView)c;
+								if (c.ContextMenu != null && c.ContextMenu.MenuItems.Count > 0) {	
+									// NB: Unable to correctly enable and disable this menu item depending on 
+									// whether an actual blueprint (as opposed to a blueprint category like
+									// Animals) has been selected, because the SelectionChanged event doesn't
+									// seem to fire on right-click, only left-click, so it's inconsistent.
+									// However, it does send the correct selection when you right-click to
+									// select it, as well as when you left-click to select it.
+									MenuItem separator = new MenuItem("-");
+									MenuItem addAsIdea = new MenuItem("Add as idea");
+									addAsIdea.Click += new EventHandler(BlueprintSentToIdeas);
+									c.ContextMenu.MenuItems.Add(separator);
+									c.ContextMenu.MenuItems.Add(addAsIdea);
+									break;
+								}
+							}
 						}
-					};
+						
+						blueprintView.SelectionChanged += delegate(object sender, BlueprintSelectionChangedEventArgs e) 
+						{  
+							if (e.Selection.Length > 0 && e.Selection != e.OldSelection) {							
+								StringBuilder message = new StringBuilder("selection: ");
+								foreach (object o in e.Selection) {
+									INWN2Blueprint blueprint = (INWN2Blueprint)o;
+									message.Append(blueprint.Name + " (" + blueprint.ObjectType + ") ");
+								}							
+								Log.WriteAction(Log.Action.selected,"blueprint",message.ToString());
+							}
+						};
+					}
+					catch (Exception e) {
+						Say.Error(e);
+					}
 				}
 				
 				else if (fi.FieldType == typeof(NWN2AreaContentsView)) {
@@ -550,9 +609,61 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
-			UpdateTitleBar();
+			UpdateTitleBar();			
+		}
+
+		
+		private static void BlueprintSentToIdeas(object sender, EventArgs e)
+		{
+			// TODO TODO TODO
+			
+			/* Still can't get property fields from blueprints, as they don't seem to contain
+			 * any actual information(!). Think this might be because they aren't resident
+			 * in memory, but OEIUnserialize doesn't seem to work. Posted on forum in hope
+			 * of response. Could simply look up the NWN2PropertyGrid that's always on the UI
+			 * since it has the info about the selected item - but that's a hack solution
+			 *  and not one that would extend to other bits of the software, where I need the
+			 * information without opening the blueprint in the property grid.
+			 */
 			
 			
+			if (blueprintView != null) {
+				if (blueprintView.Selection.Length > 0) {
+					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0];
+					
+					//Stream s = blueprint.Resource.GetStream(false);
+					//blueprint.OEIUnserialize(s);
+					//blueprint.BeginAppearanceUpdate(); TODO doesn't work
+//					INWN2Object obj = blueprint as INWN2Object;
+//					string text = String.Empty;
+//					if (obj != null) {
+//						if (obj is NWN2CreatureBlueprint) {// NWN2CreatureTemplate) {
+//							NWN2CreatureBlueprint creature = (NWN2CreatureBlueprint)obj;
+//							Stream stream = creature.Resource.GetStream(false);
+//							creature.OEIUnserialize(stream); // TODO try building filename
+//							
+//							//NWN2CreatureTemplate creature = (NWN2CreatureTemplate)obj;
+//							
+//							text = Conversation.GetStringFromOEIString(creature.FirstName) + " " +
+//								   Conversation.GetStringFromOEIString(creature.LastName) + 
+//								   "\n(Creature - resref '" + blueprint.TemplateResRef.Value + "')";
+//						}
+//						else {
+//							text = blueprint.Name + "\n(" + blueprint.ObjectType.ToString() + " - resref '" +
+//								blueprint.TemplateResRef.Value + "')";
+//						}
+//					}
+//					else {
+						string text = blueprint.Name + "\n(" + blueprint.ObjectType.ToString() + " - resref '" +
+								blueprint.TemplateResRef.Value + "')";
+//					}
+					Idea idea = new Idea(text);
+					OnIdeaSubmitted(new IdeaEventArgs(idea));
+				}
+			}
+			else {
+				Say.Error("Should not have been able to call BlueprintSentToIdeas.");
+			}
 		}
 
 		

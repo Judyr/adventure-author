@@ -28,26 +28,43 @@ namespace AdventureAuthor.Ideas
 				filename = value;
 				//UpdateTitleBar();
 			}
-		}    
-    	
-    	
-    	private MagnetControl selectedMagnet;     	
-		public MagnetControl SelectedMagnet {
-			get { return selectedMagnet; }
-			set {
-	    		if (selectedMagnet != value) {
-					if (selectedMagnet != null) {
-		    			selectedMagnet.Deselect();
-					}
-		    		selectedMagnet = value;
-		    		selectedMagnet.Select();
-	    		}
-			}
-		}
-    	
+		}     	
     	
     	private Random random = new Random();
     	
+    	#endregion
+    	
+    	#region Events
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
+		protected virtual void OnMagnetSelected(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = MagnetSelected;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetAdded;    	
+		protected virtual void OnMagnetAdded(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = MagnetAdded;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetRemoved;    	
+		protected virtual void OnMagnetRemoved(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = MagnetRemoved;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
     	#endregion
     	
     	#region Constructors
@@ -57,24 +74,22 @@ namespace AdventureAuthor.Ideas
     		InitializeComponent();
     	}
     	
+    	
     	public MagnetBoardControl(MagnetBoardInfo boardInfo) : this()
     	{
-    		foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
-    			MagnetControl magnetControl = new MagnetControl(magnetInfo);
-    			mainCanvas.Children.Add(magnetControl);
-    		}
+    		Open(boardInfo);
     	}
         
         #endregion
         
-        #region Methods
+        #region Methods    
         
         public void Open(MagnetBoardInfo boardInfo)
         {
-        	foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
-        		MagnetControl magnetControl = (MagnetControl)magnetInfo.GetControl();
-        		AddMagnet(magnetControl,false);
-	    	}
+    		foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
+    			MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
+    			AddMagnet(magnet,false);
+    		}    		
         }
         
         
@@ -104,12 +119,23 @@ namespace AdventureAuthor.Ideas
 	        	magnet.Angle = angle;
 			}        	
 	
+        	magnet.Selected += delegate(object sender, MagnetEventArgs e) { OnMagnetSelected(e); };
+        	
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
+			magnet.Show();
 			BringInsideBoard(magnet);
 			
-			magnet.MouseDown += new MouseButtonEventHandler(MagnetControl_MouseDown);
-			
 			mainCanvas.Children.Add(magnet);
+			OnMagnetAdded(new MagnetEventArgs(magnet));
+        }
+        
+        
+        public void RemoveMagnet(MagnetControl magnet)
+        {
+        	if (mainCanvas.Children.Contains(magnet)) {
+        		mainCanvas.Children.Remove(magnet);
+        	}
+        	OnMagnetRemoved(new MagnetEventArgs(magnet));
         }
         
         
@@ -184,13 +210,6 @@ namespace AdventureAuthor.Ideas
         
         #region Event handlers
         
-        private void MagnetControl_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-        	MagnetControl magnet = (MagnetControl)e.Source;
-        	if (HasMagnet(magnet)) {
-        		SelectedMagnet = magnet;
-        	}
-        }
         
         #endregion
     }

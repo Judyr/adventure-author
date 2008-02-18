@@ -45,7 +45,7 @@
 			<Grid>
 				<Polygon
 					Name="StarPolygon"
-					Points="13,0 19,9 29,9 20,15 23,25 13,20 7,25 8,15 0,9 9,9"
+					Points="{StaticResource WonkyStarPoints}"
 					Stroke="Black"
 					StrokeThickness="1"
 					Fill="LightGray"

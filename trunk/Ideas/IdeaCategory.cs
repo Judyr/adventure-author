@@ -18,7 +18,6 @@ namespace AdventureAuthor.Ideas
 		Characters,
 		Setting,
 		Other, // user stated that this idea did not relate to any of the given categories
-		Unassigned, // user did not assign this idea a category on creation
-		UserDefined // not currently used (future-proofing)
+		Unassigned // user did not assign this idea a category on creation
 	}
 }
