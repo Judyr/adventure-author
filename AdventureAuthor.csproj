@@ -297,6 +297,7 @@
     <Compile Include="Ideas\BoardObject.cs" />
     <Compile Include="Ideas\Idea.cs" />
     <Compile Include="Ideas\IdeaCategory.cs" />
+    <Compile Include="Ideas\IdeaEventArgs.cs" />
     <Compile Include="Ideas\ISerializableData.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />

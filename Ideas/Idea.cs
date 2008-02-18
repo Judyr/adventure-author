@@ -47,6 +47,12 @@ namespace AdventureAuthor.Ideas
 			set { category = value; }
 		}
 		
+		
+		/// <summary>
+		/// All the values of the enum IdeaCategory in array form.
+		/// </summary>
+		public static readonly IdeaCategory[] IDEA_CATEGORIES = (IdeaCategory[])Enum.GetValues(typeof(IdeaCategory));
+		
 		#endregion
 		
 		#region Constructors

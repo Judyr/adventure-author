@@ -20,21 +20,9 @@ namespace AdventureAuthor.Ideas
 
     public partial class MagnetList : UserControl
     {
-    	#region Fields    	
+    	#region Fields   
     	
-    	private MagnetControl selectedMagnet;     	
-		public MagnetControl SelectedMagnet {
-			get { return selectedMagnet; }
-			set {
-	    		if (selectedMagnet != value) {
-					if (selectedMagnet != null) {
-		    			selectedMagnet.Deselect();
-					}
-		    		selectedMagnet = value;
-		    		selectedMagnet.Select();
-	    		}
-			}
-		}
+    	private List<IdeaCategory> visibleCategories;
     	
     	#endregion
     	
@@ -50,10 +38,10 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	public event EventHandler<MagnetEventArgs> MagnetLeavingList;    	
-    	protected virtual void OnMagnetLeavingList(MagnetEventArgs e)
+    	public event EventHandler<MagnetEventArgs> MagnetDeployed;    	
+    	protected virtual void OnMagnetDeployed(MagnetEventArgs e)
     	{
-    		EventHandler<MagnetEventArgs> handler = MagnetLeavingList;
+    		EventHandler<MagnetEventArgs> handler = MagnetDeployed;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -68,6 +56,26 @@ namespace AdventureAuthor.Ideas
     			handler(this,e);
     		}
     	}
+    	    	
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
+		protected virtual void OnMagnetSelected(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = MagnetSelected;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+    	
+    	public event EventHandler VisibleCategoriesChanged;   	
+		protected virtual void OnVisibleCategoriesChanged(EventArgs e)
+		{
+			EventHandler handler = VisibleCategoriesChanged;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
     	
     	#endregion
     	
@@ -76,12 +84,16 @@ namespace AdventureAuthor.Ideas
         public MagnetList()
         {
             InitializeComponent();
+            visibleCategories = new List<IdeaCategory>(Idea.IDEA_CATEGORIES.Length);
+            foreach (IdeaCategory category in Idea.IDEA_CATEGORIES) {
+            	visibleCategories.Add(category);
+            }
         }
         
         
         public MagnetList(List<Idea> ideas) : this()
         {        	
-        	Add(ideas);
+        	AddIdeas(ideas);
         }
         
         #endregion
@@ -92,10 +104,10 @@ namespace AdventureAuthor.Ideas
         /// Add an idea to the list.
         /// </summary>
         /// <param name="idea">The idea to add</param>
-        public void Add(Idea idea)
+        public void AddIdea(Idea idea)
         {
         	MagnetControl magnet = new MagnetControl(idea);
-        	Add(magnet);
+        	AddNewMagnet(magnet);
         }
         
         
@@ -103,11 +115,23 @@ namespace AdventureAuthor.Ideas
         /// Add a range of ideas to the list.
         /// </summary>
         /// <param name="ideas">The range of ideas to add</param>
-        public void Add(List<Idea> ideas)
+        public void AddIdeas(List<Idea> ideas)
         {
         	foreach (Idea idea in ideas) {
-        		Add(idea);
+        		AddIdea(idea);
         	}
+        }
+        
+        
+        internal void TransferMagnetFromBoard(MagnetControl magnet)
+        {
+        	AddMagnet(magnet,false);
+        }
+        
+        
+        public void AddNewMagnet(MagnetControl magnet)
+        {
+        	AddMagnet(magnet,true);
         }
         
         
@@ -115,26 +139,37 @@ namespace AdventureAuthor.Ideas
         /// Add a magnet representing an idea to the list
         /// </summary>
         /// <param name="magnet">The magnet to add</param>
+        /// <param name="">True if the magnet has just been created; false otherwise</param>
         /// <remarks>All Add methods ultimately call this method</remarks>
-        public void Add(MagnetControl magnet)
+        private void AddMagnet(MagnetControl magnet, bool newlyCreated)
         {
-        	magnetsPanel.Children.Add(magnet);
-        	magnet.MouseDoubleClick += new MouseButtonEventHandler(MagnetControl_MouseDoubleClick);
-        	magnet.MouseDown += new MouseButtonEventHandler(MagnetControl_MouseDown);        		
-        	magnet.Margin = new Thickness(5);
-        	OnMagnetAdded(new MagnetEventArgs(magnet));
-        }
-        
-        
-        /// <summary>
-        /// Add a range of magnets representing ideas to the list
-        /// </summary>
-        /// <param name="magnets">The range of magnets to add</param>
-        public void Add(List<MagnetControl> magnets)
-        {
-        	foreach (MagnetControl magnet in magnets) {
-        		Add(magnet);
+        	if (newlyCreated) {
+	        	magnet.MouseDoubleClick += new MouseButtonEventHandler(MagnetControl_MouseDoubleClick);
+	        	magnet.Selected += delegate(object sender, MagnetEventArgs e) { OnMagnetSelected(e); };
         	}
+        	else {
+        		magnet.Angle = 0;
+        	}
+        	magnet.Margin = new Thickness(5);
+        	
+        	magnetsPanel.Children.Add(magnet);
+        	
+        	// If the magnet is newly created, ensure that it is shown, even if it is in a category which
+        	// is currently hidden. If it's been transferred back to the magnet list after being deleted
+        	// from a board, then it can retain the same shown/hidden state as its category.
+        	bool categoryIsVisible = CategoryIsVisible(magnet.Idea.Category);
+        	if (newlyCreated) {
+	        	if (!categoryIsVisible) {
+	        		ShowCategory(magnet.Idea.Category);
+	        	}
+	        	magnet.BringIntoView();
+        	}
+        	else {
+        		if (!categoryIsVisible) {
+        			magnet.Hide();
+        		}
+        	}
+        	OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
         
@@ -142,12 +177,12 @@ namespace AdventureAuthor.Ideas
         /// Remove a magnet from the list
         /// </summary>
         /// <param name="magnet"></param>
-        /// <remarks>A magnet being 'removed' rather than 'deleted' means it has been moved
+        /// <remarks>A magnet being 'deployed' rather than 'deleted' means it has been moved
         /// to a magnet board rather than being deleted permanently - MagnetLeavingList event is launched</remarks>
-        public void MoveMagnetFromList(MagnetControl magnet)
+        public void DeployMagnet(MagnetControl magnet)
         {
         	magnetsPanel.Children.Remove(magnet);
-    		OnMagnetLeavingList(new MagnetEventArgs(magnet));
+    		OnMagnetDeployed(new MagnetEventArgs(magnet));
         }
         
         
@@ -157,7 +192,7 @@ namespace AdventureAuthor.Ideas
         /// <param name="magnet"></param>
         /// <remarks>A magnet being 'deleted' rather than 'removed' means it has been deleted permanently rather
         /// than being moved to a magnet board - MagnetDeleted event is launched</remarks>
-        public void Delete(MagnetControl magnet)
+        public void DeleteMagnet(MagnetControl magnet)
         {
         	magnetsPanel.Children.Remove(magnet);
     		OnMagnetDeleted(new MagnetEventArgs(magnet));
@@ -170,7 +205,7 @@ namespace AdventureAuthor.Ideas
         /// <param name="category">The category of ideas to show</param>
         public void ShowCategory(IdeaCategory category)
         {
-        	ShowCategory(category);
+        	ShowCategory(category,false);
         }
         
         
@@ -182,6 +217,14 @@ namespace AdventureAuthor.Ideas
         /// false to show the given category and ignore everything else</param>
         public void ShowCategory(IdeaCategory category, bool only)
         {
+        	// Update list of visible categories:
+        	if (only) {
+        		visibleCategories.Clear();
+        	}
+        	if (!visibleCategories.Contains(category)) {
+        		visibleCategories.Add(category);
+        	}
+        	
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
         		if (magnet.Idea.Category == category) {
         			magnet.Show();
@@ -190,6 +233,8 @@ namespace AdventureAuthor.Ideas
         			magnet.Hide();
         		}
         	}
+        	
+        	OnVisibleCategoriesChanged(new EventArgs());
         }
                 
         
@@ -199,7 +244,7 @@ namespace AdventureAuthor.Ideas
         /// <param name="category">The category of ideas to hide</param>
         public void HideCategory(IdeaCategory category)
         {
-        	HideCategory(category);
+        	HideCategory(category,false);
         }
         
                 
@@ -211,6 +256,17 @@ namespace AdventureAuthor.Ideas
         /// false to hide the given category and ignore everything else</param>
         public void HideCategory(IdeaCategory category, bool only)
         {
+        	// Update list of visible categories:
+        	if (only) {
+        		visibleCategories.Clear();
+        		foreach (IdeaCategory cat in Idea.IDEA_CATEGORIES) {
+        			visibleCategories.Add(cat);
+        		}
+        	}
+        	if (visibleCategories.Contains(category)) {
+        		visibleCategories.Remove(category);
+        	}        	
+        	
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
         		if (magnet.Idea.Category == category) {
         			magnet.Hide();
@@ -219,12 +275,41 @@ namespace AdventureAuthor.Ideas
         			magnet.Show();
         		}
         	}
+        	
+        	OnVisibleCategoriesChanged(new EventArgs());
+        }
+        
+        
+        public List<MagnetControl> GetVisibleMagnets()
+        {
+        	List<MagnetControl> magnets = new List<MagnetControl>(magnetsPanel.Children.Count);
+        	foreach (MagnetControl magnet in magnetsPanel.Children) {
+        		if (magnet.IsVisible) {
+        			magnets.Add(magnet);
+        		}
+        	}
+        	return magnets;
+        }
+        
+        
+        public void Scatter()
+        {
+        	List<MagnetControl> magnets = GetVisibleMagnets();
+        	foreach (MagnetControl magnet in magnets) {
+        		DeployMagnet(magnet);
+        	}
         }
     	
     	
     	public bool HasMagnet(MagnetControl magnet)
     	{
     		return magnetsPanel.Children.Contains(magnet);
+    	}
+    	
+    	
+    	public bool CategoryIsVisible(IdeaCategory category)
+    	{
+    		return visibleCategories.Contains(category);
     	}
                 
         #endregion
@@ -235,18 +320,9 @@ namespace AdventureAuthor.Ideas
     	{
     		MagnetControl magnet = (MagnetControl)e.Source;
     		if (magnetsPanel.Children.Contains(magnet)) {
-    			MoveMagnetFromList(magnet);
+    			DeployMagnet(magnet);
     		}
     	}
-
-        
-        private void MagnetControl_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-        	MagnetControl magnet = (MagnetControl)e.Source;
-        	if (HasMagnet(magnet)) {
-        		SelectedMagnet = magnet;
-        	}
-        }
     		
         #endregion
     }

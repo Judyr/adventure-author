@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using System.Windows.Markup;
 using System.IO;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
@@ -21,23 +22,24 @@ namespace AdventureAuthor.Ideas
     /// </summary>
 
     public partial class MagnetBoardViewer : Window
-    {    	
-    	#region Constructors
+    {    
+    	#region Fields  
     	
-        public MagnetBoardViewer()
-        {
-            InitializeComponent();            
-            IdeaCategoryComboBox.ItemsSource = Enum.GetValues(typeof(IdeaCategory));
-            magnetList.MagnetLeavingList += new EventHandler<MagnetEventArgs>(magnetList_MagnetLeavingList);
-        }
-
-        
-        private void magnetList_MagnetLeavingList(object sender, MagnetEventArgs e)
-        {
-        	if (!magneticSurface.HasMagnet(e.Magnet)) {
-        		magneticSurface.AddMagnet(e.Magnet,true);
-        	}        	
-        }
+    	private MagnetControl selectedMagnet;     	
+		public MagnetControl SelectedMagnet {
+			get { return selectedMagnet; }
+			set {
+	    		if (selectedMagnet != value) {
+					if (selectedMagnet != null) {
+		    			selectedMagnet.DeselectFX();
+					}
+		    		selectedMagnet = value;
+		    		if (selectedMagnet != null) {
+		    			selectedMagnet.SelectFX();
+		    		}
+	    		}
+			}
+		}
     	
     	#endregion
     	
@@ -45,7 +47,73 @@ namespace AdventureAuthor.Ideas
     	
     	
     	#endregion
+	
+    	#region Constructors
+    	
+        public MagnetBoardViewer()
+        {
+            InitializeComponent();            
+            magnetList.MagnetDeployed += new EventHandler<MagnetEventArgs>(magnetList_MagnetLeavingList);
+            magnetList.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
+            magneticSurface.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
+            Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
+            
+            // Set up 'Add idea' box and 'Show/Hide idea category' menu:
+            IdeaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;            
+            foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
+            	string category = ideaCategory.ToString();
+            	MenuItem menuItem = new MenuItem();
+            	menuItem.Name = category;
+            	menuItem.Header = "Show " + category + " ideas?";
+            	menuItem.IsCheckable = true;
+            	menuItem.IsChecked = true;
+            	menuItem.Checked += new RoutedEventHandler(menuItem_CheckedChanged);
+            	menuItem.Unchecked += new RoutedEventHandler(menuItem_CheckedChanged);
+            	ShowHideCategoriesMenu.Items.Add(menuItem);
+            }          
+            magnetList.VisibleCategoriesChanged += new EventHandler(VisibleCategoriesChanged);
+            magneticSurface.MagnetRemoved += new EventHandler<MagnetEventArgs>(MagnetBoard_MagnetRemoved);
+        }
+        
 
+        private void Toolset_IdeaSubmitted(object sender, IdeaEventArgs e)
+        {
+        	MagnetControl magnet = new MagnetControl(e.Idea);
+        	magnetList.AddNewMagnet(magnet);
+        }
+
+        
+        /// <summary>
+        /// A magnet has been removed from the magnet board - rather than deleting the magnet permanently,
+        /// it should return to the magnet list.
+        /// </summary>
+        private void MagnetBoard_MagnetRemoved(object sender, MagnetEventArgs e)
+        {
+        	magnetList.TransferMagnetFromBoard(e.Magnet);
+        }
+        
+        
+        /// <summary>
+        /// When an idea category is shown/hidden, update the menu which allows you to show/hide categories.
+        /// </summary>
+        private void VisibleCategoriesChanged(object sender, EventArgs ea)
+        {
+        	foreach (MenuItem menuItem in ShowHideCategoriesMenu.Items) {
+        		try {
+        			IdeaCategory category = (IdeaCategory)Enum.Parse(typeof(IdeaCategory),menuItem.Name,true);
+	        		bool categoryIsVisible = magnetList.CategoryIsVisible(category);
+	        		if (menuItem.IsChecked != categoryIsVisible) {
+	        			menuItem.IsChecked = categoryIsVisible;
+	        		}
+        		}
+        		catch (ArgumentException e) {
+        			Say.Error("Menu item did not appear to correspond to an ideas category.",e);
+        		}
+        	}
+        }
+            	
+    	#endregion
+    	
     	#region Methods
     	
     	public void Open(string filename)
@@ -159,19 +227,97 @@ namespace AdventureAuthor.Ideas
         	else {
         		idea = new Idea(IdeaEntryBox.Text);
         	}
-        	magnetList.Add(idea);
+        	magnetList.AddIdea(idea);
         }
         
         
         private void OnClick_Scatter(object sender, RoutedEventArgs e)
         {
-        	List<MagnetControl> magnets = new List<MagnetControl>(magnetList.magnetsPanel.Children.Count);
-        	foreach (MagnetControl magnet in magnetList.magnetsPanel.Children) {
-        		magnets.Add(magnet);
+        	magnetList.Scatter();
+        }
+
+        
+        /// <summary>
+        /// Show or hide the idea category represented by this menu item (show if it has been checked,
+        /// hide if it has been unchecked.)
+        /// </summary>
+        private void menuItem_CheckedChanged(object sender, RoutedEventArgs ea)
+        {
+        	MenuItem menuItem = (MenuItem)ea.Source;
+        	try {
+        		IdeaCategory category = (IdeaCategory)Enum.Parse(typeof(IdeaCategory),menuItem.Name,true);
+        		if (menuItem.IsChecked && !magnetList.CategoryIsVisible(category)) {
+        			magnetList.ShowCategory(category);
+        		}
+        		else if (!menuItem.IsChecked && magnetList.CategoryIsVisible(category)) {
+        			magnetList.HideCategory(category);
+        		}
         	}
-        	foreach (MagnetControl magnet in magnets) {
-        		magnetList.MoveMagnetFromList(magnet);
+        	catch (ArgumentException e) {
+        		Say.Error("Could not find an idea category to show/hide it.",e);
         	}
+        }
+
+        
+        private void magnetList_MagnetLeavingList(object sender, MagnetEventArgs e)
+        {
+        	if (!magneticSurface.HasMagnet(e.Magnet)) {
+        		magneticSurface.AddMagnet(e.Magnet,true);
+        	}        	
+        }
+
+        
+        private void MagnetSelected(object sender, MagnetEventArgs e)
+        {
+        	SelectedMagnet = e.Magnet;
+        }
+
+        
+        private void KeyPressed(object sender, KeyEventArgs e)
+        {
+        	switch (e.Key) {
+        		case Key.Delete:
+        			if (SelectedMagnet != null) {
+        				if (magnetList.HasMagnet(SelectedMagnet)) {
+        					MessageBoxResult result = MessageBox.Show("Permanently delete this idea from the idea box?",
+		        					                  "Delete?", 
+		        					                  MessageBoxButton.OKCancel,
+		        					                  MessageBoxImage.Question,
+		        					                  MessageBoxResult.Cancel,
+		        					                  MessageBoxOptions.None);
+        					if (result == MessageBoxResult.OK) {
+        						magnetList.DeleteMagnet(SelectedMagnet);
+        						SelectedMagnet = null;
+        					}
+        				}
+        				else if (magneticSurface.HasMagnet(SelectedMagnet)) {
+        					magneticSurface.RemoveMagnet(SelectedMagnet);
+        					SelectedMagnet = null;
+        				}
+        			}
+        			break;
+        		case Key.Up:
+        			if (SelectedMagnet != null && magneticSurface.HasMagnet(SelectedMagnet)) {
+        				SelectedMagnet.Move(0,-1);
+        			}
+        			break;
+        		case Key.Down:
+        			if (SelectedMagnet != null && magneticSurface.HasMagnet(SelectedMagnet)) {
+        				SelectedMagnet.Move(0,1);
+        			}
+        			break;
+        		case Key.Left:
+        			if (SelectedMagnet != null && magneticSurface.HasMagnet(SelectedMagnet)) {
+        				SelectedMagnet.Move(-1,0);
+        			}
+        			break;
+        		case Key.Right:
+        			if (SelectedMagnet != null && magneticSurface.HasMagnet(SelectedMagnet)) {
+        				SelectedMagnet.Move(1,0);
+        			}
+        			break;
+        	}
+        	
         }
         
         #endregion

@@ -29,13 +29,16 @@ namespace AdventureAuthor.Ideas
     	protected static readonly Brush SETTING_BRUSH = Brushes.BurlyWood;
     	protected static readonly Brush OTHER_BRUSH = Brushes.DimGray;
     	protected static readonly Brush UNASSIGNED_BRUSH = Brushes.White;
-    	protected static readonly Brush USERDEFINED_BRUSH = Brushes.Chocolate;
     	
     	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
+    	protected static readonly BevelBitmapEffect bevel = new BevelBitmapEffect();
+    	protected static readonly DropShadowBitmapEffect shadow = new DropShadowBitmapEffect();
     	
     	#endregion    	
     	
-    	#region Fields    	
+    	#region Fields
+    	
+    	protected BitmapEffectGroup fxGroup = new BitmapEffectGroup();
     	
 		public override double X {
     		get {
@@ -92,9 +95,6 @@ namespace AdventureAuthor.Ideas
 				case IdeaCategory.Unassigned:
 					Background = UNASSIGNED_BRUSH;
 					break;
-				case IdeaCategory.UserDefined:
-					Background = USERDEFINED_BRUSH;
-					break;
 			}
 		}
 		
@@ -110,17 +110,39 @@ namespace AdventureAuthor.Ideas
     	
     	#endregion    	
     	
+    	#region Events
+    	
+    	public event EventHandler<MagnetEventArgs> Selected;    	
+		protected virtual void OnSelected(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = Selected;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+    	
+    	#endregion
+    	
     	#region Constructors
     	    	
     	public MagnetControl()
     	{
+    		// Set up visual effects:
     		glow.GlowColor = Colors.Blue;
     		glow.GlowSize = 15;
     		glow.Opacity = 0.3;
-            InitializeComponent();    		
+    		
+    		bevel.EdgeProfile = EdgeProfile.Linear;
+    		bevel.Relief = 0.3;
+    		
+    		fxGroup.Children.Add(bevel);
+    		
+            InitializeComponent();
+            
+            this.BitmapEffect = fxGroup;
     		
             MaxWidth = MAGNET_MAX_WIDTH;
-            IdeaTextBox.IsEditable = false; //Tools.PreventEditingOfTextBox(IdeaTextBox);
+            IdeaTextBox.IsEditable = false;
             RenderTransform = new RotateTransform();
     	}
     	
@@ -188,29 +210,50 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	internal void Select()
+    	internal void SelectFX()
     	{
-//    		OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
-//    		glow.GlowColor = Colors.Blue;
-//    		glow.GlowSize = 10;
-    		BitmapEffect = glow;
+    		fxGroup.Children.Add(glow);
     	}    	  
     	
     	
-    	internal void Deselect()
+    	internal void DeselectFX()
     	{
-    		BitmapEffect = null;
+    		fxGroup.Children.Remove(glow);
+    	}
+    	
+    	
+    	internal void LiftedFX()
+    	{
+    		fxGroup.Children.Add(shadow);
+    	}
+    	
+    	
+    	internal void DroppedFX()
+    	{
+    		fxGroup.Children.Remove(shadow);
     	}
     	
     	
 		public override string ToString()
 		{
 			return idea.Text;
-		}		
+		}	
+		
+		
+		public void Move(double right, double down)
+		{
+			Canvas.SetTop(this,Canvas.GetTop(this) + down);
+			Canvas.SetLeft(this,Canvas.GetLeft(this) + right);
+		}
         
         #endregion
         
         #region Event handlers   
+        
+        private void MagnetControl_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+        	OnSelected(new MagnetEventArgs(this));
+        }
         
         #endregion
     }
