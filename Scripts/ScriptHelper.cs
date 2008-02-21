@@ -880,79 +880,104 @@ namespace AdventureAuthor.Scripts
 				return "Was given a blank condition.";
 			}			
 			
+			string description;
+			
 			switch (condition.Script.ResRef.Value) {
 				case "gc_align_chaotic":
-					return "IF THE PLAYER'S ALIGNMENT IS CHAOTIC THEN";
+					description = "THE PLAYER'S ALIGNMENT IS CHAOTIC";
+					break;
 					
 				case "gc_align_evil":
-					return "IF THE PLAYER IS EVIL THEN";
+					description = "THE PLAYER IS EVIL";
+					break;
 					
 				case "gc_align_good":
-					return "IF THE PLAYER IS GOOD THEN";
+					description = "THE PLAYER IS GOOD";
+					break;
 					
 				case "gc_align_lawful":
-					return "IF THE PLAYER'S ALIGNMENT IS LAWFUL THEN";
+					description = "THE PLAYER'S ALIGNMENT IS LAWFUL";
+					break;
 					
 				case "gc_check_gold":
-					return "IF THE PLAYER HAS AT LEAST " + condition.Parameters[0].ValueInt + " GOLD PIECES THEN";
+					description = "THE PLAYER HAS AT LEAST " + condition.Parameters[0].ValueInt + " GOLD PIECES";
+					break;
 					
 				case "gc_check_item":
-					return "IF THE PLAYER HAS THE ITEM " + condition.Parameters[0].ValueString + " THEN";
+					description = "THE PLAYER HAS THE ITEM " + condition.Parameters[0].ValueString + "";
+					break;
 					
 				case "gc_dead":
-					return "IF " + condition.Parameters[0].ValueString + " IS DEAD THEN";				
+					description = "" + condition.Parameters[0].ValueString + " IS DEAD";	
+					break;			
 										
 				case "gc_distance_pc":
-					return "IF THE DISTANCE BETWEEN THE PLAYER AND " + condition.Parameters[0].ValueString + 
-						" IN METRES IS " + condition.Parameters[1].ValueString + " THEN";				
+					description = "THE DISTANCE BETWEEN THE PLAYER AND " + condition.Parameters[0].ValueString + 
+						" IN METRES IS " + condition.Parameters[1].ValueString + "";	
+					break;			
 					
 				case "gc_distance":
-					return "IF THE DISTANCE BETWEEN " + condition.Parameters[0].ValueString + " AND " + condition.Parameters[1].ValueString +
-						" IN METRES IS " + condition.Parameters[2].ValueString + " THEN";
+					description = "THE DISTANCE BETWEEN " + condition.Parameters[0].ValueString + " AND " + condition.Parameters[1].ValueString +
+						" IN METRES IS " + condition.Parameters[2].ValueString + "";
+					break;
 					
 				case "gc_equipped":
-					return "IF THE PLAYER HAS EQUIPPED ITEM " + condition.Parameters[0].ValueString + " THEN";
+					description = "THE PLAYER HAS EQUIPPED ITEM " + condition.Parameters[0].ValueString + "";
+					break;
 					
 				case "gc_module_float":
-					return "IF DECIMAL NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
-						condition.Parameters[1].ValueString + " THEN";
+					description = "DECIMAL NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + "";
+					break;
 					
 				case "gc_module_int":
-					return "IF NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
-						condition.Parameters[1].ValueString + " THEN";
+					description = "NUMBER VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + "";
+					break;
 						
 				case "gc_module_string":
-					return "IF WORD(S) VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
-						condition.Parameters[1].ValueString + " THEN";
+					description = "WORD(S) VARIABLE " + condition.Parameters[0].ValueString + " IS OF VALUE " + 
+						condition.Parameters[1].ValueString + "";
+					break;
 					
 				case "gc_henchman":
 					if (condition.Parameters[1].ValueString != String.Empty) {
-						return "IF " + condition.Parameters[0].ValueString + " IS AN ALLY OF " + 
-							condition.Parameters[1].ValueString + " THEN";
+						description = "" + condition.Parameters[0].ValueString + " IS AN ALLY OF " + 
+							condition.Parameters[1].ValueString + "";
 					}
 					else {
-						return "IF " + condition.Parameters[0].ValueString + " IS THE PLAYER'S ALLY THEN";
+						description = "" + condition.Parameters[0].ValueString + " IS THE PLAYER'S ALLY";
 					}
+					break;
 					
 				case "gc_is_enemy_near":
-					return "IF A HOSTILE CREATURE IS WITHIN " + condition.Parameters[0].ValueFloat + " METRES OF THE PLAYER THEN";
+					description = "A HOSTILE CREATURE IS WITHIN " + condition.Parameters[0].ValueFloat + 
+						" METRES OF THE PLAYER";
+					break;
 					
 				case "gc_is_female":
-					return "IF THE PLAYER IS FEMALE THEN";
+					description = "THE PLAYER IS FEMALE";
+					break;
 					
 				case "gc_is_male":
-					return "IF THE PLAYER IS MALE THEN";
+					description = "THE PLAYER IS MALE";
+					break;
 					
 				case "gc_is_open": // not currently used
-					return "IF " + condition.Parameters[0].ValueString + " IS OPEN THEN";
+					description = "" + condition.Parameters[0].ValueString + " IS OPEN";
+					break;
 					
 				case "gc_item_count": // not currently used
-					return "IF THE PLAYER HAS " + condition.Parameters[1].ValueString + 
-						   " COPIES OF ITEM " + condition.Parameters[0].ValueString + " THEN";
+					description = "THE PLAYER HAS " + condition.Parameters[1].ValueString + 
+						   " COPIES OF ITEM " + condition.Parameters[0].ValueString + "";
+					break;
 					
 				default:
-					return "IF (SCRIPT: " + condition.ToString() + ") THEN";
+					description = "(SCRIPT: " + condition.ToString() + ")";
+					break;
 			}
+			
+			return description;
 		}
 		
 		internal static string GetOwnerIfBlank(string tag)

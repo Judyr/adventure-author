@@ -917,7 +917,7 @@ namespace AdventureAuthor.Conversations
 					
 		#region General methods
 		
-		public void ExportToTextFile(string filename)
+		public void ExportToTextFile(string filename, ExportFormat format)
 		{
 			FileInfo fi = new FileInfo(filename);
 			if (sw != null) {
@@ -926,11 +926,17 @@ namespace AdventureAuthor.Conversations
 			sw = fi.CreateText();
 			sw.AutoFlush = false;
 			
-			foreach (NWN2ConversationConnector line in nwnConv.StartingList) {
-				if (line.Conditions.Count > 0) {
-					sw.WriteLine(ScriptHelper.GetDescriptionForCondition(line.Conditions));			
-				}
-				WriteToFile(line,String.Empty);
+			switch (format) {
+					
+				case ExportFormat.PageFormat:
+					foreach (Page page in WriterWindow.Instance.Pages) {
+						WritePage(page);
+					}
+					break;
+					
+				case ExportFormat.TreeFormat:
+					Write(nwnConv.StartingList,String.Empty,true);
+					break;
 			}
 			
 			sw.Flush();
@@ -939,16 +945,54 @@ namespace AdventureAuthor.Conversations
 		}		
 		
 		
-		private void WriteToFile(NWN2ConversationConnector line, string indent)
+		private void WritePage(Page page)
+		{
+			sw.WriteLine("Page " + WriterWindow.Instance.Pages.IndexOf(page));
+			sw.WriteLine();
+			
+			
+			foreach (LineControl lineControl in page.LineControls) {
+				sw.WriteLine(lineControl.SpeakerLabel.Text + " - " + 
+				             Conversation.GetStringFromOEIString(lineControl.Nwn2Line.Line.Text));
+				foreach (ActionControl actionControl in lineControl.ActionsPanel.Children) {
+					sw.WriteLine(" * " + actionControl.Description.Text);
+				}
+			}
+			
+			if (page.IsEndPage) {
+				return;
+			}
+			
+			sw.WriteLine();
+			foreach (Page childPage in page.Children) {
+				string text = ("(" + page.Children.IndexOf(page) + 1).ToString() + ")";
+				if (childPage.LeadLine.Conditions.Count > 0) {
+					text += " - only appears if " + 
+						ScriptHelper.GetDescriptionForCondition(childPage.LeadLine.Conditions).ToLower() + ")";
+				}
+				sw.WriteLine(text);
+				string indent = "  ";
+				sw.WriteLine(indent + childPage.LeadLine.Speaker + " - " + 
+				             Conversation.GetStringFromOEIString(childPage.LeadLine.Line.Text));
+				foreach (NWN2ScriptFunctor action in childPage.LeadLine.Actions) {
+					sw.WriteLine(indent + " * " + ScriptHelper.GetDescriptionForAction(action));
+				}
+				sw.WriteLine(">>>>> GO TO PAGE " + WriterWindow.Instance.Pages.IndexOf(childPage) + " <<<<<");
+			}
+			
+			sw.WriteLine();
+			sw.WriteLine();
+			sw.WriteLine();
+		}
+		
+		
+		private void WriteSingleLine(NWN2ConversationConnector line, string indent)
 		{
 			if (line == null) {
 				throw new ArgumentNullException("Tried to write a null line to file.");
 			}
-			
-			string newIndent = indent;
-					
-			if (!IsFiller(line)) {	
-				
+						
+			if (!IsFiller(line)) {					
 				string speakerName;
 				if (line.Type == NWN2ConversationConnectorType.Reply) {
 					speakerName = "PLAYER";
@@ -959,23 +1003,44 @@ namespace AdventureAuthor.Conversations
 				else {
 					speakerName = line.Speaker.ToUpper();
 				}
-				sw.WriteLine(indent + speakerName + "\t\t" + GetStringFromOEIString(line.Text));
+				sw.WriteLine(indent + speakerName + " - " + GetStringFromOEIString(line.Text));
 				
 				foreach (NWN2ScriptFunctor action in line.Actions) {
 					sw.WriteLine(indent + ScriptHelper.GetDescriptionForAction(action));
-				}
-				
-				newIndent = "   " + newIndent;
+				}				
 			}
-			
-			foreach (NWN2ConversationConnector child in line.Line.Children) {
-				if (child.Conditions.Count > 0) {
-					sw.WriteLine(indent + ScriptHelper.GetDescriptionForCondition(child.Conditions));			
-				}
-				WriteToFile(child,newIndent);
-			}
+			Write(line.Line.Children,indent,true);
 		}
 		
+		
+		private void Write(NWN2ConversationConnectorCollection siblings, string indent, bool increaseIndent)
+		{
+			switch (siblings.Count) {
+				case 0:
+					return;
+				case 1:
+					WriteSingleLine(siblings[0],indent);
+					return;
+			}
+			
+			foreach (NWN2ConversationConnector line in siblings) {
+				int branchNumber = siblings.IndexOf(line) + 1;
+				if (line.Conditions.Count > 0) {
+					sw.WriteLine(indent + "(Branch " + branchNumber + ") <ONLY APPEARS IF " + 
+					             ScriptHelper.GetDescriptionForCondition(line.Conditions) + ">:");
+				}
+				else {
+					sw.WriteLine(indent + "(Branch " + branchNumber + "):");
+				}
+				string newIndent = indent;
+				if (increaseIndent) {
+					newIndent += "  ";
+				}
+			
+				WriteSingleLine(line,newIndent);
+			}
+		}
+				
 			
 		/// <summary>
 		/// Get the number of words in a sentence.

@@ -48,6 +48,9 @@
 			<ComboBox Name="IdeaCategoryComboBox" Height="30" Width="180" Margin="5"/>
     		<Button Content="Add magnet" Click="OnClick_AddMagnet" Margin="5"/>
     		<Button Content="Scatter" Click="OnClick_Scatter" Margin="5"/>
+    		<Button Content="Sort" Click="OnClick_Sort" Margin="5"/>
+    		<Button Content="Clear board" Click="OnClick_ClearBoard" Margin="5"/>
+    		<Button Content="Set editable/uneditable" Click="OnClick_EditSelected" Margin="5"/>
     	</StackPanel>
     </Grid>
 </Window>

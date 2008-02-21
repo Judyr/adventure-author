@@ -93,6 +93,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
 		    		
+		    		switchModeButton.Visibility = Visibility.Collapsed;
+		    		addSectionButton.Visibility = Visibility.Collapsed; // because nothing is open yet
+		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
 	    			NewMenuItem.Visibility = Visibility.Visible;
 	    			OptionsMenu.Visibility = Visibility.Collapsed;
@@ -106,12 +109,16 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		EvaluatorNameField.IsEnabled = true;
 		    		DateField.IsEnabled = true;
 		    		
+		    		switchModeButton.Visibility = Visibility.Visible;
+		    		addSectionButton.Visibility = Visibility.Collapsed;
+		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
 	    			EditMenu.Visibility = Visibility.Collapsed;	    		
     				SwitchModesMenuItem.Header = "Switch to Discuss mode";
+    				switchModeButton.Content = "Switch to Discuss mode";
     				OpenDialog();
 		    		break;
     				
@@ -121,12 +128,16 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
 		    		
+		    		switchModeButton.Visibility = Visibility.Visible;
+		    		addSectionButton.Visibility = Visibility.Collapsed;
+		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
 	    			EditMenu.Visibility = Visibility.Collapsed; 		
     				SwitchModesMenuItem.Header = "Switch to Complete mode";
+    				switchModeButton.Content = "Switch to Complete mode";
     				OpenDialog();
 		    		break;
     		}
@@ -288,6 +299,23 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    DateField.Visibility = Visibility.Visible;
 		    
 		    BorderClosingRectangle.Visibility = Visibility.Visible;
+		    
+		    switch (EvaluationMode) {
+		    	case Mode.Design:
+		    		addSectionButton.Visibility = Visibility.Visible;
+		    		switchModeButton.Visibility = Visibility.Collapsed;
+		    		break;
+		    	case Mode.Complete:
+		    		addSectionButton.Visibility = Visibility.Collapsed;
+		    		switchModeButton.Content = "Switch to Discuss mode";
+		    		switchModeButton.Visibility = Visibility.Visible;
+		    		break;
+		    	case Mode.Discuss:
+		    		addSectionButton.Visibility = Visibility.Collapsed;
+		    		switchModeButton.Content = "Switch to Complete mode";
+		    		switchModeButton.Visibility = Visibility.Visible;
+		    		break;
+		    }
 		  
 		    SaveMenuItem.IsEnabled = true;
 		    SaveAsMenuItem.IsEnabled = true;
@@ -487,6 +515,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    	DesignerNameLabel.Visibility = Visibility.Hidden;
 	    	EvaluatorNameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
+	    	addSectionButton.Visibility = Visibility.Collapsed;
+	    	switchModeButton.Visibility = Visibility.Collapsed;
 	    	
 		    TitleField.Visibility = Visibility.Hidden;
 	    	DesignerNameField.Visibility = Visibility.Hidden;
@@ -615,11 +645,15 @@ namespace AdventureAuthor.Evaluation.Viewer
     				DateField.IsEnabled = true;
     				DesignerNameField.IsEnabled = true;
     				EvaluatorNameField.IsEnabled = true;
+    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
+    				switchModeButton.Content = "Switch to Discuss mode";
     				break;
     			case Mode.Discuss:
     				DateField.IsEnabled = false;
     				DesignerNameField.IsEnabled = false;
     				EvaluatorNameField.IsEnabled = false;
+    				SwitchModesMenuItem.Header = "Switch to Complete mode";
+    				switchModeButton.Content = "Switch to Complete mode";
     				break;
     			case Mode.Design:
     				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
@@ -1013,11 +1047,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     				throw new InvalidOperationException("Cannot switch to another mode from design mode.");
     			case Mode.Complete:
     				SwitchTo(Mode.Discuss);
-    				SwitchModesMenuItem.Header = "Switch to Complete mode";
     				break;
     			case Mode.Discuss:
     				SwitchTo(Mode.Complete);
-    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
     				break;
     		}
     	}

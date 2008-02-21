@@ -1,5 +1,5 @@
-
 using System;
+using System.Windows.Forms.Integration;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Core;
 using AdventureAuthor.Evaluation.Viewer;
@@ -38,58 +38,28 @@ namespace AdventureAuthor.Setup
 			closeModule.Activate += delegate { CloseModuleDialog(); };
 							
 			MenuButtonItem newArea = new MenuButtonItem("New area");
+			newArea.BeginGroup = true;
 			newArea.Activate += delegate { NewAreaDialog(); };
-			MenuButtonItem newConversation = new MenuButtonItem("Conversation writer");
-			newConversation.Activate += delegate { LaunchConversationWriter(); };
-			MenuButtonItem variableManager = new MenuButtonItem("Variable manager");
-			variableManager.Activate += delegate { LaunchVariableManager(); };
 			
-//			MenuButtonItem changeUser = new MenuButtonItem("Change user");
-//			changeUser.Activate += delegate { Say.Error("Not implemented yet."); };
-			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
-			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
-			
-			MenuButtonItem misc = new MenuButtonItem("Miscellaneous");
-			MenuButtonItem difficulty = new MenuButtonItem("Analyse hostiles");
-			difficulty.Activate += delegate { 
-				if (ModuleHelper.ModuleIsOpen() && form.App.Module.Areas.Count > 0) {
-					CombatMap combatMap = new CombatMap(); 
-					combatMap.Show(); 
-				}
-			};
-			misc.Items.Add(difficulty);
+			MenuButtonItem programmerFunctions = new MenuButtonItem("Programmer functions");
+			programmerFunctions.BeginGroup = true;
 			
 			MenuButtonItem colourPicker = new MenuButtonItem("Colour picker");
 			colourPicker.Activate += delegate { 
 				RGBPicker picker = new RGBPicker();
+				ElementHost.EnableModelessKeyboardInterop(picker);
 				picker.ShowDialog();
 			};
-			misc.Items.Add(colourPicker);
-			
-			MenuButtonItem evaluation = new MenuButtonItem("Evaluation");
-			evaluation.Activate += delegate { 
-				// if (user.HasAdminRights) {
-						SelectModeWindow selectModeWindow = new SelectModeWindow();
-						selectModeWindow.ShowDialog();
-				// }
-				// else {
-				// 		WorksheetViewer(WorksheetViewer.Mode.PupilMode);
-				// }
-			};
-			
-			MenuButtonItem magnets = new MenuButtonItem("Magnets");
-			magnets.Activate += delegate { 
-				MagnetBoardViewer mbv = new MagnetBoardViewer();
-				mbv.Show();//Dialog();
-			};
+			programmerFunctions.Items.Add(colourPicker);
 			
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
+			programmerFunctions.Items.Add(logWindow);		
 			
-			newArea.BeginGroup = true;
+			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
-			misc.BeginGroup = true;
-						
+			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
+									
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newModule,
 			                           	openModule,
@@ -98,14 +68,8 @@ namespace AdventureAuthor.Setup
 			                           	runModule,
 			                           	closeModule,
 			                           	newArea,
-			                           	newConversation,
-			                           	variableManager,
-//			                           	changeUser,
+			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
-			                           	logWindow,
-			                           	misc,
-			                           	evaluation,
-			                           	magnets
 			                           });	
 			
 			return fileMenu;
@@ -122,18 +86,21 @@ namespace AdventureAuthor.Setup
 			ButtonItem conversationButton = new ButtonItem();							
 			conversationButton.Activate += delegate { LaunchConversationWriter(); };
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
+			conversationButton.Enabled = false;
 			Tools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
 			aaToolbar.Items.Add(conversationButton);
 							
 			ButtonItem variableButton = new ButtonItem();
 			variableButton.Activate += delegate { LaunchVariableManager(); };
 			variableButton.ToolTipText = "Manage game variables";
+			variableButton.Enabled = false;
 			Tools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
 			aaToolbar.Items.Add(variableButton);
 							
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate {
 				MagnetBoardViewer mbv = new MagnetBoardViewer();
+				ElementHost.EnableModelessKeyboardInterop(mbv);
 				mbv.Show();
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
@@ -141,7 +108,15 @@ namespace AdventureAuthor.Setup
 			aaToolbar.Items.Add(ideasButton);
 							
 			ButtonItem analysisButton = new ButtonItem();
-			analysisButton.Activate += delegate { };
+			analysisButton.Activate += delegate { 
+				if (form.App.Module.Areas.Count > 0) {
+					CombatMap combatMap = new CombatMap(); 
+					combatMap.Show(); 
+				}
+				else {
+					Say.Information("There are no areas to display in map view.");
+				}
+			};
 			Tools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
 			analysisButton.Enabled = false;
 			aaToolbar.Items.Add(analysisButton);
@@ -165,7 +140,86 @@ namespace AdventureAuthor.Setup
 			achievementsButton.Enabled = false;
 			aaToolbar.Items.Add(achievementsButton);
 			
+			ModuleHelper.ModuleOpened += delegate {  
+				conversationButton.Enabled = true;
+				variableButton.Enabled = true;
+				ideasButton.Enabled = true;
+				analysisButton.Enabled = true;
+				evaluationButton.Enabled = true;
+				//achievementsButton.Enabled = true;
+			};
+			
+			ModuleHelper.ModuleClosed += delegate {  
+				conversationButton.Enabled = false;
+				variableButton.Enabled = false;
+				ideasButton.Enabled = true;
+				analysisButton.Enabled = false;
+				evaluationButton.Enabled = true;
+				//achievementsButton.Enabled = true;
+			};
+        		
+			// TODO: 'Ideas' should flash to indicate an idea has 'gone in' - or go from unlit to lit bulb?
+			
 			return aaToolbar;
+		}
+		
+		
+		public static void SetupAddIdeaToolBar(ToolBar toolbar)
+		{
+			toolbar.AddRemoveButtonsVisible = false;
+			toolbar.Text = "Add an idea";
+			toolbar.Margin = new System.Windows.Forms.Padding(3);
+			toolbar.BackColor = System.Drawing.Color.LightBlue;
+			
+			LabelItem label = new LabelItem();
+			label.Text = "Add an idea: ";
+			
+			TextBoxItem ideaEntryBox = new TextBoxItem();			
+			ideaEntryBox.ToolTipText = "Type in your idea here";
+			ideaEntryBox.MinimumControlWidth = 150;
+			
+			ComboBoxItem ideaCategoryBox = new ComboBoxItem();
+			ideaCategoryBox.ToolTipText = "Select an idea category";
+			ideaCategoryBox.MinimumControlWidth = 100;
+			ideaCategoryBox.ComboBox.SelectedValue = IdeaCategory.Other;
+			ideaCategoryBox.ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			foreach (IdeaCategory cat in Idea.IDEA_CATEGORIES) {
+				ideaCategoryBox.Items.Add(cat);
+			}
+							
+			ButtonItem addButton = new ButtonItem();	
+			addButton.Text = "Add";
+			addButton.Activate += delegate { 
+				string text = ((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text;
+				if (text == String.Empty) {
+					return;
+				}
+				IdeaCategory category;
+				object selected = ((System.Windows.Forms.ComboBox)ideaCategoryBox.ContainedControl).SelectedItem;
+				if (selected == null) {
+					category = IdeaCategory.Other;
+				}
+				else {
+					category = (IdeaCategory)selected;
+				}
+				Idea idea = new Idea(text,category);
+				OnIdeaSubmitted(new IdeaEventArgs(idea));
+				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
+			};
+			addButton.ToolTipText = "Add this idea to your ideas screen";
+			
+			ButtonItem clearButton = new ButtonItem();	
+			clearButton.Text = "Clear";
+			clearButton.Activate += delegate { 
+				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
+			};
+			clearButton.ToolTipText = "Clear this idea";					
+			
+			toolbar.Items.Add(label);
+			toolbar.Items.Add(ideaEntryBox);
+			toolbar.Items.Add(ideaCategoryBox);
+			toolbar.Items.Add(addButton);
+			toolbar.Items.Add(clearButton);
 		}
 	}
 }

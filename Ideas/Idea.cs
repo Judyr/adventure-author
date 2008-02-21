@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -53,6 +54,26 @@ namespace AdventureAuthor.Ideas
 		/// </summary>
 		public static readonly IdeaCategory[] IDEA_CATEGORIES = (IdeaCategory[])Enum.GetValues(typeof(IdeaCategory));
 		
+		
+		/// <summary>
+		/// Sort according to the text of the idea, in ascending alphabetical order.
+		/// </summary>
+		public static IComparer SortAlphabeticallyAscending {
+			get {
+				return new sortAlphabeticallyAscendingComparer();
+			}
+		}
+		
+		
+		/// <summary>
+		/// Sort according to the text of the idea, in descending alphabetical order.
+		/// </summary>
+		public static IComparer SortAlphabeticallyDescending {
+			get {
+				return new sortAlphabeticallyDescendingComparer();
+			}
+		}
+		
 		#endregion
 		
 		#region Constructors
@@ -63,10 +84,6 @@ namespace AdventureAuthor.Ideas
 		public Idea()
 		{
 			
-		}
-		
-		public Idea(string text) : this(text,IdeaCategory.Unassigned) 
-		{
 		}
 		
 		
@@ -89,20 +106,42 @@ namespace AdventureAuthor.Ideas
 		}
 				
 		#endregion
-		
+	
 		#region Methods
 		
 		public int CompareTo(object obj)
 		{
-			Idea idea = obj as Idea;
-			if (idea == null || author != idea.author || text != idea.text || 
-			    created != idea.created || category != idea.category) 
+			return String.Compare(text,((Idea)obj).text);
+		}
+		
+		#endregion
+		
+		#region IComparer classes
+		
+		/// <summary>
+		/// Sort according to the text of the idea, in ascending alphabetical order.
+		/// </summary>
+		private class sortAlphabeticallyAscendingComparer : IComparer
+		{			
+			public int Compare(object x, object y)
 			{
-				return 0;
+				Idea idea1 = (Idea)x;
+				Idea idea2 = (Idea)y;				
+				return String.Compare(idea1.text,idea2.text);
 			}
-			else 
+		}
+		
+		
+		/// <summary>
+		/// Sort according to the text of the idea, in descending alphabetical order.
+		/// </summary>
+		private class sortAlphabeticallyDescendingComparer : IComparer
+		{			
+			public int Compare(object x, object y)
 			{
-				return 1;
+				Idea idea1 = (Idea)x;
+				Idea idea2 = (Idea)y;				
+				return String.Compare(idea2.text,idea1.text);
 			}
 		}
 		

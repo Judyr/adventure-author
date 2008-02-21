@@ -54,6 +54,7 @@ using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.UI;
 using NWN2Toolset.NWN2.Views;
 using NWN2Toolset.NWN2.Wizards;
+using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.Plugins;
 using OEIShared.IO.TwoDA;
 using OEIShared.Utils;
@@ -120,39 +121,6 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		internal static void SetupUI()
 		{
-			#region Nullify context menus (commented out)			
-			
-			// Nullify every original context menu
-//			foreach (Control c in GetControls(form.App)) {
-//				
-//				if (!(c is NWN2ModuleAreaList)) {
-//					if (c.ContextMenu != null) {
-//						c.ContextMenu.MenuItems.Clear();
-//					}
-//					if (c.ContextMenuStrip != null) {
-//						c.ContextMenuStrip.Items.Clear();
-//					}
-//					
-//				
-//				if (c.ContextMenu != null) {
-//					foreach (MenuItem menuItem in c.ContextMenu.MenuItems) {
-//						if (menuItem.Text == "Add") {
-//							if (c.Parent is NWN2ModuleAreaList) {
-//								menuItem.Click += delegate { Say.Information("parent is area list"); };
-//							}
-//						}
-//					
-//					}
-//				}
-//									
-//			
-//					c.ContextMenu = null;
-//					c.ContextMenuStrip = null;
-//				}
-//			}
-			
-			#endregion
-		
 			#region Mouse mode changes
 			
 			NWN2AreaViewer.MouseModeChanged += delegate
@@ -183,6 +151,7 @@ namespace AdventureAuthor.Setup
 			
 			#endregion
 			
+						
 			// Get every field of NWN2ToolsetMainForm.App:
 			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
 															  BindingFlags.NonPublic |
@@ -198,47 +167,21 @@ namespace AdventureAuthor.Setup
 				// Hide everything except for the area contents and blueprints, and add a chapter list:
 				
 				if (fi.FieldType == typeof(DockingManager)) {
-					dockingManager = (DockingManager)fi.GetValue(form.App);
+					dockingManager = (DockingManager)fi.GetValue(form.App);					
 					
-					
-//					ManagerContentCollection cc = dockingManager.Contents;
-//					dockingManager.Contents = new ManagerContentCollection(dockingManager);
-					
-					
-					
-					
-
-
-			// Add 'add idea' content:
-			
-			ElementHost host = new ElementHost();
-			AdventureAuthor.Ideas.LightweightIdeaControl ideacontrol 
-				= new AdventureAuthor.Ideas.LightweightIdeaControl();
-			ideacontrol.Width = 300;
-			ideacontrol.Height = 200;
-			host.Child = ideacontrol;
-			Content content = new Content(dockingManager,host,"Record an idea");
-			
-			
-			dockingManager.Contents.Add(content);	
-			dockingManager.AddContentWithState(content,State.DockLeft);
-			//dockingManager.AddContentToZone(content,null,0);
-			dockingManager.ShowContent(content);	
-			
-			
-//			foreach (Content c in cc) {				
-//				dockingManager.Contents.Add(c);
-//				dockingManager.AddContentWithState(c,State.DockLeft);
-//				dockingManager.ShowContent(c);	
-//			}
-					
-					
-					
-					
-					
-					
-					
-					
+					// Add 'add idea' content:			
+//					ElementHost host = new ElementHost();
+//					AdventureAuthor.Ideas.LightweightIdeaControl ideacontrol 
+//						= new AdventureAuthor.Ideas.LightweightIdeaControl();
+//					ideacontrol.Width = 300;
+//					ideacontrol.Height = 200;
+//					host.Child = ideacontrol;
+//					Content content = new Content(dockingManager,host,"Record an idea");
+//					ideacontrol.IdeaSubmitted += delegate(object sender, IdeaEventArgs e) { OnIdeaSubmitted(e); };					
+//					dockingManager.Contents.Add(content);	
+//					dockingManager.AddContentWithState(content,State.Floating);
+//					//dockingManager.AddContentToZone(content,null,0);
+//					dockingManager.ShowContent(content);	
 					
 					//TODO: try iterating through dockingManager object, copying every field
 					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
@@ -414,7 +357,7 @@ namespace AdventureAuthor.Setup
 									// However, it does send the correct selection when you right-click to
 									// select it, as well as when you left-click to select it.
 									MenuItem separator = new MenuItem("-");
-									MenuItem addAsIdea = new MenuItem("Add as idea");
+									MenuItem addAsIdea = new MenuItem("Add this to my Ideas");
 									addAsIdea.Click += new EventHandler(BlueprintSentToIdeas);
 									c.ContextMenu.MenuItems.Add(separator);
 									c.ContextMenu.MenuItems.Add(addAsIdea);
@@ -481,6 +424,32 @@ namespace AdventureAuthor.Setup
 							}
 						};
 					}
+										
+					// TODO: Fully implement this below (sending instances as Ideas)
+					
+					
+					// Users can send objects to their ideas list. NB: For some reason adding this
+					// to each NWN2PaletteTreeView you find will lead to all of them having many
+					// copies of this MenuItem, so just add it to the first one and break:
+//					NWN2PaletteTreeView pt = paletteTreeViews["creature"];
+//					if (pt.ContextMenu != null && pt.ContextMenu.MenuItems.Count > 0) {
+//						MenuItem separator = new MenuItem("-");
+//						MenuItem addAsIdea = new MenuItem("Add this to my Ideas");
+//						addAsIdea.Click += delegate { 
+//							if (areaContentsView.AreaViewer != null) {
+//								foreach (
+//								
+//								foreach (NWN2tem instance in areaContentsView.AreaViewer.SelectedInstances) {
+//									string text = instance.Name + "\n" + instance.ObjectType.ToString() + "\n(Tag '" +
+//										instance.ObjectID.ToString();									
+//									Idea idea = new Idea(text,IdeaCategory.Resources);
+//									OnIdeaSubmitted(new IdeaEventArgs(idea));									
+//								}
+//							}
+//						};
+//						pt.ContextMenu.MenuItems.Add(separator);
+//						pt.ContextMenu.MenuItems.Add(addAsIdea);
+//					}						
 				}
 												
 				// Get rid of the graphics preferences toolbar:
@@ -576,15 +545,39 @@ namespace AdventureAuthor.Setup
 //						
 //					}
 				}
+				
+				//TODO - this is apparently the correct way to do it but nothing appears
+//				else if (fi.FieldType == typeof(TD.SandBar.SandBarManager)) {
+//					Say.Information("Found SandBarManager");
+//					try {
+//						SandBarManager manager = (SandBarManager)fi.GetValue(form.App);
+//						
+//						TD.SandBar.ToolBar aaToolbar = new TD.SandBar.ToolBar();
+//						SetupAdventureAuthorToolBar(aaToolbar);
+//						
+//						TD.SandBar.ToolBar ideaToolbar = new TD.SandBar.ToolBar();
+//						SetupAddIdeaToolBar(ideaToolbar);
+//						
+//						manager.AddToolbar(aaToolbar);
+//						manager.AddToolbar(ideaToolbar);manager.
+//					}
+//					catch (Exception e) {
+//						Say.Error(e);
+//					}
+//				}
+				
 				else if (fi.FieldType == typeof(ToolBarContainer)) {					
 					try {
 						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
 						// plus the ToolBar i'm currently creating below.						
 						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
 						if (tbc.Name == "topSandBarDock") {
-							TD.SandBar.ToolBar toolbar = new TD.SandBar.ToolBar();
-							SetupAdventureAuthorToolBar(toolbar);
-							tbc.Controls.Add(toolbar);
+							TD.SandBar.ToolBar aaToolbar = new TD.SandBar.ToolBar();
+							SetupAdventureAuthorToolBar(aaToolbar);
+							tbc.Controls.Add(aaToolbar);
+							TD.SandBar.ToolBar ideaToolbar = new TD.SandBar.ToolBar();
+							SetupAddIdeaToolBar(ideaToolbar);
+							tbc.Controls.Add(ideaToolbar);
 						}
 					} 
 					catch (Exception e) {
@@ -611,53 +604,85 @@ namespace AdventureAuthor.Setup
 			
 			UpdateTitleBar();			
 		}
+		
+		
+		private static string GetTagOrResref(INWN2Object obj)
+		{
+			return "tag: " + obj.Tag;
+		}
+		
+		
+		private static string GetTagOrResref(INWN2Blueprint blueprint)
+		{
+			return "resref: " + blueprint.TemplateResRef.Value;
+		}
+		
+		
+		private static string GetDescriptionForMagnet(INWN2Blueprint blueprint)
+		{
+			string text = blueprint.Comment + "\n" + blueprint.ObjectType.ToString() + "\nresref: " + 
+				blueprint.TemplateResRef.Value;
+			
+			
+			return text;
+			
+//			if (blueprint is NWN2CreatureTemplate) {
+//				NWN2CreatureTemplate creature = (NWN2CreatureTemplate)blueprint;
+//				text = creature.FirstName + " " + creature.LastName + "\nCreature" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2EncounterTemplate) {
+//				NWN2EncounterTemplate encounter = (NWN2DoorTemplate)blueprint;
+//				text = encounter.Name + "\nEncounter" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//			else if (blueprint is NWN2DoorTemplate) {
+//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+//			}
+//								
+//					
+//				
+//			
+//			return text + "\n" + GetTagOrResref(
+//					string text2 = blueprint.Name + "\n" + blueprint.ObjectType.ToString() + "\n(Resref '" +
+//								  blueprint.TemplateResRef.Value + "')";
+//					
+//					
+//			
+//			// if blueprint;
+//			return text + "\nresref: " + blueprint.TemplateResRef.Value;
+//			// else;
+//			//return text + "\ntag: " + blueprint.Tag;
+		}
 
 		
 		private static void BlueprintSentToIdeas(object sender, EventArgs e)
 		{
-			// TODO TODO TODO
-			
-			/* Still can't get property fields from blueprints, as they don't seem to contain
-			 * any actual information(!). Think this might be because they aren't resident
-			 * in memory, but OEIUnserialize doesn't seem to work. Posted on forum in hope
-			 * of response. Could simply look up the NWN2PropertyGrid that's always on the UI
-			 * since it has the info about the selected item - but that's a hack solution
-			 *  and not one that would extend to other bits of the software, where I need the
-			 * information without opening the blueprint in the property grid.
-			 */
-			
-			
 			if (blueprintView != null) {
-				if (blueprintView.Selection.Length > 0) {
-					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0];
-					
-					//Stream s = blueprint.Resource.GetStream(false);
-					//blueprint.OEIUnserialize(s);
-					//blueprint.BeginAppearanceUpdate(); TODO doesn't work
-//					INWN2Object obj = blueprint as INWN2Object;
-//					string text = String.Empty;
-//					if (obj != null) {
-//						if (obj is NWN2CreatureBlueprint) {// NWN2CreatureTemplate) {
-//							NWN2CreatureBlueprint creature = (NWN2CreatureBlueprint)obj;
-//							Stream stream = creature.Resource.GetStream(false);
-//							creature.OEIUnserialize(stream); // TODO try building filename
-//							
-//							//NWN2CreatureTemplate creature = (NWN2CreatureTemplate)obj;
-//							
-//							text = Conversation.GetStringFromOEIString(creature.FirstName) + " " +
-//								   Conversation.GetStringFromOEIString(creature.LastName) + 
-//								   "\n(Creature - resref '" + blueprint.TemplateResRef.Value + "')";
-//						}
-//						else {
-//							text = blueprint.Name + "\n(" + blueprint.ObjectType.ToString() + " - resref '" +
-//								blueprint.TemplateResRef.Value + "')";
-//						}
-//					}
-//					else {
-						string text = blueprint.Name + "\n(" + blueprint.ObjectType.ToString() + " - resref '" +
-								blueprint.TemplateResRef.Value + "')";
-//					}
-					Idea idea = new Idea(text);
+				if (blueprintView.Selection.Length > 0) {					
+					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off
+					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
+					string text = GetDescriptionForMagnet(blueprint);
+					Idea idea = new Idea(text,IdeaCategory.Resources);
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
 				}
 			}
@@ -706,8 +731,27 @@ namespace AdventureAuthor.Setup
 					Log.WriteAction(Log.Action.opened,"area",area.Name);
 					page.Text = "area";
 					
-					// now handled through area contents viewer events, which picks up selection events from the area viewer as well:
+					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
 					
+//					foreach (Control c in GetControls(areaViewer)) {
+//						Say.Debug(c.ToString());
+//						if (c.ContextMenu != null && c.ContextMenu.MenuItems.Count > 0) {
+//							Say.Debug("Context menu:");
+//							foreach (MenuItem menuItem in c.ContextMenu.MenuItems) {
+//								Say.Debug(" - " + menuItem.Text);
+//							}
+//						}
+//						if (c.ContextMenuStrip != null && c.ContextMenuStrip.Items.Count > 0) {
+//							Say.Debug("Context strip:");
+//							foreach (ToolStripItem menuItem in c.ContextMenuStrip.Items) {
+//								Say.Debug(" - " + menuItem.Text);
+//							}
+//						}
+//						Say.Debug("");
+//					}
+					
+					// now handled through area contents viewer events, which picks up selection events from the area viewer as well:
+										
 //					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
 //					areaViewer.ElectronPanel.SelectionChanged += delegate 
 //					{
@@ -771,8 +815,7 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
-		
-		
+				
 		/// <summary>
 		/// Clears the user interface after a module has been closed.
 		/// </summary>
@@ -781,7 +824,7 @@ namespace AdventureAuthor.Setup
 			tabbedGroupsCollection.RootSequence.Clear();
 			form.App.BlueprintView.Module = null; 	  // stop displaying custom blueprints specific to the old module
 			form.App.VerifyOutput.ClearVerifyOutput();  
-			// Close all Property Grids - not implemented.
+			// Close all Property Grids - not implemented. TODO iterate through DockingManager.Contents to find
 			form.App.CreateNewPropertyPanel(null, null, false, "Properties"); // create a fresh toolset Properties panel
 		}
 					
@@ -1029,7 +1072,6 @@ namespace AdventureAuthor.Setup
 		
 		/// <summary>
 		/// Bring up the Conversation Writer window.
-		/// <remarks>Note that a bug occurs where you can't enter text into LineControls if you use Show() rather than ShowDialog().</remarks>
 		/// </summary>
 		public static void LaunchConversationWriter() // Works
 		{
@@ -1044,7 +1086,8 @@ namespace AdventureAuthor.Setup
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
 					WriterWindow.Instance = new WriterWindow();
-					WriterWindow.Instance.ShowDialog();
+					ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
+					WriterWindow.Instance.Show();
 					
 //					win.Application.Current.Activated  += delegate { Say.Debug("Application.Current Activated. " + win.Application.Current.ToString()); };
 //					win.Application.Current.Deactivated += delegate { Say.Debug("Application.Current Deactivated. " + win.Application.Current.ToString()); };
@@ -1073,6 +1116,7 @@ namespace AdventureAuthor.Setup
 			try {
 				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
+					ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
 					VariablesWindow.Instance.ShowDialog();
 				}
 			}

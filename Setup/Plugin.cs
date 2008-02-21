@@ -113,9 +113,6 @@ namespace AdventureAuthor.Setup
 				                "not function correctly. \n\n" + e.ToString());
 				//CloseToolset();
 			}
-					
-			// Instantiate windows now to speed things up later on:
-			WriterWindow.Instance = new WriterWindow();
 							
 			// Set up the Adventure Author toolset:
 			Toolset.SetupUI();

@@ -47,7 +47,12 @@
 				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
 				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
 				<!--<MenuItem Header="Save As" IsEnabled="false" FontSize="14"/>-->
-				<MenuItem Header="Export" Click="OnClick_Export" FontSize="14"/>
+				<MenuItem Header="Export   " FontSize="14">
+					<MenuItem Header="Export to text file (Adventure Author style)" 
+					          Click="OnClick_ExportTextFile_PageFormat" FontSize="14"/>
+					<MenuItem Header="Export to text file (NWN1 style)"
+					          Click="OnClick_ExportTextFile_TreeFormat" FontSize="14"/>
+				</MenuItem>
 				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
 				<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>

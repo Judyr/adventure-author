@@ -3,7 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:AdventureAuthor.Ideas"
 	xmlns:utils="clr-namespace:AdventureAuthor.Utils"
-	MouseDown="MagnetControl_OnMouseDown">
+	MouseDown="MagnetControl_OnMouseDown"
+	AllowDrop="true">
+	<local:BoardObject.ContextMenu>
+		<ContextMenu>
+	    	<MenuItem Header="Bring to front" IsEnabled="false"/>
+	    	<MenuItem Header="Send to back" IsEnabled="false"/>
+			<Separator/>
+	    	<MenuItem Header="Remove" IsEnabled="false"/>
+		</ContextMenu>
+	</local:BoardObject.ContextMenu>
     <Grid>
         <Grid.RowDefinitions>
     		<RowDefinition/>
