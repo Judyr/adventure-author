@@ -74,6 +74,12 @@
 						<TextBox.ToolTip>The date the worksheet was filled out</TextBox.ToolTip>
 					</TextBox>
 		    	</StackPanel>
+	    		<Button Name="switchModeButton" HorizontalAlignment="Right" Margin="10"
+	    				Height="30" Width="170" FontSize="12" Click="OnClick_SwitchMode"
+	    				Visibility="Collapsed"/>
+	    		<Button Name="addSectionButton" HorizontalAlignment="Center" Margin="10"
+	    				Height="30" Width="120" FontSize="12" Content="Add section" Click="OnClick_AddSection"
+	    				Visibility="Collapsed"/>
 	    		<StackPanel Orientation="Vertical">
 	    			<StackPanel Name="SectionsPanel" Orientation="Vertical"/>
 	    			<Rectangle Name="BorderClosingRectangle" Fill="Black" Height="2" Visibility="Collapsed"/>

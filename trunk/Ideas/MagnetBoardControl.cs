@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml.Serialization;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using System.IO;
 
 namespace AdventureAuthor.Ideas
 {
@@ -31,20 +24,14 @@ namespace AdventureAuthor.Ideas
 		}     	
     	
     	private Random random = new Random();
+        
+    	
+        private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;     
+        private DragEventHandler magnetControl_DropHandler;
     	
     	#endregion
     	
     	#region Events
-    	
-    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
-		protected virtual void OnMagnetSelected(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = MagnetSelected;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
-		
     	
     	public event EventHandler<MagnetEventArgs> MagnetAdded;    	
 		protected virtual void OnMagnetAdded(MagnetEventArgs e)
@@ -56,22 +43,34 @@ namespace AdventureAuthor.Ideas
 		}
 		
     	
-    	public event EventHandler<MagnetEventArgs> MagnetRemoved;    	
-		protected virtual void OnMagnetRemoved(MagnetEventArgs e)
+    	public event EventHandler<MagnetRemovedEventArgs> MagnetRemoved;    	
+		protected virtual void OnMagnetRemoved(MagnetRemovedEventArgs e)
 		{
-			EventHandler<MagnetEventArgs> handler = MagnetRemoved;
+			EventHandler<MagnetRemovedEventArgs> handler = MagnetRemoved;
 			if (handler != null) {
 				handler(this, e);
 			}
 		}
 		
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
+		protected virtual void OnMagnetSelected(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> handler = MagnetSelected;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+				
     	#endregion
     	
     	#region Constructors
     	
     	public MagnetBoardControl()
     	{
-    		InitializeComponent();
+    		magnetControl_SelectedHandler = new EventHandler<MagnetEventArgs>(magnetControl_Selected); 
+    		magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
+    		InitializeComponent();    		
     	}
     	
     	
@@ -86,6 +85,7 @@ namespace AdventureAuthor.Ideas
         
         public void Open(MagnetBoardInfo boardInfo)
         {
+        	Clear();
     		foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
     			MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
     			AddMagnet(magnet,false);
@@ -119,7 +119,7 @@ namespace AdventureAuthor.Ideas
 	        	magnet.Angle = angle;
 			}        	
 	
-        	magnet.Selected += delegate(object sender, MagnetEventArgs e) { OnMagnetSelected(e); };
+        	AddHandlers(magnet);
         	
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
 			magnet.Show();
@@ -132,10 +132,33 @@ namespace AdventureAuthor.Ideas
         
         public void RemoveMagnet(MagnetControl magnet)
         {
-        	if (mainCanvas.Children.Contains(magnet)) {
-        		mainCanvas.Children.Remove(magnet);
+        	mainCanvas.Children.Remove(magnet);
+        	RemoveHandlers(magnet);	        	
+	        OnMagnetRemoved(new MagnetRemovedEventArgs(magnet,true));
+        }
+        
+        
+        private void AddHandlers(MagnetControl magnet)
+        {
+        	try {
+        		magnet.Selected += magnetControl_Selected;
+        		magnet.Drop += magnetControl_Drop;
         	}
-        	OnMagnetRemoved(new MagnetEventArgs(magnet));
+        	catch (Exception e) {
+        		Say.Error("Failed to add handlers to magnet.",e);
+        	}
+        }
+        
+        
+        private void RemoveHandlers(MagnetControl magnet)
+        {
+        	try {
+        		magnet.Selected -= magnetControl_Selected;
+        		magnet.Drop -= magnetControl_Drop;
+        	}
+        	catch (Exception e) {
+        		Say.Error("Failed to remove handlers from magnet.",e);
+        	}
         }
         
         
@@ -199,7 +222,7 @@ namespace AdventureAuthor.Ideas
     	{
     		return mainCanvas.Children.Contains(magnet);
     	}
-        
+            	
         
     	public override ISerializableData GetSerializable()
     	{
@@ -208,8 +231,21 @@ namespace AdventureAuthor.Ideas
         
         #endregion
         
-        #region Event handlers
+        #region Event handlers 
+    		        
+    	private void magnetControl_Selected(object sender, MagnetEventArgs e)
+    	{
+    		OnMagnetSelected(e);
+    	} 
+    		
         
+        /// <summary>
+        /// Treat drop events on magnets as you would drop events on the list itself.
+        /// </summary>
+        private void magnetControl_Drop(object sender, DragEventArgs e)
+        {
+        	OnDrop(e);
+        }
         
         #endregion
     }

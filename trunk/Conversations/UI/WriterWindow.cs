@@ -42,6 +42,7 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.IO;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using System.Windows.Input;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -670,9 +671,21 @@ namespace AdventureAuthor.Conversations.UI
 				Conversation.CurrentConversation.SaveToOriginal();
 			}			
 		}
+						
+		
+		private void OnClick_ExportTextFile_PageFormat(object sender, EventArgs e)
+		{
+			ExportDialog(ExportFormat.PageFormat);
+		}
+				
+		
+		private void OnClick_ExportTextFile_TreeFormat(object sender, EventArgs e)
+		{
+			ExportDialog(ExportFormat.TreeFormat);
+		}
 		
 		
-		private void OnClick_Export(object sender, EventArgs ea)
+		private void ExportDialog(ExportFormat format)
 		{
 			if (Conversation.CurrentConversation != null) {	
 				if (Conversation.CurrentConversation.IsDirty) {
@@ -697,8 +710,8 @@ namespace AdventureAuthor.Conversations.UI
 	  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 	  			if (ok) {	  				
 	  				string filename = saveFileDialog.FileName;
-	  				try {
-	  					Conversation.CurrentConversation.ExportToTextFile(filename);
+	  				try {	  					
+	  					Conversation.CurrentConversation.ExportToTextFile(filename,format);
 	  					Process.Start(filename);
 	  				}
 	  				catch (IOException e) {

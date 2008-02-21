@@ -21,13 +21,13 @@
 		</StackPanel>
 		
 		<TextBlock Name="replyAuthorTextBlock" Grid.Row="0" Grid.Column="1" 
-		   	       FontSize="20" FontFamily="Comic Sans MS"
+		   	       FontSize="18" FontFamily="Comic Sans MS"
 		       	   TextWrapping="Wrap" Margin="10" TextAlignment="Right"
 				   MinWidth="200" MaxWidth="200" VerticalAlignment="Top"/>	
 
 		<TextBlock Name="replyBodyTextBlock" Grid.Row="0" Grid.Column="2" 
-		           FontSize="16" FontFamily="Comic Sans MS" 
-		           TextWrapping="Wrap" Margin="10" Padding="4"
+		           FontSize="18" FontFamily="Comic Sans MS" 
+		           TextWrapping="Wrap" Margin="10" 
 		           MaxWidth="600" TextAlignment="Left" HorizontalAlignment="Left"/>
 	
 	</Grid>	

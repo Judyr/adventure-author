@@ -18,6 +18,6 @@ namespace AdventureAuthor.Ideas
 		Characters,
 		Setting,
 		Other, // user stated that this idea did not relate to any of the given categories
-		Unassigned // user did not assign this idea a category on creation
+		Resources // user has submitted an object or a blueprint as an 'idea' to be used
 	}
 }

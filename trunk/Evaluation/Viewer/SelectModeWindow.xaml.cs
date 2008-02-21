@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
+using System.Windows.Forms.Integration;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -39,7 +40,8 @@ namespace AdventureAuthor.Evaluation.Viewer
         private void Launch(Mode evaluationMode)
         {
         	WorksheetViewer viewer = new WorksheetViewer(evaluationMode);
-        	viewer.ShowDialog();
+        	ElementHost.EnableModelessKeyboardInterop(viewer);
+        	viewer.Show();
         	Close();
         }
     }

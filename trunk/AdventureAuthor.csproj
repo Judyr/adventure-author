@@ -160,6 +160,7 @@
     </Compile>
     <Compile Include="Conversations\Conversation.cs" />
     <Compile Include="Conversations\ConversationChangedEventArgs.cs" />
+    <Compile Include="Conversations\ExportFormat.cs" />
     <Compile Include="Conversations\Page.cs" />
     <Compile Include="Conversations\Speaker.cs" />
     <Compile Include="Conversations\SpeakersChangedEventArgs.cs" />
@@ -299,9 +300,11 @@
     <Compile Include="Ideas\IdeaCategory.cs" />
     <Compile Include="Ideas\IdeaEventArgs.cs" />
     <Compile Include="Ideas\ISerializableData.cs" />
+    <Compile Include="Ideas\MagnetControlDataObject.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
+    <Compile Include="Ideas\MagnetRemovedEventArgs.cs" />
+    <Compile Include="Ideas\SortBy.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />
-    <Compile Include="Ideas\LightweightIdeaControl.xaml.cs" />
     <Compile Include="Ideas\MagnetBoardInfo.cs" />
     <Compile Include="Ideas\MagnetControl.cs" />
     <Compile Include="Ideas\MagnetBoardControl.cs" />
@@ -411,6 +414,7 @@
       <DependentUpon>TeacherPasswordDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utils\TextBoxItem.cs" />
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
@@ -468,7 +472,6 @@
     <Page Include="Evaluation\Viewer\RatingControl.xaml" />
     <Page Include="Evaluation\Viewer\SelectModeWindow.xaml" />
     <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
-    <Page Include="Ideas\LightweightIdeaControl.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetBoardViewer.xaml" />

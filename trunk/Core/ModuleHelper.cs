@@ -109,6 +109,12 @@ namespace AdventureAuthor.Core
 				return Path.Combine(AdventureAuthorDir,"images");
 			}
 		}	
+				
+		public static string SoundsDir {			
+			get {
+				return Path.Combine(AdventureAuthorDir,"sounds");
+			}
+		}	
 		
 		public static string LogDir {			
 			get {
