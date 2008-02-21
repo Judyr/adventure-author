@@ -311,28 +311,6 @@
     <Compile Include="Ideas\MagnetBoardViewer.xaml.cs" />
     <Compile Include="Ideas\MagnetInfo.cs" />
     <Compile Include="Ideas\MagnetList.xaml.cs" />
-    <Compile Include="Notebook\MindMapForm.cs" />
-    <Compile Include="Notebook\MindMapForm.Designer.cs">
-      <DependentUpon>MindMapForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notebook\MyIdeas\IdeaFragment.cs" />
-    <Compile Include="Notebook\MyIdeas\LightweightIdeaControl.xaml.cs">
-      <DependentUpon>LightweightIdeaControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Notebook\Worksheets\Feedback.cs" />
-    <Compile Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml.cs">
-      <DependentUpon>FeedbackWorksheet.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Notebook\Worksheets\UI\PointControl.xaml.cs">
-      <DependentUpon>PointControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Notebook\Worksheets\UI\StarRating.xaml.cs">
-      <DependentUpon>StarRating.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Scripts\Actions.cs" />
     <Compile Include="Scripts\Conditions.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
@@ -438,9 +416,6 @@
     <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notebook\MindMapForm.resx">
-      <DependentUpon>MindMapForm.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="EULA.txt" />
     <None Include="gpl.txt" />
   </ItemGroup>
@@ -476,10 +451,6 @@
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetBoardViewer.xaml" />
     <Page Include="Ideas\MagnetList.xaml" />
-    <Page Include="Notebook\MyIdeas\LightweightIdeaControl.xaml" />
-    <Page Include="Notebook\Worksheets\UI\FeedbackWorksheet.xaml" />
-    <Page Include="Notebook\Worksheets\UI\PointControl.xaml" />
-    <Page Include="Notebook\Worksheets\UI\StarRating.xaml" />
     <Page Include="Scripts\UI\BooleanQuestionPanel.xaml" />
     <Page Include="Scripts\UI\EnumQuestionPanel.xaml" />
     <Page Include="Scripts\UI\FloatQuestionPanel.xaml" />
@@ -513,15 +484,9 @@
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
     <Folder Include="Ideas" />
-    <Folder Include="Notebook\Worksheets" />
-    <Folder Include="Notebook\Worksheets\UI" />
     <Folder Include="Setup\UI" />
     <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
-    <Folder Include="Notebook" />
-    <Folder Include="Notebook\MyIdeas" />
-    <Folder Include="Notebook\MyTasks" />
-    <Folder Include="Notebook\MyTasks\UI" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
     <Folder Include="Utils" />
