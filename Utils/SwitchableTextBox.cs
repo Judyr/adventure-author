@@ -55,6 +55,17 @@ namespace AdventureAuthor.Utils
 		{
 			IsEditable = isEditable;
 			MouseEnter += new MouseEventHandler(SwitchableTextBox_MouseEnter);
+			
+			
+			//this.SelectionChanged += new RoutedEventHandler(TextSelectionChanged);
+		}
+
+		
+		private void TextSelectionChanged(object sender, RoutedEventArgs e)
+		{
+			//if (!IsEditable && SelectionLength > 0) {				
+			//	SelectionLength = 0;
+			//}
 		}
 		
 

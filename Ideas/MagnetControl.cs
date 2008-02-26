@@ -33,7 +33,6 @@ namespace AdventureAuthor.Ideas
     	
     	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
     	protected static readonly BevelBitmapEffect bevel = new BevelBitmapEffect();
-    	protected static readonly DropShadowBitmapEffect shadow = new DropShadowBitmapEffect();
     	
     	#endregion    	
     	
@@ -115,6 +114,26 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+		
+		
+		internal event EventHandler<MagnetEventArgs> RequestSendToBack;		
+		protected virtual void OnRequestSendToBack(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> hander = RequestSendToBack;
+			if (hander != null) {
+				hander(this, e);
+			}
+		}
+		
+		
+		internal event EventHandler<MagnetEventArgs> RequestBringToFront;		
+		protected virtual void OnRequestBringToFront(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> hander = RequestBringToFront;
+			if (hander != null) {
+				hander(this, e);
+			}
+		}
     	
     	#endregion
     	
@@ -137,73 +156,13 @@ namespace AdventureAuthor.Ideas
             this.BitmapEffect = fxGroup;
     		
             MaxWidth = MAGNET_MAX_WIDTH;
-            IdeaTextBox.IsEditable = false;
-            RenderTransform = new RotateTransform();
-
+            RenderTransform = new RotateTransform(0,ActualWidth/2,ActualHeight/2);
+			SizeChanged += new SizeChangedEventHandler(UpdateCentrePointOfRotation);
+				
             
-            // Set up drag-drop:
-            this.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(MagnetBoardViewer_PreviewMouseLeftButtonDown);
-            this.PreviewMouseMove += new MouseEventHandler(MagnetBoardViewer_PreviewMouseMove);
-            
-            
-    	}
-    	
-    	        
-        Point _startPoint;
-        bool IsDragging = false;
-        
-        
-        private void MagnetBoardViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {        	
-        	_startPoint = e.GetPosition(null);
-        }
-
-        
-        private void MagnetBoardViewer_PreviewMouseMove(object sender, MouseEventArgs e)
-        {        	
-	            if (e.LeftButton == MouseButtonState.Pressed && !IsDragging)
-	            {
-	                Point position = e.GetPosition(null);
-	
-	                if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
-	                    Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
-	                {
-	                	StartDrag(e); 
-	                }
-	            }  
-        	
-        }
-        
-        
-        private void StartDrag(MouseEventArgs e)
-        {
-        	IsDragging = true;
-        	Hide();       
-        	
-        	MagnetControlDataObject data = new MagnetControlDataObject();
-        	data.Magnet = this; 	
-        	
-        	// Temporarily undo the rotation on this magnet, in order to correctly measure the
-        	// offset between the magnet's location (at its top-left corner) and the mouse click position:
-        	if (Angle == 0) {	        	
-	        	data.Offset = e.GetPosition(this);
-        	}
-        	else {
-	        	double origAngle = Angle;
-	        	Angle = 0;        	
-	        	data.Offset = e.GetPosition(this);
-	        	Angle = origAngle;
-        	}
-        	
-        	DataObject dataObject = new DataObject(typeof(MagnetControlDataObject),data);
-        	DragDropEffects effects = DragDrop.DoDragDrop(this,dataObject,DragDropEffects.Move);
-        	
-        	Show();
-        	IsDragging = false;
-        }
-    	
-    	
-    	
+            this.GotFocus += delegate { Log.WriteMessage(this.ToString() + " got focus"); };
+            this.LostFocus += delegate { Log.WriteMessage(this.ToString() + " lost focus"); };
+    	} 
     	
     	
     	public MagnetControl(MagnetInfo magnetInfo) : this()
@@ -309,15 +268,13 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	internal void LiftedFX()
+    	internal void Lifted()
     	{
-    		fxGroup.Children.Add(shadow);
     	}
     	
     	
-    	internal void DroppedFX()
+    	internal void Dropped()
     	{
-    		fxGroup.Children.Remove(shadow);
     	}
 		
 		
@@ -347,7 +304,31 @@ namespace AdventureAuthor.Ideas
         {
         	OnSelected(new MagnetEventArgs(this));
         }
-        
+
+    	
+        /// <summary>
+        /// When the size changes, we need to update the RotateTransform's centre of rotation,
+        /// otherwise it will no longer rotate evenly around the centre - this will screw up
+        /// working out where to drop magnets (since you need to account for rotation.)
+        /// </summary>
+    	private void UpdateCentrePointOfRotation(object sender, SizeChangedEventArgs e)
+    	{
+			RotateTransform rotate = (RotateTransform)RenderTransform;
+			RenderTransform = new RotateTransform(rotate.Angle,e.NewSize.Width/2,e.NewSize.Height/2);
+    	}
+    	
+    	
+    	private void OnClick_BringToFront(object sender, EventArgs e)
+    	{
+    		OnRequestBringToFront(new MagnetEventArgs(this));
+    	}
+    	
+    	
+    	private void OnClick_SendToBack(object sender, EventArgs e)
+    	{
+    		OnRequestSendToBack(new MagnetEventArgs(this));
+    	}
+    	        
         #endregion
    
 

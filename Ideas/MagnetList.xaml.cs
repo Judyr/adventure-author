@@ -170,6 +170,8 @@ namespace AdventureAuthor.Ideas
         	
         	magnet.Angle = 0;
         	magnet.Margin = new Thickness(5);
+        	magnet.bringToFrontMenuItem.IsEnabled = false;
+        	magnet.sendToBackMenuItem.IsEnabled = false;
         	
         	magnetsPanel.Children.Add(magnet);
         	

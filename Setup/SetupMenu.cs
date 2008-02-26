@@ -177,6 +177,8 @@ namespace AdventureAuthor.Setup
 			TextBoxItem ideaEntryBox = new TextBoxItem();			
 			ideaEntryBox.ToolTipText = "Type in your idea here";
 			ideaEntryBox.MinimumControlWidth = 150;
+			System.Windows.Forms.TextBox textBox = (System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl;
+			textBox.MaxLength = Idea.MAX_IDEA_LENGTH;
 			
 			ComboBoxItem ideaCategoryBox = new ComboBoxItem();
 			ideaCategoryBox.ToolTipText = "Select an idea category";

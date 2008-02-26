@@ -28,6 +28,8 @@ namespace AdventureAuthor.Ideas
     	
         private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;     
         private DragEventHandler magnetControl_DropHandler;
+        private EventHandler<MagnetEventArgs> magnetControl_SendToBackHandler;
+        private EventHandler<MagnetEventArgs> magnetControl_BringToFrontHandler;
     	
     	#endregion
     	
@@ -70,6 +72,8 @@ namespace AdventureAuthor.Ideas
     	{
     		magnetControl_SelectedHandler = new EventHandler<MagnetEventArgs>(magnetControl_Selected); 
     		magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
+    		magnetControl_BringToFrontHandler = new EventHandler<MagnetEventArgs>(magnetControl_BringToFront);
+    		magnetControl_SendToBackHandler = new EventHandler<MagnetEventArgs>(magnetControl_SendToBack);
     		InitializeComponent();    		
     	}
     	
@@ -122,10 +126,13 @@ namespace AdventureAuthor.Ideas
         	AddHandlers(magnet);
         	
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
+        	magnet.bringToFrontMenuItem.IsEnabled = true;
+        	magnet.sendToBackMenuItem.IsEnabled = true;
 			magnet.Show();
-			BringInsideBoard(magnet);
+			BringInsideBoard(magnet);			
 			
 			mainCanvas.Children.Add(magnet);
+			BringToFront(magnet);
 			OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
@@ -143,6 +150,8 @@ namespace AdventureAuthor.Ideas
         	try {
         		magnet.Selected += magnetControl_Selected;
         		magnet.Drop += magnetControl_Drop;
+        		magnet.RequestBringToFront += magnetControl_BringToFrontHandler;
+        		magnet.RequestSendToBack += magnetControl_SendToBackHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -155,6 +164,8 @@ namespace AdventureAuthor.Ideas
         	try {
         		magnet.Selected -= magnetControl_Selected;
         		magnet.Drop -= magnetControl_Drop;
+        		magnet.RequestBringToFront -= magnetControl_BringToFrontHandler;
+        		magnet.RequestSendToBack -= magnetControl_SendToBackHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -164,10 +175,11 @@ namespace AdventureAuthor.Ideas
         
         private double GetRandomAngle()
         {
-        	double angle = (30 * random.NextDouble());    
+        	double angle = (30 * random.NextDouble());
         	if (DateTime.Now.Millisecond % 2 == 0) {
         		angle = 360 - angle; // randomly angle to the left instead of the right
         	}
+        	angle -= (angle % 2); // ensure angle is divisible by 2
         	return angle;
         }
         
@@ -221,14 +233,100 @@ namespace AdventureAuthor.Ideas
     	public bool HasMagnet(MagnetControl magnet)
     	{
     		return mainCanvas.Children.Contains(magnet);
+    	}	
+    	
+    	
+    	public void BringToFront(MagnetControl magnet)
+    	{
+    		if (HasMagnet(magnet)) {
+    			UpdateZOrder(magnet,true);
+    		}
     	}
-            	
+    	
+    	
+    	public void SendToBack(MagnetControl magnet)
+    	{
+    		if (HasMagnet(magnet)) {
+    			UpdateZOrder(magnet,false);
+    		}
+    	}
+    	
+    	
+    	/// <summary>
+		/// Helper method used by the BringToFront and SendToBack methods.
+		/// </summary>
+		/// <param name="element">
+		/// The element to bring to the front or send to the back.
+		/// </param>
+		/// <param name="bringToFront">
+		/// Pass true if calling from BringToFront, else false.
+		/// </param>
+		/// <remarks>Josh Smith code from 'Dragging Elements in a Canvas' on CodeProject</remarks>
+		private void UpdateZOrder( UIElement element, bool bringToFront )
+		{
+			#region Safety Check
+
+			if( element == null )
+				throw new ArgumentNullException( "element" );
+
+			if( !mainCanvas.Children.Contains( element ) )
+				throw new ArgumentException( "Must be a child element of the Canvas.", "element" );
+
+			#endregion // Safety Check
+
+			#region Calculate Z-Indici And Offset
+
+			// Determine the Z-Index for the target UIElement.
+			int elementNewZIndex = -1;
+			if( bringToFront )
+			{
+				foreach( UIElement elem in mainCanvas.Children )
+					if( elem.Visibility != Visibility.Collapsed )
+						++elementNewZIndex;
+			}
+			else
+			{
+				elementNewZIndex = 0;
+			}
+
+			// Determine if the other UIElements' Z-Index 
+			// should be raised or lowered by one. 
+			int offset = (elementNewZIndex == 0) ? +1 : -1;
+
+			int elementCurrentZIndex = Canvas.GetZIndex( element );
+
+			#endregion // Calculate Z-Indici And Offset
+
+			#region Update Z-Indici
+
+			// Update the Z-Index of every UIElement in the Canvas.
+			foreach( UIElement childElement in mainCanvas.Children )
+			{
+				if( childElement == element )
+					Canvas.SetZIndex( element, elementNewZIndex );
+				else
+				{
+					int zIndex = Canvas.GetZIndex( childElement );
+
+					// Only modify the z-index of an element if it is  
+					// in between the target element's old and new z-index.
+					if( bringToFront && elementCurrentZIndex < zIndex ||
+						!bringToFront && zIndex < elementCurrentZIndex )
+					{
+						Canvas.SetZIndex( childElement, zIndex + offset );
+					}
+				}
+			}
+
+			#endregion // Update Z-Indici
+		}                   	
         
+		
     	public override ISerializableData GetSerializable()
     	{
     		return new MagnetBoardInfo(this);
-    	}
-        
+    	}	
+    	
         #endregion
         
         #region Event handlers 
@@ -244,7 +342,20 @@ namespace AdventureAuthor.Ideas
         /// </summary>
         private void magnetControl_Drop(object sender, DragEventArgs e)
         {
+        	e.Handled = false;
         	OnDrop(e);
+        }          
+        
+        
+        private void magnetControl_BringToFront(object sender, MagnetEventArgs e)
+        {
+        	BringToFront(e.Magnet);
+        }       
+        
+        
+        private void magnetControl_SendToBack(object sender, MagnetEventArgs e)
+        {
+        	SendToBack(e.Magnet);
         }
         
         #endregion
