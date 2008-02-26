@@ -296,6 +296,7 @@
     <Compile Include="Evaluation\OptionalWorksheetPart.cs" />
     <Compile Include="Ideas\Board.cs" />
     <Compile Include="Ideas\BoardObject.cs" />
+    <Compile Include="Ideas\MagnetDragAdorner.cs" />
     <Compile Include="Ideas\Idea.cs" />
     <Compile Include="Ideas\IdeaCategory.cs" />
     <Compile Include="Ideas\IdeaEventArgs.cs" />
@@ -303,6 +304,8 @@
     <Compile Include="Ideas\MagnetControlDataObject.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
     <Compile Include="Ideas\MagnetRemovedEventArgs.cs" />
+    <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
+    <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
     <Compile Include="Ideas\SortBy.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />
     <Compile Include="Ideas\MagnetBoardInfo.cs" />

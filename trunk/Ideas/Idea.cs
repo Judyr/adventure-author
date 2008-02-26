@@ -17,6 +17,12 @@ namespace AdventureAuthor.Ideas
 	[Serializable]
 	public class Idea : IComparable
 	{
+		#region Constants
+		
+		public const int MAX_IDEA_LENGTH = 200;
+		
+		#endregion
+		
 		#region Fields
 		
 		[XmlElement]

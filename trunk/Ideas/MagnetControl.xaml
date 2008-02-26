@@ -4,11 +4,13 @@
 	xmlns:local="clr-namespace:AdventureAuthor.Ideas"
 	xmlns:utils="clr-namespace:AdventureAuthor.Utils"
 	MouseDown="MagnetControl_OnMouseDown"
+	Focusable="true"
+	Canvas.ZIndex="2"
 	AllowDrop="true">
 	<local:BoardObject.ContextMenu>
 		<ContextMenu>
-	    	<MenuItem Header="Bring to front" IsEnabled="false"/>
-	    	<MenuItem Header="Send to back" IsEnabled="false"/>
+	    	<MenuItem Name="bringToFrontMenuItem" Header="Bring to front" Click="OnClick_BringToFront"/>
+	    	<MenuItem Name="sendToBackMenuItem" Header="Send to back" Click="OnClick_SendToBack"/>
 			<Separator/>
 	    	<MenuItem Header="Remove" IsEnabled="false"/>
 		</ContextMenu>
@@ -21,8 +23,8 @@
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
     	<Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
-	    	<utils:SwitchableTextBox x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
-					    	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" 
+	    	<TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
+					    	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
 					    	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
     	</Border>
     </Grid>

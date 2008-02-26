@@ -3,10 +3,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.ZIndex="1"
 	AllowDrop="true">
 	<Border BorderThickness="1,0,0,0" BorderBrush="Gray" Background="WhiteSmoke">
-		<ScrollViewer Name="scroller" 
-		              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" 
-		              Focusable="false">
-	    	<StackPanel Name="magnetsPanel" Orientation="Vertical"/>
-	    </ScrollViewer>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="117"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Name="showHideCategoriesPanel" Grid.Row="0" Grid.Column="0" Orientation="Vertical"
+						Background="LightGray" Height="120"/>
+			<ScrollViewer Name="scroller" Grid.Row="1" Grid.Column="0"
+			              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" 
+			              Focusable="false">
+		    	<StackPanel Name="magnetsPanel" Orientation="Vertical" Background="WhiteSmoke"/>
+		    </ScrollViewer>
+		</Grid>
 	</Border>	    
 </UserControl>

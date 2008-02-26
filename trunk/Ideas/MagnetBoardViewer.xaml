@@ -4,6 +4,7 @@
     xmlns:local="clr-namespace:AdventureAuthor.Ideas"
     Title="Magnets"
 	KeyDown="KeyPressed"
+	Background="Transparent"
     >
     <Grid>
         <Grid.RowDefinitions>
@@ -43,14 +44,17 @@
 		<local:MagnetList x:Name="magnetList" Grid.Row="2" Grid.Column="1"/>
 		<local:MagnetBoardControl x:Name="magneticSurface" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"/>
 		<StackPanel Name="ControlPanel" Grid.Row="1" Grid.Column="1"
-    				Margin="10" Height="220" Canvas.ZIndex="1">
+    				Margin="10" Canvas.ZIndex="1">
 			<TextBox Name="IdeaEntryBox" Height="30" Width="180" Margin="5"/>
 			<ComboBox Name="IdeaCategoryComboBox" Height="30" Width="180" Margin="5"/>
     		<Button Content="Add magnet" Click="OnClick_AddMagnet" Margin="5"/>
     		<Button Content="Scatter" Click="OnClick_Scatter" Margin="5"/>
     		<Button Content="Sort" Click="OnClick_Sort" Margin="5"/>
     		<Button Content="Clear board" Click="OnClick_ClearBoard" Margin="5"/>
-    		<Button Content="Set editable/uneditable" Click="OnClick_EditSelected" Margin="5"/>
+			<StackPanel Orientation="Horizontal">
+	    		<Button Content="Rotate left" Click="OnClick_RotateLeft" Margin="5"/>
+	    		<Button Content="Rotate right" Click="OnClick_RotateRight" Margin="5"/>
+			</StackPanel>
     	</StackPanel>
     </Grid>
 </Window>
