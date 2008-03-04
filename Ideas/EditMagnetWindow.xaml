@@ -8,18 +8,25 @@
     		<RowDefinition Height="45"/>
     		<RowDefinition Height="180"/>
     		<RowDefinition Height="45"/>
+    		<RowDefinition Height="45"/>
+    		<RowDefinition Height="45"/>
     	</Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
     		<ColumnDefinition/>
     	</Grid.ColumnDefinitions>
 		<TextBlock Grid.Row="0" Grid.Column="0"
-    			   FontFamily="Comic Sans MS" FontSize="14" Text="My comment is..." Margin="8"/>
+    			   FontFamily="Comic Sans MS" FontSize="14" Text="My idea is..." Margin="8"/>
 		<TextBox Name="ideaTextBox" Grid.Row="1" Grid.Column="0"
 				 FontFamily="Comic Sans MS" FontSize="14" Margin="8"
 		         TextWrapping="Wrap"
     			 MinWidth="340" MaxWidth="340" MinHeight="180" MaxHeight="180" 
 		         HorizontalAlignment="Center" MaxLength="320"/>
-		<StackPanel Grid.Row="2" Grid.Column="0"
+		<TextBlock Grid.Row="2" Grid.Column="0"
+    			   FontFamily="Comic Sans MS" FontSize="14" Text="My idea is about..." Margin="8"/>
+		<ComboBox Name="ideaCategoryComboBox" Grid.Row="3" Grid.Column="0"
+				 FontFamily="Comic Sans MS" FontSize="14" Margin="8"
+    			 MinWidth="340" MaxWidth="340"/>
+		<StackPanel Grid.Row="4" Grid.Column="0"
 					FlowDirection="RightToLeft" Orientation="Horizontal">
     		<Button FontSize="14" Content="OK" Click="OnClick_OK" Margin="4" Height="30" Width="80"
 					VerticalAlignment="Center"/>

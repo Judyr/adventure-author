@@ -39,6 +39,9 @@ namespace AdventureAuthor.Ideas
     	
     	#region Fields
     	
+    	/// <summary>
+    	/// The X co-ordinate of this magnet.
+    	/// </summary>
 		public override double X {
     		get {
     			return Canvas.GetLeft(this);    				
@@ -49,6 +52,9 @@ namespace AdventureAuthor.Ideas
 		}
 		
     	
+    	/// <summary>
+    	/// The Y co-ordinate of this magnet.
+    	/// </summary>
 		public override double Y {
     		get {
     			return Canvas.GetTop(this);    				
@@ -59,18 +65,83 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
+    	/// <summary>
+    	/// The idea that this magnet represents.
+    	/// </summary>
+    	/// <remarks>Do not use this reference to update fields on the idea - use
+    	/// the Text, Category, Author properties on the magnet instead</remarks>
 		protected Idea idea;		
 		public Idea Idea {
 			get { return idea; }
 			set {
 				idea = value;
-				IdeaTextBox.Text = idea.Text;
-				Background = GetColourForCategory(idea.Category);
+				Author = value.Author;
+				Text = value.Text;
+				Category = value.Category;
+				Created = value.Created;
 			}
 		}
 		
 		
-    	
+		public string Author {
+			get {
+				return idea.Author;
+			}
+			set {
+				if (idea == null) {
+					throw new InvalidOperationException("This magnet has no idea.");
+				}
+				idea.Author = value;
+			}
+		}
+		
+			
+		public string Text {
+			get {
+				return idea.Text;
+			}
+			set { 
+				if (idea == null) {
+					throw new InvalidOperationException("This magnet has no idea.");
+				}
+				idea.Text = value;
+				IdeaTextBox.Text = idea.Text;
+			}
+		}
+		
+			
+		public IdeaCategory Category {
+			get {
+				return idea.Category;
+			}
+			set { 
+				if (idea == null) {
+					throw new InvalidOperationException("This magnet has no idea.");
+				}
+				idea.Category = value;
+				Background = GetColourForCategory(idea.Category);
+			}
+		}
+		
+			
+		public DateTime Created {
+			get {
+				return idea.Created;
+			}
+			set { 
+				if (idea == null) {
+					throw new InvalidOperationException("This magnet has no idea.");
+				}
+				idea.Created = value;
+			}
+		}
+		
+		
+    	/// <summary>
+    	/// The collection of bitmap effects to apply to the magnet. This usually includes
+    	/// bevelling (always on, to give the magnet a 3D appearance) and a glow effect
+    	/// when the magnet is selected.
+    	/// </summary>
     	protected BitmapEffectGroup fxGroup = new BitmapEffectGroup();
 		
 		
@@ -94,6 +165,9 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
+		/// <summary>
+		/// The angle of rotation of the magnet from 0.
+		/// </summary>
 		public double Angle {
     		get {     			
     			return ((RotateTransform)RenderTransform).Angle;
@@ -104,6 +178,9 @@ namespace AdventureAuthor.Ideas
 		}    	
 		
 		
+		/// <summary>
+		/// A random number generator, to help with generating random locations/angles for magnets.
+		/// </summary>
 		private static Random random = new Random();
     	
     	#endregion    	
@@ -118,7 +195,17 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
-		
+    	
+    	
+    	public EventHandler<MagnetEventArgs> Edited;    	
+    	protected virtual void OnEdited(MagnetEventArgs e)
+    	{
+    		EventHandler<MagnetEventArgs> handler = Edited;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    			
 		
 		internal event EventHandler<MagnetEventArgs> RequestSendToBack;		
 		protected virtual void OnRequestSendToBack(MagnetEventArgs e)
@@ -134,6 +221,16 @@ namespace AdventureAuthor.Ideas
 		protected virtual void OnRequestBringToFront(MagnetEventArgs e)
 		{
 			EventHandler<MagnetEventArgs> hander = RequestBringToFront;
+			if (hander != null) {
+				hander(this, e);
+			}
+		}
+		
+		
+		internal event EventHandler<MagnetEventArgs> RequestRemove;		
+		protected virtual void OnRequestRemove(MagnetEventArgs e)
+		{
+			EventHandler<MagnetEventArgs> hander = RequestRemove;
 			if (hander != null) {
 				hander(this, e);
 			}
@@ -275,22 +372,30 @@ namespace AdventureAuthor.Ideas
     	{
     		fxGroup.Children.Remove(glow);
     	}
-    	
-    	
-    	internal void Lifted()
-    	{
-    	}
-    	
-    	
-    	internal void Dropped()
-    	{
-    	}
 		
 		
 		public void Move(double right, double down)
 		{
 			Canvas.SetTop(this,Canvas.GetTop(this) + down);
 			Canvas.SetLeft(this,Canvas.GetLeft(this) + right);
+		}
+		
+		
+		public void Rotate(double angle)
+		{
+			Angle += angle;
+		}
+		
+		
+		public void RotateLeft()
+		{
+			Rotate(-DEGREES_TO_ROTATE);
+		}
+		
+		
+		public void RotateRight()
+		{			
+			Rotate(DEGREES_TO_ROTATE);
 		}
 		
 		
@@ -313,6 +418,14 @@ namespace AdventureAuthor.Ideas
         	angle -= (angle % DEGREES_TO_ROTATE); // ensure angle is divisible by DEGREES_TO_ROTATE (2)
         	Angle = angle;
         }
+        
+        
+		public object Clone()
+		{
+			MagnetInfo info = (MagnetInfo)GetSerializable();
+			info.Idea = (Idea)info.Idea.Clone();
+			return new MagnetControl(info);
+		}
     	
 		
 		public int CompareTo(object obj)
@@ -364,7 +477,14 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_Edit(object sender, EventArgs e)
     	{
     		EditMagnetWindow window = new EditMagnetWindow(this);
+    		window.MagnetEdited += delegate(object s, MagnetEventArgs ea) { OnEdited(ea); };
     		window.ShowDialog();
+    	}
+    	
+    	
+    	private void OnClick_RemoveDelete(object sender, EventArgs e)
+    	{
+    		OnRequestRemove(new MagnetEventArgs(this));
     	}
     	        
         #endregion
@@ -403,10 +523,5 @@ namespace AdventureAuthor.Ideas
 		#endregion
     	
 		
-		public object Clone()
-		{
-			MagnetInfo info = (MagnetInfo)GetSerializable();
-			return new MagnetControl(info);
-		}
     }
 }

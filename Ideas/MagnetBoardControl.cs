@@ -44,6 +44,7 @@ namespace AdventureAuthor.Ideas
         private DragEventHandler magnetControl_DropHandler;
         private EventHandler<MagnetEventArgs> magnetControl_SendToBackHandler;
         private EventHandler<MagnetEventArgs> magnetControl_BringToFrontHandler;
+        private EventHandler<MagnetEventArgs> magnetBoard_ChangedHandler;
     	
     	#endregion
     	
@@ -97,6 +98,16 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+    	
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetTransferredOut;    	
+    	protected virtual void OnMagnetTransferredOut(MagnetEventArgs e)
+    	{
+    		EventHandler<MagnetEventArgs> handler = MagnetTransferredOut;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
 		
     	
     	public event EventHandler Opened;    	
@@ -138,9 +149,9 @@ namespace AdventureAuthor.Ideas
     		magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
     		magnetControl_BringToFrontHandler = new EventHandler<MagnetEventArgs>(magnetControl_BringToFront);
     		magnetControl_SendToBackHandler = new EventHandler<MagnetEventArgs>(magnetControl_SendToBack);
+    		magnetBoard_ChangedHandler = new EventHandler<MagnetEventArgs>(magnetBoard_Changed);
     		Drop += new DragEventHandler(magnetBoard_Drop);
     		
-    		EventHandler<MagnetEventArgs> magnetBoard_ChangedHandler = new EventHandler<MagnetEventArgs>(magnetBoard_Changed);
     		MagnetAdded += magnetBoard_ChangedHandler;
     		MagnetDeleted += magnetBoard_ChangedHandler;
     		MagnetEdited += magnetBoard_ChangedHandler;
@@ -219,6 +230,7 @@ namespace AdventureAuthor.Ideas
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
         	magnet.bringToFrontMenuItem.IsEnabled = true;
         	magnet.sendToBackMenuItem.IsEnabled = true;
+        	magnet.removeDeleteMagnetMenuItem.Header = "Remove"; // less permanent than deleting from the magnet list
 			magnet.Show();
 			BringInsideBoard(magnet);			
 			
@@ -243,6 +255,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Drop += magnetControl_Drop;
         		magnet.RequestBringToFront += magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack += magnetControl_SendToBackHandler;
+        		magnet.Edited += magnetBoard_ChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -257,6 +270,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Drop -= magnetControl_Drop;
         		magnet.RequestBringToFront -= magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack -= magnetControl_SendToBackHandler;
+        		magnet.Edited -= magnetBoard_ChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -264,6 +278,20 @@ namespace AdventureAuthor.Ideas
         }
         
         
+        /// <summary>
+        /// Indicate that a magnet should be transferred to the magnet list
+        /// </summary>
+        /// <param name="magnet">The magnet to be transferred</param>
+        public void TransferMagnet(MagnetControl magnet)
+        {       	        	
+	    	OnMagnetTransferredOut(new MagnetEventArgs(magnet));
+        }
+        
+        
+        /// <summary>
+        /// Get a point on this board at random where a magnet could sit.
+        /// </summary>
+        /// <returns>A point that represents a pair of co-ordinates on the magnet board</returns>
         private Point GetRandomLocation()
         {
         	double x = random.NextDouble() * (ActualWidth - MagnetControl.MAGNET_MAX_WIDTH);
@@ -325,11 +353,32 @@ namespace AdventureAuthor.Ideas
     		}
     	}
     	
-    	
+    	    	 
+    	/// <summary>
+    	/// Check whether a given magnet exists on this board.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if the magnet object exists on this board; false otherwise</returns>
+    	/// <remarks>This checks for the actual magnet object - to check for an equivalent magnet
+    	/// (i.e. a magnet with identical field values) call HasEquivalentMagnet instead</remarks>
     	public bool HasMagnet(MagnetControl magnet)
     	{
-    		return mainCanvas.Children.Contains(magnet);
-    	}	
+    		return MagnetList.HasMagnet(mainCanvas.Children,magnet);
+    	}
+    	
+    	    	
+    	/// <summary>
+    	/// Check whether an equivalent magnet to the given magnet exists on this board.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if a magnet with identical field values to the given magnet exists
+    	/// on this board; false otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public bool HasEquivalentMagnet(MagnetControl magnet)
+    	{
+    		return MagnetList.HasEquivalentMagnet(mainCanvas.Children,magnet);
+    	}
     	
     	
     	public void BringToFront(MagnetControl magnet)

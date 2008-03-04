@@ -14,7 +14,7 @@
 	    	<MenuItem Name="bringToFrontMenuItem" Header="Bring to front" Click="OnClick_BringToFront"/>
 	    	<MenuItem Name="sendToBackMenuItem" Header="Send to back" Click="OnClick_SendToBack"/>
 			<Separator/>
-	    	<MenuItem Header="Remove" IsEnabled="false"/>
+	    	<MenuItem Name="removeDeleteMagnetMenuItem" Header="Delete" Click="OnClick_RemoveDelete"/>
 		</ContextMenu>
 	</local:BoardObject.ContextMenu>
     <Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">

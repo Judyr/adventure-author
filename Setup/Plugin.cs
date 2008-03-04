@@ -32,6 +32,7 @@ using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Ideas;
 using NWN2Toolset.Plugins;
 using TD.SandBar;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
@@ -93,7 +94,8 @@ namespace AdventureAuthor.Setup
 			try {
 				// Check directories:
 				if (!Directory.Exists(ModuleHelper.AdventureAuthorDir)) {
-					throw new DirectoryNotFoundException("Adventure Author installation directory at " + ModuleHelper.AdventureAuthorDir + 
+					throw new DirectoryNotFoundException("Adventure Author installation directory at " + 
+					                                     ModuleHelper.AdventureAuthorDir +
 					                                     "was missing.");
 				}					
 				
@@ -101,10 +103,12 @@ namespace AdventureAuthor.Setup
 				ClearTempModules();
 				
 				// Start recording debug messages and user actions:
-				//LogWindow logWindow = new LogWindow();
-				//logWindow.Show();
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording();
+				
+				// Create an instance of the magnets board on loading, so that it's
+				// ready to receive ideas submitted from the main GUI:
+				MagnetBoardViewer magnets = new MagnetBoardViewer();
 				
 				Log.WriteAction(Log.Action.launched,"toolset");
 			}

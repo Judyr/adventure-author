@@ -348,7 +348,7 @@ namespace AdventureAuthor.Setup
 						List<Control> controls = GetControls(blueprintView);
 						foreach (Control c in controls) {
 							if (c is NWN2PaletteTreeView) {
-								NWN2PaletteTreeView pt = (NWN2PaletteTreeView)c;
+								NWN2PaletteTreeView pt = (NWN2PaletteTreeView)c;								
 								if (c.ContextMenu != null && c.ContextMenu.MenuItems.Count > 0) {	
 									// NB: Unable to correctly enable and disable this menu item depending on 
 									// whether an actual blueprint (as opposed to a blueprint category like
@@ -362,7 +362,7 @@ namespace AdventureAuthor.Setup
 									c.ContextMenu.MenuItems.Add(separator);
 									c.ContextMenu.MenuItems.Add(addAsIdea);
 									break;
-								}
+								}								
 							}
 						}
 						
@@ -624,44 +624,66 @@ namespace AdventureAuthor.Setup
 			
 			if (blueprint is NWN2CreatureTemplate) {
 				NWN2CreatureTemplate creature = (NWN2CreatureTemplate)blueprint;
-				text = creature.FirstName + " " + creature.LastName + 
+				text = GetBlueprintName(creature.FirstName + " " + creature.LastName) +
 					"\nCreature" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
-			else {
-				text = blueprint.Comment + "\n" + blueprint.ObjectType.ToString() + "\nresref: " +
-				blueprint.TemplateResRef.Value;				
+			else if (blueprint is NWN2DoorTemplate) {
+				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
+				text = GetBlueprintName(door.LocalizedName) + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
-			
+			else if (blueprint is NWN2EncounterTemplate) { // for some reason encounters have a Tag rather than Resref
+				NWN2EncounterTemplate encounter = (NWN2EncounterTemplate)blueprint;
+				text = GetBlueprintName(encounter.LocalizedName) + "\nEncounter" + "\ntag: " + encounter.Tag;
+			}
+			else if (blueprint is NWN2EnvironmentTemplate) {
+				NWN2EnvironmentTemplate environment = (NWN2EnvironmentTemplate)blueprint;
+				text = GetBlueprintName(environment.LocalizedName) + "\nEnvironment" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2ItemTemplate) {
+				NWN2ItemTemplate item = (NWN2ItemTemplate)blueprint;
+				text = GetBlueprintName(item.LocalizedName) + "\nItem" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2LightTemplate) {
+				NWN2LightTemplate light = (NWN2LightTemplate)blueprint;
+				text = GetBlueprintName(light.LocalizedName) + "\nLight" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2PlaceableTemplate) {
+				NWN2PlaceableTemplate placeable = (NWN2PlaceableTemplate)blueprint;
+				text = GetBlueprintName(placeable.LocalizedName) + "\nPlaceable" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2PlacedEffectTemplate) {
+				NWN2PlacedEffectTemplate effect = (NWN2PlacedEffectTemplate)blueprint;
+				text = GetBlueprintName(effect.LocalizedName) + "\nEffect" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2SoundTemplate) {
+				NWN2SoundTemplate sound = (NWN2SoundTemplate)blueprint;
+				text = GetBlueprintName(sound.LocalizedName) + "\nSound" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2StaticCameraTemplate) {
+				NWN2StaticCameraTemplate camera = (NWN2StaticCameraTemplate)blueprint;
+				text = GetBlueprintName(camera.LocalizedName) + "\nCamera" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2StoreTemplate) { // for some reason stores have a Tag rather than Resref
+				NWN2StoreTemplate store = (NWN2StoreTemplate)blueprint;
+				text = GetBlueprintName(store.LocalizedName) + "\nStore" + "\ntag: " + store.Tag;
+			}
+			else if (blueprint is NWN2TreeTemplate) { // trees are better described by Comment (though this is inconsistent)
+				NWN2TreeTemplate tree = (NWN2TreeTemplate)blueprint;
+				text = GetBlueprintName(blueprint.Comment) + "\nTree" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2TriggerTemplate) {
+				NWN2TriggerTemplate trigger = (NWN2TriggerTemplate)blueprint;
+				text = GetBlueprintName(trigger.LocalizedName) + "\nTrigger" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else if (blueprint is NWN2WaypointTemplate) {
+				NWN2WaypointTemplate waypoint = (NWN2WaypointTemplate)blueprint;
+				text = GetBlueprintName(waypoint.LocalizedName) + "\nWaypoint" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else {
+				text = "No description";
+			}
+				
 			return text;
-			
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2EncounterTemplate) {
-//				NWN2EncounterTemplate encounter = (NWN2DoorTemplate)blueprint;
-//				text = encounter.Name + "\nEncounter" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
-//			else if (blueprint is NWN2DoorTemplate) {
-//				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-//				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
 //								
 //					
 //				
@@ -677,6 +699,41 @@ namespace AdventureAuthor.Setup
 //			// else;
 //			//return text + "\ntag: " + blueprint.Tag;
 		}
+		
+		
+		private static string GetBlueprintName(OEIExoLocString name)
+		{
+			return GetBlueprintName(name.ToString());
+		}
+		
+		
+		private static string GetBlueprintName(string name)
+		{
+			if (name == null || name == String.Empty) {
+				return "Unnamed";
+			}
+			else {
+				for (int i = 0; i < name.Length; i++) {
+					if (name[i] != ' ') {	
+						// Placeable names start with '"' and end with '", ' 
+						// so remove them if you find them:
+						string originalName = name;
+						try {
+							if (name.StartsWith("\"") && name.EndsWith("\", ")) {
+								name = name.Substring(1,name.Length-4);
+							}				
+						}
+						catch (Exception e) {
+							Say.Debug("There was an error when trying to strip extraneous characters " +
+							          "from a placeable name for a magnet.\n" + e);
+							name = originalName;
+						}
+						return name;
+					}
+				}
+				return "Unnamed";
+			}
+		}
 
 		
 		private static void BlueprintSentToIdeas(object sender, EventArgs e)
@@ -686,7 +743,7 @@ namespace AdventureAuthor.Setup
 					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off
 					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
 					string text = GetDescriptionForMagnet(blueprint);
-					Idea idea = new Idea(text,IdeaCategory.Toolset);
+					Idea idea = new Idea(text,IdeaCategory.Toolset,"anon");
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
 				}
 			}
@@ -1077,32 +1134,30 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Bring up the Conversation Writer window.
 		/// </summary>
-		public static void LaunchConversationWriter() // Works
+		public static void LaunchConversationWriter() 
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to run conversation writer when no module was open.");
 				return;
 			}
-//			
-//			LaunchConversationWriterApplication();
-//			return;
 			
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
 					WriterWindow.Instance = new WriterWindow();
-					ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
-					WriterWindow.Instance.Show();
+				}
+				ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
+				WriterWindow.Instance.Show();
 					
 //					win.Application.Current.Activated  += delegate { Say.Debug("Application.Current Activated. " + win.Application.Current.ToString()); };
 //					win.Application.Current.Deactivated += delegate { Say.Debug("Application.Current Deactivated. " + win.Application.Current.ToString()); };
 //					win.Application.Current.Exit += delegate { Say.Debug("Application.Current Exit. " + win.Application.Current.ToString()); };
 //					win.Application.Current.LoadCompleted += delegate { Say.Debug("Application.Current LoadCompleted. " + win.Application.Current.ToString()); };
 //					win.Application.Current.Startup += delegate { Say.Debug("Application.Current Startup. " + win.Application.Current.ToString()); };
-				}
+				
 				
 			}
 			catch (Exception e) {
-				Say.Error(e);
+				Say.Error("Could not open conversation writer.",e);
 			}
 		}	
 		
@@ -1110,7 +1165,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Bring up the Variable Manager window.
 		/// </summary>
-		public static void LaunchVariableManager() // Works
+		public static void LaunchVariableManager()
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to run variable manager when no module was open.");
@@ -1120,12 +1175,30 @@ namespace AdventureAuthor.Setup
 			try {
 				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
-					ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
-					VariablesWindow.Instance.ShowDialog();
 				}
+				ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
+				VariablesWindow.Instance.Show();
 			}
 			catch (Exception e) {
-				Say.Error(e);
+				Say.Error("Could not open variable manager.",e);
+			}
+		}	
+		
+		
+		/// <summary>
+		/// Bring up the magnets window.
+		/// </summary>
+		public static void LaunchMagnetBoardViewer()
+		{
+			try {
+				if (MagnetBoardViewer.Instance == null || !MagnetBoardViewer.Instance.IsLoaded) {
+					MagnetBoardViewer.Instance = new MagnetBoardViewer();
+				}
+				ElementHost.EnableModelessKeyboardInterop(MagnetBoardViewer.Instance);
+				MagnetBoardViewer.Instance.Show();
+			}
+			catch (Exception e) {
+				Say.Error("Could not open magnets window.",e);
 			}
 		}		
 		

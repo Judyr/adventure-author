@@ -11,11 +11,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
 	[Serializable]
-	public class Idea : IComparable
+	public class Idea : IComparable, ICloneable
 	{
 		#region Constants
 		
@@ -41,9 +42,11 @@ namespace AdventureAuthor.Ideas
 		}		
 		
 		
+		[XmlAttribute]
 		private DateTime created;		
 		public DateTime Created {
 			get { return created; }
+			set { created = value; }
 		}
 		
 		
@@ -114,6 +117,30 @@ namespace AdventureAuthor.Ideas
 		#endregion
 	
 		#region Methods
+		        
+		public object Clone()
+		{
+			return MemberwiseClone();
+		}
+		
+		
+		public override bool Equals(object obj)
+		{
+			Idea idea = obj as Idea;
+			if (idea == null) {
+				return false;
+			}
+			else {
+				return text == idea.text && author == idea.author && category == idea.category && created == idea.created;
+			}
+		}
+		
+		
+		public override int GetHashCode()
+		{
+			return text.GetHashCode();
+		}
+		
 		
 		public int CompareTo(object obj)
 		{
