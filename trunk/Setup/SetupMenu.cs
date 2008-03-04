@@ -98,11 +98,7 @@ namespace AdventureAuthor.Setup
 			aaToolbar.Items.Add(variableButton);
 							
 			ButtonItem ideasButton = new ButtonItem();
-			ideasButton.Activate += delegate {
-				MagnetBoardViewer mbv = new MagnetBoardViewer();
-				ElementHost.EnableModelessKeyboardInterop(mbv);
-				mbv.Show();
-			};
+			ideasButton.Activate += delegate { LaunchMagnetBoardViewer(); };
 			ideasButton.ToolTipText = "Record and review your ideas";
 			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
 			aaToolbar.Items.Add(ideasButton);

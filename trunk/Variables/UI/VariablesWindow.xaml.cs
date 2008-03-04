@@ -16,7 +16,7 @@ namespace AdventureAuthor.Variables.UI
     	private static VariablesWindow instance;    	
 		public static VariablesWindow Instance {
 			get { return instance; }
-			set { instance = (VariablesWindow)value; }
+			set { instance = value; }
 		}   
     	
     	

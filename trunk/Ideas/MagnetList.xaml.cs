@@ -105,6 +105,7 @@ namespace AdventureAuthor.Ideas
         private MouseButtonEventHandler magnetControl_MouseDoubleClickHandler;        
         private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;        
         private DragEventHandler magnetControl_DropHandler;
+        private EventHandler<MagnetEventArgs> magnetListChangedHandler;
     	
     	#endregion
     	
@@ -130,10 +131,10 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	public event EventHandler<MagnetEventArgs> MagnetTransferred;    	
-    	protected virtual void OnMagnetTransferred(MagnetEventArgs e)
+    	public event EventHandler<MagnetEventArgs> MagnetTransferredOut;    	
+    	protected virtual void OnMagnetTransferredOut(MagnetEventArgs e)
     	{
-    		EventHandler<MagnetEventArgs> handler = MagnetTransferred;
+    		EventHandler<MagnetEventArgs> handler = MagnetTransferredOut;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -178,7 +179,8 @@ namespace AdventureAuthor.Ideas
         	magnetControl_MouseDoubleClickHandler = new MouseButtonEventHandler(magnetControl_MouseDoubleClick);
         	magnetControl_SelectedHandler = new EventHandler<MagnetEventArgs>(magnetControl_Selected);
         	magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
-        	
+        	magnetListChangedHandler = new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
+        		
             InitializeComponent();
             
             visibleCategories = new List<IdeaCategory>(Idea.IDEA_CATEGORIES.Length);
@@ -187,8 +189,8 @@ namespace AdventureAuthor.Ideas
             }
             
             // All changes in the magnet list should be serialized automatically:
-            MagnetAdded += new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
-            MagnetDeleted += new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
+            MagnetAdded += magnetListChangedHandler;
+            MagnetDeleted += magnetListChangedHandler;
         }
         
         
@@ -305,6 +307,7 @@ namespace AdventureAuthor.Ideas
         	magnet.Margin = new Thickness(5);
         	magnet.bringToFrontMenuItem.IsEnabled = false;
         	magnet.sendToBackMenuItem.IsEnabled = false;
+        	magnet.removeDeleteMagnetMenuItem.Header = "Delete"; // more permanent than removing from a magnet board
         	
         	magnetsPanel.Children.Add(magnet);
         	
@@ -347,6 +350,7 @@ namespace AdventureAuthor.Ideas
         		magnet.MouseDoubleClick += magnetControl_MouseDoubleClickHandler;
         		magnet.Selected += magnetControl_SelectedHandler;
         		magnet.Drop += magnetControl_DropHandler;
+        		magnet.Edited += magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -364,6 +368,7 @@ namespace AdventureAuthor.Ideas
         		magnet.MouseDoubleClick -= magnetControl_MouseDoubleClickHandler;
         		magnet.Selected -= magnetControl_SelectedHandler;
         		magnet.Drop -= magnetControl_DropHandler;
+        		magnet.Edited -= magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -377,7 +382,7 @@ namespace AdventureAuthor.Ideas
         /// <param name="magnet">The magnet to be transferred</param>
         public void TransferMagnet(MagnetControl magnet)
         {       	        	
-	    	OnMagnetTransferred(new MagnetEventArgs(magnet));
+	    	OnMagnetTransferredOut(new MagnetEventArgs(magnet));
         }
                 
         
@@ -543,13 +548,79 @@ namespace AdventureAuthor.Ideas
         	OnScattered(new EventArgs());
         }
     	
-    	
+    	    	
+        /// <summary>
+    	/// Check whether a given magnet exists in this list.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if the magnet object exists within this list; false otherwise</returns>
+    	/// <remarks>This checks for the actual magnet object - to check for an equivalent magnet
+    	/// (i.e. a magnet with identical field values) call HasEquivalentMagnet instead</remarks>
     	public bool HasMagnet(MagnetControl magnet)
     	{
-    		return magnetsPanel.Children.Contains(magnet);
+    		return MagnetList.HasMagnet(magnetsPanel.Children,magnet);
+    	}
+    	
+    	        
+    	/// <summary>
+    	/// Check whether an equivalent magnet to the given magnet exists in this list.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if a magnet with identical field values to the given magnet exists
+    	/// within this list; false otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public bool HasEquivalentMagnet(MagnetControl magnet)
+    	{
+    		return MagnetList.HasEquivalentMagnet(magnetsPanel.Children,magnet);
     	}
     	
     	
+    	/// <summary>
+    	/// Check whether a given magnet exists within a collection of UI elements.
+    	/// </summary>
+    	/// <param name="elements">The UI element collection to check</param>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if the magnet object exists within this collection; false otherwise</returns>
+    	/// <remarks>This checks for the actual magnet object - to check for an equivalent magnet
+    	/// (i.e. a magnet with identical field values) call HasEquivalentMagnet instead</remarks>
+    	public static bool HasMagnet(UIElementCollection elements, MagnetControl magnet)
+    	{
+    		return elements.Contains(magnet);
+    	}
+    	
+    	    	
+    	/// <summary>
+    	/// Check whether an equivalent magnet to the given magnet exists within a collection of UI elements.
+    	/// </summary>
+    	/// <param name="elements">The UI element collection to check</param>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>True if a magnet with identical field values to the given magnet exists
+    	/// within this collection; false otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public static bool HasEquivalentMagnet(UIElementCollection elements, MagnetControl magnet)
+    	{
+    		if (HasMagnet(elements,magnet)) { // return true if the actual object is found
+    			return true;
+    		}
+    		foreach (UIElement element in elements) { // return true if an equivalent object is found
+    			if (element is MagnetControl) {
+    				MagnetControl magnet2 = (MagnetControl)element;
+    				if (magnet.Idea.Equals(magnet2.Idea)) {
+    					return true;
+    				}
+    			}
+    		}
+    		return false;
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Check whether a given category of idea is currently being displayed.
+    	/// </summary>
+    	/// <param name="category">The category to check for visibility</param>
+    	/// <returns>True if the category is currently set to be displayed; false otherwise</returns>
     	public bool CategoryIsVisible(IdeaCategory category)
     	{
     		return visibleCategories.Contains(category);

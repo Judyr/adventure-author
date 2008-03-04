@@ -41,14 +41,21 @@ namespace AdventureAuthor.Ideas
     	
     	#endregion
     	
+    	#region Constructors
+    	
         public EditMagnetWindow(MagnetControl magnet) 
         {
         	this.magnet = magnet;
             InitializeComponent();
             ideaTextBox.MaxLength = Idea.MAX_IDEA_LENGTH;
         	ideaTextBox.Text = magnet.Idea.Text;
+           	ideaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;   
+        	ideaCategoryComboBox.SelectedItem = magnet.Idea.Category;  
         }
 
+        #endregion
+        
+        #region Event handlers
         
         private void OnClick_OK(object sender, EventArgs e)
         {
@@ -57,17 +64,36 @@ namespace AdventureAuthor.Ideas
         		            "idea, select it and press the delete key.");
         	}
         	else {
-        		magnet.Idea.Text = ideaTextBox.Text;
-        		magnet.IdeaTextBox.Text = magnet.Idea.Text;
+        		magnet.Text = ideaTextBox.Text;
+        		
+        		IdeaCategory category;
+        		if (ideaCategoryComboBox.SelectedItem != null) {
+	        		category = (IdeaCategory)ideaCategoryComboBox.SelectedItem;
+	        	}
+	        	else {
+	        		category = IdeaCategory.Other;
+	        	}
+        		magnet.Category = category;
+        		
         		OnMagnetEdited(new MagnetEventArgs(magnet));
 	        	Close();
         	}
         }
+        
+        
+        
+        
+	        	
+	        	
+	        	
+	        	
 
         
         private void OnClick_Cancel(object sender, EventArgs e)
         {
         	Close();
         }
+        
+        #endregion
     }
 }
