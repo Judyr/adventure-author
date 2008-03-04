@@ -52,27 +52,31 @@
 		<ScrollViewer Name="Scroller" Grid.Row="1" Grid.Column="0"
 					  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Focusable="false">
 	    	<StackPanel Orientation="Vertical">				
-				<StackPanel Orientation="Horizontal" Margin="20">
-		    		<Label Name="TitleLabel" Content="Title" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="TitleField" Width="250" Padding="5" Visibility="Hidden" 
-					         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
-						<TextBox.ToolTip>The title of the worksheet</TextBox.ToolTip>
-					</TextBox>
-		    		<Label Name="DesignerNameLabel" Content="Game designer" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="DesignerNameField" Width="250" Padding="5" Visibility="Hidden"
-					         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
-						<TextBox.ToolTip>The designer of the game being evaluated</TextBox.ToolTip>
-					</TextBox>
-		    		<Label Name="EvaluatorNameLabel" Content="Evaluator" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="EvaluatorNameField" Width="250" Padding="5" Visibility="Hidden"
-					         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
-						<TextBox.ToolTip>The person filling out the worksheet</TextBox.ToolTip>
-					</TextBox>
-		    		<Label Name="DateLabel" Content="Date" Padding="5" Visibility="Hidden"/>
-					<TextBox Name="DateField" Width="250" Padding="5" Visibility="Hidden"
-					         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
-						<TextBox.ToolTip>The date the worksheet was filled out</TextBox.ToolTip>
-					</TextBox>
+				<StackPanel Orientation="Vertical" Margin="10">
+	    			<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+			    		<Label Name="TitleLabel" Content="Worksheet title: " Margin="5" FontSize="14" Visibility="Hidden"/>
+						<TextBox Name="TitleField" Width="250" Padding="5" Visibility="Hidden" 
+						         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
+							<TextBox.ToolTip>The title of the worksheet</TextBox.ToolTip>
+						</TextBox>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+			    		<Label Name="DesignerNameLabel" Content="Game designer: " Margin="5" FontSize="14" Visibility="Hidden"/>
+						<TextBox Name="DesignerNameField" Width="250" Padding="5" Visibility="Hidden"
+						         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
+							<TextBox.ToolTip>The designer of the game being evaluated</TextBox.ToolTip>
+						</TextBox>
+			    		<Label Name="EvaluatorNameLabel" Content="Game evaluator: " Margin="5" FontSize="14" Visibility="Hidden"/>
+						<TextBox Name="EvaluatorNameField" Width="250" Padding="5" Visibility="Hidden"
+						         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
+							<TextBox.ToolTip>The person filling out the worksheet</TextBox.ToolTip>
+						</TextBox>
+			    		<Label Name="DateLabel" Content="Date: " Margin="5" FontSize="14" Visibility="Hidden"/>
+						<TextBox Name="DateField" Width="250" Padding="5" Visibility="Hidden"
+						         FontFamily="Comic Sans MS" FontSize="14" Margin="8">
+							<TextBox.ToolTip>The date the worksheet was filled out</TextBox.ToolTip>
+						</TextBox>
+					</StackPanel>
 		    	</StackPanel>
 	    		<Button Name="switchModeButton" HorizontalAlignment="Right" Margin="10"
 	    				Height="30" Width="170" FontSize="12" Click="OnClick_SwitchMode"

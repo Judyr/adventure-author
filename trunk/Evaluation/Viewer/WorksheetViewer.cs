@@ -302,7 +302,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    
 		    switch (EvaluationMode) {
 		    	case Mode.Design:
-		    		addSectionButton.Visibility = Visibility.Visible;
+		    		//addSectionButton.Visibility = Visibility.Visible; currently disabled cos it makes UI look crap
 		    		switchModeButton.Visibility = Visibility.Collapsed;
 		    		break;
 		    	case Mode.Complete:

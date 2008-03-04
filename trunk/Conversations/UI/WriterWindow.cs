@@ -946,9 +946,6 @@ namespace AdventureAuthor.Conversations.UI
 			TextBlock tb0 = new TextBlock();
 			TextBlock tb1 = new TextBlock();
 			TextBlock tb2 = new TextBlock();
-//			tb0.FontSize = 22;
-//			tb1.FontSize = 22;
-//			tb2.FontSize = 22;
 			tb0.Foreground = Brushes.Black;
 			tb1.Foreground = e.Speaker.Colour;
 			tb2.Foreground = Brushes.Black;

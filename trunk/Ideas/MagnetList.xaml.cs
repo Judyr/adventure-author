@@ -10,7 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Ideas
 {
@@ -18,9 +20,37 @@ namespace AdventureAuthor.Ideas
     /// Interaction logic for MagnetList.xaml
     /// </summary>
 
-    public partial class MagnetList : UserControl
+    public partial class MagnetList : UnserializableControl
     {
+    	#region Constants
+    	
+    	/// <summary>
+    	/// The maximum number of degrees a magnet may deviate from an angle of 0 (in either direction.)
+    	/// </summary>    	
+    	public const double MAXIMUM_ANGLE_IN_EITHER_DIRECTION = 6;
+    	
+    	#endregion
+    	
     	#region Fields  
+    	
+    	private string filename;    	
+		public string Filename {
+			get { return filename; }
+			set { 
+				filename = value;
+			}
+		}     	
+    	
+    	
+    	/// <summary>
+    	/// The default location to check for a magnet list to open.
+    	/// </summary>
+    	private static string defaultFilename = System.IO.Path.Combine(ModuleHelper.AdventureAuthorDir,"ideas.xml");
+		public static string DefaultFilename {
+			get { return defaultFilename; }
+			set { defaultFilename = value; }
+		}
+    	
     	
     	private List<IdeaCategory> visibleCategories;
     	
@@ -30,6 +60,44 @@ namespace AdventureAuthor.Ideas
 			get { return sortBy; }
 			set { 
 				sortBy = value;
+			}
+		}
+    	
+    	
+    	/// <summary>
+    	/// True to save automatically whenever a magnet is added or deleted.
+    	/// </summary>
+    	/// <remarks>Should only set this to true if a filename has been provided,
+    	/// otherwise a crash will occur</remarks>
+    	private bool saveAutomatically = false;    	
+		public bool SaveAutomatically {
+			get { return saveAutomatically; }
+			set { 
+				if (value == true && (Filename == null || Filename == String.Empty)) {
+					throw new InvalidOperationException("Cannot set this list to save changes automatically " +
+					                                    "without first providing a filename.");
+				}
+				saveAutomatically = value; 
+			}
+		}
+    	
+    	
+    	/// <summary>
+    	/// True to place magnets on the list imperfectly; false to place them perfectly straight.
+    	/// </summary>
+    	private bool useWonkyMagnets = false;    	
+		public bool UseWonkyMagnets {
+			get { return useWonkyMagnets; }
+			set { 
+				if (useWonkyMagnets != value) {
+					useWonkyMagnets = value; 
+					if (useWonkyMagnets) {
+						AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+					}
+					else {
+						StraightenMagnets();
+					}
+				}
 			}
 		}
         
@@ -52,10 +120,20 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	public event EventHandler<MagnetRemovedEventArgs> MagnetRemoved;    	
-    	protected virtual void OnMagnetRemoved(MagnetRemovedEventArgs e)
+    	public event EventHandler<MagnetEventArgs> MagnetDeleted;    	
+    	protected virtual void OnMagnetDeleted(MagnetEventArgs e)
     	{
-    		EventHandler<MagnetRemovedEventArgs> handler = MagnetRemoved;
+    		EventHandler<MagnetEventArgs> handler = MagnetDeleted;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    	
+    	
+    	public event EventHandler<MagnetEventArgs> MagnetTransferred;    	
+    	protected virtual void OnMagnetTransferred(MagnetEventArgs e)
+    	{
+    		EventHandler<MagnetEventArgs> handler = MagnetTransferred;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -80,6 +158,16 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+		
+    	
+    	public event EventHandler Scattered;   	
+		protected virtual void OnScattered(EventArgs e)
+		{
+			EventHandler handler = Scattered;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
     	
     	#endregion
     	
@@ -97,17 +185,89 @@ namespace AdventureAuthor.Ideas
             foreach (IdeaCategory category in Idea.IDEA_CATEGORIES) {
             	visibleCategories.Add(category);
             }
+            
+            // All changes in the magnet list should be serialized automatically:
+            MagnetAdded += new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
+            MagnetDeleted += new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
         }
         
         
-        public MagnetList(List<Idea> ideas) : this()
+        public MagnetList(MagnetListInfo magnetListInfo) : this()
         {        	
-        	AddIdeas(ideas);
+        	Open(magnetListInfo);
         }
         
         #endregion
         
         #region Methods
+
+        /// <summary>
+        /// Open a magnet list.
+        /// </summary>
+        /// <param name="filename">The filename of the magnet list serialized data</param>
+    	public void Open(string filename)
+    	{
+    		if (!File.Exists(filename)) {
+    			Say.Error(filename + " could not be found.");
+    			return;
+    		}
+    			
+    		try {
+	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetListInfo));
+	    		MagnetListInfo magnetListInfo = (MagnetListInfo)o;
+	    		Open(magnetListInfo);
+	    		Filename = filename;
+    		}
+    		catch (InvalidCastException ec) {
+    			Say.Error("The file you tried to open was not a valid magnet list file: " + filename,ec);
+    			Clear();
+    			this.Filename = null;
+    		}
+    		catch (Exception e) {
+    			Say.Error("Was unable to open this magnet list.",e);
+    			Clear();
+    			this.Filename = null;
+    		}
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Open a magnet list.
+    	/// </summary>
+    	/// <param name="magnetListInfo">Serialized data to represent</param>
+    	/// <remarks>Must either set a filename on this magnet list or set SaveAutomatically to false</remarks>
+    	internal void Open(MagnetListInfo magnetListInfo)
+    	{
+	        Clear();
+	    	foreach (MagnetInfo magnetInfo in magnetListInfo.Magnets) {
+	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
+	    		ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
+	    		AddMagnet(magnet,false);
+	    	}   
+    	}
+        
+        
+        /// <summary>
+        /// Clear the magnet list.
+        /// </summary>
+        /// <remarks>This is intended for UI functions, rather than to delete all magnets in a magnet list,
+        /// so no events are fired</remarks>
+        public void Clear()
+        {
+        	magnetsPanel.Children.Clear();
+        }
+        
+        
+    	public void Save()
+    	{
+    		if (filename == null) {
+    			throw new InvalidOperationException("Save failed: Should not have called Save without first setting a filename.");
+    		}
+    		else {
+	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+    		}
+    	} 
+        
         
         /// <summary>
         /// Add an idea to the list.
@@ -132,32 +292,6 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void AddHandlers(MagnetControl magnet)
-        {
-        	try {
-        		magnet.MouseDoubleClick += magnetControl_MouseDoubleClickHandler;
-        		magnet.Selected += magnetControl_SelectedHandler;
-        		magnet.Drop += magnetControl_DropHandler;
-        	}
-        	catch (Exception e) {
-        		Say.Error("Failed to add handlers to magnet.",e);
-        	}
-        }
-        
-        
-        private void RemoveHandlers(MagnetControl magnet)
-        {
-        	try {
-        		magnet.MouseDoubleClick -= magnetControl_MouseDoubleClickHandler;
-        		magnet.Selected -= magnetControl_SelectedHandler;
-        		magnet.Drop -= magnetControl_DropHandler;
-        	}
-        	catch (Exception e) {
-        		Say.Error("Failed to remove handlers from magnet.",e);
-        	}
-        }
-        
-        
         /// <summary>
         /// Add a magnet representing an idea to the list
         /// </summary>
@@ -168,12 +302,20 @@ namespace AdventureAuthor.Ideas
         {
         	AddHandlers(magnet);
         	
-        	magnet.Angle = 0;
         	magnet.Margin = new Thickness(5);
         	magnet.bringToFrontMenuItem.IsEnabled = false;
         	magnet.sendToBackMenuItem.IsEnabled = false;
         	
         	magnetsPanel.Children.Add(magnet);
+        	
+        	// Angle the magnet consistently with current policy:
+        	if (useWonkyMagnets) {
+	        	bool angleToLeft = magnetsPanel.Children.IndexOf(magnet) % 2 == 0;
+	        	magnet.RandomiseAngle(MAXIMUM_ANGLE_IN_EITHER_DIRECTION,angleToLeft);
+        	}
+        	else {
+        		magnet.Angle = 0;
+        	}
         	
         	// If the magnet is newly created, ensure that it is shown, even if it is in a category which
         	// is currently hidden. If it's been transferred back to the magnet list after being deleted
@@ -196,16 +338,48 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Remove a magnet from the list
+        /// Add magnet list event handlers when a magnet is added
         /// </summary>
-        /// <param name="magnet">The magnet to remove</param>
-        public void RemoveMagnet(MagnetControl magnet)
+        /// <param name="magnet">The magnet to add handlers for</param>
+        private void AddHandlers(MagnetControl magnet)
         {
-        	magnetsPanel.Children.Remove(magnet);        	
-        	RemoveHandlers(magnet);	        	
-	    	OnMagnetRemoved(new MagnetRemovedEventArgs(magnet,true));
+        	try {
+        		magnet.MouseDoubleClick += magnetControl_MouseDoubleClickHandler;
+        		magnet.Selected += magnetControl_SelectedHandler;
+        		magnet.Drop += magnetControl_DropHandler;
+        	}
+        	catch (Exception e) {
+        		Say.Error("Failed to add handlers to magnet.",e);
+        	}
         }
         
+        
+        /// <summary>
+        /// Remove magnet list event handlers when a magnet is removed (as it may be going elsewhere)
+        /// </summary>
+        /// <param name="magnet">The magnent to remove handlers from</param>
+        private void RemoveHandlers(MagnetControl magnet)
+        {
+        	try {
+        		magnet.MouseDoubleClick -= magnetControl_MouseDoubleClickHandler;
+        		magnet.Selected -= magnetControl_SelectedHandler;
+        		magnet.Drop -= magnetControl_DropHandler;
+        	}
+        	catch (Exception e) {
+        		Say.Error("Failed to remove handlers from magnet.",e);
+        	}
+        }
+        
+        
+        /// <summary>
+        /// Indicate that a magnet should be transferred to the magnet board
+        /// </summary>
+        /// <param name="magnet">The magnet to be transferred</param>
+        public void TransferMagnet(MagnetControl magnet)
+        {       	        	
+	    	OnMagnetTransferred(new MagnetEventArgs(magnet));
+        }
+                
         
         /// <summary>
         /// Delete a magnet from this list
@@ -215,7 +389,7 @@ namespace AdventureAuthor.Ideas
         {
         	magnetsPanel.Children.Remove(magnet);        	
         	RemoveHandlers(magnet);	        	
-	    	OnMagnetRemoved(new MagnetRemovedEventArgs(magnet,false));
+	    	OnMagnetDeleted(new MagnetEventArgs(magnet));
         }
                         
         
@@ -259,6 +433,23 @@ namespace AdventureAuthor.Ideas
                 
         
         /// <summary>
+        /// Show all idea categories.
+        /// </summary>
+        public void ShowAllCategories()
+        {
+        	visibleCategories.Clear();
+        	foreach (IdeaCategory category in Idea.IDEA_CATEGORIES) {
+        		visibleCategories.Add(category);
+        	}
+        	foreach (MagnetControl magnet in magnetsPanel.Children) {
+        		magnet.Show();
+        	}
+        	
+        	OnVisibleMagnetsChanged(new EventArgs());
+        }
+        
+        
+        /// <summary>
         /// Hide ideas belonging to a particular category.
         /// </summary>
         /// <param name="category">The category of ideas to hide</param>
@@ -298,21 +489,46 @@ namespace AdventureAuthor.Ideas
         	
         	OnVisibleMagnetsChanged(new EventArgs());
         }
+    	        
         
-        
-        public List<MagnetControl> GetVisibleMagnets()
+        public List<MagnetControl> GetMagnets(bool visibleOnly)
         {
         	List<MagnetControl> magnets = new List<MagnetControl>(magnetsPanel.Children.Count);
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
-        		if (magnet.IsVisible) {
+        		if (!visibleOnly || magnet.IsVisible) {
         			magnets.Add(magnet);
         		}
         	}
         	return magnets;
         }     	
-    	
+                
         
-        public MagnetControl[] GetMagnetsArray() 
+        /// <summary>
+        /// Set the angle of each magnet in the list to 0. 
+        /// </summary>
+        private void StraightenMagnets()
+        {
+        	foreach (MagnetControl magnet in magnetsPanel.Children) {
+        		magnet.Angle = 0;
+        	}
+        }  
+        
+        
+        private void AngleMagnets(double maxAngle)
+        {
+        	if (maxAngle == 0) {
+        		StraightenMagnets();
+        		return;
+        	}
+        	
+        	foreach (MagnetControl magnet in magnetsPanel.Children) {
+        		bool angleToLeft = magnetsPanel.Children.IndexOf(magnet) % 2 == 0;
+        		magnet.RandomiseAngle(maxAngle,angleToLeft);
+        	}
+        }
+            	
+        
+        public MagnetControl[] GetMagnets() 
         {
     		MagnetControl[] magnets = new MagnetControl[magnetsPanel.Children.Count];
     		foreach (MagnetControl magnet in magnetsPanel.Children) {
@@ -324,10 +540,7 @@ namespace AdventureAuthor.Ideas
         
         public void Scatter()
         {
-        	List<MagnetControl> magnets = GetVisibleMagnets();
-        	foreach (MagnetControl magnet in magnets) {
-        		RemoveMagnet(magnet);
-        	}
+        	OnScattered(new EventArgs());
         }
     	
     	
@@ -345,7 +558,7 @@ namespace AdventureAuthor.Ideas
     	
     	public void Sort()
     	{
-    		MagnetControl[] magnets = GetMagnetsArray();
+    		MagnetControl[] magnets = GetMagnets();
     		
     		switch (SortBy) {
     			case SortCriterion.Alphabetically:
@@ -364,7 +577,13 @@ namespace AdventureAuthor.Ideas
     			case SortCriterion.Used:
     				break;    				
     		}
-    	}
+    	}  
+    	
+		
+    	public override ISerializableData GetSerializable()
+    	{
+    		return new MagnetListInfo(this);
+    	}	
                 
         #endregion
         
@@ -374,7 +593,7 @@ namespace AdventureAuthor.Ideas
     	{
     		MagnetControl magnet = (MagnetControl)e.Source;
     		if (magnetsPanel.Children.Contains(magnet)) {
-    			RemoveMagnet(magnet);
+    			TransferMagnet(magnet);
     		}
     	}
     		
@@ -391,6 +610,14 @@ namespace AdventureAuthor.Ideas
         private void magnetControl_Drop(object sender, DragEventArgs e)
         {
         	OnDrop(e);
+        }
+        
+        
+        private void MagnetListChanged_SaveAutomatically(object sender, MagnetEventArgs e)
+        {
+        	if (saveAutomatically) {
+        		Save();
+        	}
         }
         
         #endregion

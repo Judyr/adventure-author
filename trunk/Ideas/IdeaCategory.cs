@@ -18,6 +18,6 @@ namespace AdventureAuthor.Ideas
 		Characters,
 		Setting,
 		Other, // user stated that this idea did not relate to any of the given categories
-		Resources // user has submitted an object or a blueprint as an 'idea' to be used
+		Toolset // user has submitted an object or a blueprint as an 'idea' to be used
 	}
 }

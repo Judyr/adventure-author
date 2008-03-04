@@ -18,10 +18,10 @@ using System.Windows;
 namespace AdventureAuthor.Ideas
 {
 	/// <summary>
-	/// Description of MagnetBoardInfo.
+	/// Description of MagnetListInfo.
 	/// </summary>
 	[Serializable]
-	public class MagnetBoardInfo : ISerializableData
+	public class MagnetListInfo : ISerializableData
 	{    	
     	[XmlArray]
     	private List<MagnetInfo> magnetInfos = new List<MagnetInfo>();       	
@@ -34,15 +34,15 @@ namespace AdventureAuthor.Ideas
     	/// <summary>
     	/// Constructor for serialization.
     	/// </summary>
-    	private MagnetBoardInfo()
+    	private MagnetListInfo()
     	{
     		
     	}
     	
     	
-		public MagnetBoardInfo(MagnetBoardControl magnetBoardControl)
+		public MagnetListInfo(MagnetList magnetList)
 		{
-			foreach (MagnetControl magnet in magnetBoardControl.GetMagnets()) {
+			foreach (MagnetControl magnet in magnetList.GetMagnets(false)) {
 				MagnetInfo magnetInfo = (MagnetInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);
 			}
@@ -53,9 +53,12 @@ namespace AdventureAuthor.Ideas
 		/// Get a control based on the data in this object.
 		/// </summary>
 		/// <returns>A control based on this information</returns>
+		/// <remarks>Save automatically is set to false since there is no filename to save to</remarks>
 		public UnserializableControl GetControl()
 		{
-			return new MagnetBoardControl(this);
+			MagnetList magnetList = new MagnetList(this);
+			magnetList.SaveAutomatically = false;
+			return magnetList;
 		}
 	}
 }

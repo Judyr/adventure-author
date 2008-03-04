@@ -620,16 +620,20 @@ namespace AdventureAuthor.Setup
 		
 		private static string GetDescriptionForMagnet(INWN2Blueprint blueprint)
 		{
-			string text = blueprint.Comment + "\n" + blueprint.ObjectType.ToString() + "\nresref: " + 
-				blueprint.TemplateResRef.Value;
+			string text;
 			
+			if (blueprint is NWN2CreatureTemplate) {
+				NWN2CreatureTemplate creature = (NWN2CreatureTemplate)blueprint;
+				text = creature.FirstName + " " + creature.LastName + 
+					"\nCreature" + "\nresref: " + blueprint.TemplateResRef.Value;
+			}
+			else {
+				text = blueprint.Comment + "\n" + blueprint.ObjectType.ToString() + "\nresref: " +
+				blueprint.TemplateResRef.Value;				
+			}
 			
 			return text;
 			
-//			if (blueprint is NWN2CreatureTemplate) {
-//				NWN2CreatureTemplate creature = (NWN2CreatureTemplate)blueprint;
-//				text = creature.FirstName + " " + creature.LastName + "\nCreature" + "\nresref: " + blueprint.TemplateResRef.Value;
-//			}
 //			else if (blueprint is NWN2DoorTemplate) {
 //				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
 //				text = door.Name + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
@@ -682,7 +686,7 @@ namespace AdventureAuthor.Setup
 					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off
 					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
 					string text = GetDescriptionForMagnet(blueprint);
-					Idea idea = new Idea(text,IdeaCategory.Resources);
+					Idea idea = new Idea(text,IdeaCategory.Toolset);
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
 				}
 			}
