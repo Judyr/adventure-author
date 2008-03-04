@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Windows.Markup;
 using System.Windows.Media.Effects;
-using System.IO;
-using AdventureAuthor.Utils;
+using System.ComponentModel;
 using AdventureAuthor.Setup;
+using AdventureAuthor.Utils;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
@@ -47,218 +42,138 @@ namespace AdventureAuthor.Ideas
 		    		}
 	    		}
 			}
-		}
-    	
-    	
-    	private EventHandler<MagnetEventArgs> magnetAddedHandler;
+    	}
     	
     	#endregion
     	
-    	#region Events
-    	
-    	
-    	#endregion
-	
     	#region Constructors
     	
         public MagnetBoardViewer()
-        {        	
-            InitializeComponent();  
+        {
+        	InitializeComponent();
+                        
             IdeaEntryBox.MaxLength = Idea.MAX_IDEA_LENGTH;
             
             // Set up 'Add idea' box and 'Show/Hide idea category' menu:
             IdeaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;            
+            RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
+            
             foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
-            	RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
             	string category = ideaCategory.ToString();
-            	string header = "Show " + category + " ideas";
             	
             	ShowHideCategoryMenuItem menuItem = new ShowHideCategoryMenuItem(ideaCategory);
-            	menuItem.Header = header;
-            	menuItem.IsCheckable = true;
             	menuItem.IsChecked = true;
             	menuItem.Checked += showHideChangedHandler;
             	menuItem.Unchecked += showHideChangedHandler;
             	ShowHideCategoriesMenu.Items.Add(menuItem);
             	
             	ShowHideCategoryCheckBox checkBox = new ShowHideCategoryCheckBox(ideaCategory);
-            	checkBox.Content = header;
             	checkBox.IsChecked = true;
             	checkBox.Checked += showHideChangedHandler;
             	checkBox.Unchecked += showHideChangedHandler;
             	magnetList.showHideCategoriesPanel.Children.Add(checkBox);
             }          
             
-            // Listen for events:
+            // Listen for events:            
+            EventHandler titleChangedHandler = new EventHandler(UpdateTitleBar);
+            EventHandler<MagnetEventArgs> magnetAddedHandler 
+            	= new EventHandler<MagnetEventArgs>(magnetAdded); 
             
-            magnetAddedHandler = new EventHandler<MagnetEventArgs>(magnetAdded);
+            ActiveBoard.MagnetAdded += magnetAddedHandler;
+            ActiveBoard.Drop += new DragEventHandler(magnetBoardControl_MagnetDropped);   	
+            ActiveBoard.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
+            ActiveBoard.Changed += titleChangedHandler;
+            ActiveBoard.Opened += titleChangedHandler;
+            ActiveBoard.Closed += titleChangedHandler;
+            ActiveBoard.Closed += delegate { 
+            	IdeaEntryBox.Text = String.Empty; 
+            	IdeaCategoryComboBox.SelectedValue = null;
+            };
             
-            AddMagnetBoardHandlers(ActiveBoard); // this gets its own method in case we later have multiple boards
-            
+            magnetList.MagnetAdded += magnetAddedHandler;
             magnetList.VisibleMagnetsChanged += new EventHandler(VisibleMagnetsChanged);              
             magnetList.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
-            magnetList.MagnetRemoved += new EventHandler<MagnetRemovedEventArgs>(magnetList_MagnetRemoved); 
+            magnetList.MagnetTransferred += new EventHandler<MagnetEventArgs>(magnetList_MagnetPassedToBoard); 
             magnetList.Drop += new DragEventHandler(magnetList_MagnetDropped);  
-            magnetList.MagnetAdded += magnetAddedHandler;
+            magnetList.Scattered += new EventHandler(magnetList_Scattered);
             
             Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
-        } 
-
-        
-        private void CategoryElementIsCheckedChanged(object sender, RoutedEventArgs e)
-        {
-        	IdeaCategory category;
-        	bool isChecked;
-        	if (e.Source is ShowHideCategoryMenuItem) {
-        		ShowHideCategoryMenuItem menuItem = (ShowHideCategoryMenuItem)e.Source;
-        		category = menuItem.Category;
-        		isChecked = menuItem.IsChecked;
-        	}
-        	else if (e.Source is ShowHideCategoryCheckBox) {
-        		ShowHideCategoryCheckBox checkBox = (ShowHideCategoryCheckBox)e.Source;
-        		category = checkBox.Category;
-        		isChecked = (bool)checkBox.IsChecked;
-        	}
-        	else {
-        		throw new ArgumentException("Did not recognise show/hide category element (" + e.Source + ")");
-        	}
-        	
-        	if (magnetList.CategoryIsVisible(category) && !isChecked) {
-        		magnetList.HideCategory(category,false);
-        	}
-        	else if (!magnetList.CategoryIsVisible(category) && isChecked) {        		
-        		magnetList.ShowCategory(category,false);
-        	}
+            
+            Closing += new CancelEventHandler(magnetBoardViewer_Closing);
+            
+            // Open the magnet list:
+            if (!File.Exists(MagnetList.DefaultFilename)) {
+            	Say.Debug("Couldn't find an ideas bank at the expected location (" + MagnetList.DefaultFilename + ")" +
+            	          " - will create a new one when required.");
+            	magnetList.Filename = MagnetList.DefaultFilename;
+            }
+            else {
+            	magnetList.Open(MagnetList.DefaultFilename);
+            }
+            magnetList.SaveAutomatically = true;
+            
+            wonkyMagnetsMenuItem.IsChecked = false;
         }
 
         
-        private void magnetAdded(object sender, MagnetEventArgs e)
-        {           
-	        e.Magnet.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
-	        e.Magnet.PreviewMouseMove += new MouseEventHandler(DragSource_PreviewMouseMove);
+        private void magnetBoardViewer_Closing(object sender, CancelEventArgs e)
+        {        	
+			if (!CloseDialog()) {
+				e.Cancel = true;
+			}
         }
-        
-        
-        private void magnetBoardControl_MagnetRemoved(object sender, MagnetRemovedEventArgs e)
-        {
-        	if (e.Transfer) {
-				if (!magnetList.HasMagnet(e.Magnet)) {
-	         		magnetList.AddMagnet(e.Magnet,false);	         		
-	         	}
-        	}
-        }
-
-        
-        private void magnetList_MagnetRemoved(object sender, MagnetRemovedEventArgs e)
-        {
-        	if (e.Transfer) {
-				if (!ActiveBoard.HasMagnet(e.Magnet)) {
-	         		ActiveBoard.AddMagnet(e.Magnet,true);	         		
-	         	}
-        	}
-        }
-    
-        
-	    private void magnetBoardControl_MagnetDropped(object sender, DragEventArgs e)
-	    {
-	         IDataObject data = e.Data;
-	
-	         if (data.GetDataPresent(typeof(MagnetControlDataObject))) {
-	         	MagnetControlDataObject dataObject = (MagnetControlDataObject)data.GetData(typeof(MagnetControlDataObject));
-	         	
-	         	// If this magnet is being transferred from the magnet list, remove it from there first:
-	         	if (magnetList.HasMagnet(dataObject.Magnet)) {
-	         		magnetList.RemoveMagnet(dataObject.Magnet);
-	         	}
-	         	
-	         	// Set the magnet's new position - offset accounts for the position of the mouse when
-	         	// clicking on the magnet, and the angle of the magnet's rotation
-	         	Point drop = e.GetPosition(this);
-	         	drop.X -= dataObject.Magnet.ActualWidth / 2;
-	         	drop.Y -= dataObject.Magnet.ActualHeight / 2;
-	         	dataObject.Magnet.X = drop.X;
-	         	dataObject.Magnet.Y = drop.Y;
-	         	
-	         	if (!ActiveBoard.HasMagnet(dataObject.Magnet)) {
-	         		ActiveBoard.AddMagnet(dataObject.Magnet,false);
-	         		ActiveBoard.BringToFront(dataObject.Magnet);
-	         	}
-	    	}	
-	    } 
-        
-
-        private void magnetList_MagnetDropped(object sender, DragEventArgs e)
-        {
-	         IDataObject data = e.Data;
-	
-	         if (data.GetDataPresent(typeof(MagnetControlDataObject))) {
-	         	MagnetControlDataObject dataObject = (MagnetControlDataObject)data.GetData(typeof(MagnetControlDataObject));
-	         	
-	         	// If this magnet is being transferred from the magnet board, remove it from there first:
-	         	if (ActiveBoard.HasMagnet(dataObject.Magnet)) {
-	         		ActiveBoard.RemoveMagnet(dataObject.Magnet);
-	         	}
-	         	
-	         	if (!magnetList.HasMagnet(dataObject.Magnet)) {
-	         		magnetList.AddMagnet(dataObject.Magnet,false);
-	         	}
-	         }	
-        }
-
             	
     	#endregion
     	
     	#region Methods
     	
+    	public void New()
+    	{
+    		CloseDialog();
+    	}
+    	
+    	
     	public void Open(string filename)
     	{
-    		if (!File.Exists(filename)) {
-    			Say.Error(filename + " could not be found.");
-    			return;
-    		}
-    			
     		try {
-	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetBoardInfo));
-	    		MagnetBoardInfo magnetBoardInfo = (MagnetBoardInfo)o;	
-	    		
-	    		ActiveBoard.Open(magnetBoardInfo);
+    			ActiveBoard.Open(filename);
+    		}
+    		catch (ArgumentException e) {
+    			Say.Error(filename + " is not a valid magnet board file.",e);
     		}
     		catch (Exception e) {
     			Say.Error("Was unable to open magnet board.",e);
-    			ActiveBoard.Clear();
     		}
     	}
     	
     	
-    	private void Save()
+    	public void Save()
     	{
     		ActiveBoard.Save();
-    		
-    		//TODO magnetList.Save();
-    		
-    		// foreach MagnetBoardControl boardControl in boards {
-    		// }
+		    magnetList.Save();
     	}
     	    	
     	
-    	private void SaveDialog() 
+    	private bool SaveDialog() 
     	{    		
-    		// TODO check which board control is active and only call SaveD
-    		if (ActiveBoard.Filename == null) { // get a filename to save to if there isn't one already
-    			SaveAsDialog();
-    		}
-    		else {
-	    		try {
-	    			Save();
+    		try {
+	    		// get a filename to save to if there isn't one already:
+	    		if (ActiveBoard.Filename == null || ActiveBoard.Filename == String.Empty) { 
+	    			return SaveAsDialog();
 	    		}
-	    		catch (Exception e) {
-	    			Say.Error("Failed to save magnet board.",e);
+	    		else {
+		    		Save();
+		    		return true;
 	    		}
     		}
-    	}
+	    	catch (Exception e) {
+	    		Say.Error("Failed to save magnet board.",e);
+	    		return false;
+	    	}
+    	}  
     	
     	
-    	private void SaveAsDialog()
+    	private bool SaveAsDialog()
     	{
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
@@ -272,26 +187,84 @@ namespace AdventureAuthor.Ideas
   				ActiveBoard.Filename = saveFileDialog.FileName;
   				try {
 		  			Save();
+		  			return true;
   				}
   				catch (Exception e) {
 	    			Say.Error("Failed to save magnet board.",e);
+	    			ActiveBoard.Filename = null;
+	    			return false;
   				}
   			}
+  			else {
+  				return false;
+  			}
+    	}  
+    	
+    	
+    	/// <summary>
+    	/// Close the current board, displaying dialogs offering to save/save as the board first if 
+    	/// changes have been made.
+    	/// </summary>
+    	/// <returns>Returns true if the board was closed; false if it was cancelled</returns>
+    	private bool CloseDialog()
+    	{
+    		if (ActiveBoard != null && ActiveBoard.Dirty) {
+    			MessageBoxResult result = 
+    				MessageBox.Show("Save changes to this board?","Save changes?",MessageBoxButton.YesNoCancel);
+    			switch (result) {
+    				case MessageBoxResult.Cancel:
+    					return false;
+    				case MessageBoxResult.Yes:
+    					bool cancelled = !SaveDialog(); // user can save, proceed without saving or cancel
+    					if (cancelled) {
+    						return false;
+    					}
+    					break;
+    				default:
+    					break;
+    			}    			
+    		}
+    		ActiveBoard.CloseBoard();
+    		return true;
     	}
-                    
-            
-        private void AddMagnetBoardHandlers(MagnetBoardControl board)
-        {
-            ActiveBoard.Drop += new DragEventHandler(magnetBoardControl_MagnetDropped);
-            ActiveBoard.MagnetRemoved += new EventHandler<MagnetRemovedEventArgs>(magnetBoardControl_MagnetRemoved);        	
-            ActiveBoard.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
-            ActiveBoard.MagnetAdded += magnetAddedHandler;
-        }
+    	
+    	
+    	private void UpdateTitleBar(object sender, EventArgs e)
+    	{
+    		string title;
+    		if (ActiveBoard.Filename == null || ActiveBoard.Filename == String.Empty) {
+    			if (ActiveBoard.Dirty) {
+    				title = "Untitled* - Ideas";
+    			}
+    			else {
+    				title = "Untitled - Ideas";
+    			}
+    		}
+    		else {
+    			string filename = Path.GetFileName(ActiveBoard.Filename);
+    			if (ActiveBoard.Dirty) {
+    				title = filename + "* - Ideas";
+    			}
+    			else {
+    				title = filename + " - Ideas";
+    			}
+    		}
+    		
+    		if (Title != title) {
+    			Title = title;
+    		}
+    	}  
     	
     	#endregion
         
     	#region Event handlers
     	 
+    	private void OnClick_New(object sender, RoutedEventArgs e)
+    	{
+    		New();
+    	}
+    	
+    	
     	private void OnClick_Open(object sender, RoutedEventArgs e)
         {		
 			OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -318,7 +291,19 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_SaveAs(object sender, EventArgs e)
     	{
     		SaveAsDialog();
-    	}		    	 
+    	}		
+    	 
+    	
+    	private void OnClick_Close(object sender, RoutedEventArgs e)
+    	{
+    		CloseDialog();
+    	}    		
+    	 
+    	
+    	private void OnClick_Exit(object sender, RoutedEventArgs e)
+    	{
+    		Close();
+    	}    	 
     	
     	
         private void OnClick_AddMagnet(object sender, RoutedEventArgs e)
@@ -340,7 +325,15 @@ namespace AdventureAuthor.Ideas
         
         private void OnClick_Scatter(object sender, RoutedEventArgs e)
         {
-        	magnetList.Scatter();
+        	MessageBoxResult result = MessageBox.Show("Tip all your magnets onto the board?",
+		        					                  "Scatter magnets?", 
+		        					                  MessageBoxButton.OKCancel,
+		        					                  MessageBoxImage.Question,
+		        					                  MessageBoxResult.Cancel,
+		        					                  MessageBoxOptions.None);
+        	if (result == MessageBoxResult.OK) {
+        		magnetList.Scatter();
+        	}
         }
         
         
@@ -374,7 +367,7 @@ namespace AdventureAuthor.Ideas
         					}
         				}
         				else if (ActiveBoard.HasMagnet(SelectedMagnet)) {
-        					ActiveBoard.RemoveMagnet(SelectedMagnet);
+        					ActiveBoard.DeleteMagnet(SelectedMagnet);
         				}
         			}
         			break;
@@ -399,6 +392,144 @@ namespace AdventureAuthor.Ideas
         			}
         			break;
         	}        	
+        }
+        
+        
+        private void OnClick_ClearBoard(object sender, EventArgs e)
+        {
+			MessageBoxResult result = MessageBox.Show("Clear entire board?",
+		        					                  "Clear?", 
+		        					                  MessageBoxButton.YesNo,
+		        					                  MessageBoxImage.Question,
+		        					                  MessageBoxResult.No,
+		        					                  MessageBoxOptions.None);
+    		if (result == MessageBoxResult.Yes) {
+        		List<MagnetControl> magnets = new List<MagnetControl>(ActiveBoard.mainCanvas.Children.Count);
+        		foreach (MagnetControl magnet in ActiveBoard.mainCanvas.Children) {
+        			magnets.Add(magnet);
+        		}        		        		
+        		foreach (MagnetControl magnet in magnets) { // TODO in ActiveBoard.GetMagnets()
+        			ActiveBoard.DeleteMagnet(magnet);
+        		}
+    		}
+        }
+                
+        
+        private void OnClick_RotateLeft(object sender, EventArgs e) 
+        {
+        	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
+        		SelectedMagnet.Angle -= MagnetControl.DEGREES_TO_ROTATE;
+        	}
+        }
+        
+        
+        private void OnClick_RotateRight(object sender, EventArgs e) 
+        {
+        	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
+        		SelectedMagnet.Angle += MagnetControl.DEGREES_TO_ROTATE;
+        	}
+        }
+
+        
+        private void CategoryElementIsCheckedChanged(object sender, RoutedEventArgs e)
+        {
+        	IdeaCategory category;
+        	bool isChecked;
+        	if (e.Source is ShowHideCategoryMenuItem) {
+        		ShowHideCategoryMenuItem menuItem = (ShowHideCategoryMenuItem)e.Source;
+        		category = menuItem.Category;
+        		isChecked = menuItem.IsChecked;
+        	}
+        	else if (e.Source is ShowHideCategoryCheckBox) {
+        		ShowHideCategoryCheckBox checkBox = (ShowHideCategoryCheckBox)e.Source;
+        		category = checkBox.Category;
+        		isChecked = (bool)checkBox.IsChecked;
+        	}
+        	else {
+        		throw new ArgumentException("Did not recognise show/hide category element (" + e.Source + ")");
+        	}
+        	
+        	if (magnetList.CategoryIsVisible(category) && !isChecked) {
+        		magnetList.HideCategory(category,false);
+        	}
+        	else if (!magnetList.CategoryIsVisible(category) && isChecked) {        		
+        		magnetList.ShowCategory(category,false);
+        	}
+        }
+        
+        
+        private void useWonkyMagnetsChecked(object sender, RoutedEventArgs e)
+        {
+        	magnetList.UseWonkyMagnets = true;
+        }
+        
+        
+        private void useWonkyMagnetsUnchecked(object sender, RoutedEventArgs e)
+        {
+        	magnetList.UseWonkyMagnets = false;
+        }
+
+        
+        private void magnetAdded(object sender, MagnetEventArgs e)
+        {           
+	        e.Magnet.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
+	        e.Magnet.PreviewMouseMove += new MouseEventHandler(DragSource_PreviewMouseMove);
+        }
+
+        
+        private void magnetList_MagnetPassedToBoard(object sender, MagnetEventArgs e)
+        {
+        	// Create a clone:
+        	MagnetControl magnet = (MagnetControl)e.Magnet.Clone();
+        	ActiveBoard.AddMagnet(magnet,true);	
+        }
+    
+        
+	    private void magnetBoardControl_MagnetDropped(object sender, DragEventArgs e)
+	    {
+	         IDataObject data = e.Data;
+	
+	         if (data.GetDataPresent(typeof(MagnetControlDataObject))) {
+	         	MagnetControlDataObject dataObject = (MagnetControlDataObject)data.GetData(typeof(MagnetControlDataObject));
+	         	MagnetControl magnet = dataObject.Magnet;
+	         	
+	         	bool fromMagnetList = !ActiveBoard.HasMagnet(magnet);
+	         		         	
+	         	if (fromMagnetList) { // copy the magnet from the magnetlist
+	         		magnet = (MagnetControl)magnet.Clone();
+	         	}
+	         	
+	         	// Set the magnet's new position - account for the position of the mouse when
+	         	// clicking on the magnet (and the angle of the magnet's rotation?):
+	         	Point drop = e.GetPosition(this);
+	         	drop.X -= magnet.DesiredSize.Width / 2;
+	         	drop.Y -= magnet.DesiredSize.Height / 2;
+	         	magnet.X = drop.X;
+	         	magnet.Y = drop.Y;
+	         	
+	         	if (fromMagnetList) {
+	         		ActiveBoard.AddMagnet(magnet,false);
+	         		SelectedMagnet = magnet; // select the clone rather than the original
+	         	}
+	         		
+	         	ActiveBoard.BringToFront(magnet);
+	    	}	
+	    } 
+        
+
+        private void magnetList_MagnetDropped(object sender, DragEventArgs e)
+        {
+	         IDataObject data = e.Data;
+	
+	         if (data.GetDataPresent(typeof(MagnetControlDataObject))) {
+	         	MagnetControlDataObject dataObject = (MagnetControlDataObject)data.GetData(typeof(MagnetControlDataObject));
+	         	
+	         	// If this magnet is being put back in the idea box, remove it from the board
+	         	// but don't add it to the list.
+	         	if (ActiveBoard.HasMagnet(dataObject.Magnet)) {
+	         		ActiveBoard.DeleteMagnet(dataObject.Magnet);
+	         	}
+	         }	
         }
         
 
@@ -430,49 +561,25 @@ namespace AdventureAuthor.Ideas
         			checkBox.IsChecked = magnetList.CategoryIsVisible(checkBox.Category);
         		}
         	}
-        }
+        }        
         
-        
-        private void OnClick_ClearBoard(object sender, EventArgs e)
+
+        private void magnetList_Scattered(object sender, EventArgs e)
         {
-			MessageBoxResult result = MessageBox.Show("Clear entire board?",
-		        					                  "Clear?", 
-		        					                  MessageBoxButton.YesNo,
-		        					                  MessageBoxImage.Question,
-		        					                  MessageBoxResult.No,
-		        					                  MessageBoxOptions.None);
-    		if (result == MessageBoxResult.Yes) {
-        		List<MagnetControl> magnets = new List<MagnetControl>(ActiveBoard.mainCanvas.Children.Count);
-        		foreach (MagnetControl magnet in ActiveBoard.mainCanvas.Children) {
-        			magnets.Add(magnet);
-        		}        		        		
-        		foreach (MagnetControl magnet in magnets) { // TODO in ActiveBoard.GetMagnets()
-        			ActiveBoard.RemoveMagnet(magnet);
-        		}
-    		}
-        }
-                
-        
-        private void OnClick_RotateLeft(object sender, EventArgs e) 
-        {
-        	if (SelectedMagnet != null) {
-        		SelectedMagnet.Angle -= 2;
-        	}
-        }
-        
-        
-        private void OnClick_RotateRight(object sender, EventArgs e) 
-        {
-        	if (SelectedMagnet != null) {
-        		SelectedMagnet.Angle += 2;
+        	if (ActiveBoard != null) {
+	        	foreach (MagnetControl magnet in magnetList.GetMagnets(true)) {
+        			MagnetControl clone = (MagnetControl)magnet.Clone();
+        			ActiveBoard.AddMagnet(clone,true);
+	        	}        
         	}
         }
         
         #endregion
         
         
+        #region Drag-drop
 
-        void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && !IsDragging)
             {
@@ -490,24 +597,20 @@ namespace AdventureAuthor.Ideas
             }   
         }
 
-        void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        
+        private void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _startPoint = e.GetPosition(null);
         }
         
 
-        
-
-        #region STEP2  BASIC Custom Cursor .. 
-        
-
-        void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        private void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
-                e.UseDefaultCursors = false;
-                e.Handled = true;
+            e.UseDefaultCursors = false;
+            e.Handled = true;
 
-
-
+            #region Redundant
+            
 //            System.Diagnostics.Debug.WriteLine("DragSource_GiveFeedback " + e.Effects.ToString());
 //
 //            if (this.DragScope == null)
@@ -535,25 +638,18 @@ namespace AdventureAuthor.Ideas
 //                e.UseDefaultCursors = false;
 //                e.Handled = true;
 //            }
+
+			#endregion
         }
-        #endregion 
 
 
-        #region STEP3 ADORNERS
-        // 
-        DragAdorner _adorner = null;
-        AdornerLayer _layer;
-
-        #endregion 
+        private DragAdorner _adorner = null;
+        private AdornerLayer _layer;
 
 
 
-
-        #region STEP5  -- Use DRAGOVER as a workaround 
-
-        FrameworkElement _dragScope;
-        public FrameworkElement DragScope
-        {
+        private FrameworkElement _dragScope;
+        public FrameworkElement DragScope {
             get { return _dragScope; }
             set { _dragScope = value; }
         }
@@ -598,11 +694,10 @@ namespace AdventureAuthor.Ideas
             
             
             MagnetControl magnet = (MagnetControl)e.Source;
-            magnet.Opacity = 0.5;
             BitmapEffect fx = magnet.BitmapEffect;
             magnet.BitmapEffect = null;
             
-            _adorner = new DragAdorner(DragScope,(UIElement)magnet, true, 1.0);// 0.5);
+            _adorner = new DragAdorner(DragScope,(UIElement)magnet, true, 0.5);
             //magnet.Hide();
             _layer = AdornerLayer.GetAdornerLayer(DragScope as Visual);
             _layer.Add(_adorner);
@@ -634,7 +729,6 @@ namespace AdventureAuthor.Ideas
             
              // Clean up our mess :) 
              magnet.BitmapEffect = fx;
-             magnet.Opacity = 1.0;
             DragScope.AllowDrop = previousDrop;
             AdornerLayer.GetAdornerLayer(DragScope).Remove(_adorner);
             _adorner = null;
@@ -649,7 +743,7 @@ namespace AdventureAuthor.Ideas
         }
 
         private bool _dragHasLeftScope = false; 
-        void DragScope_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void DragScope_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
             if (this._dragHasLeftScope)
             {
@@ -660,7 +754,7 @@ namespace AdventureAuthor.Ideas
         }
 
 
-        void DragScope_DragLeave(object sender, DragEventArgs e)
+        private void DragScope_DragLeave(object sender, DragEventArgs e)
         {
             if (e.OriginalSource == DragScope)
             {
@@ -678,7 +772,7 @@ namespace AdventureAuthor.Ideas
 
 
 
-        void Window1_DragOver(object sender, DragEventArgs args)
+        private void Window1_DragOver(object sender, DragEventArgs args)
         {
             if (_adorner != null)
             {
@@ -686,12 +780,6 @@ namespace AdventureAuthor.Ideas
                 _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */ ;
             }
         }
-
-
-        
-        #endregion 
-
-
 
     
 
@@ -704,7 +792,8 @@ namespace AdventureAuthor.Ideas
             set { _isDragging = value; }
         } 
 
-      
+        
+        #endregion 
 
     }
 }

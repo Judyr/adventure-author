@@ -9,23 +9,17 @@
 	AllowDrop="true">
 	<local:BoardObject.ContextMenu>
 		<ContextMenu>
+	    	<MenuItem Name="editMenuItem" Header="Edit" Click="OnClick_Edit"/>
+			<Separator/>
 	    	<MenuItem Name="bringToFrontMenuItem" Header="Bring to front" Click="OnClick_BringToFront"/>
 	    	<MenuItem Name="sendToBackMenuItem" Header="Send to back" Click="OnClick_SendToBack"/>
 			<Separator/>
 	    	<MenuItem Header="Remove" IsEnabled="false"/>
 		</ContextMenu>
 	</local:BoardObject.ContextMenu>
-    <Grid>
-        <Grid.RowDefinitions>
-    		<RowDefinition/>
-    	</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-    		<ColumnDefinition/>
-    	</Grid.ColumnDefinitions>
-    	<Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
+    <Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
 	    	<TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
 					    	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
 					    	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
-    	</Border>
-    </Grid>
+    </Border>
 </local:BoardObject>

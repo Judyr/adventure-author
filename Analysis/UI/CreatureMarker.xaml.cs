@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,9 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using NWN2Toolset.NWN2.Data.Instances;
+using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Analysis.UI
@@ -144,11 +145,25 @@ namespace AdventureAuthor.Analysis.UI
         
         public CreatureMarker(NWN2CreatureInstance creature)
         {
-        	Radius = 5;
         	MarkerBrush = DEFAULT_BRUSH;
-        	this.creature = creature;        	
+        	this.creature = creature;      
+        	// Base marker size on the intended size of creature. Could be multiplying this by 
+        	// Scale here, but the creature size seems to be very general - e.g. trolls are
+        	// same size as dragons even though the dragon is about 10 times as big as the troll
+        	// on the map - so I think this would just confuse things (e.g. a triple-sized human,
+        	// on the area map much smaller than a dragon, would be bigger than a dragon on the
+        	// map view.)
+        	Radius = creature.LookupCreatureSize();
         	UpdateChallengeRating();
             InitializeComponent();
+            
+            // TODO - attaches to everything, despite conversation check. Also pic doesn't look great.
+            if (creature.Conversation != null && creature.Conversation.FullName != String.Empty) {            	
+	            Image image = new Image();
+	            ImageSourceConverter s = new ImageSourceConverter();
+	            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"speechbubblesblue.png"));            
+	            Content = image;        
+            }
         }
 
                 

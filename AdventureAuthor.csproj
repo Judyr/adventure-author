@@ -294,6 +294,10 @@
     </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Evaluation\OptionalWorksheetPart.cs" />
+    <Compile Include="Ideas\EditMagnetWindow.cs">
+      <DependentUpon>EditMagnetWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ideas\Board.cs" />
     <Compile Include="Ideas\BoardObject.cs" />
     <Compile Include="Ideas\MagnetDragAdorner.cs" />
@@ -303,7 +307,7 @@
     <Compile Include="Ideas\ISerializableData.cs" />
     <Compile Include="Ideas\MagnetControlDataObject.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
-    <Compile Include="Ideas\MagnetRemovedEventArgs.cs" />
+    <Compile Include="Ideas\MagnetListInfo.cs" />
     <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
     <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
     <Compile Include="Ideas\SortBy.cs" />
@@ -450,6 +454,7 @@
     <Page Include="Evaluation\Viewer\RatingControl.xaml" />
     <Page Include="Evaluation\Viewer\SelectModeWindow.xaml" />
     <Page Include="Evaluation\Viewer\WorksheetViewer.xaml" />
+    <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetBoardViewer.xaml" />

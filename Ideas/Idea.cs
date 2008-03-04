@@ -117,7 +117,9 @@ namespace AdventureAuthor.Ideas
 		
 		public int CompareTo(object obj)
 		{
-			return String.Compare(text,((Idea)obj).text);
+			Idea idea = (Idea)obj;
+			int answer = String.Compare(text,((Idea)obj).text);
+			return answer;
 		}
 		
 		#endregion

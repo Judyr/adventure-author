@@ -17,11 +17,12 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
-    public partial class MagnetControl : BoardObject
+    public partial class MagnetControl : BoardObject, ICloneable
     {       
     	#region Constants
     	
     	public const double MAGNET_MAX_WIDTH = 150;
+		public const double DEGREES_TO_ROTATE = 2;
     	
     	protected static readonly Brush CHARACTERS_BRUSH = Brushes.LightCoral;
     	protected static readonly Brush ITEMS_BRUSH = Brushes.Wheat;
@@ -64,7 +65,7 @@ namespace AdventureAuthor.Ideas
 			set {
 				idea = value;
 				IdeaTextBox.Text = idea.Text;
-				SetColourByCategory();
+				Background = GetColourForCategory(idea.Category);
 			}
 		}
 		
@@ -101,6 +102,9 @@ namespace AdventureAuthor.Ideas
     			((RotateTransform)RenderTransform).Angle = value;
 			}
 		}    	
+		
+		
+		private static Random random = new Random();
     	
     	#endregion    	
     	
@@ -153,15 +157,15 @@ namespace AdventureAuthor.Ideas
     		
             InitializeComponent();
             
+            // Stop the control expanding to fill the space available in a StackPanel:
+            this.VerticalAlignment = VerticalAlignment.Center;
+            this.HorizontalAlignment = HorizontalAlignment.Center;
+            
             this.BitmapEffect = fxGroup;
     		
             MaxWidth = MAGNET_MAX_WIDTH;
             RenderTransform = new RotateTransform(0,ActualWidth/2,ActualHeight/2);
 			SizeChanged += new SizeChangedEventHandler(UpdateCentrePointOfRotation);
-				
-            
-            this.GotFocus += delegate { Log.WriteMessage(this.ToString() + " got focus"); };
-            this.LostFocus += delegate { Log.WriteMessage(this.ToString() + " lost focus"); };
     	} 
     	
     	
@@ -204,7 +208,7 @@ namespace AdventureAuthor.Ideas
     	{
     		return new MagnetInfo(this);
     	}
-    	
+    	    	
     	
     	/// <summary>
     	/// Hide this magnet if it is visible.
@@ -228,33 +232,38 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-		private void SetColourByCategory()
-		{
-			switch (idea.Category) {
+    	public static Brush GetColourForCategory(IdeaCategory category)
+    	{
+    		Brush brush;
+			switch (category) {
 				case IdeaCategory.Characters:
-					Background = CHARACTERS_BRUSH;
+					brush = CHARACTERS_BRUSH;
 					break;
 				case IdeaCategory.Items:
-					Background = ITEMS_BRUSH;
+					brush = ITEMS_BRUSH;
 					break;
 				case IdeaCategory.Plot:
-					Background = PLOT_BRUSH;
+					brush = PLOT_BRUSH;
 					break;
 				case IdeaCategory.Quests:
-					Background = QUESTS_BRUSH;
+					brush = QUESTS_BRUSH;
 					break;
 				case IdeaCategory.Setting:
-					Background = SETTING_BRUSH;
+					brush = SETTING_BRUSH;
 					break;
 				case IdeaCategory.Other:
-					Background = OTHER_BRUSH;
+					brush = OTHER_BRUSH;
 					break;
-				case IdeaCategory.Resources:
-					Background = RESOURCES_BRUSH;
+				case IdeaCategory.Toolset:
+					brush = RESOURCES_BRUSH;
+					break;
+				default:
+					brush = OTHER_BRUSH;
 					break;
 			}
-		}
-    	
+    		return brush;
+    	}
+    	    	
     	
     	internal void SelectFX()
     	{
@@ -283,11 +292,33 @@ namespace AdventureAuthor.Ideas
 			Canvas.SetTop(this,Canvas.GetTop(this) + down);
 			Canvas.SetLeft(this,Canvas.GetLeft(this) + right);
 		}
+		
+		
+		public void RandomiseAngle(double maxDeviationFromZero)
+		{
+			bool angleToLeft = DateTime.Now.Millisecond % 2 == 0;
+			RandomiseAngle(maxDeviationFromZero,angleToLeft);
+		}
+        
+        
+        public void RandomiseAngle(double maxDeviationFromZero, bool angleToLeft)
+        {
+        	double angle = (maxDeviationFromZero * random.NextDouble());
+        	if (((int)angle) == 0) { // straight magnets stand out too sharply from the rest
+        		angle = DEGREES_TO_ROTATE;
+        	}
+        	if (angleToLeft) {
+        		angle = 360 - angle;
+        	}
+        	angle -= (angle % DEGREES_TO_ROTATE); // ensure angle is divisible by DEGREES_TO_ROTATE (2)
+        	Angle = angle;
+        }
     	
 		
 		public int CompareTo(object obj)
 		{
-			return String.Compare(idea.Text,((MagnetControl)obj).idea.Text);
+			MagnetControl magnet = (MagnetControl)obj;
+			return this.idea.CompareTo(magnet.idea);
 		}
 		
     	
@@ -328,6 +359,13 @@ namespace AdventureAuthor.Ideas
     	{
     		OnRequestSendToBack(new MagnetEventArgs(this));
     	}
+    	
+    	
+    	private void OnClick_Edit(object sender, EventArgs e)
+    	{
+    		EditMagnetWindow window = new EditMagnetWindow(this);
+    		window.ShowDialog();
+    	}
     	        
         #endregion
    
@@ -363,5 +401,12 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		#endregion
+    	
+		
+		public object Clone()
+		{
+			MagnetInfo info = (MagnetInfo)GetSerializable();
+			return new MagnetControl(info);
+		}
     }
 }
