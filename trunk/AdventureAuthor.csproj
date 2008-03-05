@@ -371,9 +371,9 @@
       <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
+    <Compile Include="Utils\DragDropManager\Debug.cs" />
     <Compile Include="Utils\DragDropManager\DragDropManager.cs" />
     <Compile Include="Utils\DragDropManager\DropPreviewAdorner.cs" />
     <Compile Include="Utils\DragDropManager\IDragSourceAdvisor.cs" />
@@ -387,6 +387,7 @@
     </Compile>
     <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Utils\Measurement.cs" />
+    <Compile Include="Utils\ResourceHelper.cs" />
     <Compile Include="Utils\RGBPicker.xaml.cs">
       <DependentUpon>RGBPicker.xaml</DependentUpon>
       <SubType>Code</SubType>

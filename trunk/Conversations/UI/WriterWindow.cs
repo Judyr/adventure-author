@@ -707,6 +707,15 @@ namespace AdventureAuthor.Conversations.UI
 	    		saveFileDialog.Filter = Filters.TXT;
 	  			saveFileDialog.ValidateNames = true;
 	  			saveFileDialog.Title = "Select location to export conversation to";
+	  			
+	  			// get the default filename from the conversation filename:
+	  			try {
+	  				saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,originalFilename + ".txt");
+	  			}
+	  			catch (Exception e) {
+	  				Say.Error(e);
+	  			};
+	  			
 	  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 	  			if (ok) {	  				
 	  				string filename = saveFileDialog.FileName;

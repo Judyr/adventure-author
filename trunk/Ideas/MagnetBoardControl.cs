@@ -20,6 +20,7 @@ namespace AdventureAuthor.Ideas
 			get { return filename; }
 			set { 
 				filename = value;
+				Log.WriteMessage("Filename:  " + filename);
 			}
 		}    	
     	
@@ -74,16 +75,6 @@ namespace AdventureAuthor.Ideas
 		protected virtual void OnMagnetMoved(MagnetEventArgs e)
 		{
 			EventHandler<MagnetEventArgs> handler = MagnetMoved;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
-		
-    	
-    	public event EventHandler<MagnetEventArgs> MagnetEdited;    	
-		protected virtual void OnMagnetEdited(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = MagnetEdited;
 			if (handler != null) {
 				handler(this, e);
 			}
@@ -154,7 +145,6 @@ namespace AdventureAuthor.Ideas
     		
     		MagnetAdded += magnetBoard_ChangedHandler;
     		MagnetDeleted += magnetBoard_ChangedHandler;
-    		MagnetEdited += magnetBoard_ChangedHandler;
     		MagnetMoved += magnetBoard_ChangedHandler;
     		
     		InitializeComponent();    		
@@ -170,27 +160,53 @@ namespace AdventureAuthor.Ideas
         
         #region Methods   
        
+        /// <summary>
+        /// Open a magnet board from serialized data.
+        /// </summary>
+        /// <param name="filename">The location of the serialized data file</param>
         public void Open(string filename)
         {
     		if (!File.Exists(filename)) {
     			throw new ArgumentException(filename + " could not be found.");
     		}
-    			
-    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetBoardInfo));
-	    	MagnetBoardInfo magnetBoardInfo = (MagnetBoardInfo)o;
-	    	Filename = filename;	    		
-	    	Open(magnetBoardInfo);
+        	
+        	try {
+	    		object o = Serialization.Deserialize(filename,typeof(MagnetBoardInfo));
+		    	MagnetBoardInfo boardInfo = (MagnetBoardInfo)o;
+        		OpenBoard(boardInfo);
+		    	Filename = filename;
+	        	OnOpened(new EventArgs());
+        	}
+        	catch (Exception e) {
+        		Say.Error("Failed to open magnet board.",e);
+        		CloseBoard();
+        	}
         }
         
         
-        internal void Open(MagnetBoardInfo boardInfo)
+        /// <summary>
+        /// Open a magnet board from serialized data, without raising an Opened event.
+        /// </summary>
+        /// <param name="boardInfo">Serialized data describing the board to be opened</param>
+        private void OpenBoard(MagnetBoardInfo boardInfo)
+        {
+	        CloseBoard();
+	    	foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
+	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
+	    		AddMagnet(magnet,false);
+	    	}
+	        dirty = false; // cancel effect of adding magnets when opening (and don't raise Changed event)
+        }
+        
+        
+        /// <summary>
+        /// Open a magnet board from serialized data.
+        /// </summary>
+        /// <param name="boardInfo">Serialized data describing the board to be opened</param>
+        public void Open(MagnetBoardInfo boardInfo)
         {
         	try {
-	        	CloseBoard();
-	    		foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
-	    			MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
-	    			AddMagnet(magnet,false);
-	    		}
+        		OpenBoard(boardInfo);
 	        	OnOpened(new EventArgs());
         	}
         	catch (Exception e) {

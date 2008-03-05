@@ -241,10 +241,7 @@ namespace AdventureAuthor.Utils
 		internal static void SetXAMLButtonImage(Button button, string imageName, string alternateText)
 		{
         	try {
-	            ImageSourceConverter s = new ImageSourceConverter();	            
-	            Image image = new Image();
-	            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,imageName));            
-	            button.Content = image; 
+				button.Content = ResourceHelper.GetImage(imageName);
         	}
         	catch (Exception e) {
         		Say.Debug("Couldn't assign image for interface button: " + e);
@@ -255,11 +252,9 @@ namespace AdventureAuthor.Utils
 		
 		internal static void SetSandbarButtonImage(ButtonItem button, string imageName, string buttonText)
 		{		
-			ButtonItem cw = button;
-            System.Drawing.Bitmap b = new System.Drawing.Bitmap(Path.Combine(ModuleHelper.ImagesDir,imageName));
-            cw.Image = b;   
-            cw.Text = buttonText;
-            cw.BeginGroup = true;
+			button.Image = ResourceHelper.GetBitmap(imageName);
+            button.Text = buttonText;
+            button.BeginGroup = true;
 		}
 	}
 }
