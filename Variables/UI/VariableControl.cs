@@ -34,10 +34,7 @@ namespace AdventureAuthor.Variables.UI
         	
             InitializeComponent();    
             
-//            Image image = new Image();
-//            ImageSourceConverter s = new ImageSourceConverter();
-//            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(Adventure.ImagesDir,"delete.jpg"));            
-//            DeleteButton.Content = image;
+            DeleteButton.Content = ResourceHelper.GetImage("delete.jpg"); // NB: was commented out - why?
             
             VariableNameTextBox.Text = var.Name;
             VariableTypeTextBox.Text = GetVariableType(var);

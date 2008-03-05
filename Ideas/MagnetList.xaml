@@ -3,6 +3,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.ZIndex="1"
     xmlns:local="clr-namespace:AdventureAuthor.Ideas"
 	AllowDrop="true">
+	<local:UnserializableControl.Resources>	
+		<LinearGradientBrush x:Key="backgroundBrush" StartPoint="1,0" EndPoint="0,1">
+			<GradientStop Offset="-2" Color="WhiteSmoke"/>
+			<GradientStop Offset="2" Color="PaleGreen"/>
+		</LinearGradientBrush>
+	</local:UnserializableControl.Resources>
 	<Border BorderThickness="1,0,0,0" BorderBrush="Gray" Background="WhiteSmoke">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -17,7 +23,7 @@
 			<ScrollViewer Name="scroller" Grid.Row="1" Grid.Column="0"
 			              HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" 
 			              Focusable="false">
-		    	<StackPanel Name="magnetsPanel" Orientation="Horizontal" Background="WhiteSmoke"/>
+		    	<StackPanel Name="magnetsPanel" Orientation="Horizontal" Background="{StaticResource backgroundBrush}"/>
 		    </ScrollViewer>
 		</Grid>
 	</Border>	    

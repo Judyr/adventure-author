@@ -158,11 +158,8 @@ namespace AdventureAuthor.Analysis.UI
             InitializeComponent();
             
             // TODO - attaches to everything, despite conversation check. Also pic doesn't look great.
-            if (creature.Conversation != null && creature.Conversation.FullName != String.Empty) {            	
-	            Image image = new Image();
-	            ImageSourceConverter s = new ImageSourceConverter();
-	            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"speechbubblesblue.png"));            
-	            Content = image;        
+            if (creature.Conversation != null && creature.Conversation.FullName != String.Empty) {   
+            	Content = ResourceHelper.GetImage("speechbubblesblue.png");
             }
         }
 

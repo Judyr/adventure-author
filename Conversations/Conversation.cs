@@ -926,6 +926,9 @@ namespace AdventureAuthor.Conversations
 			sw = fi.CreateText();
 			sw.AutoFlush = false;
 			
+			sw.WriteLine(Path.GetFileName(filename));
+			sw.WriteLine();
+			
 			switch (format) {
 					
 				case ExportFormat.PageFormat:
@@ -949,7 +952,6 @@ namespace AdventureAuthor.Conversations
 		{
 			sw.WriteLine("Page " + WriterWindow.Instance.Pages.IndexOf(page));
 			sw.WriteLine();
-			
 			
 			foreach (LineControl lineControl in page.LineControls) {
 				sw.WriteLine(lineControl.SpeakerLabel.Text + " - " + 

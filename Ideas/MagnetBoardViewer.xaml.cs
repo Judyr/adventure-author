@@ -102,7 +102,7 @@ namespace AdventureAuthor.Ideas
             ActiveBoard.MagnetAdded += magnetAddedHandler;
             ActiveBoard.Drop += new DragEventHandler(magnetBoardControl_MagnetDropped);   	
             ActiveBoard.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
-            ActiveBoard.Changed += titleChangedHandler;
+            ActiveBoard.Changed += titleChangedHandler; // board became dirty
             ActiveBoard.Opened += titleChangedHandler;
             ActiveBoard.Closed += titleChangedHandler;
             ActiveBoard.Closed += delegate { 
@@ -206,6 +206,7 @@ namespace AdventureAuthor.Ideas
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				ActiveBoard.Filename = saveFileDialog.FileName;
+  				UpdateTitleBar(null,null);
   				try {
 		  			Save();
 		  			return true;
@@ -254,19 +255,25 @@ namespace AdventureAuthor.Ideas
     	{
     		string title;
     		if (ActiveBoard.Filename == null || ActiveBoard.Filename == String.Empty) {
+    			Log.WriteMessage("filename was null or blank");
     			if (ActiveBoard.Dirty) {
+    				Log.WriteMessage("and dirty");
     				title = "Untitled* - Ideas";
     			}
     			else {
+    				Log.WriteMessage("and clean");
     				title = "Untitled - Ideas";
     			}
     		}
     		else {
+    			Log.WriteMessage("filename was NOT null or blank");
     			string filename = Path.GetFileName(ActiveBoard.Filename);
     			if (ActiveBoard.Dirty) {
+    				Log.WriteMessage("and dirty");
     				title = filename + "* - Ideas";
     			}
     			else {
+    				Log.WriteMessage("and clean");
     				title = filename + " - Ideas";
     			}
     		}

@@ -98,10 +98,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	InitializeComponent();
             
         	// Set the image on the delete button:
-            Image image = new Image();
-            ImageSourceConverter s = new ImageSourceConverter();
-            image.Source = (ImageSource)s.ConvertFromString(Path.Combine(ModuleHelper.ImagesDir,"delete.jpg"));            
-            DeleteLineButton.Content = image;            	
+        	DeleteLineButton.Content = ResourceHelper.GetImage("delete.jpg");
         	
         	// Set the appearance of the control based on who is speaking:
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);
