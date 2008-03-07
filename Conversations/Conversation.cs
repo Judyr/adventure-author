@@ -94,7 +94,6 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnChanged(ConversationChangedEventArgs e)
 		{
-			Say.Debug("Conversation.Changed event raised.");
 			EventHandler<ConversationChangedEventArgs> handler = Changed;
 			if (handler != null) {
 				handler(this,e);
@@ -103,7 +102,6 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnSaved(EventArgs e)
 		{
-			Say.Debug("Conversation.Saved event raised.");
 			EventHandler<EventArgs> handler = Saved;
 			if (handler != null) {
 				handler(this,e);
@@ -112,7 +110,6 @@ namespace AdventureAuthor.Conversations
 		
 		protected virtual void OnSpeakerAdded(SpeakerAddedEventArgs e)
 		{
-			Say.Debug("Conversation.SpeakersAdded event raised.");
 			EventHandler<SpeakerAddedEventArgs> handler = SpeakerAdded;
 			if (handler != null) {
 				handler(this,e);
@@ -138,7 +135,9 @@ namespace AdventureAuthor.Conversations
 			set { currentConversation = value; }
 		}
 		
+		
 		private static object padlock = new object();
+		
 		
 		/// <summary>
 		/// The game conversation.
@@ -148,7 +147,9 @@ namespace AdventureAuthor.Conversations
 			get { return nwnConv; }
 		}
 		
+		
 		private StreamWriter sw;
+		
 		
 		/// <summary>
 		/// Characters who can speak in this conversation. Always includes the player.
@@ -332,21 +333,46 @@ namespace AdventureAuthor.Conversations
 				line.Actions.Remove(action);
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
-		}		
-		
-				
+		}	
+					
+						
 		/// <summary>
-		/// Delete all actions on a line of dialogue.
+		/// Move the position of an action.
 		/// </summary>
-		/// <param name="line">The line of dialogue</param>
-		public void DeleteAllActions(NWN2ConversationConnector line)
+		/// <param name="line">The line of dialogue the action is attached to</param>
+		/// <param name="action">The action to move</param>
+		/// <param name="moveUp">True to move the action up; false to move the action down</param>
+		public void MoveAction(NWN2ConversationConnector line, NWN2ScriptFunctor action, bool moveUp)
 		{
 			if (line == null) {
 				Say.Error("Can't operate on a null line.");
 			}
+			else if (action == null) {
+				Say.Error("Can't move a null action.");
+			}
 			else {
-				Log.WriteMessage("deleted all actions on line");
-				line.Actions.Clear();
+				if (!(line.Actions.Contains(action))) {
+					Say.Error("The given action does not appear on this line.");
+					return;
+				}
+				
+				if (moveUp) {
+					line.Actions.MoveTowardsFront(action);
+				}
+				else {
+					line.Actions.MoveTowardsBack(action);
+				}
+								
+				string extraInfo;
+				if (moveUp) {
+					extraInfo = "up";
+				}
+				else {
+					extraInfo = "down";
+				}
+				
+				Log.WriteAction(Log.Action.moved,"action",extraInfo);
+				
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}
@@ -740,7 +766,7 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineIntoChoice(NWN2ConversationConnector line, NWN2ConversationConnector choiceParent)
 		{
-			Log.WriteAction(Log.Action.dragdropped,"line","into choice, creating a new branch");
+			Log.WriteAction(Log.Action.moved,"line","into choice, creating a new branch");
 			
 			NWN2ConversationConnectorCollection existingBranches = GetChildren(choiceParent);
 			
@@ -783,35 +809,25 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		
-		public void MoveLineWithinChoice(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingBranch)
+		public void MoveLineWithinChoice(NWN2ConversationConnector line, int index)
 		{
-			Log.WriteAction(Log.Action.dragdropped,"line","within choice, re-ordering existing branches");
+			Log.WriteAction(Log.Action.moved,"line","within choice, re-ordering existing branches");
 			                
 			if (line == null) {			
 				throw new ArgumentNullException("line","Cannot operate on a null line.");
 			}
-			if (newPrecedingBranch == null) {
-				throw new ArgumentNullException("newPrecedingBranch","Cannot operate on a null line.");
-			}
-			if (line.Parent != newPrecedingBranch.Parent) {
-				throw new InvalidOperationException("The two lines were not part of the same choice.");
-			}
 			if (!Conversation.CurrentConversation.Contains(line)) {
 				throw new ArgumentException("line","Passed line does not exist in this conversation.");
 			}
-			if (!Conversation.CurrentConversation.Contains(newPrecedingBranch)) {
-				throw new ArgumentException("newPrecedingBranch","Passed line does not exist in this conversation.");
-			}
 			
-			NWN2ConversationConnectorCollection children = GetChildren(line.Parent);
-			children.Remove(line);
-			int index = children.IndexOf(newPrecedingBranch) + 1;
+			NWN2ConversationConnectorCollection siblings = GetChildren(line.Parent);
+			siblings.Remove(line);
 			
-			if (index > (children.Count - 1)) { // if outside index bounds
-				children.Add(line);
+			if (index > (siblings.Count - 1)) { // if outside index bounds
+				siblings.Add(line);
 			}
 			else {
-				children.Insert(index,line);
+				siblings.Insert(index,line);
 			}
 			OnChanged(new ConversationChangedEventArgs(true));
 		}				
@@ -827,7 +843,7 @@ namespace AdventureAuthor.Conversations
 		/// <param name="newPrecedingLine">The line that should now come before it (not necessarily the parent)</param>
 		public void MoveLine(NWN2ConversationConnector line, NWN2ConversationConnector newPrecedingLine)
 		{
-			Log.WriteAction(Log.Action.dragdropped,"line");
+			Log.WriteAction(Log.Action.moved,"line");
 			
 			if (line == null) {			
 				Say.Debug("line == null");
@@ -841,7 +857,6 @@ namespace AdventureAuthor.Conversations
 				Say.Debug("Drag-dropped line over itself - do nothing.");
 				return; // dragged over self
 			}
-			// TODO if trying to drop over the line's original preceding line, return as well
 					
 			// Create a new line, copy the properties of the original and then delete it:
 			NWN2ConversationConnector copy = _AddLine(newPrecedingLine,line.Speaker);
@@ -866,8 +881,9 @@ namespace AdventureAuthor.Conversations
 			Log.WriteAction(Log.Action.saved,"conversation");
 			
 			// Changes to a line's text are not saved immediately, so save changes before going any further:
-			if (WriterWindow.Instance.SelectedLineControl != null && !IsFiller(WriterWindow.Instance.SelectedLineControl.Nwn2Line)) {
-				WriterWindow.Instance.SelectedLineControl.SaveChangesToText();
+			LineControl selected = WriterWindow.Instance.SelectedLineControl;
+			if (selected != null && !IsFiller(selected.Nwn2Line)) {
+				selected.SaveChangesToText();
 			}
 			
 			lock (padlock) {				
@@ -1203,6 +1219,8 @@ namespace AdventureAuthor.Conversations
 			return new DataFromConversation(words,lines,pages);
 		}
 		
+				
+		
 		public override string ToString()
 		{
 			StringBuilder s = new StringBuilder();
@@ -1365,6 +1383,7 @@ namespace AdventureAuthor.Conversations
 			return newLine;
 		}			
 				
+		
 		/// <summary>
 		/// Do not call directly.
 		/// </summary>

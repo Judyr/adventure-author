@@ -180,6 +180,7 @@
       <SubType>Code</SubType>
       <DependentUpon>ChoiceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conversations\UI\Controls\ChoiceType.cs" />
     <Compile Include="Conversations\UI\Controls\ConditionControl.xaml.cs">
       <DependentUpon>ConditionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -201,12 +202,12 @@
       <DependentUpon>SoundControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversations\UI\LineDragSourceAdvisor.cs" />
-    <Compile Include="Conversations\UI\LineDropTargetAdvisor.cs" />
+    <Compile Include="Conversations\UI\LineControlDragAdorner.cs" />
     <Compile Include="Conversations\UI\NewOpenConversationWindow.xaml.cs">
       <DependentUpon>NewOpenConversationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Conversations\UI\SpeakerButton.cs" />
     <Compile Include="Conversations\UI\WriterWindow.cs">
       <SubType>Code</SubType>
       <DependentUpon>WriterWindow.xaml</DependentUpon>

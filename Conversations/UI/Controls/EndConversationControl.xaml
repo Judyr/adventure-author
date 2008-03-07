@@ -22,7 +22,8 @@
 
 <UserControl x:Class="AdventureAuthor.Conversations.UI.Controls.EndConversationControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	AllowDrop="false">
     <Grid ShowGridLines="false">		
 		<Grid.RowDefinitions>
     		<RowDefinition MinHeight="34" MaxHeight="34"/>
@@ -31,6 +32,8 @@
     		<ColumnDefinition Width="300"/>
     		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/>
     	</Grid.ColumnDefinitions>    	    	    	
-    	<TextBlock Width="700" Grid.Row="0" Grid.Column="1" FontSize="22" FontWeight="400" Background="Transparent" Padding="5" Margin="35,0,0,0">END OF CONVERSATION</TextBlock>
+    	<TextBlock Width="700" Grid.Row="0" Grid.Column="1" 
+    	           FontSize="22" FontWeight="400" 
+    	           Background="Transparent" Padding="5" Margin="35,0,0,0">END OF CONVERSATION</TextBlock>
 	</Grid>
 </UserControl>

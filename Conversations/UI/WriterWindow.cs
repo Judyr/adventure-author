@@ -33,9 +33,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
+using System.Windows.Documents;
 using AdventureAuthor.Conversations.UI.Controls;
 using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
+using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
@@ -43,6 +45,7 @@ using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.IO;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using System.Windows.Input;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -53,12 +56,7 @@ namespace AdventureAuthor.Conversations.UI
     public sealed partial class WriterWindow : Window
     {       
     	#region Fields    	
-    	
-    	/// <summary>
-    	/// Used to host a .NET 2.0 Windows Forms object, specifically the conversation graph.
-    	/// </summary>
-    	private WindowsFormsHost host;
-    	
+    	    	
     	/// <summary>
     	/// The single instance of the Writer window.
     	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
@@ -69,22 +67,25 @@ namespace AdventureAuthor.Conversations.UI
 			set { instance = (WriterWindow)value; }
 		}    	
     	
+    	
     	/// <summary>
     	/// A form containing a navigatable graph representation of the conversation, displayed on the main window.
-    	/// </summary>
-		private GraphForm mainGraph;		
+    	/// </summary>	
 		public GraphForm MainGraph {
-			get { return mainGraph; }
+			get { return this.mainGraph; }
 		}
     	
+		
 		/// <summary>
-		/// A form containing a navigatable graph representation of the conversation, displayed via an Expand Graph button on the main window.
+		/// A form containing a navigatable graph representation of the conversation, 
+		/// displayed via an Expand Graph button on the main window.
 		/// </summary>
 		private GraphForm expandedGraph = null;	
 		public GraphForm ExpandedGraph {
 			get { return expandedGraph; }
 		}
     	
+		
     	/// <summary>
     	/// The pages that make up the currently-open conversation, starting with a root page.
     	/// A new page is taken when the conversation reaches a branch point (i.e. the player or
@@ -95,6 +96,7 @@ namespace AdventureAuthor.Conversations.UI
 			get { return pages; }
 		}
     	
+    	
     	/// <summary>
     	/// The page that is currently selected in the graph and displayed in the main window.
     	/// </summary>
@@ -103,6 +105,7 @@ namespace AdventureAuthor.Conversations.UI
 			get { return currentPage; }
 		}
     	
+    	
     	/// <summary>
     	/// The previously viewed page, if there is one, to allow the user to click Back.
     	/// </summary>
@@ -110,6 +113,7 @@ namespace AdventureAuthor.Conversations.UI
 		public Page PreviousPage {
 			get { return previousPage; }
 		}    	
+    	
     	
     	/// <summary>
     	/// The currently selected line control.
@@ -122,6 +126,7 @@ namespace AdventureAuthor.Conversations.UI
 				else Say.Debug("Set CurrentControl to value: " + selectedLineControl.Nwn2Line.ToString());}
 		}
     	    	
+    	
     	/// <summary>
     	/// The filename of the conversation the user opened.
     	/// </summary>
@@ -130,6 +135,7 @@ namespace AdventureAuthor.Conversations.UI
 			get { return originalFilename; }
 		}
     	
+    	
     	/// <summary>
     	/// The filename of the working copy of the original conversation file that we are actually operating on.
     	/// </summary>
@@ -137,6 +143,11 @@ namespace AdventureAuthor.Conversations.UI
 		public string WorkingFilename {
 			get { return workingFilename; }
 		}    	
+    	
+		
+    	private MouseButtonEventHandler draggable_PreviewMouseLeftButtonDownHandler;
+    	private MouseEventHandler draggable_PreviewMouseMoveHandler;
+    	
     	
     	#endregion Fields
     	  						
@@ -157,9 +168,49 @@ namespace AdventureAuthor.Conversations.UI
 		    	      	
     	#region Constructors 
     	
-		public WriterWindow()
+    	/// <summary>
+    	/// Open a new conversation writer window, to create and edit conversations for game characters.
+    	/// </summary>
+    	/// <param name="launchNewOpenConversationDialog">True to launch a dialog upon loading that
+    	/// asks the user if they want to create a new conversation or open an existing conversation;
+    	/// false to do nothing.</param>
+		public WriterWindow(bool launchNewOpenConversationDialog)
 		{
 			InitializeComponent();
+    		draggable_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(lineControl_PreviewMouseLeftButtonDown);
+    		draggable_PreviewMouseMoveHandler = new MouseEventHandler(lineControl_PreviewMouseMove);
+    		Loaded += delegate
+    		{  
+				Log.WriteAction(Log.Action.launched,"conversationwriter");
+				
+				if (launchNewOpenConversationDialog) {
+					NewOpenConversationWindow win = new NewOpenConversationWindow();
+					win.ShowDialog();
+				}
+    		};
+    		
+            Closing += delegate { 
+            	try {
+            		Log.WriteAction(Log.Action.exited,"conversationwriter");
+            	}
+            	catch (Exception) { 
+            		// already disposed because toolset is closing
+            	}
+            };
+		}
+		
+		
+		public WriterWindow(string filename) : this(false)
+		{
+			Loaded += delegate 
+			{
+				try {
+					Open(filename);
+				}
+				catch (ApplicationException e) {
+					Say.Error(e);
+				}
+			};
 		}
 		
 		#endregion
@@ -186,7 +237,8 @@ namespace AdventureAuthor.Conversations.UI
 								
 			// Show the (disabled) first line of the previous page at the top of the page view:
 			if (currentPage.LeadLine != null) {
-				ShowLeadingLine(currentPage.LeadLine);
+				LeadingLine lineControl = ShowLeadingLine(currentPage.LeadLine); 
+				AddHandlersForDropping(lineControl); // not draggable
 			}
 			
 			// Display each line of dialogue until the page branches or the conversation ends:
@@ -194,29 +246,36 @@ namespace AdventureAuthor.Conversations.UI
 			while (possibleNextLines.Count == 1) {
 				NWN2ConversationConnector currentLine = possibleNextLines[0];
 				if (!Conversation.IsFiller(currentLine)) {
-					ShowLine(currentLine);
+					Line lineControl = ShowLine(currentLine);
+					AddHandlersForDragging(lineControl);
+					AddHandlersForDropping(lineControl);
 				}
 				possibleNextLines = currentLine.Line.Children;
 			}
 				
 			// Display the choice, check or end of conversation that ends this page:
 			if (possibleNextLines.Count == 0) {
-				ShowEndOfConversation();
+				ShowEndOfConversation(); // not draggable or droppable
 			}
 			else {
-				ShowBranch(possibleNextLines);
+				ChoiceControl choiceControl = ShowChoice(possibleNextLines);
+				foreach (LineControl lineControl in choiceControl.LineControls) {					
+					AddHandlersForDragging(lineControl);
+					AddHandlersForDropping(lineControl);
+				}
 			}
-		}
+		}		
 		
 		
 		/// <summary>
 		/// Add the line of dialogue that leads to this page to the current page view, unless this is the root page.
 		/// </summary>
 		/// <param name="line">The leading line to add</param>
-		private void ShowLeadingLine(NWN2ConversationConnector line)
+		private LeadingLine ShowLeadingLine(NWN2ConversationConnector line)
 		{
 			LeadingLine leadingLine = new LeadingLine(line);
 			LinesPanel.Children.Insert(0,leadingLine);
+			return leadingLine;
 		}
 		
 		
@@ -224,11 +283,12 @@ namespace AdventureAuthor.Conversations.UI
 		/// Add a line of dialogue to the current page view.
 		/// </summary>
 		/// <param name="line">The line of dialogue to add</param>
-		private void ShowLine(NWN2ConversationConnector line)
+		private Line ShowLine(NWN2ConversationConnector line)
 		{
 			Line lineControl = new Line(line);
 			this.currentPage.LineControls.Add(lineControl);
 			this.LinesPanel.Children.Add(lineControl);
+			return lineControl;
 		}				
 	
 		
@@ -236,35 +296,54 @@ namespace AdventureAuthor.Conversations.UI
 		/// Add a branch to the current page view.
 		/// </summary>
 		/// <param name="possibleLines">The lines which make up the branch</param>
-		private void ShowBranch(NWN2ConversationConnectorCollection possibleLines) 
+		private ChoiceControl ShowChoice(NWN2ConversationConnectorCollection possibleLines) 
 		{
 			if (possibleLines == null) {
-				Say.Error("Tried to create a branch from a null collection of lines.");
-				return;
+				throw new ArgumentNullException("Tried to create a choice from a null collection of lines.");
 			}
 			if (possibleLines.Count < 2) {
-				throw new ArgumentException("Tried to create a branch with less than 2 lines.");
+				throw new ArgumentException("Tried to create a choice with less than 2 lines.");
 			}
 			NWN2ConversationConnectorType speakerType = possibleLines[0].Type;
 			
 			// Create a LineControl for each line of dialogue in the branch:
 			foreach (NWN2ConversationConnector line in possibleLines) {
 				if (!Conversation.AreSameSpeakerType(line.Type,speakerType)) {					
-					throw new ArgumentException("Tried to create a branch with lines by both PC and NPC.");
+					throw new ArgumentException("Tried to create a choice with lines by both PC and NPC.");
 				}
 			}				
-			ChoiceControl branchControl = new ChoiceControl(possibleLines);
-			this.LinesPanel.Children.Add(branchControl);
+			ChoiceControl choiceControl = new ChoiceControl(possibleLines);
+			this.LinesPanel.Children.Add(choiceControl);
+			return choiceControl;
 		}		
 		
 		
 		/// <summary>
 		/// Add an end of conversation notice to the current page view.
 		/// </summary>
-		private void ShowEndOfConversation()
+		private EndConversationControl ShowEndOfConversation()
 		{				
 			EndConversationControl endOfConversation = new EndConversationControl();
 			LinesPanel.Children.Add(endOfConversation);
+			return endOfConversation;
+		}
+		
+		
+		private void AddHandlersForDragging(LineControl lineControl)
+		{
+			lineControl.PreviewMouseLeftButtonDown += lineControl_PreviewMouseLeftButtonDown;
+			lineControl.PreviewMouseMove += lineControl_PreviewMouseMove;
+		}
+		
+		
+		private void AddHandlersForDropping(LineControl lineControl)
+		{
+			lineControl.Drop += lineControl_OnDrop;
+			lineControl.Dialogue.PreviewDrop += delegate(object sender, DragEventArgs e) 
+			{      	
+				Say.Information("dropped on textbox");
+	        	lineControl_OnDrop(lineControl,e);
+			};
 		}
 						
         #endregion
@@ -345,7 +424,7 @@ namespace AdventureAuthor.Conversations.UI
         #endregion
 
         
-		
+        
 		
 		/// <summary>
 		/// Display a page of the conversation, in the page view and in the graph view.
@@ -495,9 +574,9 @@ namespace AdventureAuthor.Conversations.UI
 		/// <summary>
 		/// Open an existing conversation.
 		/// </summary>
-		/// <param name="name">The filename of the conversation.</param>
+		/// <param name="filename">The filename of the conversation.</param>
 		/// <remarks>The conversation file must be located in the directory of the current Adventure.</remarks>
-		public void Open(string name)
+		public void Open(string filename)
 		{
 			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
 				Say.Error("Open an Adventure first.");
@@ -509,24 +588,29 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(Log.Action.opened,"conversation",name);
+			Log.WriteAction(Log.Action.opened,"conversation",filename);
 			
-			Open(name,false);
+			try {
+				Open(filename,false);
+			}
+			catch (ApplicationException e) {
+				Say.Error(e);
+			}
 		}
 				
 		
 		/// <summary>
 		/// Create and open a new conversation.
 		/// </summary>
-		/// <param name="name">The filename of the conversation to create.</param>
-		public void CreateOpen(string name)
+		/// <param name="filename">The filename of the conversation to create.</param>
+		public void CreateOpen(string filename)
 		{
 			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
 				Say.Error("Open an Adventure first.");
 				return;
 			}
-			else if (!ModuleHelper.IsValidName(name)) {
-				Say.Error("'" + name + "' is not a valid name for a conversation.");
+			else if (!ModuleHelper.IsValidName(filename)) {
+				Say.Error("'" + filename + "' is not a valid name for a conversation.");
 				return;
 			}
 			
@@ -535,10 +619,15 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(Log.Action.added,"conversation",name);
-			Log.WriteAction(Log.Action.opened,"conversation",name);
+			Log.WriteAction(Log.Action.added,"conversation",filename);
+			Log.WriteAction(Log.Action.opened,"conversation",filename);
 			
-			Open(name,true);
+			try {
+				Open(filename,true);
+			}
+			catch (ApplicationException e) {
+				Say.Error(e);
+			}
 		}
 		
 		
@@ -584,7 +673,7 @@ namespace AdventureAuthor.Conversations.UI
 				if (File.Exists(workingPath)) {
 					File.Delete(workingPath);
 				}	
-				Say.Error("Failed to open conversation.",e);
+				throw new ApplicationException("Failed to open this conversation.",e);
 			}
 						
 			// Build a graph based on the list of Pages:
@@ -594,6 +683,7 @@ namespace AdventureAuthor.Conversations.UI
 				ExpandedGraph.Open(pages);
 			}
 			
+			try {
 			// Allocate speakers unique colours and create a button for each:				
 			Conversation.CurrentConversation.AddSpeaker(String.Empty); // player has no tag, so pass String.Empty
 			foreach (NWN2ConversationConnector line in Conversation.CurrentConversation.NwnConv.AllConnectors) {
@@ -603,8 +693,12 @@ namespace AdventureAuthor.Conversations.UI
 					}
 				}					
 			}
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
 			
-			ButtonsPanel.IsEnabled = true;
+			buttonsPanel.IsEnabled = true;
 			ExpandGraphButton.IsEnabled = true;
 			GoToStartButton.IsEnabled = true;
 			
@@ -750,8 +844,14 @@ namespace AdventureAuthor.Conversations.UI
 				AddSpeakerWindow window = new AddSpeakerWindow();
 				window.ShowDialog();
 			}
-			else {
-				Say.Information("You have to have a conversation open to be able to add speakers.");
+		}
+		
+		
+		private void OnClick_ReplaceSpeaker(object sender, EventArgs e)
+		{
+			if (Conversation.CurrentConversation != null) {
+				// TODO load ReplaceSpeaker window
+				RenameSpeaker(Conversation.CurrentConversation.Speakers[1],"batman",true);
 			}
 		}
 		
@@ -771,12 +871,21 @@ namespace AdventureAuthor.Conversations.UI
 		
 		
 		/// <summary>
-		/// If there's a conversation still open, ask if the user wants to save it before closing. If they cancel, cancel the closing event.
+		/// If there's a conversation still open, ask if the user wants to save it before closing. 
+		/// If they cancel, cancel the closing event.
 		/// </summary>
 		private void OnClosing(object sender, CancelEventArgs ea)
 		{
 			if (!CloseConversationDialog()) {
 				ea.Cancel = true;
+			}
+			else {
+				string path = form.App.Module.Repository.DirectoryName;
+				DirectoryInfo di = new DirectoryInfo(path);
+				FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
+				foreach (FileInfo file in tempFiles) {
+					file.Delete();
+				}
 			}
 		}
 		
@@ -787,13 +896,12 @@ namespace AdventureAuthor.Conversations.UI
 		/// <remarks>These are usually deleted when they're done with, but will remain if there's a crash.</remarks>
 		private void OnClosed(object sender, EventArgs ea)
 		{
-			Log.WriteAction(Log.Action.exited,"conversationwriter");
-			string path = form.App.Module.Repository.DirectoryName;
-			DirectoryInfo di = new DirectoryInfo(path);
-			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
-			foreach (FileInfo file in tempFiles) {
-				file.Delete();
-			}
+//			string path = form.App.Module.Repository.DirectoryName;
+//			DirectoryInfo di = new DirectoryInfo(path);
+//			FileInfo[] tempFiles = di.GetFiles("~tmp*.dlg");
+//			foreach (FileInfo file in tempFiles) {
+//				file.Delete();
+//			}
 		}
 		
 		
@@ -849,8 +957,11 @@ namespace AdventureAuthor.Conversations.UI
 		private void CloseConversation()
 		{
 			try {
-				string workingFilePath = System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,this.workingFilename+".dlg");
-				File.Delete(workingFilePath);
+				string workingFilePath = 
+					System.IO.Path.Combine(form.App.Module.Repository.DirectoryName,workingFilename+".dlg");
+				if (File.Exists(workingFilePath)) {
+					File.Delete(workingFilePath);
+				}
 				this.workingFilename = null;
 				this.originalFilename = null;
 				currentPage = null;
@@ -868,10 +979,10 @@ namespace AdventureAuthor.Conversations.UI
 				}
 								
 				Button addSpeakersButton = (Button)FindName("AddSpeakersButton");
-				SpeakersButtonsPanel.Children.Clear();
-				SpeakersButtonsPanel.Children.Add(addSpeakersButton);
+				speakersButtonsPanel.Children.Clear();
+				speakersButtonsPanel.Children.Add(addSpeakersButton);
 			
-				this.ButtonsPanel.IsEnabled = false;
+				this.buttonsPanel.IsEnabled = false;
 				ExpandGraphButton.IsEnabled = false;
 				GoToStartButton.IsEnabled = false;
 				this.LinesPanel.Children.Clear();
@@ -880,24 +991,6 @@ namespace AdventureAuthor.Conversations.UI
 				Say.Error(e);
 			}
 		}
-		
-		
-		private void OnLoaded(object sender, EventArgs e)
-		{
-			host = new WindowsFormsHost();	
-			mainGraph = new GraphForm(false);
-			host.Child = MainGraph;			
-			
-			Grid.SetRow(host,0);
-			Grid.SetColumn(host,0);
-			GraphGrid.Children.Add(host);	
-			
-			Log.WriteAction(Log.Action.launched,"conversationwriter");
-			
-			NewOpenConversationWindow win = new NewOpenConversationWindow();
-			win.ShowDialog();
-		}		
-    
 		
 
 		private void SetTitleBar()
@@ -944,32 +1037,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// </summary>
 		private void WriterWindow_OnSpeakerAdded(object sender, SpeakerAddedEventArgs e)
 		{
-			if (e.Speaker == null) {
-				Say.Error("Can't add a null speaker.");
-				return;
-			}
-			
-			Button button = new Button();
-			button.Margin = new Thickness(2);
-			TextBlock textBlock = new TextBlock();
-			TextBlock tb0 = new TextBlock();
-			TextBlock tb1 = new TextBlock();
-			TextBlock tb2 = new TextBlock();
-			tb0.Foreground = Brushes.Black;
-			tb1.Foreground = e.Speaker.Colour;
-			tb2.Foreground = Brushes.Black;
-			if (e.Speaker.Name.Length > 0 && Tools.StartsWithVowel(e.Speaker.Name)) {
-				tb0.Text = "Add an ";
-			}
-			else {
-				tb0.Text = "Add a ";
-			}
-			tb1.Text = e.Speaker.Name.ToUpper();
-			tb2.Text = " line";
-			textBlock.Inlines.Add(tb0);
-			textBlock.Inlines.Add(tb1);
-			textBlock.Inlines.Add(tb2);
-			button.Content = textBlock;			
+			SpeakerButton button = new SpeakerButton(e.Speaker);
 			
 			button.Click += delegate 
 			{ 
@@ -994,7 +1062,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 			};
 			
-			SpeakersButtonsPanel.Children.Add(button);
+			speakersButtonsPanel.Children.Add(button);
 		}	
 		
 		
@@ -1073,6 +1141,276 @@ namespace AdventureAuthor.Conversations.UI
 			
 			return null;			
 		}
+		
+		
+		private void RenameSpeaker(Speaker speaker, string newTag, bool includingScripts)
+		{
+			if (speaker.Name == String.Empty) { // this is the player
+				throw new InvalidOperationException("Cannot rename the player.");
+			}
+			else if (newTag == String.Empty) {
+				throw new InvalidOperationException("Cannot give a speaker a blank tag.");
+			}
+			else if (Conversation.CurrentConversation.GetSpeaker(newTag) != null) {
+				throw new InvalidOperationException("There is already a speaker with that tag.");
+			}
+			
+			// Rename the speaker:
+			speaker.Tag = newTag; 
+			
+			// Edit all the speaker's lines, and optionally edit all associated scripts:
+			foreach (NWN2ConversationConnector line in Conversation.CurrentConversation.NwnConv.AllConnectors) {
+				if (line.Speaker == speaker.Tag) {
+					line.Speaker = newTag;
+				}
+				if (includingScripts) {
+					foreach (NWN2ScriptFunctor script in line.Actions) {
+						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
+					}
+					foreach (NWN2ScriptFunctor script in line.Conditions) {
+						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
+					}
+				}
+			}
+						
+			// Refresh the display:
+			RefreshPageViewOnly();
+		
+			// Rename the button representing the speaker:
+			foreach (UIElement element in speakersButtonsPanel.Children) {
+				if (element is SpeakerButton) {
+					SpeakerButton button = (SpeakerButton)element;
+					if (button.Speaker == speaker) {
+						button.UpdateSpeakerName();
+					}
+				}
+			}
+		}
+		
+	
+		
+        #region Drag-drop
+
+        bool mouseDownOnDraggable = false;
+                
+        
+        private void lineControl_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (mouseDownOnDraggable && e.LeftButton == MouseButtonState.Pressed && !IsDragging)
+            {
+                Point position = e.GetPosition(null);
+
+                if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                     StartDragInProcAdorner(e); 
+                }
+            }   
+        }
+        
+        
+        /// <summary>
+        /// Check whether an element which has been clicked is valid for dragging.
+        /// </summary>
+        /// <param name="e">Event arguments from the preview mouse left button down event</param>
+        /// <returns>True if the event source can be dragged; false otherwise</returns>
+        private bool IsDraggable(MouseButtonEventArgs e)
+        {        	
+        	if (!(e.Source is BranchLine || e.Source is Line)) { // only these are draggable
+        		return false;
+        	}
+        	
+        	LineControl lineControl = (LineControl)e.Source;        	
+        	if (lineControl.Dialogue.IsEditable && lineControl.Dialogue.IsFocused) { 
+        		return false; // don't allow user to drag while text is being edited
+        	}
+        	
+        	return true;
+        }
+
+        
+        private void lineControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+        	_startPoint = e.GetPosition(null);       	
+        	mouseDownOnDraggable = IsDraggable(e);
+        }
+        
+
+        private void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            e.UseDefaultCursors = false;
+            e.Handled = true;
+        }
+
+
+        private LineControlDragAdorner _adorner = null;
+        private AdornerLayer _layer;
+
+
+
+        private FrameworkElement _dragScope;
+        public FrameworkElement DragScope {
+            get { return _dragScope; }
+            set { _dragScope = value; }
+        }
+
+
+        private void StartDragInProcAdorner(MouseEventArgs e)
+        {
+            // Let's define our DragScope .. In this case it is every thing inside our main window .. 
+            //DragScope = Application.Current.MainWindow.Content as FrameworkElement;
+            DragScope = this.Content as FrameworkElement;
+            System.Diagnostics.Debug.Assert(DragScope != null);
+
+            // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 
+            bool previousDrop = DragScope.AllowDrop;
+            DragScope.AllowDrop = true;            
+
+            // Let's wire our usual events.. 
+            // GiveFeedback just tells it to use no standard cursors..  
+
+            GiveFeedbackEventHandler feedbackhandler = new GiveFeedbackEventHandler(DragSource_GiveFeedback);
+            //this.DragSource.GiveFeedback += feedbackhandler;
+            this.GiveFeedback += feedbackhandler;
+
+            // The DragOver event ... 
+            DragEventHandler draghandler = new DragEventHandler(Window1_DragOver);
+            DragScope.PreviewDragOver += draghandler; 
+
+            // Drag Leave is optional, but write up explains why I like it .. 
+            DragEventHandler dragleavehandler = new DragEventHandler(DragScope_DragLeave);
+            DragScope.DragLeave += dragleavehandler; 
+
+            // QueryContinue Drag goes with drag leave... 
+            QueryContinueDragEventHandler queryhandler = new QueryContinueDragEventHandler(DragScope_QueryContinueDrag);
+            DragScope.QueryContinueDrag += queryhandler; 
+
+            //Here we create our adorner..
+            
+            
+            _adorner = new LineControlDragAdorner(DragScope,(LineControl)e.Source, true, 0.5);
+            _layer = AdornerLayer.GetAdornerLayer(DragScope as Visual);
+            _layer.Add(_adorner);
+
+
+            IsDragging = true;
+            _dragHasLeftScope = false; 
+            //Finally lets drag drop 
+            
+            // Construct data object:
+            DataObject dataObject = new DataObject(e.Source.GetType(),e.Source);
+        	
+        	
+        	//DataObject dataObject = new DataObject(typeof(LineControl),(LineControl)e.Source);
+
+
+            DragDropEffects de = DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move);
+            
+             // Clean up our mess :) 
+            DragScope.AllowDrop = previousDrop;
+            AdornerLayer.GetAdornerLayer(DragScope).Remove(_adorner);
+            _adorner = null;
+
+            this.GiveFeedback -= feedbackhandler;
+            DragScope.DragLeave -= dragleavehandler;
+            DragScope.QueryContinueDrag -= queryhandler;
+            DragScope.PreviewDragOver -= draghandler;  
+
+            mouseDownOnDraggable = false;
+            
+            IsDragging = false;
+        }
+        
+
+        private bool _dragHasLeftScope = false; 
+        private void DragScope_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            if (this._dragHasLeftScope)
+            {
+                e.Action = DragAction.Cancel;
+                e.Handled = true; 
+            }
+            
+        }
+
+
+        private void DragScope_DragLeave(object sender, DragEventArgs e)
+        {
+            if (e.OriginalSource == DragScope)
+            {
+                Point p = e.GetPosition(DragScope);
+                Rect r = VisualTreeHelper.GetContentBounds(DragScope);
+                if (!r.Contains(p))
+                {
+                    this._dragHasLeftScope = true;
+                    e.Handled = true;
+                }
+            }
+
+        } 
+
+
+
+
+        private void Window1_DragOver(object sender, DragEventArgs args)
+        {
+            if (_adorner != null)
+            {
+                _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */ ;
+                _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */ ;
+            }
+        }
+
+    
+
+        private Point _startPoint;
+        private bool _isDragging;
+
+        public bool IsDragging
+        {
+            get { return _isDragging; }
+            set { _isDragging = value; }
+        } 
+        
+        
+        private void lineControl_OnDrop(object sender, DragEventArgs e)
+        {
+        	Say.Information(" " +e.Source +"\n\n" + e.OriginalSource);
+        	e.Handled = true;
+        	        
+        	LineControl dropTarget = (LineControl)sender;
+        	        	
+        	LineControl dragSource;        	
+        	if (e.Data.GetDataPresent(typeof(Line))) {
+        		dragSource = (Line)e.Data.GetData(typeof(Line));
+        	}
+        	else if (e.Data.GetDataPresent(typeof(BranchLine))) {
+        		dragSource = (BranchLine)e.Data.GetData(typeof(BranchLine));
+        	}
+        	else {
+        		return;
+        	}
+        	
+        	if (dragSource is BranchLine) {
+        		if (dropTarget is BranchLine) { // re-ordering branches within a choice
+	        		int dropTargetIndex = dropTarget.Nwn2Line.Parent.Line.Children.IndexOf(dropTarget.Nwn2Line);
+	        		Conversation.CurrentConversation.MoveLineWithinChoice(dragSource.Nwn2Line,dropTargetIndex);
+        		}
+        	}
+        	else if (dragSource is Line) {
+        		if (dropTarget is Line) { // re-ordering lines on a page
+        			Conversation.CurrentConversation.MoveLine(dragSource.Nwn2Line,dropTarget.Nwn2Line);
+        		}
+        		else if (dropTarget is LeadingLine) { // re-ordering lines on a page
+        			Conversation.CurrentConversation.MoveLine(dragSource.Nwn2Line,dropTarget.Nwn2Line);
+        		}
+        		else if (dropTarget is BranchLine) { // making an ordinary line into a branch
+        			Conversation.CurrentConversation.MoveLineIntoChoice(dragSource.Nwn2Line,dropTarget.Nwn2Line.Parent);
+        		}
+        	}
+        }
+        
+        #endregion 
     }
 }
 		

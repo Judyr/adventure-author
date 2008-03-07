@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms.Integration;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Core;
+using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Ideas;
 using AdventureAuthor.Utils;
@@ -84,7 +85,13 @@ namespace AdventureAuthor.Setup
 			aaToolbar.Text = "Adventure Author applications";			
 							
 			ButtonItem conversationButton = new ButtonItem();							
-			conversationButton.Activate += delegate { LaunchConversationWriter(); };
+			conversationButton.Activate += delegate { 
+				LaunchConversationWriter(true);				
+				if (WriterWindow.Instance.WindowState == System.Windows.WindowState.Minimized) {
+					WriterWindow.Instance.WindowState = System.Windows.WindowState.Normal;
+				}
+				WriterWindow.Instance.Activate(); // bring to front
+			};
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
 			conversationButton.Enabled = false;
 			Tools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");

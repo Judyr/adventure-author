@@ -102,6 +102,18 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
+        private void OnClick_MoveActionUp(object sender, EventArgs e)
+        {
+        	Conversation.CurrentConversation.MoveAction(attachedTo.Nwn2Line,action,true);
+        }
+        
+        
+        private void OnClick_MoveActionDown(object sender, EventArgs e)
+        {
+        	Conversation.CurrentConversation.MoveAction(attachedTo.Nwn2Line,action,false);
+        }
+        
+        
         /// <summary>
         /// Give focus to the parent LineControl.
         /// </summary>

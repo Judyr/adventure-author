@@ -93,8 +93,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
-        	this.Resources.Add("DropAdvisor",new LineDropTargetAdvisor());
-        	this.Resources.Add("DragAdvisor",new LineDragSourceAdvisor());
         	InitializeComponent();
             
         	// Set the image on the delete button:
@@ -110,12 +108,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
       	        	       
         	
-        	// Check if there are actions to occur when this line is spoken, and if so represent *each* of them with a control:
+        	// Check if there are actions to occur when this line is spoken, 
+        	// and if so represent *each* of them with a control:
         	if (line.Actions.Count > 0) {
+        		bool lineHasSeveralActions = line.Actions.Count > 1;
         		actionControls = new List<ActionControl>(line.Actions.Count);
         		foreach (NWN2ScriptFunctor action in line.Actions) {
         			ActionControl actionControl = new ActionControl(action,this);
         			actionControls.Add(actionControl);
+        			actionControl.moveUpMenuItem.IsEnabled = lineHasSeveralActions;
+        			actionControl.moveDownMenuItem.IsEnabled = lineHasSeveralActions;
         			ActionsPanel.Children.Add(actionControl);
         		}
         	}   
@@ -290,15 +292,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	else {
 	        	// Only ask to confirm deletion if the line is not blank, or has an action associated with it:
-	        	if (!ModuleHelper.BeQuiet && ((nwn2Line.Text.Strings.Count > 0 && nwn2Line.Text.Strings[0].Value.Length > 0) || nwn2Line.Actions.Count > 0)) {
+//	        	if (!ModuleHelper.BeQuiet && ((nwn2Line.Text.Strings.Count > 0 && nwn2Line.Text.Strings[0].Value.Length > 0) || nwn2Line.Actions.Count > 0)) {
 		        	MessageBoxResult result = MessageBox.Show("Delete?","Are you sure?", MessageBoxButton.YesNo);
 		        	if (result == MessageBoxResult.Yes) {
 		        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
 		        	}
-	        	}
-	        	else { 
-	        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
-	        	}        		
+//	        	}
+//	        	else { 
+//	        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);
+//	        	}        		
         	}
         }        
        
@@ -450,12 +452,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void SelectLine()
         {
-//        	Say.Debug("SelectLine(): " + this.ToString());
         	WriterWindow.Instance.SelectedLineControl = this;
-//        	Say.Debug("about to set background");
+        	
         	Background = Brushes.Wheat;
-        	Dialogue.Background = Brushes.White;
-        	Dialogue.BorderBrush = Brushes.Black;
+			Dialogue.IsEditable = true;
+
 //        	Say.Debug("just set background. about to switch on all the buttons");
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
@@ -476,15 +477,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
         // TODO override
         protected void DeselectLine()
         {
-//        	Say.Debug("DeselectLine(): " + this.ToString());
         	if (this is BranchLine) {
         		Background = Brushes.AliceBlue;
         	}
         	else {
         		Background = Brushes.LightYellow;
         	}
-        	Dialogue.Background = Brushes.Transparent;
-        	Dialogue.BorderBrush = Brushes.Transparent;
+			Dialogue.IsEditable = false;
         	
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {

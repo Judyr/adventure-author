@@ -60,8 +60,10 @@ namespace AdventureAuthor.Utils
 		
 		private static void LogMessage(object sender, LogEventArgs e)
 		{
-			writer.WriteLine(e.Message);
-			writer.Flush();
+			if (writer != null) {
+				writer.WriteLine(e.Message);
+				writer.Flush();
+			}
 		}
 	}
 }

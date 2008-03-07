@@ -30,6 +30,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private static Mode evaluationMode;    	
 		public static Mode EvaluationMode {
 			get { return evaluationMode; }
+			internal set {
+				evaluationMode = value;
+				Log.WriteAction(Log.Action.mode,"evaluation_" + evaluationMode.ToString());
+			}
 		}
     	
     	private Worksheet originalWorksheet;
@@ -78,11 +82,25 @@ namespace AdventureAuthor.Evaluation.Viewer
     	public WorksheetViewer(Mode mode)
     	{
     		InitializeComponent();
-    		this.Closing += new CancelEventHandler(WorksheetClosing);
+    		
+    		Closing += new CancelEventHandler(viewerClosing);
     		Changed += new EventHandler(WorksheetChanged);
-    		EvaluationOptions.ChangedDefaultImageApplication += 
-    			new EventHandler(EvaluationOptions_ChangedDefaultImageApplication);    		    			
-    		evaluationMode = mode;
+    		Loaded += delegate
+    		{  
+				Log.WriteAction(Log.Action.launched,"evaluation");
+    		};    		
+            Closing += delegate 
+            {
+            	try {
+            		Log.WriteAction(Log.Action.exited,"evaluation");
+            	}
+            	catch (Exception) { 
+            		// already disposed because toolset is closing
+            	}
+            };
+    		EvaluationOptions.ChangedDefaultImageApplication += changedDefaultImageViewer;   
+    		    		
+    		EvaluationMode = mode;
     		
     		// Edit worksheet titles in design mode only; fill in name and date in complete/discuss mode only
     		switch (EvaluationMode) {
@@ -144,7 +162,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
     	
 
-    	private void WorksheetClosing(object sender, CancelEventArgs e)
+    	private void viewerClosing(object sender, CancelEventArgs e)
     	{	
 			if (!CloseWorksheetDialog()) {
 				e.Cancel = true;
@@ -152,16 +170,18 @@ namespace AdventureAuthor.Evaluation.Viewer
     	}
 
     	
-    	private void EvaluationOptions_ChangedDefaultImageApplication(object sender, EventArgs e)
+    	private void changedDefaultImageViewer(object sender, EventArgs e)
     	{
     		switch (EvaluationOptions.ApplicationToOpenImages) {
     			case EvaluationOptions.ImageApps.Default:
     				UseDefaultMenuItem.IsChecked = true;
     				UsePaintMenuItem.IsChecked = false;
+    				Log.WriteMessage("checked 'View images in default application'");
     				break;
     			case EvaluationOptions.ImageApps.MicrosoftPaint:
     				UseDefaultMenuItem.IsChecked = false;
     				UsePaintMenuItem.IsChecked = true;
+    				Log.WriteMessage("checked 'View images in Microsoft Paint'");
     				break;
     		}
     	}
@@ -701,7 +721,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     			}
     		}
     		
-    		evaluationMode = mode;
+    		EvaluationMode = mode;
     		UpdateTitleBar();    		
     	}    	
     	

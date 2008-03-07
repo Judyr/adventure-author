@@ -140,7 +140,7 @@ namespace Netron.Diagramming.Win.AdventureAuthor
 				
 				// Setup tooltip:
 //				tooltip = new ToolTip();
-////				tooltip.Active = false;
+//				tooltip.Active = false;
 //				tooltip.AutoPopDelay = 300000;				
 //				tooltip.BackColor = Color.FloralWhite;
 //				tooltip.InitialDelay = 1000;

@@ -31,14 +31,14 @@ namespace AdventureAuthor.Conversations.UI
         {
 			NewConversation form = new NewConversation();
 			form.ShowDialog();
-			this.Close();
+			Close();
         }
         
         
         private void OnClick_OpenExistingConversation(object sender, EventArgs e)
         {
         	WriterWindow.Instance.OpenDialog();
-        	this.Close();
+        	Close();
         }
     }
 }

@@ -28,7 +28,14 @@ namespace AdventureAuthor.Variables.UI
             InitializeComponent();
             RefreshVariablesList();
             this.Loaded += delegate { Log.WriteAction(Log.Action.launched, "variablemanager"); };
-            this.Closed += delegate { Log.WriteAction(Log.Action.exited,"variablemanager"); };
+            this.Closing += delegate { 
+            	try {
+            		Log.WriteAction(Log.Action.exited,"variablemanager");
+            	}
+            	catch (Exception) { 
+            		// already disposed because toolset is closing
+            	}
+            };
         }
         
             
