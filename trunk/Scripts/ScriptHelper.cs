@@ -1004,6 +1004,41 @@ namespace AdventureAuthor.Scripts
 		
 		#region Tags and blueprints
 				
+		/// <summary>
+		/// If this script functor features any variable which has a value equal to oldTag,
+		/// give it the value of newTag instead.
+		/// </summary>
+		/// <param name="scriptFunctor">The script to check the variables of</param>
+		/// <param name="oldTag">The tag to replace</param>
+		/// <param name="newTag">The replacement tag</param>
+		public static void ReplaceTag(NWN2ScriptFunctor script, string oldTag, string newTag)
+		{
+			if (newTag == null) {
+				throw new ArgumentNullException(newTag);
+			}
+			else if (oldTag == null) {
+				throw new ArgumentNullException(oldTag);
+			}
+			
+			foreach (NWN2ScriptParameter param in script.Parameters) {							
+				switch (param.ParameterType) {
+					case NWN2ScriptParameterType.String:
+						if (param.ValueString == oldTag) {
+							param.ValueString = newTag;
+							continue;
+						}									
+						break;
+					case NWN2ScriptParameterType.Tag:
+						if (param.ValueTag == oldTag) {
+							param.ValueTag = newTag;
+							continue;
+						}									
+						break;
+				}
+			}
+		}
+		
+		
 		public static SortedList<string,string> GetResRefs(TaggedType type)
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {

@@ -811,9 +811,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		}
     	}   
     	
+    	
+    	private void OnClick_AddCustomScript(object sender, EventArgs e)
+    	{
+    		
+    	}
+    			
 		
-		
-		public void SetupVariables(object sender, EventArgs ea)
+		public void journalteststuff(object sender, EventArgs ea)
 		{
 //			NWN2Journal journal = Adventure.CurrentAdventure.Module.Journal;
 //			

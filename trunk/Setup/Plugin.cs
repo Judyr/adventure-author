@@ -92,6 +92,8 @@ namespace AdventureAuthor.Setup
 		public void Load(INWN2PluginHost cHost)
 		{
 			try {
+				//form.App.Closing += OnNeverwinterNights2Closing;
+				
 				// Check directories:
 				if (!Directory.Exists(ModuleHelper.AdventureAuthorDir)) {
 					throw new DirectoryNotFoundException("Adventure Author installation directory at " + 
@@ -115,7 +117,6 @@ namespace AdventureAuthor.Setup
 			catch (DirectoryNotFoundException e) {
 				MessageBox.Show("Required Adventure Author files were not found at the expected location - software may " +
 				                "not function correctly. \n\n" + e.ToString());
-				//CloseToolset();
 			}
 							
 			// Set up the Adventure Author toolset:
@@ -128,10 +129,22 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="cHost"></param>
 		public void Unload(INWN2PluginHost cHost)
-		{		
-			Log.WriteAction(Log.Action.exited,"toolset");
-			LogWriter.StopRecording();
-			DebugWriter.StopRecording();
+		{					
+//			if (WriterWindow.Instance != null) {
+//				WriterWindow.Instance.Close();
+//			}
+//			if (VariablesWindow.Instance != null) {
+//				VariablesWindow.Instance.Close();
+//			}
+//			if (MagnetBoardViewer.Instance != null) {
+//				MagnetBoardViewer.Instance.Close();
+//			}
+//			// TODO if analysis window is not null
+//			// TODO if evaluation window is not null
+//			
+//			Log.WriteAction(Log.Action.exited,"toolset");
+//			LogWriter.StopRecording();
+//			DebugWriter.StopRecording();
 		}
 		
 		
@@ -142,7 +155,21 @@ namespace AdventureAuthor.Setup
 		/// <param name="e"></param>
 		public void Shutdown(INWN2PluginHost cHost)
 		{
+			if (WriterWindow.Instance != null) {
+				WriterWindow.Instance.Close();
+			}
+			if (VariablesWindow.Instance != null) {
+				VariablesWindow.Instance.Close();
+			}
+			if (MagnetBoardViewer.Instance != null) {
+				MagnetBoardViewer.Instance.Close();
+			}
+			// TODO if analysis window is not null
+			// TODO if evaluation window is not null
 			
+			Log.WriteAction(Log.Action.exited,"toolset");
+			LogWriter.StopRecording();
+			DebugWriter.StopRecording();
 		}
 		
 		#endregion INWN2Plugin
@@ -165,12 +192,6 @@ namespace AdventureAuthor.Setup
 			catch (Exception) {
 				//MessageBox.Show("Failed to delete temp modules on loading.\n\n\n" + ex.ToString());
 			}
-		}
-						
-	
-		private static void CloseToolset()
-		{
-			throw new NotImplementedException();
-		}
+		}	
 	}
 }

@@ -47,33 +47,64 @@ namespace AdventureAuthor.Conversations.UI.Graph
 			get { return graphControl; }
 		}
 		
+		
+		private bool standAlone;		
+		public bool StandAlone {
+			get { return standAlone; }
+		}
+		
+		
 		/// <summary>
 		/// Create a new instance of a form that holds a graph control.
 		/// </summary>
-		/// <param name="topLevel">True if this form has no parent; false otherwise. Necessary to allow it to be added to a WindowsFormHost.</param>
-		public GraphForm(bool topLevel)
+		/// <param name="standAlone">True if this form has no parent and is intended
+		/// for use as a standalone form; false otherwise. 
+		/// <remarks>It is necessary to set standAlone to true in order to
+		/// add this form to a WindowsFormsHost</remarks>
+		public GraphForm(bool standAlone)
 		{
-			try {
-				this.TopLevel = topLevel;
-				InitializeComponent();
-				this.SetStyle(ControlStyles.AllPaintingInWmPaint |
-							  ControlStyles.UserPaint |
-							  ControlStyles.DoubleBuffer,true);
-				
-	            if (topLevel) {
-		            this.MaximumSize = new Size(1200,900);
-				}
-				else {
-					this.MaximumSize = new Size(400,420);
-	            }
-		        this.MinimumSize = this.MaximumSize;
-				this.SizeGripStyle = SizeGripStyle.Hide;
-				
-				ClearGraph();
+			this.standAlone = standAlone;
+			this.TopLevel = standAlone;
+			InitializeComponent();
+			this.SetStyle(ControlStyles.AllPaintingInWmPaint |
+						  ControlStyles.UserPaint |
+						  ControlStyles.DoubleBuffer,true);
+			
+	        if (standAlone) {								
+				// open in kiosk mode (takes up the entire screen):
+				closeGraphFormButton.Visible = true;
+				MaximizeBox = false;
+				MinimizeBox = false;
+				TopMost = true;
+				FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; 
+				WindowState = System.Windows.Forms.FormWindowState.Maximized;		
+				MinimumSize = new Size(4000,4000);
 			}
-			catch (Exception e) {
-				Say.Error(e);
-			}
+			this.SizeGripStyle = SizeGripStyle.Hide;
+			
+			ClearGraph(); 
+			
+			// Close the expanded graph if you hit the escape
+			// key (the Exit button initially has focus):
+	        if (standAlone) {
+				closeGraphFormButton.PreviewKeyDown += delegate(object sender, PreviewKeyDownEventArgs e) 
+				{  
+					if (e.KeyCode == Keys.Escape) {
+						Close();
+					}
+				};
+	        }
+		}
+		
+		
+		/// <summary>
+		/// Create a new instance of a form that holds a graph control. 
+		/// </summary>
+		/// <remarks>Intended for use in XAML (setting TopLevel to false allows 
+		/// it to be hosted within a WindowsFormsHost) within a WindowsFormsHost
+		/// (TopLevel is set to false).</remarks>
+		public GraphForm() : this(false)
+		{			
 		}
 		
 		
@@ -101,10 +132,29 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	        graphControl.Controller.AddTool(new GraphTool("Graph Tool")); // the tool which governs clicks on the graph
 	        graphControl.Dock = System.Windows.Forms.DockStyle.None;
 	        graphControl.Location = new System.Drawing.Point(-GraphControl.RULER_OFFSET,-GraphControl.RULER_OFFSET); // hide the ruler space
-	        graphControl.Size = new Size(this.Width+GraphControl.RULER_OFFSET,this.Height+GraphControl.RULER_OFFSET);
+	        
+	        if (standAlone) {
+	        	int height = Height + GraphControl.RULER_OFFSET + 80; // account for missing title bar
+	        		//SystemInformation.CaptionHeight + SystemInformation.BorderSize.Height; // doesn't seem right?
+	        	int width = Width + GraphControl.RULER_OFFSET + SystemInformation.BorderSize.Width;
+	        	graphControl.MinimumSize = new Size(width,height);
+	        }
+	        else {
+	        	graphControl.MinimumSize = new Size(Width + GraphControl.RULER_OFFSET,
+	        	                                    Height + GraphControl.RULER_OFFSET);
+	        }
 	        
 	        graphControl.Origin = origin;
 	        graphControl.Magnification = magnification;
+	        
+	        if (standAlone) { // close the expanded graph if you hit the escape key
+				graphControl.KeyDown += delegate(object sender, KeyEventArgs e) 
+				{  
+					if (e.KeyCode == Keys.Escape) {
+						Close();
+					}
+				};
+	        }
 	            
 	        this.Controls.Add(this.graphControl);
 		}
@@ -191,6 +241,14 @@ namespace AdventureAuthor.Conversations.UI.Graph
 				Log.WriteAction(Log.Action.exited,"expandedgraph");
 			}
 			base.OnClosed(e);
+		}
+		
+		
+		private void OnClick_CloseGraphForm(object sender, EventArgs e)
+		{
+			if (standAlone) { // this should never get called in stand-alone mode anyway, but just for safety
+				Close();
+			}
 		}
 	}
 }

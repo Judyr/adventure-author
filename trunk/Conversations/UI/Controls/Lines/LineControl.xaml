@@ -25,12 +25,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="clr-namespace:AdventureAuthor.Conversations.UI"
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
-    xmlns:dragdrop="clr-namespace:Samples.DragDrop"
-	IsEnabled="True" Focusable="True" MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
+	IsEnabled="True" Focusable="True" 
+    MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
     Padding="6" AllowDrop="True" 
-    dragdrop:DragDropManager.DropTargetAdvisor="{StaticResource DropAdvisor}"
-    dragdrop:DragDropManager.DragSourceAdvisor="{StaticResource DragAdvisor}"
 	>
 	
 	<UserControl.Resources>		
@@ -111,6 +110,7 @@
 					<MenuItem Header="A number variable is set to a value" Click="OnClick_SetIntVariable"/>
 					<MenuItem Header="A word(s) variable is set to a value" Click="OnClick_SetStringVariable"/>
 				</MenuItem.Items>
+				<!--<MenuItem Header="Add a custom script" Click="OnClick_AddCustomScript"/>-->
 				</MenuItem>
 			</MenuItem.Items>
 			</MenuItem>
@@ -160,10 +160,11 @@
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="100"/> <!--Buttons-->
     		<ColumnDefinition Width="200"/> <!--Speaker-->
-    		<ColumnDefinition MinWidth="350" MaxWidth="750" Width="*"/> <!--Dialogue-->
+    		<ColumnDefinition MinWidth="250" MaxWidth="750" Width="*"/> <!--Dialogue-->
     	</Grid.ColumnDefinitions>
     	    	
-    	<StackPanel Name="LineControlButtonsPanel" Focusable="true" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
+    	<StackPanel Name="LineControlButtonsPanel" Grid.Column="0" Grid.Row="1" 
+    	            Focusable="true" Orientation="Horizontal" Background="Transparent">
     		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="false" Visibility="Hidden" Click="OnClick_Delete">
     			<Button.ToolTip>
     				<ToolTip>Delete this line</ToolTip>
@@ -173,14 +174,14 @@
     	
     	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" FontSize="22" Padding="6" TextAlignment="Right"/>
     	
-    	<TextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" 
+    	<utils:SwitchableTextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" 
     	         FontSize="22" FontWeight="4" Focusable="true" AcceptsReturn="false"
-    	         BorderThickness="1" BorderBrush="Transparent" Background="Transparent" Padding="4">
-    		<TextBox.Text>
+    	         BorderThickness="1" IsEditable="false" Padding="4">
+    		<utils:SwitchableTextBox.Text>
     			<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>    		
     			<!--<Binding ElementName="SpeakerLabel" Path="Text"></Binding> (works) -->
-    		</TextBox.Text>    
-    	</TextBox>
+    		</utils:SwitchableTextBox.Text>    
+    	</utils:SwitchableTextBox>
 	
 		<StackPanel x:Name="ActionsPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
 	

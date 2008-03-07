@@ -168,21 +168,7 @@ namespace AdventureAuthor.Setup
 				
 				if (fi.FieldType == typeof(DockingManager)) {
 					dockingManager = (DockingManager)fi.GetValue(form.App);					
-					
-					// Add 'add idea' content:			
-//					ElementHost host = new ElementHost();
-//					AdventureAuthor.Ideas.LightweightIdeaControl ideacontrol 
-//						= new AdventureAuthor.Ideas.LightweightIdeaControl();
-//					ideacontrol.Width = 300;
-//					ideacontrol.Height = 200;
-//					host.Child = ideacontrol;
-//					Content content = new Content(dockingManager,host,"Record an idea");
-//					ideacontrol.IdeaSubmitted += delegate(object sender, IdeaEventArgs e) { OnIdeaSubmitted(e); };					
-//					dockingManager.Contents.Add(content);	
-//					dockingManager.AddContentWithState(content,State.Floating);
-//					//dockingManager.AddContentToZone(content,null,0);
-//					dockingManager.ShowContent(content);	
-					
+										
 					//TODO: try iterating through dockingManager object, copying every field
 					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
 					
@@ -198,10 +184,10 @@ namespace AdventureAuthor.Setup
 					List<Content> contents = new List<Content>(5);
 					
 					foreach (Content c in dockingManager.Contents) {
-						if (c.FullTitle == "Conversations") {
-							contents.Add(c);
-						}
-						else if (c.FullTitle == "Campaign Conversations") {
+//						if (c.FullTitle == "Conversations") { // NWN2ModuleConversationList
+//							contents.Add(c);
+//						}
+						if (c.FullTitle == "Campaign Conversations") {
 							contents.Add(c);
 						}
 						else if (c.FullTitle == "Campaign Scripts") {
@@ -828,10 +814,25 @@ namespace AdventureAuthor.Setup
 				}
 				else if (viewer.ViewedResource is NWN2GameConversation) {
 					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
-					Say.Debug("Tried to open the original conversation editor - closing it again.");
-					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // old conversation editor so close	
-					LaunchConversationWriter();
-					WriterWindow.Instance.Open(conv.Name);
+					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // old conversation editor so close
+					if (conv.Name.StartsWith("~tmp")) {
+						return; // temp file
+					}
+					
+					LaunchConversationWriter(false);
+					// Unlike when you Open the same conversation again from within the conversation writer
+					// (usually if you have screwed something up and don't want to save) double-clicking
+					// the conversation that is already open probably just means you want to bring it into view:
+					if (Conversation.CurrentConversation == null ||
+					    WriterWindow.Instance.OriginalFilename != conv.Name) 
+					{
+						WriterWindow.Instance.Open(conv.Name);
+					}	
+					
+					if (WriterWindow.Instance.WindowState == System.Windows.WindowState.Minimized) {
+						WriterWindow.Instance.WindowState = System.Windows.WindowState.Normal;
+					}
+					WriterWindow.Instance.Activate(); // bring to front
 				}
 				else if (viewer.ViewedResource is NWN2FactionData) {
 					NWN2FactionData factions = (NWN2FactionData)viewer.ViewedResource;
@@ -1134,7 +1135,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Bring up the Conversation Writer window.
 		/// </summary>
-		public static void LaunchConversationWriter() 
+		public static void LaunchConversationWriter(bool withDialog) 
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to run conversation writer when no module was open.");
@@ -1143,18 +1144,10 @@ namespace AdventureAuthor.Setup
 			
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
-					WriterWindow.Instance = new WriterWindow();
+					WriterWindow.Instance = new WriterWindow(withDialog);
 				}
 				ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
 				WriterWindow.Instance.Show();
-					
-//					win.Application.Current.Activated  += delegate { Say.Debug("Application.Current Activated. " + win.Application.Current.ToString()); };
-//					win.Application.Current.Deactivated += delegate { Say.Debug("Application.Current Deactivated. " + win.Application.Current.ToString()); };
-//					win.Application.Current.Exit += delegate { Say.Debug("Application.Current Exit. " + win.Application.Current.ToString()); };
-//					win.Application.Current.LoadCompleted += delegate { Say.Debug("Application.Current LoadCompleted. " + win.Application.Current.ToString()); };
-//					win.Application.Current.Startup += delegate { Say.Debug("Application.Current Startup. " + win.Application.Current.ToString()); };
-				
-				
 			}
 			catch (Exception e) {
 				Say.Error("Could not open conversation writer.",e);
@@ -1223,54 +1216,76 @@ namespace AdventureAuthor.Setup
 				return; // cancel shutdown if they change their mind when asked to save the current adventure
 			}
 			
-			ShutdownToolset();
+			//ShutdownToolset();
+			
+			form.App.Close();
 			
 			// TODO: should be adding event handling stuff to the OnClose(?) event, and then raising that event from here.
 		}
 		
 		#endregion Event handlers
+//		
+//		private static void ShutdownAdventureAuthorWindows()
+//		{
+//			if (WriterWindow.Instance != null) {
+//				WriterWindow.Instance.Close();
+//			}
+//			if (VariablesWindow.Instance != null) {
+//				VariablesWindow.Instance.Close();
+//			}
+//			if (MagnetBoardViewer.Instance != null) {
+//				MagnetBoardViewer.Instance.Close();
+//			}			
+//		}
+//		
+//		
+//		private static void OnNeverwinterNights2Closing(object sender, EventArgs e)
+//		{
+//			ShutdownAdventureAuthorWindows();
+//		}
 		
-		private static void ShutdownToolset()
-		{	
-			IScriptCompiler scriptCompiler = null;
-			int? threadID = null;
-			NWN2PluginHost host = null;
-			
-			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.NonPublic |
-			                                                  BindingFlags.Instance |
-			                                                  BindingFlags.Static);
-			
-			// Get the script compiler and thread ID through reflection 
-			// (there is only one field of either type):
-			foreach (FieldInfo fi in fields) {
-				if (fi.FieldType == typeof(IScriptCompiler)) {
-					scriptCompiler = fi.GetValue(form.App) as IScriptCompiler;
-				}
-				else if (fi.FieldType == typeof(Int32)) {
-					threadID = (Int32)fi.GetValue(form.App);
-				}
-				else if (fi.FieldType == typeof(NWN2PluginHost)) {
-					host = fi.GetValue(form.App) as NWN2PluginHost;
-				}
-			}	
-				
-			if (Thread.CurrentThread.ManagedThreadId == threadID) {
-				form.App.Module.CloseModule();
-				
-				if (scriptCompiler != null) {
-					scriptCompiler.Dispose();
-					scriptCompiler = null;
-				}
-				//NWN2NetDisplayManager.Instance.Shutdown();
-				host.UnloadPlugins();
-				OEIShared.IO.TalkTable.TalkTable.Instance.Dispose();
-				form.App.Module.Dispose(true);
-				host.ShutdownPlugins();
-				
-				//Application.Exit();
-				form.App.Close();
-				form.App.Dispose();
-			}
-		}
+		
+//		private static void ShutdownToolset()
+//		{	
+//			IScriptCompiler scriptCompiler = null;
+//			int? threadID = null;
+//			NWN2PluginHost host = null;
+//			
+//			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.NonPublic |
+//			                                                  BindingFlags.Instance |
+//			                                                  BindingFlags.Static);
+//			
+//			// Get the script compiler and thread ID through reflection 
+//			// (there is only one field of either type):
+//			foreach (FieldInfo fi in fields) {
+//				if (fi.FieldType == typeof(IScriptCompiler)) {
+//					scriptCompiler = fi.GetValue(form.App) as IScriptCompiler;
+//				}
+//				else if (fi.FieldType == typeof(Int32)) {
+//					threadID = (Int32)fi.GetValue(form.App);
+//				}
+//				else if (fi.FieldType == typeof(NWN2PluginHost)) {
+//					host = fi.GetValue(form.App) as NWN2PluginHost;
+//				}
+//			}	
+//				
+//			if (Thread.CurrentThread.ManagedThreadId == threadID) {
+//				form.App.Module.CloseModule();
+//				
+//				if (scriptCompiler != null) {
+//					scriptCompiler.Dispose();
+//					scriptCompiler = null;
+//				}
+//				//NWN2NetDisplayManager.Instance.Shutdown();
+//				host.UnloadPlugins();
+//				OEIShared.IO.TalkTable.TalkTable.Instance.Dispose();
+//				form.App.Module.Dispose(true);
+//				host.ShutdownPlugins();
+//				
+//				//Application.Exit();
+//				form.App.Close();
+//				form.App.Dispose();
+//			}
+//		}
 	}
 }

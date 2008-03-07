@@ -120,6 +120,7 @@ namespace AdventureAuthor.Ideas
             
             Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
             
+            Loaded += delegate { Log.WriteAction(Log.Action.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
             
             // Open the magnet list:
@@ -142,6 +143,14 @@ namespace AdventureAuthor.Ideas
 			if (!CloseDialog()) {
 				e.Cancel = true;
 			}
+        	else {
+        		try {
+        			Log.WriteAction(Log.Action.exited,"magnets");
+        		}
+        		catch (Exception) {
+        			// already disposed because the toolset is closing
+        		}
+        	}
         }
             	
     	#endregion
@@ -255,25 +264,19 @@ namespace AdventureAuthor.Ideas
     	{
     		string title;
     		if (ActiveBoard.Filename == null || ActiveBoard.Filename == String.Empty) {
-    			Log.WriteMessage("filename was null or blank");
     			if (ActiveBoard.Dirty) {
-    				Log.WriteMessage("and dirty");
     				title = "Untitled* - Ideas";
     			}
     			else {
-    				Log.WriteMessage("and clean");
     				title = "Untitled - Ideas";
     			}
     		}
     		else {
-    			Log.WriteMessage("filename was NOT null or blank");
     			string filename = Path.GetFileName(ActiveBoard.Filename);
     			if (ActiveBoard.Dirty) {
-    				Log.WriteMessage("and dirty");
     				title = filename + "* - Ideas";
     			}
     			else {
-    				Log.WriteMessage("and clean");
     				title = filename + " - Ideas";
     			}
     		}
@@ -700,13 +703,19 @@ namespace AdventureAuthor.Ideas
         }
         
         
+        private bool IsDraggable(object o)
+        {
+        	return o is MagnetControl;
+        }
+                
+        
         bool mouseDownOnMagnet = false;
 
         
         private void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
         	_startPoint = e.GetPosition(null);
-        	mouseDownOnMagnet = (e.Source is MagnetControl);
+        	mouseDownOnMagnet = IsDraggable(e.Source);
         }
         
 

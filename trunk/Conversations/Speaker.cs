@@ -31,16 +31,25 @@ using System.Windows.Media;
 namespace AdventureAuthor.Conversations
 {
 	/// <summary>
-	/// Description of Speaker.
+	/// A speaker in a conversation.
 	/// </summary>
 	public class Speaker
 	{		
+		/// <summary>
+		/// The tag this speaker receives as a game object.
+		/// </summary>
 		private string tag;		
 		public string Tag {
 			get { return tag; }
 			set { tag = value; }
 		}
 		
+		
+		/// <summary>
+		/// The name of this speaker.
+		/// </summary>
+		/// <remarks>Cannot be set - either returns the tag name, or the name of
+		/// the player if there is a blank tag.</remarks>
 		public string Name {
 			get { 
 				if (tag == String.Empty) {
@@ -52,17 +61,23 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 		
+		
+		/// <summary>
+		/// The colour that will represent this speaker on interface controls.
+		/// </summary>
 		private Brush colour;				
 		public Brush Colour {
 			get { return colour; }
 			set { colour = value; }
 		}
 				
+		
 		public Speaker(string tag)
 		{
 			this.tag = tag;
 			this.colour = Brushes.Black;
 		}
+		
 		
 		public override string ToString()
 		{

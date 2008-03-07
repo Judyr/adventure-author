@@ -65,14 +65,22 @@ namespace AdventureAuthor.Utils
 			deleted,
 			saved,
 			set,
-			dragdropped,
+			moved,
+			viewed,
+			
+			// entered a mode (e.g. toolset_SelectObjects, toolset_PaintTerrain, worksheet_Design):
+			mode,
 			
 			// selected just means giving it focus:
 			selected,
 				
 			// deliberately non-specific, for when no further information has been gathered, e.g. when the user
 			// clicks something in the terrain editor window or area contents window 
-			clicked
+			clicked,
+			
+			// relating to worksheet designer:
+			activated,
+			deactivated
 		}
 		
 		

@@ -24,6 +24,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	MouseDown="OnMouseDown">
+	<UserControl.ContextMenu>
+		<ContextMenu>
+			<MenuItem Header="Edit action" IsEnabled="false" Visibility="Collapsed"/>
+			<MenuItem Header="Delete action" IsEnabled="true" Click="OnClick_DeleteAction"/>
+			<Separator/>
+			<MenuItem Name="moveUpMenuItem" Header="Move action up" IsEnabled="true" Click="OnClick_MoveActionUp"/>
+			<MenuItem Name="moveDownMenuItem" Header="Move action down" IsEnabled="true" Click="OnClick_MoveActionDown"/>
+		</ContextMenu>
+	</UserControl.ContextMenu>
     <Grid>
 		<Grid.RowDefinitions>
     		<RowDefinition/>
@@ -33,9 +42,9 @@
     		<ColumnDefinition Width="*"/>
     	</Grid.ColumnDefinitions>
     	<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">  
-			<!--<Button Name="EditActionButton" Click="OnClick_EditAction" IsEnabled="false" Opacity="0.0" Content="Edit" 
+			<!--<Button Name="EditActionButton" Click="OnClick_EditAction" IsEnabled="false" Visibility="Hidden" Content="Edit" 
     		        Height="25" Width="60" Margin="6"/>-->
-			<Button Name="DeleteActionButton" Click="OnClick_DeleteAction" IsEnabled="false" Opacity="0.0" Content="Delete" 
+			<Button Name="DeleteActionButton" Click="OnClick_DeleteAction" IsEnabled="false" Visibility="Hidden" Content="Delete" 
     		        Height="25" Width="60" Margin="6"/>
 			<TextBlock x:Name="Description" Background="Transparent" FontSize="22" FontWeight="600" Padding="6" TextWrapping="Wrap"/> 
     	</StackPanel>

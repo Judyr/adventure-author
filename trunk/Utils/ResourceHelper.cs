@@ -20,6 +20,11 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class ResourceHelper
 	{
+		/// <summary>
+		/// Fetch an image (.NET 3.0) from Adventure Author's images folder.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
 		public static Image GetImage(string filename)
 		{			
 	        Image image = new Image();
@@ -30,6 +35,11 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
+		/// <summary>
+		/// Fetch a bitmap (.NET 2.0) from Adventure Author's images folder.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
 		public static System.Drawing.Bitmap GetBitmap(string filename)
 		{
 			string path = Path.Combine(ModuleHelper.ImagesDir,filename);

@@ -41,14 +41,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
     /// </summary>
 
     public partial class ChoiceControl : UserControl
-    {    	
-    	public enum ChoiceType { Player, NPC }
-    	
+    {    	    	
     	private ChoiceType typeOfSpeaker;
 		public ChoiceType TypeOfSpeaker {
 			get { return typeOfSpeaker; }
 			set { typeOfSpeaker = value; }
 		}
+    	
     	
      	private List<LineControl> lineControls;    	
 		public List<LineControl> LineControls {
@@ -56,6 +55,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			set { lineControls = value; }
 		}
         
+     	
         public ChoiceControl(NWN2ConversationConnectorCollection lines)
         {
         	InitializeComponent();
@@ -120,31 +120,21 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         public void OnClick_AddBranch(object sender, EventArgs ea)
         {
-        	Say.Debug("rar");
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
-        	Say.Debug("rar");
         	NWN2ConversationConnector newLine = Conversation.CurrentConversation.AddLineToChoice(parentLine);
-        	Say.Debug("rar");
-				
         	WriterWindow.Instance.FocusOn(newLine);
-        	Say.Debug("rar");
         }	
         
         
         public void OnClick_DeleteEntireChoice(object sender, EventArgs ea)
         {        	
-        	Say.Debug("xax");
         	NWN2ConversationConnector parentLine = this.lineControls[0].Nwn2Line.Parent;
-        	Say.Debug("xax");
         	NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.GetChildren(parentLine);
-        	Say.Debug("xax");
         	
         	if (!ModuleHelper.BeQuiet) { 	
-        	Say.Debug("xax");
         		Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(children);
         		
         		StringBuilder warning = new StringBuilder();
-        	Say.Debug("xax");
         		
         		if (children.Count == 2) {
         			warning.Append("Are you sure you want to delete both branches of this choice");
@@ -159,16 +149,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		else {
         			warning.Append("?");
         		}
-        	Say.Debug("xaxs");
         		
         		if (!(bool)Say.Question(warning.ToString(),"Delete?",System.Windows.Forms.MessageBoxButtons.YesNo)) {
-        	Say.Debug("reyurn ");
         			return;
         		}
         	}
-        	Say.Debug("xaxs");
         	Conversation.CurrentConversation.DeleteEntireChoice(parentLine);
-        	Say.Debug("xaxs");
         }
     }
 }

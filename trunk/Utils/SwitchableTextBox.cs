@@ -29,56 +29,28 @@ namespace AdventureAuthor.Utils
 		        	Background = Brushes.White;
 		        	BorderBrush = Brushes.Black;
 		        	IsReadOnly = false;
-		        	Focusable = true;
-		        	cursor = Cursors.IBeam;
+		        	Cursor = Cursors.IBeam;
 				}
 				else {
+					IsEditable = true;
 		        	Background = Brushes.Transparent;
 		        	BorderBrush = Brushes.Transparent;
 					IsReadOnly = true;
-					Focusable = false;
-					cursor = Cursors.Arrow;
+					Cursor = Cursors.Arrow;
 				}
 			}
 		}
 		
 		
-		private Cursor cursor;
-		
-		
 		public SwitchableTextBox() : this(true)
 		{
+			AllowDrop = true;
 		}
 		
 		
 		public SwitchableTextBox(bool isEditable) : base()
 		{
 			IsEditable = isEditable;
-			MouseEnter += new MouseEventHandler(SwitchableTextBox_MouseEnter);
-			
-			
-			//this.SelectionChanged += new RoutedEventHandler(TextSelectionChanged);
-		}
-
-		
-		private void TextSelectionChanged(object sender, RoutedEventArgs e)
-		{
-			//if (!IsEditable && SelectionLength > 0) {				
-			//	SelectionLength = 0;
-			//}
-		}
-		
-
-		/// <summary>
-		/// When not in editable form, the cursor will stay as the default arrow instead of the text IBeam.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void SwitchableTextBox_MouseEnter(object sender, MouseEventArgs e)
-		{
-			if (Cursor != cursor) {
-				Cursor = cursor;
-			}
 		}
 	}
 }
