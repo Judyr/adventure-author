@@ -109,7 +109,7 @@ namespace AdventureAuthor.Variables.UI
         				}
         				if (var.ValueInt != val) {
 							if (edit) {
-								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+								Log.WriteAction(LogAction.set,"variable","starting value of variable '" + var.Name + 
 								                "' was set to " + val + " (was " + var.ValueInt + ")");
 							}
         					var.ValueInt = val;
@@ -130,11 +130,11 @@ namespace AdventureAuthor.Variables.UI
         			if (var.ValueString != VariableStartingValueTextBox.Text) {
         				if (edit) {
 							if (var.ValueString != null) {
-								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+								Log.WriteAction(LogAction.set,"variable","starting value of variable '" + var.Name + 
 							                "' set to " + VariableStartingValueTextBox.Text + " (was " + var.ValueString + ")");
 							}
 							else {
-								Log.WriteAction(Log.Action.set,"variable","starting value of variable '" + var.Name + 
+								Log.WriteAction(LogAction.set,"variable","starting value of variable '" + var.Name + 
         						                "' set to " + VariableStartingValueTextBox.Text);
 							}
         				}

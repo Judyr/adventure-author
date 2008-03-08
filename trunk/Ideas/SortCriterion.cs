@@ -12,7 +12,8 @@ using System;
 namespace AdventureAuthor.Ideas
 {
 	/// <summary>
-	/// Description of SortBy.
+	/// The criterion to sort the magnet list by (e.g. sort alphabetically, or
+	/// sort into those magnets which have been used and those which haven't.)
 	/// </summary>
 	public enum SortCriterion {
 		Alphabetically,

@@ -30,7 +30,10 @@ namespace AdventureAuthor.Scripts.UI
         	checkType = type;
         }
         
-		public enum CheckType { CheckForSetting, CheckForGetting }
+		public enum CheckType { 
+			CheckForSetting, 
+			CheckForGetting 
+		}
 		
         public object Answer
         {

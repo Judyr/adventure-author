@@ -25,13 +25,13 @@ namespace AdventureAuthor.Scripts.UI
     	/// </summary>
     	/// <param name="question">The question to ask the user</param>
         /// <param name="objectTypes">The (multiple) types of object to populate the resref list from</param>
-        public ResRefQuestionPanel(string question, ScriptHelper.TaggedType[] objectTypes)
+        public ResRefQuestionPanel(string question, TaggedType[] objectTypes)
         {
             InitializeComponent();
             QuestionLabel.Text = question;
             
             SortedList<string,string> resrefs = new SortedList<string,string>();
-            foreach (ScriptHelper.TaggedType type in objectTypes) {
+            foreach (TaggedType type in objectTypes) {
             	foreach (string resref in ScriptHelper.GetResRefs(type).Keys) {
             		if (!resrefs.ContainsKey(resref)) {
             			resrefs.Add(resref,null);

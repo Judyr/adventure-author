@@ -49,39 +49,6 @@ namespace AdventureAuthor.Utils
 			}
 		}
 		
-		public enum Action {
-			// applications or mini-applications e.g. conversationwriter, expandedgraph:
-			launched,
-			exited,
-			
-			// documents etc.:
-			opened,
-			closed,
-			
-			// other objects:
-			added,
-			edited,
-			renamed,
-			deleted,
-			saved,
-			set,
-			moved,
-			viewed,
-			
-			// entered a mode (e.g. toolset_SelectObjects, toolset_PaintTerrain, worksheet_Design):
-			mode,
-			
-			// selected just means giving it focus:
-			selected,
-				
-			// deliberately non-specific, for when no further information has been gathered, e.g. when the user
-			// clicks something in the terrain editor window or area contents window 
-			clicked,
-			
-			// relating to worksheet designer:
-			activated,
-			deactivated
-		}
 		
 		
 		
@@ -145,7 +112,7 @@ namespace AdventureAuthor.Utils
 		/// <remarks>Timestamp:EffectiveAction subject -optionalextrainfo</remarks>
 		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
 		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
-		public static void WriteAction(Action action, string subject)
+		public static void WriteAction(LogAction action, string subject)
 		{
 			WriteAction(action,subject,null);
 		}		
@@ -158,7 +125,7 @@ namespace AdventureAuthor.Utils
 		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
 		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
 		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-		public static void WriteAction(Action action, string subject, string extraInfo)
+		public static void WriteAction(LogAction action, string subject, string extraInfo)
 		{
 			string message;
 			string subjectmsg = subject == null ? "<Subject not logged>" : subject;			
@@ -181,13 +148,15 @@ namespace AdventureAuthor.Utils
 				string type = GetNWN2TypeName(o);
 				string message;
 				if (e.PropertyName.ToLower() == "tag") {
-					message = "'" + e.PropertyName + "' on " + type + " '" + e.OldValue + "' to " + e.NewValue + " (was " + e.OldValue + ")";
+					message = "'" + e.PropertyName + "' on " + type + " '" + 
+						e.OldValue + "' to " + e.NewValue + " (was " + e.OldValue + ")";
 				}
 				else {
-					message = "'" + e.PropertyName + "' on " + type + " '" + name + "' to " + e.NewValue + " (was " + e.OldValue + ")";
+					message = "'" + e.PropertyName + "' on " + type + " '" + 
+						name + "' to " + e.NewValue + " (was " + e.OldValue + ")";
 				}
 				
-				WriteAction(Action.set,"property",message);
+				WriteAction(LogAction.set,"property",message);
 			}
 		}
 		

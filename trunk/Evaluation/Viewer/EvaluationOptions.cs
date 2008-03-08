@@ -31,13 +31,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 		#endregion 
 		
 		
-		public enum ImageApps {
-			MicrosoftPaint,
-			Default
-		}
 		
-		private static ImageApps applicationToOpenImages = ImageApps.MicrosoftPaint;		
-		public static ImageApps ApplicationToOpenImages {
+		private static ImageApp applicationToOpenImages = ImageApp.MicrosoftPaint;		
+		public static ImageApp ImageViewer {
 			get { return applicationToOpenImages; }
 			set { 
 				applicationToOpenImages = value; 

@@ -38,14 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdventureAuthor\MindMapControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="AdventureAuthor\GraphControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="AdventureAuthor\IPageNode.cs" />
-    <Compile Include="AdventureAuthor\MindMapTextEditor.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DiagramControl.cs">
       <SubType>Component</SubType>

@@ -49,7 +49,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is dead.");
-    		window.AddTagQuestion("Which creature needs to be dead?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature needs to be dead?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -69,7 +69,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular door is open.");
-    		window.AddTagQuestion("Which door needs to be open?",ScriptHelper.TaggedType.Door);
+    		window.AddTagQuestion("Which door needs to be open?",TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -153,7 +153,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a particular item equipped");
-    		window.AddTagQuestion("Which item does the player need to be using/wearing?",ScriptHelper.TaggedType.Item);
+    		window.AddTagQuestion("Which item does the player need to be using/wearing?",TaggedType.Item);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -214,7 +214,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that a particular creature is the player's ally");
-    		window.AddTagQuestion("Which creature does the player need to have as an ally?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature does the player need to have as an ally?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -234,7 +234,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			}
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a particular item");
-    		window.AddTagQuestion("Which item does the player need to have?",ScriptHelper.TaggedType.Item);
+    		window.AddTagQuestion("Which item does the player need to have?",TaggedType.Item);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -260,7 +260,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			
 			object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Check that the player has a number of items");
-    		window.AddTagQuestion("Which item should the player have?",ScriptHelper.TaggedType.Item);
+    		window.AddTagQuestion("Which item should the player have?",TaggedType.Item);
     		window.AddStringQuestion("How many items with this tag does the player need to have?");// Either enter the value, " +
     		                          //"e.g. '5', or an operation, e.g. '-4' or '+1'."); // TODO add check
     		bool? result = window.ShowDialog();

@@ -112,7 +112,7 @@ namespace AdventureAuthor.Setup
 				// ready to receive ideas submitted from the main GUI:
 				MagnetBoardViewer magnets = new MagnetBoardViewer();
 				
-				Log.WriteAction(Log.Action.launched,"toolset");
+				Log.WriteAction(LogAction.launched,"toolset");
 			}
 			catch (DirectoryNotFoundException e) {
 				MessageBox.Show("Required Adventure Author files were not found at the expected location - software may " +
@@ -142,7 +142,7 @@ namespace AdventureAuthor.Setup
 //			// TODO if analysis window is not null
 //			// TODO if evaluation window is not null
 //			
-//			Log.WriteAction(Log.Action.exited,"toolset");
+//			Log.WriteAction(LogAction.exited,"toolset");
 //			LogWriter.StopRecording();
 //			DebugWriter.StopRecording();
 		}
@@ -167,7 +167,7 @@ namespace AdventureAuthor.Setup
 			// TODO if analysis window is not null
 			// TODO if evaluation window is not null
 			
-			Log.WriteAction(Log.Action.exited,"toolset");
+			Log.WriteAction(LogAction.exited,"toolset");
 			LogWriter.StopRecording();
 			DebugWriter.StopRecording();
 		}

@@ -17,7 +17,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
-    public partial class MagnetControl : BoardObject, ICloneable
+	public partial class MagnetControl : BoardObject, ICloneable
     {       
     	#region Constants
     	

@@ -11,6 +11,10 @@ using System;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
+	/// <summary>
+	/// The mode to run the evaluation application in, allowing users to either 
+	/// build worksheets, fill them in or discuss completed worksheets.
+	/// </summary>
 	public enum Mode
 	{		
     	Design, // design and build a worksheet from scratch, or edit an existing worksheet

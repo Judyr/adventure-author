@@ -63,10 +63,10 @@ namespace AdventureAuthor.Variables
 					throw new ArgumentException("Variable of type " + variable.VariableType.ToString() + " is not supported.");
 			}
 			if (startingValueMessage != null) {
-				Log.WriteAction(Log.Action.added,"variable","'" + variable.Name + "'" + startingValueMessage);
+				Log.WriteAction(LogAction.added,"variable","'" + variable.Name + "'" + startingValueMessage);
 			}
 			else {
-				Log.WriteAction(Log.Action.added,"variable","'" + variable.Name + "'");
+				Log.WriteAction(LogAction.added,"variable","'" + variable.Name + "'");
 			}
 	        form.App.Module.ModuleInfo.Variables.Add(variable);
 			if (VariablesWindow.Instance != null) {
@@ -82,7 +82,7 @@ namespace AdventureAuthor.Variables
 		/// <param name="removeReferences">True to also remove all references in conversations and scripts, false to only delete the variable</param>
 		public static void Delete(NWN2ScriptVariable variable, bool removeReferences)
 		{			
-			Log.WriteAction(Log.Action.deleted,"variable",variable.Name);
+			Log.WriteAction(LogAction.deleted,"variable",variable.Name);
 			
 			if (removeReferences) {
 				RemoveReferences(variable);

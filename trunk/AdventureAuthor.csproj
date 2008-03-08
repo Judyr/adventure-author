@@ -137,6 +137,7 @@
     <Compile Include="Achievements\WordCountAchievement.cs" />
     <Compile Include="Analysis\Combat.cs" />
     <Compile Include="Analysis\CreatureInfo.cs" />
+    <Compile Include="Analysis\DangerLevel.cs" />
     <Compile Include="Analysis\HostileGroup.cs" />
     <Compile Include="Analysis\UI\AreaMapControl.xaml.cs">
       <DependentUpon>AreaMapControl.xaml</DependentUpon>
@@ -255,6 +256,8 @@
       <DependentUpon>AddReplyWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Evaluation\Viewer\EvidenceControlStatus.cs" />
+    <Compile Include="Evaluation\Viewer\ImageApp.cs" />
     <Compile Include="Evaluation\Viewer\Mode.cs" />
     <Compile Include="Evaluation\Viewer\MovingEventArgs.cs" />
     <Compile Include="Evaluation\Viewer\OptionalWorksheetPartControl.cs" />
@@ -311,7 +314,7 @@
     <Compile Include="Ideas\MagnetListInfo.cs" />
     <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
     <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
-    <Compile Include="Ideas\SortBy.cs" />
+    <Compile Include="Ideas\SortCriterion.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />
     <Compile Include="Ideas\MagnetBoardInfo.cs" />
     <Compile Include="Ideas\MagnetControl.cs" />
@@ -320,8 +323,14 @@
     <Compile Include="Ideas\MagnetInfo.cs" />
     <Compile Include="Ideas\MagnetList.xaml.cs" />
     <Compile Include="Scripts\Actions.cs" />
+    <Compile Include="Scripts\Animation.cs" />
     <Compile Include="Scripts\Conditions.cs" />
+    <Compile Include="Scripts\Feat.cs" />
+    <Compile Include="Scripts\Movie.cs" />
+    <Compile Include="Scripts\NWN2Colour.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
+    <Compile Include="Scripts\ScriptOrigin.cs" />
+    <Compile Include="Scripts\TaggedType.cs" />
     <Compile Include="Scripts\UI\BooleanQuestionPanel.xaml.cs">
       <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -372,15 +381,12 @@
       <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
-    <Compile Include="Utils\DragDropManager\Debug.cs" />
-    <Compile Include="Utils\DragDropManager\DragDropManager.cs" />
-    <Compile Include="Utils\DragDropManager\DropPreviewAdorner.cs" />
-    <Compile Include="Utils\DragDropManager\IDragSourceAdvisor.cs" />
-    <Compile Include="Utils\DragDropManager\IDropTargetAdvisor.cs" />
     <Compile Include="Utils\Filters.cs" />
     <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\LogAction.cs" />
     <Compile Include="Utils\LogEventArgs.cs" />
     <Compile Include="Utils\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
@@ -495,7 +501,6 @@
     <Folder Include="Evaluation" />
     <Folder Include="Ideas" />
     <Folder Include="Setup\UI" />
-    <Folder Include="Utils\DragDropManager" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />

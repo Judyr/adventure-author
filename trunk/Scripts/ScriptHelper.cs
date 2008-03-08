@@ -48,156 +48,10 @@ namespace AdventureAuthor.Scripts
 	/// </summary>
 	public static class ScriptHelper
 	{		
-		//TODO: write a script to give player all usable item feats and massive lore and automatically attach it upon the creation
-		//of a new adventure
-				
 		#region Constants
 		
 		private static string ownerName = "[OWNER]";		
-		
-		public enum Location {
-			Original, // included with game - located at Neverwinter Nights 2/Data/Scripts.zip on the main drive
-			Override // included with Adventure Author - located at Neverwinter Nights 2/Override on the main drive
-		}
-		
-		public enum FadeColour { 
-			Black = 0, 
-			White = 16777215, 
-			Blue = 255,
-			Red = 16711680,
-			Yellow = 16776960,
-			Green = 32768,
-			Orange = 16753920,
-			Purple = 8388736,
-			Pink = 16761035,
-			Gold = 16766720,
-			Silver = 12632256,
-			Brown = 10824234,
-			Grey = 8421504,
-		};
-		
-		public enum Feat { 
-			Cleave = 6, 
-			Knockdown = 23, 
-			PowerAttack = 28 
-		};
-		
-		public enum Animation { 
-			// Looping:
-			Pause = 0,
-			Pause2 = 1,
-			Listen = 2,
-			Meditate = 3, 
-			Worship = 4, 
-			LookFar = 5,
-//			SitInChair = 6,
-			SitCrossLegged = 7,
-			TalkNormal = 8,
-			TalkPleading = 9,
-			TalkForceful = 10,
-			TalkLaughing = 11,
-			GetLow = 12,
-			GetMid = 13,
-			PauseTired = 14,
-			PauseDrunk = 15,
-			DeadFront = 16,
-			DeadBack = 17,
-			Conjure1 = 18,
-			Conjure2 = 19,
-			Spasm = 20,
-//			Custom1 = 21,
-//			Custom2 = 22,
-			Cast1 = 23,
-			Prone = 24,
-			Kneel = 25,			
-			Dance1 = 26, 
-			Dance2 = 27, 
-			Dance3 = 28,
-			PlayGuitar = 29,
-			IdleGuitar = 30,
-			PlayFlute = 31,
-			IdleFlute = 32,
-			PlayDrum = 33,
-			IdleDrum = 34,
-			Cook1 = 35,
-			Cook2 = 36,
-			Craft = 37,
-			Forge = 38,
-			BoxCarry = 39,
-			BoxIdle = 40,
-			BoxHurried = 41,
-			Lookown = 42,
-			LookUp = 43,
-			LookLeft = 44,
-			LookRight = 45,
-			Shoveling = 46,
-			Injured = 47,
-			
-			// One-time:
-			TurnHeadLeft = 100,
-			TurnHeadRight = 101,
-			PauseScratchHead = 102,
-			PauseBored = 103,
-			Salute = 104,
-			Bow = 105,
-			Steal = 106,
-			Greeting = 107,
-			Taunt = 108,
-			Victory1 = 109,
-			Victory2 = 110,
-			Victory3 = 111,
-			Read = 112,
-			Drink = 113,
-			DodgeToSide = 114,
-			Duck = 115,
-//			Spasm = 116, // seems to be repeated
-			Collapse = 117,
-			LieDown = 118,
-			StandUp = 119,
-			Activate = 120,
-			UseItem = 121,
-			KneelFidget = 122,
-			KneelTalk = 123,
-			KneelDamage = 124,
-			KneelDeath = 125,
-			Sing = 126,
-			FidgetWithGuitar = 127,
-			FidgetWithFlute = 128,
-			FidgetWithDrum = 129,
-			Wildshape = 130,
-			Search = 131,
-			Intimidate = 132,
-			Chuckle = 133			
-		};
-		
-		public enum Movie { //.bik files in Neverwinter Nights 2/Movies
-			AtariLogo,
-			Credits,
-			Intro,
-			Legal,
-			NvidiaLogo,
-			OEIlogo,
-			WOTCLogo
-		}
-		
-		public enum TaggedType { 
-			AnyObject, 
-			Creature, 
-			Door, 
-			Encounter, 
-			Item, 
-			JournalCategory, // note that journal does not exist as an object
-			Light, 
-			Placeable,
-			PlacedEffect, 
-			Sound, 
-			StaticCamera, 
-			Store, 
-			Tree, 
-			Trigger, 
-			Waypoint 
-		};
-		
+					
 		#endregion
 		
 		#region Creating scripts
@@ -208,7 +62,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. gc_item_count (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a conditional functor, or null if failed.</returns>
-		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, Location origin)
+		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, ScriptOrigin origin)
 		{
 			NWN2ConditionalFunctor conditionalFunctor = GetFunctor(scriptName,args,origin);
 			
@@ -223,7 +77,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, Location location)
+		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, ScriptOrigin location)
 		{
 			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,location);
 			return scriptFunctor;
@@ -235,10 +89,10 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, Location location)
+		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, ScriptOrigin origin)
 		{
 			try {
-				NWN2GameScript script = new NWN2GameScript(GetScriptResource(scriptName, location));
+				NWN2GameScript script = new NWN2GameScript(GetScriptResource(scriptName, origin));
 				if (script == null) {
 					Say.Error("Couldn't find a script named '" + scriptName + "'.");
 					return null;
@@ -288,15 +142,15 @@ namespace AdventureAuthor.Scripts
 		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="origin">The origin of the script; i.e. a NWN2 game script, or an Adventure Author script</param>
 		/// <returns>Returns the compiled script resource, or null if no script was found.</returns>
-		internal static IResourceEntry GetScriptResource(string name, Location location)
+		internal static IResourceEntry GetScriptResource(string name, ScriptOrigin origin)
 		{
 			try {	
 				IResourceRepository scripts;
-				if (location == Location.Original) {
+				if (origin == ScriptOrigin.Original) {
 					string path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
 					scripts = ResourceManager.Instance.GetRepositoryByName(path);
 				}
-				else if (location == Location.Override) {
+				else if (origin == ScriptOrigin.Override) {
 					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT UserOverrideDirectory
 				}
 				else {
@@ -335,7 +189,7 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("module","Module to attach scripts to cannot be null.");
 			}
 			
-			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			ScriptOrigin loc = ScriptOrigin.Override;
 			
 			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",loc);
 			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",loc);
@@ -362,7 +216,7 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("area","Area to attach scripts to cannot be null.");
 			}
 			
-			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			ScriptOrigin loc = ScriptOrigin.Override;
 			
 			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",loc);
 		}
@@ -379,7 +233,7 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("instance","Instance to attach scripts to cannot be null.");
 			}
 			
-			ScriptHelper.Location loc = ScriptHelper.Location.Override;
+			ScriptOrigin loc = ScriptOrigin.Override;
 			
 			if (instance is NWN2CreatureInstance) {
 				NWN2CreatureInstance creature = (NWN2CreatureInstance)instance;
@@ -621,7 +475,7 @@ namespace AdventureAuthor.Scripts
 					
 				case "ga_fade_to_black":
 					StringBuilder sb = new StringBuilder("FADE ");
-					string colour = Enum.GetName(typeof(ScriptHelper.FadeColour),action.Parameters[2].ValueInt);
+					string colour = Enum.GetName(typeof(NWN2Colour),action.Parameters[2].ValueInt);
 					if (colour == null) {
 						sb.Append("OUT (");
 					}
@@ -648,7 +502,7 @@ namespace AdventureAuthor.Scripts
 						+ " AND DISAPPEARS.";
 					
 				case "ga_give_feat":
-					string featgiven = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
+					string featgiven = Enum.GetName(typeof(Feat),action.Parameters[1].ValueInt);
 					if (featgiven == null) {
 						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
 							" RECEIVES SPECIAL ABILITY " + action.Parameters[1].ValueInt + ".";
@@ -766,7 +620,7 @@ namespace AdventureAuthor.Scripts
 					}
 										
 				case "ga_play_animation":
-					string animName = Enum.GetName(typeof(ScriptHelper.Animation),action.Parameters[1].ValueInt);
+					string animName = Enum.GetName(typeof(Animation),action.Parameters[1].ValueInt);
 					if (animName == null) {
 						animName = "unidentified animation";
 					}
@@ -794,7 +648,7 @@ namespace AdventureAuthor.Scripts
 					return ga_play_sound.ToString();
 					
 				case "ga_remove_feat":
-					string featremoved = Enum.GetName(typeof(ScriptHelper.Feat),action.Parameters[1].ValueInt);
+					string featremoved = Enum.GetName(typeof(Feat),action.Parameters[1].ValueInt);
 					if (featremoved == null) {
 						return GetPlayerIfBlank(action.Parameters[0].ValueString) + 
 							" LOSES SPECIAL ABILITY " + action.Parameters[1].ValueInt + ".";

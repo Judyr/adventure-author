@@ -33,33 +33,28 @@ namespace AdventureAuthor.Evaluation.Viewer
 			set { 			
 				filename = value;
 				if (filename == null || filename == String.Empty) {
-					Status = EvidenceStatus.NoLink;
+					Status = EvidenceControlStatus.NoLink;
 				}
 				else if (File.Exists(filename)) {
-					Status = EvidenceStatus.Link;
+					Status = EvidenceControlStatus.Link;
 				}
 				else {
-					Status = EvidenceStatus.BrokenLink;
+					Status = EvidenceControlStatus.BrokenLink;
 				}
 				OnChanged(new EventArgs());
 			}
 		}
     	
-    	protected enum EvidenceStatus {
-    		NoLink,
-    		Link,
-    		BrokenLink
-    	}
     	
-    	private EvidenceStatus status;
-    	protected EvidenceStatus Status {
+    	private EvidenceControlStatus status;
+    	protected EvidenceControlStatus Status {
     		get {
     			return status;
     		}
     		set {
     			status = value;
     			switch (status) {
-    				case EvidenceStatus.NoLink:   
+    				case EvidenceControlStatus.NoLink:   
     					ViewLink.Visibility = Visibility.Collapsed;
     					ViewLink.ToolTip = String.Empty; 					
     					SelectLinkText.Text = "Attach evidence...";
@@ -67,7 +62,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			            SelectLink.ToolTip = "Add a piece of evidence which " +
 			            					 "supports your other answers.";
     					break;
-    				case EvidenceStatus.Link:
+    				case EvidenceControlStatus.Link:
     					ViewLink.Visibility = Visibility.Visible;
     					ViewLink.ToolTip = filename;
     					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
@@ -80,7 +75,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			            SelectLink.ToolTip = "Choose a different piece\n" +
 			            					 "of supporting evidence.";
     					break;
-    				case EvidenceStatus.BrokenLink:
+    				case EvidenceControlStatus.BrokenLink:
     					ViewLink.Visibility = Visibility.Visible;
     					ViewLink.ToolTip = filename;
     					ViewLinkText.Text = ".../" + Path.GetFileName(filename);
@@ -142,7 +137,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;
 			
-			if (status == EvidenceStatus.Link) {
+			if (status == EvidenceControlStatus.Link) {
 				try {
 					openFileDialog.InitialDirectory = Path.GetDirectoryName(filename);
 				}
@@ -160,11 +155,11 @@ namespace AdventureAuthor.Evaluation.Viewer
 		
 		private void OnClick_ViewEvidence(object sender, RoutedEventArgs e)
 		{
-			if (status == EvidenceStatus.NoLink) {
+			if (status == EvidenceControlStatus.NoLink) {
 				throw new InvalidOperationException("'View evidence' button should not have been visible.");
 			}
 			
-			if (status == EvidenceStatus.Link) {
+			if (status == EvidenceControlStatus.Link) {
 				try {
 					OpenEvidence(filename);
 					return; // only get this far if no exception has been raised
@@ -172,7 +167,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				catch (IOException) {
 					// Open the evidence if it's there, and return. If trying to open it throws an IOException,
 					// it isn't there, so DON'T return - go on to the BrokenLink handling code instead.
-					Status = EvidenceStatus.BrokenLink;
+					Status = EvidenceControlStatus.BrokenLink;
 				}
 			}
 			
@@ -194,11 +189,11 @@ namespace AdventureAuthor.Evaluation.Viewer
 			}
 			
 			if (IsImage(filename)) {
-				switch (EvaluationOptions.ApplicationToOpenImages) {
-					case EvaluationOptions.ImageApps.Default:
+				switch (EvaluationOptions.ImageViewer) {
+					case ImageApp.Default:
 						Process.Start(filename);
 						break;
-					case EvaluationOptions.ImageApps.MicrosoftPaint:
+					case ImageApp.MicrosoftPaint:
 						try {
 							Process.Start("mspaint.exe",filename);
 						}

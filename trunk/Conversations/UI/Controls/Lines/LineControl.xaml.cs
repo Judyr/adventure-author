@@ -421,7 +421,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
-        	Log.WriteAction(Log.Action.selected,"line");
+        	Log.WriteAction(LogAction.selected,"line");
         	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
         	SelectLine();
         }

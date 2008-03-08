@@ -21,13 +21,6 @@ namespace AdventureAuthor.Analysis.UI
     /// Interaction logic for CreatureMarker.xaml
     /// </summary>
 
-   	public enum DangerLevel {
-   		Friendly,
-   		Weak,
-    	Medium,
-    	Strong,
-    	Impossible
-    }
     
     
     public partial class CreatureMarker : UserControl

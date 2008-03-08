@@ -46,7 +46,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            		// seemingly
 	            		Node node = entity as Node;
 	            		if (node != null) {
-	            			Log.WriteAction(Log.Action.selected,"node");
+	            			Log.WriteAction(LogAction.selected,"node");
 	            			WriterWindow.Instance.DisplayPage(node.Page);	            			
 	            			if (centreGraph) {	            	
 	            				Log.WriteMessage("centred graph on the new page.");			
