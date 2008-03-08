@@ -156,7 +156,7 @@ namespace AdventureAuthor.Core
 		{
 			INWN2Instance instance = value as INWN2Instance;
 			if (instance != null) {
-				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value),instance.Name);
+				Log.WriteAction(LogAction.added,Log.GetNWN2TypeName(value),instance.Name);
 				try {
 					ScriptHelper.ApplyDefaultScripts(instance);
 				}
@@ -165,7 +165,7 @@ namespace AdventureAuthor.Core
 				}
 			}
 			else {
-				Log.WriteAction(Log.Action.added,Log.GetNWN2TypeName(value));
+				Log.WriteAction(LogAction.added,Log.GetNWN2TypeName(value));
 			}
 		}
 		
@@ -174,10 +174,10 @@ namespace AdventureAuthor.Core
 		{
 			INWN2Instance instance = value as INWN2Instance;
 			if (instance != null) {
-				Log.WriteAction(Log.Action.deleted,Log.GetNWN2TypeName(value),instance.Name);
+				Log.WriteAction(LogAction.deleted,Log.GetNWN2TypeName(value),instance.Name);
 			}
 			else {
-				Log.WriteAction(Log.Action.deleted,Log.GetNWN2TypeName(value));
+				Log.WriteAction(LogAction.deleted,Log.GetNWN2TypeName(value));
 			}
 		}
 		

@@ -188,7 +188,7 @@ namespace AdventureAuthor.Core
 			// this seems to get called 6 times every time you set the start location (??):
 			form.App.Module.ModuleInfo.EntryPointChanged += delegate
 			{ 
-				Log.WriteAction(Log.Action.set,"startlocation"); 
+				Log.WriteAction(LogAction.set,"startlocation"); 
 			};
 			form.App.Module.ModuleExpanded += delegate 
 			{
@@ -197,51 +197,51 @@ namespace AdventureAuthor.Core
 			form.App.Module.NameChanged += delegate(object sender, NameChangedEventArgs e) 
 			{  
 				if (e.OldName != e.NewName) { // ignore if this has been raised on a save
-					Log.WriteAction(Log.Action.renamed,"module","'" + e.NewName + "' from '" + e.OldName + "'");
+					Log.WriteAction(LogAction.renamed,"module","'" + e.NewName + "' from '" + e.OldName + "'");
 				}
 			};
 			
 			form.App.Module.Areas.Inserted += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
 			{  
-				Log.WriteAction(Log.Action.added,"area",key.ToString());
+				Log.WriteAction(LogAction.added,"area",key.ToString());
 			};
 			form.App.Module.Areas.Removed += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
 			{  
-				Log.WriteAction(Log.Action.deleted,"area",key.ToString());
+				Log.WriteAction(LogAction.deleted,"area",key.ToString());
 			};
 				
 			form.App.Module.Scripts.Inserted += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
 			{  
-				Log.WriteAction(Log.Action.added,"script",key.ToString());
+				Log.WriteAction(LogAction.added,"script",key.ToString());
 			};
 			form.App.Module.Scripts.Removed += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 
 			{  
-				Log.WriteAction(Log.Action.deleted,"script",key.ToString());
+				Log.WriteAction(LogAction.deleted,"script",key.ToString());
 			};
 			
 			form.App.Module.FactionData.Factions.Inserted += delegate(OEICollectionWithEvents cList, int index, object value)
 			{  
-				Log.WriteAction(Log.Action.added,"faction",((NWN2Faction)value).Name);
+				Log.WriteAction(LogAction.added,"faction",((NWN2Faction)value).Name);
 			};				
 			form.App.Module.FactionData.Factions.Removed += delegate(OEICollectionWithEvents cList, int index, object value)
 			{  
-				Log.WriteAction(Log.Action.deleted,"faction",((NWN2Faction)value).Name);
+				Log.WriteAction(LogAction.deleted,"faction",((NWN2Faction)value).Name);
 			};	
 			
 			form.App.Module.Journal.Categories.Inserted += delegate(OEICollectionWithEvents cList, int index, object value)
 			{  
-				Log.WriteAction(Log.Action.added,"journalcategory");
+				Log.WriteAction(LogAction.added,"journalcategory");
 			};				
 			form.App.Module.Journal.Categories.Removed += delegate(OEICollectionWithEvents cList, int index, object value)
 			{  
-				Log.WriteAction(Log.Action.deleted,"journalcategory");
+				Log.WriteAction(LogAction.deleted,"journalcategory");
 			};	
 		}	
 		
 				
 		public static NWN2GameModule CreateAndOpenModule(string name)
 		{			
-			Log.WriteAction(Log.Action.added,"module",name);
+			Log.WriteAction(LogAction.added,"module",name);
 			
 			// Create the module object:
 			NWN2GameModule mod = new NWN2GameModule();
@@ -286,7 +286,7 @@ namespace AdventureAuthor.Core
 		/// <param name="name">Name of the module to open.</param>
 		public static bool Open(string name)
 		{
-			Log.WriteAction(Log.Action.opened,"module",name);
+			Log.WriteAction(LogAction.opened,"module",name);
 			
 			if (ModuleIsOpen()) {
 				CloseModule();
@@ -326,7 +326,7 @@ namespace AdventureAuthor.Core
 				Say.Error("Can't save a module that is not stored as a directory."); // shouldn't happen
 			}
 					
-			Log.WriteAction(Log.Action.saved,"module");
+			Log.WriteAction(LogAction.saved,"module");
 						
 		    form.App.WaitForPanelsToSave();  	        
 		    if (form.VersionControlManager.OnModuleSaving()) {
@@ -465,7 +465,7 @@ namespace AdventureAuthor.Core
 				return;
 			}
 			
-			Log.WriteAction(Log.Action.closed,"module",form.App.Module.Name);
+			Log.WriteAction(LogAction.closed,"module",form.App.Module.Name);
 			
 			CloseModule();
 			OnModuleClosed(new EventArgs());
@@ -529,7 +529,7 @@ namespace AdventureAuthor.Core
 			Process.Start(copylogStartInfo);
 			
 			// start the game:
-			Log.WriteAction(Log.Action.launched,"game");
+			Log.WriteAction(LogAction.launched,"game");
 			form.App.RunModule(String.Empty,false,false,false);
 			
 //			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
@@ -538,7 +538,7 @@ namespace AdventureAuthor.Core
 //			nwn2mainStartInfo.UseShellExecute = false;
 //			Process nwn2main = new Process();
 //			nwn2main.StartInfo = nwn2mainStartInfo;
-//			nwn2main.Disposed += delegate { Log.WriteAction(Log.Action.exited,"game",CurrentAdventure.Name); }; doesn't seem to work
+//			nwn2main.Disposed += delegate { Log.WriteAction(LogAction.exited,"game",CurrentAdventure.Name); }; doesn't seem to work
 //			nwn2main.Start();
 		}
 		

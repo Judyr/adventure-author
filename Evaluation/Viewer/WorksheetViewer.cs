@@ -32,7 +32,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			get { return evaluationMode; }
 			internal set {
 				evaluationMode = value;
-				Log.WriteAction(Log.Action.mode,"evaluation_" + evaluationMode.ToString());
+				Log.WriteAction(LogAction.mode,"evaluation_" + evaluationMode.ToString());
 			}
 		}
     	
@@ -87,12 +87,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		Changed += new EventHandler(WorksheetChanged);
     		Loaded += delegate
     		{  
-				Log.WriteAction(Log.Action.launched,"evaluation");
+				Log.WriteAction(LogAction.launched,"evaluation");
     		};    		
             Closing += delegate 
             {
             	try {
-            		Log.WriteAction(Log.Action.exited,"evaluation");
+            		Log.WriteAction(LogAction.exited,"evaluation");
             	}
             	catch (Exception) { 
             		// already disposed because toolset is closing
@@ -172,13 +172,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void changedDefaultImageViewer(object sender, EventArgs e)
     	{
-    		switch (EvaluationOptions.ApplicationToOpenImages) {
-    			case EvaluationOptions.ImageApps.Default:
+    		switch (EvaluationOptions.ImageViewer) {
+    			case ImageApp.Default:
     				UseDefaultMenuItem.IsChecked = true;
     				UsePaintMenuItem.IsChecked = false;
     				Log.WriteMessage("checked 'View images in default application'");
     				break;
-    			case EvaluationOptions.ImageApps.MicrosoftPaint:
+    			case ImageApp.MicrosoftPaint:
     				UseDefaultMenuItem.IsChecked = false;
     				UsePaintMenuItem.IsChecked = true;
     				Log.WriteMessage("checked 'View images in Microsoft Paint'");
@@ -1050,13 +1050,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void OnChecked_UsePaint(object sender, EventArgs e)
     	{
-    		EvaluationOptions.ApplicationToOpenImages = EvaluationOptions.ImageApps.MicrosoftPaint;
+    		EvaluationOptions.ImageViewer = ImageApp.MicrosoftPaint;
     	}
     	
     	
     	private void OnChecked_UseDefault(object sender, EventArgs e)
     	{
-    		EvaluationOptions.ApplicationToOpenImages = EvaluationOptions.ImageApps.Default;
+    		EvaluationOptions.ImageViewer = ImageApp.Default;
     	}
     	
     	

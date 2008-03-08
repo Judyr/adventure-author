@@ -120,7 +120,7 @@ namespace AdventureAuthor.Ideas
             
             Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
             
-            Loaded += delegate { Log.WriteAction(Log.Action.launched,"magnets"); };
+            Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
             
             // Open the magnet list:
@@ -145,7 +145,7 @@ namespace AdventureAuthor.Ideas
 			}
         	else {
         		try {
-        			Log.WriteAction(Log.Action.exited,"magnets");
+        			Log.WriteAction(LogAction.exited,"magnets");
         		}
         		catch (Exception) {
         			// already disposed because the toolset is closing

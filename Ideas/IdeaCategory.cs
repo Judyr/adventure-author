@@ -11,6 +11,9 @@ using System;
 
 namespace AdventureAuthor.Ideas
 {
+	/// <summary>
+	/// The general subject domain that an idea relates to.
+	/// </summary>
 	public enum IdeaCategory {
 		Quests,
 		Plot,

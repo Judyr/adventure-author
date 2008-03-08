@@ -292,7 +292,7 @@ namespace AdventureAuthor.Setup
 								else {
 									extraInfo = String.Empty;
 								}
-								Log.WriteAction(Log.Action.set,"terraineditorsettings",extraInfo);
+								Log.WriteAction(LogAction.set,"terraineditorsettings",extraInfo);
 							};
 						}
 					}
@@ -307,7 +307,7 @@ namespace AdventureAuthor.Setup
 							tileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
 							{  
 								if (e.NewValue) {
-									Log.WriteAction(Log.Action.selected,"tile",e.TreeNode.Text);
+									Log.WriteAction(LogAction.selected,"tile",e.TreeNode.Text);
 								}
 							};
 						}
@@ -316,7 +316,7 @@ namespace AdventureAuthor.Setup
 							metaTileTreeView.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e)
 							{  
 								if (e.NewValue) {
-									Log.WriteAction(Log.Action.selected,"metatile",e.TreeNode.Text);
+									Log.WriteAction(LogAction.selected,"metatile",e.TreeNode.Text);
 								}
 							};
 						}
@@ -360,7 +360,7 @@ namespace AdventureAuthor.Setup
 									INWN2Blueprint blueprint = (INWN2Blueprint)o;
 									message.Append(blueprint.Name + " (" + blueprint.ObjectType + ") ");
 								}							
-								Log.WriteAction(Log.Action.selected,"blueprint",message.ToString());
+								Log.WriteAction(LogAction.selected,"blueprint",message.ToString());
 							}
 						};
 					}
@@ -406,7 +406,7 @@ namespace AdventureAuthor.Setup
 						view.SelectedIndexChanged += delegate(object source, GTSelectionChangedEventArgs e) 
 						{  
 							if (e.NewValue && dictionaries[key].ContainsValue(e.TreeNode)) {
-								Log.WriteAction(Log.Action.selected,key,e.TreeNode.Text);
+								Log.WriteAction(LogAction.selected,key,e.TreeNode.Text);
 							}
 						};
 					}
@@ -775,7 +775,7 @@ namespace AdventureAuthor.Setup
 			if (viewer != null && viewer.ViewedResource != null) {
 				if (viewer.ViewedResource is NWN2GameArea) {
 					NWN2GameArea area = (NWN2GameArea)viewer.ViewedResource;
-					Log.WriteAction(Log.Action.opened,"area",area.Name);
+					Log.WriteAction(LogAction.opened,"area",area.Name);
 					page.Text = "area";
 					
 					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
@@ -808,7 +808,7 @@ namespace AdventureAuthor.Setup
 //								INWN2Instance instance = (INWN2Instance)o;
 //								message.Append(instance.Name + " (" + instance.ObjectType + ") ");
 //							}							
-//							Log.WriteAction(Log.Action.selected,"object",message.ToString());
+//							Log.WriteAction(LogAction.selected,"object",message.ToString());
 //						}
 //					};
 				}
@@ -836,27 +836,27 @@ namespace AdventureAuthor.Setup
 				}
 				else if (viewer.ViewedResource is NWN2FactionData) {
 					NWN2FactionData factions = (NWN2FactionData)viewer.ViewedResource;
-					Log.WriteAction(Log.Action.opened,"factions");
+					Log.WriteAction(LogAction.opened,"factions");
 					page.Text = "faction";
 				}
 				else if (viewer.ViewedResource is NWN2Journal) {
 					//NWN2Journal journal = (NWN2Journal)viewer.ViewedResource;
-					Log.WriteAction(Log.Action.opened,"journal");
+					Log.WriteAction(LogAction.opened,"journal");
 					page.Text = "journal";
 				}
 				else if (viewer.ViewedResource is TwoDAFile) {
 					TwoDAFile twodafile = (TwoDAFile)viewer.ViewedResource;
-					Log.WriteAction(Log.Action.opened,"2dafile",twodafile.Name);
+					Log.WriteAction(LogAction.opened,"2dafile",twodafile.Name);
 					page.Text = "2dafile";
 				}
 				else if (viewer.ViewedResource is NWN2GameScript) {
 					NWN2GameScript script = (NWN2GameScript)viewer.ViewedResource;
-					Log.WriteAction(Log.Action.opened,"script",script.Name);
+					Log.WriteAction(LogAction.opened,"script",script.Name);
 					page.Text = "script";
 				}
 				else {
 					string type = viewer.ViewedResource.GetType().ToString();
-					Log.WriteAction(Log.Action.opened,type);
+					Log.WriteAction(LogAction.opened,type);
 					page.Text = type;
 				}
 			}
@@ -867,13 +867,13 @@ namespace AdventureAuthor.Setup
 		{
 			crown.TabPage page = (crown.TabPage)value;
 			if (page.Text == null || page.Text == String.Empty) {
-				Log.WriteAction(Log.Action.closed,"<resource>",page.Title);
+				Log.WriteAction(LogAction.closed,"<resource>",page.Title);
 			}
 			else if (page.Text == "2dafile" || page.Text == "script" || page.Text == "area") {
-				Log.WriteAction(Log.Action.closed,page.Text,page.Title);
+				Log.WriteAction(LogAction.closed,page.Text,page.Title);
 			}
 			else {
-				Log.WriteAction(Log.Action.closed,page.Text);
+				Log.WriteAction(LogAction.closed,page.Text);
 			}
 		}
 		

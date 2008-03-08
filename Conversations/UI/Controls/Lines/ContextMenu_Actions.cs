@@ -57,7 +57,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    		
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Attack the player");
-    		window.AddTagQuestion("Who should attack the player?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Who should attack the player?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -72,8 +72,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //    	{    		
 //    		object[] prms = new object[2];
 //    		ScriptParametersWindow window = new ScriptParametersWindow(ref prms, "Make a creature attack another creature");
-//    		window.AddTagQuestion("Who should be the attacker?",ScriptHelper.TaggedType.Creature);
-//    		window.AddTagQuestion("Who should be the victim?",ScriptHelper.TaggedType.Creature);
+//    		window.AddTagQuestion("Who should be the attacker?",TaggedType.Creature);
+//    		window.AddTagQuestion("Who should be the victim?",TaggedType.Creature);
 //    		bool? result = window.ShowDialog();
 //    		if (result == null || !(bool)result) { // cancelled or failed
 //    			return;
@@ -88,7 +88,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player an ally");
-    		window.AddTagQuestion("Who should become the player's ally?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Who should become the player's ally?",TaggedType.Creature);
     		window.AddBooleanQuestion("Should they follow the player around and fight for him?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -104,8 +104,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give someone else an ally");
-    		window.AddTagQuestion("Who should become the ally?",ScriptHelper.TaggedType.Creature);
-    		window.AddTagQuestion("Whose ally should they become?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Who should become the ally?",TaggedType.Creature);
+    		window.AddTagQuestion("Whose ally should they become?",TaggedType.Creature);
     		window.AddBooleanQuestion("Should they follow their master around and fight for them?");
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -121,7 +121,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Close a door");
-    		window.AddTagQuestion("Which door should be closed?",ScriptHelper.TaggedType.Door);
+    		window.AddTagQuestion("Which door should be closed?",TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -136,9 +136,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a creature");
-    		window.AddResRefQuestion("What template should the creature be created from?",ScriptHelper.TaggedType.Creature);
+    		window.AddResRefQuestion("What template should the creature be created from?",TaggedType.Creature);
     		window.AddStringQuestion("What tag should the new creature be given?");
-    		window.AddTagQuestion("What waypoint should the creature appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("What waypoint should the creature appear at?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null); 
     		bool? result = window.ShowDialog();
@@ -155,9 +155,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create an item");
-    		window.AddResRefQuestion("What template should the item be created from?",ScriptHelper.TaggedType.Item);
+    		window.AddResRefQuestion("What template should the item be created from?",TaggedType.Item);
     		window.AddStringQuestion("What tag should the new item be given?");
-    		window.AddTagQuestion("What waypoint should the item appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("What waypoint should the item appear at?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
@@ -174,9 +174,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a placeable");
-    		window.AddResRefQuestion("What template should the placeable be created from?",ScriptHelper.TaggedType.Placeable);
+    		window.AddResRefQuestion("What template should the placeable be created from?",TaggedType.Placeable);
     		window.AddStringQuestion("What tag should the new placeable be given?");
-    		window.AddTagQuestion("What waypoint should the placeable appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("What waypoint should the placeable appear at?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
@@ -193,9 +193,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a placeable");
-    		window.AddResRefQuestion("What template should the store be created from?",ScriptHelper.TaggedType.Store);
+    		window.AddResRefQuestion("What template should the store be created from?",TaggedType.Store);
     		window.AddStringQuestion("What tag should the new store be given?");
-    		window.AddTagQuestion("What waypoint should the store appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("What waypoint should the store appear at?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
@@ -215,9 +215,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		// which may be useful in future. Currently however the interface just takes a waypoint tag, so this is of no use.
     		object[] prms = new object[5];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Create a waypoint");
-    		window.AddResRefQuestion("What template should the waypoint be created from?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddResRefQuestion("What template should the waypoint be created from?",TaggedType.Waypoint);
     		window.AddStringQuestion("What tag should the new waypoint be given?");
-    		window.AddTagQuestion("What waypoint should the waypoint appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("What waypoint should the waypoint appear at?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should an 'appearing' animation be played when it is created?");
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
@@ -234,8 +234,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[4];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Tell a creature to move somewhere");
-    		window.AddTagQuestion("Which creature should move?",ScriptHelper.TaggedType.Creature);
-    		window.AddTagQuestion("Which waypoint should they move to?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("Which creature should move?",TaggedType.Creature);
+    		window.AddTagQuestion("Which waypoint should they move to?",TaggedType.Waypoint);
     		window.AddBooleanQuestion("Should the creature walk or run?","Run","Walk");
     		window.AddBooleanQuestion("Should the creature vanish once it gets there?");
     		bool? result = window.ShowDialog();
@@ -252,7 +252,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    		
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Destroy an object");
-    		window.AddTagQuestion("What object should be destroyed?",ScriptHelper.TaggedType.AnyObject);
+    		window.AddTagQuestion("What object should be destroyed?",TaggedType.AnyObject);
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);    		
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -289,13 +289,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"End the game");
-    		window.AddEnumQuestion("What movie should play when the game ends?",typeof(ScriptHelper.Movie));
+    		window.AddEnumQuestion("What movie should play when the game ends?",typeof(Movie));
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.EndGame(((ScriptHelper.Movie)prms[0]).ToString());
+    			NWN2ScriptFunctor action = Actions.EndGame(((Movie)prms[0]).ToString());
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -304,7 +304,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Fade out");
-    		window.AddEnumQuestion("What colour should the screen fade to?",typeof(ScriptHelper.FadeColour));
+    		window.AddEnumQuestion("What colour should the screen fade to?",typeof(NWN2Colour));
     		window.AddFloatQuestion("How many seconds should it take to fade out?",0,60);
     		window.AddFloatQuestion("How many seconds should pass before fading in again?",0,60);
     		bool? result = window.ShowDialog();
@@ -312,7 +312,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.FadeOut((ScriptHelper.FadeColour)prms[0],(float)prms[1],(float)prms[2]);
+    			NWN2ScriptFunctor action = Actions.FadeOut((NWN2Colour)prms[0],(float)prms[1],(float)prms[2]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -336,13 +336,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player a special ability");
-    		window.AddEnumQuestion("Which special ability should the player learn?",typeof(ScriptHelper.Feat));
+    		window.AddEnumQuestion("Which special ability should the player learn?",typeof(Feat));
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.GivePlayerFeat((ScriptHelper.Feat)prms[0]);
+    			NWN2ScriptFunctor action = Actions.GivePlayerFeat((Feat)prms[0]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}   
@@ -351,14 +351,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give a creature a special ability");
-    		window.AddTagQuestion("Which creature should learn the special ability?",ScriptHelper.TaggedType.Creature);
-    		window.AddEnumQuestion("Which special ability should the creature learn?",typeof(ScriptHelper.Feat));
+    		window.AddTagQuestion("Which creature should learn the special ability?",TaggedType.Creature);
+    		window.AddEnumQuestion("Which special ability should the creature learn?",typeof(Feat));
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.GiveCreatureFeat((string)prms[0],(ScriptHelper.Feat)prms[1]);
+    			NWN2ScriptFunctor action = Actions.GiveCreatureFeat((string)prms[0],(Feat)prms[1]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}   
@@ -382,7 +382,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Give the player an item");
-    		window.AddResRefQuestion("What kind of item should the player receive?",ScriptHelper.TaggedType.Item);
+    		window.AddResRefQuestion("What kind of item should the player receive?",TaggedType.Item);
     		window.AddIntegerQuestion("How many copies of the item should the player receive?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -428,7 +428,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature become a commoner");
-    		window.AddTagQuestion("Which creature should become a commoner?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become a commoner?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -443,7 +443,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature become a defender");
-    		window.AddTagQuestion("Which creature should become a defender?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become a defender?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -458,7 +458,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature become a hostile");
-    		window.AddTagQuestion("Which creature should become a hostile?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become a hostile?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -473,8 +473,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Move a creature instantly to another location");
-    		window.AddTagQuestion("Which creature should be teleported?",ScriptHelper.TaggedType.Creature);
-    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("Which creature should be teleported?",TaggedType.Creature);
+    		window.AddTagQuestion("Which waypoint should they appear at?",TaggedType.Waypoint);
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -490,8 +490,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Move an object instantly to another location");
-    		window.AddTagQuestion("Which object should be teleported?",ScriptHelper.TaggedType.AnyObject);
-    		window.AddTagQuestion("Which waypoint should they appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("Which object should be teleported?",TaggedType.AnyObject);
+    		window.AddTagQuestion("Which waypoint should they appear at?",TaggedType.Waypoint);
     		window.AddFloatQuestion("How many seconds should pass before doing this (if any)?",0,null);    
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
@@ -507,7 +507,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
         	object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Move the player instantly to another location");
-    		window.AddTagQuestion("Which waypoint should the player appear at?",ScriptHelper.TaggedType.Waypoint);
+    		window.AddTagQuestion("Which waypoint should the player appear at?",TaggedType.Waypoint);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -522,7 +522,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Kill a creature");
-    		window.AddTagQuestion("Which creature should be killed?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should be killed?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -537,7 +537,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Open a door");
-    		window.AddTagQuestion("Which door should be opened?",ScriptHelper.TaggedType.Door);
+    		window.AddTagQuestion("Which door should be opened?",TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -552,7 +552,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Open a store");
-    		window.AddTagQuestion("Which store should be opened?",ScriptHelper.TaggedType.Store);
+    		window.AddTagQuestion("Which store should be opened?",TaggedType.Store);
     		window.AddIntegerQuestion("How much more expensive than normal should it be? (0-100%)",0,100);
     		window.AddIntegerQuestion("Or - how much cheaper than normal should it be? (0-100%)",0,100);
     		bool? result = window.ShowDialog();
@@ -570,15 +570,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
     		// Add a remark: "Note that many animations only work on humanoid creatures."
     		object[] prms = new object[3];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Creature plays an animation");
-    		window.AddTagQuestion("Who should perform the animation?",ScriptHelper.TaggedType.Creature);
-    		window.AddEnumQuestion("Which animation should they perform?",typeof(ScriptHelper.Animation));
+    		window.AddTagQuestion("Who should perform the animation?",TaggedType.Creature);
+    		window.AddEnumQuestion("Which animation should they perform?",typeof(Animation));
     		window.AddFloatQuestion("How long should they wait before performing it (in seconds)?",0,null);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.CreatureAnimation((string)prms[0],(ScriptHelper.Animation)prms[1],(float)prms[2]);
+    			NWN2ScriptFunctor action = Actions.CreatureAnimation((string)prms[0],(Animation)prms[1],(float)prms[2]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}
@@ -587,13 +587,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Take a special ability away from the player");
-    		window.AddEnumQuestion("Which special ability should they lose?",typeof(ScriptHelper.Feat));
+    		window.AddEnumQuestion("Which special ability should they lose?",typeof(Feat));
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.RemovePlayerFeat((ScriptHelper.Feat)prms[0]);
+    			NWN2ScriptFunctor action = Actions.RemovePlayerFeat((Feat)prms[0]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}    
@@ -602,14 +602,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[2];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Take a special ability away from a creature");
-    		window.AddTagQuestion("Who should lose a special ability?",ScriptHelper.TaggedType.Creature);
-    		window.AddEnumQuestion("Which special ability should they lose?",typeof(ScriptHelper.Feat));
+    		window.AddTagQuestion("Who should lose a special ability?",TaggedType.Creature);
+    		window.AddEnumQuestion("Which special ability should they lose?",typeof(Feat));
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
     		}
     		else {    			
-    			NWN2ScriptFunctor action = Actions.RemoveCreatureFeat((string)prms[0],(ScriptHelper.Feat)prms[1]);
+    			NWN2ScriptFunctor action = Actions.RemoveCreatureFeat((string)prms[0],(Feat)prms[1]);
     			Conversation.CurrentConversation.AddAction(nwn2Line,action);
     		}
     	}   
@@ -618,7 +618,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make one of the player's allies leave him");
-    		window.AddTagQuestion("Which creature should stop being the player's ally?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should stop being the player's ally?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -633,7 +633,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Take an item away from the player");
-    		window.AddTagQuestion("Which item should the player lose?",ScriptHelper.TaggedType.Item);
+    		window.AddTagQuestion("Which item should the player lose?",TaggedType.Item);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -648,7 +648,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Lock a door");
-    		window.AddTagQuestion("Which door should be locked?",ScriptHelper.TaggedType.Door);
+    		window.AddTagQuestion("Which door should be locked?",TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -663,7 +663,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{    	
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Unlock a door");
-    		window.AddTagQuestion("Which door should be unlocked?",ScriptHelper.TaggedType.Door);
+    		window.AddTagQuestion("Which door should be unlocked?",TaggedType.Door);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -731,7 +731,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature killable");
-    		window.AddTagQuestion("Which creature should become mortal (can be killed)?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become mortal (can be killed)?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;
@@ -746,7 +746,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	{
     		object[] prms = new object[1];
     		ScriptParametersWindow window = new ScriptParametersWindow(ref prms,"Make a creature unkillable");
-    		window.AddTagQuestion("Which creature should become immortal (can't be killed)?",ScriptHelper.TaggedType.Creature);
+    		window.AddTagQuestion("Which creature should become immortal (can't be killed)?",TaggedType.Creature);
     		bool? result = window.ShowDialog();
     		if (result == null || !(bool)result) { // cancelled or failed
     			return;

@@ -181,7 +181,7 @@ namespace AdventureAuthor.Conversations.UI
     		draggable_PreviewMouseMoveHandler = new MouseEventHandler(lineControl_PreviewMouseMove);
     		Loaded += delegate
     		{  
-				Log.WriteAction(Log.Action.launched,"conversationwriter");
+				Log.WriteAction(LogAction.launched,"conversationwriter");
 				
 				if (launchNewOpenConversationDialog) {
 					NewOpenConversationWindow win = new NewOpenConversationWindow();
@@ -191,7 +191,7 @@ namespace AdventureAuthor.Conversations.UI
     		
             Closing += delegate { 
             	try {
-            		Log.WriteAction(Log.Action.exited,"conversationwriter");
+            		Log.WriteAction(LogAction.exited,"conversationwriter");
             	}
             	catch (Exception) { 
             		// already disposed because toolset is closing
@@ -432,7 +432,7 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="page">The page to display</param>
 		public void DisplayPage(Page page)
 		{
-	        Log.WriteAction(Log.Action.selected,"page");
+	        Log.WriteAction(LogAction.selected,"page");
 	        
 			// Update references to the currently and previously viewed pages:
 			if (currentPage != page) {
@@ -536,7 +536,7 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_ExpandGraph(object sender, EventArgs ea)
 		{
 			if (Conversation.CurrentConversation != null) {
-				Log.WriteAction(Log.Action.launched,"expandedgraph");
+				Log.WriteAction(LogAction.launched,"expandedgraph");
 				expandedGraph = new GraphForm(true);
 				expandedGraph.Open(pages);
 				DisplayPage(currentPage);
@@ -588,7 +588,7 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(Log.Action.opened,"conversation",filename);
+			Log.WriteAction(LogAction.opened,"conversation",filename);
 			
 			try {
 				Open(filename,false);
@@ -619,8 +619,8 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(Log.Action.added,"conversation",filename);
-			Log.WriteAction(Log.Action.opened,"conversation",filename);
+			Log.WriteAction(LogAction.added,"conversation",filename);
+			Log.WriteAction(LogAction.opened,"conversation",filename);
 			
 			try {
 				Open(filename,true);
@@ -936,7 +936,7 @@ namespace AdventureAuthor.Conversations.UI
 				}
 				Say.Debug("Close the conversation.");
 				
-				Log.WriteAction(Log.Action.closed,"conversation",this.originalFilename);
+				Log.WriteAction(LogAction.closed,"conversation",this.originalFilename);
 				
 				CloseConversation();
 			}
