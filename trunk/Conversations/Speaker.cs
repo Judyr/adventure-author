@@ -83,5 +83,15 @@ namespace AdventureAuthor.Conversations
 		{
 			return Name;
 		}
+		
+		
+		/// <summary>
+		/// Check whether this speaker represents the player.
+		/// </summary>
+		/// <returns>True if this speaker represents the player; false if it represents some NPC</returns>
+		public bool IsPlayer()
+		{
+			return tag == String.Empty;
+		}
 	}
 }

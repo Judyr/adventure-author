@@ -44,24 +44,31 @@
 			<ColumnDefinition Width="400"/>
 		</Grid.ColumnDefinitions>
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
-			<MenuItem Header="File" FontSize="14">
-				<MenuItem Header="New" Click="OnClick_New" FontSize="14"/>
-				<MenuItem Header="Open" Click="OnClick_Open" FontSize="14"/>
-				<MenuItem Header="Save" Click="OnClick_Save" FontSize="14"/>
+			<MenuItem Name="fileMenu" Header="File" FontSize="14">
+				<MenuItem Name="newMenuItem" Header="New" Click="OnClick_New" FontSize="14"/>
+				<MenuItem Name="openMenuItem" Header="Open" Click="OnClick_Open" FontSize="14"/>
+				<MenuItem Name="saveMenuItem" Header="Save" Click="OnClick_Save" 
+				          FontSize="14" IsEnabled="false"/>
 				<!--<MenuItem Header="Save As" IsEnabled="false" FontSize="14"/>-->
-				<MenuItem Header="Export   " FontSize="14">
-					<MenuItem Header="Export to text file (Adventure Author style)" 
+				<MenuItem Name="exportMenu" Header="Export   " 
+				          FontSize="14" IsEnabled="false">
+					<MenuItem Name="exportToPageFormatMenuItem" Header="Export to text file (Adventure Author style)" 
 					          Click="OnClick_ExportTextFile_PageFormat" FontSize="14"/>
-					<MenuItem Header="Export to text file (NWN1 style)"
+					<MenuItem Name="exportToTextFormatMenuItem" Header="Export to text file (NWN1 style)"
 					          Click="OnClick_ExportTextFile_TreeFormat" FontSize="14"/>
 				</MenuItem>
-				<MenuItem Header="Close" Click="OnClick_Close" FontSize="14"/>
-				<MenuItem Header="Exit" Click="OnClick_Exit" FontSize="14"/>
+				<MenuItem Name="closeMenuItem" Header="Close" Click="OnClick_Close" 
+				          FontSize="14" IsEnabled="false"/>
+				<MenuItem Name="exitMenuItem" Header="Exit" Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>
-			<MenuItem Header="Options" FontSize="14">
-				<MenuItem Header="Add a speaker" Click="OnClick_AddRemoveSpeakers" FontSize="14"/>
-				<MenuItem Header="Replace a speaker" Click="OnClick_ReplaceSpeaker" FontSize="14"/>
-				<MenuItem Header="Expand graph" Click="OnClick_ExpandGraph" FontSize="14"/>
+			<MenuItem Name="optionsMenu" Header="Options" 
+			          FontSize="14" IsEnabled="false">
+				<MenuItem Name="addSpeakerMenuItem" Header="Add a speaker" Click="OnClick_AddRemoveSpeakers" 
+				          FontSize="14"/>
+				<MenuItem Name="replaceSpeakerMenuItem" Header="Replace a speaker" Click="OnClick_ReplaceSpeaker" 
+				          FontSize="14" IsEnabled="false"/>
+				<MenuItem Name="expandGraphMenuItem" Header="Expand graph" Click="OnClick_ExpandGraph" 
+				          FontSize="14"/>
 			</MenuItem>
 		</Menu>
 		<Border Name="ButtonsPanelBorder" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1,0,0,1" BorderBrush="Black" Background="White">

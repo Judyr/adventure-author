@@ -222,13 +222,13 @@ namespace AdventureAuthor.Setup
 					tabbedGroupsCollection.ActiveLeaf.TabPages.Removing += new CollectionChange(ResourceViewerClosed);
 										
 					// Hide the close [X] control, change the appearance:
-					SetupResourceViewersLeaf();					
+					//SetupResourceViewersLeaf(); //no longer necessary		
 					
 					// When all resource viewers are closed, the resource viewers window (ActiveLeaf) is disposed 
 					// and then created again later on; so on ActiveLeafChanged, we need to redo some stuff:
 					tabbedGroupsCollection.ActiveLeafChanged += delegate 
 					{ 
-						SetupResourceViewersLeaf(); 
+						//SetupResourceViewersLeaf(); //no longer necessary	
 						tabbedGroupsCollection.ActiveLeaf.TabPages.Inserted += new CollectionChange(ResourceViewerOpened);					
 						tabbedGroupsCollection.ActiveLeaf.TabPages.Removing += new CollectionChange(ResourceViewerClosed);
 					};
@@ -898,7 +898,7 @@ namespace AdventureAuthor.Setup
 				form.App.Text += ": " + form.App.Module.Name;
 			}
 		}	
-				
+		
 			
 		/// <summary>
 		/// If a Verify window or the original conversation editor is displayed, hide it again.
@@ -933,6 +933,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Dispose the [X] control and perform other modifications to the resource viewers window.
 		/// </summary>
+		/// <remarks>Deprecated.</remarks>
 		private static void SetupResourceViewersLeaf()
 		{
 			if (tabbedGroupsCollection.ActiveLeaf != null) {
