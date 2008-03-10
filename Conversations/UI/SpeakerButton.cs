@@ -51,6 +51,8 @@ namespace AdventureAuthor.Conversations.UI
 			
 			Speaker = speaker;
 						
+			textBlock.MinHeight = 60;
+			textBlock.MinWidth = 200;
 			button.MinHeight = 60;
 			button.MinWidth = 200;
 			button.Content = textBlock;					

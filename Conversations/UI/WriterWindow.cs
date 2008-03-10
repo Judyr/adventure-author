@@ -424,6 +424,36 @@ namespace AdventureAuthor.Conversations.UI
         #endregion
 
         
+        private void SetUI_ConversationIsOpen()
+        {
+        	// main interface:
+			buttonsPanel.IsEnabled = true;
+			ExpandGraphButton.IsEnabled = true;
+			GoToStartButton.IsEnabled = true;
+			
+        	// file menu:
+        	saveMenuItem.IsEnabled = true;
+        	exportMenu.IsEnabled = true;
+        	closeMenuItem.IsEnabled = true;
+        	optionsMenu.IsEnabled = true;        	
+        	replaceSpeakerMenuItem.IsEnabled =  Conversation.CurrentConversation.Speakers.Count > 1;       		
+        }
+        
+        
+        private void SetUI_ConversationIsNotOpen()
+        {        	
+        	// main interface:
+			buttonsPanel.IsEnabled = false;
+			ExpandGraphButton.IsEnabled = false;
+			GoToStartButton.IsEnabled = false;
+			
+        	// file menu:
+        	saveMenuItem.IsEnabled = false;
+        	exportMenu.IsEnabled = false;
+        	closeMenuItem.IsEnabled = false;
+        	optionsMenu.IsEnabled = false;
+        	replaceSpeakerMenuItem.IsEnabled = false;
+        }
         
 		
 		/// <summary>
@@ -698,9 +728,7 @@ namespace AdventureAuthor.Conversations.UI
 				Say.Error(e);
 			}
 			
-			buttonsPanel.IsEnabled = true;
-			ExpandGraphButton.IsEnabled = true;
-			GoToStartButton.IsEnabled = true;
+			SetUI_ConversationIsOpen();
 			
 			// Display the conversation from the root page:
 			DisplayPage(pages[0]);	
@@ -982,10 +1010,9 @@ namespace AdventureAuthor.Conversations.UI
 				speakersButtonsPanel.Children.Clear();
 				speakersButtonsPanel.Children.Add(addSpeakersButton);
 			
-				this.buttonsPanel.IsEnabled = false;
-				ExpandGraphButton.IsEnabled = false;
-				GoToStartButton.IsEnabled = false;
-				this.LinesPanel.Children.Clear();
+				SetUI_ConversationIsNotOpen();
+				
+				this.LinesPanel.Children.Clear();	
 			}
 			catch (Exception e) {
 				Say.Error(e);
@@ -1063,6 +1090,12 @@ namespace AdventureAuthor.Conversations.UI
 			};
 			
 			speakersButtonsPanel.Children.Add(button);
+			
+			// disable Replace Speaker until there is at least one NPC speaker.
+			// (don't have to disable this again, as there's currently no way to remove speakers)
+			if (!replaceSpeakerMenuItem.IsEnabled && !e.Speaker.IsPlayer()) {
+				replaceSpeakerMenuItem.IsEnabled = true;
+			}
 		}	
 		
 		
