@@ -39,10 +39,10 @@
 				<MenuItem Name="OptionsMenu" Header="Options" FontSize="14" IsEnabled="false">
 					<MenuItem Name="UsePaintMenuItem" IsCheckable="true" Checked="OnChecked_UsePaint" 
 					          Header="Open pictures in Microsoft Paint" FontSize="14"
-							  IsChecked="true"/>
+							  />
 					<MenuItem Name="UseDefaultMenuItem" IsCheckable="true" Checked="OnChecked_UseDefault"  
 					          Header="Open pictures in default program" FontSize="14"
-							  IsChecked="false"/>
+							  />
 					<Separator/>
 					<MenuItem Name="SwitchModesMenuItem" Click="OnClick_SwitchMode"
 							  FontSize="14"/>

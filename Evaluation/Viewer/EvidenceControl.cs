@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation.Viewer
@@ -189,7 +190,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			}
 			
 			if (IsImage(filename)) {
-				switch (EvaluationOptions.ImageViewer) {
+				switch (Toolset.Plugin.Options.ImageViewer) {
 					case ImageApp.Default:
 						Process.Start(filename);
 						break;

@@ -68,6 +68,8 @@ namespace AdventureAuthor.Setup
 	{
 		#region Global variables
 		
+		public static AdventureAuthorPlugin Plugin = null;
+		
 		/// <summary>
 		/// The docking manager controls all docked controls on the main interface screen
 		/// </summary>
@@ -87,6 +89,14 @@ namespace AdventureAuthor.Setup
 		/// The blueprints view control, which lists every available blueprint
 		/// </summary>
 		private static NWN2BlueprintView blueprintView = null;
+		
+		private static NWN2ModuleAreaList areaList = null;
+		private static NWN2ModuleConversationList conversationList = null;
+		private static NWN2ModuleScriptList scriptList = null;
+			
+		private static GraphicsPreferencesToolBar graphicsToolbar = null;
+		private static TD.SandBar.ToolBar objectsToolbar = null;
+		private static MenuBarItem fileMenu = null;
 		
 		/// <summary>
 		/// A list of all the game object dictionaries, one for each type of object (e.g. creature, door, placeable etc.)
@@ -158,24 +168,19 @@ namespace AdventureAuthor.Setup
 			                                                  BindingFlags.Instance |
 			                                                  BindingFlags.Static);	
 			
-			GraphicsPreferencesToolBar graphicsToolbar = null;
-			TD.SandBar.ToolBar objectsToolbar = null;
 					
 			// Iterate through NWN2ToolsetMainForm fields and apply UI modifications:
 			foreach (FieldInfo fi in fields) {	
-								
-				// Hide everything except for the area contents and blueprints, and add a chapter list:
 				
 				if (fi.FieldType == typeof(DockingManager)) {
 					dockingManager = (DockingManager)fi.GetValue(form.App);					
 										
-					//TODO: try iterating through dockingManager object, copying every field
-					//except for Event ContextMenu, and then assigning it to the toolset (using a reflected method)
-					
-					// Lock the interface:
-					dockingManager.AllowFloating = false;
-//					dockingManager.AllowRedocking = false;
-//					dockingManager.AllowResize = false;
+					if (Plugin.Options.LockInterface) {
+						LockInterface();
+					}
+					else {
+						UnlockInterface();
+					}
 			
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
@@ -184,25 +189,31 @@ namespace AdventureAuthor.Setup
 					List<Content> contents = new List<Content>(5);
 					
 					foreach (Content c in dockingManager.Contents) {
-//						if (c.FullTitle == "Conversations") { // NWN2ModuleConversationList
-//							contents.Add(c);
-//						}
-						if (c.FullTitle == "Campaign Conversations") {
-							contents.Add(c);
+						if (c.Control is NWN2ModuleAreaList) {
+							areaList = (NWN2ModuleAreaList)c.Control;
 						}
-						else if (c.FullTitle == "Campaign Scripts") {
-							contents.Add(c);
+						else if (c.Control is NWN2ModuleConversationList) {
+							if (c.FullTitle == "Conversations") {
+								conversationList = (NWN2ModuleConversationList)c.Control;
+							}
+							else { // hide "Campaign Conversations"
+								contents.Add(c);
+							}
+						}
+						else if (c.Control is NWN2ModuleScriptList) {
+							if (c.FullTitle == "Scripts") {
+								scriptList = (NWN2ModuleScriptList)c.Control;
+							}
+							else { // hide "Campaign Scripts"
+								contents.Add(c);
+							}
 						}
 						else if (c.FullTitle == "Search Results") {
 							contents.Add(c);
 						}
 						else if (c.Control is NWN2VerifyOutputControl) {
 							contents.Add(c);
-						}
-						
-						// Lock the interface:
-						//c.HideButton = false;
-						//c.CloseButton = false;
+						}					
 					}		
 					
 					foreach (Content c in contents) {
@@ -444,11 +455,11 @@ namespace AdventureAuthor.Setup
 					graphicsToolbar.Dispose();
 				}
 				
-				// Prevent the object manipulation toolbar from being modified or moved:
 				else if (fi.FieldType == typeof(TD.SandBar.ToolBar)) {
-					objectsToolbar = (TD.SandBar.ToolBar)fi.GetValue(form.App);
-					objectsToolbar.AddRemoveButtonsVisible = false;
-					objectsToolbar.Movable = false;					
+					TD.SandBar.ToolBar toolbar = (TD.SandBar.ToolBar)fi.GetValue(form.App);
+					if (toolbar.Text == "Object Manipulation") {
+						objectsToolbar = toolbar;
+					}
 				}
 								
 				// Get rid of the "Filters:" label on the object manipulation toolbar:
@@ -510,9 +521,11 @@ namespace AdventureAuthor.Setup
 				}
 				// Deal with MenuBarItems:
 				else if (fi.FieldType == typeof(MenuBarItem)) {
+					
 					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
 										
 					if (menuBarItem.Text == "&File") {	
+						fileMenu = menuBarItem;
 						SetupFileMenu(menuBarItem);
 					}
 //					else if (menuBarItem.Text == "&Edit") {
@@ -558,12 +571,12 @@ namespace AdventureAuthor.Setup
 						// plus the ToolBar i'm currently creating below.						
 						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
 						if (tbc.Name == "topSandBarDock") {
-							TD.SandBar.ToolBar aaToolbar = new TD.SandBar.ToolBar();
+							aaToolbar = new TD.SandBar.ToolBar();
 							SetupAdventureAuthorToolBar(aaToolbar);
 							tbc.Controls.Add(aaToolbar);
-							TD.SandBar.ToolBar ideaToolbar = new TD.SandBar.ToolBar();
-							SetupAddIdeaToolBar(ideaToolbar);
-							tbc.Controls.Add(ideaToolbar);
+							addIdeaToolbar = new TD.SandBar.ToolBar();
+							SetupAddIdeaToolBar(addIdeaToolbar);
+							tbc.Controls.Add(addIdeaToolbar);
 						}
 					} 
 					catch (Exception e) {
@@ -571,24 +584,13 @@ namespace AdventureAuthor.Setup
 					}
 				}
 			}
-						
-//			if (objectsToolbar != null && graphicsToolbar != null) {
-//				MenuBarItem graphicsOptionsItem = new MenuBarItem("Graphics Options");
-//				foreach (ToolbarItemBase item in graphicsToolbar.Items) {
-//					graphicsOptionsItem.Items.Add(item);
-//				}
-//				objectsToolbar.Items.Add(graphicsOptionsItem);
-//				graphicsToolbar.Dispose();				
-//			}
-//			else {
-//				Say.Warning("Failed to modify the UI toolbars.");
-//			}
 			
 			ModuleHelper.ModuleSaved += new EventHandler(ModuleHelper_ModuleSaved);
 			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
-			UpdateTitleBar();			
+			UpdateTitleBar();		
+			SetUI_ModuleNotOpen();
 		}
 		
 		
@@ -742,26 +744,40 @@ namespace AdventureAuthor.Setup
 		private static void ModuleHelper_ModuleClosed(object sender, EventArgs e)
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
-				Clear();
-				
+				Clear();				
 			}
 			UpdateTitleBar();
+			SetUI_ModuleNotOpen();
 		}
 
 		
 		private static void ModuleHelper_ModuleOpened(object sender, EventArgs e)
 		{
-			if (!ModuleHelper.ModuleIsOpen()) {
-				
-			}
 			UpdateTitleBar();
+			SetUI_ModuleOpen();
 		}
 		
 		
 		private static void ModuleHelper_ModuleSaved(object sender, EventArgs e)
 		{
-			UpdateTitleBar();			
+			UpdateTitleBar();	
 		}		
+		
+		
+		private static void SetUI_ModuleNotOpen()
+		{
+			areaList.Enabled = false;
+			conversationList.Enabled = false;
+			scriptList.Enabled = false;		
+		}
+		
+		
+		private static void SetUI_ModuleOpen()
+		{
+			areaList.Enabled = true;
+			conversationList.Enabled = true;
+			scriptList.Enabled = true;
+		}
 		
 		
 		private static void ResourceViewerOpened(int index, object value)
@@ -912,7 +928,7 @@ namespace AdventureAuthor.Setup
 				dockingManager.HideContent(form.App.VerifyContent);
 			}
 			if (c.Control is NWN2PropertyGrid) {
-				WatchForChanges((NWN2PropertyGrid)c.Control);
+				WatchForChanges((NWN2PropertyGrid)c.Control); // TODO does this work for newly opened property grids?
 			}
 		}
 		
@@ -1017,7 +1033,20 @@ namespace AdventureAuthor.Setup
 					else {
 						bool opened = ModuleHelper.Open(moduleName);	
 						if (!opened || !ModuleHelper.ModuleIsOpen()) {
-							Say.Error("Failed to open module.");
+							Say.Error("Something went wrong - the module was not opened.");
+						}
+						else {							
+							if (Toolset.Plugin.Options.OpenScratchpadByDefault && 
+							    form.App.Module.Areas[ModuleHelper.NAME_OF_SCRATCHPAD_AREA] != null) 
+							{
+								try {
+									AreaHelper.Open(ModuleHelper.NAME_OF_SCRATCHPAD_AREA);
+								}
+								catch (FileNotFoundException) { 
+									Say.Debug("Tried to open " + ModuleHelper.NAME_OF_SCRATCHPAD_AREA  + 
+									          " in module '" + moduleName + "', but there was no such area.");
+								}
+							}
 						}
 					}
 				}
@@ -1288,5 +1317,73 @@ namespace AdventureAuthor.Setup
 //				form.App.Dispose();
 //			}
 //		}
+		
+		
+		/// <summary>
+		/// Controls can no longer be repositioned, resized, or closed.
+		/// </summary>
+		public static void LockInterface()
+		{
+			SetInterfaceLock(true);
+		}
+		
+		
+		/// <summary>
+		/// The option to reposition, resize or close controls becomes available.
+		/// </summary>
+		public static void UnlockInterface()
+		{
+			SetInterfaceLock(false);
+		}
+		
+		
+		/// <summary>
+		/// Set the locked status of the interface.
+		/// </summary>
+		/// <param name="locked">True to lock the interface; false to unlock it</param>
+		private static void SetInterfaceLock(bool locked)
+		{
+			dockingManager.AllowFloating = !locked;
+			dockingManager.AllowRedocking = !locked;
+			dockingManager.AllowResize = !locked;
+										
+			if (graphicsToolbar != null) { 
+				SetToolbarLock(graphicsToolbar,locked);
+			}						
+			if (objectsToolbar != null) { 
+				SetToolbarLock(objectsToolbar,locked);
+			}					
+			if (fileMenu != null && fileMenu.ToolBar != null) { 
+				SetToolbarLock(fileMenu.ToolBar,locked);
+			}
+			if (aaToolbar != null) {
+				SetToolbarLock(aaToolbar,locked);
+			}		
+			if (addIdeaToolbar != null) {
+				SetToolbarLock(addIdeaToolbar,locked);
+			}
+									
+			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
+															  BindingFlags.NonPublic |
+			                                                  BindingFlags.Instance);
+			
+			foreach (FieldInfo fi in fields) {								
+				if (fi.FieldType == typeof(Content)) {
+					Content c = (Content)fi.GetValue(form.App);
+					c.HideButton = !locked;
+					c.CloseButton = !locked;
+				}
+			}
+		}
+		
+		
+		private static void SetToolbarLock(TD.SandBar.ToolBar toolbar, bool locked)
+		{
+			toolbar.AddRemoveButtonsVisible = !locked;
+			toolbar.Closable = !locked;
+			toolbar.Movable = !locked;
+			toolbar.Tearable = !locked;
+			toolbar.Resizable = !locked;
+		}
 	}
 }
