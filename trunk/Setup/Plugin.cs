@@ -51,8 +51,14 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		private Options options = new Options();
+		public Options Options {
+			get { return options; }
+		}
+		
+		
 		public object Preferences {
-			get { return null; }
+			get { return Options; }
 			set {}
 		}
 		
@@ -70,9 +76,6 @@ namespace AdventureAuthor.Setup
 		public string MenuName {
 			get { return "Adventure Author"; }
 		}
-		
-		
-		private static string modulesDirectory = form.ModulesDirectory;
 		
 		
 		/// <summary>
@@ -99,7 +102,9 @@ namespace AdventureAuthor.Setup
 					throw new DirectoryNotFoundException("Adventure Author installation directory at " + 
 					                                     ModuleHelper.AdventureAuthorDir +
 					                                     "was missing.");
-				}					
+				}
+				
+				Toolset.Plugin = this;
 				
 				// Delete temp modules created during previous sessions:
 				ClearTempModules();
@@ -181,7 +186,7 @@ namespace AdventureAuthor.Setup
 		private static void ClearTempModules()
 		{
 			try {
-				string[] temppaths = Directory.GetDirectories(modulesDirectory,"temp*");
+				string[] temppaths = Directory.GetDirectories(form.ModulesDirectory,"temp*");
 				foreach (string path in temppaths) {
 					if (Directory.Exists(path)) {
 						DirectoryInfo dir = new DirectoryInfo(path);

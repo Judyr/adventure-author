@@ -17,7 +17,8 @@ namespace AdventureAuthor.Setup
 	public static partial class Toolset
 	{			
 		private static MenuBarItem mainFileMenu;
-		private static ToolBar aaToolbar;		
+		private static ToolBar aaToolbar;
+		private static ToolBar addIdeaToolbar;
 		
 		private static MenuBarItem SetupFileMenu(MenuBarItem fileMenu)
 		{
@@ -55,8 +56,8 @@ namespace AdventureAuthor.Setup
 			
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
-			programmerFunctions.Items.Add(logWindow);		
-			
+			programmerFunctions.Items.Add(logWindow);	
+						
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
 			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
@@ -81,7 +82,7 @@ namespace AdventureAuthor.Setup
 		{
 			aaToolbar = toolbar;
 			aaToolbar.AddRemoveButtonsVisible = false;
-			aaToolbar.AllowMerge = true;							
+			aaToolbar.AllowMerge = false;							
 			aaToolbar.Text = "Adventure Author applications";			
 							
 			ButtonItem conversationButton = new ButtonItem();							

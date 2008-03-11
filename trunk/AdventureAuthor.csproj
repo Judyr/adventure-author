@@ -59,6 +59,9 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="OEILocalization">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\OEILocalization.dll</HintPath>
+    </Reference>
     <Reference Include="OEIShared">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\OEIShared.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -265,7 +268,6 @@
       <SubType>Code</SubType>
       <DependentUpon>CommentControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Evaluation\Viewer\EvaluationOptions.cs" />
     <Compile Include="Evaluation\Viewer\EvidenceControl.cs">
       <SubType>Code</SubType>
       <DependentUpon>EvidenceControl.xaml</DependentUpon>
@@ -372,19 +374,20 @@
       <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Setup\Options.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Setup\UI\FriendlyToolTip.xaml.cs">
-      <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
     <Compile Include="Utils\Filters.cs" />
+    <Compile Include="Utils\FriendlyToolTip.xaml.cs">
+      <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\LogAction.cs" />
     <Compile Include="Utils\LogEventArgs.cs" />
@@ -477,7 +480,7 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
-    <Page Include="Setup\UI\FriendlyToolTip.xaml" />
+    <Page Include="Utils\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Utils\RGBPicker.xaml" />
     <Page Include="Utils\TeacherPasswordDialog.xaml" />
@@ -500,7 +503,6 @@
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
     <Folder Include="Ideas" />
-    <Folder Include="Setup\UI" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />

@@ -31,6 +31,7 @@ using System.IO;
 using System.Xml.Serialization;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 using NWN2Toolset;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
@@ -53,6 +54,7 @@ namespace AdventureAuthor.Core
 		
 		public const int MAX_RESOURCE_NAME_LENGTH = 32; // hard-coded into toolset: do not change				
 		public const int MIN_AREA_LENGTH = 8;  // equates to 4 red gridbox lengths on the map grid
+		public const int DEFAULT_AREA_LENGTH = 12; // equates to 6 red gridbox lengths on the map grid
 		public const int MAX_AREA_LENGTH = 16; // equates to 8 red gridbox lengths on the map grid
 		public const string NAME_OF_SCRATCHPAD_AREA = "Scratchpad";
 		public static readonly Font ADVENTURE_AUTHOR_FONT = new Font("Arial",10.0F);
@@ -80,15 +82,9 @@ namespace AdventureAuthor.Core
 			set { doBackups = value; }
 		}
 		
-		private static string nwn2InstallDir = @"C:\Program Files\Atari\Neverwinter Nights 2";	
-		public static string Nwn2InstallDir {
-			get { return nwn2InstallDir; }
-			set { nwn2InstallDir = value; }
-		}
-		
 		public static string AdventureAuthorDir {			
 			get {
-				return Path.Combine(Nwn2InstallDir,"AdventureAuthor");
+				return Path.Combine(@"C:\Program Files\Atari\Neverwinter Nights 2","AdventureAuthor");
 			}
 		}	
 		
@@ -263,8 +259,18 @@ namespace AdventureAuthor.Core
 			Open(name);
 			
 			// Create a scratchpad area and open it:
-			AreaHelper.CreateArea(NAME_OF_SCRATCHPAD_AREA,true,12,12);
-			AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
+			AreaHelper.CreateArea(NAME_OF_SCRATCHPAD_AREA,true,DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
+			if (Toolset.Plugin.Options.OpenScratchpadByDefault && 
+			    form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA] != null) 
+			{
+				try {
+					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
+				}
+				catch (FileNotFoundException) { 
+					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + 
+					          " in module '" + name + "', but there was no such area.");
+				}
+			}
 
 			return mod;
 		}	
@@ -273,13 +279,9 @@ namespace AdventureAuthor.Core
 		private static void Serialize(NWN2GameModule module)
 		{
 			module.OEISerialize(module.Name);
-//			foreach (NWN2GameArea area in module.Areas) {
-//				area.OEISerialize(area.Name);
-//			}
 		}
 		
-						
-		
+								
 		/// <summary>
 		/// Open a module in the toolset.
 		/// </summary>
@@ -296,14 +298,6 @@ namespace AdventureAuthor.Core
 				Deserialize(name);				
 				foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
 					AreaHelper.ApplyLogging(area);
-				}
-				
-				try {
-					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
-				}
-				catch (FileNotFoundException) { 
-					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + 
-					          " in module '" + name + "', but there was no such area.");
 				}
 				
 				OnModuleOpened(new EventArgs());
@@ -473,7 +467,7 @@ namespace AdventureAuthor.Core
 		
 		
 		/// <summary>
-		/// Close the currently open module (based on reflected code). Preferentially call Adventure.Close() instead.
+		/// Close the currently open module.
 		/// </summary>
 		private static void CloseModule()
 		{

@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using NWN2Toolset.NWN2.Data;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 using AdventureAuthor.Scripts.UI;
 using Microsoft.Win32;
 
@@ -98,7 +99,18 @@ namespace AdventureAuthor.Evaluation.Viewer
             		// already disposed because toolset is closing
             	}
             };
-    		EvaluationOptions.ChangedDefaultImageApplication += changedDefaultImageViewer;   
+            
+    		Toolset.Plugin.Options.ChangedDefaultImageApplication += changedDefaultImageViewer;
+    		switch (Toolset.Plugin.Options.ImageViewer) {
+    			case ImageApp.Default:
+    				UsePaintMenuItem.IsChecked = false;
+    				UseDefaultMenuItem.IsChecked = true;
+    				break;
+    			case ImageApp.MicrosoftPaint:
+    				UsePaintMenuItem.IsChecked = true;
+    				UseDefaultMenuItem.IsChecked = false;
+    				break;
+    		}
     		    		
     		EvaluationMode = mode;
     		
@@ -172,16 +184,14 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void changedDefaultImageViewer(object sender, EventArgs e)
     	{
-    		switch (EvaluationOptions.ImageViewer) {
+    		switch (Toolset.Plugin.Options.ImageViewer) {
     			case ImageApp.Default:
     				UseDefaultMenuItem.IsChecked = true;
     				UsePaintMenuItem.IsChecked = false;
-    				Log.WriteMessage("checked 'View images in default application'");
     				break;
     			case ImageApp.MicrosoftPaint:
     				UseDefaultMenuItem.IsChecked = false;
     				UsePaintMenuItem.IsChecked = true;
-    				Log.WriteMessage("checked 'View images in Microsoft Paint'");
     				break;
     		}
     	}
@@ -1050,13 +1060,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void OnChecked_UsePaint(object sender, EventArgs e)
     	{
-    		EvaluationOptions.ImageViewer = ImageApp.MicrosoftPaint;
+    		Toolset.Plugin.Options.ImageViewer = ImageApp.MicrosoftPaint;
     	}
     	
     	
     	private void OnChecked_UseDefault(object sender, EventArgs e)
     	{
-    		EvaluationOptions.ImageViewer = ImageApp.Default;
+    		Toolset.Plugin.Options.ImageViewer = ImageApp.Default;
     	}
     	
     	
