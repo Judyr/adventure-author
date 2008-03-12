@@ -126,6 +126,7 @@ namespace AdventureAuthor.Setup
 		#endregion
 		
 		
+		
 		/// <summary>
 		/// Performs a myriad of modifications to the user interface at launch.
 		/// </summary>
@@ -175,13 +176,6 @@ namespace AdventureAuthor.Setup
 				if (fi.FieldType == typeof(DockingManager)) {
 					dockingManager = (DockingManager)fi.GetValue(form.App);					
 										
-					if (Plugin.Options.LockInterface) {
-						LockInterface();
-					}
-					else {
-						UnlockInterface();
-					}
-			
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
 					dockingManager.ShowAllContents();					
@@ -591,8 +585,15 @@ namespace AdventureAuthor.Setup
 			
 			UpdateTitleBar();		
 			SetUI_ModuleNotOpen();
+			Plugin.Options.LockedInterface += delegate { 
+				Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
+			};
+			Plugin.Options.UnlockedInterface += delegate { 
+				Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
+			};
+			SetInterfaceLock(Plugin.Options.LockInterface);
 		}
-		
+				
 		
 		private static string GetTagOrResref(INWN2Object obj)
 		{
@@ -1320,59 +1321,46 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// Controls can no longer be repositioned, resized, or closed.
-		/// </summary>
-		public static void LockInterface()
-		{
-			SetInterfaceLock(true);
-		}
-		
-		
-		/// <summary>
-		/// The option to reposition, resize or close controls becomes available.
-		/// </summary>
-		public static void UnlockInterface()
-		{
-			SetInterfaceLock(false);
-		}
-		
-		
-		/// <summary>
 		/// Set the locked status of the interface.
 		/// </summary>
 		/// <param name="locked">True to lock the interface; false to unlock it</param>
-		private static void SetInterfaceLock(bool locked)
+		internal static void SetInterfaceLock(bool locked)
 		{
-			dockingManager.AllowFloating = !locked;
-			dockingManager.AllowRedocking = !locked;
-			dockingManager.AllowResize = !locked;
-										
-			if (graphicsToolbar != null) { 
-				SetToolbarLock(graphicsToolbar,locked);
-			}						
-			if (objectsToolbar != null) { 
-				SetToolbarLock(objectsToolbar,locked);
-			}					
-			if (fileMenu != null && fileMenu.ToolBar != null) { 
-				SetToolbarLock(fileMenu.ToolBar,locked);
-			}
-			if (aaToolbar != null) {
-				SetToolbarLock(aaToolbar,locked);
-			}		
-			if (addIdeaToolbar != null) {
-				SetToolbarLock(addIdeaToolbar,locked);
-			}
-									
-			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
-															  BindingFlags.NonPublic |
-			                                                  BindingFlags.Instance);
-			
-			foreach (FieldInfo fi in fields) {								
-				if (fi.FieldType == typeof(Content)) {
-					Content c = (Content)fi.GetValue(form.App);
-					c.HideButton = !locked;
-					c.CloseButton = !locked;
+			try {				 
+				dockingManager.AllowFloating = !locked;
+				dockingManager.AllowRedocking = !locked;
+				dockingManager.AllowResize = !locked;
+											
+				if (graphicsToolbar != null) { 
+					SetToolbarLock(graphicsToolbar,locked);
+				}						
+				if (objectsToolbar != null) { 
+					SetToolbarLock(objectsToolbar,locked);
+				}					
+				if (fileMenu != null && fileMenu.ToolBar != null) { 
+					SetToolbarLock(fileMenu.ToolBar,locked);
 				}
+				if (aaToolbar != null) {
+					SetToolbarLock(aaToolbar,locked);
+				}		
+				if (addIdeaToolbar != null) {
+					SetToolbarLock(addIdeaToolbar,locked);
+				}
+										
+				FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |
+																  BindingFlags.NonPublic |
+				                                                  BindingFlags.Instance);
+				
+				foreach (FieldInfo fi in fields) {								
+					if (fi.FieldType == typeof(Content)) {
+						Content c = (Content)fi.GetValue(form.App);
+						c.HideButton = !locked;
+						c.CloseButton = !locked;
+					}
+				}
+			}
+			catch (Exception e) {
+				Say.Error("Could not lock/unlock the interface.",e);
 			}
 		}
 		

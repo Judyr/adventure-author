@@ -100,7 +100,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             	}
             };
             
-    		Toolset.Plugin.Options.ChangedDefaultImageApplication += changedDefaultImageViewer;
+    		//Toolset.Plugin.Options.DefaultImageViewerChanged += changedDefaultImageViewer;
     		switch (Toolset.Plugin.Options.ImageViewer) {
     			case ImageApp.Default:
     				UsePaintMenuItem.IsChecked = false;
