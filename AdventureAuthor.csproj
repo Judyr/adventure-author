@@ -374,7 +374,7 @@
       <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Setup\Options.cs" />
+    <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\Toolset.cs">

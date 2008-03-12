@@ -51,30 +51,29 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		private Options options = new Options();
-		public Options Options {
-			get { return options; }
-		}
+		public AdventureAuthorPluginPreferences Options {
+			get { return (AdventureAuthorPluginPreferences)Preferences; }
+		}	
 		
 		
 		public object Preferences {
-			get { return Options; }
-			set {}
+			get { return (object)AdventureAuthorPluginPreferences.Instance; }
+			set { AdventureAuthorPluginPreferences.Instance = (AdventureAuthorPluginPreferences)value; }
 		}
 		
 		
 		public string Name {
-			get { return "Adventure Author"; }
+			get { return "AdventureAuthor"; }
 		}
 		
 		
 		public string DisplayName {
-			get { return "Adventure Author"; }
+			get { return "AdventureAuthor"; }
 		}
 		
 		
 		public string MenuName {
-			get { return "Adventure Author"; }
+			get { return "AdventureAuthor"; }
 		}
 		
 		
@@ -87,7 +86,6 @@ namespace AdventureAuthor.Setup
 			
 		}		
 				
-		
 		/// <summary>
 		/// Called when the toolset starts
 		/// </summary>
@@ -103,7 +101,7 @@ namespace AdventureAuthor.Setup
 					                                     ModuleHelper.AdventureAuthorDir +
 					                                     "was missing.");
 				}
-				
+								
 				Toolset.Plugin = this;
 				
 				// Delete temp modules created during previous sessions:
@@ -198,5 +196,14 @@ namespace AdventureAuthor.Setup
 				//MessageBox.Show("Failed to delete temp modules on loading.\n\n\n" + ex.ToString());
 			}
 		}	
+		
+//		public object Preferences {
+//			get {
+//				return (object)tempPrefs.Instance;;
+//			}
+//			set {
+//				tempPrefs.Instance = (tempPrefs)value;
+//			}
+//		}
 	}
 }

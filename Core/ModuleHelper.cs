@@ -260,9 +260,7 @@ namespace AdventureAuthor.Core
 			
 			// Create a scratchpad area and open it:
 			AreaHelper.CreateArea(NAME_OF_SCRATCHPAD_AREA,true,DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
-			if (Toolset.Plugin.Options.OpenScratchpadByDefault && 
-			    form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA] != null) 
-			{
+			if (Toolset.Plugin.Options.OpenScratchpadByDefault && form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA] != null) {
 				try {
 					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
 				}
