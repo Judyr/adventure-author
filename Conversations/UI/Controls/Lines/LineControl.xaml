@@ -152,29 +152,36 @@
     <Grid x:Name="LineControlGrid">		
 		<Grid.RowDefinitions>
     		<RowDefinition MinHeight="0"/> <!--Condition control-->
-    		<RowDefinition MinHeight="34" MaxHeight="34"/> <!--Speaker and first line of dialogue-->
-    		<RowDefinition MinHeight="0" Height="*"/> <!--Any subsequent lines of dialogue-->
+    		<RowDefinition MinHeight="34" Height="*"/> <!--Speaker and dialogue-->
     		<RowDefinition MinHeight="0"/> <!--Sound control-->
     		<RowDefinition MinHeight="0"/> <!--Action controls-->
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="100"/> <!--Buttons-->
-    		<ColumnDefinition Width="200"/> <!--Speaker-->
-    		<ColumnDefinition MinWidth="250" MaxWidth="750" Width="*"/> <!--Dialogue-->
+    		<ColumnDefinition Width="32"/> <!--Buttons-->
+    		<ColumnDefinition MinWidth="100" MaxWidth="200" Width="*"/> <!--Speaker-->
+    		<ColumnDefinition Width="10"/> <!--gap-->
+    		<ColumnDefinition Width="2*"/> <!--Dialogue-->
     	</Grid.ColumnDefinitions>
     	    	
     	<StackPanel Name="LineControlButtonsPanel" Grid.Column="0" Grid.Row="1" 
     	            Focusable="true" Orientation="Horizontal" Background="Transparent">
-    		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" IsEnabled="false" Visibility="Hidden" Click="OnClick_Delete">
+    		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" 
+    		        IsEnabled="false" Visibility="Hidden" Click="OnClick_Delete"
+    				VerticalAlignment="Top" HorizontalAlignment="Center">
     			<Button.ToolTip>
     				<ToolTip>Delete this line</ToolTip>
     			</Button.ToolTip>
 	    	</Button>   	
     	</StackPanel>
     	
-    	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" FontSize="22" Padding="6" TextAlignment="Right"/>
+    	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" 
+    	           FontSize="22" Padding="6" TextAlignment="Right" TextWrapping="Wrap"/>
     	
-    	<utils:SwitchableTextBox x:Name="Dialogue" Width="700" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" TextWrapping="Wrap" 
+    	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
+    	      Width="10" Background="Transparent"/>
+    	
+    	<utils:SwitchableTextBox x:Name="Dialogue"
+    			 Grid.Row="1" Grid.Column="3" TextWrapping="Wrap"
     	         FontSize="22" FontWeight="4" Focusable="true" AcceptsReturn="false"
     	         BorderThickness="1" IsEditable="false" Padding="4">
     		<utils:SwitchableTextBox.Text>
@@ -183,7 +190,7 @@
     		</utils:SwitchableTextBox.Text>    
     	</utils:SwitchableTextBox>
 	
-		<StackPanel x:Name="ActionsPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
+		<StackPanel x:Name="ActionsPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Vertical"/>
 	
 	</Grid>
 

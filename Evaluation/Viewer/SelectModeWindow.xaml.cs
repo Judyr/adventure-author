@@ -31,7 +31,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_DesignMode(object sender, EventArgs e)
         {
-        	if (Tools.TeacherHasSignedIn(false)) {
+        	if (User.IdentifyTeacherOrDemandPassword()) {
         		Launch(Mode.Design);
         	}
         }

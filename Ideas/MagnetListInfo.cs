@@ -57,7 +57,6 @@ namespace AdventureAuthor.Ideas
 		public UnserializableControl GetControl()
 		{
 			MagnetList magnetList = new MagnetList(this);
-			magnetList.SaveAutomatically = false;
 			return magnetList;
 		}
 	}

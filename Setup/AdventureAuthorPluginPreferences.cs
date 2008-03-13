@@ -57,6 +57,16 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		public event EventHandler Nwn2InstallationDirectoryChanged;
+		private void OnNwn2InstallationDirectoryChanged(EventArgs e) 
+		{
+			EventHandler handler = Nwn2InstallationDirectoryChanged;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}		
+		
+		
 		public event EventHandler DefaultImageViewerChanged;		
 		private void OnDefaultImageViewerChanged(EventArgs e) 
 		{
@@ -67,14 +77,14 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		public event EventHandler Nwn2InstallationDirectoryChanged;
-		private void OnNwn2InstallationDirectoryChanged(EventArgs e) 
+		public event EventHandler FontSizeChanged; // one event for all font size changes
+		private void OnFontSizeChanged(EventArgs e)
 		{
-			EventHandler handler = Nwn2InstallationDirectoryChanged;
+			EventHandler handler = FontSizeChanged;
 			if (handler != null) {
 				handler(this,e);
 			}
-		}			
+		}
 		
 		#endregion
 				
@@ -96,6 +106,7 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
+		#region General
 		
 		/// <summary>
 		/// True to open the scratchpad area (if one exists) automatically upon
@@ -135,31 +146,6 @@ namespace AdventureAuthor.Setup
 				Log.WriteAction(LogAction.set,"LockInterface",value.ToString());
 			}
 		}
-						
-			
-		/// <summary>
-		/// The default application to open images in (usually when viewing a piece of evidence
-		/// in the Evaluation application).
-		/// </summary>
-		[XmlElement]
-		[Description("The default application to open images in (usually when viewing a piece of evidence" + 
-					 "in the Evaluation application)."), Category("General"), Browsable(true)]
-		private ImageApp imageViewer;
-		public ImageApp ImageViewer {
-			get { return imageViewer; }
-			set { 
-				imageViewer = value; 
-				switch (imageViewer) {
-					case ImageApp.Default:
-	    				Log.WriteMessage("checked 'View images in default application'");
-						break;
-					case ImageApp.MicrosoftPaint:
-						Log.WriteMessage("checked 'View images in Microsoft Paint'");
-						break;
-				}    				
-				OnDefaultImageViewerChanged(new EventArgs());
-			}
-		}
 		
 				
 		/// <summary>
@@ -175,12 +161,57 @@ namespace AdventureAuthor.Setup
 				Log.WriteAction(LogAction.set,"NWN2InstallationDirectory",value.ToString());
 				OnNwn2InstallationDirectoryChanged(new EventArgs());
 			}
-		}		
+		}	
+		
+		#endregion
+			
+		#region Evaluation
+		
+		/// <summary>
+		/// The default application to open images in.
+		/// </summary>
+		[XmlElement]
+		[Description("The default application to open images in (usually when viewing a piece of evidence" + 
+					 "in the Evaluation application)."), Category("Evaluation"), Browsable(true)]
+		private ImageApp imageViewer;
+		public ImageApp ImageViewer {
+			get { return imageViewer; }
+			set { 
+				imageViewer = value; 
+				switch (imageViewer) {
+					case ImageApp.Default:
+	    				Log.WriteMessage("checked 'View images in default application'");
+						break;
+					case ImageApp.MicrosoftPaint:
+						Log.WriteMessage("checked 'View images in Microsoft Paint'");
+						break;
+				}    				
+				OnDefaultImageViewerChanged(new EventArgs());
+			}
+		}	
+		
+		#endregion
+				
+		#region Conversations
+		
+		/// <summary>
+		/// The font size of conversation dialogue and speaker names. 
+		/// </summary>
+		[XmlElement]
+		[Description("The font size of conversation dialogue and speaker names."), Category("Conversations"), Browsable(true)]
+		private double dialogueFontSize;
+		public double DialogueFontSize {
+			get { return dialogueFontSize; }
+			set { 
+				dialogueFontSize = value;
+				OnFontSizeChanged(new EventArgs());
+				Log.WriteAction(LogAction.set,"DialogueFontSize",value.ToString());
+			}
+		}
 		
 		#endregion
 		
-			// more options could go in this class
-			// AdventureAuthor.Setup contents could all go in Core
+		#endregion
 		
 		#region Constructors			
 		

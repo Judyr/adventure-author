@@ -149,6 +149,10 @@ namespace AdventureAuthor.Conversations.UI
     	private MouseEventHandler draggable_PreviewMouseMoveHandler;
     	
     	
+    	 	
+    	
+    	
+    	
     	#endregion Fields
     	  						
 		#region Events

@@ -95,7 +95,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_Delete(object sender, RoutedEventArgs e)
         {
-        	if (Tools.TeacherHasSignedIn(false)) {
+        	if (User.IdentifyTeacherOrDemandPassword()) {
         		OnDeleted(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }
@@ -103,7 +103,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_Edit(object sender, RoutedEventArgs e)
         {
-        	if (Tools.TeacherHasSignedIn(false)) {
+        	if (User.IdentifyTeacherOrDemandPassword()) {
         		AddReplyWindow window = new AddReplyWindow((Reply)GetWorksheetPart());
         		window.ReplyAdded += new EventHandler<OptionalWorksheetPartEventArgs>(ReplyEdited);
         		window.ShowDialog();

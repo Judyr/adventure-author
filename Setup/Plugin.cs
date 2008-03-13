@@ -68,12 +68,12 @@ namespace AdventureAuthor.Setup
 		
 		
 		public string DisplayName {
-			get { return "AdventureAuthor"; }
+			get { return "Adventure Author"; }
 		}
 		
 		
 		public string MenuName {
-			get { return "AdventureAuthor"; }
+			get { return "Adventure Author"; }
 		}
 		
 		
@@ -86,6 +86,7 @@ namespace AdventureAuthor.Setup
 			
 		}		
 				
+		
 		/// <summary>
 		/// Called when the toolset starts
 		/// </summary>
@@ -95,11 +96,34 @@ namespace AdventureAuthor.Setup
 			try {
 				//form.App.Closing += OnNeverwinterNights2Closing;
 				
-				// Check directories:
-				if (!Directory.Exists(ModuleHelper.AdventureAuthorDir)) {
-					throw new DirectoryNotFoundException("Adventure Author installation directory at " + 
-					                                     ModuleHelper.AdventureAuthorDir +
-					                                     "was missing.");
+				// Check directories:				
+				if (!Directory.Exists(ModuleHelper.AAInstallDirectory)) {					
+					Say.Error("Adventure Author files were not found at the expected location " + 
+					          "(" + ModuleHelper.AAInstallDirectory + ").\n\n" +
+					          "You may find that the software no longer runs correctly. " +
+					          "If this is the case, try reinstalling Adventure Author.");
+				}
+				try {
+					if (!Directory.Exists(ModuleHelper.AAUserDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.AAUserDirectory);	
+					}	
+					if (!Directory.Exists(ModuleHelper.DebugDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.DebugDirectory);	
+					}	
+					if (!Directory.Exists(ModuleHelper.UserLogDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.UserLogDirectory);	
+					}	
+					if (!Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.WorksheetsDirectory);	
+					}	
+					if (!Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.MagnetBoardsDirectory);
+						// missing magnet list will be created by MagnetBoardViewer if required
+					}	
+				} 
+				catch (Exception e) {
+					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
+					          "Some features of Adventure Author will not work correctly until this is resolved.",e);
 				}
 								
 				Toolset.Plugin = this;
@@ -114,16 +138,16 @@ namespace AdventureAuthor.Setup
 				// Create an instance of the magnets board on loading, so that it's
 				// ready to receive ideas submitted from the main GUI:
 				MagnetBoardViewer magnets = new MagnetBoardViewer();
+							
+				// Modify the main user interface:
+				Toolset.SetupUI();
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
-			catch (DirectoryNotFoundException e) {
-				MessageBox.Show("Required Adventure Author files were not found at the expected location - software may " +
-				                "not function correctly. \n\n" + e.ToString());
+			catch (Exception e) {
+				Say.Error("A problem occurred when trying to set up the toolset. " + 
+				          "You may experience problems which require you to reinstall Adventure Author.",e);
 			}
-							
-			// Set up the Adventure Author toolset:
-			Toolset.SetupUI();
 		}	
 		
 		
@@ -154,8 +178,6 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Called when the plugin finishes
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void Shutdown(INWN2PluginHost cHost)
 		{
 			if (WriterWindow.Instance != null) {
@@ -196,14 +218,5 @@ namespace AdventureAuthor.Setup
 				//MessageBox.Show("Failed to delete temp modules on loading.\n\n\n" + ex.ToString());
 			}
 		}	
-		
-//		public object Preferences {
-//			get {
-//				return (object)tempPrefs.Instance;;
-//			}
-//			set {
-//				tempPrefs.Instance = (tempPrefs)value;
-//			}
-//		}
 	}
 }

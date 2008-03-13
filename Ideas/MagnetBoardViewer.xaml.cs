@@ -6,7 +6,10 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Xml;
+using System.Xml.Serialization;
 using System.ComponentModel;
+using AdventureAuthor.Core;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -122,19 +125,18 @@ namespace AdventureAuthor.Ideas
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
-            
-            // Open the magnet list:
-            if (!File.Exists(MagnetList.DefaultFilename)) {
-            	Say.Debug("Couldn't find an ideas bank at the expected location (" + MagnetList.DefaultFilename + ")" +
-            	          " - will create a new one when required.");
-            	magnetList.Filename = MagnetList.DefaultFilename;
-            }
-            else {
-            	magnetList.Open(MagnetList.DefaultFilename);
-            }
-            magnetList.SaveAutomatically = true;
-            
+                       
             wonkyMagnetsMenuItem.IsChecked = false;
+                        
+    		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
+			try {
+				if (!Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
+					Directory.CreateDirectory(ModuleHelper.MagnetBoardsDirectory);
+				}
+			}
+			catch (Exception e) {
+    			Say.Debug("Failed to create a Magnets board directory for user:\n"+e);
+			}  
         }
 
         
@@ -180,7 +182,6 @@ namespace AdventureAuthor.Ideas
     	public void Save()
     	{
     		ActiveBoard.Save();
-		    magnetList.Save();
     	}
     	    	
     	
@@ -212,6 +213,10 @@ namespace AdventureAuthor.Ideas
     		saveFileDialog.Filter = Filters.XML;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save magnet board to";
+			if (Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
+				saveFileDialog.InitialDirectory = ModuleHelper.MagnetBoardsDirectory;
+			}	
+  			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				ActiveBoard.Filename = saveFileDialog.FileName;
@@ -345,7 +350,10 @@ namespace AdventureAuthor.Ideas
     		openFileDialog.Filter = Filters.XML;
 			openFileDialog.Title = "Select a magnet board file to open";
 			openFileDialog.Multiselect = false;
-			openFileDialog.RestoreDirectory = false;	
+			openFileDialog.RestoreDirectory = false;
+			if (Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
+				openFileDialog.InitialDirectory = ModuleHelper.MagnetBoardsDirectory;
+			}
 			
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
@@ -389,7 +397,7 @@ namespace AdventureAuthor.Ideas
 	        	else {
 	        		category = IdeaCategory.Other;
 	        	}
-	        	idea = new Idea(IdeaEntryBox.Text,category);
+	        	idea = new Idea(IdeaEntryBox.Text,category,User.GetCurrentUser());
 	        	magnetList.AddIdea(idea);
         	}
         }

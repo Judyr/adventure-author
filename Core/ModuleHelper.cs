@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
+using System.Windows.Forms;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Setup;
@@ -62,84 +63,101 @@ namespace AdventureAuthor.Core
 		#endregion Constants
 			
 		#region Global variables
-			
-		private static bool beQuiet = false;	
-		private static bool debug = true;
-		private static bool doBackups = true;	
 				
+		static ModuleHelper() {
+			beQuiet = false;
+			debug = true;
+			
+			FileInfo nwn2ExeFile = new FileInfo(Application.ExecutablePath);
+			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
+			aaInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
+			string localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			aaUserDirectory = Path.Combine(localApplicationData,"Adventure Author");
+		}
+		
+						
+		private static bool beQuiet;	
 		public static bool BeQuiet {
 			get	{ return beQuiet; }
 			set	{ beQuiet = value; } 
 		}
 		
+		
+		private static bool debug;
 		public static bool Debug {
 			get	{ return debug; }
 			set	{ debug = value; } 
 		}
 		
-		public static bool DoBackups {
-			get { return doBackups; }
-			set { doBackups = value; }
+		
+		private static string nwn2InstallDirectory;
+		public static string Nwn2InstallDirectory {
+			get { return nwn2InstallDirectory; }
+			set { nwn2InstallDirectory = value; }
 		}
 		
-		public static string AdventureAuthorDir {			
-			get {
-				return Path.Combine(@"C:\Program Files\Atari\Neverwinter Nights 2","AdventureAuthor");
-			}
-		}	
 		
-		public static string BackupDir {			
-			get {
-				return Path.Combine(AdventureAuthorDir,"backups");
-			}
-		}	
+		private static string aaInstallDirectory;		
+		public static string AAInstallDirectory {
+			get { return aaInstallDirectory; }
+			set { aaInstallDirectory = value; }
+		}
 		
-		public static string DebugDir {			
-			get {
-				return Path.Combine(AdventureAuthorDir,"debugs");
-			}
-		}	
+		
+		private static string aaUserDirectory;		
+		public static string AAUserDirectory {
+			get { return aaUserDirectory; }
+			set { aaUserDirectory = value; }
+		}
+		
 				
+		public static string DebugDirectory {			
+			get {
+				return Path.Combine(AAUserDirectory,"Debug");
+			}
+		}	
+		
+		
+		public static string UserLogDirectory {			
+			get {
+				return Path.Combine(AAUserDirectory,"User logs");
+			}
+		}	
+		
+		
+		public static string WorksheetsDirectory {
+			get {
+				return Path.Combine(AAUserDirectory,"Worksheets");
+			}
+		}
+		
+		
+		public static string MagnetBoardsDirectory {
+			get {
+				return Path.Combine(AAUserDirectory,"Magnet boards");
+			}
+		}	
+		
+		
+		public static string IdeasBoxFilename {
+			get {
+				return Path.Combine(AAUserDirectory,"ideas.xml");
+			}
+		}
+		
+		
 		public static string ImagesDir {			
 			get {
-				return Path.Combine(AdventureAuthorDir,"images");
+				return Path.Combine(AAInstallDirectory,"images");
 			}
 		}	
 				
+		
 		public static string SoundsDir {			
 			get {
-				return Path.Combine(AdventureAuthorDir,"sounds");
+				return Path.Combine(AAInstallDirectory,"sounds");
 			}
-		}	
-		
-		public static string LogDir {			
-			get {
-				if (!Directory.Exists(@"C:\adventureauthorlogs")) {
-				    	
-				}
-				
-				return @"C:\adventureauthorlogs";
-				
-				
-//				try {
-//				StreamReader sr = new StreamReader(System.IO.File.Open(Path.Combine(System.Environment.CurrentDirectory,"logdirectory.txt"), FileMode.Open));
-//				string logdir = sr.ReadLine();
-//				if (logdir != null && logdir != String.Empty) {
-//					return Path.Combine(logdir,"");
-//				}
-//				else {
-//					Say.Error("No destination found for log files - in the file logdirectory.txt in the main NWN2 folder, " + 
-//					          "please type in a valid path e.g. C:\adventureauthorlogs");
-//					return Path.Combine(AdventureAuthorDir,"logs");
-//				}
-//				//return Path.Combine(AdventureAuthorDir,"logs");
-//				}
-//				catch (FileNotFoundException e) {
-//					Say.Error("Could not find log directory.",e);
-//					return Path.Combine(AdventureAuthorDir,"logs");
-//				}
-			}
-		}	
+		}
 				
 		
 		#endregion Global variables
@@ -356,7 +374,7 @@ namespace AdventureAuthor.Core
 			// Clone the existing module to a new location - this will
 		}
 				
-		
+		/*
 		/// <summary>
 		/// Create a date-stamped backup copy of this Adventure.
 		/// </summary>
@@ -424,7 +442,7 @@ namespace AdventureAuthor.Core
 	       		File.Copy(sourceFile, destFile);
 	    	}
 		}	
-						
+		*/				
 		
 		/// <summary>
 		/// Used to retrieve a module from disk.
@@ -635,9 +653,9 @@ namespace AdventureAuthor.Core
 			AreaHelper.Close(area);
 			
 			// If requested, backup the entire module:
-			if (ModuleHelper.DoBackups) {
-				Backup("Deleted area '" + area.Name + "'.");
-			}
+			//if (ModuleHelper.DoBackups) {
+			//	Backup("Deleted area '" + area.Name + "'.");
+			//}
 			
 			// Delete the area:
 			form.App.Module.RemoveResource(area);

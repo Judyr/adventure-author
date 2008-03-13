@@ -35,10 +35,10 @@ namespace AdventureAuthor.Ideas
 		
 		
 		[XmlAttribute]
-		private string author; // TODO take user ID instead
-		public string Author {
-			get { return author; }
-			set { author = value; }
+		private string user;
+		public string User {
+			get { return user; }
+			set { user = value; }
 		}		
 		
 		
@@ -110,7 +110,7 @@ namespace AdventureAuthor.Ideas
 		{
 			this.text = text;
 			this.category = category;
-			this.author = author;
+			this.user = author;
 			this.created = created;
 		}
 				
@@ -131,7 +131,7 @@ namespace AdventureAuthor.Ideas
 				return false;
 			}
 			else {
-				return text == idea.text && author == idea.author && category == idea.category && created == idea.created;
+				return text == idea.text && user == idea.user && category == idea.category && created == idea.created;
 			}
 		}
 		

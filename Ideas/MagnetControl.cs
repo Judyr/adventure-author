@@ -75,7 +75,7 @@ namespace AdventureAuthor.Ideas
 			get { return idea; }
 			set {
 				idea = value;
-				Author = value.Author;
+				Author = value.User;
 				Text = value.Text;
 				Category = value.Category;
 				Created = value.Created;
@@ -85,13 +85,13 @@ namespace AdventureAuthor.Ideas
 		
 		public string Author {
 			get {
-				return idea.Author;
+				return idea.User;
 			}
 			set {
 				if (idea == null) {
 					throw new InvalidOperationException("This magnet has no idea.");
 				}
-				idea.Author = value;
+				idea.User = value;
 			}
 		}
 		

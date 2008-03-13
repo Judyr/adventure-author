@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using NWN2Toolset.NWN2.Data;
+using AdventureAuthor.Core;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Setup;
@@ -171,6 +172,16 @@ namespace AdventureAuthor.Evaluation.Viewer
     				OpenDialog();
 		    		break;
     		}
+    		
+    		// Ideally user should save worksheets to User/Adventure Author/Worksheets:
+			try {
+				if (!Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+					Directory.CreateDirectory(ModuleHelper.WorksheetsDirectory);
+				}
+			}
+			catch (Exception e) {
+    			Say.Debug("Failed to create a Worksheets directory for user:\n"+e);
+			}     		
     	}
     	
 
@@ -766,8 +777,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     		openFileDialog.Filter = Filters.XML;
 			openFileDialog.Title = "Select a worksheet file to open";
 			openFileDialog.Multiselect = false;
-			openFileDialog.RestoreDirectory = false;	
-			
+			openFileDialog.RestoreDirectory = false;
+			if (Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+				openFileDialog.InitialDirectory = ModuleHelper.WorksheetsDirectory;
+			}	
+				
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
   				Open(openFileDialog.FileName);
@@ -795,7 +809,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     		saveFileDialog.DefaultExt = Filters.TXT;
     		saveFileDialog.Filter = Filters.TXT;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to export worksheet to";
+  			saveFileDialog.Title = "Select location to export worksheet to";  			
+			if (Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+				saveFileDialog.InitialDirectory = ModuleHelper.WorksheetsDirectory;
+			}	
+  			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string exportFilename = saveFileDialog.FileName;
@@ -944,6 +962,11 @@ namespace AdventureAuthor.Evaluation.Viewer
     		saveFileDialog.Filter = Filters.XML;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save worksheet to";
+			saveFileDialog.RestoreDirectory = false;
+  			if (Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+  				saveFileDialog.InitialDirectory = ModuleHelper.WorksheetsDirectory;
+  			}
+  				
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				Filename = saveFileDialog.FileName;

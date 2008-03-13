@@ -45,7 +45,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		conditionalControl = new ConditionControl(this);
         		Grid.SetRow(conditionalControl,0);
         		Grid.SetColumn(conditionalControl,0);
-        		Grid.SetColumnSpan(conditionalControl,3);
+        		Grid.SetColumnSpan(conditionalControl,4);
         		LineControlGrid.Children.Add(conditionalControl);
         	}   
 			

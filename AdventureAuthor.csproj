@@ -412,6 +412,7 @@
     </Compile>
     <Compile Include="Utils\TextBoxItem.cs" />
     <Compile Include="Utils\Tools.cs" />
+    <Compile Include="Utils\User.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

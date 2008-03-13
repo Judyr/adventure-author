@@ -24,7 +24,7 @@ namespace AdventureAuthor.Utils
 		
 		public static void StartRecording()
 		{			
-			string path = Path.Combine(ModuleHelper.DebugDir,Tools.GetTimeStamp(true)+".log");
+			string path = Path.Combine(ModuleHelper.DebugDirectory,Tools.GetTimeStamp(true)+".log");
 			FileInfo f = new FileInfo(path);			
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);

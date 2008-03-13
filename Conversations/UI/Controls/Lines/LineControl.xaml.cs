@@ -126,10 +126,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	
         	// Check if there is a sound attached to this line, and if so represent it with a control. 
-        	// Note that there is an issue with lines having a non-null Sound property (FullName == ".RES") even when they don't have a sound:        	
+        	// Note that there is an issue with lines having a non-null Sound property (FullName == ".RES") 
+        	// even when they don't have a sound:
         	if (line.Sound != null && line.Sound.FullName != ".RES") { 	
         		soundControl = new SoundControl(this);
-        		Grid.SetRow(soundControl,3);
+        		Grid.SetRow(soundControl,2);
         		Grid.SetColumn(soundControl,0);
         		Grid.SetColumnSpan(soundControl,3);
         		LineControlGrid.Children.Add(soundControl);
