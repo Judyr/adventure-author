@@ -31,14 +31,14 @@ namespace AdventureAuthor.Utils
 			// Place in AdventureAuthor/logs
 			
 			string filename = Tools.GetDateStamp();// + "_" + username
-			string logpath = Path.Combine(ModuleHelper.LogDir,filename+".log");
+			string logpath = Path.Combine(ModuleHelper.UserLogDirectory,filename+".log");
 			
 			// If the filename is already taken, add numbering ("<filename>2.log", "<filename>3.log" etc.):
 			int count = 1;
 			while (File.Exists(logpath)) {
 				count++;
 				string newfilename = filename + count.ToString();
-				logpath = Path.Combine(ModuleHelper.LogDir,newfilename+".log");								
+				logpath = Path.Combine(ModuleHelper.UserLogDirectory,newfilename+".log");								
 			}			
 			
 			FileInfo f = new FileInfo(logpath);				

@@ -42,6 +42,7 @@ using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Ideas;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
+using Crownwood.DotNetMagic.Controls;
 using GlacialComponents.Controls.GlacialTreeList;
 using NWN2Toolset;
 using NWN2Toolset.Data;
@@ -68,6 +69,9 @@ namespace AdventureAuthor.Setup
 	{
 		#region Global variables
 		
+		/// <summary>
+		/// The Adventure Author plugin. 
+		/// </summary>
 		public static AdventureAuthorPlugin Plugin = null;
 		
 		/// <summary>
@@ -78,7 +82,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Owns the TabGroupLeaf which holds resource viewers
 		/// </summary>
-		private static Crownwood.DotNetMagic.Controls.TabbedGroups tabbedGroupsCollection = null; 
+		private static TabbedGroups tabbedGroupsCollection = null; 
 		
 		/// <summary>
 		/// The area contents view control, which lists every object in the current game area
@@ -583,120 +587,150 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
+			// Set up the interface for initial use - update the title bar, and disable
+			// parts of the interface which require an open module to be useful.
 			UpdateTitleBar();		
 			SetUI_ModuleNotOpen();
-			Plugin.Options.LockedInterface += delegate { 
-				Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
-			};
-			Plugin.Options.UnlockedInterface += delegate { 
-				Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
-			};
+			
+			// Lock or unlock the interface depending on user settings, and set up handlers
+			// to lock/unlock the interface when user settings change.
+			EventHandler updateLockedStatusHandler = new EventHandler(UpdateLockedStatus);
+			Plugin.Options.LockedInterface += updateLockedStatusHandler;
+			Plugin.Options.UnlockedInterface += updateLockedStatusHandler;
 			SetInterfaceLock(Plugin.Options.LockInterface);
+		}
+		
+		
+		/// <summary>
+		/// Check whether the user has set the interface to be locked or unlocked,
+		/// and lock/unlock the interface accordingly.
+		/// </summary>
+		private static void UpdateLockedStatus(object sender, EventArgs e)
+		{
+			Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
 		}
 				
 		
-		private static string GetTagOrResref(INWN2Object obj)
-		{
-			return "tag: " + obj.Tag;
-		}
+//		/// <summary>
+//		/// 
+//		/// </summary>
+//		/// <param name="obj">A game object</param>
+//		/// <returns></returns>
+//		private static string GetTagOrResref(INWN2Object obj)
+//		{
+//			return "tag: " + obj.Tag;
+//		}
+//		
+//		
+//		/// <summary>
+//		/// 
+//		/// </summary>
+//		/// <param name="blueprint">A game blueprint</param>
+//		/// <returns></returns>
+//		private static string GetTagOrResref(INWN2Blueprint blueprint)
+//		{
+//			return "resref: " + blueprint.TemplateResRef.Value;
+//		}
 		
 		
-		private static string GetTagOrResref(INWN2Blueprint blueprint)
-		{
-			return "resref: " + blueprint.TemplateResRef.Value;
-		}
-		
-		
-		private static string GetDescriptionForMagnet(INWN2Blueprint blueprint)
+		/// <summary>
+		/// Get a piece of text that appropriately describes a given blueprint,
+		/// for use in creating a blueprint magnet.
+		/// </summary>
+		/// <param name="blueprint">The blueprint to describe</param>
+		/// <returns>A description of a given blueprint</returns>
+		private static string GetTextForBlueprintMagnet(INWN2Blueprint blueprint)
 		{
 			string text;
 			
 			if (blueprint is NWN2CreatureTemplate) {
 				NWN2CreatureTemplate creature = (NWN2CreatureTemplate)blueprint;
-				text = GetBlueprintName(creature.FirstName + " " + creature.LastName) +
+				text = GetNameForBlueprintMagnet(creature.FirstName + " " + creature.LastName) +
 					"\nCreature" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2DoorTemplate) {
 				NWN2DoorTemplate door = (NWN2DoorTemplate)blueprint;
-				text = GetBlueprintName(door.LocalizedName) + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(door.LocalizedName) + "\nDoor" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2EncounterTemplate) { // for some reason encounters have a Tag rather than Resref
 				NWN2EncounterTemplate encounter = (NWN2EncounterTemplate)blueprint;
-				text = GetBlueprintName(encounter.LocalizedName) + "\nEncounter" + "\ntag: " + encounter.Tag;
+				text = GetNameForBlueprintMagnet(encounter.LocalizedName) + "\nEncounter" + "\ntag: " + encounter.Tag;
 			}
 			else if (blueprint is NWN2EnvironmentTemplate) {
 				NWN2EnvironmentTemplate environment = (NWN2EnvironmentTemplate)blueprint;
-				text = GetBlueprintName(environment.LocalizedName) + "\nEnvironment" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(environment.LocalizedName) + "\nEnvironment" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2ItemTemplate) {
 				NWN2ItemTemplate item = (NWN2ItemTemplate)blueprint;
-				text = GetBlueprintName(item.LocalizedName) + "\nItem" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(item.LocalizedName) + "\nItem" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2LightTemplate) {
 				NWN2LightTemplate light = (NWN2LightTemplate)blueprint;
-				text = GetBlueprintName(light.LocalizedName) + "\nLight" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(light.LocalizedName) + "\nLight" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2PlaceableTemplate) {
 				NWN2PlaceableTemplate placeable = (NWN2PlaceableTemplate)blueprint;
-				text = GetBlueprintName(placeable.LocalizedName) + "\nPlaceable" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(placeable.LocalizedName) + "\nPlaceable" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2PlacedEffectTemplate) {
 				NWN2PlacedEffectTemplate effect = (NWN2PlacedEffectTemplate)blueprint;
-				text = GetBlueprintName(effect.LocalizedName) + "\nEffect" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(effect.LocalizedName) + "\nEffect" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2SoundTemplate) {
 				NWN2SoundTemplate sound = (NWN2SoundTemplate)blueprint;
-				text = GetBlueprintName(sound.LocalizedName) + "\nSound" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(sound.LocalizedName) + "\nSound" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2StaticCameraTemplate) {
 				NWN2StaticCameraTemplate camera = (NWN2StaticCameraTemplate)blueprint;
-				text = GetBlueprintName(camera.LocalizedName) + "\nCamera" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(camera.LocalizedName) + "\nCamera" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2StoreTemplate) { // for some reason stores have a Tag rather than Resref
 				NWN2StoreTemplate store = (NWN2StoreTemplate)blueprint;
-				text = GetBlueprintName(store.LocalizedName) + "\nStore" + "\ntag: " + store.Tag;
+				text = GetNameForBlueprintMagnet(store.LocalizedName) + "\nStore" + "\ntag: " + store.Tag;
 			}
 			else if (blueprint is NWN2TreeTemplate) { // trees are better described by Comment (though this is inconsistent)
 				NWN2TreeTemplate tree = (NWN2TreeTemplate)blueprint;
-				text = GetBlueprintName(blueprint.Comment) + "\nTree" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(blueprint.Comment) + "\nTree" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2TriggerTemplate) {
 				NWN2TriggerTemplate trigger = (NWN2TriggerTemplate)blueprint;
-				text = GetBlueprintName(trigger.LocalizedName) + "\nTrigger" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(trigger.LocalizedName) + "\nTrigger" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else if (blueprint is NWN2WaypointTemplate) {
 				NWN2WaypointTemplate waypoint = (NWN2WaypointTemplate)blueprint;
-				text = GetBlueprintName(waypoint.LocalizedName) + "\nWaypoint" + "\nresref: " + blueprint.TemplateResRef.Value;
+				text = GetNameForBlueprintMagnet(waypoint.LocalizedName) + "\nWaypoint" + "\nresref: " + blueprint.TemplateResRef.Value;
 			}
 			else {
 				text = "No description";
 			}
 				
 			return text;
-//								
-//					
-//				
-//			
-//			return text + "\n" + GetTagOrResref(
-//					string text2 = blueprint.Name + "\n" + blueprint.ObjectType.ToString() + "\n(Resref '" +
-//								  blueprint.TemplateResRef.Value + "')";
-//					
-//					
-//			
-//			// if blueprint;
-//			return text + "\nresref: " + blueprint.TemplateResRef.Value;
-//			// else;
-//			//return text + "\ntag: " + blueprint.Tag;
 		}
 		
 		
-		private static string GetBlueprintName(OEIExoLocString name)
+		/// <summary>
+		/// Returns a version of a blueprint name appropriate for a magnet, 
+		/// based on the original blueprint name. The quotation marks which 
+		/// surround placeable blueprint names are stripped,
+		/// and a null or blank name will become 'Unnamed'.
+		/// </summary>
+		/// <param name="name">The name of the blueprint</param>
+		/// <returns>The name to give the magnet</returns>
+		private static string GetNameForBlueprintMagnet(OEIExoLocString name)
 		{
-			return GetBlueprintName(name.ToString());
+			return GetNameForBlueprintMagnet(name.ToString());
 		}
 		
 		
-		private static string GetBlueprintName(string name)
+		/// <summary>
+		/// Returns a version of a blueprint name appropriate for a magnet, 
+		/// based on the original blueprint name. The quotation marks which 
+		/// surround placeable blueprint names are stripped,
+		/// and a null or blank name will become 'Unnamed'.
+		/// </summary>
+		/// <param name="name">The name of the blueprint</param>
+		/// <returns>The name to give the magnet</returns>
+		private static string GetNameForBlueprintMagnet(string name)
 		{
 			if (name == null || name == String.Empty) {
 				return "Unnamed";
@@ -725,14 +759,17 @@ namespace AdventureAuthor.Setup
 		}
 
 		
+		/// <summary>
+		/// Create an idea representing the user-selected blueprint, and send it to the magnet list.
+		/// </summary>
 		private static void BlueprintSentToIdeas(object sender, EventArgs e)
 		{
 			if (blueprintView != null) {
 				if (blueprintView.Selection.Length > 0) {					
 					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off
 					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
-					string text = GetDescriptionForMagnet(blueprint);
-					Idea idea = new Idea(text,IdeaCategory.Toolset,"anon");
+					string text = GetTextForBlueprintMagnet(blueprint);
+					Idea idea = new Idea(text,IdeaCategory.Toolset,User.GetCurrentUser());
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
 				}
 			}
@@ -742,6 +779,10 @@ namespace AdventureAuthor.Setup
 		}
 
 		
+		/// <summary>
+		/// Clear the interface of the remnants of the old module, disable any controls
+		/// which are tied to modules and update the title bar.
+		/// </summary>
 		private static void ModuleHelper_ModuleClosed(object sender, EventArgs e)
 		{
 			if (!ModuleHelper.ModuleIsOpen()) {
@@ -751,7 +792,12 @@ namespace AdventureAuthor.Setup
 			SetUI_ModuleNotOpen();
 		}
 
-		
+			
+		/// <summary>
+		/// Enable the interface controls which relate to modules and update the title bar.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private static void ModuleHelper_ModuleOpened(object sender, EventArgs e)
 		{
 			UpdateTitleBar();
@@ -759,12 +805,18 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		/// <summary>
+		/// Update the title bar.
+		/// </summary>
 		private static void ModuleHelper_ModuleSaved(object sender, EventArgs e)
 		{
 			UpdateTitleBar();	
 		}		
 		
 		
+		/// <summary>
+		/// Disable parts of the interface which should only be used when a module is open.
+		/// </summary>
 		private static void SetUI_ModuleNotOpen()
 		{
 			areaList.Enabled = false;
@@ -773,6 +825,9 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		/// <summary>
+		/// Enable parts of the interface which should only be used when a module is open.
+		/// </summary>
 		private static void SetUI_ModuleOpen()
 		{
 			areaList.Enabled = true;
@@ -1208,7 +1263,7 @@ namespace AdventureAuthor.Setup
 			}
 		}	
 		
-		
+	
 		/// <summary>
 		/// Bring up the magnets window.
 		/// </summary>
@@ -1220,6 +1275,9 @@ namespace AdventureAuthor.Setup
 				}
 				ElementHost.EnableModelessKeyboardInterop(MagnetBoardViewer.Instance);
 				MagnetBoardViewer.Instance.Show();
+    		
+	    		// Attempt to open a magnet list, and handle its absence/corruption:
+	    		MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
 			}
 			catch (Exception e) {
 				Say.Error("Could not open magnets window.",e);

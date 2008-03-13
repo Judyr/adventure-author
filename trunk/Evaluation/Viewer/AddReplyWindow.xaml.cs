@@ -101,7 +101,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 	        	}
 	        	
 	        	// Check that the user is a teacher before allowing them to add a teacher response:
-	        	if (reply.ReplierType == Role.Teacher && !Tools.TeacherHasSignedIn(false)) {
+	        	if (reply.ReplierType == Role.Teacher && !User.IdentifyTeacherOrDemandPassword()) {
 	        		return;
 	        	}
 	        	

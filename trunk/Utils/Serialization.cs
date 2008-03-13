@@ -55,5 +55,26 @@ namespace AdventureAuthor.Utils
 				throw new Exception("Error in deserialization",e);
 			}
 		}
+		
+		
+		// TODO : Broken? Was returning true on a sabotaged .xml file of the correct type.
+		/// <summary>
+		/// Check whether a given file is a serialised object of a given type.
+		/// </summary>
+		/// <param name="filename">The filename of the file to check</param>
+		/// <param name="type">The type of serialised object to check for</param>
+		/// <returns>True if the file is a serialised object of the given type; false otherwise.</returns>
+		public static bool IsSerialisedObjectOfType(string filename, Type type)
+		{
+			if (!File.Exists(filename)) {
+				throw new ArgumentException(filename + " does not exist.");
+			}
+			
+			XmlTextReader reader = new XmlTextReader(filename);
+			XmlSerializer serialiser = new XmlSerializer(type);
+			bool result = serialiser.CanDeserialize(reader);
+			reader.Close();
+			return result;
+		}
 	}
 }

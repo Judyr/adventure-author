@@ -37,11 +37,11 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
 			<RowDefinition/>
-			<RowDefinition MinHeight="450" MaxHeight="450"/>
+			<RowDefinition MinHeight="350" MaxHeight="350"/>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition MinWidth="350" Width="*"/>
-			<ColumnDefinition Width="400"/>
+			<ColumnDefinition MinWidth="500" Width="*"/>
+			<ColumnDefinition Width="300"/>
 		</Grid.ColumnDefinitions>
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
 			<MenuItem Name="fileMenu" Header="File" FontSize="14">
@@ -116,9 +116,9 @@
 					<graph:GraphForm x:Name="mainGraph"/>
 				</WindowsFormsHost>
 				<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-					<Button Name="GoToStartButton" Width="194" Height="24" Margin="3" 
+					<Button Name="GoToStartButton" HorizontalAlignment="Stretch" Height="24" Margin="3" 
 					        IsEnabled="false" Click="OnClick_GoToStart">Go to Start</Button>
-					<Button Name="ExpandGraphButton" Width="194" Height="24" Margin="3" 
+					<Button Name="ExpandGraphButton" HorizontalAlignment="Stretch" Height="24" Margin="3" 
 					        IsEnabled="false" Click="OnClick_ExpandGraph">View full-screen</Button>
 				</StackPanel>
 			</Grid>

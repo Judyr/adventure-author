@@ -127,13 +127,8 @@ namespace AdventureAuthor.Setup
 						
 			ButtonItem evaluationButton = new ButtonItem();
 			evaluationButton.Activate += delegate { 
-			// if (user.HasAdminRights) {
-					SelectModeWindow selectModeWindow = new SelectModeWindow();
-					selectModeWindow.ShowDialog();
-			// }
-			// else {
-			// 		WorksheetViewer(WorksheetViewer.Mode.PupilMode);
-			// } 
+				SelectModeWindow selectModeWindow = new SelectModeWindow();
+				selectModeWindow.ShowDialog();
 			};
 			Tools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
 			aaToolbar.Items.Add(evaluationButton);
@@ -208,7 +203,7 @@ namespace AdventureAuthor.Setup
 				else {
 					category = (IdeaCategory)selected;
 				}
-				Idea idea = new Idea(text,category);
+				Idea idea = new Idea(text,category,User.GetCurrentUser());
 				OnIdeaSubmitted(new IdeaEventArgs(idea));
 				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
 			};

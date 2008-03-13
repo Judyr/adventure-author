@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.IO;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Core;
+using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
 {
@@ -42,16 +43,6 @@ namespace AdventureAuthor.Ideas
 		}     	
     	
     	
-    	/// <summary>
-    	/// The default location to check for a magnet list to open.
-    	/// </summary>
-    	private static string defaultFilename = System.IO.Path.Combine(ModuleHelper.AdventureAuthorDir,"ideas.xml");
-		public static string DefaultFilename {
-			get { return defaultFilename; }
-			set { defaultFilename = value; }
-		}
-    	
-    	
     	private List<IdeaCategory> visibleCategories;
     	
     	
@@ -68,15 +59,15 @@ namespace AdventureAuthor.Ideas
     	/// True to save automatically whenever a magnet is added or deleted.
     	/// </summary>
     	/// <remarks>Should only set this to true if a filename has been provided,
-    	/// otherwise a crash will occur</remarks>
+    	/// otherwise a crash may occur</remarks>
     	private bool saveAutomatically = false;    	
 		public bool SaveAutomatically {
 			get { return saveAutomatically; }
 			set { 
-				if (value == true && (Filename == null || Filename == String.Empty)) {
-					throw new InvalidOperationException("Cannot set this list to save changes automatically " +
-					                                    "without first providing a filename.");
-				}
+				//if (value == true && (Filename == null || Filename == String.Empty)) {
+				//	throw new InvalidOperationException("Cannot set this list to save changes automatically " +
+				//	                                    "without first providing a filename.");
+				//}
 				saveAutomatically = value; 
 			}
 		}
@@ -202,50 +193,123 @@ namespace AdventureAuthor.Ideas
         #endregion
         
         #region Methods
-
+        
         /// <summary>
-        /// Open a magnet list.
+        /// Attempt to open a magnet list at the given filename.
         /// </summary>
-        /// <param name="filename">The filename of the magnet list serialized data</param>
-    	public void Open(string filename)
-    	{
-    		if (!File.Exists(filename)) {
-    			Say.Error(filename + " could not be found.");
-    			return;
-    		}
-    			
-    		try {
-	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetListInfo));
-	    		MagnetListInfo magnetListInfo = (MagnetListInfo)o;
-	    		Open(magnetListInfo);
-	    		Filename = filename;
-    		}
-    		catch (InvalidCastException ec) {
-    			Say.Error("The file you tried to open was not a valid magnet list file: " + filename,ec);
-    			Clear();
-    			this.Filename = null;
-    		}
-    		catch (Exception e) {
-    			Say.Error("Was unable to open this magnet list.",e);
-    			Clear();
-    			this.Filename = null;
-    		}
-    	}
-    	
+        /// <param name="filename">The location of a magnet list, or a valid location
+        /// where a new one can be created</param>
+        /// <remarks>If there is no file at that location (but the location is valid) a new
+        /// magnet list will be saved to it. If the location is invalid, or the existing file
+        /// is corrupted or in the wrong format, tries to delete the corrupted file (giving the 
+        /// user the option of backing it up) and create a new one. If anything further goes
+        /// wrong, or the user declines to deal with the corrupted file, the magnet list will
+        /// remain functional but not save any ideas.</remarks>
+        public void Open(string filename)
+        {   
+	        if (!File.Exists(filename)) { // as long as an ideas box can be created at this filename, save to it
+	            Say.Debug("Couldn't find an ideas box at the expected location (" + filename + ")" +
+	        		     " - will create a new one when required.");
+	          	Filename = filename;
+	          	SaveAutomatically = true;
+	        }
+	        else {
+	          	try { // try to open the ideas box, and if successful, save to it        		
+		    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetListInfo));
+			    	MagnetListInfo magnetListInfo = (MagnetListInfo)o;
+			    	Open(magnetListInfo);
+			    	Filename = filename;
+			    	SaveAutomatically = true;
+	           	} 
+	           	catch (Exception e) {
+	           		if (e.InnerException is InvalidOperationException) {
+        				if (ModuleHelper.BeQuiet) { // don't show dialog if in quiet (automated) mode
+        					AbortOpen();
+        				}
+		           		MessageBoxResult result = 
+		           			MessageBox.Show(filename + " is not a valid ideas box file. It may " +
+		           	    	      "be corrupted, or the wrong type of file.\n\n" + 
+		           	    	      "This file must be replaced to continue. Do you want to back up the " +
+		           	    	      "corrupted file in case it can be fixed?",
+		           	    	      "Back up corrupted ideas file?",
+		           	    	      MessageBoxButton.YesNoCancel);
+		           		switch (result) {
+		           			case MessageBoxResult.Cancel: // user didn't want to deal with corrupted file
+		           				AbortOpen();
+		           				break;
+		           			case MessageBoxResult.Yes: // user wants to back up the corrupted file before deleting it
+		           				SaveFileDialog saveFileDialog = new SaveFileDialog();
+					    		saveFileDialog.AddExtension = true;
+					    		saveFileDialog.CheckPathExists = true;
+					    		saveFileDialog.DefaultExt = Filters.XML;
+					    		saveFileDialog.Filter = Filters.XML;
+					  			saveFileDialog.ValidateNames = true;
+					  			saveFileDialog.OverwritePrompt = true;
+					  			saveFileDialog.Title = "Select location to save copy of corrupted ideas box";
+					  			
+					  			bool ok = (bool)saveFileDialog.ShowDialog();  				
+					  			if (ok) {	
+					  				try {
+					  					File.Copy(filename,saveFileDialog.FileName);
+		           						File.Delete(filename);
+		           						Filename = filename;
+		           						SaveAutomatically = true;
+					  				} 
+					  				catch (Exception ex) {
+					  					Say.Error("Could not create a backup copy of the corrupted file.",ex);
+					  					AbortOpen();
+					  				}
+					  			}
+					  			else { // user changed their mind, and didn't want to deal with corrupted file
+					  				AbortOpen();
+					  			}
+		           				break;
+		           			case MessageBoxResult.No: // user just wants to delete the corrupted file
+					  			try {
+		           					File.Delete(filename);
+		           					Filename = filename;
+		           					SaveAutomatically = true;
+					  			} 
+					  			catch (Exception ex) {
+					  				Say.Error("Could not delete the corrupted file.",ex);
+					  				AbortOpen();
+					  			}
+		           				break;
+		           		}
+	           		}
+		           	else { // something non-specific went wrong
+        				Say.Error("Something went wrong when trying to open the ideas box file.",e);
+        				AbortOpen();
+		           	}
+	           	}
+	        }
+        }      
+        
+        
+        private void AbortOpen()
+        {
+			Say.Warning("Ideas will not be saved during this session.");
+		    Filename = null;
+			SaveAutomatically = false;
+			Clear();
+        }
+            	
     	
     	/// <summary>
     	/// Open a magnet list.
     	/// </summary>
     	/// <param name="magnetListInfo">Serialized data to represent</param>
-    	/// <remarks>Must either set a filename on this magnet list or set SaveAutomatically to false</remarks>
-    	internal void Open(MagnetListInfo magnetListInfo)
+    	/// <remarks>Changes will not be saved unless you set SaveAutomatically to true following
+    	/// this call, and provide a valid filename</remarks>
+    	private void Open(MagnetListInfo magnetListInfo)
     	{
 	        Clear();
 	    	foreach (MagnetInfo magnetInfo in magnetListInfo.Magnets) {
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
 	    		AddMagnet(magnet,false);
-	    	}   
+	    	}
+	        SaveAutomatically = false;
     	}
         
         
@@ -254,7 +318,7 @@ namespace AdventureAuthor.Ideas
         /// </summary>
         /// <remarks>This is intended for UI functions, rather than to delete all magnets in a magnet list,
         /// so no events are fired</remarks>
-        public void Clear()
+        private void Clear()
         {
         	magnetsPanel.Children.Clear();
         }
@@ -266,7 +330,12 @@ namespace AdventureAuthor.Ideas
     			throw new InvalidOperationException("Save failed: Should not have called Save without first setting a filename.");
     		}
     		else {
-	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+    			try {
+	    			AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+    			} 
+    			catch (Exception e) {
+    				Say.Error("Changes to the magnet list could not be saved.",e);
+    			}
     		}
     	} 
         
