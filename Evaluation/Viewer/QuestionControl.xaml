@@ -38,7 +38,8 @@
 									 Padding="3" AcceptsReturn="false" Margin="8"
 							         Width="300" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			<CheckBox Name="ActivateCheckBox"
-			    	  Margin="8,8,30,8" IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+			    	  Margin="8,8,30,8" IsChecked="true" 
+			          Checked="onActivatorChecked" Unchecked="onActivatorUnchecked" PreviewMouseLeftButtonDown="onActivatorClicked"
 					  Visibility="Collapsed" VerticalAlignment="Center">
 				<CheckBox.LayoutTransform>
 					<ScaleTransform ScaleX="1.7" 

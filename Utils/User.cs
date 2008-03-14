@@ -45,15 +45,17 @@ namespace AdventureAuthor.Utils
 		
 		public static bool IdentifyTeacherOrDemandPassword(string user)
 		{
+			bool isTeacher;
 			if (User.IsTeacher(user)) { // this user has teacher privileges
-				return true;
+				isTeacher = true;
 			}
 			else { // this user does not have teacher privileges, but allow the 
 				   // actual teacher to type in a password for the user
 				TeacherPasswordDialog dialog = new TeacherPasswordDialog();
 				dialog.ShowDialog();
-				return dialog.ReceivedCorrectPassword;
+				isTeacher = dialog.ReceivedCorrectPassword;
 			}			
+			return isTeacher;
 		}		
 	}
 }

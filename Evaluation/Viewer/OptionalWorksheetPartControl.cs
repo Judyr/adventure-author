@@ -16,6 +16,15 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
 	public abstract class OptionalWorksheetPartControl : ActivatableControl
 	{		
+		#region Fields
+		
+		/// <summary>
+		/// The name of the control type, for logging purposes.
+		/// </summary>
+		protected string properName;
+		
+		#endregion
+		
 		#region Events
 		
 		public event EventHandler Changed;
@@ -78,6 +87,37 @@ namespace AdventureAuthor.Evaluation.Viewer
 		{
 			return GetWorksheetPartObject().ToString();
 		}
+		
+		
+        protected virtual void onActivatorChecked(object sender, EventArgs e)
+        {
+        	Activate();
+        }
+        
+        
+        protected virtual void onActivatorUnchecked(object sender, EventArgs e)
+        {    		
+        	Deactivate(false);
+        }
+        
+        
+        /// <summary>
+        /// Log whether the control has been activated or deactivated when the
+        /// activator checkbox is clicked. Note that basing this on Checked and
+        /// Unchecked would register the activation/deactivation of child controls
+        /// also, but we only want the one the user clicked.
+        /// </summary>
+        protected virtual void onActivatorClicked(object sender, EventArgs e)
+        {
+        	// Log what it's about to become (deactivated) rather than what it currently is,
+        	// since the current activation status won't be updated yet.
+        	if (IsActive) { 
+        		Log.WriteAction(LogAction.deactivated,properName);
+        	}
+        	else {
+        		Log.WriteAction(LogAction.activated,properName);
+        	}
+        }
 		
 		#endregion
 	}

@@ -18,7 +18,7 @@ namespace AdventureAuthor.Utils
 	/// <summary>
 	/// Description of SwitchableTextBox.
 	/// </summary>
-	public class SwitchableTextBox : System.Windows.Controls.TextBox
+	public class SwitchableTextBox : ReportingTextBox
 	{
 		private bool isEditable;		
 		public bool IsEditable {

@@ -10,6 +10,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class QuestionControl : OptionalWorksheetPartControl
     {    	
+    	#region Fields
+    	
+    	private string previousValue;
+    	
+    	#endregion
+    	
     	#region Events
     	
     	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleting;  
@@ -35,15 +41,29 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	
     	
+    	
+    	
+    	
         public QuestionControl(Question question)
         {
+        	properName = "Question";
+        	
         	if (question == null) {
         		question = new Question();
         	}
         	
+        	previousValue = question.Text;
+        	
             InitializeComponent(); 
-            this.QuestionTitle.Text = question.Text;    
-            QuestionTitle.TextChanged += delegate { OnChanged(new EventArgs()); };
+            this.QuestionTitle.SetText(question.Text);
+            
+            QuestionTitle.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"question",e.NewValue);
+            };            
+            QuestionTitle.TextChanged += delegate { 
+            	OnChanged(new EventArgs()); 
+            };
+            
             SetInitialActiveStatus(question);
             
 		    foreach (Answer answer in question.Answers) {
@@ -80,7 +100,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             	AddReplyButton.Visibility = Visibility.Collapsed;
             }
             
-            Tools.SetXAMLButtonImage(DeleteQuestionButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(DeleteQuestionButton,"delete.png","delete");
             Tools.SetXAMLButtonImage(MoveDownButton,"07.png","down");
             Tools.SetXAMLButtonImage(MoveUpButton,"08.png","up");
             Tools.SetXAMLButtonImage(AddReplyButton,"29.png","Add comment");
@@ -148,16 +168,18 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
         
         
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
+//        private void OnChecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.activated,"question");
+//        	Activate();
+//        }
+//        
+//        
+//        private void OnUnchecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.deactivated,"question");
+//        	Deactivate(false);
+//        }
         
         
         private void OnClick_DeleteQuestion(object sender, EventArgs e)
@@ -173,6 +195,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	                                          MessageBoxResult.Cancel,
         	                                          MessageBoxOptions.None);
         	if (result == MessageBoxResult.OK) {
+        		Log.WriteAction(LogAction.deleted,"question");
         		OnDeleting(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }    
@@ -180,12 +203,14 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_MoveUp(object sender, EventArgs e)
         {
+        	Log.WriteAction(LogAction.moved,"question","up");
         	OnMoving(new MovingEventArgs(this,true));
         }
         
         
         private void OnClick_MoveDown(object sender, EventArgs e)
         {
+        	Log.WriteAction(LogAction.moved,"question","down");
         	OnMoving(new MovingEventArgs(this,false));
         }
 
@@ -200,7 +225,9 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void ReplyAdded(object sender, OptionalWorksheetPartEventArgs e)
         {
-        	AddReplyField((Reply)e.Part);
+        	Reply reply = (Reply)e.Part;
+        	Log.WriteAction(LogAction.added,"reply",reply.ToString());
+        	AddReplyField(reply);
         }
         
         

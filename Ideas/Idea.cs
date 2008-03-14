@@ -35,12 +35,12 @@ namespace AdventureAuthor.Ideas
 		
 		
 		[XmlAttribute]
-		private string user;
-		public string User {
-			get { return user; }
-			set { user = value; }
+		private string creator;
+		public string Creator {
+			get { return creator; }
+			set { creator = value; }
 		}		
-		
+				
 		
 		[XmlAttribute]
 		private DateTime created;		
@@ -110,7 +110,7 @@ namespace AdventureAuthor.Ideas
 		{
 			this.text = text;
 			this.category = category;
-			this.user = author;
+			this.creator = author;
 			this.created = created;
 		}
 				
@@ -131,7 +131,7 @@ namespace AdventureAuthor.Ideas
 				return false;
 			}
 			else {
-				return text == idea.text && user == idea.user && category == idea.category && created == idea.created;
+				return text == idea.text && creator == idea.creator && category == idea.category && created == idea.created;
 			}
 		}
 		

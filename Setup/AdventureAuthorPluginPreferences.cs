@@ -178,14 +178,7 @@ namespace AdventureAuthor.Setup
 			get { return imageViewer; }
 			set { 
 				imageViewer = value; 
-				switch (imageViewer) {
-					case ImageApp.Default:
-	    				Log.WriteMessage("checked 'View images in default application'");
-						break;
-					case ImageApp.MicrosoftPaint:
-						Log.WriteMessage("checked 'View images in Microsoft Paint'");
-						break;
-				}    				
+				Log.WriteAction(LogAction.set,"ImageViewer",value.ToString());			
 				OnDefaultImageViewerChanged(new EventArgs());
 			}
 		}	

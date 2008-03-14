@@ -37,10 +37,12 @@ namespace AdventureAuthor.Utils
         private void OnClick_OK(object sender, RoutedEventArgs e)
         {
         	if (TeacherPasswordBox.Password == TEACHER_PASSWORD) {
+        		Log.WriteMessage("Passed teacher password check");
         		receivedCorrectPassword = true;
         		Close();
         	}
         	else {
+        		Log.WriteMessage("Failed teacher password check");
         		receivedCorrectPassword = false;
         		Say.Warning("Password was incorrect.");
         		TeacherPasswordBox.Password = String.Empty;
@@ -51,6 +53,7 @@ namespace AdventureAuthor.Utils
         
         private void OnClick_Cancel(object sender, RoutedEventArgs e)
         {
+        	Log.WriteMessage("Cancelled teacher password check");
         	receivedCorrectPassword = false;
         	Close();
         }

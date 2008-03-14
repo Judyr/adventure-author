@@ -43,10 +43,11 @@
 		    			</Button>
 					</StackPanel>					
 		    		<utils:SwitchableTextBox x:Name="SectionTitleTextBox" Grid.Row="0" Grid.Column="0"
-									       	 FontFamily="Arial" FontSize="20" Margin="8" Width="250"
+									       	 FontFamily="Arial" FontSize="20" Margin="8" Width="400"
 											 AcceptsReturn="false" VerticalAlignment="Center"/>
 					<CheckBox Name="ActivateCheckBox"
-						      IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+						      IsChecked="true" 
+					          Checked="onActivatorChecked" Unchecked="onActivatorUnchecked" PreviewMouseLeftButtonDown="onActivatorClicked"
 							  Margin="8" Visibility="Collapsed" VerticalAlignment="Center">
 						<CheckBox.LayoutTransform>
 							<ScaleTransform ScaleX="1.7" 

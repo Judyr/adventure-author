@@ -210,9 +210,7 @@ namespace AdventureAuthor.Core
 			};
 			form.App.Module.NameChanged += delegate(object sender, NameChangedEventArgs e) 
 			{  
-				if (e.OldName != e.NewName) { // ignore if this has been raised on a save
-					Log.WriteAction(LogAction.renamed,"module","'" + e.NewName + "' from '" + e.OldName + "'");
-				}
+				Log.WriteAction(LogAction.saved,"module",e.NewName); //TODO check this corresponds always
 			};
 			
 			form.App.Module.Areas.Inserted += delegate(OEIDictionaryWithEvents cDictionary, object key, object value) 

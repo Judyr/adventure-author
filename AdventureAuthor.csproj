@@ -8,9 +8,10 @@
     <AssemblyName>AdventureAuthor</AssemblyName>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>False</RunCodeAnalysis>
+    <DocumentationFile>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\AdventureAuthor.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\</OutputPath>
@@ -397,6 +398,7 @@
     </Compile>
     <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Utils\Measurement.cs" />
+    <Compile Include="Utils\ReportingTextBox.cs" />
     <Compile Include="Utils\ResourceHelper.cs" />
     <Compile Include="Utils\RGBPicker.xaml.cs">
       <DependentUpon>RGBPicker.xaml</DependentUpon>
@@ -411,6 +413,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\TextBoxItem.cs" />
+    <Compile Include="Utils\TextEditedEventArgs.cs" />
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Utils\User.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
