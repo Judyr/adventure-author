@@ -34,7 +34,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 			get { return evaluationMode; }
 			internal set {
 				evaluationMode = value;
-				Log.WriteAction(LogAction.mode,"evaluation_" + evaluationMode.ToString());
+				Log.WriteAction(LogAction.set,"EvaluationMode",evaluationMode.ToString());
 			}
 		}
     	
@@ -85,34 +85,14 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		InitializeComponent();
     		
+    		Log.WriteAction(LogAction.launched,"evaluation");   
+    		
     		Closing += new CancelEventHandler(viewerClosing);
     		Changed += new EventHandler(WorksheetChanged);
-    		Loaded += delegate
-    		{  
-				Log.WriteAction(LogAction.launched,"evaluation");
-    		};    		
-            Closing += delegate 
-            {
-            	try {
-            		Log.WriteAction(LogAction.exited,"evaluation");
-            	}
-            	catch (Exception) { 
-            		// already disposed because toolset is closing
-            	}
-            };
             
-    		//Toolset.Plugin.Options.DefaultImageViewerChanged += changedDefaultImageViewer;
-    		switch (Toolset.Plugin.Options.ImageViewer) {
-    			case ImageApp.Default:
-    				UsePaintMenuItem.IsChecked = false;
-    				UseDefaultMenuItem.IsChecked = true;
-    				break;
-    			case ImageApp.MicrosoftPaint:
-    				UsePaintMenuItem.IsChecked = true;
-    				UseDefaultMenuItem.IsChecked = false;
-    				break;
-    		}
-    		    		
+            Toolset.Plugin.Options.DefaultImageViewerChanged += delegate { updateImageViewerSelectionMenu(); };
+            updateImageViewerSelectionMenu();
+            
     		EvaluationMode = mode;
     		
     		// Edit worksheet titles in design mode only; fill in name and date in complete/discuss mode only
@@ -190,19 +170,34 @@ namespace AdventureAuthor.Evaluation.Viewer
 			if (!CloseWorksheetDialog()) {
 				e.Cancel = true;
 			}
+    		else {
+    			Log.WriteAction(LogAction.exited,"evaluation");
+    		}
     	}
 
     	
-    	private void changedDefaultImageViewer(object sender, EventArgs e)
+    	private void updateImageViewerSelectionMenu()
     	{
     		switch (Toolset.Plugin.Options.ImageViewer) {
     			case ImageApp.Default:
-    				UseDefaultMenuItem.IsChecked = true;
-    				UsePaintMenuItem.IsChecked = false;
+    				if (!UseDefaultMenuItem.IsChecked) {
+	    				UseDefaultMenuItem.IsChecked = true;
+	    				UseDefaultMenuItem.IsCheckable = false;
+    				}
+    				if (UsePaintMenuItem.IsChecked) {
+	    				UsePaintMenuItem.IsChecked = false;
+	    				UsePaintMenuItem.IsCheckable = true;
+    				}
     				break;
     			case ImageApp.MicrosoftPaint:
-    				UseDefaultMenuItem.IsChecked = false;
-    				UsePaintMenuItem.IsChecked = true;
+    				if (UseDefaultMenuItem.IsChecked) {
+	    				UseDefaultMenuItem.IsChecked = false;
+	    				UseDefaultMenuItem.IsCheckable = true;
+    				}
+    				if (!UsePaintMenuItem.IsChecked) {    					
+	    				UsePaintMenuItem.IsChecked = true;
+	    				UsePaintMenuItem.IsCheckable = false;
+    				}
     				break;
     		}
     	}
@@ -271,11 +266,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     			Filename = sourceFilename;
     		}
     		
+    		Log.WriteAction(LogAction.opened,"worksheet",Path.GetFileName(filename));
+    		
 	    	originalWorksheet = worksheet;
-	    	TitleField.Text = worksheet.Title;
-	    	DateField.Text = worksheet.Date;
-	    	DesignerNameField.Text = worksheet.DesignerName;
-	    	EvaluatorNameField.Text = worksheet.EvaluatorName;
+	    	TitleField.SetText(worksheet.Title);
+	    	DateField.SetText(worksheet.Date);
+	    	DesignerNameField.SetText(worksheet.DesignerName);
+	    	EvaluatorNameField.SetText(worksheet.EvaluatorName);
 	    	    		
 	    	foreach (Section section in worksheet.Sections) {	    			
 	    		if (EvaluationMode == Mode.Design || section.Include) {
@@ -324,10 +321,31 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    		}
 	    	}
 	    		    	
-	    	DateField.TextChanged += delegate { OnChanged(new EventArgs()); };
-	    	DesignerNameField.TextChanged += delegate { OnChanged(new EventArgs()); };
-	    	EvaluatorNameField.TextChanged += delegate { OnChanged(new EventArgs()); };
-	    	TitleField.TextChanged += delegate { OnChanged(new EventArgs()); };
+            DateField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"worksheetDate",e.NewValue);
+            };
+            DesignerNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"worksheetDesignerName",e.NewValue);
+            };
+            EvaluatorNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"worksheetEvaluatorName",e.NewValue);
+            };
+            TitleField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"worksheetTitle",e.NewValue);
+            };
+	    	
+	    	DateField.TextChanged += delegate { 
+	    		OnChanged(new EventArgs()); 
+	    	};
+	    	DesignerNameField.TextChanged += delegate { 
+	    		OnChanged(new EventArgs()); 
+	    	};
+	    	EvaluatorNameField.TextChanged += delegate { 
+	    		OnChanged(new EventArgs()); 
+	    	};
+	    	TitleField.TextChanged += delegate { 
+	    		OnChanged(new EventArgs()); 
+	    	};
 	    	
 	    	TitleLabel.Visibility = Visibility.Visible;
 	    	DesignerNameLabel.Visibility = Visibility.Visible;
@@ -416,10 +434,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void SetTitle(OptionalWorksheetPartControl control, string title)
     	{
     		if (control is SectionControl) {
-    			((SectionControl)control).SectionTitleTextBox.Text = title;
+    			((SectionControl)control).SectionTitleTextBox.SetText(title);
     		}
     		else if (control is QuestionControl) {
-    			((QuestionControl)control).QuestionTitle.Text = title;
+    			((QuestionControl)control).QuestionTitle.SetText(title);
     		}
     		else {
     			throw new ArgumentException("Can only set titles of sections and questions, not " +
@@ -469,7 +487,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     	public void AddNewSection()
     	{
     		try {
+    			Log.WriteAction(LogAction.added,"section");
 	    		SectionControl sectionControl = AddSection(new Section("New section"));
+	    		Log.WriteAction(LogAction.added,"question");
 	    		sectionControl.AddNewQuestion();
 	    		OnChanged(new EventArgs());
     		}
@@ -512,8 +532,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		SectionsPanel.Children.Add(control);
     		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(sectionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
-    		control.Activated += delegate { OnChanged(new EventArgs()); };
-    		control.Deactivated += delegate { OnChanged(new EventArgs()); };
+    		control.Activated += delegate { 
+    			OnChanged(new EventArgs());
+    		};
+    		control.Deactivated += delegate { 
+    			OnChanged(new EventArgs()); 
+    		};
     		control.Changed += delegate { OnChanged(new EventArgs()); };
     		control.BringIntoView();
     		OnChanged(new EventArgs());
@@ -531,6 +555,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     			return false;
     		}
     		else {
+    			Log.WriteAction(LogAction.saved,"worksheet",Path.GetFileName(Filename));
 	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,GetWorksheet());
 	    		if (Dirty) {
 	    			Dirty = false;
@@ -542,6 +567,10 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	public void CloseWorksheet()
     	{
+    		if (filename != null && filename != String.Empty) {
+    			Log.WriteAction(LogAction.closed,"worksheet",Path.GetFileName(Filename));
+    		}
+    		
     		Filename = null;
     		originalWorksheet = null;
     		
@@ -753,6 +782,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	private void OnClick_New(object sender, EventArgs e)
     	{    		
     		try {
+    			Log.WriteAction(LogAction.added,"worksheet");
     			Open(new Worksheet(),null);
     			AddNewSection();
     		}
@@ -809,14 +839,25 @@ namespace AdventureAuthor.Evaluation.Viewer
     		saveFileDialog.DefaultExt = Filters.TXT;
     		saveFileDialog.Filter = Filters.TXT;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to export worksheet to";  			
+  			saveFileDialog.Title = "Select location to export worksheet to";  		
+  		
 			if (Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
 				saveFileDialog.InitialDirectory = ModuleHelper.WorksheetsDirectory;
 			}	
+	  		// get the default filename from the worksheet filename:
+	  		try {
+	  			saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,
+	  			                                       Path.GetFileNameWithoutExtension(filename) + ".txt");
+	  		}
+	  		catch (Exception e) {
+	  			Say.Error(e);
+	  		};
   			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string exportFilename = saveFileDialog.FileName;
+  				Log.WriteAction(LogAction.exported,"worksheet",Path.GetFileName(exportFilename));
+  			
   				try {
   					ExportToTextFile(exportFilename);
   					Process.Start(exportFilename);
@@ -1043,10 +1084,15 @@ namespace AdventureAuthor.Evaluation.Viewer
     		saveFileDialog.DefaultExt = Filters.XML;
     		saveFileDialog.Filter = Filters.XML;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to save blank copy to";
+  			saveFileDialog.Title = "Select location to save blank copy to";  			
+			if (Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
+				saveFileDialog.InitialDirectory = ModuleHelper.WorksheetsDirectory;
+			}	
+  			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string filename = saveFileDialog.FileName;  
+  				Log.WriteAction(LogAction.saved,"worksheet","blank copy -" + Path.GetFileName(filename));
 	    		AdventureAuthor.Utils.Serialization.Serialize(filename,blankCopy);
 	    		Say.Information("Created blank copy at " + filename);
   			}
@@ -1089,7 +1135,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private void OnChecked_UseDefault(object sender, EventArgs e)
     	{
-    		Toolset.Plugin.Options.ImageViewer = ImageApp.Default;
+    		Toolset.Plugin.Options.ImageViewer = ImageApp.Default;    		
     	}
     	
     	

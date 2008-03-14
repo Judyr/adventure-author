@@ -47,6 +47,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     {    	
     	#region Fields
     	
+    	public double myfontsize = 40;
+    	
     	/// <summary>
     	/// The line of conversation this control represents.
     	/// </summary>
@@ -86,7 +88,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	/// <param name="line">The line of conversation to represent</param>
     	/// <param name="lineIsPartOfBranch">True if the line is part of a branch, false otherwise</param>
         protected LineControl(NWN2ConversationConnector line)
-        {        
+        {      
         	this.nwn2Line = line;        	
         	if (this.nwn2Line.Text.Strings.Count == 0) {
         		this.nwn2Line.Text = Conversation.GetOEIStringFromString(String.Empty);
@@ -94,9 +96,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
         	InitializeComponent();
+        	this.DataContext = this;
             
         	// Set the image on the delete button:
-        	DeleteLineButton.Content = ResourceHelper.GetImage("delete.jpg");
+        	DeleteLineButton.Content = ResourceHelper.GetImage("delete.png");
         	
         	// Set the appearance of the control based on who is speaking:
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);

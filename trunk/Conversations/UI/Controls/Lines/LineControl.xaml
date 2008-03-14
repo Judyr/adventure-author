@@ -32,7 +32,7 @@
     Padding="6" AllowDrop="True" 
 	>
 	
-	<UserControl.Resources>		
+	<UserControl.Resources>
 		<ContextMenu x:Key="LineControlContextMenu">
 			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> 
 			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
@@ -175,7 +175,8 @@
     	</StackPanel>
     	
     	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" 
-    	           FontSize="22" Padding="6" TextAlignment="Right" TextWrapping="Wrap"/>
+    	           FontSize="22" 
+    	           Padding="6" TextAlignment="Right" TextWrapping="Wrap"/>
     	
     	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
     	      Width="10" Background="Transparent"/>

@@ -96,6 +96,7 @@ namespace AdventureAuthor.Setup
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
 			conversationButton.Enabled = false;
 			Tools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
+			
 			aaToolbar.Items.Add(conversationButton);
 							
 			ButtonItem variableButton = new ButtonItem();

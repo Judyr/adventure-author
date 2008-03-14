@@ -69,7 +69,8 @@
 		<StackPanel Name="StarsPanel"
 					Orientation="Horizontal"/>
 		<CheckBox Name="ActivateCheckBox"
-		    	  IsChecked="true" Checked="OnChecked" Unchecked="OnUnchecked"
+		    	  IsChecked="true" 
+		          Checked="onActivatorChecked" Unchecked="onActivatorUnchecked" PreviewMouseLeftButtonDown="onActivatorClicked"
 		          Margin="8" Visibility="Collapsed">
 			<CheckBox.LayoutTransform>
 				<ScaleTransform ScaleX="1.4" 

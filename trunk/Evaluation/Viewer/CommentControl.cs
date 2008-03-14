@@ -2,37 +2,52 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class CommentControl : OptionalWorksheetPartControl
     {    	
+    	private string previousValue;
+    	
+    	
     	public CommentControl(Comment comment)
         {    		
+        	properName = "Comment";
+        	
         	if (comment == null) {
     			comment = new Comment();
     		}
+        	
+        	previousValue = comment.Value;
     		
             InitializeComponent();          
-            CommentTextBox.Text = comment.Value;
+            CommentTextBox.SetText(comment.Value);
             SetInitialActiveStatus(comment);
             
-            CommentTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };
+            CommentTextBox.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"comment",e.NewValue);
+            };            
+            CommentTextBox.TextChanged += delegate { 
+            	OnChanged(new EventArgs()); 
+            };
             
             ToolTip = "Write your answer here.";
         }
         
         
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
+//        private void OnChecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.activated,"comment");
+//        	Activate();
+//        }
+//        
+//        
+//        private void OnUnchecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.deactivated,"comment");
+//        	Deactivate(false);
+//        }
 
         
     	protected override void PerformEnable()

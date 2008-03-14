@@ -56,7 +56,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             }            
             Open(reply);
             
-            Tools.SetXAMLButtonImage(DeleteButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(DeleteButton,"delete.png","delete");
             DeleteButton.ToolTip = "Delete this comment\n(teachers only)";
             EditButton.ToolTip = "Edit this comment\n(teachers only)";
         }
@@ -96,6 +96,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         private void OnClick_Delete(object sender, RoutedEventArgs e)
         {
         	if (User.IdentifyTeacherOrDemandPassword()) {
+        		Log.WriteAction(LogAction.deleted,"reply",GetWorksheetPart().ToString());
         		OnDeleted(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }
@@ -114,6 +115,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         private void ReplyEdited(object sender, OptionalWorksheetPartEventArgs e)
         {
         	Reply reply = (Reply)e.Part;
+        	Log.WriteAction(LogAction.edited,"reply",reply.ToString());
         	Open(reply);
         }
 		

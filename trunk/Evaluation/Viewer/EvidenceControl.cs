@@ -27,11 +27,21 @@ namespace AdventureAuthor.Evaluation.Viewer
     	#endregion
     	
     	#region Fields
+    	
+    	private string previousValue;
+    	
     	    	
     	private string filename;    	
 		public string Filename {
 			get { return filename; }
 			set { 			
+				// don't log it if you've edited the evidence to be null/String.Empty,
+				// as this is picked up elsewhere as a deletion
+				if (previousValue != value && value != null && value != String.Empty) {
+					Log.WriteAction(LogAction.edited,"evidence",value);
+					previousValue = value;
+				}
+				
 				filename = value;
 				if (filename == null || filename == String.Empty) {
 					Status = EvidenceControlStatus.NoLink;
@@ -101,9 +111,13 @@ namespace AdventureAuthor.Evaluation.Viewer
     			
         public EvidenceControl(Evidence evidence)
         {        
+        	properName = "Evidence";
+        	
     		if (evidence == null) {
         		evidence = new Evidence();
     		}
+        	
+        	previousValue = evidence.Value;
     		
             InitializeComponent();
             SetInitialActiveStatus(evidence);
@@ -159,6 +173,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 			if (status == EvidenceControlStatus.NoLink) {
 				throw new InvalidOperationException("'View evidence' button should not have been visible.");
 			}
+			
+			Log.WriteAction(LogAction.viewed,"evidence",filename);
 			
 			if (status == EvidenceControlStatus.Link) {
 				try {
@@ -232,21 +248,24 @@ namespace AdventureAuthor.Evaluation.Viewer
 			                                          "Remove evidence?", 
 			                                          MessageBoxButton.OKCancel);
 			if (result == MessageBoxResult.OK) {
+				Log.WriteAction(LogAction.deleted,"evidence",filename);
 				Filename = String.Empty;				
 			}
 		}
         
         
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
+//        private void OnChecked(object sender, EventArgs e)
+//        {
+//        	Log.WriteAction(LogAction.activated,"evidence");
+//        	Activate();
+//        }
+//        
+//        
+//        private void OnUnchecked(object sender, EventArgs e)
+//        {
+//        	Log.WriteAction(LogAction.deactivated,"evidence");
+//        	Deactivate(false);
+//        }
 		
 		#endregion
 				
@@ -287,10 +306,12 @@ namespace AdventureAuthor.Evaluation.Viewer
     		ActivateCheckBox.ToolTip = "Click to activate this answer field\n(will not appear in worksheet)";
     	}
     	
+    	
 		public override void ShowActivationControls()
 		{
 			ActivateCheckBox.Visibility = Visibility.Visible;
 		}
+		
 		
 		public override void HideActivationControls()
 		{

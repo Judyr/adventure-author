@@ -28,6 +28,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 			get { return maxStars; }
 		}
     	
+    	
+    	private string previousValue;
+    	
     	#endregion
                 
     	
@@ -36,9 +39,13 @@ namespace AdventureAuthor.Evaluation.Viewer
         
     	public RatingControl(Rating rating)
         {
+        	properName = "StarRating";        	
+        	
     		if (rating == null) {
     			rating = new Rating();
     		}
+        	
+        	previousValue = rating.Value;
     		
     		InitializeComponent();
             LoadStars(rating.Max);
@@ -87,18 +94,6 @@ namespace AdventureAuthor.Evaluation.Viewer
         	UIElement element = (UIElement)sender;
 	        SelectedStars = StarsPanel.Children.IndexOf(element) + 1;
         }
-        
-        
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
            
         
         public int SelectedStars
@@ -116,6 +111,11 @@ namespace AdventureAuthor.Evaluation.Viewer
         		return rating;
         	}
         	set {
+        		if (value.ToString() != previousValue) {
+        			Log.WriteAction(LogAction.edited,"starrating",value + " stars");
+        			previousValue = value.ToString();
+        		}        		
+        		
         		int starsChecked = 0;
         		bool shouldCheck = true;
         		

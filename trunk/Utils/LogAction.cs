@@ -23,16 +23,16 @@ namespace AdventureAuthor.Utils
 		// documents etc.:
 		opened,
 		closed,
+		exported,
 		
 		// other objects:
 		added,
 		edited,
-		renamed,
 		deleted,
 		saved,
 		set,
 		moved,
-		viewed,
+		viewed,		
 		
 		// entered a mode (e.g. toolset_SelectObjects, toolset_PaintTerrain, worksheet_Design):
 		mode,

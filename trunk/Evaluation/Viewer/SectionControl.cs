@@ -10,6 +10,12 @@ namespace AdventureAuthor.Evaluation.Viewer
 {
     public partial class SectionControl : OptionalWorksheetPartControl
     {     	
+    	#region Fields
+    	
+    	private string previousValue = String.Empty;
+        
+    	#endregion
+    	
     	#region Events
     	
     	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleting;  
@@ -34,18 +40,29 @@ namespace AdventureAuthor.Evaluation.Viewer
 		}  
     	
     	#endregion
-    	    	
-        
+    	
+    	
         public SectionControl(Section section) 	
         {
+        	properName = "Section";
+        	
         	if (section == null) {
         		section = new Section();
         	}  	
         	
+        	previousValue = section.Title;
+        	
             InitializeComponent();   
             
-            SectionTitleTextBox.Text = section.Title;
-            SectionTitleTextBox.TextChanged += delegate { OnChanged(new EventArgs()); };  
+            SectionTitleTextBox.SetText(section.Title);
+            
+            SectionTitleTextBox.TextEdited += delegate(object sender, TextEditedEventArgs e) {
+            	Log.WriteAction(LogAction.edited,"section",e.NewValue);
+            };            
+            SectionTitleTextBox.TextChanged += delegate { 
+            	OnChanged(new EventArgs()); 
+            };
+            
             SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
@@ -61,7 +78,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
             
-            Tools.SetXAMLButtonImage(DeleteSectionButton,"01.png","delete");
+            Tools.SetXAMLButtonImage(DeleteSectionButton,"delete.png","delete");
             Tools.SetXAMLButtonImage(MoveSectionDownButton,"07.png","down");
             Tools.SetXAMLButtonImage(MoveSectionUpButton,"08.png","up");
         }  
@@ -152,6 +169,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         	                                          MessageBoxResult.Cancel,
         	                                          MessageBoxOptions.None);
         	if (result == MessageBoxResult.OK) {
+        		Log.WriteAction(LogAction.deleted,"section");
         		OnDeleting(new OptionalWorksheetPartControlEventArgs(this));
         	}
         }        
@@ -159,26 +177,30 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_MoveUp(object sender, EventArgs e)
         {
+        	Log.WriteAction(LogAction.moved,"section","up");
         	OnMoving(new MovingEventArgs(this,true));
         }
         
         
         private void OnClick_MoveDown(object sender, EventArgs e)
         {
+        	Log.WriteAction(LogAction.moved,"section","down");
         	OnMoving(new MovingEventArgs(this,false));
         }
         
         
-        private void OnChecked(object sender, EventArgs e)
-        {
-        	Activate();
-        }
-        
-        
-        private void OnUnchecked(object sender, EventArgs e)
-        {
-        	Deactivate(false);
-        }
+//        private void OnChecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.activated,"section");
+//        	Activate();
+//        }
+//        
+//        
+//        private void OnUnchecked(object sender, EventArgs e)
+//        {
+//    		Log.WriteAction(LogAction.deactivated,"section");
+//        	Deactivate(false);
+//        }
         
         
         internal void AddNewQuestion()
@@ -229,7 +251,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{	    		
     		SectionTitleTextBox.Opacity = 1.0f;
     		SectionTitleTextBox.IsEnabled = true;
-    		SectionTitleTextBox.IsEditable = true; //Tools.AllowEditingOfTextBox(SectionTitleTextBox);
+    		SectionTitleTextBox.IsEditable = true;
     		ActivatableControl.EnableElement(ActivateCheckBox);
     		ActivatableControl.EnableElement(AddQuestionButton);
     		ActivatableControl.EnableElement(MoveSectionDownButton);
