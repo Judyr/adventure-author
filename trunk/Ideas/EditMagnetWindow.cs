@@ -21,10 +21,7 @@ namespace AdventureAuthor.Ideas
     {    	
     	#region Fields
     	
-    	private MagnetControl magnet;    	
-		public MagnetControl Magnet {
-			get { return magnet; }
-		}
+    	private MagnetControl magnet;
     	
     	#endregion
     	
@@ -43,14 +40,24 @@ namespace AdventureAuthor.Ideas
     	
     	#region Constructors
     	
+    	public EditMagnetWindow() : this(null)
+    	{
+    		
+    	}
+    	
+    	
         public EditMagnetWindow(MagnetControl magnet) 
         {
         	this.magnet = magnet;
+        	
             InitializeComponent();
             ideaTextBox.MaxLength = Idea.MAX_IDEA_LENGTH;
-        	ideaTextBox.Text = magnet.Idea.Text;
-           	ideaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;   
-        	ideaCategoryComboBox.SelectedItem = magnet.Idea.Category;  
+           	ideaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;  
+           	
+           	if (magnet != null) {
+	        	ideaTextBox.Text = magnet.Idea.Text; 
+	        	ideaCategoryComboBox.SelectedItem = magnet.Idea.Category;             		
+           	}
         }
 
         #endregion
@@ -60,12 +67,9 @@ namespace AdventureAuthor.Ideas
         private void OnClick_OK(object sender, EventArgs e)
         {
         	if (ideaTextBox.Text == String.Empty) {
-        		Say.Warning("You can't create a blank idea - if you want to get rid of this" +
-        		            "idea, select it and press the delete key.");
+        		Say.Warning("You can't create a blank idea.");
         	}
         	else {
-        		magnet.Text = ideaTextBox.Text;
-        		
         		IdeaCategory category;
         		if (ideaCategoryComboBox.SelectedItem != null) {
 	        		category = (IdeaCategory)ideaCategoryComboBox.SelectedItem;
@@ -73,21 +77,21 @@ namespace AdventureAuthor.Ideas
 	        	else {
 	        		category = IdeaCategory.Other;
 	        	}
-        		magnet.Category = category;
+        		        		
+        		if (magnet == null) {
+        			Idea idea = new Idea(ideaTextBox.Text,category,User.GetCurrentUser(),DateTime.Now);
+        			magnet = new MagnetControl(idea);
+        		}
+        		else {
+        			magnet.Text = ideaTextBox.Text;
+        			magnet.Category = category;
+        		}
         		
         		OnMagnetEdited(new MagnetEventArgs(magnet));
 	        	Close();
         	}
         }
         
-        
-        
-        
-	        	
-	        	
-	        	
-	        	
-
         
         private void OnClick_Cancel(object sender, EventArgs e)
         {
