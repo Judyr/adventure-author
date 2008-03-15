@@ -75,7 +75,7 @@ namespace AdventureAuthor.Ideas
 			get { return idea; }
 			set {
 				idea = value;
-				Author = value.Creator;
+				Creator = value.Creator;
 				Text = value.Text;
 				Category = value.Category;
 				Created = value.Created;
@@ -83,7 +83,7 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-		public string Author {
+		public string Creator {
 			get {
 				return idea.Creator;
 			}

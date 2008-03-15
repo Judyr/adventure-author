@@ -74,11 +74,8 @@ namespace AdventureAuthor.Ideas
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
     	
         	InitializeComponent();
-                        
-            IdeaEntryBox.MaxLength = Idea.MAX_IDEA_LENGTH;
-            
-            // Set up 'Add idea' box and 'Show/Hide idea category' menu:
-            IdeaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;            
+                                    
+            // Set up 'Show/Hide idea category' menu:
             RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
             
             foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
@@ -108,10 +105,6 @@ namespace AdventureAuthor.Ideas
             ActiveBoard.Changed += titleChangedHandler; // board became dirty
             ActiveBoard.Opened += titleChangedHandler;
             ActiveBoard.Closed += titleChangedHandler;
-            ActiveBoard.Closed += delegate { 
-            	IdeaEntryBox.Text = String.Empty; 
-            	IdeaCategoryComboBox.SelectedValue = null;
-            };
             ActiveBoard.MagnetTransferredOut += new EventHandler<MagnetEventArgs>(ActiveBoard_MagnetPassedToList);
             
             magnetList.MagnetAdded += magnetAddedHandler;
@@ -388,18 +381,17 @@ namespace AdventureAuthor.Ideas
     	
         private void OnClick_AddMagnet(object sender, RoutedEventArgs e)
         {        	
-        	if (IdeaEntryBox.Text != String.Empty) {
-	        	Idea idea;
-	        	IdeaCategory category;
-	        	if (IdeaCategoryComboBox.SelectedItem != null) {
-	        		category = (IdeaCategory)IdeaCategoryComboBox.SelectedItem;
-	        	}
-	        	else {
-	        		category = IdeaCategory.Other;
-	        	}
-	        	idea = new Idea(IdeaEntryBox.Text,category,User.GetCurrentUser());
-	        	magnetList.AddIdea(idea);
-        	}
+        	Idea idea = new Idea();
+        	MagnetControl magnet = new MagnetControl(idea);
+        	EditMagnetWindow window = new EditMagnetWindow();
+        	window.MagnetEdited += new EventHandler<MagnetEventArgs>(newMagnetCreated);
+        	window.ShowDialog();
+        }
+
+        
+        private void newMagnetCreated(object sender, MagnetEventArgs e)
+        {
+        	magnetList.AddMagnet(e.Magnet,true);
         }
         
         
@@ -431,41 +423,42 @@ namespace AdventureAuthor.Ideas
         
         private void KeyPressed(object sender, KeyEventArgs e)
         {
-        	switch (e.Key) {
-        		case Key.Delete:
+        	if (SelectedMagnet != null) {
+        		if (e.Key == Key.Delete) {
         			DeleteMagnet(SelectedMagnet);
-        			break;
-        		case Key.Up:
-        			if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        				SelectedMagnet.Move(0,-1);
+        			e.Handled = true;
+        		}
+        		else if (ActiveBoard.HasMagnet(SelectedMagnet)) { // only perform these operations on board magnets
+        			switch (e.Key) {	
+		        		case Key.Up:
+		        			SelectedMagnet.Move(0,-1);
+		        			e.Handled = true;
+		        			break;
+		        		case Key.Down:
+		        			SelectedMagnet.Move(0,1);
+		        			e.Handled = true;
+		        			break;
+		        		case Key.Left:
+		        			if (Keyboard.Modifiers == ModifierKeys.Shift) {
+		        				SelectedMagnet.RotateLeft();
+		        			}
+		        			else {
+		        				SelectedMagnet.Move(-1,0);
+		        			}
+		        			e.Handled = true;
+		        			break;
+		        		case Key.Right:
+		        			if (Keyboard.Modifiers == ModifierKeys.Shift) {
+		        				SelectedMagnet.RotateRight();
+		        			}
+		        			else {
+		        				SelectedMagnet.Move(1,0);
+		        			}
+		        			e.Handled = true;
+		        			break;
         			}
-        			break;
-        		case Key.Down:
-        			if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        				SelectedMagnet.Move(0,1);
-        			}
-        			break;
-        		case Key.Left:
-        			if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        				if (Keyboard.Modifiers == ModifierKeys.Shift) {
-        					SelectedMagnet.RotateLeft();
-        				}
-        				else {
-        					SelectedMagnet.Move(-1,0);
-        				}
-        			}
-        			break;
-        		case Key.Right:
-        			if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        				if (Keyboard.Modifiers == ModifierKeys.Shift) {
-        					SelectedMagnet.RotateRight();
-        				}
-        				else {
-        					SelectedMagnet.Move(1,0);
-        				}
-        			}
-        			break;
-        	}        	
+        		}
+        	}    	
         }
         
         
@@ -489,7 +482,7 @@ namespace AdventureAuthor.Ideas
         private void OnClick_RotateLeft(object sender, EventArgs e) 
         {
         	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        		SelectedMagnet.Angle -= MagnetControl.DEGREES_TO_ROTATE;
+        		SelectedMagnet.RotateLeft();
         	}
         }
         
@@ -497,7 +490,7 @@ namespace AdventureAuthor.Ideas
         private void OnClick_RotateRight(object sender, EventArgs e) 
         {
         	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        		SelectedMagnet.Angle += MagnetControl.DEGREES_TO_ROTATE;
+        		SelectedMagnet.RotateRight();
         	}
         }
 
