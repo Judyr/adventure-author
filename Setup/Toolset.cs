@@ -141,7 +141,7 @@ namespace AdventureAuthor.Setup
 			NWN2AreaViewer.MouseModeChanged += delegate
 			{
 				if (previousMouseMode != NWN2AreaViewer.MouseMode) {
-					Log.WriteMessage("entered mode " + NWN2AreaViewer.MouseMode);
+					Log.WriteAction(LogAction.mode,"toolset_" + NWN2AreaViewer.MouseMode);
 					previousMouseMode = NWN2AreaViewer.MouseMode;
 				}
 			};
@@ -1274,10 +1274,10 @@ namespace AdventureAuthor.Setup
 					MagnetBoardViewer.Instance = new MagnetBoardViewer();
 				}
 				ElementHost.EnableModelessKeyboardInterop(MagnetBoardViewer.Instance);
-				MagnetBoardViewer.Instance.Show();
     		
 	    		// Attempt to open a magnet list, and handle its absence/corruption:
 	    		MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
+				MagnetBoardViewer.Instance.Show();
 			}
 			catch (Exception e) {
 				Say.Error("Could not open magnets window.",e);

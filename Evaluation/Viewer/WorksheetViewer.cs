@@ -33,8 +33,8 @@ namespace AdventureAuthor.Evaluation.Viewer
 		public static Mode EvaluationMode {
 			get { return evaluationMode; }
 			internal set {
-				evaluationMode = value;
-				Log.WriteAction(LogAction.set,"EvaluationMode",evaluationMode.ToString());
+				evaluationMode = value;				
+				Log.WriteAction(LogAction.mode,"evaluation_" + evaluationMode);
 			}
 		}
     	

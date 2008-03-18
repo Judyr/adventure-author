@@ -27,7 +27,9 @@ namespace AdventureAuthor.Ideas
     	
     	/// <summary>
     	/// The maximum number of degrees a magnet may deviate from an angle of 0 (in either direction.)
-    	/// </summary>    	
+    	/// </summary>  
+    	/// <remarks>Note that this constant is repeated in MagnetBoardControl and MagnetListControl
+    	/// with different values</remarks>  	
     	public const double MAXIMUM_ANGLE_IN_EITHER_DIRECTION = 6;
     	
     	#endregion
@@ -64,10 +66,6 @@ namespace AdventureAuthor.Ideas
 		public bool SaveAutomatically {
 			get { return saveAutomatically; }
 			set { 
-				//if (value == true && (Filename == null || Filename == String.Empty)) {
-				//	throw new InvalidOperationException("Cannot set this list to save changes automatically " +
-				//	                                    "without first providing a filename.");
-				//}
 				saveAutomatically = value; 
 			}
 		}
@@ -91,12 +89,23 @@ namespace AdventureAuthor.Ideas
 				}
 			}
 		}
+    	
+    	
+    	private Orientation orientation;
+		public Orientation Orientation {
+			get { return orientation; }
+			set { 
+				orientation = value;
+				SetOrientation(orientation);
+    			OnOrientationChanged(new EventArgs());
+			}
+		}
         
         
         private MouseButtonEventHandler magnetControl_MouseDoubleClickHandler;        
         private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;        
         private DragEventHandler magnetControl_DropHandler;
-        private EventHandler<MagnetEventArgs> magnetListChangedHandler;
+        private EventHandler magnetListChangedHandler;
     	
     	#endregion
     	
@@ -130,16 +139,6 @@ namespace AdventureAuthor.Ideas
     			handler(this,e);
     		}
     	}
-    	    	
-    	
-    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
-		protected virtual void OnMagnetSelected(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = MagnetSelected;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
 		
     	
     	public event EventHandler VisibleMagnetsChanged;   	
@@ -160,17 +159,26 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+		
+    	
+    	public event EventHandler OrientationChanged;   	
+		protected virtual void OnOrientationChanged(EventArgs e)
+		{
+			EventHandler handler = OrientationChanged;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
     	
     	#endregion
     	
     	#region Constructors
     	
         public MagnetList()
-        {
+        {            
         	magnetControl_MouseDoubleClickHandler = new MouseButtonEventHandler(magnetControl_MouseDoubleClick);
-        	magnetControl_SelectedHandler = new EventHandler<MagnetEventArgs>(magnetControl_Selected);
         	magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
-        	magnetListChangedHandler = new EventHandler<MagnetEventArgs>(MagnetListChanged_SaveAutomatically);
+        	magnetListChangedHandler = new EventHandler(MagnetListChanged_SaveAutomatically);
         		
             InitializeComponent();
             
@@ -180,8 +188,8 @@ namespace AdventureAuthor.Ideas
             }
             
             // All changes in the magnet list should be serialized automatically:
-            MagnetAdded += magnetListChangedHandler;
-            MagnetDeleted += magnetListChangedHandler;
+            MagnetAdded += delegate { automaticSave(); };
+            MagnetDeleted += delegate { automaticSave(); };
         }
         
         
@@ -283,6 +291,7 @@ namespace AdventureAuthor.Ideas
 		           	}
 	           	}
 	        }
+        	Orientation = Orientation.Horizontal;
         }      
         
         
@@ -377,6 +386,7 @@ namespace AdventureAuthor.Ideas
         	magnet.bringToFrontMenuItem.IsEnabled = false;
         	magnet.sendToBackMenuItem.IsEnabled = false;
         	magnet.removeDeleteMagnetMenuItem.Header = "Delete"; // more permanent than removing from a magnet board
+        	magnet.VerticalAlignment = VerticalAlignment.Center;
         	
         	magnetsPanel.Children.Add(magnet);
         	
@@ -417,7 +427,6 @@ namespace AdventureAuthor.Ideas
         {
         	try {
         		magnet.MouseDoubleClick += magnetControl_MouseDoubleClickHandler;
-        		magnet.Selected += magnetControl_SelectedHandler;
         		magnet.Drop += magnetControl_DropHandler;
         		magnet.Edited += magnetListChangedHandler;
         	}
@@ -435,7 +444,6 @@ namespace AdventureAuthor.Ideas
         {
         	try {
         		magnet.MouseDoubleClick -= magnetControl_MouseDoubleClickHandler;
-        		magnet.Selected -= magnetControl_SelectedHandler;
         		magnet.Drop -= magnetControl_DropHandler;
         		magnet.Edited -= magnetListChangedHandler;
         	}
@@ -588,16 +596,16 @@ namespace AdventureAuthor.Ideas
         }  
         
         
-        private void AngleMagnets(double maxAngle)
+        private void AngleMagnets(double maxDeviationFromZero)
         {
-        	if (maxAngle == 0) {
+        	if (maxDeviationFromZero == 0) {
         		StraightenMagnets();
         		return;
         	}
         	
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
         		bool angleToLeft = magnetsPanel.Children.IndexOf(magnet) % 2 == 0;
-        		magnet.RandomiseAngle(maxAngle,angleToLeft);
+        		magnet.RandomiseAngle(maxDeviationFromZero,angleToLeft);
         	}
         }
             	
@@ -719,6 +727,43 @@ namespace AdventureAuthor.Ideas
     		}
     	}  
     	
+    	
+    	private void SetOrientation(Orientation orientation)
+    	{
+    		switch (orientation) {
+    			case Orientation.Vertical:
+    				Grid.SetRow(controlPanel,0);
+    				Grid.SetColumn(controlPanel,1);
+    				row0.MinHeight = 220;
+    				row0.MaxHeight = 220;
+    				row1.MaxHeight = double.MaxValue;
+    				magnetsPanel.MaxHeight = double.MaxValue;
+    				column0.MinWidth = 0;
+    				column0.MaxWidth = 0;
+    				column1.MinWidth = 180;
+    				column1.MaxWidth = 180;
+	        		magnetsPanel.Orientation = Orientation.Vertical;
+    				scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+    				scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+    				break;
+    			case Orientation.Horizontal:
+    				Grid.SetRow(controlPanel,1);
+    				Grid.SetColumn(controlPanel,0);
+    				row0.MinHeight = 0;
+    				row0.MaxHeight = 0;
+    				row1.MinHeight = 220;
+    				row1.MaxHeight = 220;
+    				magnetsPanel.MaxHeight = 200;
+    				column0.MinWidth = 180;
+    				column0.MaxWidth = 180;
+    				column1.MaxWidth = double.MaxValue;
+	        		magnetsPanel.Orientation = Orientation.Horizontal;
+    				scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+    				scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+    				break;
+    		}
+    	}
+    	
 		
     	public override ISerializableData GetSerializable()
     	{
@@ -729,18 +774,60 @@ namespace AdventureAuthor.Ideas
         
         #region Event handlers
         
+//        /// <summary>
+//        /// Scroll the magnet list by scrolling the mouse wheel.
+//        /// </summary>
+//        /// <remarks>This is a preview event because scrolling the wheel over the window
+//        /// should move the list up and down, but not rotate the selected magnet (which is
+//        /// what usually happens on wheel scroll.) Handling the event will stop
+//        /// the selected magnet from rotating, if we are currently over the magnet list.</remarks>
+//        private void magnetListPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+//        {
+//        	double offset = e.Delta;
+//        	scroller.ScrollToHorizontalOffset(scroller.HorizontalOffset + offset);
+//        	e.Handled = true;
+//        }
+        
+        
+        internal void OnClick_Scatter(object sender, RoutedEventArgs e)
+        {
+        	MessageBoxResult result = MessageBox.Show("Tip all your magnets onto the board?",
+		        					                  "Scatter magnets?", 
+		        					                  MessageBoxButton.YesNo,
+		        					                  MessageBoxImage.Question,
+		        					                  MessageBoxResult.No,
+		        					                  MessageBoxOptions.None);
+        	if (result == MessageBoxResult.Yes) {
+        		Scatter();
+        	}
+        }
+    	
+    	
+        internal void OnClick_CreateMagnet(object sender, RoutedEventArgs e)
+        {        	
+        	Idea idea = new Idea();
+        	MagnetControl magnet = new MagnetControl(idea);
+        	EditMagnetWindow window = new EditMagnetWindow();
+        	window.MagnetEdited += new EventHandler<MagnetEventArgs>(newMagnetCreated);
+        	window.ShowDialog();
+        }
+
+        
+        private void newMagnetCreated(object sender, MagnetEventArgs e)
+        {
+        	AddMagnet(e.Magnet,true);
+        }
+        
+        
+        /// <summary>
+        /// Transfer a copy of this magnet to the currently active magnet board.
+        /// </summary>
     	private void magnetControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     	{
     		MagnetControl magnet = (MagnetControl)e.Source;
-    		if (magnetsPanel.Children.Contains(magnet)) {
+    		if (HasMagnet(magnet)) {
     			TransferMagnet(magnet);
     		}
-    	}
-    		
-        
-    	private void magnetControl_Selected(object sender, MagnetEventArgs e)
-    	{
-    		OnMagnetSelected(e);
     	}
     		
         
@@ -753,11 +840,21 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void MagnetListChanged_SaveAutomatically(object sender, MagnetEventArgs e)
+        /// <summary>
+        /// Save all changes to the magnet list automatically, unless you don't have a valid
+        /// filename or something went wrong on a previous attempt to save.
+        /// </summary>
+        private void MagnetListChanged_SaveAutomatically(object sender, EventArgs e)
+        {
+        	automaticSave();
+        }
+        
+        
+        private void automaticSave() 
         {
         	if (saveAutomatically) {
         		Save();
-        	}
+        	}        	
         }
         
         #endregion

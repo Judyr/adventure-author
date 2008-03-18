@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,6 +14,7 @@ using AdventureAuthor.Core;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
+using Microsoft.Samples.CustomControls;
 
 namespace AdventureAuthor.Ideas
 {
@@ -45,31 +47,36 @@ namespace AdventureAuthor.Ideas
     	private MagnetControl selectedMagnet;     	
 		public MagnetControl SelectedMagnet {
 			get { return selectedMagnet; }
-			set {
+			internal set {
 	    		if (selectedMagnet != value) {
 					if (selectedMagnet != null) {
 		    			selectedMagnet.DeselectFX();
+		    			selectedMagnet.Rotated -= invalidateUponRotateHandler;
 					}
 		    		selectedMagnet = value;
 		    		if (selectedMagnet != null) {
 		    			selectedMagnet.SelectFX();
+		    			selectedMagnet.Rotated += invalidateUponRotateHandler;
 		    		}
 	    		}
 			}
     	}
     	
     	
-    	private EventHandler<MagnetEventArgs> magnetControl_RequestRemoveHandler;
+    	private EventHandler magnetControl_RequestRemoveHandler;
     	private MouseButtonEventHandler magnetControl_PreviewMouseLeftButtonDownHandler;
     	private MouseEventHandler magnetControl_PreviewMouseMoveHandler;
+        private RoutedEventHandler magnetGotFocusHandler;
+        private RoutedEventHandler magnetLostFocusHandler;
+        private EventHandler invalidateUponRotateHandler;
     	
     	#endregion
     	
     	#region Constructors
     	
         public MagnetBoardViewer()
-        {
-        	magnetControl_RequestRemoveHandler = new EventHandler<MagnetEventArgs>(magnetControl_RequestRemove);
+        {    		
+        	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
     		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
     	
@@ -101,25 +108,33 @@ namespace AdventureAuthor.Ideas
             
             ActiveBoard.MagnetAdded += magnetAddedHandler;
             ActiveBoard.Drop += new DragEventHandler(magnetBoardControl_MagnetDropped);   	
-            ActiveBoard.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
             ActiveBoard.Changed += titleChangedHandler; // board became dirty
             ActiveBoard.Opened += titleChangedHandler;
             ActiveBoard.Closed += titleChangedHandler;
             ActiveBoard.MagnetTransferredOut += new EventHandler<MagnetEventArgs>(ActiveBoard_MagnetPassedToList);
             
             magnetList.MagnetAdded += magnetAddedHandler;
-            magnetList.VisibleMagnetsChanged += new EventHandler(VisibleMagnetsChanged);              
-            magnetList.MagnetSelected += new EventHandler<MagnetEventArgs>(MagnetSelected);
+            magnetList.VisibleMagnetsChanged += new EventHandler(VisibleMagnetsChanged);        
             magnetList.MagnetTransferredOut += new EventHandler<MagnetEventArgs>(magnetList_MagnetPassedToBoard); 
             magnetList.Drop += new DragEventHandler(magnetList_MagnetDropped);  
             magnetList.Scattered += new EventHandler(magnetList_Scattered);
+            magnetList.OrientationChanged += new EventHandler(magnetList_OrientationChanged);
             
+            magnetGotFocusHandler = new RoutedEventHandler(magnetGotFocus);
+            magnetLostFocusHandler = new RoutedEventHandler(magnetLostFocus);
+            EventHandler<MagnetEventArgs> trackFocusedMagnetHandler = new EventHandler<MagnetEventArgs>(trackFocusedMagnet);
+            ActiveBoard.MagnetAdded += trackFocusedMagnetHandler;
+            magnetList.MagnetAdded += trackFocusedMagnetHandler;
+            
+            invalidateUponRotateHandler = new EventHandler(invalidateUponRotate);
+                        
             Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
                        
             wonkyMagnetsMenuItem.IsChecked = false;
+            appearsAtSideMenuItem.IsChecked = false;
                         
     		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
 			try {
@@ -129,9 +144,21 @@ namespace AdventureAuthor.Ideas
 			}
 			catch (Exception e) {
     			Say.Debug("Failed to create a Magnets board directory for user:\n"+e);
-			}  
+			}
         }
 
+        
+        private void OnClick_ChangeBoardColour(object sender, EventArgs e)
+        {        	
+        	ColorPickerDialog colorPicker = new ColorPickerDialog();
+        	colorPicker.StartingColor = ActiveBoard.SurfaceColour;
+        	bool ok = (bool)colorPicker.ShowDialog();
+        	
+        	if (ok) {
+        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;
+        	}
+        }
+        
         
         private void magnetBoardViewer_Closing(object sender, CancelEventArgs e)
         {        	
@@ -298,7 +325,7 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void DeleteMagnet(MagnetControl magnet)
+        private void RemoveOrDeleteMagnet(MagnetControl magnet)
         {
         	if (magnet != null) {
         		if (magnetList.HasMagnet(magnet)) {
@@ -311,14 +338,14 @@ namespace AdventureAuthor.Ideas
         			if (result == MessageBoxResult.OK) {
         				magnetList.DeleteMagnet(magnet);
         				if (SelectedMagnet == magnet) {
-        					magnet = null;
+        					SelectedMagnet = null;
         				}
         			}
         		}
         		else if (ActiveBoard.HasMagnet(magnet)) {
         			ActiveBoard.DeleteMagnet(magnet);
         			if (SelectedMagnet == magnet) {
-        				magnet = null;
+        				SelectedMagnet = null;
         			}
         		}
         	}        	
@@ -376,36 +403,18 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_Exit(object sender, RoutedEventArgs e)
     	{
     		Close();
-    	}    	 
+    	}   
     	
     	
-        private void OnClick_AddMagnet(object sender, RoutedEventArgs e)
-        {        	
-        	Idea idea = new Idea();
-        	MagnetControl magnet = new MagnetControl(idea);
-        	EditMagnetWindow window = new EditMagnetWindow();
-        	window.MagnetEdited += new EventHandler<MagnetEventArgs>(newMagnetCreated);
-        	window.ShowDialog();
-        }
-
-        
-        private void newMagnetCreated(object sender, MagnetEventArgs e)
-        {
-        	magnetList.AddMagnet(e.Magnet,true);
-        }
+    	private void OnClick_CreateMagnet(object sender, RoutedEventArgs e)
+        {   
+    		magnetList.OnClick_CreateMagnet(sender,e);
+    	}
         
         
         private void OnClick_Scatter(object sender, RoutedEventArgs e)
         {
-        	MessageBoxResult result = MessageBox.Show("Tip all your magnets onto the board?",
-		        					                  "Scatter magnets?", 
-		        					                  MessageBoxButton.OKCancel,
-		        					                  MessageBoxImage.Question,
-		        					                  MessageBoxResult.Cancel,
-		        					                  MessageBoxOptions.None);
-        	if (result == MessageBoxResult.OK) {
-        		magnetList.Scatter();
-        	}
+        	magnetList.OnClick_Scatter(sender,e);
         }
         
         
@@ -415,48 +424,52 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void MagnetSelected(object sender, MagnetEventArgs e)
+        private void previewKeyDown(object sender, KeyEventArgs e)
         {
-        	SelectedMagnet = e.Magnet;
-        }
-
-        
-        private void KeyPressed(object sender, KeyEventArgs e)
-        {
+        	Log.WriteMessage(e.Key.ToString() + " is down");
         	if (SelectedMagnet != null) {
         		if (e.Key == Key.Delete) {
-        			DeleteMagnet(SelectedMagnet);
+        			RemoveOrDeleteMagnet(SelectedMagnet);
         			e.Handled = true;
         		}
-        		else if (ActiveBoard.HasMagnet(SelectedMagnet)) { // only perform these operations on board magnets
-        			switch (e.Key) {	
-		        		case Key.Up:
-		        			SelectedMagnet.Move(0,-1);
-		        			e.Handled = true;
-		        			break;
-		        		case Key.Down:
-		        			SelectedMagnet.Move(0,1);
-		        			e.Handled = true;
-		        			break;
-		        		case Key.Left:
-		        			if (Keyboard.Modifiers == ModifierKeys.Shift) {
-		        				SelectedMagnet.RotateLeft();
-		        			}
-		        			else {
-		        				SelectedMagnet.Move(-1,0);
-		        			}
-		        			e.Handled = true;
-		        			break;
-		        		case Key.Right:
-		        			if (Keyboard.Modifiers == ModifierKeys.Shift) {
-		        				SelectedMagnet.RotateRight();
-		        			}
-		        			else {
-		        				SelectedMagnet.Move(1,0);
-		        			}
-		        			e.Handled = true;
-		        			break;
+        		else if (ActiveBoard.HasMagnet(SelectedMagnet)) { // only perform these operations on board magnets     
+        			Log.WriteMessage("..so do stuff");
+        			bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+        			bool down = Keyboard.IsKeyDown(Key.Down);
+        			bool up = Keyboard.IsKeyDown(Key.Up);
+        			bool left = Keyboard.IsKeyDown(Key.Left);
+        			bool right = Keyboard.IsKeyDown(Key.Right);          			
+        			
+        			double xMovement = 0; // if both down & up are pressed this will amount to 0
+        			double yMovement = 0; // if both right & left are pressed this will amount to 0
+        			
+        			double step = 1;
+        			
+        			if (up) {
+        				yMovement -= step;
+        				Log.WriteMessage("up: yMovement: " + yMovement);
         			}
+        			if (down) {
+        				yMovement += step;
+        				Log.WriteMessage("dn: yMovement: " + yMovement);
+        			}
+        			if (left) {
+        				xMovement -= step;
+        				Log.WriteMessage("lt: xMovement: " + xMovement);
+        			}
+        			if (right) {
+        				xMovement += step;
+        				Log.WriteMessage("rt: xMovement: " + xMovement);
+        			}
+        			
+        			if (shift) { 
+        				SelectedMagnet.RotateBy(xMovement * MagnetControl.DEGREES_TO_ROTATE,
+		        				                MagnetBoardControl.MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+        			}
+        			else {
+        				SelectedMagnet.Move(xMovement,yMovement);
+        			}
+        			e.Handled = true;        			
         		}
         	}    	
         }
@@ -476,22 +489,6 @@ namespace AdventureAuthor.Ideas
         			ActiveBoard.DeleteMagnet(magnet);
         		}
     		}
-        }
-                
-        
-        private void OnClick_RotateLeft(object sender, EventArgs e) 
-        {
-        	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        		SelectedMagnet.RotateLeft();
-        	}
-        }
-        
-        
-        private void OnClick_RotateRight(object sender, EventArgs e) 
-        {
-        	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
-        		SelectedMagnet.RotateRight();
-        	}
         }
 
         
@@ -578,8 +575,75 @@ namespace AdventureAuthor.Ideas
         		SelectedMagnet = null;
         	}
         }
-    
         
+        
+        /// <summary>
+        /// Ensure that every magnet that's added to the board is watched for focus events,
+        /// so that we always know which magnet is currently selected. By removing and then
+        /// adding the appropriate handlers, we ensure they end up with exactly one.
+        /// </summary>
+        private void trackFocusedMagnet(object sender, MagnetEventArgs e)
+        {
+           e.Magnet.GotFocus -= magnetGotFocusHandler;
+           e.Magnet.GotFocus += magnetGotFocusHandler;
+           e.Magnet.LostFocus -= magnetLostFocusHandler;
+           e.Magnet.LostFocus += magnetLostFocusHandler;            
+        }
+                
+        /// <summary>
+        /// To lock the assignment of SelectedMagnet when you need to check
+        /// the value of SelectedMagnet first.
+        /// </summary>
+        private object padlock = new object();
+        
+        /// <summary>
+        /// If any magnet gets focus, it becomes the selected magnet.
+        /// </summary>
+        private void magnetGotFocus(object sender, EventArgs e)
+        {
+        	SelectedMagnet = (MagnetControl)sender;
+        }
+        
+        
+        /// <summary>
+        /// If the selected magnet loses focus, it is no longer the selected magnet.
+        /// </summary>
+        private void magnetLostFocus(object sender, EventArgs e)
+        {
+        	lock (padlock) { // check that a newly focused magnet has not assigned SelectedMagnet already
+        		if (SelectedMagnet == (MagnetControl)sender) {
+        			SelectedMagnet = null;
+        		}
+        	}
+        }    
+        
+        
+        /// <summary>
+        /// Rotate the selected magnet with the mouse wheel, if one exists.
+        /// </summary>
+        private void magnetBoardViewerMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+        	double offset = -(e.Delta / 60);
+        	if (SelectedMagnet != null && ActiveBoard.HasMagnet(SelectedMagnet)) {
+        		SelectedMagnet.RotateBy(offset,MagnetBoardControl.MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+        	}
+        } 
+        
+        
+        /// <summary>
+        /// Invalidate the visuals after a magnet has been rotated, to account for the 
+        /// dashed selection lines not updating. 
+        /// </summary>
+        /// <remarks>This is only necessary for the selected magnet, and only then
+        /// if it was selected using tab.</remarks>
+        private void invalidateUponRotate(object sender, EventArgs e)
+        {
+        	if (SelectedMagnet == (MagnetControl)sender) {
+        		((MagnetControl)sender).InvalidateArrange();//.InvalidateVisual();
+        	}
+        }
+        
+                
 	    private void magnetBoardControl_MagnetDropped(object sender, DragEventArgs e)
 	    {
 	         IDataObject data = e.Data;
@@ -608,7 +672,7 @@ namespace AdventureAuthor.Ideas
 	         	
 	         	if (fromMagnetList) {
 	         		ActiveBoard.AddMagnet(magnet,false);
-	         		SelectedMagnet = magnet; // select the clone rather than the original
+	         		magnet.Focus(); // select the clone rather than the original
 	         	}
 	         		
 	         	ActiveBoard.BringToFront(magnet);
@@ -652,8 +716,10 @@ namespace AdventureAuthor.Ideas
         private void VisibleMagnetsChanged(object sender, EventArgs ea)
         {        	
         	// Check the selected magnet has not been hidden, and nullify it if it has:
-        	if (SelectedMagnet != null && !SelectedMagnet.IsVisible) {
-        		SelectedMagnet = null;
+        	lock (padlock) {
+	        	if (SelectedMagnet != null && !SelectedMagnet.IsVisible) {
+	        		SelectedMagnet = null;
+	        	}
         	}
         	
         	foreach (ShowHideCategoryMenuItem menuItem in ShowHideCategoriesMenu.Items) {
@@ -675,9 +741,52 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void magnetControl_RequestRemove(object sender, MagnetEventArgs e)
+        private void magnetList_OrientationChanged(object sender, EventArgs e)
         {
-        	DeleteMagnet(e.Magnet);
+//        	try {
+//        	bool displayedAtSide = magnetList.Orientation == Orientation.Vertical;
+//        	if (appearsAtSideMenuItem.IsChecked != displayedAtSide) {
+//        		appearsAtSideMenuItem.IsChecked = displayedAtSide;
+//        	}
+//        		 
+//        	}
+//        	catch (Exception ex) {
+//        		MessageBox.Show(ex.ToString());
+//        	}
+        }
+        
+        
+        private void magnetControl_RequestRemove(object sender, EventArgs e)
+        {
+        	if (sender is MagnetControl) {
+        		RemoveOrDeleteMagnet((MagnetControl)sender);
+        	}
+        }
+        
+        
+        private void appearsAtSideChecked(object sender, EventArgs e)
+        {
+        	magnetList.Orientation = Orientation.Vertical;
+	        
+	        Grid.SetRowSpan(magneticSurface,2);
+	        Grid.SetColumnSpan(magneticSurface,1);
+	        Grid.SetRow(magnetList,1);
+	        Grid.SetRowSpan(magnetList,2);
+	        Grid.SetColumn(magnetList,1);
+	        Grid.SetColumnSpan(magnetList,1);
+        }
+        
+        
+        private void appearsAtSideUnchecked(object sender, EventArgs e)
+        {
+        	magnetList.Orientation = Orientation.Horizontal;
+	        
+	        Grid.SetRowSpan(magneticSurface,1);
+	        Grid.SetColumnSpan(magneticSurface,2);
+	        Grid.SetRow(magnetList,2);
+	        Grid.SetRowSpan(magnetList,1);
+	        Grid.SetColumn(magnetList,0);
+	        Grid.SetColumnSpan(magnetList,2);
         }
         
         #endregion

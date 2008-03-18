@@ -21,16 +21,56 @@ namespace AdventureAuthor.Ideas
     {       
     	#region Constants
     	
-    	public const double MAGNET_MAX_WIDTH = 150;
-		public const double DEGREES_TO_ROTATE = 2;
+    	static MagnetControl()
+    	{
+//    		PLOTCOLOR = Color.FromScRgb(1.0f,0.3915725f,0.8879231f,0.5394795f);// = "#FFA8F2C2";
+//			QUESTSCOLOR = Color.FromScRgb(1.0f,0.5332764f,0.6724432f,1.0f);// = "#FFC1D6FE";
+//			CHARACTERSCOLOR = Color.FromScRgb(1.0f,1.0f,0.6444797f,0.3324515f);// = "#FFFFD29C";
+//			DIALOGUECOLOR = Color.FromScRgb(1.0f,0.8631572f,0.8879231f,0.3915725f);// = "#FFEFF2A8";
+//			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.5775805f,0.5775805f);// = "#FFFFC8C8";
+//			ITEMSCOLOR = Color.FromScRgb(1.0f,0.8631572f,0.5647115f,0.9734453f);// = "#FFEFC6FC";
+//			OTHERCOLOR = Color.FromScRgb(1.0f,0.9215819f,0.7083758f,0.5457245f);// = "#FFF6DBC3";
+//			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.838799f,0.838799f,0.838799f);// = "#FFEBECEC";
+			
+    		PLOTCOLOR = Color.FromScRgb(1.0f,0.1915725f,0.6879231f,0.3394795f);// = "#FFA8F2C2";
+			QUESTSCOLOR = Color.FromScRgb(1.0f,0.3332764f,0.4724432f,1.0f);// = "#FFC1D6FE";
+			CHARACTERSCOLOR = Color.FromScRgb(1.0f,1.0f,0.5972018f,0.2541521f);// = "#FFFFD29C";
+			DIALOGUECOLOR = Color.FromScRgb(1.0f,1.0f,0.8069522f,0.1559265f);// = "#FFEFF2A8";
+			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.3775805f,0.3775805f);// = "#FFFFC8C8";
+			ITEMSCOLOR = Color.FromScRgb(1.0f,0.6631572f,0.3647115f,0.7734453f);// = "#FFEFC6FC";
+			OTHERCOLOR = Color.FromScRgb(1.0f,0.7215819f,0.5083758f,0.3457245f);// = "#FFF6DBC3";
+			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.638799f,0.638799f,0.638799f);// = "#FFEBECEC";
+			    	
+	    	PLOTBRUSH = new SolidColorBrush(PLOTCOLOR);
+	    	QUESTSBRUSH = new SolidColorBrush(QUESTSCOLOR);
+			CHARACTERSBRUSH = new SolidColorBrush(CHARACTERSCOLOR);
+	    	DIALOGUEBRUSH = new SolidColorBrush(DIALOGUECOLOR);
+	    	SETTINGBRUSH = new SolidColorBrush(SETTINGCOLOR);
+	    	ITEMSBRUSH = new SolidColorBrush(ITEMSCOLOR);
+	    	OTHERBRUSH = new SolidColorBrush(OTHERCOLOR);
+	    	TOOLSETBRUSH = new SolidColorBrush(TOOLSETCOLOR);
+    	}
     	
-    	protected static readonly Brush CHARACTERS_BRUSH = Brushes.LightCoral;
-    	protected static readonly Brush ITEMS_BRUSH = Brushes.Wheat;
-    	protected static readonly Brush PLOT_BRUSH = Brushes.LightGreen;
-    	protected static readonly Brush QUESTS_BRUSH = Brushes.LightBlue;
-    	protected static readonly Brush SETTING_BRUSH = Brushes.BurlyWood;
-    	protected static readonly Brush OTHER_BRUSH = Brushes.LightGray;
-    	protected static readonly Brush RESOURCES_BRUSH = Brushes.White;
+    	public const double MAGNET_MAX_WIDTH = 150;
+		public const double DEGREES_TO_ROTATE = 2;		
+		
+		protected static Color PLOTCOLOR;// = "#FFA8F2C2";
+		protected static Color QUESTSCOLOR;// = "#FFC1D6FE";
+		protected static Color CHARACTERSCOLOR;// = "#FFFFD29C";
+		protected static Color DIALOGUECOLOR;// = "#FFEFF2A8";
+		protected static Color SETTINGCOLOR;// = "#FFFFC8C8";
+		protected static Color ITEMSCOLOR;// = "#FFEFC6FC";
+		protected static Color OTHERCOLOR;// = "#FFF6DBC3";
+		protected static Color TOOLSETCOLOR;// = "#FFEBECEC";
+    	
+    	protected static SolidColorBrush PLOTBRUSH;
+    	protected static SolidColorBrush QUESTSBRUSH;
+		protected static SolidColorBrush CHARACTERSBRUSH;
+    	protected static SolidColorBrush DIALOGUEBRUSH;
+    	protected static SolidColorBrush SETTINGBRUSH;
+    	protected static SolidColorBrush ITEMSBRUSH;
+    	protected static SolidColorBrush OTHERBRUSH;
+    	protected static SolidColorBrush TOOLSETBRUSH;
     	
     	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
     	protected static readonly BevelBitmapEffect bevel = new BevelBitmapEffect();
@@ -119,7 +159,7 @@ namespace AdventureAuthor.Ideas
 					throw new InvalidOperationException("This magnet has no idea.");
 				}
 				idea.Category = value;
-				Background = GetColourForCategory(idea.Category);
+				Background = GetBrushForCategory(idea.Category);
 			}
 		}
 		
@@ -170,10 +210,12 @@ namespace AdventureAuthor.Ideas
 		/// </summary>
 		public double Angle {
     		get {     			
-    			return ((RotateTransform)RenderTransform).Angle;
+				double angle = ((RotateTransform)RenderTransform).Angle;
+				return angle;
     		}
 			set { 
     			((RotateTransform)RenderTransform).Angle = value;
+				OnRotated(new EventArgs());
 			}
 		}    	
 		
@@ -187,52 +229,62 @@ namespace AdventureAuthor.Ideas
     	
     	#region Events
     	
-    	public event EventHandler<MagnetEventArgs> Selected;    	
-		protected virtual void OnSelected(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = Selected;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
-    	
-    	
-    	public EventHandler<MagnetEventArgs> Edited;    	
-    	protected virtual void OnEdited(MagnetEventArgs e)
+    	public EventHandler Edited;    	
+    	protected virtual void OnEdited(EventArgs e)
     	{
-    		EventHandler<MagnetEventArgs> handler = Edited;
+    		EventHandler handler = Edited;
     		if (handler != null) {
     			handler(this,e);
     		}
     	}
+		
+		
+		public event EventHandler Rotated;		
+		protected virtual void OnRotated(EventArgs e)
+		{
+			EventHandler handler = Rotated;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
     			
 		
-		internal event EventHandler<MagnetEventArgs> RequestSendToBack;		
-		protected virtual void OnRequestSendToBack(MagnetEventArgs e)
+		public event EventHandler RequestSendToBack;		
+		protected virtual void OnRequestSendToBack(EventArgs e)
 		{
-			EventHandler<MagnetEventArgs> hander = RequestSendToBack;
-			if (hander != null) {
-				hander(this, e);
+			EventHandler handler = RequestSendToBack;
+			if (handler != null) {
+				handler(this, e);
 			}
 		}
 		
 		
-		internal event EventHandler<MagnetEventArgs> RequestBringToFront;		
-		protected virtual void OnRequestBringToFront(MagnetEventArgs e)
+		public event EventHandler RequestBringToFront;		
+		protected virtual void OnRequestBringToFront(EventArgs e)
 		{
-			EventHandler<MagnetEventArgs> hander = RequestBringToFront;
-			if (hander != null) {
-				hander(this, e);
+			EventHandler handler = RequestBringToFront;
+			if (handler != null) {
+				handler(this, e);
 			}
 		}
 		
 		
-		internal event EventHandler<MagnetEventArgs> RequestRemove;		
-		protected virtual void OnRequestRemove(MagnetEventArgs e)
+		public event EventHandler RequestRemove;		
+		protected virtual void OnRequestRemove(EventArgs e)
 		{
-			EventHandler<MagnetEventArgs> hander = RequestRemove;
-			if (hander != null) {
-				hander(this, e);
+			EventHandler handler = RequestRemove;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+		
+		public event EventHandler TaskSubmitted;		
+		protected virtual void OnTaskSubmitted(EventArgs e)
+		{
+			EventHandler handler = TaskSubmitted;
+			if (handler != null) {
+				handler(this, e);
 			}
 		}
     	
@@ -329,45 +381,100 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	public static Brush GetColourForCategory(IdeaCategory category)
+    	/// <summary>
+    	/// Get the colour that represents a given category of idea.
+    	/// </summary>
+    	/// <param name="category">A category of idea (e.g. Quests, Plot)</param>
+    	/// <returns>The colour representing the given idea category</returns>
+    	public static Color GetColourForCategory(IdeaCategory category)
     	{
-    		Brush brush;
+    		Color color;
 			switch (category) {
-				case IdeaCategory.Characters:
-					brush = CHARACTERS_BRUSH;
-					break;
-				case IdeaCategory.Items:
-					brush = ITEMS_BRUSH;
-					break;
 				case IdeaCategory.Plot:
-					brush = PLOT_BRUSH;
+					color = PLOTCOLOR;
 					break;
 				case IdeaCategory.Quests:
-					brush = QUESTS_BRUSH;
+					color = QUESTSCOLOR;
+					break;
+				case IdeaCategory.Characters:
+					color = CHARACTERSCOLOR;
+					break;
+				case IdeaCategory.Dialogue:
+					color = DIALOGUECOLOR;
 					break;
 				case IdeaCategory.Setting:
-					brush = SETTING_BRUSH;
+					color = SETTINGCOLOR;
+					break;
+				case IdeaCategory.Items:
+					color = ITEMSCOLOR;
 					break;
 				case IdeaCategory.Other:
-					brush = OTHER_BRUSH;
+					color = OTHERCOLOR;
 					break;
 				case IdeaCategory.Toolset:
-					brush = RESOURCES_BRUSH;
+					color = TOOLSETCOLOR;
 					break;
 				default:
-					brush = OTHER_BRUSH;
+					color = OTHERCOLOR;
+					break;
+			}
+    		return color;
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Get the colour brush that represents a given category of idea.
+    	/// </summary>
+    	/// <param name="category">A category of idea (e.g. Quests, Plot)</param>
+    	/// <returns>The colour brush representing the given idea category</returns>
+    	public static SolidColorBrush GetBrushForCategory(IdeaCategory category)
+    	{
+    		SolidColorBrush brush;
+			switch (category) {
+				case IdeaCategory.Plot:
+					brush = PLOTBRUSH;
+					break;
+				case IdeaCategory.Quests:
+					brush = QUESTSBRUSH;
+					break;
+				case IdeaCategory.Characters:
+					brush = CHARACTERSBRUSH;
+					break;
+				case IdeaCategory.Dialogue:
+					brush = DIALOGUEBRUSH;
+					break;
+				case IdeaCategory.Setting:
+					brush = SETTINGBRUSH;
+					break;
+				case IdeaCategory.Items:
+					brush = ITEMSBRUSH;
+					break;
+				case IdeaCategory.Other:
+					brush = OTHERBRUSH;
+					break;
+				case IdeaCategory.Toolset:
+					brush = TOOLSETBRUSH;
+					break;
+				default:
+					brush = OTHERBRUSH;
 					break;
 			}
     		return brush;
     	}
     	    	
     	
+    	/// <summary>
+    	/// Apply bitmap effects to indicate that this magnet is currently selected.
+    	/// </summary>
     	internal void SelectFX()
     	{
     		fxGroup.Children.Add(glow);
     	}    	  
     	
     	
+    	/// <summary>
+    	/// Remove bitmap effects which indicated that this magnet was selected.
+    	/// </summary>
     	internal void DeselectFX()
     	{
     		fxGroup.Children.Remove(glow);
@@ -376,36 +483,75 @@ namespace AdventureAuthor.Ideas
 		
 		public void Move(double right, double down)
 		{
+			Log.WriteMessage("move " + right.ToString() + "," + down);
 			Canvas.SetTop(this,Canvas.GetTop(this) + down);
 			Canvas.SetLeft(this,Canvas.GetLeft(this) + right);
 		}
 		
 		
-		public void Rotate(double angle)
+		/// <summary>
+		/// Rotate this magnet by a certain number of degrees, within a 
+		/// given maximum deviation from zero in either direction.
+		/// </summary>
+		/// <param name="offset">The number of degrees to move the magnet angle by
+		/// (positive to move to the right, negative to move to the left)</param>
+		public void RotateBy(double offset) 
 		{
-			Angle += angle;
+			RotateBy(offset,180);
 		}
 		
 		
-		public void RotateLeft()
-		{
-			Rotate(-DEGREES_TO_ROTATE);
+		/// <summary>
+		/// Rotate this magnet by a certain number of degrees, within a 
+		/// given maximum deviation from zero in either direction.
+		/// </summary>
+		/// <param name="offset">The number of degrees to move the magnet angle by
+		/// (positive to move to the right, negative to move to the left)</param>
+		/// <param name="maxDeviationFromZero">The maximum number of degrees
+		/// the magnet may deviate from zero (in either direction, so passing
+		/// the number 45 will restrict the magnet to an angle of between
+		/// -45 degrees and 45 degrees). If the new
+		/// angle would be outside this range, the magnet is not rotated</param>
+		public void RotateBy(double offset, double maxDeviationFromZero)
+		{			                
+			double proposedAngle = Angle + offset;
+			while (proposedAngle < 0) {
+				proposedAngle += 360;
+			}
+			while (proposedAngle > 360) {
+				proposedAngle -= 360;	
+			}
+			
+			if (proposedAngle < maxDeviationFromZero || proposedAngle > 360 - maxDeviationFromZero) {
+				Angle = proposedAngle;
+			}
 		}
 		
 		
-		public void RotateRight()
-		{			
-			Rotate(DEGREES_TO_ROTATE);
-		}
-		
-		
+		/// <summary>
+		/// Angle the magnet randomly, within a certain deviation from zero.
+		/// </summary>
+		/// <param name="maxDeviationFromZero">The maximum number of degrees
+		/// the magnet may deviate from zero (in either direction, so passing
+		/// the number 45 will restrict the magnet to an angle of between
+		/// -45 degrees and 45 degrees)</param>
 		public void RandomiseAngle(double maxDeviationFromZero)
 		{
 			bool angleToLeft = DateTime.Now.Millisecond % 2 == 0;
 			RandomiseAngle(maxDeviationFromZero,angleToLeft);
 		}
         
-        
+        	
+		/// <summary>
+		/// Angle the magnet randomly, within a certain deviation from zero.
+		/// </summary>
+		/// <param name="maxDeviationFromZero">The maximum number of degrees
+		/// the magnet may deviate from zero (in either direction, so passing
+		/// the number 45 will restrict the magnet to an angle of between
+		/// -45 degrees and 45 degrees)</param>
+		/// <param name="angleToLeft">True to angle the magnet a random number of degrees
+		/// to the left; false to angle the magnet a random number of degrees
+		/// to the right</param>
         public void RandomiseAngle(double maxDeviationFromZero, bool angleToLeft)
         {
         	double angle = (maxDeviationFromZero * random.NextDouble());
@@ -420,6 +566,10 @@ namespace AdventureAuthor.Ideas
         }
         
         
+        /// <summary>
+        /// Get an identical copy of this MagnetControl.
+        /// </summary>
+        /// <returns>An identical copy of this MagnetControl</returns>
 		public object Clone()
 		{
 			MagnetInfo info = (MagnetInfo)GetSerializable();
@@ -443,13 +593,16 @@ namespace AdventureAuthor.Ideas
         #endregion
         
         #region Event handlers   
-        
-        private void MagnetControl_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-        	OnSelected(new MagnetEventArgs(this));
-        }
-
     	
+        /// <summary>
+        /// Focus on the magnet if you receive a MouseDown event.
+        /// </summary>
+        private void magnetControlMouseDown(object sender, MouseButtonEventArgs e)
+        {
+        	Focus();
+        }
+        
+        
         /// <summary>
         /// When the size changes, we need to update the RotateTransform's centre of rotation,
         /// otherwise it will no longer rotate evenly around the centre - this will screw up
@@ -487,6 +640,12 @@ namespace AdventureAuthor.Ideas
     		OnRequestRemove(new MagnetEventArgs(this));
     	}
     	        
+    	
+    	private void OnClick_AddToTasksDelete(object sender, EventArgs e)
+    	{
+    		OnTaskSubmitted(new MagnetEventArgs(this));
+    	}
+    	
         #endregion
    
 
