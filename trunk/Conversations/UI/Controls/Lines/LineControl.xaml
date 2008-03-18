@@ -31,7 +31,7 @@
     MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
     Padding="6" AllowDrop="True" 
 	>
-	
+		
 	<UserControl.Resources>
 		<ContextMenu x:Key="LineControlContextMenu">
 			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> 

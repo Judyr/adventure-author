@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
 using System.IO;
@@ -13,6 +15,17 @@ namespace AdventureAuthor.Ideas
     /// </summary>
     public partial class MagnetBoardControl : Board
     {
+    	#region Constants
+    	
+    	/// <summary>
+    	/// The maximum number of degrees a magnet may deviate from an angle of 0 (in either direction.)
+    	/// </summary>  
+    	/// <remarks>Note that this constant is repeated in MagnetBoardControl and MagnetListControl
+    	/// with different values</remarks>  	
+    	public const double MAXIMUM_ANGLE_IN_EITHER_DIRECTION = 30;
+    	
+    	#endregion
+    	
     	#region Fields
     	
     	private string filename;    	
@@ -20,9 +33,30 @@ namespace AdventureAuthor.Ideas
 			get { return filename; }
 			set { 
 				filename = value;
-				Log.WriteMessage("Filename:  " + filename);
 			}
-		}    	
+		}    
+    	
+    	
+		public Color SurfaceColour {
+			get { 
+    			return ((LinearGradientBrush)Resources["fridgeBrush"]).GradientStops[0].Color;
+    		}
+			set { 
+    			((LinearGradientBrush)Resources["fridgeBrush"]).GradientStops[0].Color = value; 
+    			MakeDirty();
+    		}
+		}
+    	
+    	
+    	private Color defaultSurfaceColour;
+		public Color DefaultSurfaceColour {
+			get { 
+    			return (Color)Resources["defaultSurfaceColour"];
+    		}
+			set { 
+    			Resources["defaultSurfaceColour"] = value; 
+    		}
+		}
     	
     	
     	/// <summary>
@@ -41,11 +75,10 @@ namespace AdventureAuthor.Ideas
     	private Random random = new Random();        
     	
     	
-        private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;     
         private DragEventHandler magnetControl_DropHandler;
-        private EventHandler<MagnetEventArgs> magnetControl_SendToBackHandler;
-        private EventHandler<MagnetEventArgs> magnetControl_BringToFrontHandler;
-        private EventHandler<MagnetEventArgs> magnetBoard_ChangedHandler;
+        private EventHandler magnetControl_SendToBackHandler;
+        private EventHandler magnetControl_BringToFrontHandler;
+        private EventHandler magnetControl_EditedHandler;
     	
     	#endregion
     	
@@ -75,16 +108,6 @@ namespace AdventureAuthor.Ideas
 		protected virtual void OnMagnetMoved(MagnetEventArgs e)
 		{
 			EventHandler<MagnetEventArgs> handler = MagnetMoved;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
-		
-    	
-    	public event EventHandler<MagnetEventArgs> MagnetSelected;    	
-		protected virtual void OnMagnetSelected(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = MagnetSelected;
 			if (handler != null) {
 				handler(this, e);
 			}
@@ -133,20 +156,19 @@ namespace AdventureAuthor.Ideas
     	#endregion
     	
     	#region Constructors
-    	
+    	    	
     	public MagnetBoardControl()
     	{
-    		magnetControl_SelectedHandler = new EventHandler<MagnetEventArgs>(magnetControl_Selected); 
     		magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
-    		magnetControl_BringToFrontHandler = new EventHandler<MagnetEventArgs>(magnetControl_BringToFront);
-    		magnetControl_SendToBackHandler = new EventHandler<MagnetEventArgs>(magnetControl_SendToBack);
-    		magnetBoard_ChangedHandler = new EventHandler<MagnetEventArgs>(magnetBoard_Changed);
+    		magnetControl_BringToFrontHandler = new EventHandler(magnetControl_BringToFront);
+    		magnetControl_SendToBackHandler = new EventHandler(magnetControl_SendToBack);
+    		magnetControl_EditedHandler = new EventHandler(magnetBoard_Changed);
     		Drop += new DragEventHandler(magnetBoard_Drop);
     		
-    		MagnetAdded += magnetBoard_ChangedHandler;
-    		MagnetDeleted += magnetBoard_ChangedHandler;
-    		MagnetMoved += magnetBoard_ChangedHandler;
-    		
+    		MagnetAdded += delegate { MakeDirty(); };
+    		MagnetDeleted += delegate { MakeDirty(); };
+    		MagnetMoved += delegate { MakeDirty(); };
+    		  		    		
     		InitializeComponent();    		
     	}
     	
@@ -155,7 +177,7 @@ namespace AdventureAuthor.Ideas
     	{
     		Open(boardInfo);
     	}
-        
+    	        
         #endregion
         
         #region Methods   
@@ -191,6 +213,7 @@ namespace AdventureAuthor.Ideas
         private void OpenBoard(MagnetBoardInfo boardInfo)
         {
 	        CloseBoard();
+	        SurfaceColour = boardInfo.SurfaceColour;
 	    	foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		AddMagnet(magnet,false);
@@ -238,7 +261,7 @@ namespace AdventureAuthor.Ideas
 	        	Point location = GetRandomLocation();
 	        	magnet.X = location.X;
 	        	magnet.Y = location.Y;
-	        	magnet.RandomiseAngle(MagnetList.MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+	        	magnet.RandomiseAngle(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
 			}        	
 	
         	AddHandlers(magnet);
@@ -252,6 +275,7 @@ namespace AdventureAuthor.Ideas
 			
 			mainCanvas.Children.Add(magnet);
 			BringToFront(magnet);
+			
 			OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
@@ -267,11 +291,10 @@ namespace AdventureAuthor.Ideas
         private void AddHandlers(MagnetControl magnet)
         {
         	try {
-        		magnet.Selected += magnetControl_Selected;
         		magnet.Drop += magnetControl_Drop;
         		magnet.RequestBringToFront += magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack += magnetControl_SendToBackHandler;
-        		magnet.Edited += magnetBoard_ChangedHandler;
+        		magnet.Edited += magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -282,11 +305,10 @@ namespace AdventureAuthor.Ideas
         private void RemoveHandlers(MagnetControl magnet)
         {
         	try {
-        		magnet.Selected -= magnetControl_Selected;
         		magnet.Drop -= magnetControl_Drop;
         		magnet.RequestBringToFront -= magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack -= magnetControl_SendToBackHandler;
-        		magnet.Edited -= magnetBoard_ChangedHandler;
+        		magnet.Edited -= magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -311,7 +333,7 @@ namespace AdventureAuthor.Ideas
         private Point GetRandomLocation()
         {
         	double x = random.NextDouble() * (ActualWidth - MagnetControl.MAGNET_MAX_WIDTH);
-        	double y = random.NextDouble() * ActualHeight;
+        	double y = random.NextDouble() * ActualHeight - 50;
         	return new Point(x,y);
         }
     	
@@ -349,7 +371,8 @@ namespace AdventureAuthor.Ideas
         /// </summary>
         public void CloseBoard()
         {
-        	mainCanvas.Children.Clear();        	
+        	mainCanvas.Children.Clear(); 
+        	SurfaceColour = defaultSurfaceColour;
         	Filename = null;
         	Dirty = false;
         	OnClosed(new EventArgs());
@@ -493,13 +516,7 @@ namespace AdventureAuthor.Ideas
         #endregion
         
         #region Event handlers 
-    		        
-    	private void magnetControl_Selected(object sender, MagnetEventArgs e)
-    	{
-    		OnMagnetSelected(e);
-    	} 
-    		
-        
+    		           
         /// <summary>
         /// Treat drop events on magnets as you would drop events on the board itself.
         /// </summary>
@@ -532,19 +549,25 @@ namespace AdventureAuthor.Ideas
     	}    
         
         
-        private void magnetControl_BringToFront(object sender, MagnetEventArgs e)
+        private void magnetControl_BringToFront(object sender, EventArgs e)
         {
-        	BringToFront(e.Magnet);
+        	BringToFront((MagnetControl)sender);
         }       
         
         
-        private void magnetControl_SendToBack(object sender, MagnetEventArgs e)
+        private void magnetControl_SendToBack(object sender, EventArgs e)
         {
-        	SendToBack(e.Magnet);
+        	SendToBack((MagnetControl)sender);
         }
         
         
-        private void magnetBoard_Changed(object sender, MagnetEventArgs e)
+        private void magnetBoard_Changed(object sender, EventArgs e)
+        {
+        	MakeDirty();
+        }
+        
+        
+        private void MakeDirty()
         {
         	if (!Dirty) {
         		Dirty = true;

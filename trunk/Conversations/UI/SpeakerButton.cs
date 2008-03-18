@@ -36,8 +36,7 @@ namespace AdventureAuthor.Conversations.UI
 		
 		public SpeakerButton(Speaker speaker)
 		{
-			button = new Button();
-			button.Margin = new Thickness(2);
+			Margin = new Thickness(2);
 			TextBlock textBlock = new TextBlock();
 			grammarTextBlock = new TextBlock();
 			speakerTextBlock = new TextBlock();
@@ -51,11 +50,7 @@ namespace AdventureAuthor.Conversations.UI
 			
 			Speaker = speaker;
 						
-			textBlock.MinHeight = 60;
-			textBlock.MinWidth = 200;
-			button.MinHeight = 60;
-			button.MinWidth = 200;
-			button.Content = textBlock;					
+			Content = textBlock;	
 		}
 		
 		

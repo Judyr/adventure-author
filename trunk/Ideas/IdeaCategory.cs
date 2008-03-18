@@ -15,11 +15,12 @@ namespace AdventureAuthor.Ideas
 	/// The general subject domain that an idea relates to.
 	/// </summary>
 	public enum IdeaCategory {
-		Quests,
 		Plot,
-		Items,
+		Quests,
 		Characters,
+		Dialogue,
 		Setting,
+		Items,
 		Other, // user stated that this idea did not relate to any of the given categories
 		Toolset // user has submitted an object or a blueprint as an 'idea' to be used
 	}

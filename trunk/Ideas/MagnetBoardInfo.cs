@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using System.Windows.Media;
 using AdventureAuthor.Ideas;
 using AdventureAuthor.Utils;
 using System.Windows.Controls;
@@ -23,6 +24,14 @@ namespace AdventureAuthor.Ideas
 	[Serializable]
 	public class MagnetBoardInfo : ISerializableData
 	{    	
+		[XmlAttribute]
+		private Color surfaceColour;
+		public Color SurfaceColour {
+			get { return surfaceColour; }
+			set { surfaceColour = value; }
+		}
+		
+		
     	[XmlArray]
     	private List<MagnetInfo> magnetInfos = new List<MagnetInfo>();       	
 		public List<MagnetInfo> Magnets {
@@ -42,6 +51,7 @@ namespace AdventureAuthor.Ideas
     	
 		public MagnetBoardInfo(MagnetBoardControl magnetBoardControl)
 		{
+			surfaceColour = magnetBoardControl.SurfaceColour;
 			foreach (MagnetControl magnet in magnetBoardControl.GetMagnets()) {
 				MagnetInfo magnetInfo = (MagnetInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);

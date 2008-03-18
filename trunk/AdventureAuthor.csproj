@@ -513,6 +513,10 @@
     <Folder Include="Utils" />
     <Folder Include="Setup" />
     <Folder Include="Variables\UI" />
+    <ProjectReference Include="..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
+      <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
+      <Name>ColorPicker</Name>
+    </ProjectReference>
     <ProjectReference Include="Diagramming.Core\Netron.Diagramming.Core.csproj">
       <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
       <Name>Netron.Diagramming.Core</Name>

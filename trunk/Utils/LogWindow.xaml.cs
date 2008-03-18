@@ -15,7 +15,7 @@ namespace AdventureAuthor.Utils
 {
     public partial class LogWindow : Window
     {
-    	private List<Label> debugmsgs = new List<Label>(1000);
+    	private List<Label> debugmsgs = new List<Label>(5000);
     	
     	
         public LogWindow()
@@ -28,24 +28,27 @@ namespace AdventureAuthor.Utils
         
         private void DebugLog_Message(object sender, DebugLogEventArgs e)
         {			
-//        	object loggable = null;
-//			if (e.Message != null) {
-//				loggable = e.Message;
-//			}
-//			else if (e.ThrownException != null) {
-//				loggable = e.ThrownException;
-//			}
-//			else {
-//				loggable = "Empty debug message.";
-//			}
-//			string msg = UsefulTools.GetTimeStamp(false) + ": " + loggable;
-//			
-//        	Label message = new Label();
-//        	message.Content = msg;
-//        	message.Visibility = Visibility.Collapsed;
-//        	debugmsgs.Add(message);
-//        	MessagesList.Items.Add(msg);        	
-//        	MessagesScroller.ScrollToBottom();
+        	object loggable = null;
+			if (e.Message != null) {
+				loggable = e.Message;
+			}
+			else if (e.ThrownException != null) {
+				loggable = e.ThrownException;
+			}
+			else {
+				loggable = "Empty debug message.";
+			}
+			string msg = Tools.GetTimeStamp(false) + ": " + loggable;
+			
+        	Label message = new Label();
+        	message.Content = msg;
+        	if (!((bool)ShowDebugCheckbox.IsChecked)) {
+        		message.Visibility = Visibility.Collapsed;
+        	}
+        	
+        	debugmsgs.Add(message);
+        	MessagesList.Items.Add(msg);        	
+        	MessagesScroller.ScrollToBottom();
         }
         
 
@@ -74,17 +77,25 @@ namespace AdventureAuthor.Utils
         
 		private void ShowDebugCheckboxUnchecked(object sender, RoutedEventArgs e)
 		{
+			Say.Information("doing something");
+			int count = 0;
 			foreach (Label l in debugmsgs) {
+				count++;
 				l.Visibility = Visibility.Collapsed;
 			}
+			Say.Information("did " + count + " things");
 		}
 		
 		
 		private void ShowDebugCheckboxChecked(object sender, RoutedEventArgs e)
 		{
+			Say.Information("doing something");
+			int count = 0;
 			foreach (Label l in debugmsgs) {
+				count++;
 				l.Visibility = Visibility.Visible;
 			}
+			Say.Information("did " + count + " things");
 		}
     }
 }
