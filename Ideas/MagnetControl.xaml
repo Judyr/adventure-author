@@ -21,8 +21,8 @@
 		</ContextMenu>
 	</local:BoardObject.ContextMenu>
     <Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
-	    	<TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
-					    	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
-					    	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+	    <TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
+		  	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
+		   	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Border>
 </local:BoardObject>

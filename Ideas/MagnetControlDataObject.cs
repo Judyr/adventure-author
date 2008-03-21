@@ -18,6 +18,8 @@ namespace AdventureAuthor.Ideas
 	public struct MagnetControlDataObject
 	{
 		public MagnetControl Magnet;
-		public Point Offset;
+		public Size ActualRotatedSize; // actual size of magnet, accounting for rotation if appropriate
+		public double MagnetHeight;
+		public double MagnetWidth;
 	}
 }

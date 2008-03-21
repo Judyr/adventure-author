@@ -90,7 +90,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		Closing += new CancelEventHandler(viewerClosing);
     		Changed += new EventHandler(WorksheetChanged);
             
-            Toolset.Plugin.Options.DefaultImageViewerChanged += delegate { updateImageViewerSelectionMenu(); };
+            Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             updateImageViewerSelectionMenu();
             
     		EvaluationMode = mode;
@@ -103,10 +103,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
-		    		
-		    		switchModeButton.Visibility = Visibility.Collapsed;
-		    		addSectionButton.Visibility = Visibility.Collapsed; // because nothing is open yet
-		    		
+		    				    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
 	    			NewMenuItem.Visibility = Visibility.Visible;
 	    			OptionsMenu.Visibility = Visibility.Collapsed;
@@ -119,10 +116,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		DesignerNameField.IsEnabled = true;
 		    		EvaluatorNameField.IsEnabled = true;
 		    		DateField.IsEnabled = true;
-		    		
-		    		switchModeButton.Visibility = Visibility.Visible;
-		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		
+		    				    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
@@ -138,9 +132,6 @@ namespace AdventureAuthor.Evaluation.Viewer
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
-		    		
-		    		switchModeButton.Visibility = Visibility.Visible;
-		    		addSectionButton.Visibility = Visibility.Collapsed;
 		    		
 	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
@@ -162,6 +153,14 @@ namespace AdventureAuthor.Evaluation.Viewer
 			catch (Exception e) {
     			Say.Debug("Failed to create a Worksheets directory for user:\n"+e);
 			}     		
+    	}
+
+    	
+    	private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
+    	{
+    		if (e.PropertyName == "ImageViewer") {
+    			updateImageViewerSelectionMenu();
+    		}
     	}
     	
 

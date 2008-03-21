@@ -19,7 +19,7 @@ namespace AdventureAuthor.Ideas
         public DragAdorner(UIElement owner) : base(owner) { }
 
         
-        public DragAdorner(UIElement owner, UIElement adornElement, bool useVisualBrush, double opacity)
+        public DragAdorner(UIElement owner, MagnetControl adornElement, bool useVisualBrush, double opacity)
             : base(owner)
         {
             System.Diagnostics.Debug.Assert(owner != null);
@@ -29,17 +29,20 @@ namespace AdventureAuthor.Ideas
             {
                 VisualBrush _brush = new VisualBrush(adornElement);
                 _brush.Opacity = opacity;
+                
                 Rectangle r = new Rectangle();
-                r.RadiusX = 3;
-                r.RadiusY = 3;
 
                 //TODO: questioning DesiredSize vs. Actual 
-                r.Width = adornElement.DesiredSize.Width;
-                r.Height = adornElement.DesiredSize.Height;
+//                r.Width = adornElement.ActualWidth;
+//                r.Height = adornElement.ActualHeight;
 
-                XCenter = adornElement.DesiredSize.Width / 2;
-                YCenter = adornElement.DesiredSize.Height / 2;
-
+				Size rotatedSize = adornElement.GetRotatedSize();
+				r.Width = rotatedSize.Width;
+				r.Height = rotatedSize.Height;
+				
+                XCenter = adornElement.ActualWidth / 2;
+                YCenter = adornElement.ActualHeight / 2;
+                
                 r.Fill = _brush;
                 _child = r;
 

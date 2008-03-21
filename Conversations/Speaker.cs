@@ -41,7 +41,14 @@ namespace AdventureAuthor.Conversations
 		private string tag;		
 		public string Tag {
 			get { return tag; }
-			set { tag = value; }
+			set { 
+				if (tag == String.Empty) {
+					throw new InvalidOperationException("Cannot give a speaker an empty tag, " +
+					                                    "as this would clash with the definition " + 
+					                                    "of the Player speaker.");
+				}
+				tag = value; 
+			}
 		}
 		
 		

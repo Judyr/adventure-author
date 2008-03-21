@@ -318,36 +318,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         }
         
-        #region Drag-drop
-        
-        /// <summary>
-        /// Called when a drag-drop operation is started.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="ea"></param>
-        protected void OnDragStarted(object sender, EventArgs ea)
-        {
-        	//this.Background = Brushes.Pink;
-        }
-        
-        
-        protected void OnDragCompleted(object sender, EventArgs ea) 
-        {
-        	//this.Background = Brushes.LightYellow;
-        }
-        
-        
-        protected void OnDragDelta(object sender, EventArgs ea)
-        {
-//        	if (DateTime.Now.Second % 2 == 0) {
-//        		this.Background = Brushes.Red;
-//        	}
-//        	else {
-//        		this.Background = Brushes.Blue;
-//        	}
-        }
-        
-        #endregion
         
         protected void OnMouseDown(object sender, MouseEventArgs ea)
         {        	

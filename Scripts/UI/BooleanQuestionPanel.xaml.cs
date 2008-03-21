@@ -16,7 +16,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a boolean value.
 	/// </summary>
-    public partial class BooleanQuestionPanel : UserControl, IParameterPanel
+    public partial class BooleanQuestionPanel : ParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a boolean value.
@@ -77,7 +77,7 @@ namespace AdventureAuthor.Scripts.UI
         /// <summary>
         /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
         /// </summary>
-        public object Answer  // have to convert bool into an int for use with scripts
+        public override object Answer  // have to convert bool into an int for use with scripts
         {
 			get { 
         		if ((bool)YesButton.IsChecked) {

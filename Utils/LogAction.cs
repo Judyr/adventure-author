@@ -46,6 +46,12 @@ namespace AdventureAuthor.Utils
 		
 		// relating to worksheet designer:
 		activated,
-		deactivated
+		deactivated,
+		
+		// relating to magnets:
+		placed,
+		removed,
+		hid,
+		showed
 	}
 }

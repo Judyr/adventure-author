@@ -2,9 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.ZIndex="1"
     xmlns:local="clr-namespace:AdventureAuthor.Ideas"
-	AllowDrop="true" Background="Green"
+	AllowDrop="true" Background="DarkGray"
+	PreviewMouseWheel="magnetListPreviewMouseWheel"
 	>
-		<Grid ShowGridLines="true">
+		<Grid>
 		
 			<Grid.RowDefinitions>
 				<RowDefinition x:Name="row0"/>
@@ -14,14 +15,6 @@
 				<ColumnDefinition x:Name="column0" />
 				<ColumnDefinition x:Name="column1" />
 			</Grid.ColumnDefinitions>
-			<!--<Grid.RowDefinitions>
-				<RowDefinition x:Name="row0" MinHeight="0" MaxHeight="0"/>
-				<RowDefinition x:Name="row1" MinHeight="220" MaxHeight="220"/>
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition x:Name="column0" MinWidth="180" MaxWidth="180"/>
-				<ColumnDefinition x:Name="column1" MaxWidth="5000"/>
-			</Grid.ColumnDefinitions>-->
 		
 			<!--Border surrounding the control panel-->
 			<Border x:Name="controlPanel" Grid.Row="1" Grid.Column="0" 
@@ -34,17 +27,17 @@
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+					</Grid.ColumnDefinitions>			    	
 					<Button Grid.Row="0" Click="OnClick_CreateMagnet"
 					    	Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
 					    	<Bold>Create magnet</Bold>
-					 </Button>
-					 <Button Grid.Row="1" Click="OnClick_Scatter"
-					         Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
-					  		<Bold>Scatter magnets</Bold>
-					 </Button>
-					 <StackPanel Name="showHideCategoriesPanel" Grid.Row="2" Margin="3"
-					             Width="130" Orientation="Vertical"/>
+					</Button>		    	
+					<Button Grid.Row="1" Click="OnClick_Scatter"
+					        Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
+					 		<Bold>Scatter magnets</Bold>
+					</Button>
+					<StackPanel Name="showHideCategoriesPanel" Grid.Row="2" Margin="3"
+					            Width="130" Orientation="Vertical"/>
 				</Grid>
 			</Border>			
 			
@@ -54,7 +47,7 @@
 						      HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" 
 						      Focusable="false">
 					<StackPanel Name="magnetsPanel" Orientation="Horizontal" Background="LightGray"
-								MaxHeight="200"/>
+								MaxHeight="195"/>
 				</ScrollViewer>	
 			</Border>	
 	

@@ -52,6 +52,12 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.DirectX" />
+    <Reference Include="Netron.Diagramming.Core">
+      <HintPath>..\Libraries\Netron.Diagramming.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Netron.Diagramming.Win">
+      <HintPath>..\Libraries\Netron.Diagramming.Win.dll</HintPath>
+    </Reference>
     <Reference Include="NWN2PluginToolsLibrary">
       <HintPath>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\NWN2PluginToolsLibrary.dll</HintPath>
     </Reference>
@@ -212,6 +218,10 @@
       <DependentUpon>NewOpenConversationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Conversations\UI\ReplaceSpeakerWindow.xaml.cs">
+      <DependentUpon>ReplaceSpeakerWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Conversations\UI\SpeakerButton.cs" />
     <Compile Include="Conversations\UI\WriterWindow.cs">
       <SubType>Code</SubType>
@@ -307,6 +317,7 @@
     </Compile>
     <Compile Include="Ideas\Board.cs" />
     <Compile Include="Ideas\BoardObject.cs" />
+    <Compile Include="Ideas\MagnetCategoryEventArgs.cs" />
     <Compile Include="Ideas\MagnetDragAdorner.cs" />
     <Compile Include="Ideas\Idea.cs" />
     <Compile Include="Ideas\IdeaCategory.cs" />
@@ -354,13 +365,17 @@
       <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Scripts\UI\IParameterPanel.cs" />
+    <Compile Include="Scripts\UI\ParameterPanel.cs" />
     <Compile Include="Scripts\UI\ResRefQuestionPanel.xaml.cs">
       <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripts\UI\ScriptParametersWindow.cs">
       <DependentUpon>ScriptParametersWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\SelectTagQuestionPanel.xaml.cs">
+      <DependentUpon>SelectTagQuestionPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripts\UI\StringQuestionPanel.xaml.cs">
@@ -456,6 +471,7 @@
     <Page Include="Conversations\UI\Controls\Lines\LineControl.xaml" />
     <Page Include="Conversations\UI\Controls\SoundControl.xaml" />
     <Page Include="Conversations\UI\NewOpenConversationWindow.xaml" />
+    <Page Include="Conversations\UI\ReplaceSpeakerWindow.xaml" />
     <Page Include="Conversations\UI\WriterWindow.xaml" />
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
@@ -481,6 +497,7 @@
     <Page Include="Scripts\UI\IntegerQuestionPanel.xaml" />
     <Page Include="Scripts\UI\ResRefQuestionPanel.xaml" />
     <Page Include="Scripts\UI\ScriptParametersWindow.xaml" />
+    <Page Include="Scripts\UI\SelectTagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
@@ -507,6 +524,7 @@
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
     <Folder Include="Ideas" />
+    <Folder Include="Tasks" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
@@ -516,16 +534,6 @@
     <ProjectReference Include="..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
       <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
       <Name>ColorPicker</Name>
-    </ProjectReference>
-    <ProjectReference Include="Diagramming.Core\Netron.Diagramming.Core.csproj">
-      <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
-      <Name>Netron.Diagramming.Core</Name>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="Diagramming.Win\Netron.Diagramming.Win.csproj">
-      <Project>{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}</Project>
-      <Name>Netron.Diagramming.Win</Name>
-      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>

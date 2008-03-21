@@ -5,6 +5,7 @@ using System.Windows.Documents;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using AdventureAuthor.Conversations.UI.Controls;
 
 namespace AdventureAuthor.Conversations.UI
 {
@@ -19,39 +20,33 @@ namespace AdventureAuthor.Conversations.UI
         public LineControlDragAdorner(UIElement owner) : base(owner) { }
 
         
-        public LineControlDragAdorner(UIElement owner, UIElement adornElement, bool useVisualBrush, double opacity)
+        public LineControlDragAdorner(UIElement owner, LineControl lineControl, bool useVisualBrush, double opacity)
             : base(owner)
         {
             System.Diagnostics.Debug.Assert(owner != null);
-            System.Diagnostics.Debug.Assert(adornElement != null); 
+            System.Diagnostics.Debug.Assert(lineControl != null); 
             _owner = owner;
             if (useVisualBrush)
             {
-                VisualBrush _brush = new VisualBrush(adornElement);
+                VisualBrush _brush = new VisualBrush(lineControl);
                 _brush.Opacity = opacity;
                 Rectangle r = new Rectangle();
                 r.RadiusX = 3;
                 r.RadiusY = 3;
 
                 //TODO: questioning DesiredSize vs. Actual 
-                r.Width = adornElement.DesiredSize.Width;
-                r.Height = adornElement.DesiredSize.Height;
-
-                // Attach by the top-left corner to minimise effect of not being able
-                // to drag over the graph:
-//                if (adornElement.DesiredSize.Width > 10 && adornElement.DesiredSize.Height > 10) {
-//                	XCenter = 10;
-//                	YCenter = 10;
-//                }                
-                XCenter = adornElement.DesiredSize.Width / 2;
-                YCenter = adornElement.DesiredSize.Height / 2;
+                r.Width = lineControl.ActualWidth;
+                r.Height = lineControl.ActualHeight;
+                
+                XCenter = lineControl.DesiredSize.Width / 2;
+                YCenter = lineControl.DesiredSize.Height / 2;
 
                 r.Fill = _brush;
                 _child = r;
 
             }
             else
-                _child = adornElement;
+                _child = lineControl;
 
 
         }

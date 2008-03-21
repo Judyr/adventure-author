@@ -46,7 +46,11 @@
     		        Height="25" Width="60" Margin="6"/>-->
 			<Button Name="DeleteActionButton" Click="OnClick_DeleteAction" IsEnabled="false" Visibility="Hidden" Content="Delete" 
     		        Height="25" Width="60" Margin="6"/>
-			<TextBlock x:Name="Description" Background="Transparent" FontSize="22" FontWeight="600" Padding="6" TextWrapping="Wrap"/> 
+			<TextBlock x:Name="Description" 
+    		           Background="Transparent" 
+			           FontSize="22" FontWeight="600" 
+			           Padding="6" 
+			           TextWrapping="Wrap"/>
     	</StackPanel>
     </Grid>
 </UserControl>

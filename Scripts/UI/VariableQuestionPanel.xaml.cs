@@ -13,7 +13,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value corresponding to the name of a game variable. 
 	/// </summary>
-    public partial class VariableQuestionPanel : UserControl, IParameterPanel
+    public partial class VariableQuestionPanel : ParameterPanel
     {
     	/// <summary>
     	/// The type of variable which the user can select from (e.g. int, string).
@@ -42,7 +42,7 @@ namespace AdventureAuthor.Scripts.UI
     	/// <summary>
         /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
         /// </summary>
-        public object Answer
+        public override object Answer
         {
 			get { 
         		return AnswerBox.SelectedItem;
@@ -73,6 +73,7 @@ namespace AdventureAuthor.Scripts.UI
         private void OnClick_LaunchVariableManagerButton(object sender, EventArgs ea)
         {
         	Toolset.LaunchVariableManager();
+        	Toolset.BringToFront(VariablesWindow.Instance);
             PopulateVariableList(); // variables may have changed
         }
         

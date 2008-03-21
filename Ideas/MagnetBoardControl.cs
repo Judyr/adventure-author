@@ -44,6 +44,7 @@ namespace AdventureAuthor.Ideas
 			set { 
     			((LinearGradientBrush)Resources["fridgeBrush"]).GradientStops[0].Color = value; 
     			MakeDirty();
+    			Log.WriteAction(LogAction.set,"magnetboardcolour",value.ToString());
     		}
 		}
     	
@@ -94,10 +95,10 @@ namespace AdventureAuthor.Ideas
 		}
 		
     	
-    	public event EventHandler<MagnetEventArgs> MagnetDeleted;    	
-		protected virtual void OnMagnetDeleted(MagnetEventArgs e)
+    	public event EventHandler<MagnetEventArgs> MagnetRemoved;    	
+		protected virtual void OnMagnetRemoved(MagnetEventArgs e)
 		{
-			EventHandler<MagnetEventArgs> handler = MagnetDeleted;
+			EventHandler<MagnetEventArgs> handler = MagnetRemoved;
 			if (handler != null) {
 				handler(this, e);
 			}
@@ -112,16 +113,6 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
-    	
-    	
-    	public event EventHandler<MagnetEventArgs> MagnetTransferredOut;    	
-    	protected virtual void OnMagnetTransferredOut(MagnetEventArgs e)
-    	{
-    		EventHandler<MagnetEventArgs> handler = MagnetTransferredOut;
-    		if (handler != null) {
-    			handler(this,e);
-    		}
-    	}
 		
     	
     	public event EventHandler Opened;    	
@@ -142,6 +133,16 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+    	
+    	
+    	public event EventHandler Cleared;    	
+    	protected virtual void OnCleared(EventArgs e)
+    	{
+    		EventHandler handler = Cleared;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
 		
     	
     	public event EventHandler Changed;    	
@@ -165,9 +166,28 @@ namespace AdventureAuthor.Ideas
     		magnetControl_EditedHandler = new EventHandler(magnetBoard_Changed);
     		Drop += new DragEventHandler(magnetBoard_Drop);
     		
-    		MagnetAdded += delegate { MakeDirty(); };
-    		MagnetDeleted += delegate { MakeDirty(); };
-    		MagnetMoved += delegate { MakeDirty(); };
+    		MagnetAdded += delegate (object sender, MagnetEventArgs e) {
+    			MakeDirty();
+    			Log.WriteAction(LogAction.placed,"idea",e.Magnet.ToString());
+    		};
+    		MagnetRemoved += delegate (object sender, MagnetEventArgs e) {
+    			MakeDirty(); 
+    			Log.WriteAction(LogAction.removed,"idea",e.Magnet.ToString());
+    		};
+    		MagnetMoved += delegate (object sender, MagnetEventArgs e) {
+    			MakeDirty(); 
+    			Log.WriteAction(LogAction.moved,"idea",e.Magnet.ToString());
+    		};
+    		Cleared += delegate {
+    			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing
+    			Log.WriteMessage("cleared board");
+    		};
+    		Opened += delegate { 
+    			Log.WriteAction(LogAction.opened,"magnetboard",filename);
+    		};
+    		Closed += delegate { 
+    			Log.WriteAction(LogAction.closed,"magnetboard");
+    		};
     		  		    		
     		InitializeComponent();    		
     	}
@@ -269,7 +289,7 @@ namespace AdventureAuthor.Ideas
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
         	magnet.bringToFrontMenuItem.IsEnabled = true;
         	magnet.sendToBackMenuItem.IsEnabled = true;
-        	magnet.removeDeleteMagnetMenuItem.Header = "Remove"; // less permanent than deleting from the magnet list
+        	magnet.removeDeleteMagnetMenuItem.Header = "Put back in box"; // less permanent than deleting from the magnet list
 			magnet.Show();
 			BringInsideBoard(magnet);			
 			
@@ -280,11 +300,11 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        public void DeleteMagnet(MagnetControl magnet)
+        public void RemoveMagnet(MagnetControl magnet)
         {
         	mainCanvas.Children.Remove(magnet);
         	RemoveHandlers(magnet);	        	
-	        OnMagnetDeleted(new MagnetEventArgs(magnet));
+	        OnMagnetRemoved(new MagnetEventArgs(magnet));
         }
         
         
@@ -317,23 +337,18 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Indicate that a magnet should be transferred to the magnet list
-        /// </summary>
-        /// <param name="magnet">The magnet to be transferred</param>
-        public void TransferMagnet(MagnetControl magnet)
-        {       	        	
-	    	OnMagnetTransferredOut(new MagnetEventArgs(magnet));
-        }
-        
-        
-        /// <summary>
-        /// Get a point on this board at random where a magnet could sit.
+        /// Get a point on this board at random where a magnet could sit, avoiding points
+        /// which are at the very edge of the board.
         /// </summary>
         /// <returns>A point that represents a pair of co-ordinates on the magnet board</returns>
         private Point GetRandomLocation()
         {
-        	double x = random.NextDouble() * (ActualWidth - MagnetControl.MAGNET_MAX_WIDTH);
-        	double y = random.NextDouble() * ActualHeight - 50;
+        	// first border is a much lower value because the magnet extends 
+        	// to the bottom-right from its point of origin
+        	double leftTopBorder = 20;
+        	double rightBottomBorder = MagnetControl.MAGNET_MAX_WIDTH;
+        	double x = (random.NextDouble() * (ActualWidth - (leftTopBorder+rightBottomBorder)) + leftTopBorder);
+        	double y = (random.NextDouble() * (ActualHeight - (leftTopBorder+rightBottomBorder)) + leftTopBorder);
         	return new Point(x,y);
         }
     	
@@ -505,7 +520,17 @@ namespace AdventureAuthor.Ideas
 			}
 
 			#endregion // Update Z-Indici
-		}               	
+		}   
+		
+		
+		public void ClearBoard()
+		{
+        	List<MagnetControl> magnets = GetMagnets();
+        	foreach (MagnetControl magnet in magnets) {
+        		RemoveMagnet(magnet);
+        	}
+        	OnCleared(new EventArgs());
+		}
         
 		
     	public override ISerializableData GetSerializable()

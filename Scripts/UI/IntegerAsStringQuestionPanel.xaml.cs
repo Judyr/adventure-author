@@ -19,7 +19,7 @@ namespace AdventureAuthor.Scripts.UI
     /// Interaction logic for StringQuestionPanel.xaml
     /// </summary>
 
-    public partial class IntegerAsStringQuestionPanel : UserControl, IParameterPanel
+    public partial class IntegerAsStringQuestionPanel : ParameterPanel
     {
     	private CheckType checkType;
     	
@@ -35,7 +35,7 @@ namespace AdventureAuthor.Scripts.UI
 			CheckForGetting 
 		}
 		
-        public object Answer
+        public override object Answer
         {
         	get {    
         		string s = AnswerBox.Text;

@@ -16,7 +16,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a string value.
 	/// </summary>
-    public partial class StringQuestionPanel : UserControl, IParameterPanel
+    public partial class StringQuestionPanel : ParameterPanel
     {    	
     	/// <summary>
     	/// Create a question panel which will be answered by a string value.
@@ -43,7 +43,7 @@ namespace AdventureAuthor.Scripts.UI
         /// <summary>
         /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
         /// </summary>
-        public object Answer
+        public override object Answer
         {
         	get {
         		return AnswerBox.Text;

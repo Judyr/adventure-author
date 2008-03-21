@@ -56,7 +56,7 @@ namespace AdventureAuthor.Conversations.UI
     public sealed partial class WriterWindow : Window
     {       
     	#region Fields    	
-    	    	
+    	
     	/// <summary>
     	/// The single instance of the Writer window.
     	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
@@ -882,8 +882,8 @@ namespace AdventureAuthor.Conversations.UI
 		private void OnClick_ReplaceSpeaker(object sender, EventArgs e)
 		{
 			if (Conversation.CurrentConversation != null) {
-				// TODO load ReplaceSpeaker window
-				RenameSpeaker(Conversation.CurrentConversation.Speakers[1],"batman",true);
+				ReplaceSpeakerWindow window = new ReplaceSpeakerWindow();
+				window.ShowDialog();
 			}
 		}
 		
@@ -1135,7 +1135,11 @@ namespace AdventureAuthor.Conversations.UI
 					// TODO - if Focus is called, it works (but we want the textbox to be enabled.) If Dialogue.Focus() is called, it doesn't 
 					// work, even though from debug statements I can see that SelectLine() is ran all the way through to the end.
 					
-					Focus();
+					//Focus();
+					
+					
+					FocusManager.SetFocusedElement(this,lineControl);//.Dialogue);
+					
 					//Dialogue.Focus();
 					
 					//TextBox dialogue = (TextBox)FindName("Dialogue");
@@ -1178,53 +1182,6 @@ namespace AdventureAuthor.Conversations.UI
 			
 			return null;			
 		}
-		
-		
-		private void RenameSpeaker(Speaker speaker, string newTag, bool includingScripts)
-		{
-			if (speaker.Name == String.Empty) { // this is the player
-				throw new InvalidOperationException("Cannot rename the player.");
-			}
-			else if (newTag == String.Empty) {
-				throw new InvalidOperationException("Cannot give a speaker a blank tag.");
-			}
-			else if (Conversation.CurrentConversation.GetSpeaker(newTag) != null) {
-				throw new InvalidOperationException("There is already a speaker with that tag.");
-			}
-			
-			// Rename the speaker:
-			speaker.Tag = newTag; 
-			
-			// Edit all the speaker's lines, and optionally edit all associated scripts:
-			foreach (NWN2ConversationConnector line in Conversation.CurrentConversation.NwnConv.AllConnectors) {
-				if (line.Speaker == speaker.Tag) {
-					line.Speaker = newTag;
-				}
-				if (includingScripts) {
-					foreach (NWN2ScriptFunctor script in line.Actions) {
-						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
-					}
-					foreach (NWN2ScriptFunctor script in line.Conditions) {
-						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
-					}
-				}
-			}
-						
-			// Refresh the display:
-			RefreshPageViewOnly();
-		
-			// Rename the button representing the speaker:
-			foreach (UIElement element in speakersButtonsPanel.Children) {
-				if (element is SpeakerButton) {
-					SpeakerButton button = (SpeakerButton)element;
-					if (button.Speaker == speaker) {
-						button.UpdateSpeakerName();
-					}
-				}
-			}
-		}
-		
-	
 		
         #region Drag-drop
 
@@ -1338,9 +1295,6 @@ namespace AdventureAuthor.Conversations.UI
             DataObject dataObject = new DataObject(e.Source.GetType(),e.Source);
         	
         	
-        	//DataObject dataObject = new DataObject(typeof(LineControl),(LineControl)e.Source);
-
-
             DragDropEffects de = DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move);
             
              // Clean up our mess :) 
@@ -1412,7 +1366,6 @@ namespace AdventureAuthor.Conversations.UI
         
         private void lineControl_OnDrop(object sender, DragEventArgs e)
         {
-        	Say.Information(" " +e.Source +"\n\n" + e.OriginalSource);
         	e.Handled = true;
         	        
         	LineControl dropTarget = (LineControl)sender;
@@ -1445,6 +1398,12 @@ namespace AdventureAuthor.Conversations.UI
         			Conversation.CurrentConversation.MoveLineIntoChoice(dragSource.Nwn2Line,dropTarget.Nwn2Line.Parent);
         		}
         	}
+        }
+        
+        
+        private void windowsFormsHost_Drop(object sender, DragEventArgs e) 
+        {
+        	e.Handled = true;	
         }
         
         #endregion 

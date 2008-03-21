@@ -6,6 +6,7 @@
     MouseWheel="magnetBoardViewerMouseWheel"
 	Title="Untitled - Ideas"
 	MinWidth="800" MinHeight="600"
+	WindowState="Maximized"
     >
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -35,7 +36,7 @@
 				<MenuItem Name="ExitMenuItem" Header="Exit" 
 				          Click="OnClick_Exit" FontSize="14"/>
 			</MenuItem>
-	    	<MenuItem Header="Box" FontSize="14">
+	    	<MenuItem x:Name="boxMenu" Header="Box" FontSize="14">
 				<MenuItem Header="Create magnet" Click="OnClick_CreateMagnet"
 	    				  FontSize="14"/>
 				<MenuItem Header="Scatter magnets" Click="OnClick_Scatter"
@@ -45,13 +46,17 @@
 	    				  FontSize="14"/>
 	    		<Separator/>
 				<MenuItem Name="wonkyMagnetsMenuItem" Header="Display wonky magnets"
-	    				  IsCheckable="true" FontSize="14" Checked="useWonkyMagnetsChecked"
-	    				  Unchecked="useWonkyMagnetsUnchecked"/>
-				<MenuItem Name="appearsAtSideMenuItem" Header="Magnet box appears at side" IsCheckable="true"
-	    		          Checked="appearsAtSideChecked" Unchecked="appearsAtSideUnchecked"
+	    				  IsCheckable="true" 
+				          Checked="useWonkyMagnetsCheckedOrUnchecked"
+	    				  Unchecked="useWonkyMagnetsCheckedOrUnchecked"
+	    		          FontSize="14"/>
+				<MenuItem Name="appearsAtSideMenuItem" Header="Magnet box appears at side" 
+	    		          IsCheckable="true"
+	    		          Checked="appearsAtSideCheckedOrUnchecked" 
+				          Unchecked="appearsAtSideCheckedOrUnchecked"
 	    				  FontSize="14"/>
 			</MenuItem>
-	    	<MenuItem Header="Board" FontSize="14">
+	    	<MenuItem x:Name="boardMenu" Header="Board" FontSize="14">
 				<MenuItem Header="Clear board" Click="OnClick_ClearBoard" FontSize="14"/>
 				<Separator/>
 	    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour" FontSize="14"/>
@@ -62,8 +67,15 @@
 						  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
 		
 		<local:MagnetBoardControl x:Name="magneticSurface" 
-								  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
-		
+								  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+			<local:MagnetBoardControl.ContextMenu>
+				<ContextMenu>				
+			    	<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+					<Separator/>
+			    	<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
+				</ContextMenu>
+			</local:MagnetBoardControl.ContextMenu>
+		</local:MagnetBoardControl>
 	</Grid>
 	
 	

@@ -263,6 +263,42 @@ namespace AdventureAuthor.Conversations
 			}
 		}
 		
+		
+		public void RenameSpeaker(Speaker speaker, string newTag, bool includingScripts)
+		{
+			if (speaker.Name == String.Empty) { // this is the player
+				throw new InvalidOperationException("Cannot rename the player.");
+			}
+			else if (newTag == String.Empty) {
+				throw new InvalidOperationException("Cannot give a speaker a blank tag.");
+			}
+			else if (newTag.ToLower() == PLAYER_NAME.ToLower()) {
+				throw new InvalidOperationException("Cannot rename a speaker 'player'.");
+			}
+			else if (Conversation.CurrentConversation.GetSpeaker(newTag) != null) {
+				throw new InvalidOperationException("There is already a speaker with that tag.");
+			}
+			
+			// Edit all the speaker's lines, and optionally edit all associated scripts:
+			foreach (NWN2ConversationConnector line in NwnConv.AllConnectors) {
+				if (line.Speaker == speaker.Tag) {
+					line.Speaker = newTag;
+				}
+				if (includingScripts) {
+					foreach (NWN2ScriptFunctor script in line.Actions) {
+						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
+					}
+					foreach (NWN2ScriptFunctor script in line.Conditions) {
+						ScriptHelper.ReplaceTag(script,speaker.Tag,newTag);
+					}
+				}
+			}
+			
+			// Rename the speaker:
+			speaker.Tag = newTag; 
+			OnChanged(new ConversationChangedEventArgs(false));
+		}
+		
 		#endregion Speakers
 		
 		#region Editing lines

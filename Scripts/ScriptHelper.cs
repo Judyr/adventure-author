@@ -69,7 +69,8 @@ namespace AdventureAuthor.Scripts
 			// TODO: Do stuff with AND, OR and NOT here.
 			
 			return conditionalFunctor;
-		}	
+		}
+		
 		
 		/// <summary>
 		/// Returns a script functor given a script name and an array of parameter arguments.
@@ -82,6 +83,7 @@ namespace AdventureAuthor.Scripts
 			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,location);
 			return scriptFunctor;
 		}
+		
 		
 		/// <summary>
 		/// Returns a script functor given a script name and an array of parameter arguments.
