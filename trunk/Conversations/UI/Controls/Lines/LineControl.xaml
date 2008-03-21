@@ -27,6 +27,7 @@
 	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils"
     xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
+    xmlns:pref="clr-namespace:AdventureAuthor.Setup"
 	IsEnabled="True" Focusable="True" 
     MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
     Padding="6" AllowDrop="True" 
@@ -149,7 +150,7 @@
 		<StaticResource ResourceKey="LineControlContextMenu"/>
 	</UserControl.ContextMenu>
 			
-    <Grid x:Name="LineControlGrid">		
+    <Grid x:Name="LineControlGrid">
 		<Grid.RowDefinitions>
     		<RowDefinition MinHeight="0"/> <!--Condition control-->
     		<RowDefinition MinHeight="34" Height="*"/> <!--Speaker and dialogue-->
@@ -159,7 +160,7 @@
 		<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="32"/> <!--Buttons-->
     		<ColumnDefinition MinWidth="100" MaxWidth="200" Width="*"/> <!--Speaker-->
-    		<ColumnDefinition Width="10"/> <!--gap-->
+    		<ColumnDefinition Width="10"/> <!--clickable gap-->
     		<ColumnDefinition Width="2*"/> <!--Dialogue-->
     	</Grid.ColumnDefinitions>
     	    	
@@ -191,7 +192,9 @@
     		</utils:SwitchableTextBox.Text>    
     	</utils:SwitchableTextBox>
 	
-		<StackPanel x:Name="ActionsPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Vertical"/>
+		<StackPanel x:Name="ActionsPanel" 
+    	            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" 
+		            Orientation="Vertical"/>
 	
 	</Grid>
 

@@ -18,7 +18,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by an enum value.
 	/// </summary>
-    public partial class EnumQuestionPanel : UserControl, IParameterPanel
+    public partial class EnumQuestionPanel : ParameterPanel
     {
     	/// <summary>
     	/// The type of enum to provide possible answers from.
@@ -62,9 +62,10 @@ namespace AdventureAuthor.Scripts.UI
         
         
         /// <summary>
-        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// Returns an object representing an answer to the question posed by this panel - 
+        /// the type of object depends on the type of question.
         /// </summary>
-        public object Answer
+        public override object Answer
         {
 			get {   
         		return Enum.Parse(enumType,(string)AnswerBox.SelectedItem,true);

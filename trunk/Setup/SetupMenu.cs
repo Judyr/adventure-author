@@ -6,6 +6,7 @@ using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Ideas;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Variables.UI;
 using TD.SandBar;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
@@ -87,11 +88,8 @@ namespace AdventureAuthor.Setup
 							
 			ButtonItem conversationButton = new ButtonItem();							
 			conversationButton.Activate += delegate { 
-				LaunchConversationWriter(true);				
-				if (WriterWindow.Instance.WindowState == System.Windows.WindowState.Minimized) {
-					WriterWindow.Instance.WindowState = System.Windows.WindowState.Normal;
-				}
-				WriterWindow.Instance.Activate(); // bring to front
+				LaunchConversationWriter(true);	
+				BringToFront(WriterWindow.Instance);
 			};
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
 			conversationButton.Enabled = false;
@@ -100,14 +98,20 @@ namespace AdventureAuthor.Setup
 			aaToolbar.Items.Add(conversationButton);
 							
 			ButtonItem variableButton = new ButtonItem();
-			variableButton.Activate += delegate { LaunchVariableManager(); };
+			variableButton.Activate += delegate { 
+				LaunchVariableManager();
+				BringToFront(VariablesWindow.Instance);
+			};
 			variableButton.ToolTipText = "Manage game variables";
 			variableButton.Enabled = false;
 			Tools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
 			aaToolbar.Items.Add(variableButton);
 							
 			ButtonItem ideasButton = new ButtonItem();
-			ideasButton.Activate += delegate { LaunchMagnetBoardViewer(); };
+			ideasButton.Activate += delegate { 
+				LaunchMagnetBoardViewer(); 
+				BringToFront(MagnetBoardViewer.Instance);
+			};
 			ideasButton.ToolTipText = "Record and review your ideas";
 			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
 			aaToolbar.Items.Add(ideasButton);
@@ -123,7 +127,9 @@ namespace AdventureAuthor.Setup
 				}
 			};
 			Tools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
+			analysisButton.ToolTipText = "Read a useful analysis of your game";
 			analysisButton.Enabled = false;
+			analysisButton.Visible = false;
 			aaToolbar.Items.Add(analysisButton);
 						
 			ButtonItem evaluationButton = new ButtonItem();
@@ -132,12 +138,15 @@ namespace AdventureAuthor.Setup
 				selectModeWindow.ShowDialog();
 			};
 			Tools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
+			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 			aaToolbar.Items.Add(evaluationButton);
 														
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate { };
 			Tools.SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
 			achievementsButton.Enabled = false;
+			achievementsButton.Visible = false;
+			achievementsButton.ToolTipText = "View your achievements";
 			aaToolbar.Items.Add(achievementsButton);
 			
 			ModuleHelper.ModuleOpened += delegate {  
@@ -207,6 +216,7 @@ namespace AdventureAuthor.Setup
 				Idea idea = new Idea(text,category,User.GetCurrentUser());
 				OnIdeaSubmitted(new IdeaEventArgs(idea));
 				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
+				Log.WriteAction(LogAction.added,"idea","from 'add an idea' toolbar- " + idea.ToString());
 			};
 			addButton.ToolTipText = "Add this idea to your ideas screen";
 			

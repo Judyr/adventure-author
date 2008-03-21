@@ -44,6 +44,7 @@ namespace AdventureAuthor.Conversations.UI
             InitializeComponent();
         }
 
+        
         private void OnClickOK(object sender, EventArgs ea)
         {
         	if (SpeakersList.SelectedItem == null) {
@@ -56,6 +57,7 @@ namespace AdventureAuthor.Conversations.UI
 				this.Close();
         	}
         }
+        
 
         private void OnClickCancel(object sender, EventArgs ea)
         {

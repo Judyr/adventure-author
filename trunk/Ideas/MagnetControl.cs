@@ -39,7 +39,7 @@ namespace AdventureAuthor.Ideas
 			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.3775805f,0.3775805f);// = "#FFFFC8C8";
 			ITEMSCOLOR = Color.FromScRgb(1.0f,0.6631572f,0.3647115f,0.7734453f);// = "#FFEFC6FC";
 			OTHERCOLOR = Color.FromScRgb(1.0f,0.7215819f,0.5083758f,0.3457245f);// = "#FFF6DBC3";
-			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.638799f,0.638799f,0.638799f);// = "#FFEBECEC";
+			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.93f,0.93f,0.93f);// = "#FFEBECEC";
 			    	
 	    	PLOTBRUSH = new SolidColorBrush(PLOTCOLOR);
 	    	QUESTSBRUSH = new SolidColorBrush(QUESTSCOLOR);
@@ -149,7 +149,7 @@ namespace AdventureAuthor.Ideas
 			}
 		}
 		
-			
+		
 		public IdeaCategory Category {
 			get {
 				return idea.Category;
@@ -158,6 +158,7 @@ namespace AdventureAuthor.Ideas
 				if (idea == null) {
 					throw new InvalidOperationException("This magnet has no idea.");
 				}
+				
 				idea.Category = value;
 				Background = GetBrushForCategory(idea.Category);
 			}
@@ -292,13 +293,8 @@ namespace AdventureAuthor.Ideas
     	
     	#region Constructors
     	    	
-    	public MagnetControl()
+    	private MagnetControl()
     	{
-    		// Set up visual effects:
-    		glow.GlowColor = Colors.Blue;
-    		glow.GlowSize = 15;
-    		glow.Opacity = 0.3;
-    		
     		bevel.EdgeProfile = EdgeProfile.Linear;
     		bevel.Relief = 0.3;
     		
@@ -315,6 +311,10 @@ namespace AdventureAuthor.Ideas
             MaxWidth = MAGNET_MAX_WIDTH;
             RenderTransform = new RotateTransform(0,ActualWidth/2,ActualHeight/2);
 			SizeChanged += new SizeChangedEventHandler(UpdateCentrePointOfRotation);
+			
+			TaskSubmitted += delegate { 
+				Log.WriteAction(LogAction.added,"task","update me with details about the task that was submitted.");
+			};
     	} 
     	
     	
@@ -324,12 +324,18 @@ namespace AdventureAuthor.Ideas
     		Y = magnetInfo.Y;
     		Angle = magnetInfo.Angle;
     		Idea = magnetInfo.Idea;
+			Rotated += delegate { 
+				Log.WriteMessage("rotated idea -" + Idea);
+			};
     	}
     	
     	
     	public MagnetControl(Idea idea) : this()
     	{
             Idea = idea;
+			Rotated += delegate { 
+				Log.WriteMessage("rotated idea -" + Idea);
+			};
     	}
     	
     	
@@ -348,7 +354,77 @@ namespace AdventureAuthor.Ideas
         #endregion        
         
         #region Methods
-            	
+            
+        /// <summary>
+        /// If the magnet has been rotated, the various size methods will not take account
+        /// of its rotation (it will be wider and higher than it appears to be). This
+        /// method returns the size of a box that exactly fits around the rotated magnet.
+        /// </summary>
+        /// <returns></returns>
+        public Size GetRotatedSize()
+        {
+//        	if (Angle == 0) {
+        		return new Size(ActualWidth,ActualHeight);
+//        	}
+//        	else {
+//        		double originalAngle = Angle;
+//        		Angle = 0;
+//        		double actualWidth = ActualWidth;
+//        		double actualHeight = ActualHeight;
+//        		Angle = originalAngle;    
+//        		
+//        		double angle = Angle;
+//            		
+//        		double a = actualWidth; // Hypotenuse
+//        		double cos = Math.Cos(angle);// * 180 / Math.PI;
+//        		double b = cos * a; // Adjacent = cos(Angle) * Hypotenuse
+//        		if (b < 0) {
+//        			Log.WriteMessage("turned b = " + b + "..");
+//        			b += (b*2);
+//        			Log.WriteMessage("into b = " + b );
+//        		}
+//        		
+//        		double c = Math.Sqrt((a*a) - (b*b)); // c = square root of (a squared - b squared)
+//        		
+//        		double d = actualHeight; // Hypotenuse
+//        		double cos2 = Math.Cos(angle);// * 180 / Math.PI;
+//        		double e = cos2 * d; // Adjacent = cos(Angle) * Hypotenuse
+//        		if (e < 0) {
+//        			Log.WriteMessage("turned e = " + e + "..");
+//        			e += (e*2);
+//        			Log.WriteMessage("into e = " + e );
+//        		}
+//        		
+//        		double f = Math.Sqrt((d*d) - (e*e)); // c = square root of (a squared - b squared)
+//        		
+//        		double rotatedWidth = b + f;
+//        		double rotatedHeight = e + c;
+//        		
+//        		Log.WriteMessage("angle = " + angle);
+//        		
+//        		Log.WriteMessage("a = " + a);
+//        		Log.WriteMessage("cos = " + cos);
+//        		Log.WriteMessage("b = " + b);
+//        		Log.WriteMessage("c = " + c);
+//        		Log.WriteMessage("d = " + d);
+//        		Log.WriteMessage("cos2 = " + cos2);
+//        		Log.WriteMessage("e = " + e);
+//        		Log.WriteMessage("f = " + f);
+//        		Log.WriteMessage("rotatedWidth = " + rotatedWidth);
+//        		Log.WriteMessage("rotatedHeight = " + rotatedHeight);
+//        		
+//        		try {
+//        			 return new Size(rotatedWidth,rotatedHeight);
+//        		}
+//        		catch (Exception ex) {
+//        			Log.WriteMessage(ex.ToString());
+//        			return new Size(100,100);
+//        		}
+//        		
+//        	}        	
+        }
+        
+        
 		/// <summary>
 		/// Get a serializable object representing serializable data in an unserializable control.
 		/// </summary>
@@ -468,7 +544,8 @@ namespace AdventureAuthor.Ideas
     	/// </summary>
     	internal void SelectFX()
     	{
-    		fxGroup.Children.Add(glow);
+    		//fxGroup.Children.Add(glow);
+    		magnetBorder.BorderBrush = Brushes.Red;
     	}    	  
     	
     	
@@ -477,7 +554,8 @@ namespace AdventureAuthor.Ideas
     	/// </summary>
     	internal void DeselectFX()
     	{
-    		fxGroup.Children.Remove(glow);
+    		//fxGroup.Children.Remove(glow);
+    		magnetBorder.BorderBrush = Brushes.Black;
     	}
 		
 		
@@ -630,7 +708,11 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_Edit(object sender, EventArgs e)
     	{
     		EditMagnetWindow window = new EditMagnetWindow(this);
-    		window.MagnetEdited += delegate(object s, MagnetEventArgs ea) { OnEdited(ea); };
+    		window.MagnetEdited += delegate(object s, MagnetEventArgs ea) 
+    		{
+    			OnEdited(ea);
+    			Log.WriteAction(LogAction.edited,"idea");
+    		};
     		window.ShowDialog();
     	}
     	

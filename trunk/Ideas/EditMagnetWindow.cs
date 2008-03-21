@@ -13,10 +13,6 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
-    /// <summary>
-    /// Interaction logic for EditMagnetWindow.xaml
-    /// </summary>
-
     public partial class EditMagnetWindow : Window
     {    	
     	#region Fields

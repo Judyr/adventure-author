@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -13,6 +14,7 @@ using System.Windows.Shapes;
 using System.IO;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Core;
+using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
@@ -71,26 +73,6 @@ namespace AdventureAuthor.Ideas
 		}
     	
     	
-    	/// <summary>
-    	/// True to place magnets on the list imperfectly; false to place them perfectly straight.
-    	/// </summary>
-    	private bool useWonkyMagnets = false;    	
-		public bool UseWonkyMagnets {
-			get { return useWonkyMagnets; }
-			set { 
-				if (useWonkyMagnets != value) {
-					useWonkyMagnets = value; 
-					if (useWonkyMagnets) {
-						AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
-					}
-					else {
-						StraightenMagnets();
-					}
-				}
-			}
-		}
-    	
-    	
     	private Orientation orientation;
 		public Orientation Orientation {
 			get { return orientation; }
@@ -141,10 +123,20 @@ namespace AdventureAuthor.Ideas
     	}
 		
     	
-    	public event EventHandler VisibleMagnetsChanged;   	
-		protected virtual void OnVisibleMagnetsChanged(EventArgs e)
+    	public event EventHandler<MagnetCategoryEventArgs> HidCategory;   	
+		protected virtual void OnHidCategory(MagnetCategoryEventArgs e)
 		{
-			EventHandler handler = VisibleMagnetsChanged;
+			EventHandler<MagnetCategoryEventArgs> handler = HidCategory;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+    	
+    	public event EventHandler<MagnetCategoryEventArgs> ShowedCategory;   	
+		protected virtual void OnShowedCategory(MagnetCategoryEventArgs e)
+		{
+			EventHandler<MagnetCategoryEventArgs> handler = ShowedCategory;
 			if (handler != null) {
 				handler(this, e);
 			}
@@ -188,8 +180,45 @@ namespace AdventureAuthor.Ideas
             }
             
             // All changes in the magnet list should be serialized automatically:
-            MagnetAdded += delegate { automaticSave(); };
-            MagnetDeleted += delegate { automaticSave(); };
+            MagnetAdded += delegate(object sender, MagnetEventArgs e) {
+            	automaticSave(); 
+            	Log.WriteAction(LogAction.added,"idea","from magnets app- " + e.Magnet.ToString());
+            };
+            MagnetDeleted += delegate(object sender, MagnetEventArgs e) {
+            	automaticSave(); 
+            	Log.WriteAction(LogAction.deleted,"idea",e.Magnet.ToString());
+            };
+            Scattered += delegate {
+            	Log.WriteMessage("scattered");
+            };
+            HidCategory += delegate(object sender, MagnetCategoryEventArgs e) { 
+            	Log.WriteAction(LogAction.hid,"ideacategory",e.Category.ToString());
+            };
+            ShowedCategory += delegate(object sender, MagnetCategoryEventArgs e) { 
+            	Log.WriteAction(LogAction.showed,"ideacategory",e.Category.ToString());
+            };
+            
+           	Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
+           	UpdateUseWonkyMagnets();
+        }
+
+        
+        private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+        	if (e.PropertyName == "UseWonkyMagnets") { // magnet board viewer updates the checkable menu item
+        		UpdateUseWonkyMagnets();
+        	}
+        }
+        
+        
+        private void UpdateUseWonkyMagnets()
+        {
+        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
+        		AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+        	}
+        	else {
+        		StraightenMagnets();
+        	}
         }
         
         
@@ -290,8 +319,7 @@ namespace AdventureAuthor.Ideas
         				AbortOpen();
 		           	}
 	           	}
-	        }
-        	Orientation = Orientation.Horizontal;
+	        }        	
         }      
         
         
@@ -391,7 +419,7 @@ namespace AdventureAuthor.Ideas
         	magnetsPanel.Children.Add(magnet);
         	
         	// Angle the magnet consistently with current policy:
-        	if (useWonkyMagnets) {
+        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
 	        	bool angleToLeft = magnetsPanel.Children.IndexOf(magnet) % 2 == 0;
 	        	magnet.RandomiseAngle(MAXIMUM_ANGLE_IN_EITHER_DIRECTION,angleToLeft);
         	}
@@ -495,22 +523,27 @@ namespace AdventureAuthor.Ideas
         {
         	// Update list of visible categories:
         	if (only) {
+        		foreach (IdeaCategory visCat in visibleCategories) {        			
+        			if (visCat != category) {
+        				OnHidCategory(new MagnetCategoryEventArgs(visCat));
+        			}
+        		}        		
         		visibleCategories.Clear();
         	}
-        	if (!visibleCategories.Contains(category)) {
+        	
+        	//if (!visibleCategories.Contains(category)) {
         		visibleCategories.Add(category);
-        	}
-        	
-        	foreach (MagnetControl magnet in magnetsPanel.Children) {
-        		if (magnet.Idea.Category == category) {
-        			magnet.Show();
-        		}
-        		else if (only) {
-        			magnet.Hide();
-        		}
-        	}
-        	
-        	OnVisibleMagnetsChanged(new EventArgs());
+        		
+	        	foreach (MagnetControl magnet in magnetsPanel.Children) {
+	        		if (magnet.Idea.Category == category) {
+	        			magnet.Show();
+	        		}
+	        		else if (only) {
+	        			magnet.Hide();
+	        		}
+	        	}	        	
+	        	OnShowedCategory(new MagnetCategoryEventArgs(category));
+        	//}
         }
                 
         
@@ -519,15 +552,16 @@ namespace AdventureAuthor.Ideas
         /// </summary>
         public void ShowAllCategories()
         {
-        	visibleCategories.Clear();
+        	// Update list of visible categories:        	
         	foreach (IdeaCategory category in Idea.IDEA_CATEGORIES) {
-        		visibleCategories.Add(category);
+        		if (!visibleCategories.Contains(category)) {
+        			visibleCategories.Add(category);
+        			OnShowedCategory(new MagnetCategoryEventArgs(category));
+        		}
         	}
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
         		magnet.Show();
         	}
-        	
-        	OnVisibleMagnetsChanged(new EventArgs());
         }
         
         
@@ -550,16 +584,20 @@ namespace AdventureAuthor.Ideas
         public void HideCategory(IdeaCategory category, bool only)
         {
         	// Update list of visible categories:
-        	if (only) {
-        		visibleCategories.Clear();
-        		foreach (IdeaCategory cat in Idea.IDEA_CATEGORIES) {
-        			visibleCategories.Add(cat);
-        		}
-        	}
         	if (visibleCategories.Contains(category)) {
         		visibleCategories.Remove(category);
-        	}        	
+        		OnHidCategory(new MagnetCategoryEventArgs(category));
+        	}
         	
+        	if (only) {
+        		foreach (IdeaCategory cat in Idea.IDEA_CATEGORIES) {
+        			if (cat != category && !visibleCategories.Contains(cat)) {
+        				visibleCategories.Add(cat);
+        				OnShowedCategory(new MagnetCategoryEventArgs(cat));
+        			}
+        		}    		
+        	}
+        	        	
         	foreach (MagnetControl magnet in magnetsPanel.Children) {
         		if (magnet.Idea.Category == category) {
         			magnet.Hide();
@@ -568,8 +606,19 @@ namespace AdventureAuthor.Ideas
         			magnet.Show();
         		}
         	}
-        	
-        	OnVisibleMagnetsChanged(new EventArgs());
+        }
+                
+        
+        /// <summary>
+        /// Hide all idea categories.
+        /// </summary>
+        public void HideAllCategories()
+        {
+        	// Update list of visible categories:     	
+        	foreach (IdeaCategory visCat in visibleCategories) {
+        		OnHidCategory(new MagnetCategoryEventArgs(visCat));
+        	}
+        	Clear();
         }
     	        
         
@@ -582,8 +631,8 @@ namespace AdventureAuthor.Ideas
         		}
         	}
         	return magnets;
-        }     	
-                
+        }     	                
+           
         
         /// <summary>
         /// Set the angle of each magnet in the list to 0. 
@@ -753,7 +802,7 @@ namespace AdventureAuthor.Ideas
     				row0.MaxHeight = 0;
     				row1.MinHeight = 220;
     				row1.MaxHeight = 220;
-    				magnetsPanel.MaxHeight = 200;
+    				magnetsPanel.MaxHeight = 195;
     				column0.MinWidth = 180;
     				column0.MaxWidth = 180;
     				column1.MaxWidth = double.MaxValue;
@@ -774,24 +823,29 @@ namespace AdventureAuthor.Ideas
         
         #region Event handlers
         
-//        /// <summary>
-//        /// Scroll the magnet list by scrolling the mouse wheel.
-//        /// </summary>
-//        /// <remarks>This is a preview event because scrolling the wheel over the window
-//        /// should move the list up and down, but not rotate the selected magnet (which is
-//        /// what usually happens on wheel scroll.) Handling the event will stop
-//        /// the selected magnet from rotating, if we are currently over the magnet list.</remarks>
-//        private void magnetListPreviewMouseWheel(object sender, MouseWheelEventArgs e)
-//        {
-//        	double offset = e.Delta;
-//        	scroller.ScrollToHorizontalOffset(scroller.HorizontalOffset + offset);
-//        	e.Handled = true;
-//        }
+        /// <summary>
+        /// Scroll the magnet list by scrolling the mouse wheel.
+        /// </summary>
+        /// <remarks>This is a preview event because scrolling the wheel over the window
+        /// should move the list up and down, but not rotate the selected magnet (which is
+        /// what usually happens on wheel scroll.) Handling the event will stop
+        /// the selected magnet from rotating, if we are currently over the magnet list.</remarks>
+        private void magnetListPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+	        double offset = e.Delta / 2;
+        	if (Orientation == Orientation.Horizontal) {
+	        	scroller.ScrollToHorizontalOffset(scroller.HorizontalOffset - offset);
+        	}
+        	else { // technically unnecessary as it happens anyway, but left for clarity
+	        	scroller.ScrollToVerticalOffset(scroller.VerticalOffset - offset);
+        	}
+	        e.Handled = true;
+        }
         
         
         internal void OnClick_Scatter(object sender, RoutedEventArgs e)
         {
-        	MessageBoxResult result = MessageBox.Show("Tip all your magnets onto the board?",
+        	MessageBoxResult result = MessageBox.Show("Tip all visible magnets onto the board?",
 		        					                  "Scatter magnets?", 
 		        					                  MessageBoxButton.YesNo,
 		        					                  MessageBoxImage.Question,
@@ -805,8 +859,6 @@ namespace AdventureAuthor.Ideas
     	
         internal void OnClick_CreateMagnet(object sender, RoutedEventArgs e)
         {        	
-        	Idea idea = new Idea();
-        	MagnetControl magnet = new MagnetControl(idea);
         	EditMagnetWindow window = new EditMagnetWindow();
         	window.MagnetEdited += new EventHandler<MagnetEventArgs>(newMagnetCreated);
         	window.ShowDialog();

@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -592,11 +593,9 @@ namespace AdventureAuthor.Setup
 			UpdateTitleBar();		
 			SetUI_ModuleNotOpen();
 			
-			// Lock or unlock the interface depending on user settings, and set up handlers
-			// to lock/unlock the interface when user settings change.
-			EventHandler updateLockedStatusHandler = new EventHandler(UpdateLockedStatus);
-			Plugin.Options.LockedInterface += updateLockedStatusHandler;
-			Plugin.Options.UnlockedInterface += updateLockedStatusHandler;
+			// Lock or unlock the interface depending on user settings, and handle
+			// locking/unlocking the interface when user settings change in future.
+            Plugin.Options.PropertyChanged += UpdateLockedStatus;            
 			SetInterfaceLock(Plugin.Options.LockInterface);
 		}
 		
@@ -605,9 +604,11 @@ namespace AdventureAuthor.Setup
 		/// Check whether the user has set the interface to be locked or unlocked,
 		/// and lock/unlock the interface accordingly.
 		/// </summary>
-		private static void UpdateLockedStatus(object sender, EventArgs e)
+		private static void UpdateLockedStatus(object sender, PropertyChangedEventArgs e)
 		{
-			Toolset.SetInterfaceLock(Plugin.Options.LockInterface);
+			if (e.PropertyName == "LockInterface") {
+				SetInterfaceLock(Plugin.Options.LockInterface);
+			}
 		}
 				
 		
@@ -771,6 +772,7 @@ namespace AdventureAuthor.Setup
 					string text = GetTextForBlueprintMagnet(blueprint);
 					Idea idea = new Idea(text,IdeaCategory.Toolset,User.GetCurrentUser());
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
+					Log.WriteAction(LogAction.added,"idea","from blueprints- " + idea.ToString());
 				}
 			}
 			else {
@@ -891,20 +893,14 @@ namespace AdventureAuthor.Setup
 						return; // temp file
 					}
 					
-					LaunchConversationWriter(false);
+					LaunchConversationWriter(false); // delay bringing it into view
 					// Unlike when you Open the same conversation again from within the conversation writer
 					// (usually if you have screwed something up and don't want to save) double-clicking
 					// the conversation that is already open probably just means you want to bring it into view:
-					if (Conversation.CurrentConversation == null ||
-					    WriterWindow.Instance.OriginalFilename != conv.Name) 
-					{
+					if (Conversation.CurrentConversation == null || WriterWindow.Instance.OriginalFilename != conv.Name) {
 						WriterWindow.Instance.Open(conv.Name);
-					}	
-					
-					if (WriterWindow.Instance.WindowState == System.Windows.WindowState.Minimized) {
-						WriterWindow.Instance.WindowState = System.Windows.WindowState.Normal;
-					}
-					WriterWindow.Instance.Activate(); // bring to front
+					}						
+					Toolset.BringToFront(WriterWindow.Instance);
 				}
 				else if (viewer.ViewedResource is NWN2FactionData) {
 					NWN2FactionData factions = (NWN2FactionData)viewer.ViewedResource;
@@ -1272,17 +1268,32 @@ namespace AdventureAuthor.Setup
 			try {
 				if (MagnetBoardViewer.Instance == null || !MagnetBoardViewer.Instance.IsLoaded) {
 					MagnetBoardViewer.Instance = new MagnetBoardViewer();
+					// Attempt to open a magnet list, and handle its absence/corruption:
+	    			MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
+	    			// (Messily) tell the viewer where to load the magnet box. Because this involves
+	    			// changes to the UI of both the magnet list and the magnet viewer, it is
+	    			// handled in the magnet viewer, which also tells the magnet list what to do.
+	    			// You can't call this till now, because by default the magnet board viewer
+	    			// won't have an open magnet list - you have to call that explicitly as above,
+	    			// then call this:
+	    			MagnetBoardViewer.Instance.UpdateMagnetBoxAppearsAtSide();
 				}
-				ElementHost.EnableModelessKeyboardInterop(MagnetBoardViewer.Instance);
-    		
-	    		// Attempt to open a magnet list, and handle its absence/corruption:
-	    		MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
+				ElementHost.EnableModelessKeyboardInterop(MagnetBoardViewer.Instance);	    		
 				MagnetBoardViewer.Instance.Show();
 			}
 			catch (Exception e) {
 				Say.Error("Could not open magnets window.",e);
 			}
-		}		
+		}	
+		
+		
+		public static void BringToFront(System.Windows.Window window)
+		{
+			if (window.WindowState == System.Windows.WindowState.Minimized) {
+				window.WindowState = System.Windows.WindowState.Normal;
+			}
+			window.Activate(); // bring to front
+		}
 		
 		
 		private static void DeleteAreaDialog(NWN2GameArea area)

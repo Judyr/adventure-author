@@ -25,17 +25,18 @@
  */
 
 using System;
+using System.Windows.Controls;
 
 namespace AdventureAuthor.Scripts.UI
 {
 	/// <summary>
 	/// A panel that elicits a value for a script parameter from the user by posing the user a question.
 	/// </summary>
-	public interface IParameterPanel
+	public abstract class ParameterPanel : UserControl
 	{
 		/// <summary>
 		/// Returns an object representing the answer to the question posed by the panel, based on user input.
 		/// </summary>
-		object Answer { get; }		
+		public abstract object Answer { get; }		
 	}
 }

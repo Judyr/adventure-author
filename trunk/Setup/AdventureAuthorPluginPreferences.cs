@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.Reflection;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Evaluation.Viewer;
@@ -23,66 +24,16 @@ namespace AdventureAuthor.Setup
 	/// </summary>
 	[Serializable]
 	[XmlRoot]
-	public class AdventureAuthorPluginPreferences
+	public class AdventureAuthorPluginPreferences : INotifyPropertyChanged
 	{		
-		#region Events			
+		#region Events	
 		
-		public event EventHandler OpenScratchpadByDefaultChanged;		
-		private void OnOpenScratchpadByDefaultChanged(EventArgs e) 
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void NotifyPropertyChanged(string propertyName)
 		{
-			EventHandler handler = OpenScratchpadByDefaultChanged;
+			PropertyChangedEventHandler handler = PropertyChanged;
 			if (handler != null) {
-				handler(this,e);
-			}
-		}
-		
-					
-		public event EventHandler LockedInterface;		
-		private void OnLockedInterface(EventArgs e) 
-		{
-			EventHandler handler = LockedInterface;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-			
-		
-		public event EventHandler UnlockedInterface;		
-		private void OnUnlockedInterface(EventArgs e) 
-		{
-			EventHandler handler = UnlockedInterface;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-		
-		
-		public event EventHandler Nwn2InstallationDirectoryChanged;
-		private void OnNwn2InstallationDirectoryChanged(EventArgs e) 
-		{
-			EventHandler handler = Nwn2InstallationDirectoryChanged;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}		
-		
-		
-		public event EventHandler DefaultImageViewerChanged;		
-		private void OnDefaultImageViewerChanged(EventArgs e) 
-		{
-			EventHandler handler = DefaultImageViewerChanged;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-		
-		
-		public event EventHandler FontSizeChanged; // one event for all font size changes
-		private void OnFontSizeChanged(EventArgs e)
-		{
-			EventHandler handler = FontSizeChanged;
-			if (handler != null) {
-				handler(this,e);
+				PropertyChanged(this,new PropertyChangedEventArgs(propertyName));
 			}
 		}
 		
@@ -94,6 +45,7 @@ namespace AdventureAuthor.Setup
 		/// The single instance of this class.
 		/// </summary>
 		private static AdventureAuthorPluginPreferences instance;
+		[XmlIgnore]
 		public static AdventureAuthorPluginPreferences Instance {
 			get {
 				if (instance == null) {
@@ -106,44 +58,42 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
-		#region General
+		
+		// General:
 		
 		/// <summary>
-		/// True to open the scratchpad area (if one exists) automatically upon
-		/// opening a module; otherwise false.
+		/// Whether or not the scratchpad area should automatically load when you open a module.
 		/// </summary>
-		[XmlElement]		
-		[Description("True to open the scratchpad area (if one exists) automatically upon" + 
-		 			 "opening a module; otherwise false."), Category("General"), Browsable(true)]
 		private bool openScratchpadByDefault;	
+		[XmlElement]		
+		[Description("Whether or not the scratchpad area should automatically load when you open a module."), 
+		 Category("General"), Browsable(true)]
 		public bool OpenScratchpadByDefault {
 			get { return openScratchpadByDefault; }
 			set { 
-				openScratchpadByDefault = value; 
-				Log.WriteAction(LogAction.set,"OpenScratchpadByDefault",value.ToString());
-				OnOpenScratchpadByDefaultChanged(new EventArgs());
+				if (openScratchpadByDefault != value) {
+					openScratchpadByDefault = value; 
+					NotifyPropertyChanged("OpenScratchpadByDefault");
+				}
 			}
 		}
 				
 		
 		/// <summary>
-		/// True if the interface is locked (i.e. controls cannot be docked,
-		/// resized or closed); false if it is unlocked (can be altered). 
+		/// Whether or not the interface is unlocked (controls can be moved about the screen, resized
+		/// and closed) or locked (controls are frozen in position.)
 		/// </summary>
-		[XmlElement]
-		[Description("True to allow interface controls to be docked, resized or closed."), Category("General"), Browsable(true)]
 		private bool lockInterface;
+		[XmlElement]
+		[Description("True to allow interface controls to be docked, resized or closed."), 
+		 Category("General"), Browsable(true)]
 		public bool LockInterface {
 			get { return lockInterface; }
 			set { 
-				lockInterface = value;
-				if (lockInterface) {
-					OnLockedInterface(new EventArgs());
+				if (lockInterface != value) {
+					lockInterface = value;
+					NotifyPropertyChanged("LockInterface");
 				}
-				else {
-					OnUnlockedInterface(new EventArgs());
-				}
-				Log.WriteAction(LogAction.set,"LockInterface",value.ToString());
 			}
 		}
 		
@@ -151,58 +101,99 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The location of the Neverwinter Nights 2 main install.
 		/// </summary>
+		private string nwn2InstallationDirectory;	
 		[XmlElement]
-		[Description("The location of the Neverwinter Nights 2 main install."), Category("General"), Browsable(true)]
-		private string nwn2InstallationDirectory;		
+		[Description("The location of the Neverwinter Nights 2 main install."), 
+		 Category("General"), Browsable(true)]	
 		public string NWN2InstallationDirectory {
 			get { return nwn2InstallationDirectory; }
 			set { 
-				nwn2InstallationDirectory = value;				
-				Log.WriteAction(LogAction.set,"NWN2InstallationDirectory",value.ToString());
-				OnNwn2InstallationDirectoryChanged(new EventArgs());
+				if (nwn2InstallationDirectory != value) {
+					nwn2InstallationDirectory = value;
+					NotifyPropertyChanged("NWN2InstallationDirectory");
+				}
 			}
 		}	
+					
 		
-		#endregion
-			
-		#region Evaluation
+		// Evaluation:
 		
 		/// <summary>
 		/// The default application to open images in.
 		/// </summary>
+		private ImageApp imageViewer;
 		[XmlElement]
 		[Description("The default application to open images in (usually when viewing a piece of evidence" + 
-					 "in the Evaluation application)."), Category("Evaluation"), Browsable(true)]
-		private ImageApp imageViewer;
+					 "in the Evaluation application)."),
+		 Category("Evaluation"), Browsable(true)]
 		public ImageApp ImageViewer {
 			get { return imageViewer; }
 			set { 
-				imageViewer = value; 
-				Log.WriteAction(LogAction.set,"ImageViewer",value.ToString());			
-				OnDefaultImageViewerChanged(new EventArgs());
+				if (imageViewer != value) {
+					imageViewer = value;
+					NotifyPropertyChanged("ImageViewer");
+				}
 			}
 		}	
 		
-		#endregion
-				
-		#region Conversations
 		
+		// Conversations:
+						
 		/// <summary>
 		/// The font size of conversation dialogue and speaker names. 
 		/// </summary>
-		[XmlElement]
-		[Description("The font size of conversation dialogue and speaker names."), Category("Conversations"), Browsable(true)]
 		private double dialogueFontSize;
+		[XmlElement]
+		[Description("The font size of conversation dialogue and speaker names."), 
+		 Category("Conversations"), Browsable(true)]
 		public double DialogueFontSize {
 			get { return dialogueFontSize; }
 			set { 
-				dialogueFontSize = value;
-				OnFontSizeChanged(new EventArgs());
-				Log.WriteAction(LogAction.set,"DialogueFontSize",value.ToString());
+				if (dialogueFontSize != value) {
+					dialogueFontSize = value;
+					NotifyPropertyChanged("DialogueFontSize");
+				}
 			}
 		}
 		
-		#endregion
+		
+		// Magnets:
+			
+		/// <summary>
+		/// Whether or not magnets in the magnet list will appear perfectly straight or slightly angled.
+		/// </summary>
+		private bool useWonkyMagnets;
+		[XmlElement]
+		[Description("Whether or not magnets in the magnet list will appear perfectly straight " +
+		             "or slightly angled."), Category("Ideas"), Browsable(true)]
+		public bool UseWonkyMagnets {
+			get { return useWonkyMagnets; }
+			set { 
+				if (useWonkyMagnets != value) {
+					useWonkyMagnets = value;
+					NotifyPropertyChanged("UseWonkyMagnets");
+				}
+			}
+		}	
+		
+		
+		/// <summary>
+		/// Whether or not the magnet list will appear at the right-hand side of the screen, or at the
+		/// bottom of the screen.
+		/// </summary>
+		private bool magnetBoxAppearsAtSide;
+		[XmlElement]
+		[Description("Whether or not the magnet list will appear at the right-hand side of the screen, or at the " +
+					 "bottom of the screen."), Category("Ideas"), Browsable(true)]
+		public bool MagnetBoxAppearsAtSide {
+			get { return magnetBoxAppearsAtSide; }
+			set { 
+				if (magnetBoxAppearsAtSide != value) {
+					magnetBoxAppearsAtSide = value;
+					NotifyPropertyChanged("MagnetBoxAppearsAtSide");
+				}
+			}
+		}
 		
 		#endregion
 		
@@ -216,6 +207,30 @@ namespace AdventureAuthor.Setup
 		
 		public AdventureAuthorPluginPreferences()
 		{			
+			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
+		}
+		
+		#endregion
+		
+		#region Event handlers
+		
+		private void logPropertyChange(object sender, PropertyChangedEventArgs e)
+		{
+			try {
+				PropertyInfo property = GetType().GetProperty(e.PropertyName);
+				if (property != null) {
+					object val = property.GetValue(this,null);
+					if (val == null) {
+						Log.WriteAction(LogAction.set,e.PropertyName);
+					}
+					else {
+						Log.WriteAction(LogAction.set,e.PropertyName,val.ToString());
+					}
+				}
+			}
+			catch (Exception ex) {
+				Say.Debug("Failed to log a property change to property " + e.PropertyName + ":\n" + ex.ToString());
+			}
 		}
 		
 		#endregion

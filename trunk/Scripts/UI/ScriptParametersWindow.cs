@@ -34,8 +34,7 @@ namespace AdventureAuthor.Scripts.UI
             InitializeComponent();
     		this.Title = title;
     		this.ResizeMode = ResizeMode.NoResize;
-    		this.Loaded += delegate 
-    		{  
+    		this.Loaded += delegate {
     			Height = (QuestionsPanel.Children.Count * 120) + 85;
     		};
         }      
@@ -284,7 +283,7 @@ namespace AdventureAuthor.Scripts.UI
         	
         	bool incomplete = false;
         	for (int i = 0; i < QuestionsPanel.Children.Count; i++) {
-        		IParameterPanel panel = (IParameterPanel)QuestionsPanel.Children[i];
+        		ParameterPanel panel = (ParameterPanel)QuestionsPanel.Children[i];
          		if (panel.Answer == null) {        			
         			incomplete = true;
         			break;

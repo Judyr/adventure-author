@@ -17,7 +17,7 @@ namespace AdventureAuthor.Scripts.UI
 	/// <summary>
 	/// Ask a question which will be answered by a float value.
 	/// </summary>
-    public partial class FloatQuestionPanel : UserControl, IParameterPanel
+    public partial class FloatQuestionPanel : ParameterPanel
     {
     	/// <summary>
     	/// The minimum allowed value for this answer
@@ -72,7 +72,7 @@ namespace AdventureAuthor.Scripts.UI
         /// <summary>
         /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
         /// </summary>
-        public object Answer
+        public override object Answer
         {
 			get { 
         		try {
