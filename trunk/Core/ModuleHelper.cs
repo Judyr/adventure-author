@@ -70,9 +70,11 @@ namespace AdventureAuthor.Core
 			
 			FileInfo nwn2ExeFile = new FileInfo(Application.ExecutablePath);
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
-			aaInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
-			string localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			aaUserDirectory = Path.Combine(localApplicationData,"Adventure Author");
+			adventureAuthorInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
+			string localApplicationDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			privateUserDirectory = Path.Combine(localApplicationDataFolder,"Adventure Author");
+			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
 		}
 		
 						
@@ -97,65 +99,72 @@ namespace AdventureAuthor.Core
 		}
 		
 		
-		private static string aaInstallDirectory;		
-		public static string AAInstallDirectory {
-			get { return aaInstallDirectory; }
-			set { aaInstallDirectory = value; }
+		private static string adventureAuthorInstallDirectory;		
+		public static string AdventureAuthorInstallDirectory {
+			get { return adventureAuthorInstallDirectory; }
+			set { adventureAuthorInstallDirectory = value; }
 		}
 		
 		
-		private static string aaUserDirectory;		
-		public static string AAUserDirectory {
-			get { return aaUserDirectory; }
-			set { aaUserDirectory = value; }
+		private static string publicUserDirectory;		
+		public static string PublicUserDirectory {
+			get { return publicUserDirectory; }
+			set { publicUserDirectory = value; }
+		}
+		
+		
+		private static string privateUserDirectory;
+		public static string PrivateUserDirectory {
+			get { return privateUserDirectory; }
+			set { privateUserDirectory = value; }
 		}
 		
 				
 		public static string DebugDirectory {			
 			get {
-				return Path.Combine(AAUserDirectory,"Debug");
+				return Path.Combine(PrivateUserDirectory,"Debug");
 			}
 		}	
 		
 		
 		public static string UserLogDirectory {			
 			get {
-				return Path.Combine(AAUserDirectory,"User logs");
+				return Path.Combine(PrivateUserDirectory,"User logs");
 			}
 		}	
 		
 		
 		public static string WorksheetsDirectory {
 			get {
-				return Path.Combine(AAUserDirectory,"Worksheets");
+				return Path.Combine(PublicUserDirectory,"Worksheets");
 			}
 		}
 		
 		
 		public static string MagnetBoardsDirectory {
 			get {
-				return Path.Combine(AAUserDirectory,"Magnet boards");
+				return Path.Combine(PublicUserDirectory,"Magnet boards");
 			}
 		}	
 		
 		
 		public static string IdeasBoxFilename {
 			get {
-				return Path.Combine(AAUserDirectory,"ideas.xml");
+				return Path.Combine(PublicUserDirectory,"ideas.xml");
 			}
 		}
 		
 		
 		public static string ImagesDir {			
 			get {
-				return Path.Combine(AAInstallDirectory,"images");
+				return Path.Combine(AdventureAuthorInstallDirectory,"images");
 			}
 		}	
 				
 		
 		public static string SoundsDir {			
 			get {
-				return Path.Combine(AAInstallDirectory,"sounds");
+				return Path.Combine(AdventureAuthorInstallDirectory,"sounds");
 			}
 		}
 				
@@ -249,6 +258,12 @@ namespace AdventureAuthor.Core
 				Log.WriteAction(LogAction.deleted,"journalcategory");
 			};	
 		}	
+		
+		
+		public static string GetCurrentModulePath()
+		{
+			return Path.Combine(form.ModulesDirectory,form.App.Module.Repository.DirectoryName);
+		}
 		
 				
 		public static NWN2GameModule CreateAndOpenModule(string name)
@@ -657,7 +672,7 @@ namespace AdventureAuthor.Core
 			
 			// Delete the area:
 			form.App.Module.RemoveResource(area);
-			string path = Path.Combine(form.ModulesDirectory,form.App.Module.FileName);
+			string path = ModuleHelper.GetCurrentModulePath();
 			string[] areaFiles = Directory.GetFiles(path,area.Name+"*");
 			foreach (string filename in areaFiles) {
 				Directory.Delete(filename);

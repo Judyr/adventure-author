@@ -50,7 +50,7 @@
 					Points="{StaticResource WonkyStarPoints}"
 					Stroke="Black"
 					StrokeThickness="1"
-					Fill="Yellow"
+					Fill="Silver"
 					Margin="3">
 					<Polygon.BitmapEffect>
 						<BevelBitmapEffect EdgeProfile="Linear" Relief="0.3"/>

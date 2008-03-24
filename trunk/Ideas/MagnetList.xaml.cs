@@ -182,7 +182,6 @@ namespace AdventureAuthor.Ideas
             // All changes in the magnet list should be serialized automatically:
             MagnetAdded += delegate(object sender, MagnetEventArgs e) {
             	automaticSave(); 
-            	Log.WriteAction(LogAction.added,"idea","from magnets app- " + e.Magnet.ToString());
             };
             MagnetDeleted += delegate(object sender, MagnetEventArgs e) {
             	automaticSave(); 
@@ -444,7 +443,7 @@ namespace AdventureAuthor.Ideas
         			magnet.Hide();
         		}
         	}
-        	
+        	    		
         	OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
@@ -461,6 +460,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited += magnetListChangedHandler;
         		magnet.Starred += magnetListChangedHandler;
         		magnet.Unstarred += magnetListChangedHandler;
+        		magnet.Rotated += magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -480,6 +480,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited -= magnetListChangedHandler;
         		magnet.Starred -= magnetListChangedHandler;
         		magnet.Unstarred -= magnetListChangedHandler;
+        		magnet.Rotated -= magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -874,6 +875,7 @@ namespace AdventureAuthor.Ideas
         private void newMagnetCreated(object sender, MagnetEventArgs e)
         {
         	AddMagnet(e.Magnet,true);
+        	Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString());
         }
         
         

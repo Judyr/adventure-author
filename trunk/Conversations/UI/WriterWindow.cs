@@ -625,7 +625,7 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(LogAction.opened,"conversation",filename);
+			Log.WriteAction(LogAction.opened,"conversation",Path.GetFileName(filename));
 			
 			try {
 				Open(filename,false);
@@ -656,8 +656,8 @@ namespace AdventureAuthor.Conversations.UI
 				return;
 			}
 			
-			Log.WriteAction(LogAction.added,"conversation",filename);
-			Log.WriteAction(LogAction.opened,"conversation",filename);
+			Log.WriteAction(LogAction.added,"conversation",Path.GetFileName(filename));
+			Log.WriteAction(LogAction.opened,"conversation",Path.GetFileName(filename));
 			
 			try {
 				Open(filename,true);

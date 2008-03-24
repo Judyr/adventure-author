@@ -246,14 +246,12 @@ namespace AdventureAuthor.Ideas
 		/// </summary>
 		public double Angle {
     		get {     			
-				double angle = ((RotateTransform)RenderTransform).Angle;
-				return angle;
+				return ((RotateTransform)RenderTransform).Angle;
     		}
-			set { 
+			internal set { 
     			((RotateTransform)RenderTransform).Angle = value;
-				OnRotated(new EventArgs());
 			}
-		}    	
+		}    
 		
 		
 		/// <summary>
@@ -379,18 +377,12 @@ namespace AdventureAuthor.Ideas
     		Y = magnetInfo.Y;
     		Angle = magnetInfo.Angle;
     		Idea = magnetInfo.Idea;
-			Rotated += delegate { 
-				Log.WriteMessage("rotated idea -" + Idea);
-			};
     	}
     	
     	
     	public MagnetControl(Idea idea) : this()
     	{
             Idea = idea;
-			Rotated += delegate { 
-				Log.WriteMessage("rotated idea -" + Idea);
-			};
     	}
     	
     	
@@ -509,7 +501,14 @@ namespace AdventureAuthor.Ideas
     		if (Visibility != Visibility.Visible) {
     			Visibility = Visibility.Visible;
     		}
-    	}
+    	}	
+		
+		
+		public void SetAngle(double angle)
+		{
+			Angle = angle;
+			OnRotated(new EventArgs());
+		}
     	
     	
     	/// <summary>
@@ -656,7 +655,7 @@ namespace AdventureAuthor.Ideas
 			}
 			
 			if (proposedAngle < maxDeviationFromZero || proposedAngle > 360 - maxDeviationFromZero) {
-				Angle = proposedAngle;
+				SetAngle(proposedAngle);
 			}
 		}
 		
@@ -695,7 +694,7 @@ namespace AdventureAuthor.Ideas
         		angle = 360 - angle;
         	}
         	angle -= (angle % DEGREES_TO_ROTATE); // ensure angle is divisible by DEGREES_TO_ROTATE (2)
-        	Angle = angle;
+        	SetAngle(angle);
         }
         
         

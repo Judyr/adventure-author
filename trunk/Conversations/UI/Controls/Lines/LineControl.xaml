@@ -111,8 +111,9 @@
 					<MenuItem Header="A number variable is set to a value" Click="OnClick_SetIntVariable"/>
 					<MenuItem Header="A word(s) variable is set to a value" Click="OnClick_SetStringVariable"/>
 				</MenuItem.Items>
-				<!--<MenuItem Header="Add a custom script" Click="OnClick_AddCustomScript"/>-->
 				</MenuItem>
+				<Separator/>
+				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomAction"/>
 			</MenuItem.Items>
 			</MenuItem>
 			<MenuItem Header="Add a condition" Name="MenuItem_AddCondition">
@@ -138,6 +139,8 @@
 				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->
 				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
 				<MenuItem Header="If a word(s) variable has a certain value" Click="OnClick_StringHasValue"/>
+				<Separator/>
+				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomCondition"/>
 			</MenuItem.Items>
 			</MenuItem>
 			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" Name="MenuItem_SetCamera" IsEnabled="false" Visibility="Collapsed"/> <!--Not implemented-->

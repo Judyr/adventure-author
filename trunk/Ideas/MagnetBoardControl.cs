@@ -49,7 +49,6 @@ namespace AdventureAuthor.Ideas
 		}
     	
     	
-    	private Color defaultSurfaceColour;
 		public Color DefaultSurfaceColour {
 			get { 
     			return (Color)Resources["defaultSurfaceColour"];
@@ -183,7 +182,7 @@ namespace AdventureAuthor.Ideas
     			Log.WriteMessage("cleared board");
     		};
     		Opened += delegate { 
-    			Log.WriteAction(LogAction.opened,"magnetboard",filename);
+    			Log.WriteAction(LogAction.opened,"magnetboard",Path.GetFileName(filename));
     		};
     		Closed += delegate { 
     			Log.WriteAction(LogAction.closed,"magnetboard");
@@ -296,9 +295,9 @@ namespace AdventureAuthor.Ideas
 			BringInsideBoard(magnet);			
 			
 			mainCanvas.Children.Add(magnet);
-			BringToFront(magnet);
-			
-			OnMagnetAdded(new MagnetEventArgs(magnet));
+			UpdateZOrder(magnet,true); // bring to front but avoid raising event
+			        	  		
+        	OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
         
@@ -319,6 +318,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited += magnetControl_EditedHandler;
         		magnet.Starred += magnetControl_EditedHandler;
         		magnet.Unstarred += magnetControl_EditedHandler;
+        		magnet.Rotated += magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -335,6 +335,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited -= magnetControl_EditedHandler;
         		magnet.Starred -= magnetControl_EditedHandler;
         		magnet.Unstarred -= magnetControl_EditedHandler;
+        		magnet.Rotated -= magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -393,7 +394,7 @@ namespace AdventureAuthor.Ideas
         public void CloseBoard()
         {
         	mainCanvas.Children.Clear(); 
-        	SurfaceColour = defaultSurfaceColour;
+        	SurfaceColour = DefaultSurfaceColour;
         	Filename = null;
         	Dirty = false;
         	OnClosed(new EventArgs());

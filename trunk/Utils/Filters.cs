@@ -21,7 +21,8 @@ namespace AdventureAuthor.Utils
     	public const string TXT = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
     	public const string XML = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     	public const string PICTURES = "Pictures (*.jpg;*.jpeg;*.bmp;*.png;*.gif)|*.jpg;*.jpeg;*.bmp;*.png;*.gif";
-    	public const string ALL = "All files (*.*)|*.*";
+    	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";
+    	public const string ALL = "All files (*.*)|*.*";    	
     	public const string WORKSHEET_EVIDENCE = PICTURES + "|" + ALL;
     	
     	#endregion
