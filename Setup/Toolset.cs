@@ -1299,7 +1299,7 @@ namespace AdventureAuthor.Setup
 		private static void DeleteAreaDialog(NWN2GameArea area)
 		{			
 			DialogResult d = MessageBox.Show("Are you sure you want to delete '" + area.Name + "'?",
-			                                 "Delete chapter?", 
+			                                 "Delete area?", 
 			                                 MessageBoxButtons.YesNo,
 			                                 MessageBoxIcon.Question,
 			                                 MessageBoxDefaultButton.Button2);

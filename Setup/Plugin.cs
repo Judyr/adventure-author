@@ -97,15 +97,18 @@ namespace AdventureAuthor.Setup
 				//form.App.Closing += OnNeverwinterNights2Closing;
 				
 				// Check directories:				
-				if (!Directory.Exists(ModuleHelper.AAInstallDirectory)) {					
+				if (!Directory.Exists(ModuleHelper.AdventureAuthorInstallDirectory)) {					
 					Say.Error("Adventure Author files were not found at the expected location " + 
-					          "(" + ModuleHelper.AAInstallDirectory + ").\n\n" +
+					          "(" + ModuleHelper.AdventureAuthorInstallDirectory + ").\n\n" +
 					          "You may find that the software no longer runs correctly. " +
 					          "If this is the case, try reinstalling Adventure Author.");
 				}
 				try {
-					if (!Directory.Exists(ModuleHelper.AAUserDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.AAUserDirectory);	
+					if (!Directory.Exists(ModuleHelper.PublicUserDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.PublicUserDirectory);	
+					}	
+					if (!Directory.Exists(ModuleHelper.PrivateUserDirectory)) {
+						Directory.CreateDirectory(ModuleHelper.PrivateUserDirectory);	
 					}	
 					if (!Directory.Exists(ModuleHelper.DebugDirectory)) {
 						Directory.CreateDirectory(ModuleHelper.DebugDirectory);	

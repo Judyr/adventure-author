@@ -48,7 +48,7 @@ namespace AdventureAuthor.Conversations.UI
         private void OnClickOK(object sender, EventArgs ea)
         {        	
         	string name = ConversationNameTextBox.Text;
-        	if (File.Exists(Path.Combine(Path.Combine(form.ModulesDirectory,form.App.Module.Repository.DirectoryName),name+".dlg"))) {
+        	if (File.Exists(Path.Combine(ModuleHelper.GetCurrentModulePath(),name+".dlg"))) {
         		Say.Warning("A conversation called '" + name + "' already exists - try another name.");
         	}
         	else if (!ModuleHelper.IsValidName(name)) {

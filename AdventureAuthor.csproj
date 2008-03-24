@@ -344,7 +344,6 @@
     <Compile Include="Scripts\Movie.cs" />
     <Compile Include="Scripts\NWN2Colour.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
-    <Compile Include="Scripts\ScriptOrigin.cs" />
     <Compile Include="Scripts\TaggedType.cs" />
     <Compile Include="Scripts\UI\BooleanQuestionPanel.xaml.cs">
       <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>

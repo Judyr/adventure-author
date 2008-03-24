@@ -25,11 +25,14 @@
  */
  
 using System;
+using System.IO;
 using System.Windows.Controls;
+using AdventureAuthor.Core;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Scripts.UI;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
+using Microsoft.Win32;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
@@ -338,5 +341,29 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			NWN2ConditionalFunctor condition = Conditions.PlayerIsChaotic();
     		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
 		}	
+    	
+    	
+    	private void OnClick_AddCustomCondition(object sender, EventArgs e)
+    	{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.ValidateNames = true;
+    		openFileDialog.DefaultExt = Filters.COMPILEDSCRIPTS;
+    		openFileDialog.Filter = Filters.COMPILEDSCRIPTS;
+			openFileDialog.Title = "Select a custom script to run";
+			openFileDialog.Multiselect = false;
+			openFileDialog.RestoreDirectory = true;
+			openFileDialog.InitialDirectory = ModuleHelper.GetCurrentModulePath();			
+									
+  			bool ok = (bool)openFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string filename = openFileDialog.FileName;
+  				FileInfo fileInfo = new FileInfo(filename);  		
+  				NWN2ScriptFunctor script = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
+							  				                             null, // currently don't handle function script
+							  				                             fileInfo.DirectoryName); 	
+  				NWN2ConditionalFunctor condition = (NWN2ConditionalFunctor)script;  					
+	    		Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+  			}    		
+    	}
     }
 }

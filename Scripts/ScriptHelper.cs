@@ -54,7 +54,36 @@ namespace AdventureAuthor.Scripts
 					
 		#endregion
 		
-		#region Creating scripts
+		#region Fields		
+		
+		private static ZIPResourceRepository nwn2ScriptsRepository = 
+			(ZIPResourceRepository)ResourceManager.Instance.GetRepositoryByName(
+				Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip"));
+		public static ZIPResourceRepository NWN2ScriptsRepository {
+			get {
+				return nwn2ScriptsRepository;
+			}
+		}
+		
+		
+		private static DirectoryResourceRepository overrideRepository = 
+			((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory;
+		public static DirectoryResourceRepository OverrideRepository {
+			get { 
+				return overrideRepository; 
+			}
+		}
+			
+					
+		public static DirectoryResourceRepository CurrentModuleRepository {
+			get {
+				return new DirectoryResourceRepository(ModuleHelper.GetCurrentModulePath());
+			}
+		}
+		
+		#endregion
+		
+		#region Creating scripts			
 		
 		/// <summary>
 		/// Returns a conditional functor given a script name and an array of parameter arguments.
@@ -62,12 +91,40 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. gc_item_count (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a conditional functor, or null if failed.</returns>
-		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, ScriptOrigin origin)
+		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, 
+		                                                           string directoryPath)
 		{
-			NWN2ConditionalFunctor conditionalFunctor = GetFunctor(scriptName,args,origin);
+			DirectoryResourceRepository repository = new DirectoryResourceRepository(directoryPath);
+			return GetConditionalFunctor(scriptName,args,repository);
+		}
+		
+		
+		/// <summary>
+		/// Returns a script functor given a script name and an array of parameter arguments.
+		/// </summary>
+		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
+		/// <param name="args">The arguments to pass into the script method.</param>
+		/// <returns>Returns a script functor, or null if failed.</returns>
+		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, 
+		                                                 string directoryPath)
+		{
+			DirectoryResourceRepository repository = new DirectoryResourceRepository(directoryPath);
+			return GetScriptFunctor(scriptName,args,repository);
+		}
+		
+		
+		/// <summary>
+		/// Returns a conditional functor given a script name and an array of parameter arguments.
+		/// </summary>
+		/// <param name="scriptName">The name/resref of the script, e.g. gc_item_count (no file extension)</param>
+		/// <param name="args">The arguments to pass into the script method.</param>
+		/// <returns>Returns a conditional functor, or null if failed.</returns>
+		public static NWN2ConditionalFunctor GetConditionalFunctor(string scriptName, object[] args, 
+		                                                           IResourceRepository repository)
+		{
+			NWN2ConditionalFunctor conditionalFunctor = GetFunctor(scriptName,args,repository);
 			
 			// TODO: Do stuff with AND, OR and NOT here.
-			
 			return conditionalFunctor;
 		}
 		
@@ -78,12 +135,13 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, ScriptOrigin location)
+		public static NWN2ScriptFunctor GetScriptFunctor(string scriptName, object[] args, 
+		                                                 IResourceRepository repository)
 		{
-			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,location);
+			NWN2ScriptFunctor scriptFunctor = (NWN2ScriptFunctor)GetFunctor(scriptName,args,repository);
 			return scriptFunctor;
 		}
-		
+						
 		
 		/// <summary>
 		/// Returns a script functor given a script name and an array of parameter arguments.
@@ -91,18 +149,20 @@ namespace AdventureAuthor.Scripts
 		/// <param name="scriptName">The name/resref of the script, e.g. ga_attack (no file extension)</param>
 		/// <param name="args">The arguments to pass into the script method.</param>
 		/// <returns>Returns a script functor, or null if failed.</returns>
-		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, ScriptOrigin origin)
+		private static NWN2ConditionalFunctor GetFunctor(string scriptName, object[] args, 
+		                                                 IResourceRepository repository)
 		{
 			try {
-				NWN2GameScript script = new NWN2GameScript(GetScriptResource(scriptName, origin));
-				if (script == null) {
-					Say.Error("Couldn't find a script named '" + scriptName + "'.");
-					return null;
+				IResourceEntry resource = GetScriptResource(scriptName, repository);
+				NWN2GameScript script = new NWN2GameScript(resource);
+				if (resource == null || script == null) {
+					throw new IOException("Couldn't find a script named '" + scriptName + "'.");
 				}		
 								
 				NWN2ConditionalFunctor functor = new NWN2ConditionalFunctor();
 				functor.Script = script.Resource;
 				
+				// Set up parameters:
 				if (args != null) {
 					foreach (object o in args) { // float, int, string or tag(?)
 						NWN2ScriptParameter param = new NWN2ScriptParameter();
@@ -137,33 +197,24 @@ namespace AdventureAuthor.Scripts
 			}
 		}	
 		
-		
+				
 		/// <summary>
 		/// Retrieves a compiled (.NCS) script of a given name/resref as a resource.
 		/// </summary>
 		/// <param name="name">The name/resref of the script, e.g. ga_attack (no file extension)</param>
-		/// <param name="origin">The origin of the script; i.e. a NWN2 game script, or an Adventure Author script</param>
+		/// <param name="repository">The directory resource repository object representing the directory
+		/// which contains this script.</param>
+		/// <remarks>Use the static IResourceRepository objects in the ScriptHelper class
+		/// to help you locate scripts.</remarks>
 		/// <returns>Returns the compiled script resource, or null if no script was found.</returns>
-		internal static IResourceEntry GetScriptResource(string name, ScriptOrigin origin)
+		public static IResourceEntry GetScriptResource(string name, IResourceRepository repository)
 		{
-			try {	
-				IResourceRepository scripts;
-				if (origin == ScriptOrigin.Original) {
-					string path = Path.Combine(ResourceManager.Instance.BaseDirectory,@"Data\Scripts.zip");
-					scripts = ResourceManager.Instance.GetRepositoryByName(path);
-				}
-				else if (origin == ScriptOrigin.Override) {
-					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT user's OverrideDirectory
-				}
-				else {
-					throw new IOException("Unknown script location passed.");
-				}
-								
+			try {									
 				ushort ncs = BWResourceTypes.GetResourceType("ncs");
 				OEIResRef resRef = new OEIResRef(name);
-				return scripts.FindResource(resRef,ncs);
+				return repository.FindResource(resRef,ncs);
 			}
-			catch (NullReferenceException e) {
+			catch (Exception e) {
 				throw new IOException("Was unable to retrieve script named '" + name + "'.",e);
 			}
 		}
@@ -191,19 +242,19 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("module","Module to attach scripts to cannot be null.");
 			}
 			
-			ScriptOrigin location = ScriptOrigin.Override;
+			DirectoryResourceRepository repository = OverrideRepository;
 			
-			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",location);
-			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",location);
-			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",location);
-			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",location);
-			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",location);
-			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",location);
-			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",location);
+			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",repository);
+			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",repository);
+			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",repository);
+			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",repository);
+			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",repository);
+			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",repository);
+			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",repository);
 			//module.ModuleInfo.OnPlayerRespawn = ScriptHelper.GetScriptResource("module_onplayerrespawn",loc); doesn't work
-			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",location);
-			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",location);
-			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",location);
+			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",repository);
+			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",repository);
+			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",repository);
 		}
 		
 		
@@ -218,9 +269,9 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("area","Area to attach scripts to cannot be null.");
 			}
 			
-			ScriptOrigin loc = ScriptOrigin.Override;
+			DirectoryResourceRepository repository = OverrideRepository;
 			
-			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",loc);
+			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
 		}
 		
 		
@@ -235,57 +286,57 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("instance","Instance to attach scripts to cannot be null.");
 			}
 			
-			ScriptOrigin loc = ScriptOrigin.Override;
+			DirectoryResourceRepository repository = OverrideRepository;
 			
 			if (instance is NWN2CreatureInstance) {
 				NWN2CreatureInstance creature = (NWN2CreatureInstance)instance;
-				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",loc);
-				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",loc);
-				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",loc);
-				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",loc);
+				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",repository);
+				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",repository);
+				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",repository);
+				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",repository);
 				//creature.FactionID = 2;
 			}
 			else if (instance is NWN2DoorInstance) {
 				NWN2DoorInstance door = (NWN2DoorInstance)instance; 
-				door.OnOpen = ScriptHelper.GetScriptResource("onopen",loc);
-				door.OnClosed = ScriptHelper.GetScriptResource("onclosed",loc);
-				door.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
-				door.OnLock = ScriptHelper.GetScriptResource("onlock",loc);
-				door.OnUnlock = ScriptHelper.GetScriptResource("onunlock",loc);
-				door.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",loc);
-				door.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",loc);
-				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
-				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",loc);
+				door.OnOpen = ScriptHelper.GetScriptResource("onopen",repository);
+				door.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
+				door.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
+				door.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
+				door.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
+				door.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
+				door.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
+				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
 			}
 			else if (instance is NWN2EncounterInstance) {
 				NWN2EncounterInstance encounter = (NWN2EncounterInstance)instance;
-				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",loc);
-				encounter.OnExhausted = ScriptHelper.GetScriptResource("encounter_onexhausted",loc);
+				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",repository);
+				encounter.OnExhausted = ScriptHelper.GetScriptResource("encounter_onexhausted",repository);
 			}
 			else if (instance is NWN2PlaceableInstance) {
 				NWN2PlaceableInstance placeable = (NWN2PlaceableInstance)instance;
-				placeable.OnClosed = ScriptHelper.GetScriptResource("onclosed",loc);
-				placeable.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",loc);
-				placeable.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",loc);
-				placeable.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
-				placeable.OnLeftClick = ScriptHelper.GetScriptResource("onleftclick",loc);
-				placeable.OnLock = ScriptHelper.GetScriptResource("onlock",loc);
-				placeable.OnOpen = ScriptHelper.GetScriptResource("onopened",loc);
-				placeable.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
-				placeable.OnUnlock = ScriptHelper.GetScriptResource("onunlock",loc);
-				placeable.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",loc);
+				placeable.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
+				placeable.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
+				placeable.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
+				placeable.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
+				placeable.OnLeftClick = ScriptHelper.GetScriptResource("onleftclick",repository);
+				placeable.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
+				placeable.OnOpen = ScriptHelper.GetScriptResource("onopened",repository);
+				placeable.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+				placeable.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
+				placeable.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
 			}
 			else if (instance is NWN2StoreInstance) {
 				NWN2StoreInstance store = (NWN2StoreInstance)instance;
-				store.OnOpenStore = ScriptHelper.GetScriptResource("store_onopenstore",loc);
-				store.OnCloseStore = ScriptHelper.GetScriptResource("store_onclosestore",loc);
+				store.OnOpenStore = ScriptHelper.GetScriptResource("store_onopenstore",repository);
+				store.OnCloseStore = ScriptHelper.GetScriptResource("store_onclosestore",repository);
 			}
 			else if (instance is NWN2TriggerInstance) {
 				NWN2TriggerInstance trigger = (NWN2TriggerInstance)instance;
-				trigger.OnEnter = ScriptHelper.GetScriptResource("area_trigger_onenter",loc);
-				trigger.OnExit = ScriptHelper.GetScriptResource("trigger_onexit",loc);
-				trigger.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",loc);
-				trigger.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",loc);
+				trigger.OnEnter = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
+				trigger.OnExit = ScriptHelper.GetScriptResource("trigger_onexit",repository);
+				trigger.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+				trigger.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
 			}
 		}
 		
@@ -712,7 +763,7 @@ namespace AdventureAuthor.Scripts
 					return ga_time_set.ToString();
 					
 				default:
-					return "SCRIPT: " + action.ToString();				
+					return "RUN SCRIPT: '" + Path.GetFileNameWithoutExtension(action.Script.FullName) + "'";
 			}
 		}
 			 	
@@ -829,7 +880,8 @@ namespace AdventureAuthor.Scripts
 					break;
 					
 				default:
-					description = "(SCRIPT: " + condition.ToString() + ")";
+					description = "(SCRIPT '" + Path.GetFileNameWithoutExtension(condition.Script.FullName)
+								+ "' RETURNS TRUE)";
 					break;
 			}
 			

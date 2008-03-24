@@ -26,12 +26,14 @@
  
 using System;
 using System.Windows.Controls;
+using System.IO;
 using AdventureAuthor.Core;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Scripts.UI;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Journal;
+using Microsoft.Win32;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Conversations.UI.Controls
@@ -812,9 +814,26 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	}   
     	
     	
-    	private void OnClick_AddCustomScript(object sender, EventArgs e)
+    	private void OnClick_AddCustomAction(object sender, EventArgs e)
     	{
-    		
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.ValidateNames = true;
+    		openFileDialog.DefaultExt = Filters.COMPILEDSCRIPTS;
+    		openFileDialog.Filter = Filters.COMPILEDSCRIPTS;
+			openFileDialog.Title = "Select a custom script to run";
+			openFileDialog.Multiselect = false;
+			openFileDialog.RestoreDirectory = true;
+			openFileDialog.InitialDirectory = ModuleHelper.GetCurrentModulePath();			
+									
+  			bool ok = (bool)openFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string filename = openFileDialog.FileName;
+  				FileInfo fileInfo = new FileInfo(filename);  			  				
+  				NWN2ScriptFunctor action = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
+							  				                             null, // currently don't handle function script
+							  				                             fileInfo.DirectoryName); 	
+	    		Conversation.CurrentConversation.AddAction(nwn2Line,action);
+  			}    		
     	}
     			
 		

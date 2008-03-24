@@ -74,7 +74,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int bForce = 1; // always add henchman even if the player has max henchmen
 			string sMaster = String.Empty; // add to player
-			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptHelper.NWN2ScriptsRepository);
 		}				
 		
 		/// <summary>
@@ -88,7 +88,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor AddHenchmanForCreature(string sTarget, string sMaster, int bOverrideBehavior)
 		{
 			int bForce = 1; // always add henchman even if the player has max henchmen
-			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_henchman_add",new object[]{sTarget,bForce,sMaster,bOverrideBehavior},ScriptHelper.NWN2ScriptsRepository);
 		}	
 				
 		/// <summary>
@@ -103,7 +103,7 @@ namespace AdventureAuthor.Scripts
 			int nMinute = 0; // not useful and works strangely
 			int nSecond = 0; // not useful
 			int nMillisecond = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_time_advance",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_time_advance",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -114,7 +114,7 @@ namespace AdventureAuthor.Scripts
 		/// <returns></returns>
 		public static NWN2ScriptFunctor Attack(string sAttacker)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_attack",new object[]{sAttacker},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_attack",new object[]{sAttacker},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -126,7 +126,7 @@ namespace AdventureAuthor.Scripts
 		/// <returns></returns>
 		private static NWN2ScriptFunctor AttackTarget(string sAttacker, string sTarget)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_attack_target",new object[]{sAttacker,sTarget},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_attack_target",new object[]{sAttacker,sTarget},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -138,7 +138,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CloseDoor(string sTag)
 		{
 			int nLock = 0; // not useful - just call SetDoorLock after this
-			return ScriptHelper.GetScriptFunctor("ga_door_close",new object[]{sTag,nLock},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_door_close",new object[]{sTag,nLock},ScriptHelper.NWN2ScriptsRepository);
 		}
 				       
 		/// <summary>
@@ -154,7 +154,7 @@ namespace AdventureAuthor.Scripts
 		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
-			                                      new object[]{"C",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptOrigin.Original);
+			                                      new object[]{"C",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -170,7 +170,7 @@ namespace AdventureAuthor.Scripts
 		                                             int bUseAppearAnimation, float fDelay)			
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
-			                                      new object[]{"I",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptOrigin.Original);
+			                                      new object[]{"I",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}					       
 		/// <summary>
 		/// Create a placeable.
@@ -185,7 +185,7 @@ namespace AdventureAuthor.Scripts
 		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
-			                                      new object[]{"P",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptOrigin.Original);
+			                                      new object[]{"P",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}					       
 		/// <summary>
 		/// Create a store.
@@ -200,7 +200,7 @@ namespace AdventureAuthor.Scripts
 		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
-			                                      new object[]{"S",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptOrigin.Original);
+			                                      new object[]{"S",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}					       
 		/// <summary>
 		/// Create a waypoint.
@@ -215,7 +215,7 @@ namespace AdventureAuthor.Scripts
 		                                             int bUseAppearAnimation, float fDelay)
 		{		
 			return ScriptHelper.GetScriptFunctor("ga_create_obj",
-			                                      new object[]{"W",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptOrigin.Original);
+			                                      new object[]{"W",sTemplate,sLocationTag,bUseAppearAnimation,sNewTag,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}			
 						
 		/// <summary>
@@ -228,11 +228,11 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureMoves(string sCreatureTag, string sWPTag, int bRun, int disappear)
 		{
 			if (disappear == 1) {
-				return ScriptHelper.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun},ScriptOrigin.Original);
+				return ScriptHelper.GetScriptFunctor("ga_force_exit",new object[]{sCreatureTag,sWPTag,bRun},ScriptHelper.NWN2ScriptsRepository);
 			}
 			else {
 				// parameters are in a different order from the function call, to be consistent with ga_force_exit:
-				return ScriptHelper.GetScriptFunctor("ga_move",new object[]{sWPTag,bRun,sCreatureTag},ScriptOrigin.Original);
+				return ScriptHelper.GetScriptFunctor("ga_move",new object[]{sWPTag,bRun,sCreatureTag},ScriptHelper.NWN2ScriptsRepository);
 			}
 		}
 		
@@ -246,7 +246,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor Destroy(string sTagString, float fDelay)
 		{
 			int iInstance = -1; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_destroy",new object[]{sTagString,iInstance,fDelay},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_destroy",new object[]{sTagString,iInstance,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}		
 		
 		/// <summary>
@@ -255,7 +255,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="message">The message to display.</param>
 		public static NWN2ScriptFunctor DisplayMessage(string message)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_display_message",new object[]{message},ScriptOrigin.Override);
+			return ScriptHelper.GetScriptFunctor("ga_display_message",new object[]{message},ScriptHelper.OverrideRepository);
 		}
 		
 		/// <summary>
@@ -264,7 +264,7 @@ namespace AdventureAuthor.Scripts
 		/// <description>ga_destroy_party_henchmen</description>
 		public static NWN2ScriptFunctor DestroyAllHenchmen()
 		{
-			return ScriptHelper.GetScriptFunctor("ga_destroy_party_henchmen",null,ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_destroy_party_henchmen",null,ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -273,7 +273,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sEndMovie">The end movie to play</param>
 		public static NWN2ScriptFunctor EndGame(string sEndMovie)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_end_game",new object[]{sEndMovie},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_end_game",new object[]{sEndMovie},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -282,7 +282,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="fSpeed">Number of seconds to fade in over (0.0 for instantly).</param>
 		public static NWN2ScriptFunctor FadeIn(float fSpeed)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_fade_from_black",new object[]{fSpeed},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_fade_from_black",new object[]{fSpeed},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -294,7 +294,7 @@ namespace AdventureAuthor.Scripts
 		/// (passing 0.0 results in the default value of 15 seconds)</param>
 		public static NWN2ScriptFunctor FadeOut(NWN2Colour fadeColour, float fSpeed, float fFailsafe)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_fade_to_black",new object[]{fSpeed,fFailsafe,(int)fadeColour},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_fade_to_black",new object[]{fSpeed,fFailsafe,(int)fadeColour},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -308,7 +308,7 @@ namespace AdventureAuthor.Scripts
 			int nFeat = (int)feat;
 			int bCheckReq = 0; // not useful
 			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -322,7 +322,7 @@ namespace AdventureAuthor.Scripts
 			int nFeat = (int)feat;
 			int bCheckReq = 0; // not useful
 			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_give_feat",new object[]{sTarget,nFeat,bCheckReq,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}
 				
     	/// <summary>
@@ -334,7 +334,7 @@ namespace AdventureAuthor.Scripts
     	public static NWN2ScriptFunctor GiveGold(int nGP)
 		{
     		int bAllPartyMembers = 0; // not useful
-    		return ScriptHelper.GetScriptFunctor("ga_give_gold",new object[]{nGP,bAllPartyMembers},ScriptOrigin.Original);
+    		return ScriptHelper.GetScriptFunctor("ga_give_gold",new object[]{nGP,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}		     
 		
 		/// <summary>
@@ -348,7 +348,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor GiveItem(string sTemplate, int nQuantity)
 		{
 			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_give_item",new object[]{sTemplate,nQuantity,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_give_item",new object[]{sTemplate,nQuantity,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}			
 		
 		/// <summary>
@@ -359,7 +359,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor GiveExperience(int nXP)
 		{
 			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_give_xp",new object[]{nXP,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_give_xp",new object[]{nXP,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}
 					
 		/// <summary>
@@ -369,7 +369,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor HealPC(int nHealPercent)
 		{
 			int bAllPartyMembers = 1; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_heal_pc",new object[]{nHealPercent,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_heal_pc",new object[]{nHealPercent,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}		
 		
 		/// <summary>
@@ -379,7 +379,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureJoinsCommonerFaction(string sTarget)
 		{
 			string sTargetFaction = "$COMMONER";
-			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.NWN2ScriptsRepository);
 		}			
 		
 		/// <summary>
@@ -389,7 +389,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureJoinsDefenderFaction(string sTarget)
 		{
 			string sTargetFaction = "$DEFENDER";
-			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -399,7 +399,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureJoinsHostileFaction(string sTarget)
 		{
 			string sTargetFaction = "$HOSTILE";
-			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_faction_join",new object[]{sTarget,sTargetFaction},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -413,7 +413,7 @@ namespace AdventureAuthor.Scripts
 		{
 			// NB: Identical to TeleportObject, but it felt more natural to have teleport creature and teleport object
 			// separate in the UI, so I've replicated that here for consistency's sake.
-    		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptOrigin.Original);
+    		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}
 	
 		/// <summary>
@@ -425,7 +425,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="fDelay">Delay before jumping</param>
 		public static NWN2ScriptFunctor TeleportObject(string sTarget, string sDestination, float fDelay)
 		{
-    		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptOrigin.Original);
+    		return ScriptHelper.GetScriptFunctor("ga_jump",new object[]{sDestination,sTarget,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -437,7 +437,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int bWholeParty = 1; // not useful
 			int bOnlyThisArea = 0; // deprecated parameter
-    		return ScriptHelper.GetScriptFunctor("ga_jump_players",new object[]{sDestTag,bWholeParty,bOnlyThisArea},ScriptOrigin.Original);
+    		return ScriptHelper.GetScriptFunctor("ga_jump_players",new object[]{sDestTag,bWholeParty,bOnlyThisArea},ScriptHelper.NWN2ScriptsRepository);
 		}				
 		
 		/// <summary>
@@ -449,7 +449,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor Kill(string sTag)
 		{
 			int iInstance = -1; // not useful
-    		return ScriptHelper.GetScriptFunctor("ga_death",new object[]{sTag,iInstance},ScriptOrigin.Original);
+    		return ScriptHelper.GetScriptFunctor("ga_death",new object[]{sTag,iInstance},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -459,7 +459,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="sTag">Tag of door to open</param>
 		public static NWN2ScriptFunctor OpenDoor(string sTag)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_door_open",new object[]{sTag},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_door_open",new object[]{sTag},ScriptHelper.NWN2ScriptsRepository);
 		}
 				
 		/// <summary>
@@ -470,7 +470,7 @@ namespace AdventureAuthor.Scripts
 		/// <param name="nMarkDown">The percentage amount to reduce all prices by (from regular prices).</param>
 		public static NWN2ScriptFunctor OpenStore(string sTag, int nMarkUp, int nMarkDown)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_open_store",new object[]{sTag,nMarkUp,nMarkDown},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_open_store",new object[]{sTag,nMarkUp,nMarkDown},ScriptHelper.NWN2ScriptsRepository);
 		}
 				
 		/// <summary>
@@ -484,7 +484,7 @@ namespace AdventureAuthor.Scripts
 			float fDuration = 6.0f; // not used for one-time animations, simpler to give it a fixed value for the looping ones too
 			float fSpeed = 1.0f; // simpler to leave this out of the equation, for now anyway
 			int iAnim = (int)animation;
-			return ScriptHelper.GetScriptFunctor("ga_play_animation",new object[]{sTarget,iAnim,fSpeed,fDuration,fDelayUntilStart},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_play_animation",new object[]{sTarget,iAnim,fSpeed,fDuration,fDelayUntilStart},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -497,7 +497,7 @@ namespace AdventureAuthor.Scripts
 		/// on a creature/object from an OnEntry(etc.) script later on.</remarks>
 		public static NWN2ScriptFunctor PlaySound(string sSound, string sTarget, float fDelay)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_play_sound",new object[]{sSound,sTarget,fDelay},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_play_sound",new object[]{sSound,sTarget,fDelay},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -509,7 +509,7 @@ namespace AdventureAuthor.Scripts
 			string sTarget = String.Empty; // player
 			int bAllPartyMembers = 0; // not useful
 			int nFeat = (int)feat;
-			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -521,7 +521,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int bAllPartyMembers = 0; // not useful
 			int nFeat = (int)feat;
-			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_remove_feat",new object[]{sTarget,nFeat,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -532,7 +532,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor RemoveHenchman(string sTarget)
 		{
 			string sOptionalMasterTag = String.Empty; // deprecated parameter
-			return ScriptHelper.GetScriptFunctor("ga_henchman_remove",new object[]{sTarget,sOptionalMasterTag},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_henchman_remove",new object[]{sTarget,sOptionalMasterTag},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -545,7 +545,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int nQuantity = -1; // destroy all items with this tag. Think we should hide the functionality of objects sharing the same tag.
 			int bPCFaction = 1; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_destroy_item",new object[]{sItemTag,nQuantity,bPCFaction},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_destroy_item",new object[]{sItemTag,nQuantity,bPCFaction},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -557,7 +557,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor LockDoor(string sDoorTag)
 		{
 			int bLock = 1; // lock
-			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptHelper.NWN2ScriptsRepository);
 		}		
 		
 		/// <summary>
@@ -569,7 +569,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor UnlockDoor(string sDoorTag)
 		{
 			int bLock = 0; // unlock
-			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_lock",new object[]{sDoorTag,bLock},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -588,7 +588,7 @@ namespace AdventureAuthor.Scripts
 		/// <returns></returns>
 		public static NWN2ScriptFunctor SetFloat(string sVariable, string sChange)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_module_float",new object[]{sVariable,sChange},ScriptOrigin.Override);
+			return ScriptHelper.GetScriptFunctor("ga_module_float",new object[]{sVariable,sChange},ScriptHelper.OverrideRepository);
 		}
 		
 		/// <summary>
@@ -606,7 +606,7 @@ namespace AdventureAuthor.Scripts
 		///	"--"   (Subtract 1)</param>
 		public static NWN2ScriptFunctor SetInt(string sVariable, string sChange)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_module_int",new object[]{sVariable,sChange},ScriptOrigin.Override);
+			return ScriptHelper.GetScriptFunctor("ga_module_int",new object[]{sVariable,sChange},ScriptHelper.OverrideRepository);
 		}
 						
 		/// <summary>
@@ -617,7 +617,7 @@ namespace AdventureAuthor.Scripts
 		/// <returns></returns>
 		public static NWN2ScriptFunctor SetString(string sVariable, string sChange)
 		{
-			return ScriptHelper.GetScriptFunctor("ga_module_string",new object[]{sVariable,sChange},ScriptOrigin.Override);
+			return ScriptHelper.GetScriptFunctor("ga_module_string",new object[]{sVariable,sChange},ScriptHelper.OverrideRepository);
 		}		
 		
 		/// <summary>
@@ -627,7 +627,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureBecomesImmortal(string sTarget)
 		{
 			int bImmortal = 1; // unkillable
-			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -637,7 +637,7 @@ namespace AdventureAuthor.Scripts
 		public static NWN2ScriptFunctor CreatureBecomesMortal(string sTarget)
 		{
 			int bImmortal = 0; // killable
-			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_setimmortal",new object[]{sTarget,bImmortal},ScriptHelper.NWN2ScriptsRepository);
 		}
 				
 		/// <summary>
@@ -652,7 +652,7 @@ namespace AdventureAuthor.Scripts
 			int nMinute = 0; // not useful and works strangely
 			int nSecond = 0; // not useful
 			int nMillisecond = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_time_set",new object[]{nHour,nMinute,nSecond,nMillisecond},ScriptHelper.NWN2ScriptsRepository);
 		}	
 		
 		/// <summary>
@@ -663,7 +663,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int degreeOfChange = 3; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
 			int axis = 0; // adjust on the Good/Evil axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -674,7 +674,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int degreeOfChange = -3; // simpler to take this out of the equation (goes from 1 to 3 for good, -1 to -3 for evil)
 			int axis = 0; // adjust on the Good/Evil axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.NWN2ScriptsRepository);
 		}		
 		
 		/// <summary>
@@ -685,7 +685,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int degreeOfChange = 3; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
 			int axis = 1; // adjust on the Law/Chaos axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -696,7 +696,7 @@ namespace AdventureAuthor.Scripts
 		{
 			int degreeOfChange = -3; // simpler to take this out of the equation (goes from 1 to 3 for lawful, -1 to -3 for chaotic)
 			int axis = 1; // adjust on the Law/Chaos axis
-			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_alignment",new object[]{degreeOfChange,axis},ScriptHelper.NWN2ScriptsRepository);
 		}
 		
 		/// <summary>
@@ -704,11 +704,10 @@ namespace AdventureAuthor.Scripts
 		/// </summary>
 		/// <description>ga_take_gold</description>
 		/// <param name="nGold">The amount of gold to take</param>
-		/// <returns></returns>
 		public static NWN2ScriptFunctor TakeGold(int nGold)
 		{
 			int bAllPartyMembers = 0; // not useful
-			return ScriptHelper.GetScriptFunctor("ga_take_gold",new object[]{nGold,bAllPartyMembers},ScriptOrigin.Original);
+			return ScriptHelper.GetScriptFunctor("ga_take_gold",new object[]{nGold,bAllPartyMembers},ScriptHelper.NWN2ScriptsRepository);
 		}	
 	}
 }
