@@ -175,22 +175,27 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		private object padlock = new object();
+		
+		
 		/// <summary>
 		/// Called when the plugin finishes
 		/// </summary>
 		public void Shutdown(INWN2PluginHost cHost)
 		{
-			if (WriterWindow.Instance != null) {
-				WriterWindow.Instance.Close();
+			lock (padlock) {
+				if (WriterWindow.Instance != null) {
+					WriterWindow.Instance.Close();
+				}
+				if (VariablesWindow.Instance != null) {
+					VariablesWindow.Instance.Close();
+				}
+				if (MagnetBoardViewer.Instance != null) {
+					MagnetBoardViewer.Instance.Close();
+				}
+				// TODO if analysis window is not null
+				// TODO if evaluation window is not null
 			}
-			if (VariablesWindow.Instance != null) {
-				VariablesWindow.Instance.Close();
-			}
-			if (MagnetBoardViewer.Instance != null) {
-				MagnetBoardViewer.Instance.Close();
-			}
-			// TODO if analysis window is not null
-			// TODO if evaluation window is not null
 			
 			Log.WriteAction(LogAction.exited,"toolset");
 			LogWriter.StopRecording();

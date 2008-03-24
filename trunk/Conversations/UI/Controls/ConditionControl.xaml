@@ -38,15 +38,17 @@
     		<ColumnDefinition Width="100"/>
     		<ColumnDefinition Width="*"/>
     	</Grid.ColumnDefinitions>
-	    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">  
+	    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">  
 			<!--<Button Name="EditConditionsButton" 
 					Click="OnClick_EditConditions" IsEnabled="false" Visibility="Hidden" Content="Edit" 
     		        Height="25" Width="60" Margin="6"/>-->
 			<Button Name="DeleteConditionsButton" 
 	    	        Click="OnClick_DeleteConditions" IsEnabled="false" Visibility="Hidden" Content="Delete"
     		        Height="25" Width="60" Margin="6"/>
-			<TextBlock x:Name="Description" Background="Transparent" FontSize="22" 
-	    	           FontWeight="600" Padding="6" TextWrapping="Wrap"/>
     	</StackPanel>
+		<TextBlock x:Name="Description" 
+    	           Grid.Row="0" Grid.Column="1"
+		           Background="Transparent" FontSize="22"
+	               FontWeight="600" Padding="6" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

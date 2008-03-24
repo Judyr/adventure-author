@@ -38,5 +38,30 @@ namespace AdventureAuthor.Scripts.UI
 		/// Returns an object representing the answer to the question posed by the panel, based on user input.
 		/// </summary>
 		public abstract object Answer { get; }		
+		
+		
+//		private bool invalid;
+//		public bool Invalid { 
+//			get {
+//				return invalid;
+//			}
+//			set {
+//				if (invalid != value) {
+//					invalid = value;
+//					if (invalid) {
+//						ShowInvalidWarning();
+//					}
+//					else {
+//						HideInvalidWarning();
+//					}
+//				}
+//			}
+//		}
+//		
+//		
+//		public abstract void ShowInvalidWarning();
+//		
+//		
+//		public abstract void HideInvalidWarning();
 	}
 }

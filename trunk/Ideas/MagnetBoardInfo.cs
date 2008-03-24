@@ -22,9 +22,10 @@ namespace AdventureAuthor.Ideas
 	/// Description of MagnetBoardInfo.
 	/// </summary>
 	[Serializable]
+	[XmlRoot("MagnetBoard")]
 	public class MagnetBoardInfo : ISerializableData
 	{    	
-		[XmlAttribute]
+		[XmlAttribute("Colour")]
 		private Color surfaceColour;
 		public Color SurfaceColour {
 			get { return surfaceColour; }
@@ -32,9 +33,10 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-    	[XmlArray]
-    	private List<MagnetInfo> magnetInfos = new List<MagnetInfo>();       	
-		public List<MagnetInfo> Magnets {
+		[XmlArray("Magnets")]
+		[XmlArrayItemAttribute("Magnet")]
+    	private List<MagnetControlInfo> magnetInfos = new List<MagnetControlInfo>();       	
+		public List<MagnetControlInfo> Magnets {
 			get { return magnetInfos; }
 			set { magnetInfos = value; }
 		}
@@ -53,7 +55,7 @@ namespace AdventureAuthor.Ideas
 		{
 			surfaceColour = magnetBoardControl.SurfaceColour;
 			foreach (MagnetControl magnet in magnetBoardControl.GetMagnets()) {
-				MagnetInfo magnetInfo = (MagnetInfo)magnet.GetSerializable();
+				MagnetControlInfo magnetInfo = (MagnetControlInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);
 			}
 		}

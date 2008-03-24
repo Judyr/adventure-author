@@ -234,7 +234,7 @@ namespace AdventureAuthor.Ideas
         {
 	        CloseBoard();
 	        SurfaceColour = boardInfo.SurfaceColour;
-	    	foreach (MagnetInfo magnetInfo in boardInfo.Magnets) {
+	    	foreach (MagnetControlInfo magnetInfo in boardInfo.Magnets) {
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		AddMagnet(magnet,false);
 	    	}
@@ -286,10 +286,12 @@ namespace AdventureAuthor.Ideas
 	
         	AddHandlers(magnet);
         	
+        	magnet.UpdateStarVisibility();
+        	
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
         	magnet.bringToFrontMenuItem.IsEnabled = true;
         	magnet.sendToBackMenuItem.IsEnabled = true;
-        	magnet.removeDeleteMagnetMenuItem.Header = "Put back in box"; // less permanent than deleting from the magnet list
+        	magnet.removeDeleteMagnetMenuItem.Header = "Put back in box"; // less permanent than 'Delete' or 'Remove'
 			magnet.Show();
 			BringInsideBoard(magnet);			
 			
@@ -315,6 +317,8 @@ namespace AdventureAuthor.Ideas
         		magnet.RequestBringToFront += magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack += magnetControl_SendToBackHandler;
         		magnet.Edited += magnetControl_EditedHandler;
+        		magnet.Starred += magnetControl_EditedHandler;
+        		magnet.Unstarred += magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -329,6 +333,8 @@ namespace AdventureAuthor.Ideas
         		magnet.RequestBringToFront -= magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack -= magnetControl_SendToBackHandler;
         		magnet.Edited -= magnetControl_EditedHandler;
+        		magnet.Starred -= magnetControl_EditedHandler;
+        		magnet.Unstarred -= magnetControl_EditedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);

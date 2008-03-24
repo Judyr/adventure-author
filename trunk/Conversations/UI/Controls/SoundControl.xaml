@@ -40,9 +40,14 @@
     		<ColumnDefinition Width="100"/>
     		<ColumnDefinition Width="*"/>
     	</Grid.ColumnDefinitions>
-    	<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">  
-			<Button Name="PlaySoundButton" IsEnabled="false" Opacity="0.0" Content="Listen" Height="25" Width="60" Margin="6"/>
-			<TextBlock x:Name="Description" Background="Transparent" FontSize="22" FontWeight="600" Padding="6" TextWrapping="Wrap"/> 
+    	<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">  
+			<Button Name="PlaySoundButton"     		        
+			        IsEnabled="false" Visibility="Hidden"
+    		        Content="Listen" Height="25" Width="60" Margin="6"/>
     	</StackPanel>
+		<TextBlock x:Name="Description" 
+    	           Grid.Row="0" Grid.Column="1"
+		           Background="Transparent" FontSize="22" FontWeight="600" 
+		           Padding="6" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

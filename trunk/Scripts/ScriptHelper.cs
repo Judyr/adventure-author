@@ -153,7 +153,7 @@ namespace AdventureAuthor.Scripts
 					scripts = ResourceManager.Instance.GetRepositoryByName(path);
 				}
 				else if (origin == ScriptOrigin.Override) {
-					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT UserOverrideDirectory
+					scripts = ((NWN2ResourceManager)ResourceManager.Instance).OverrideDirectory; // NOT user's OverrideDirectory
 				}
 				else {
 					throw new IOException("Unknown script location passed.");
@@ -191,19 +191,19 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("module","Module to attach scripts to cannot be null.");
 			}
 			
-			ScriptOrigin loc = ScriptOrigin.Override;
+			ScriptOrigin location = ScriptOrigin.Override;
 			
-			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",loc);
-			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",loc);
-			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",loc);
-			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",loc);
-			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",loc);
-			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",loc);
-			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",loc);
+			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",location);
+			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",location);
+			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",location);
+			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",location);
+			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",location);
+			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",location);
+			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",location);
 			//module.ModuleInfo.OnPlayerRespawn = ScriptHelper.GetScriptResource("module_onplayerrespawn",loc); doesn't work
-			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",loc);
-			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",loc);
-			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",loc);
+			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",location);
+			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",location);
+			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",location);
 		}
 		
 		

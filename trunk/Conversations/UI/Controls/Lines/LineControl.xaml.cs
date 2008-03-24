@@ -135,7 +135,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		soundControl = new SoundControl(this);
         		Grid.SetRow(soundControl,2);
         		Grid.SetColumn(soundControl,0);
-        		Grid.SetColumnSpan(soundControl,3);
+        		Grid.SetColumnSpan(soundControl,4);
         		LineControlGrid.Children.Add(soundControl);
         	}
         	
@@ -435,11 +435,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
 //        		SwitchOn(conditionalControl.EditConditionsButton);
-        		SwitchOn(conditionalControl.DeleteConditionsButton);
+//        		SwitchOn(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
 //        		SwitchOn(actionControl.EditActionButton);
-        		SwitchOn(actionControl.DeleteActionButton);
+//        		SwitchOn(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
         		SwitchOn(soundControl.PlaySoundButton);
@@ -462,11 +462,11 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	SwitchOff(DeleteLineButton);
         	if (conditionalControl != null) {
 //        		SwitchOff(conditionalControl.EditConditionsButton);
-        		SwitchOff(conditionalControl.DeleteConditionsButton);
+//        		SwitchOff(conditionalControl.DeleteConditionsButton);
         	} 
         	foreach (ActionControl actionControl in actionControls) {
 //        		SwitchOff(actionControl.EditActionButton);
-        		SwitchOff(actionControl.DeleteActionButton);
+//        		SwitchOff(actionControl.DeleteActionButton);
         	}
         	if (soundControl != null) {
         		SwitchOff(soundControl.PlaySoundButton);

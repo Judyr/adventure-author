@@ -17,31 +17,32 @@ namespace AdventureAuthor.Ideas
 	/// Description of MagnetInfo.
 	/// </summary>
 	[Serializable]
-	public class MagnetInfo : ISerializableData
+	[XmlRoot("Magnet")]
+	public class MagnetControlInfo : ISerializableData
 	{
-		[XmlElement]
+		[XmlAttribute]
 		public double X;
     	
-    	[XmlElement]
+    	[XmlAttribute]
 		public double Y;
+		
+		[XmlAttribute]
+		public double Angle;	
 		
 		[XmlElement]	
 		public Idea Idea;
-		
-		[XmlElement]
-		public double Angle;
-		
+			
 		
 		/// <summary>
 		/// Constructor for serialization.
 		/// </summary>
-		private MagnetInfo()
+		private MagnetControlInfo()
 		{
 			
 		}
 		
 		
-		public MagnetInfo(MagnetControl magnetControl)
+		public MagnetControlInfo(MagnetControl magnetControl)
 		{
 			X = magnetControl.X;
 			Y = magnetControl.Y;

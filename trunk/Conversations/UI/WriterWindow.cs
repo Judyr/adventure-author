@@ -191,6 +191,9 @@ namespace AdventureAuthor.Conversations.UI
 					NewOpenConversationWindow win = new NewOpenConversationWindow();
 					win.ShowDialog();
 				}
+				
+				mainGraph.MinimumSize = mainGraph.Size;
+				mainGraph.MaximumSize = mainGraph.MinimumSize;
     		};
     		
             Closing += delegate { 
