@@ -12,11 +12,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Ideas
 {
 	[Serializable]
-	public class Idea : IComparable, ICloneable
+	[XmlRoot]
+	public class Idea : IComparable, ICloneable, IStarred
 	{
 		#region Constants
 		
@@ -55,6 +57,14 @@ namespace AdventureAuthor.Ideas
 		public IdeaCategory Category {
 			get { return category; }
 			set { category = value; }
+		}
+		
+		
+		[XmlAttribute]
+		private bool isStarred;
+		public bool IsStarred	{
+			get { return isStarred; }
+			set { isStarred = value; }
 		}
 		
 		
@@ -131,7 +141,11 @@ namespace AdventureAuthor.Ideas
 				return false;
 			}
 			else {
-				return text == idea.text && creator == idea.creator && category == idea.category && created == idea.created;
+				return text == idea.text && 
+					creator == idea.creator && 
+					category == idea.category && 
+					created == idea.created &&
+					isStarred == idea.isStarred;
 			}
 		}
 		

@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Ideas
 {
@@ -21,34 +22,48 @@ namespace AdventureAuthor.Ideas
     {       
     	#region Constants
     	
-    	static MagnetControl()
+    	private static Color GetOffset(Color color)
     	{
-//    		PLOTCOLOR = Color.FromScRgb(1.0f,0.3915725f,0.8879231f,0.5394795f);// = "#FFA8F2C2";
-//			QUESTSCOLOR = Color.FromScRgb(1.0f,0.5332764f,0.6724432f,1.0f);// = "#FFC1D6FE";
-//			CHARACTERSCOLOR = Color.FromScRgb(1.0f,1.0f,0.6444797f,0.3324515f);// = "#FFFFD29C";
-//			DIALOGUECOLOR = Color.FromScRgb(1.0f,0.8631572f,0.8879231f,0.3915725f);// = "#FFEFF2A8";
-//			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.5775805f,0.5775805f);// = "#FFFFC8C8";
-//			ITEMSCOLOR = Color.FromScRgb(1.0f,0.8631572f,0.5647115f,0.9734453f);// = "#FFEFC6FC";
-//			OTHERCOLOR = Color.FromScRgb(1.0f,0.9215819f,0.7083758f,0.5457245f);// = "#FFF6DBC3";
-//			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.838799f,0.838799f,0.838799f);// = "#FFEBECEC";
-			
-    		PLOTCOLOR = Color.FromScRgb(1.0f,0.1915725f,0.6879231f,0.3394795f);// = "#FFA8F2C2";
-			QUESTSCOLOR = Color.FromScRgb(1.0f,0.3332764f,0.4724432f,1.0f);// = "#FFC1D6FE";
-			CHARACTERSCOLOR = Color.FromScRgb(1.0f,1.0f,0.5972018f,0.2541521f);// = "#FFFFD29C";
-			DIALOGUECOLOR = Color.FromScRgb(1.0f,1.0f,0.8069522f,0.1559265f);// = "#FFEFF2A8";
-			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.3775805f,0.3775805f);// = "#FFFFC8C8";
-			ITEMSCOLOR = Color.FromScRgb(1.0f,0.6631572f,0.3647115f,0.7734453f);// = "#FFEFC6FC";
-			OTHERCOLOR = Color.FromScRgb(1.0f,0.7215819f,0.5083758f,0.3457245f);// = "#FFF6DBC3";
-			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.93f,0.93f,0.93f);// = "#FFEBECEC";
+    		float offset = 0.15f;
+    		Color newColor = Color.FromScRgb(color.ScA, color.ScR - offset, color.ScG - offset, color.ScB - offset);
+    		return newColor;
+    	}
+    	
+    	
+    	private static Brush GetBrush(Color color, bool gradient)
+    	{
+    		Brush brush;
+    		if (gradient) {
+    			brush = new LinearGradientBrush(color,GetOffset(color),new Point(0,0),new Point(1,1));
+    		}
+    		else {
+    			brush = new SolidColorBrush(color);
+    		}    		
+    		return brush;
+    	}
+    	
+    	
+    	static MagnetControl()
+    	{			
+    		PLOTCOLOR = Color.FromScRgb(1.0f,0.1915725f,0.6879231f,0.3394795f);
+			QUESTSCOLOR = Color.FromScRgb(1.0f,0.3332764f,0.4724432f,1.0f);
+			CHARACTERSCOLOR = Color.FromScRgb(1.0f,1.0f,0.5972018f,0.2541521f);
+			DIALOGUECOLOR = Color.FromScRgb(1.0f,1.0f,0.8069522f,0.1559265f);
+			SETTINGCOLOR = Color.FromScRgb(1.0f,1.0f,0.3775805f,0.3775805f);
+			ITEMSCOLOR = Color.FromScRgb(1.0f,0.6631572f,0.3647115f,0.7734453f);
+			OTHERCOLOR = Color.FromScRgb(1.0f,0.7215819f,0.5083758f,0.3457245f);
+			TOOLSETCOLOR = Color.FromScRgb(1.0f,0.93f,0.93f,0.93f);
 			    	
-	    	PLOTBRUSH = new SolidColorBrush(PLOTCOLOR);
-	    	QUESTSBRUSH = new SolidColorBrush(QUESTSCOLOR);
-			CHARACTERSBRUSH = new SolidColorBrush(CHARACTERSCOLOR);
-	    	DIALOGUEBRUSH = new SolidColorBrush(DIALOGUECOLOR);
-	    	SETTINGBRUSH = new SolidColorBrush(SETTINGCOLOR);
-	    	ITEMSBRUSH = new SolidColorBrush(ITEMSCOLOR);
-	    	OTHERBRUSH = new SolidColorBrush(OTHERCOLOR);
-	    	TOOLSETBRUSH = new SolidColorBrush(TOOLSETCOLOR);
+			bool getGradientBrush = true;
+			
+			PLOTBRUSH = GetBrush(PLOTCOLOR,getGradientBrush);
+	    	QUESTSBRUSH = GetBrush(QUESTSCOLOR,getGradientBrush);
+			CHARACTERSBRUSH = GetBrush(CHARACTERSCOLOR,getGradientBrush);
+	    	DIALOGUEBRUSH = GetBrush(DIALOGUECOLOR,getGradientBrush);
+	    	SETTINGBRUSH = GetBrush(SETTINGCOLOR,getGradientBrush);
+	    	ITEMSBRUSH = GetBrush(ITEMSCOLOR,getGradientBrush);
+	    	OTHERBRUSH = GetBrush(OTHERCOLOR,getGradientBrush);
+	    	TOOLSETBRUSH = GetBrush(TOOLSETCOLOR,getGradientBrush);
     	}
     	
     	public const double MAGNET_MAX_WIDTH = 150;
@@ -63,14 +78,14 @@ namespace AdventureAuthor.Ideas
 		protected static Color OTHERCOLOR;// = "#FFF6DBC3";
 		protected static Color TOOLSETCOLOR;// = "#FFEBECEC";
     	
-    	protected static SolidColorBrush PLOTBRUSH;
-    	protected static SolidColorBrush QUESTSBRUSH;
-		protected static SolidColorBrush CHARACTERSBRUSH;
-    	protected static SolidColorBrush DIALOGUEBRUSH;
-    	protected static SolidColorBrush SETTINGBRUSH;
-    	protected static SolidColorBrush ITEMSBRUSH;
-    	protected static SolidColorBrush OTHERBRUSH;
-    	protected static SolidColorBrush TOOLSETBRUSH;
+    	protected static Brush PLOTBRUSH;
+    	protected static Brush QUESTSBRUSH;
+		protected static Brush CHARACTERSBRUSH;
+    	protected static Brush DIALOGUEBRUSH;
+    	protected static Brush SETTINGBRUSH;
+    	protected static Brush ITEMSBRUSH;
+    	protected static Brush OTHERBRUSH;
+    	protected static Brush TOOLSETBRUSH;
     	
     	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
     	protected static readonly BevelBitmapEffect bevel = new BevelBitmapEffect();
@@ -119,6 +134,7 @@ namespace AdventureAuthor.Ideas
 				Text = value.Text;
 				Category = value.Category;
 				Created = value.Created;
+				IsStarred = value.IsStarred;
 			}
 		}
 		
@@ -174,6 +190,25 @@ namespace AdventureAuthor.Ideas
 					throw new InvalidOperationException("This magnet has no idea.");
 				}
 				idea.Created = value;
+			}
+		}
+		
+		
+		public bool IsStarred {
+			get {
+				return idea.IsStarred;
+			}
+			set {
+				if (idea.IsStarred != value) {
+					idea.IsStarred = value;
+					UpdateStarVisibility();
+					if (IsStarred) {
+						OnStarred(new EventArgs());
+					}
+					else {
+						OnUnstarred(new EventArgs());
+					}
+				}
 			}
 		}
 		
@@ -288,7 +323,27 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
-    	
+		
+		
+		public event EventHandler Starred;		
+		protected virtual void OnStarred(EventArgs e)
+		{
+			EventHandler handler = Starred;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+		
+		public event EventHandler Unstarred;		
+		protected virtual void OnUnstarred(EventArgs e)
+		{
+			EventHandler handler = Unstarred;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
     	#endregion
     	
     	#region Constructors
@@ -318,7 +373,7 @@ namespace AdventureAuthor.Ideas
     	} 
     	
     	
-    	public MagnetControl(MagnetInfo magnetInfo) : this()
+    	public MagnetControl(MagnetControlInfo magnetInfo) : this()
     	{
     		X = magnetInfo.X;
     		Y = magnetInfo.Y;
@@ -431,7 +486,7 @@ namespace AdventureAuthor.Ideas
 		/// <returns>A serializable object</returns>
     	public override ISerializableData GetSerializable()
     	{
-    		return new MagnetInfo(this);
+    		return new MagnetControlInfo(this);
     	}
     	    	
     	
@@ -503,9 +558,9 @@ namespace AdventureAuthor.Ideas
     	/// </summary>
     	/// <param name="category">A category of idea (e.g. Quests, Plot)</param>
     	/// <returns>The colour brush representing the given idea category</returns>
-    	public static SolidColorBrush GetBrushForCategory(IdeaCategory category)
+    	public static Brush GetBrushForCategory(IdeaCategory category)
     	{
-    		SolidColorBrush brush;
+    		Brush brush;
 			switch (category) {
 				case IdeaCategory.Plot:
 					brush = PLOTBRUSH;
@@ -650,7 +705,7 @@ namespace AdventureAuthor.Ideas
         /// <returns>An identical copy of this MagnetControl</returns>
 		public object Clone()
 		{
-			MagnetInfo info = (MagnetInfo)GetSerializable();
+			MagnetControlInfo info = (MagnetControlInfo)GetSerializable();
 			info.Idea = (Idea)info.Idea.Clone();
 			return new MagnetControl(info);
 		}
@@ -660,6 +715,18 @@ namespace AdventureAuthor.Ideas
 		{
 			MagnetControl magnet = (MagnetControl)obj;
 			return this.idea.CompareTo(magnet.idea);
+		}
+		
+		
+		internal void UpdateStarVisibility()
+		{
+			if (IsStarred) {
+				star.Visibility = Visibility.Visible;				
+			}
+			else {
+				star.Visibility = Visibility.Collapsed;
+			}
+			starMenuItem.IsChecked = IsStarred;
 		}
 		
     	
@@ -728,6 +795,12 @@ namespace AdventureAuthor.Ideas
     		OnTaskSubmitted(new MagnetEventArgs(this));
     	}
     	
+    	
+    	private void OnClick_StarIdea(object sender, EventArgs e) 
+    	{
+    		IsStarred = ((MenuItem)sender).IsChecked;
+    	}
+    	
         #endregion
    
 
@@ -763,6 +836,5 @@ namespace AdventureAuthor.Ideas
 		
 		#endregion
     	
-		
     }
 }

@@ -21,11 +21,13 @@ namespace AdventureAuthor.Ideas
 	/// Description of MagnetListInfo.
 	/// </summary>
 	[Serializable]
+	[XmlRoot("MagnetBox")]
 	public class MagnetListInfo : ISerializableData
 	{    	
-    	[XmlArray]
-    	private List<MagnetInfo> magnetInfos = new List<MagnetInfo>();       	
-		public List<MagnetInfo> Magnets {
+		[XmlArray("Magnets")]
+		[XmlArrayItemAttribute("Magnet")]
+    	private List<MagnetControlInfo> magnetInfos = new List<MagnetControlInfo>();       	
+		public List<MagnetControlInfo> Magnets {
 			get { return magnetInfos; }
 			set { magnetInfos = value; }
 		}
@@ -43,7 +45,7 @@ namespace AdventureAuthor.Ideas
 		public MagnetListInfo(MagnetList magnetList)
 		{
 			foreach (MagnetControl magnet in magnetList.GetMagnets(false)) {
-				MagnetInfo magnetInfo = (MagnetInfo)magnet.GetSerializable();
+				MagnetControlInfo magnetInfo = (MagnetControlInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);
 			}
 		}

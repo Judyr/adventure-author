@@ -79,6 +79,12 @@ namespace AdventureAuthor.Ideas
         	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
     		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
+    		PreviewMouseRightButtonDown += delegate(object sender, MouseButtonEventArgs e) { 
+    			if (e.Source is MagnetControl) {
+    				MagnetControl magnet = (MagnetControl)e.Source;
+    				magnet.IsStarred = !magnet.IsStarred;
+    			}
+    		};
     	
         	InitializeComponent();
                                     

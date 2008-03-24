@@ -7,22 +7,99 @@
 	MouseDown="magnetControlMouseDown"
 	Canvas.ZIndex="2"
 	AllowDrop="true">
+	
+	<local:BoardObject.Resources>	
+		<PointCollection x:Key="WonkyStarPoints"> 
+			<!--Wonky star: Points="13,0 19,9 29,9 20,15 23,25 13,20 7,25 8,15 0,9 9,9"-->
+			<Point X="13" Y="0"/>
+			<Point X="19" Y="9"/>
+			<Point X="29" Y="9"/>
+			<Point X="20" Y="15"/>
+			<Point X="23" Y="25"/>
+			<Point X="13" Y="20"/>
+			<Point X="7" Y="25"/>
+			<Point X="8" Y="15"/>
+			<Point X="0" Y="9"/>
+			<Point X="9" Y="9"/>
+		</PointCollection>
+		<PointCollection x:Key="ExactStarPoints">
+			<!--Exact star: Points="13,0 17,9 26,9 19,15 24,24 13,19 2,24 7,15 0,9 9,9"-->
+			<Point X="13" Y="0"/>
+			<Point X="17" Y="9"/>
+			<Point X="26" Y="9"/>
+			<Point X="19" Y="15"/>
+			<Point X="24" Y="24"/>
+			<Point X="13" Y="19"/>
+			<Point X="2" Y="24"/>
+			<Point X="7" Y="15"/>
+			<Point X="0" Y="9"/>
+			<Point X="9" Y="9"/>
+		</PointCollection>
+		<LinearGradientBrush x:Key="GoldBrush" StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Offset="0" Color="Yellow"/>
+			<GradientStop Offset="0.8" Color="White"/>
+		</LinearGradientBrush>
+		<LinearGradientBrush x:Key="PaleYellowBrush" StartPoint="0,0" EndPoint="0,1">
+			<GradientStop Offset="0" Color="White"/>
+			<GradientStop Offset="1" Color="LightYellow"/>
+		</LinearGradientBrush>
+		<ControlTemplate x:Key="StarTemplate">
+			<Grid>
+				<Polygon
+					Name="StarPolygon"
+					Points="{StaticResource WonkyStarPoints}"
+					Stroke="Black"
+					StrokeThickness="1"
+					Fill="Yellow"
+					Margin="3">
+					<Polygon.BitmapEffect>
+						<BevelBitmapEffect EdgeProfile="Linear" Relief="0.3"/>
+					</Polygon.BitmapEffect>
+				</Polygon>
+			</Grid>
+			<!--<ControlTemplate.Triggers>
+				<Trigger Property="CheckBox.IsMouseOver" Value="True">
+					<Setter TargetName="StarPolygon" Property="RenderTransform">
+						<Setter.Value>
+							<ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+			</ControlTemplate.Triggers>-->
+		</ControlTemplate>
+	</local:BoardObject.Resources>
+	
 	<local:BoardObject.ContextMenu>
 		<ContextMenu>
-	    	<MenuItem Name="editMenuItem" Header="Edit" Click="OnClick_Edit"/>
+	    	<MenuItem Name="editMenuItem" Header="Edit" 
+			          Click="OnClick_Edit"/>
 			<Separator/>
-	    	<MenuItem Name="bringToFrontMenuItem" Header="Bring to front" Click="OnClick_BringToFront"/>
-	    	<MenuItem Name="sendToBackMenuItem" Header="Send to back" Click="OnClick_SendToBack"/>
+	    	<MenuItem Name="bringToFrontMenuItem" Header="Bring to front" 
+			          Click="OnClick_BringToFront"/>
+	    	<MenuItem Name="sendToBackMenuItem" Header="Send to back" 
+			          Click="OnClick_SendToBack"/>
 			<Separator/>
-	    	<MenuItem Name="removeDeleteMagnetMenuItem" Header="Delete" Click="OnClick_RemoveDelete"/>
+	    	<MenuItem Name="removeDeleteMagnetMenuItem" Header="Delete" 
+			          Click="OnClick_RemoveDelete"/>
 			<Separator/>
-	    	<MenuItem Name="addToTasksMenuItem" Header="Add to my to-do list" Click="OnClick_AddToTasksDelete"
+	    	<MenuItem Name="addToTasksMenuItem" Header="Add to my to-do list" 
+			          Click="OnClick_AddToTasksDelete"
 						IsEnabled="false"/>
+			<Separator/>
+	    	<MenuItem Name="starMenuItem" Header="This is one of my favourite ideas" 
+			          Click="OnClick_StarIdea"
+					  IsCheckable="true"/>
 		</ContextMenu>
 	</local:BoardObject.ContextMenu>
+	
     <Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
-	    <TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
-		  	         Padding="8" TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
-		   	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<StackPanel Margin="8" Orientation="Vertical">
+		    <TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
+			  	         TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
+			   	         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    		<Label x:Name="star" 
+			       Template="{StaticResource StarTemplate}"
+				   Visibility="Collapsed"/>
+    	</StackPanel>
     </Border>
 </local:BoardObject>

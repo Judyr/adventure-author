@@ -341,7 +341,7 @@ namespace AdventureAuthor.Ideas
     	private void Open(MagnetListInfo magnetListInfo)
     	{
 	        Clear();
-	    	foreach (MagnetInfo magnetInfo in magnetListInfo.Magnets) {
+	    	foreach (MagnetControlInfo magnetInfo in magnetListInfo.Magnets) {
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
 	    		AddMagnet(magnet,false);
@@ -427,6 +427,8 @@ namespace AdventureAuthor.Ideas
         		magnet.Angle = 0;
         	}
         	
+        	magnet.UpdateStarVisibility();
+        	        	
         	// If the magnet is newly created, ensure that it is shown, even if it is in a category which
         	// is currently hidden. If it's been transferred back to the magnet list after being deleted
         	// from a board, then it can retain the same shown/hidden state as its category.
@@ -457,6 +459,8 @@ namespace AdventureAuthor.Ideas
         		magnet.MouseDoubleClick += magnetControl_MouseDoubleClickHandler;
         		magnet.Drop += magnetControl_DropHandler;
         		magnet.Edited += magnetListChangedHandler;
+        		magnet.Starred += magnetListChangedHandler;
+        		magnet.Unstarred += magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -474,6 +478,8 @@ namespace AdventureAuthor.Ideas
         		magnet.MouseDoubleClick -= magnetControl_MouseDoubleClickHandler;
         		magnet.Drop -= magnetControl_DropHandler;
         		magnet.Edited -= magnetListChangedHandler;
+        		magnet.Starred -= magnetListChangedHandler;
+        		magnet.Unstarred -= magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);

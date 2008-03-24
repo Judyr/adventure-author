@@ -24,21 +24,27 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	AllowDrop="false">
-    <Grid>
-    	<Grid.RowDefinitions>
-    		<RowDefinition MinHeight="100" Height="*"/>
-    	</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="*"/>
-    	</Grid.ColumnDefinitions>
-    	<Border Grid.Row="0" Grid.Column="0" BorderThickness="2" BorderBrush="Black">
-    		<StackPanel Orientation="Vertical">
-	    		<StackPanel Background="AliceBlue" Orientation="Vertical" Name="OptionsPanel"/>
-	    		<StackPanel Background="LightBlue" Orientation="Horizontal">
-	    			<Button Click="OnClick_AddBranch" Margin="1" Content="Add Branch"/> 
-	    			<Button Click="OnClick_DeleteEntireChoice" Margin="1" Content="Delete Entire Choice"/> 
-	    		</StackPanel>
-    		</StackPanel>
-    	</Border>		
-    </Grid>
+	<Border BorderBrush="Black" BorderThickness="2">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			
+			<StackPanel Grid.Row="0" Grid.Column="0"
+						Name="OptionsPanel" Background="AliceBlue" Orientation="Vertical"/>
+			
+	    	<StackPanel Grid.Row="1" Grid.Column="0" 
+			            Background="LightBlue" Orientation="Horizontal">
+	    		<Button Click="OnClick_AddBranch" Margin="2" 
+	    		        Content="Add Branch"/>
+	    		<Button Click="OnClick_DeleteEntireChoice" Margin="2" 
+	    		        Content="Delete Entire Choice"/>
+	    	</StackPanel>
+		
+		</Grid>
+	</Border>
 </UserControl>
