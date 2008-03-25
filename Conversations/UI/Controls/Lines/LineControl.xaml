@@ -185,15 +185,29 @@
     	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
     	      Width="10" Background="Transparent"/>
     	
-    	<utils:SwitchableTextBox x:Name="Dialogue"
-    			 Grid.Row="1" Grid.Column="3" TextWrapping="Wrap"
-    	         FontSize="22" FontWeight="4" Focusable="true" AcceptsReturn="false"
-    	         BorderThickness="1" IsEditable="false" Padding="4">
-    		<utils:SwitchableTextBox.Text>
-    			<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>    		
-    			<!--<Binding ElementName="SpeakerLabel" Path="Text"></Binding> (works) -->
-    		</utils:SwitchableTextBox.Text>    
-    	</utils:SwitchableTextBox>
+    	
+    	
+    	
+    	<!--<utils:EditableTextBlock 
+    		 x:Name="Dialogue"
+	    	 Grid.Row="1" Grid.Column="3"
+    		 AllowDrop="true"
+	    	 
+	    	 FontSize="22" FontWeight="4" Focusable="true"
+	    	 BorderThickness="1" IsEditable="false" Padding="4">
+	    </utils:EditableTextBlock>-->
+    	<utils:SwitchableTextBox 
+    		 x:Name="Dialogue"
+	    	 Grid.Row="1" Grid.Column="3"
+    		 AllowDrop="true"
+	    	 TextWrapping="Wrap" AcceptsReturn="false"
+	    	 FontSize="22" FontWeight="4" Focusable="true"
+	    	 BorderThickness="1" IsEditable="false" Padding="4">
+	    	<utils:SwitchableTextBox.Text>
+	    		<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>
+	    	</utils:SwitchableTextBox.Text>    
+	    </utils:SwitchableTextBox>
+    	
 	
 		<StackPanel x:Name="ActionsPanel" 
     	            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" 

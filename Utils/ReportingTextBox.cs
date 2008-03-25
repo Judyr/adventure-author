@@ -49,7 +49,7 @@ namespace AdventureAuthor.Utils
 		}
 
 		#endregion
-		
+				
 		#region Methods
 		
 		public void SetText(string text)

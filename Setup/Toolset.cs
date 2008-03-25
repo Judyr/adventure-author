@@ -887,8 +887,8 @@ namespace AdventureAuthor.Setup
 //					};
 				}
 				else if (viewer.ViewedResource is NWN2GameConversation) {
-					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
-					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // old conversation editor so close
+					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;					
+					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // close the original conversation editor
 					if (conv.Name.StartsWith("~tmp")) {
 						return; // temp file
 					}
@@ -933,15 +933,21 @@ namespace AdventureAuthor.Setup
 		
 		private static void ResourceViewerClosed(int index, object value)
 		{
-			crown.TabPage page = (crown.TabPage)value;
-			if (page.Text == null || page.Text == String.Empty) {
-				Log.WriteAction(LogAction.closed,"<resource>",page.Title);
+			//Say.Information("called resource viewer closed");
+			try {
+				crown.TabPage page = (crown.TabPage)value;
+				if (page.Text == null || page.Text == String.Empty) {
+					Log.WriteAction(LogAction.closed,"<resource>",page.Title);
+				}
+				else if (page.Text == "2dafile" || page.Text == "script" || page.Text == "area") {
+					Log.WriteAction(LogAction.closed,page.Text,page.Title);
+				}
+				else {
+					Log.WriteAction(LogAction.closed,page.Text);
+				}
 			}
-			else if (page.Text == "2dafile" || page.Text == "script" || page.Text == "area") {
-				Log.WriteAction(LogAction.closed,page.Text,page.Title);
-			}
-			else {
-				Log.WriteAction(LogAction.closed,page.Text);
+			catch (Exception e) {
+				Say.Error("Erorr in resourceviewerclosed",e);
 			}
 		}
 		

@@ -144,14 +144,12 @@ namespace AdventureAuthor.Conversations.UI
 			get { return workingFilename; }
 		}    	
     	
-		
-    	private MouseButtonEventHandler draggable_PreviewMouseLeftButtonDownHandler;
-    	private MouseEventHandler draggable_PreviewMouseMoveHandler;
     	
-    	
-    	 	
-    	
-    	
+//    	private static Brush DRAGOVERBRUSH = Brushes.SandyBrown;
+//    	private static Brush SELECTEDBRUSH = Brushes.Wheat;
+//    	private static Brush UNSELECTEDBRUSH = Brushes.LightYellow;
+//    	private static Brush BRANCHSELECTEDBRUSH = Brushes.Wheat;
+//    	private static Brush BRANCHUNSELECTEDBRUSH = Brushes.AliceBlue;
     	
     	#endregion Fields
     	  						
@@ -181,8 +179,7 @@ namespace AdventureAuthor.Conversations.UI
 		public WriterWindow(bool launchNewOpenConversationDialog)
 		{
 			InitializeComponent();
-    		draggable_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(lineControl_PreviewMouseLeftButtonDown);
-    		draggable_PreviewMouseMoveHandler = new MouseEventHandler(lineControl_PreviewMouseMove);
+			
     		Loaded += delegate
     		{  
 				Log.WriteAction(LogAction.launched,"conversationwriter");
@@ -204,6 +201,10 @@ namespace AdventureAuthor.Conversations.UI
             		// already disposed because toolset is closing
             	}
             };
+    		
+//    		this.PreviewDrop += delegate(object sender, DragEventArgs e) { 
+//    			Say.Information("Source: " + e.Source + "\n\nOriginal source: " + e.OriginalSource);
+//    		};
 		}
 		
 		
@@ -338,19 +339,44 @@ namespace AdventureAuthor.Conversations.UI
 		
 		private void AddHandlersForDragging(LineControl lineControl)
 		{
-			lineControl.PreviewMouseLeftButtonDown += lineControl_PreviewMouseLeftButtonDown;
-			lineControl.PreviewMouseMove += lineControl_PreviewMouseMove;
+			lineControl.MouseLeftButtonDown += lineControl_PreviewMouseLeftButtonDown;
+			lineControl.MouseMove += lineControl_PreviewMouseMove;
 		}
 		
 		
 		private void AddHandlersForDropping(LineControl lineControl)
-		{
-			lineControl.Drop += lineControl_OnDrop;
+		{			
+			lineControl.PreviewDrop += lineControl_OnDrop;
 			lineControl.Dialogue.PreviewDrop += delegate(object sender, DragEventArgs e) 
 			{      	
-				Say.Information("dropped on textbox");
 	        	lineControl_OnDrop(lineControl,e);
 			};
+			
+			// too horrible, do properly:
+//			lineControl.DragEnter += delegate(object sender, DragEventArgs e) { 
+//				LineControl lineControl = (LineControl)sender;
+//				lineControl.Background = DRAGOVERBRUSH;
+//			};
+//			
+//			lineControl.DragLeave += delegate(object sender, DragEventArgs e) { 
+//				LineControl lineControl = (LineControl)sender;
+//				if (SelectedLineControl == lineControl) {
+//					if (lineControl is BranchLine) {
+//						lineControl.Background = BRANCHSELECTEDBRUSH;
+//					}
+//					else {
+//						lineControl.Background = SELECTEDBRUSH;
+//					}
+//				}
+//				else {
+//					if (lineControl is BranchLine) {
+//						lineControl.Background = BRANCHUNSELECTEDBRUSH;
+//					}
+//					else {
+//						lineControl.Background = UNSELECTEDBRUSH;
+//					}
+//				}
+//			};
 		}
 						
         #endregion
@@ -946,33 +972,22 @@ namespace AdventureAuthor.Conversations.UI
 		/// <returns>False if the close operation was cancelled; true otherwise</returns>
 		private bool CloseConversationDialog()
 		{
-			Say.Debug("CloseConversationDialog()");
 			if (Conversation.CurrentConversation != null) {
-				Say.Debug("CurrentConversation is not null.");
 				// Make sure you get any changes to the current line:
 				if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
 					SelectedLineControl.SaveChangesToText();
 				}	
 				if (!ModuleHelper.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
-					Say.Debug("IsDirty == true.");
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
-						Say.Debug("Cancelled.");
 						return false;
 					}
 					else if (result == MessageBoxResult.Yes) {
-						Say.Debug("Clicked Yes - saving.");			
-
 						Conversation.CurrentConversation.SaveToOriginal();
 					}
-				}			
-				else {
-					Say.Debug("IsDirty == false.");
-				}
-				Say.Debug("Close the conversation.");
+				}	
 				
-				Log.WriteAction(LogAction.closed,"conversation",this.originalFilename);
-				
+				Log.WriteAction(LogAction.closed,"conversation",this.originalFilename);				
 				CloseConversation();
 			}
 			else {
@@ -1218,8 +1233,11 @@ namespace AdventureAuthor.Conversations.UI
         	}
         	
         	LineControl lineControl = (LineControl)e.Source;        	
-        	if (lineControl.Dialogue.IsEditable && lineControl.Dialogue.IsFocused) { 
-        		return false; // don't allow user to drag while text is being edited
+//        	if (e.OriginalSource is EditableTextBlock && ((EditableTextBlock)e.OriginalSource).IsEditable) {
+//        		return false; // don't drag if the user is actually selecting text
+//        	}
+        	if (e.OriginalSource is SwitchableTextBox && ((SwitchableTextBox)e.OriginalSource).IsEditable) {
+        		return false; // don't drag if the user is actually selecting text
         	}
         	
         	return true;
@@ -1369,6 +1387,8 @@ namespace AdventureAuthor.Conversations.UI
         
         private void lineControl_OnDrop(object sender, DragEventArgs e)
         {
+        	Say.Information("Got drop event");
+        	
         	e.Handled = true;
         	        
         	LineControl dropTarget = (LineControl)sender;
@@ -1401,6 +1421,8 @@ namespace AdventureAuthor.Conversations.UI
         			Conversation.CurrentConversation.MoveLineIntoChoice(dragSource.Nwn2Line,dropTarget.Nwn2Line.Parent);
         		}
         	}
+        	
+        	Say.Information("concluded drop event");
         }
         
         

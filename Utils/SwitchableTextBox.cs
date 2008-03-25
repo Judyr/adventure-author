@@ -20,6 +20,16 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public class SwitchableTextBox : ReportingTextBox
 	{
+		public event EventHandler EditableChanged;
+		protected virtual void OnEditableChanged(EventArgs e)
+		{
+			EventHandler handler = EditableChanged;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+		
 		private bool isEditable;		
 		public bool IsEditable {
 			get { return isEditable; }
@@ -32,25 +42,33 @@ namespace AdventureAuthor.Utils
 		        	Cursor = Cursors.IBeam;
 				}
 				else {
-					IsEditable = true;
 		        	Background = Brushes.Transparent;
 		        	BorderBrush = Brushes.Transparent;
 					IsReadOnly = true;
 					Cursor = Cursors.Arrow;
 				}
+				OnEditableChanged(new EventArgs());
 			}
 		}
 		
 		
 		public SwitchableTextBox() : this(true)
-		{
-			AllowDrop = true;
+		{			
 		}
 		
 		
 		public SwitchableTextBox(bool isEditable) : base()
-		{
+		{		
+//			EventHandler<DragEventArgs> handler2 = new EventHandler<DragEventArgs>(rarg);
+//			this.AddHandler(SwitchableTextBox.DropEvent,handler2,true);
 			IsEditable = isEditable;
+			AllowDrop = true;
 		}
+		
+//		private void rarg(object sender, DragEventArgs e)
+//		{
+//			Say.Information("Dropped.\n\n" + e);
+//		}
+		
 	}
 }

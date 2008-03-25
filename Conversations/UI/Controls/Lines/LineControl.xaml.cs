@@ -89,7 +89,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	/// <param name="lineIsPartOfBranch">True if the line is part of a branch, false otherwise</param>
         protected LineControl(NWN2ConversationConnector line)
         {      
-        	this.nwn2Line = line;        	
+        	this.nwn2Line = line;
         	if (this.nwn2Line.Text.Strings.Count == 0) {
         		this.nwn2Line.Text = Conversation.GetOEIStringFromString(String.Empty);
         	}
@@ -97,6 +97,18 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	this.Resources.Add("LineText",this.nwn2Line.Text.Strings[0]);
         	InitializeComponent();
         	this.DataContext = this;
+        	        		
+        	// Check if there are conditions for this line to be spoken, 
+        	// and if so represent *all* of them with a single control.
+        	// (Note that this should only be the case on BranchLine
+        	// or LeadingLine instances, not on Line instances.)
+        	if (line.Conditions.Count > 0) {
+        		conditionalControl = new ConditionControl(this);
+        		Grid.SetRow(conditionalControl,0);
+        		Grid.SetColumn(conditionalControl,0);
+        		Grid.SetColumnSpan(conditionalControl,4);
+        		LineControlGrid.Children.Add(conditionalControl);
+        	}   
             
         	// Set the image on the delete button:
         	DeleteLineButton.Content = ResourceHelper.GetImage("delete.png");
@@ -148,7 +160,19 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //			Dialogue.LostFocus += new RoutedEventHandler(New_DialogueLostFocus);
 //			Dialogue.GotFocus += new RoutedEventHandler(New_DialogueGotFocus);
 //			this.LostFocus += delegate { DeselectLine(); };
+        	
+        	
+        	Dialogue.LostFocus += delegate { 
+        		Dialogue.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
+//        		Dialogue.textBox.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
+        	};
+        	
+//        	Dialogue.textBox.TextWrapping = TextWrapping.Wrap;
+//        	Dialogue.textBlock.TextWrapping = TextWrapping.Wrap;
+//        	Dialogue.textBox.AcceptsReturn = false;
+//        	Dialogue.Text = this.nwn2Line.Text.Strings[0].ToString();
         }
+        
         
         protected virtual void SetupContextMenu()
         {        
@@ -431,7 +455,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Background = Brushes.Wheat;
 			Dialogue.IsEditable = true;
 
-//        	Say.Debug("just set background. about to switch on all the buttons");
         	SwitchOn(DeleteLineButton);
         	if (conditionalControl != null) {
 //        		SwitchOn(conditionalControl.EditConditionsButton);
@@ -444,7 +467,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (soundControl != null) {
         		SwitchOn(soundControl.PlaySoundButton);
         	}
-//        	Say.Debug("Switched on all the buttons.");
         }
         
         
