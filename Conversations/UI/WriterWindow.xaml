@@ -129,7 +129,6 @@
 					        IsEnabled="false" Click="OnClick_GoToStart">Go to Start</Button>
 					<Button Name="ExpandGraphButton" HorizontalAlignment="Stretch" Height="24" Margin="3" 
 					        IsEnabled="false" Click="OnClick_ExpandGraph">View full-screen</Button>
-					<TextBox Height="30" Width="200" Drop="lineControl_OnDrop"/>
 				</StackPanel>
 			</Grid>
 		</Border>

@@ -347,10 +347,6 @@ namespace AdventureAuthor.Conversations.UI
 		private void AddHandlersForDropping(LineControl lineControl)
 		{			
 			lineControl.PreviewDrop += lineControl_OnDrop;
-			lineControl.Dialogue.PreviewDrop += delegate(object sender, DragEventArgs e) 
-			{      	
-	        	lineControl_OnDrop(lineControl,e);
-			};
 			
 			// too horrible, do properly:
 //			lineControl.DragEnter += delegate(object sender, DragEventArgs e) { 
@@ -1386,11 +1382,7 @@ namespace AdventureAuthor.Conversations.UI
         
         
         private void lineControl_OnDrop(object sender, DragEventArgs e)
-        {
-        	Say.Information("Got drop event");
-        	
-        	e.Handled = true;
-        	        
+        {        	        
         	LineControl dropTarget = (LineControl)sender;
         	        	
         	LineControl dragSource;        	
@@ -1422,13 +1414,7 @@ namespace AdventureAuthor.Conversations.UI
         		}
         	}
         	
-        	Say.Information("concluded drop event");
-        }
-        
-        
-        private void windowsFormsHost_Drop(object sender, DragEventArgs e) 
-        {
-        	e.Handled = true;	
+        	e.Handled = true;
         }
         
         #endregion 

@@ -155,22 +155,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
 
         	WriterWindow.Instance.ViewedPage += new EventHandler(LineControl_OnViewedPage);
         	
-		
-        	// originally commented out:
-//			Dialogue.LostFocus += new RoutedEventHandler(New_DialogueLostFocus);
-//			Dialogue.GotFocus += new RoutedEventHandler(New_DialogueGotFocus);
-//			this.LostFocus += delegate { DeselectLine(); };
-        	
-        	
         	Dialogue.LostFocus += delegate { 
         		Dialogue.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
-//        		Dialogue.textBox.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
         	};
-        	
-//        	Dialogue.textBox.TextWrapping = TextWrapping.Wrap;
-//        	Dialogue.textBlock.TextWrapping = TextWrapping.Wrap;
-//        	Dialogue.textBox.AcceptsReturn = false;
-//        	Dialogue.Text = this.nwn2Line.Text.Strings[0].ToString();
         }
         
         
@@ -352,65 +339,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         
         #endregion
-        
-        // Tests:
-        
-        
-//        
-//		protected override void OnGotFocus(RoutedEventArgs e)
-//		{
-//			SelectLine();
-//			base.OnGotFocus(e);
-//		}
-//		
-////		protected override void OnLostFocus(RoutedEventArgs e)
-////		{	
-////			base.OnLostFocus(e);
-////			if (!DeleteLineButton.IsFocused) {
-////				DeselectLine();
-////			}
-////		}
-//		
-//		private void New_DialogueGotFocus(object sender, RoutedEventArgs e)
-//		{
-//			SelectLine();
-//		}
-//       
-//		private void New_DialogueLostFocus(object sender, RoutedEventArgs e)
-//		{
-//			DeselectLine();
-//		}
-        
-        
-        
-        
-        
-        
-        
-//		protected override void OnGotFocus(RoutedEventArgs e)
-//		{
-//			Dialogue.Focus();
-//		}
-//		
-//		protected override void OnLostFocus(RoutedEventArgs e)
-//		{
-//			base.OnLostFocus(e);
-//		}
-//		
-//		private void New_DialogueGotFocus(object sender, RoutedEventArgs e)
-//		{
-//			SelectLine();
-//			e.Handled = true;			
-//		}
-//       
-//		private void New_DialogueLostFocus(object sender, RoutedEventArgs e)
-//		{
-//			DeselectLine();
-//			e.Handled = false;
-//		}
-        
-        
-        
+             
         
         
         
