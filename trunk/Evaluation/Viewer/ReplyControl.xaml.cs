@@ -50,7 +50,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         public ReplyControl(Reply reply)
         {
             InitializeComponent();
-            if (WorksheetViewer.EvaluationMode == Mode.Complete) {
+            if (WorksheetViewer.Instance.EvaluationMode == Mode.Complete) {
             	DeleteButton.Visibility = Visibility.Collapsed;
             	EditButton.Visibility = Visibility.Collapsed;
             }            

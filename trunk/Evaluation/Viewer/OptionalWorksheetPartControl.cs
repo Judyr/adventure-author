@@ -68,7 +68,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				
 		protected void SetInitialActiveStatus(OptionalWorksheetPart representedWorksheetPart)
 		{          
-            if (WorksheetViewer.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
+            if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
 				ShowActivationControls();
 	    		if (representedWorksheetPart.Include) {
 					Activate();

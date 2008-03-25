@@ -31,8 +31,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     	
     	private string previousValue;
     	
-    	#endregion
-                
+    	#endregion                
     	
     	#region Constructors
         
@@ -79,7 +78,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         		StarsPanel.Children.Add(button);
         	}
         	int width = maxStars * 40;
-        	if (WorksheetViewer.EvaluationMode == Mode.Design) {
+        	if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) {
         		width += 30; // leave space for the activation checkbox
         	}
         	Width = width;

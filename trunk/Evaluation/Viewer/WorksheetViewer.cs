@@ -29,8 +29,19 @@ namespace AdventureAuthor.Evaluation.Viewer
     	    	
     	#region Fields
     	
-    	private static Mode evaluationMode;    	
-		public static Mode EvaluationMode {
+    	/// <summary>
+    	/// The single instance of the worksheet viewer window.
+    	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
+    	/// </summary>
+    	private static WorksheetViewer instance;    	
+		public static WorksheetViewer Instance {
+			get { return instance; }
+			set { instance = value; }
+		}   
+    	
+    	
+    	private Mode evaluationMode;    	
+		public Mode EvaluationMode {
 			get { return evaluationMode; }
 			internal set {
 				evaluationMode = value;				
@@ -38,7 +49,9 @@ namespace AdventureAuthor.Evaluation.Viewer
 			}
 		}
     	
+    	
     	private Worksheet originalWorksheet;
+    	
     	
     	private string filename;    	
 		public string Filename {
@@ -48,6 +61,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 				UpdateTitleBar();
 			}
 		}    	
+    	
     	
     	/// <summary>
     	/// True if the worksheet fields have been changed since the last save; false otherwise.

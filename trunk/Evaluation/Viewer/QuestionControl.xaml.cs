@@ -67,18 +67,18 @@ namespace AdventureAuthor.Evaluation.Viewer
             SetInitialActiveStatus(question);
             
 		    foreach (Answer answer in question.Answers) {
-		    	if (WorksheetViewer.EvaluationMode == Mode.Design || answer.Include) {
+		    	if (WorksheetViewer.Instance.EvaluationMode == Mode.Design || answer.Include) {
 		    		AddAnswerField(answer);
 		    	}
 		    }
             
             foreach (Reply reply in question.Replies) {
-            	if (WorksheetViewer.EvaluationMode != Mode.Design) {
+            	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
             		AddReplyField(reply);
             	}
             }
                  
-            if (WorksheetViewer.EvaluationMode == Mode.Design) {
+            if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) {
             	ControlPanel.Visibility = Visibility.Visible;
             	ControlPanel.Width = 80;
             	ControlPanel.MaxWidth = 80;
@@ -93,7 +93,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             	QuestionAndControlsColumn.Width = new GridLength(350);
             }
             	
-            if (WorksheetViewer.EvaluationMode == Mode.Discuss) {
+            if (WorksheetViewer.Instance.EvaluationMode == Mode.Discuss) {
             	AddReplyButton.Visibility = Visibility.Visible;
             }
             else {
@@ -184,7 +184,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_DeleteQuestion(object sender, EventArgs e)
         {
-        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
+        	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a question.");
         	}
         	

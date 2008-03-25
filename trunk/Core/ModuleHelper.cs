@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
@@ -38,8 +39,10 @@ using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Factions;
 using NWN2Toolset.NWN2.IO;
+using NWN2Toolset.NWN2.Views;
 using OEIShared.UI;
 using OEIShared.Utils;
+using Crownwood.DotNetMagic.Docking;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core
@@ -484,7 +487,7 @@ namespace AdventureAuthor.Core
 		public static void Close()
 		{
 			if (form.App.Module == null) {
-				Say.Warning("No module was open to be closed.");
+				Say.Debug("No module was open to be closed.");
 				return;
 			}
 			
@@ -498,7 +501,7 @@ namespace AdventureAuthor.Core
 		/// <summary>
 		/// Close the currently open module.
 		/// </summary>
-		private static void CloseModule()
+		private static void OriginalCloseModule()
 		{
 			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {				
 				OEIShared.Actions.ActionManager.Manager.Clear(); // ??	
@@ -511,6 +514,53 @@ namespace AdventureAuthor.Core
 		        form.App.DoNewModule(true);	
 			}
 		}
+		
+		
+		/// <summary>
+		/// Close the currently open module.
+		/// </summary>
+		private static void CloseModule()
+		{
+			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {	
+				Toolset.Plugin.CloseModuleWindows();
+				
+				OEIShared.Actions.ActionManager.Manager.Clear(); // ??	
+				form.App.Module.CloseModule();            
+		        form.VersionControlManager.OnModuleClosed();            
+		        form.App.ClearHandlersForGameResourceContainer(form.App.Module);
+		        if (form.App.Module != null) {
+		        	form.App.Module.Dispose();
+		        }	
+		        
+		        // ---stuff that was previously in Toolset.Clear()---
+		        Toolset.TabbedGroupsCollection.RootSequence.Clear();
+		        if (form.App.BlueprintView != null) {
+		        	form.App.BlueprintView.Module = null; // stop displaying custom blueprints specific to the old module
+		        }
+		        if (form.App.VerifyOutput != null) {
+		        	form.App.VerifyOutput.ClearVerifyOutput(); 
+		        }
+		        // Close all open property grids:
+		        List<Content> propertyGrids = new List<Content>(2);
+		        foreach (Content content in Toolset.DockingManager.Contents) {
+		        	if (content.Control is NWN2PropertyGrid) {
+		        		propertyGrids.Add(content);
+		        	}
+		        }
+		        foreach (Content propertyGrid in propertyGrids) {
+		        	if (propertyGrid.Visible) {
+		        		Toolset.DockingManager.HideContent(propertyGrid);
+		        	}		        	
+		        }
+				form.App.CreateNewPropertyPanel(null, null, false, "Properties");
+		        // ---end of stuff that was previously in Toolset.Clear()---
+		        
+		        form.App.DoNewModule(true);	
+			}
+		}
+			
+			 
+			
 				
 		
 		/// <summary>

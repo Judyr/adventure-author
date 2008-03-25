@@ -41,6 +41,9 @@ using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Ideas;
+using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Analysis;
+using AdventureAuthor.Analysis.UI;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
@@ -73,41 +76,59 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The Adventure Author plugin. 
 		/// </summary>
-		public static AdventureAuthorPlugin Plugin = null;
+		private static AdventureAuthorPlugin plugin = null;
+		public static AdventureAuthorPlugin Plugin {
+			get { return plugin; }
+			internal set { plugin = value; }
+		}
+		
 		
 		/// <summary>
 		/// The docking manager controls all docked controls on the main interface screen
 		/// </summary>
 		private static DockingManager dockingManager = null;
+		internal static DockingManager DockingManager {
+			get { return dockingManager; }
+		}
+		
 		
 		/// <summary>
 		/// Owns the TabGroupLeaf which holds resource viewers
 		/// </summary>
 		private static TabbedGroups tabbedGroupsCollection = null; 
+		internal static TabbedGroups TabbedGroupsCollection {
+			get { return tabbedGroupsCollection; }
+		}
+		
 		
 		/// <summary>
 		/// The area contents view control, which lists every object in the current game area
 		/// </summary>
 		private static NWN2AreaContentsView areaContentsView = null;
 		
+		
 		/// <summary>
 		/// The blueprints view control, which lists every available blueprint
 		/// </summary>
 		private static NWN2BlueprintView blueprintView = null;
 		
+		
 		private static NWN2ModuleAreaList areaList = null;
 		private static NWN2ModuleConversationList conversationList = null;
 		private static NWN2ModuleScriptList scriptList = null;
 			
+		
 		private static GraphicsPreferencesToolBar graphicsToolbar = null;
 		private static TD.SandBar.ToolBar objectsToolbar = null;
 		private static MenuBarItem fileMenu = null;
+		
 		
 		/// <summary>
 		/// A list of all the game object dictionaries, one for each type of object (e.g. creature, door, placeable etc.)
 		/// </summary>
 		private static Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>> dictionaries 
 			= new Dictionary<string,Dictionary<INWN2Object,GTLTreeNode>>(14);	
+		
 		
 		/// <summary>
 		/// The mouse mode the user was previously in (e.g. Select Objects) - so that we only log genuine changes to the mouse mode
@@ -192,12 +213,13 @@ namespace AdventureAuthor.Setup
 							areaList = (NWN2ModuleAreaList)c.Control;
 						}
 						else if (c.Control is NWN2ModuleConversationList) {
-							if (c.FullTitle == "Conversations") {
-								conversationList = (NWN2ModuleConversationList)c.Control;
-							}
-							else { // hide "Campaign Conversations"
-								contents.Add(c);
-							}
+							contents.Add(c);
+//							if (c.FullTitle == "Conversations") {
+//								conversationList = (NWN2ModuleConversationList)c.Control;
+//							}
+//							else { // hide "Campaign Conversations"
+//								contents.Add(c);
+//							}
 						}
 						else if (c.Control is NWN2ModuleScriptList) {
 							if (c.FullTitle == "Scripts") {
@@ -787,9 +809,9 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static void ModuleHelper_ModuleClosed(object sender, EventArgs e)
 		{
-			if (!ModuleHelper.ModuleIsOpen()) {
-				Clear();				
-			}
+//			if (!ModuleHelper.ModuleIsOpen()) {
+//				Clear();				
+//			}
 			UpdateTitleBar();
 			SetUI_ModuleNotOpen();
 		}
@@ -822,7 +844,7 @@ namespace AdventureAuthor.Setup
 		private static void SetUI_ModuleNotOpen()
 		{
 			areaList.Enabled = false;
-			conversationList.Enabled = false;
+			//conversationList.Enabled = false;
 			scriptList.Enabled = false;		
 		}
 		
@@ -833,7 +855,7 @@ namespace AdventureAuthor.Setup
 		private static void SetUI_ModuleOpen()
 		{
 			areaList.Enabled = true;
-			conversationList.Enabled = true;
+			//conversationList.Enabled = true;
 			scriptList.Enabled = true;
 		}
 		
@@ -854,23 +876,6 @@ namespace AdventureAuthor.Setup
 					
 					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
 					
-//					foreach (Control c in GetControls(areaViewer)) {
-//						Say.Debug(c.ToString());
-//						if (c.ContextMenu != null && c.ContextMenu.MenuItems.Count > 0) {
-//							Say.Debug("Context menu:");
-//							foreach (MenuItem menuItem in c.ContextMenu.MenuItems) {
-//								Say.Debug(" - " + menuItem.Text);
-//							}
-//						}
-//						if (c.ContextMenuStrip != null && c.ContextMenuStrip.Items.Count > 0) {
-//							Say.Debug("Context strip:");
-//							foreach (ToolStripItem menuItem in c.ContextMenuStrip.Items) {
-//								Say.Debug(" - " + menuItem.Text);
-//							}
-//						}
-//						Say.Debug("");
-//					}
-					
 					// now handled through area contents viewer events, which picks up selection events from the area viewer as well:
 										
 //					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
@@ -886,9 +891,31 @@ namespace AdventureAuthor.Setup
 //						}
 //					};
 				}
-				else if (viewer.ViewedResource is NWN2GameConversation) {
-					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;					
-					tabbedGroupsCollection.ActiveLeaf.TabPages.Remove(page); // close the original conversation editor
+				else if (viewer is NWN2ConversationViewer) {
+					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
+										
+					//viewer.Close(false);
+//					if (viewer != null) {
+//						viewer.Dispose();
+//					}
+					
+					
+					try {
+						TabPageCollection tabPages = tabbedGroupsCollection.ActiveLeaf.TabPages;
+					
+						tabPages.Remove(page); // close the original conversation editor
+//						if (tabPages == null) {
+//							tabPages = new TabPageCollection();
+//						}
+						//tabbedGroupsCollection.ActiveTabPage = null;
+					}
+					catch (Exception e) {
+						Say.Error("Error when closing the original conversation editor.",e);
+					}
+						
+						
+					
+					
 					if (conv.Name.StartsWith("~tmp")) {
 						return; // temp file
 					}
@@ -933,7 +960,6 @@ namespace AdventureAuthor.Setup
 		
 		private static void ResourceViewerClosed(int index, object value)
 		{
-			//Say.Information("called resource viewer closed");
 			try {
 				crown.TabPage page = (crown.TabPage)value;
 				if (page.Text == null || page.Text == String.Empty) {
@@ -952,17 +978,17 @@ namespace AdventureAuthor.Setup
 		}
 		
 				
-		/// <summary>
-		/// Clears the user interface after a module has been closed.
-		/// </summary>
-		private static void Clear()
-		{
-			tabbedGroupsCollection.RootSequence.Clear();
-			form.App.BlueprintView.Module = null; 	  // stop displaying custom blueprints specific to the old module
-			form.App.VerifyOutput.ClearVerifyOutput();  
-			// Close all Property Grids - not implemented. TODO iterate through DockingManager.Contents to find
-			form.App.CreateNewPropertyPanel(null, null, false, "Properties"); // create a fresh toolset Properties panel
-		}
+//		/// <summary>
+//		/// Clears the user interface after a module has been closed.
+//		/// </summary>
+//		private static void Clear()
+//		{
+//			tabbedGroupsCollection.RootSequence.Clear();
+//			form.App.BlueprintView.Module = null; 	  // stop displaying custom blueprints specific to the old module
+//			form.App.VerifyOutput.ClearVerifyOutput();  
+//			// Close all Property Grids - not implemented. TODO iterate through DockingManager.Contents to find
+//			form.App.CreateNewPropertyPanel(null, null, false, "Properties"); // create a fresh toolset Properties panel
+//		}
 					
 		
 		private static void UpdateTitleBar()
@@ -1233,6 +1259,7 @@ namespace AdventureAuthor.Setup
 			try {
 				if (WriterWindow.Instance == null || !WriterWindow.Instance.IsLoaded) {
 					WriterWindow.Instance = new WriterWindow(withDialog);
+					Plugin.ModuleWindows.Add(WriterWindow.Instance);
 				}
 				ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
 				WriterWindow.Instance.Show();
@@ -1256,6 +1283,7 @@ namespace AdventureAuthor.Setup
 			try {
 				if (VariablesWindow.Instance == null || !VariablesWindow.Instance.IsLoaded) {
 					VariablesWindow.Instance = new VariablesWindow();
+					Plugin.ModuleWindows.Add(VariablesWindow.Instance);
 				}
 				ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
 				VariablesWindow.Instance.Show();
@@ -1274,6 +1302,8 @@ namespace AdventureAuthor.Setup
 			try {
 				if (MagnetBoardViewer.Instance == null || !MagnetBoardViewer.Instance.IsLoaded) {
 					MagnetBoardViewer.Instance = new MagnetBoardViewer();
+					Plugin.SessionWindows.Add(MagnetBoardViewer.Instance);
+					
 					// Attempt to open a magnet list, and handle its absence/corruption:
 	    			MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
 	    			// (Messily) tell the viewer where to load the magnet box. Because this involves
@@ -1291,6 +1321,50 @@ namespace AdventureAuthor.Setup
 				Say.Error("Could not open magnets window.",e);
 			}
 		}	
+		
+		
+		/// <summary>
+		/// Bring up the Evaluation window.
+		/// </summary>
+		public static void LaunchEvaluation(Mode mode)
+		{
+			try {
+				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {
+					WorksheetViewer.Instance = new WorksheetViewer(mode);
+					Plugin.SessionWindows.Add(WorksheetViewer.Instance);
+				}
+				ElementHost.EnableModelessKeyboardInterop(WorksheetViewer.Instance);
+				WorksheetViewer.Instance.Show();
+			}
+			catch (Exception e) {
+				Say.Error("Could not open evaluation viewer.",e);
+			}
+		}		
+		
+		
+		/// <summary>
+		/// Bring up an Analysis window.
+		/// </summary>
+		public static CombatMap LaunchAnalysis()
+		{
+			if (!ModuleHelper.ModuleIsOpen()) {
+				Say.Debug("Tried to run analysis window when no module was open.");
+				return null;
+			}
+			
+			try {
+				CombatMap combatMap = new CombatMap();
+				ElementHost.EnableModelessKeyboardInterop(combatMap);	  
+				Plugin.ModuleWindows.Add(combatMap);
+				combatMap.Show();
+				return combatMap;
+			}
+			catch (Exception e) {
+				Say.Error("Could not open analysis window.",e);
+				return null;
+			}
+		}	
+		
 		
 		
 		public static void BringToFront(System.Windows.Window window)
@@ -1314,86 +1388,8 @@ namespace AdventureAuthor.Setup
 				ModuleHelper.DeleteArea(area);
 			}
 		}
-					
 		
-		private static void ExitToolsetDialog()
-		{
-			if (!ModuleHelper.BeQuiet && ModuleHelper.ModuleIsOpen() && !CloseModuleDialog()) {
-				return; // cancel shutdown if they change their mind when asked to save the current adventure
-			}
-			
-			//ShutdownToolset();
-			
-			form.App.Close();
-			
-			// TODO: should be adding event handling stuff to the OnClose(?) event, and then raising that event from here.
-		}
-		
-		#endregion Event handlers
-//		
-//		private static void ShutdownAdventureAuthorWindows()
-//		{
-//			if (WriterWindow.Instance != null) {
-//				WriterWindow.Instance.Close();
-//			}
-//			if (VariablesWindow.Instance != null) {
-//				VariablesWindow.Instance.Close();
-//			}
-//			if (MagnetBoardViewer.Instance != null) {
-//				MagnetBoardViewer.Instance.Close();
-//			}			
-//		}
-//		
-//		
-//		private static void OnNeverwinterNights2Closing(object sender, EventArgs e)
-//		{
-//			ShutdownAdventureAuthorWindows();
-//		}
-		
-		
-//		private static void ShutdownToolset()
-//		{	
-//			IScriptCompiler scriptCompiler = null;
-//			int? threadID = null;
-//			NWN2PluginHost host = null;
-//			
-//			FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.NonPublic |
-//			                                                  BindingFlags.Instance |
-//			                                                  BindingFlags.Static);
-//			
-//			// Get the script compiler and thread ID through reflection 
-//			// (there is only one field of either type):
-//			foreach (FieldInfo fi in fields) {
-//				if (fi.FieldType == typeof(IScriptCompiler)) {
-//					scriptCompiler = fi.GetValue(form.App) as IScriptCompiler;
-//				}
-//				else if (fi.FieldType == typeof(Int32)) {
-//					threadID = (Int32)fi.GetValue(form.App);
-//				}
-//				else if (fi.FieldType == typeof(NWN2PluginHost)) {
-//					host = fi.GetValue(form.App) as NWN2PluginHost;
-//				}
-//			}	
-//				
-//			if (Thread.CurrentThread.ManagedThreadId == threadID) {
-//				form.App.Module.CloseModule();
-//				
-//				if (scriptCompiler != null) {
-//					scriptCompiler.Dispose();
-//					scriptCompiler = null;
-//				}
-//				//NWN2NetDisplayManager.Instance.Shutdown();
-//				host.UnloadPlugins();
-//				OEIShared.IO.TalkTable.TalkTable.Instance.Dispose();
-//				form.App.Module.Dispose(true);
-//				host.ShutdownPlugins();
-//				
-//				//Application.Exit();
-//				form.App.Close();
-//				form.App.Dispose();
-//			}
-//		}
-		
+		#endregion Event handlers	
 		
 		/// <summary>
 		/// Set the locked status of the interface.
