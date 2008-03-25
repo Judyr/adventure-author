@@ -1,0 +1,10 @@
+<UserControl x:Class="AdventureAuthor.Utils.EditableTextBlock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AdventureAuthor.Utils"
+    >
+    <Grid>
+    	<TextBlock x:Name="textBlock" Text="{Binding ElementName=textBlock, Path=Text, Mode=OneWay}"/>
+		<TextBox x:Name="textBox" />
+    </Grid>
+</UserControl>

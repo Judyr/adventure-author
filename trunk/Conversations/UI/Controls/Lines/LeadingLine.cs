@@ -40,15 +40,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	{
 		public LeadingLine(NWN2ConversationConnector line) : base(line)
 		{
-        	// Check if there are conditions for this line to be spoken, and if so represent *all* of them with a single control:
-        	if (line.Conditions.Count > 0) {
-        		conditionalControl = new ConditionControl(this);
-        		Grid.SetRow(conditionalControl,0);
-        		Grid.SetColumn(conditionalControl,0);
-        		Grid.SetColumnSpan(conditionalControl,3);
-        		LineControlGrid.Children.Add(conditionalControl);
-        	}   
-        	
         	// Disable and grey out everything:
         	Focusable = false;
         	DeleteLineButton.IsEnabled = false;
