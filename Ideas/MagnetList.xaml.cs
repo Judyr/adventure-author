@@ -263,7 +263,9 @@ namespace AdventureAuthor.Ideas
         					AbortOpen();
         				}
 		           		MessageBoxResult result = 
-		           			MessageBox.Show(filename + " is not a valid ideas box file. It may " +
+		           			MessageBox.Show( // this will appear before toolset has finished loading
+		           				  "There was a problem when setting up the Adventure Author fridge magnet application.\n\n" +
+		           				  filename + " is not a valid ideas box file. It may " +
 		           	    	      "be corrupted, or the wrong type of file.\n\n" + 
 		           	    	      "This file must be replaced to continue. Do you want to back up the " +
 		           	    	      "corrupted file in case it can be fixed?",
@@ -324,7 +326,7 @@ namespace AdventureAuthor.Ideas
         
         private void AbortOpen()
         {
-			Say.Warning("Ideas will not be saved during this session.");
+			Say.Warning("Any ideas you create in the fridge magnets application will not be saved during this session.");
 		    Filename = null;
 			SaveAutomatically = false;
 			Clear();

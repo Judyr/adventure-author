@@ -24,24 +24,9 @@ namespace AdventureAuthor.Utils
 		
 		public static void StartRecording()
 		{			
-			// Filename:
-			// Date_Username.log
-			// e.g. 05_05_07_JackStuart.log
-			// e.g. 05_05_07_JackStuart2.log
-			// Place in AdventureAuthor/logs
-			
-			string filename = Tools.GetDateStamp();// + "_" + username
-			string logpath = Path.Combine(ModuleHelper.UserLogDirectory,filename+".log");
-			
-			// If the filename is already taken, add numbering ("<filename>2.log", "<filename>3.log" etc.):
-			int count = 1;
-			while (File.Exists(logpath)) {
-				count++;
-				string newfilename = filename + count.ToString();
-				logpath = Path.Combine(ModuleHelper.UserLogDirectory,newfilename+".log");								
-			}			
-			
-			FileInfo f = new FileInfo(logpath);				
+			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp() + " " + Tools.GetTimeStamp(true);
+			string path = GetUnusedPath(ModuleHelper.UserLogDirectory,preferredFilename,"log");						
+			FileInfo f = new FileInfo(path);				
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);
 			writer.AutoFlush = true;
@@ -64,6 +49,19 @@ namespace AdventureAuthor.Utils
 				writer.WriteLine(e.Message);
 				writer.Flush();
 			}
+		}
+		
+		
+		public static string GetUnusedPath(string directory, string preferredFilename, string fileExtension)
+		{
+			int count = 1;
+			string path = Path.Combine(directory,preferredFilename+"."+fileExtension);
+			while (File.Exists(path)) {
+				count++;
+				string newfilename = preferredFilename + " (" + count + ")";
+				path = Path.Combine(directory,newfilename+"."+fileExtension);						
+			}			
+			return path;
 		}
 	}
 }

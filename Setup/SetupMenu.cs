@@ -221,7 +221,7 @@ namespace AdventureAuthor.Setup
 				else {
 					category = (IdeaCategory)selected;
 				}
-				Idea idea = new Idea(text,category,User.GetCurrentUser());
+				Idea idea = new Idea(text,category,User.GetCurrentUserName());
 				OnIdeaSubmitted(new IdeaEventArgs(idea));
 				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
 				Log.WriteAction(LogAction.added,"idea","from 'add an idea' toolbar- " + idea.ToString());

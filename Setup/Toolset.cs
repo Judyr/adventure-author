@@ -790,9 +790,14 @@ namespace AdventureAuthor.Setup
 			if (blueprintView != null) {
 				if (blueprintView.Selection.Length > 0) {					
 					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off
-					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
+					
+					// LoadBlueprint() fetches from disk, but two copies appear in the blueprint view
+//					NWN2GlobalBlueprintManager.Instance.LoadBlueprint(blueprint.Resource); // fetch from disk
+					blueprint.OEIUnserialize(blueprint.Resource.GetStream(false)); // fetch from disk
+					
 					string text = GetTextForBlueprintMagnet(blueprint);
-					Idea idea = new Idea(text,IdeaCategory.Toolset,User.GetCurrentUser());
+					blueprint.Resource.Release();
+					Idea idea = new Idea(text,IdeaCategory.Toolset,User.GetCurrentUserName());
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
 					Log.WriteAction(LogAction.added,"idea","from blueprints- " + idea.ToString());
 				}
@@ -1305,7 +1310,8 @@ namespace AdventureAuthor.Setup
 					Plugin.SessionWindows.Add(MagnetBoardViewer.Instance);
 					
 					// Attempt to open a magnet list, and handle its absence/corruption:
-	    			MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
+	    			//MagnetBoardViewer.Instance.magnetList.Open(ModuleHelper.IdeasBoxFilename);
+	    			
 	    			// (Messily) tell the viewer where to load the magnet box. Because this involves
 	    			// changes to the UI of both the magnet list and the magnet viewer, it is
 	    			// handled in the magnet viewer, which also tells the magnet list what to do.

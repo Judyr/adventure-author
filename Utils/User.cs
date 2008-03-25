@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Windows.Forms;
 using NWN2Toolset.NWN2.Data;
 
 namespace AdventureAuthor.Utils
@@ -17,9 +18,9 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class User
 	{
-		public static string GetCurrentUser()
+		public static string GetCurrentUserName()
 		{
-			return System.Windows.Forms.SystemInformation.UserName;
+			return SystemInformation.UserName;
 		}
 		
 		
@@ -39,7 +40,7 @@ namespace AdventureAuthor.Utils
 		
 		public static bool IdentifyTeacherOrDemandPassword()
 		{
-			return IdentifyTeacherOrDemandPassword(User.GetCurrentUser());
+			return IdentifyTeacherOrDemandPassword(User.GetCurrentUserName());
 		}
 		
 		

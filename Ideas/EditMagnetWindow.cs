@@ -75,7 +75,7 @@ namespace AdventureAuthor.Ideas
 	        	}
         		        		
         		if (magnet == null) {
-        			Idea idea = new Idea(ideaTextBox.Text,category,User.GetCurrentUser(),DateTime.Now);
+        			Idea idea = new Idea(ideaTextBox.Text,category,User.GetCurrentUserName(),DateTime.Now);
         			magnet = new MagnetControl(idea);
         		}
         		else {

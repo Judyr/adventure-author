@@ -142,7 +142,8 @@ namespace AdventureAuthor.Setup
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
-					          "Some features of Adventure Author will not work correctly until this is resolved.",e);
+					          "You may find that the software no longer runs correctly. " +
+					          "If this is the case, try reinstalling Adventure Author.");
 				}
 								
 				Toolset.Plugin = this;
@@ -156,8 +157,8 @@ namespace AdventureAuthor.Setup
 				
 				// Create an instance of the magnets board on loading, so that it's
 				// ready to receive ideas submitted from the main GUI:
-				MagnetBoardViewer magnetBoardViewer = new MagnetBoardViewer();
-				sessionWindows.Add(magnetBoardViewer);
+				MagnetBoardViewer.Instance = new MagnetBoardViewer();				
+				sessionWindows.Add(MagnetBoardViewer.Instance);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();

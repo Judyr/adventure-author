@@ -138,17 +138,6 @@ namespace AdventureAuthor.Ideas
             wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;            
             appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
             Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
-            
-            
-//            
-//            ContextMenu BoardMenu = new ContextMenu();
-//            BoardMenu.ItemsSource = boardMenu.Items;
-//            
-//            ContextMenu BoxMenu = new ContextMenu();
-//            BoxMenu.ItemsSource = boxMenu.Items;
-//            	
-//            ActiveBoard.ContextMenu = BoardMenu;
-//            magnetList.ContextMenu = BoxMenu;
                         
     		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
 			try {
@@ -159,6 +148,8 @@ namespace AdventureAuthor.Ideas
 			catch (Exception e) {
     			Say.Debug("Failed to create a Magnets board directory for user:\n"+e);
 			}
+    		
+    		magnetList.Open(ModuleHelper.IdeasBoxFilename); // previously was outside constructor
         }
             	
     	#endregion

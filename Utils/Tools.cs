@@ -110,7 +110,7 @@ namespace AdventureAuthor.Utils
 		public static string GetDateStamp()
 		{
 			DateTime now = DateTime.Now;
-			return now.Day + "_" + now.Month + "_" + now.Year;
+			return now.Day + "." + now.Month + "." + now.Year;
 		}
 		
 		
@@ -119,17 +119,17 @@ namespace AdventureAuthor.Utils
 		/// </summary>
 		/// <param name="validForFilename">True if the string should only contain valid characters for filenames, false otherwise</param>
 		/// <returns>A string representing the current time in hours, minutes and seconds</returns>
-		public static string GetTimeStamp(bool validForFilename)
+		public static string GetTimeStamp(bool forFilename)
 		{
-			if (!validForFilename) {
+			if (!forFilename) {
 				return GetNWN2StyleTimeStamp();
 			}
 			
 			DateTime d = DateTime.Now;
 			StringBuilder timestamp = new StringBuilder();
 			string divider;
-			if (validForFilename) {
-				divider = "_";
+			if (forFilename) {
+				divider = "";
 			}
 			else {
 				divider = ":";
@@ -149,13 +149,13 @@ namespace AdventureAuthor.Utils
 			else {
 				timestamp.Append(minute + divider);
 			}						
-			string second = d.Second.ToString();
-			if (second.Length == 1) {
-				timestamp.Append("0" + second + divider);
-			}
-			else {
-				timestamp.Append(second + divider);
-			}
+//			string second = d.Second.ToString();
+//			if (second.Length == 1) {
+//				timestamp.Append("0" + second + divider);
+//			}
+//			else {
+//				timestamp.Append(second + divider);
+//			}
 				
 			return timestamp.ToString();
 		}
