@@ -399,10 +399,6 @@
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
-    <Compile Include="Utils\EditableTextBlock.xaml.cs">
-      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Utils\Filters.cs" />
     <Compile Include="Utils\FriendlyToolTip.xaml.cs">
       <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
@@ -505,7 +501,6 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
-    <Page Include="Utils\EditableTextBlock.xaml" />
     <Page Include="Utils\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Utils\RGBPicker.xaml" />

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AdventureAuthor.Conversations.UI.Controls;
 
 namespace AdventureAuthor.Utils
 {
@@ -57,18 +58,42 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
+		/// <summary>
+		/// Allow LineControls to be dragged over and dropped on this textbox.
+		/// </summary>
+		protected override void OnDragOver(DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(typeof(LineControl)) ||
+			    e.Data.GetDataPresent(typeof(Line)) ||
+			    e.Data.GetDataPresent(typeof(BranchLine))) 
+			{
+				return;
+			}
+			
+			base.OnDragOver(e);
+		}
+		
+		
+		/// <summary>
+		/// Allow LineControls to be dragged over and dropped on this textbox.
+		/// </summary>
+		protected override void OnDrop(DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(typeof(LineControl)) ||
+			    e.Data.GetDataPresent(typeof(Line)) ||
+			    e.Data.GetDataPresent(typeof(BranchLine))) 
+			{
+				return;
+			}
+			
+			base.OnDragOver(e);
+		}
+		
+		
 		public SwitchableTextBox(bool isEditable) : base()
 		{		
-//			EventHandler<DragEventArgs> handler2 = new EventHandler<DragEventArgs>(rarg);
-//			this.AddHandler(SwitchableTextBox.DropEvent,handler2,true);
 			IsEditable = isEditable;
 			AllowDrop = true;
 		}
-		
-//		private void rarg(object sender, DragEventArgs e)
-//		{
-//			Say.Information("Dropped.\n\n" + e);
-//		}
-		
 	}
 }

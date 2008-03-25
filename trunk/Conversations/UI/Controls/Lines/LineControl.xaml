@@ -185,17 +185,6 @@
     	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
     	      Width="10" Background="Transparent"/>
     	
-    	
-    	
-    	
-    	<!--<utils:EditableTextBlock 
-    		 x:Name="Dialogue"
-	    	 Grid.Row="1" Grid.Column="3"
-    		 AllowDrop="true"
-	    	 
-	    	 FontSize="22" FontWeight="4" Focusable="true"
-	    	 BorderThickness="1" IsEditable="false" Padding="4">
-	    </utils:EditableTextBlock>-->
     	<utils:SwitchableTextBox 
     		 x:Name="Dialogue"
 	    	 Grid.Row="1" Grid.Column="3"
