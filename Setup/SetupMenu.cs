@@ -61,7 +61,7 @@ namespace AdventureAuthor.Setup
 						
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
-			exitAdventureAuthor.Activate += delegate { ExitToolsetDialog(); };
+			exitAdventureAuthor.Activate += delegate { form.App.Close(); };
 									
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newModule,
@@ -119,8 +119,10 @@ namespace AdventureAuthor.Setup
 			ButtonItem analysisButton = new ButtonItem();
 			analysisButton.Activate += delegate { 
 				if (form.App.Module.Areas.Count > 0) {
-					CombatMap combatMap = new CombatMap(); 
-					combatMap.Show(); 
+					CombatMap analysisWindow = LaunchAnalysis();
+					if (analysisWindow != null) {
+						BringToFront(analysisWindow);
+					}
 				}
 				else {
 					Say.Information("There are no areas to display in map view.");
@@ -134,8 +136,14 @@ namespace AdventureAuthor.Setup
 						
 			ButtonItem evaluationButton = new ButtonItem();
 			evaluationButton.Activate += delegate { 
-				SelectModeWindow selectModeWindow = new SelectModeWindow();
-				selectModeWindow.ShowDialog();
+				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {					
+					SelectModeWindow selectModeWindow = new SelectModeWindow();
+					bool cancelled = !((bool)selectModeWindow.ShowDialog());
+					if (cancelled) {
+						return;	
+					}
+				}
+				BringToFront(WorksheetViewer.Instance);
 			};
 			Tools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
 			evaluationButton.ToolTipText = "Answer questions to evaluate a game";

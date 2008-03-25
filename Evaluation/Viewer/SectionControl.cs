@@ -66,12 +66,12 @@ namespace AdventureAuthor.Evaluation.Viewer
             SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
-        		if (WorksheetViewer.EvaluationMode == Mode.Design || question.Include) {	
+        		if (WorksheetViewer.Instance.EvaluationMode == Mode.Design || question.Include) {	
 		        	AddQuestionField(question);
         		}
         	}
                            
-            if (WorksheetViewer.EvaluationMode == Mode.Design) {
+            if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) {
             	AddQuestionButton.Visibility = Visibility.Visible;
             	DeleteSectionButton.Visibility = Visibility.Visible;
             	MoveSectionDownButton.Visibility = Visibility.Visible;
@@ -150,7 +150,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_DeleteSection(object sender, EventArgs e)
         {
-        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
+        	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
         	}
         	
@@ -189,20 +189,6 @@ namespace AdventureAuthor.Evaluation.Viewer
         }
         
         
-//        private void OnChecked(object sender, EventArgs e)
-//        {
-//    		Log.WriteAction(LogAction.activated,"section");
-//        	Activate();
-//        }
-//        
-//        
-//        private void OnUnchecked(object sender, EventArgs e)
-//        {
-//    		Log.WriteAction(LogAction.deactivated,"section");
-//        	Deactivate(false);
-//        }
-        
-        
         internal void AddNewQuestion()
         {        	
         	Question question = new Question("New question");
@@ -217,7 +203,7 @@ namespace AdventureAuthor.Evaluation.Viewer
         
         private void OnClick_AddQuestion(object sender, EventArgs e)
         {
-        	if (WorksheetViewer.EvaluationMode != Mode.Design) {
+        	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to call Add Question " +
         		                                    "when not in designer mode.");
         	}

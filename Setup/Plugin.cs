@@ -27,6 +27,8 @@
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.Windows;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
@@ -44,22 +46,40 @@ namespace AdventureAuthor.Setup
 	/// </summary>
 	public class AdventureAuthorPlugin : INWN2Plugin
 	{	
-		#region INWN2Plugin
+		#region Fields	
 		
+		/// <summary>
+		/// A padlock object for locking purposes.
+		/// </summary>
+		private object padlock = new object();
+		
+		
+		/// <summary>
+		/// Not used.
+		/// </summary>
 		public MenuButtonItem PluginMenuItem {
 			get { return null; }
 		}
 		
 		
-		public AdventureAuthorPluginPreferences Options {
-			get { return (AdventureAuthorPluginPreferences)Preferences; }
-		}	
-		
-		
+		/// <summary>
+		/// The user preference settings relating to this plugin.
+		/// </summary>
 		public object Preferences {
 			get { return (object)AdventureAuthorPluginPreferences.Instance; }
 			set { AdventureAuthorPluginPreferences.Instance = (AdventureAuthorPluginPreferences)value; }
 		}
+		
+		
+		/// <summary>
+		/// The user preference settings related to this plugin.
+		/// </summary>
+		/// <remarks>This is identical to the Preferences property, 
+		/// but no cast is required to use it.</remarks>
+		public AdventureAuthorPluginPreferences Options {
+			get { return (AdventureAuthorPluginPreferences)Preferences; }
+			set { AdventureAuthorPluginPreferences.Instance = value; }
+		}	
 		
 		
 		public string Name {
@@ -78,24 +98,33 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// Called when the plugin starts (after being clicked in the menu)
+		/// Windows which should be shut down when the module is closed.
 		/// </summary>
-		/// <param name="cHost"></param>
-		public void Startup(INWN2PluginHost cHost)
-		{
-			
-		}		
-				
+		private List<Window> moduleWindows = new List<Window>(4);
+		public List<Window> ModuleWindows	{
+			get { return moduleWindows; }
+		}
+		
 		
 		/// <summary>
-		/// Called when the toolset starts
+		/// Windows which should be shut down when the toolset is closed.
+		/// </summary>
+		private List<Window> sessionWindows = new List<Window>(1);
+		public List<Window> SessionWindows {
+			get { return sessionWindows; }
+		}
+		
+		#endregion
+		
+		#region Methods
+		
+		/// <summary>
+		/// Called when the toolset starts.
 		/// </summary>
 		/// <param name="cHost"></param>
 		public void Load(INWN2PluginHost cHost)
 		{
 			try {
-				//form.App.Closing += OnNeverwinterNights2Closing;
-				
 				// Check directories:				
 				if (!Directory.Exists(ModuleHelper.AdventureAuthorInstallDirectory)) {					
 					Say.Error("Adventure Author files were not found at the expected location " + 
@@ -104,25 +133,12 @@ namespace AdventureAuthor.Setup
 					          "If this is the case, try reinstalling Adventure Author.");
 				}
 				try {
-					if (!Directory.Exists(ModuleHelper.PublicUserDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.PublicUserDirectory);	
-					}	
-					if (!Directory.Exists(ModuleHelper.PrivateUserDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.PrivateUserDirectory);	
-					}	
-					if (!Directory.Exists(ModuleHelper.DebugDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.DebugDirectory);	
-					}	
-					if (!Directory.Exists(ModuleHelper.UserLogDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.UserLogDirectory);	
-					}	
-					if (!Directory.Exists(ModuleHelper.WorksheetsDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.WorksheetsDirectory);	
-					}	
-					if (!Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
-						Directory.CreateDirectory(ModuleHelper.MagnetBoardsDirectory);
-						// missing magnet list will be created by MagnetBoardViewer if required
-					}	
+					EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
+					EnsureDirectoryExists(ModuleHelper.PrivateUserDirectory);
+					EnsureDirectoryExists(ModuleHelper.DebugDirectory);
+					EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
+					EnsureDirectoryExists(ModuleHelper.WorksheetsDirectory);
+					EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
@@ -140,7 +156,8 @@ namespace AdventureAuthor.Setup
 				
 				// Create an instance of the magnets board on loading, so that it's
 				// ready to receive ideas submitted from the main GUI:
-				MagnetBoardViewer magnets = new MagnetBoardViewer();
+				MagnetBoardViewer magnetBoardViewer = new MagnetBoardViewer();
+				sessionWindows.Add(magnetBoardViewer);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();
@@ -155,30 +172,13 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// Called when the toolset closes
+		/// Called when the plugin starts (after being clicked in the menu).
 		/// </summary>
 		/// <param name="cHost"></param>
-		public void Unload(INWN2PluginHost cHost)
-		{					
-//			if (WriterWindow.Instance != null) {
-//				WriterWindow.Instance.Close();
-//			}
-//			if (VariablesWindow.Instance != null) {
-//				VariablesWindow.Instance.Close();
-//			}
-//			if (MagnetBoardViewer.Instance != null) {
-//				MagnetBoardViewer.Instance.Close();
-//			}
-//			// TODO if analysis window is not null
-//			// TODO if evaluation window is not null
-//			
-//			Log.WriteAction(LogAction.exited,"toolset");
-//			LogWriter.StopRecording();
-//			DebugWriter.StopRecording();
-		}
-		
-		
-		private object padlock = new object();
+		public void Startup(INWN2PluginHost cHost)
+		{
+			
+		}	
 		
 		
 		/// <summary>
@@ -186,26 +186,38 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public void Shutdown(INWN2PluginHost cHost)
 		{
+			
+		}	
+						
+		
+		/// <summary>
+		/// Called when the toolset closes - ensure that every window Adventure Author has
+		/// opened is closed again, otherwise the toolset crashes.
+		/// </summary>
+		/// <param name="cHost"></param>
+		public void Unload(INWN2PluginHost cHost)
+		{			
 			lock (padlock) {
-				if (WriterWindow.Instance != null) {
-					WriterWindow.Instance.Close();
-				}
-				if (VariablesWindow.Instance != null) {
-					VariablesWindow.Instance.Close();
-				}
-				if (MagnetBoardViewer.Instance != null) {
-					MagnetBoardViewer.Instance.Close();
-				}
-				// TODO if analysis window is not null
-				// TODO if evaluation window is not null
+				CloseSessionWindows();
+				CloseModuleWindows();
 			}
 			
 			Log.WriteAction(LogAction.exited,"toolset");
 			LogWriter.StopRecording();
 			DebugWriter.StopRecording();
 		}
+				
 		
-		#endregion INWN2Plugin
+		/// <summary>
+		/// Check that a given directory exists; if it doesn't, create it.
+		/// </summary>
+		/// <param name="directory">The directory to check for/create</param>
+		private void EnsureDirectoryExists(string directory)
+		{
+			if (!Directory.Exists(directory)) {
+				Directory.CreateDirectory(directory);	
+			}	
+		}
 		
 				
 		/// <summary>
@@ -222,9 +234,44 @@ namespace AdventureAuthor.Setup
 					}
 				}
 			}
-			catch (Exception) {
-				//MessageBox.Show("Failed to delete temp modules on loading.\n\n\n" + ex.ToString());
+			catch (Exception e) {
+				//Say.Debug("Failed to delete temp modules.\n" + e.ToString());
 			}
 		}	
+		
+		
+		/// <summary>
+		/// Close all Adventure Author windows.
+		/// </summary>
+		public void CloseSessionWindows()
+		{
+			CloseWindows(sessionWindows);
+		}
+		
+		
+		/// <summary>
+		/// Close all Adventure Author windows that relate to the module that's currently open.
+		/// </summary>
+		public void CloseModuleWindows()
+		{
+			CloseWindows(moduleWindows);
+		}
+		
+		
+		/// <summary>
+		/// Close a list of windows.
+		/// </summary>
+		/// <param name="windows">The list of windows to close</param>
+		private void CloseWindows(List<Window> windows)
+		{
+			foreach (Window window in windows) {
+				if (window != null) {
+					Say.Debug("closing window: " + window.Title + " (" + window.GetType() + ")");
+					window.Close();
+				}
+			}
+		}
+		
+		#endregion
 	}
 }
