@@ -788,18 +788,21 @@ namespace AdventureAuthor.Ideas
     	
     	private void SetOrientation(Orientation orientation)
     	{
+    		double magnetListHeight = 250; //220;
+    		double magnetListWidth = 180;
+    		
     		switch (orientation) {
     			case Orientation.Vertical:
     				Grid.SetRow(controlPanel,0);
     				Grid.SetColumn(controlPanel,1);
-    				row0.MinHeight = 220;
-    				row0.MaxHeight = 220;
+    				row0.MinHeight = magnetListHeight;
+    				row0.MaxHeight = magnetListHeight;
     				row1.MaxHeight = double.MaxValue;
     				magnetsPanel.MaxHeight = double.MaxValue;
     				column0.MinWidth = 0;
     				column0.MaxWidth = 0;
-    				column1.MinWidth = 180;
-    				column1.MaxWidth = 180;
+    				column1.MinWidth = magnetListWidth;
+    				column1.MaxWidth = magnetListWidth;
 	        		magnetsPanel.Orientation = Orientation.Vertical;
     				scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
     				scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -809,11 +812,11 @@ namespace AdventureAuthor.Ideas
     				Grid.SetColumn(controlPanel,0);
     				row0.MinHeight = 0;
     				row0.MaxHeight = 0;
-    				row1.MinHeight = 220;
-    				row1.MaxHeight = 220;
+    				row1.MinHeight = magnetListHeight;
+    				row1.MaxHeight = magnetListHeight;
     				magnetsPanel.MaxHeight = 195;
-    				column0.MinWidth = 180;
-    				column0.MaxWidth = 180;
+    				column0.MinWidth = magnetListWidth;
+    				column0.MaxWidth = magnetListWidth;
     				column1.MaxWidth = double.MaxValue;
 	        		magnetsPanel.Orientation = Orientation.Horizontal;
     				scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;

@@ -416,7 +416,7 @@ namespace AdventureAuthor.Ideas
         
         private void previewKeyDown(object sender, KeyEventArgs e)
         {
-        	Log.WriteMessage(e.Key.ToString() + " is down");
+        	Say.Debug(e.Key.ToString() + " is down");
         	if (SelectedMagnet != null) {
         		if (e.Key == Key.Delete) {
         			if (ActiveBoard.HasMagnet(SelectedMagnet)) {
@@ -429,7 +429,7 @@ namespace AdventureAuthor.Ideas
         			}
         		}
         		else if (ActiveBoard.HasMagnet(SelectedMagnet)) { // only perform these operations on board magnets     
-        			Log.WriteMessage("..so do stuff");
+        			Say.Debug("..so do stuff");
         			bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
         			bool down = Keyboard.IsKeyDown(Key.Down);
         			bool up = Keyboard.IsKeyDown(Key.Up);
@@ -443,19 +443,19 @@ namespace AdventureAuthor.Ideas
         			
         			if (up) {
         				yMovement -= step;
-        				Log.WriteMessage("up: yMovement: " + yMovement);
+        				Say.Debug("up: yMovement: " + yMovement);
         			}
         			if (down) {
         				yMovement += step;
-        				Log.WriteMessage("dn: yMovement: " + yMovement);
+        				Say.Debug("dn: yMovement: " + yMovement);
         			}
         			if (left) {
         				xMovement -= step;
-        				Log.WriteMessage("lt: xMovement: " + xMovement);
+        				Say.Debug("lt: xMovement: " + xMovement);
         			}
         			if (right) {
         				xMovement += step;
-        				Log.WriteMessage("rt: xMovement: " + xMovement);
+        				Say.Debug("rt: xMovement: " + xMovement);
         			}
         			
         			if (shift) { 
