@@ -224,7 +224,7 @@ namespace AdventureAuthor.Setup
 				Idea idea = new Idea(text,category,User.GetCurrentUserName());
 				OnIdeaSubmitted(new IdeaEventArgs(idea));
 				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
-				Log.WriteAction(LogAction.added,"idea","from 'add an idea' toolbar- " + idea.ToString());
+				Log.WriteAction(LogAction.added,"idea",idea.ToString() + " ... added from toolbar");
 			};
 			addButton.ToolTipText = "Add this idea to your ideas screen";
 			

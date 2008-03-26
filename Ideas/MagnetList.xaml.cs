@@ -89,6 +89,13 @@ namespace AdventureAuthor.Ideas
         private DragEventHandler magnetControl_DropHandler;
         private EventHandler magnetListChangedHandler;
     	
+        
+        private object padlock = new object();
+        
+        
+        internal MenuItem appearsAtSideContextMenuItem = null; // since you can't easily name these (weird XAML thing)
+        internal MenuItem wonkyMagnetsContextMenuItem = null;
+        
     	#endregion
     	
     	#region Events
@@ -188,7 +195,7 @@ namespace AdventureAuthor.Ideas
             	Log.WriteAction(LogAction.deleted,"idea",e.Magnet.ToString());
             };
             Scattered += delegate {
-            	Log.WriteMessage("scattered");
+            	Log.WriteMessage("scattered " + GetMagnets(true).Count + " magnets");
             };
             HidCategory += delegate(object sender, MagnetCategoryEventArgs e) { 
             	Log.WriteAction(LogAction.hid,"ideacategory",e.Category.ToString());
@@ -369,7 +376,9 @@ namespace AdventureAuthor.Ideas
     		}
     		else {
     			try {
-	    			AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+    				lock (padlock) {
+    					AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+    				}
     			} 
     			catch (Exception e) {
     				Say.Error("Changes to the magnet list could not be saved.",e);
@@ -880,7 +889,7 @@ namespace AdventureAuthor.Ideas
         private void newMagnetCreated(object sender, MagnetEventArgs e)
         {
         	AddMagnet(e.Magnet,true);
-        	Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString());
+			Log.WriteAction(LogAction.added,"idea",e.Magnet.Idea.ToString() + " ... added from magnets app");
         }
         
         

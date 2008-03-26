@@ -100,7 +100,7 @@ namespace AdventureAuthor.Variables
 		/// Remove all references in conversation scripts and OnEvent scripts to a given variable
 		/// </summary>
 		/// <param name="variable">The variable to remove references for</param>
-		private static void RemoveReferences(NWN2ScriptVariable variable)
+		public static void RemoveReferences(NWN2ScriptVariable variable)
 		{			
 			// Remove all references to this variable in the module's conversations:
         	IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(form.App.Module.Repository.Name); // was modulepath
@@ -137,19 +137,15 @@ namespace AdventureAuthor.Variables
 						if (DependsOnVariable(connector.Actions[i],variable)) {
 							defunctActions.Add(connector.Actions[i]);
 						}
-					}
-					
+					}					
 					for (int i = 0; i < connector.Conditions.Count; i++) { 
 						if (DependsOnVariable(connector.Conditions[i],variable)) {
 							defunctConditions.Add(connector.Conditions[i]);
 						}
-					}
-					
-					
+					}										
 					foreach (NWN2ScriptFunctor removable in defunctActions) {
 						Conversation.CurrentConversation.DeleteAction(connector,removable);
-					}
-					
+					}					
 					foreach (NWN2ConditionalFunctor removable in defunctConditions) {
 						Conversation.CurrentConversation.DeleteCondition(connector,removable);
 					}

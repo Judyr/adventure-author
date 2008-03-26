@@ -919,17 +919,19 @@ namespace AdventureAuthor.Conversations
 			// Changes to a line's text are not saved immediately, so save changes before going any further:
 			LineControl selected = WriterWindow.Instance.SelectedLineControl;
 			if (selected != null && !IsFiller(selected.Nwn2Line)) {
-				selected.SaveChangesToText();
+				selected.FlushChangesToText();
 			}
 			
 			lock (padlock) {				
 				NwnConv.OEISerialize(false);
-				string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,WriterWindow.Instance.OriginalFilename+".dlg");
-				string workingPath = Path.Combine(form.App.Module.Repository.DirectoryName,WriterWindow.Instance.WorkingFilename+".dlg");
+				string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,
+				                                   WriterWindow.Instance.OriginalFilename+".dlg");
+				string workingPath = Path.Combine(form.App.Module.Repository.DirectoryName,
+				                                  WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
 				isDirty = false;
-				OnSaved(new EventArgs());
 			}
+			OnSaved(new EventArgs());
 		}
 		
 		
@@ -944,9 +946,8 @@ namespace AdventureAuthor.Conversations
 			
 			try {
 				lock (padlock) {
-					NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize: launch in separate thread ?				
+					NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize			
 					isDirty = true;
-					Say.Debug("Saved to working copy.");
 				}
 			}
 			catch (Exception e) {

@@ -81,13 +81,10 @@ namespace AdventureAuthor.Ideas
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
     	
         	InitializeComponent();
-                                    
+                                                
             // Set up 'Show/Hide idea category' menu:
             RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
-            
             foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
-            	string category = ideaCategory.ToString();
-            	
             	ShowHideCategoryMenuItem menuItem = new ShowHideCategoryMenuItem(ideaCategory);
             	menuItem.IsChecked = true;
             	menuItem.Checked += showHideChangedHandler;
@@ -135,8 +132,6 @@ namespace AdventureAuthor.Ideas
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
             
-            wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;            
-            appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
             Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
                         
     		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
@@ -179,7 +174,7 @@ namespace AdventureAuthor.Ideas
     	public void Save()
     	{
     		ActiveBoard.Save();
-    		Log.WriteAction(LogAction.saved,"magnetboard",ActiveBoard.Filename);
+    		Log.WriteAction(LogAction.saved,"magnetboard",Path.GetFileNameWithoutExtension(ActiveBoard.Filename));
     	}
     	    	
     	
@@ -293,7 +288,8 @@ namespace AdventureAuthor.Ideas
         public void Scatter(bool unusedOnly)
         {
         	if (ActiveBoard != null) {
-	        	foreach (MagnetControl magnet in magnetList.GetMagnets(true)) {
+        		List<MagnetControl> visibleMagnets = magnetList.GetMagnets(true);
+	        	foreach (MagnetControl magnet in visibleMagnets) {
         			if (!ActiveBoard.HasEquivalentMagnet(magnet)) {
 	        			MagnetControl clone = (MagnetControl)magnet.Clone();
 	        			ActiveBoard.AddMagnet(clone,true);
@@ -416,7 +412,7 @@ namespace AdventureAuthor.Ideas
         
         private void previewKeyDown(object sender, KeyEventArgs e)
         {
-        	Say.Debug(e.Key.ToString() + " is down");
+        	//Say.Debug(e.Key.ToString() + " is down");
         	if (SelectedMagnet != null) {
         		if (e.Key == Key.Delete) {
         			if (ActiveBoard.HasMagnet(SelectedMagnet)) {
@@ -429,7 +425,7 @@ namespace AdventureAuthor.Ideas
         			}
         		}
         		else if (ActiveBoard.HasMagnet(SelectedMagnet)) { // only perform these operations on board magnets     
-        			Say.Debug("..so do stuff");
+        			//Say.Debug("..so do stuff");
         			bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
         			bool down = Keyboard.IsKeyDown(Key.Down);
         			bool up = Keyboard.IsKeyDown(Key.Up);
@@ -443,19 +439,19 @@ namespace AdventureAuthor.Ideas
         			
         			if (up) {
         				yMovement -= step;
-        				Say.Debug("up: yMovement: " + yMovement);
+        				//Say.Debug("up: yMovement: " + yMovement);
         			}
         			if (down) {
         				yMovement += step;
-        				Say.Debug("dn: yMovement: " + yMovement);
+        				//Say.Debug("dn: yMovement: " + yMovement);
         			}
         			if (left) {
         				xMovement -= step;
-        				Say.Debug("lt: xMovement: " + xMovement);
+        				//Say.Debug("lt: xMovement: " + xMovement);
         			}
         			if (right) {
         				xMovement += step;
-        				Say.Debug("rt: xMovement: " + xMovement);
+        				//Say.Debug("rt: xMovement: " + xMovement);
         			}
         			
         			if (shift) { 
@@ -516,6 +512,12 @@ namespace AdventureAuthor.Ideas
         {
         	Toolset.Plugin.Options.UseWonkyMagnets = wonkyMagnetsMenuItem.IsChecked;
         }
+        
+        
+        private void appearsAtSideCheckedOrUnchecked(object sender, EventArgs e)
+        {
+        	Toolset.Plugin.Options.MagnetBoxAppearsAtSide = appearsAtSideMenuItem.IsChecked;
+        }       
 
         
         /// <summary>
@@ -545,6 +547,7 @@ namespace AdventureAuthor.Ideas
         {
         	MagnetControl magnet = (MagnetControl)e.Magnet.Clone();
         	ActiveBoard.AddMagnet(magnet,true);	
+        	Log.WriteAction(LogAction.placed,"idea",e.Magnet.ToString());
         }
         
         
@@ -662,6 +665,10 @@ namespace AdventureAuthor.Ideas
 	         	if (fromMagnetList) {
 	         		ActiveBoard.AddMagnet(magnet,false);
 	         		magnet.Focus(); // select the clone rather than the original
+	         		Log.WriteAction(LogAction.placed,"idea",magnet.ToString());
+	         	}
+	         	else {
+	         		Log.WriteAction(LogAction.moved,"idea",magnet.ToString());
 	         	}
 	         		
 	         	ActiveBoard.BringToFront(magnet);
@@ -799,12 +806,6 @@ namespace AdventureAuthor.Ideas
         		DeleteMagnet(magnet);
         	}
         }
-        
-        
-        private void appearsAtSideCheckedOrUnchecked(object sender, EventArgs e)
-        {
-        	Toolset.Plugin.Options.MagnetBoxAppearsAtSide = appearsAtSideMenuItem.IsChecked;
-        }       
         
         #endregion
         

@@ -731,7 +731,7 @@ namespace AdventureAuthor.Ideas
     	
 		public override string ToString()
 		{
-			return idea.Text;
+			return idea.ToString();
 		}	
         
         #endregion
