@@ -237,7 +237,7 @@ namespace AdventureAuthor.Conversations.UI
 			// at which point the LineControl will not be recreated. Otherwise, it will save the text of the
 			// LineControl to what is now a filler line, causing problems. 
 			if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
-				SelectedLineControl.SaveChangesToText();
+				SelectedLineControl.FlushChangesToText();
 				SelectedLineControl = null;
 			}			
 			LinesPanel.Children.Clear();
@@ -971,7 +971,7 @@ namespace AdventureAuthor.Conversations.UI
 			if (Conversation.CurrentConversation != null) {
 				// Make sure you get any changes to the current line:
 				if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
-					SelectedLineControl.SaveChangesToText();
+					SelectedLineControl.FlushChangesToText();
 				}	
 				if (!ModuleHelper.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);

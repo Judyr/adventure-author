@@ -200,7 +200,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         protected void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
         {
-        	SaveChangesToText();
+        	FlushChangesToText();
         }
         
         
@@ -213,7 +213,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		OnClick_Delete(sender,e);
 		    }
         	if (e.Key == Key.Return) {
-        		SaveChangesToText();
+        		FlushChangesToText();
         	}
         }
         
@@ -221,7 +221,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// <summary>
         /// Save changes made to dialogue, so they are not lost when the page view is next refreshed.
         /// </summary>
-        internal void SaveChangesToText()
+        internal void FlushChangesToText()
         {
         	if (Conversation.GetStringFromOEIString(nwn2Line.Line.Text) != Dialogue.Text) {
         		Conversation.CurrentConversation.SetText(nwn2Line,Dialogue.Text);

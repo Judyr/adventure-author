@@ -799,7 +799,7 @@ namespace AdventureAuthor.Setup
 					blueprint.Resource.Release();
 					Idea idea = new Idea(text,IdeaCategory.Toolset,User.GetCurrentUserName());
 					OnIdeaSubmitted(new IdeaEventArgs(idea));
-					Log.WriteAction(LogAction.added,"idea","from blueprints- " + idea.ToString());
+				Log.WriteAction(LogAction.added,"idea",idea.ToString() + " ... added from blueprints");
 				}
 			}
 			else {

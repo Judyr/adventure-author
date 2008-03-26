@@ -79,6 +79,9 @@ namespace AdventureAuthor.Ideas
         private EventHandler magnetControl_SendToBackHandler;
         private EventHandler magnetControl_BringToFrontHandler;
         private EventHandler magnetControl_EditedHandler;
+        
+        
+        private object padlock = new object();
     	
     	#endregion
     	
@@ -166,16 +169,14 @@ namespace AdventureAuthor.Ideas
     		Drop += new DragEventHandler(magnetBoard_Drop);
     		
     		MagnetAdded += delegate (object sender, MagnetEventArgs e) {
-    			MakeDirty();
-    			Log.WriteAction(LogAction.placed,"idea",e.Magnet.ToString());
+    			MakeDirty();    			
     		};
     		MagnetRemoved += delegate (object sender, MagnetEventArgs e) {
     			MakeDirty(); 
     			Log.WriteAction(LogAction.removed,"idea",e.Magnet.ToString());
     		};
     		MagnetMoved += delegate (object sender, MagnetEventArgs e) {
-    			MakeDirty(); 
-    			Log.WriteAction(LogAction.moved,"idea",e.Magnet.ToString());
+    			MakeDirty(); ;
     		};
     		Cleared += delegate {
     			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing
@@ -258,12 +259,6 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        public void AddMagnet(MagnetControl magnet)
-        {
-        	AddMagnet(magnet,false);
-        }
-        
-        
         /// <summary>
         /// Add a magnet to the board.
         /// </summary>
@@ -296,7 +291,7 @@ namespace AdventureAuthor.Ideas
 			
 			mainCanvas.Children.Add(magnet);
 			UpdateZOrder(magnet,true); // bring to front but avoid raising event
-			        	  		
+			
         	OnMagnetAdded(new MagnetEventArgs(magnet));
         }
         
@@ -407,10 +402,12 @@ namespace AdventureAuthor.Ideas
     			throw new InvalidOperationException("Save failed: Should not have called Save without first setting a filename.");
     		}
     		else {
-	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
-	    		if (Dirty) {
-	    			Dirty = false;
-	    		}
+    			lock (padlock) {
+		    		AdventureAuthor.Utils.Serialization.Serialize(Filename,this.GetSerializable());
+		    		if (Dirty) {
+		    			Dirty = false;
+		    		}
+    			}
     		}
     	}
     	
@@ -530,12 +527,19 @@ namespace AdventureAuthor.Ideas
 		}   
 		
 		
-		public void ClearBoard()
+		private void Clear()
 		{
         	List<MagnetControl> magnets = GetMagnets();
         	foreach (MagnetControl magnet in magnets) {
         		RemoveMagnet(magnet);
-        	}
+        	}			
+		}
+		
+		
+		public void ClearBoard()
+		{
+			Log.WriteMessage("cleared board:"); // 'cleared' should appear before all the 'removed magnet' messages
+			Clear();
         	OnCleared(new EventArgs());
 		}
         
@@ -583,13 +587,17 @@ namespace AdventureAuthor.Ideas
         
         private void magnetControl_BringToFront(object sender, EventArgs e)
         {
-        	BringToFront((MagnetControl)sender);
+        	MagnetControl magnet = (MagnetControl)sender;
+        	BringToFront(magnet);
+        	Log.WriteMessage("brought idea to front -" + magnet.ToString());
         }       
         
         
         private void magnetControl_SendToBack(object sender, EventArgs e)
         {
-        	SendToBack((MagnetControl)sender);
+        	MagnetControl magnet = (MagnetControl)sender;
+        	SendToBack(magnet);
+        	Log.WriteMessage("sent idea to back -" + magnet.ToString());
         }
         
         

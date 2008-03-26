@@ -127,6 +127,12 @@ namespace AdventureAuthor.Ideas
 		#endregion
 	
 		#region Methods
+		
+		public override string ToString()
+		{
+			return text + " (" + category + ")";
+		}
+		
 		        
 		public object Clone()
 		{
