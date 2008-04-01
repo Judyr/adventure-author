@@ -37,15 +37,20 @@ namespace AdventureAuthor.Scripts.UI
     	
         public SelectTagQuestionPanel()
         {
+        	
+        	
             InitializeComponent();            
             
-            foreach (TaggedType type in Enum.GetValues(typeof(TaggedType))) {
-            	CheckBox checkBox = new CheckBox();
-            	checkBox.Content = type;
-            	
-            	
-            }
-            
+//            foreach (TaggedType type in Enum.GetValues(typeof(TaggedType))) {
+//            	CheckBox checkBox = new CheckBox();
+//            	checkBox.Content = type;
+//            	objectTypesPanel.Children.Add(checkBox);
+//            	
+//            	foreach (string tagvalue in ScriptHelper.GetTags(type,currentArea)) {
+//            		Tag tagtuple = new Tag();
+//            		tagtuple.
+//            	}
+//            }
             
             
 //            ScriptHelper.GetTags(TaggedType.

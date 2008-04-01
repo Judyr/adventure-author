@@ -349,11 +349,12 @@ namespace AdventureAuthor.Ideas
     	private void Open(MagnetListInfo magnetListInfo)
     	{
 	        Clear();
+	    	ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
+	    	
 	    	foreach (MagnetControlInfo magnetInfo in magnetListInfo.Magnets) {
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
-	    		ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
 	    		AddMagnet(magnet,false);
-	    	}
+	        }
 	        SaveAutomatically = false;
     	}
         
@@ -454,8 +455,14 @@ namespace AdventureAuthor.Ideas
         			magnet.Hide();
         		}
         	}
+        	
+        	
+        	
+        	
+        	
         	    		
         	OnMagnetAdded(new MagnetEventArgs(magnet));
+        	
         }
         
         
@@ -705,20 +712,6 @@ namespace AdventureAuthor.Ideas
     		return MagnetList.HasMagnet(magnetsPanel.Children,magnet);
     	}
     	
-    	        
-    	/// <summary>
-    	/// Check whether an equivalent magnet to the given magnet exists in this list.
-    	/// </summary>
-    	/// <param name="magnet">The magnet to check for</param>
-    	/// <returns>True if a magnet with identical field values to the given magnet exists
-    	/// within this list; false otherwise</returns>
-    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
-    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
-    	public bool HasEquivalentMagnet(MagnetControl magnet)
-    	{
-    		return MagnetList.HasEquivalentMagnet(magnetsPanel.Children,magnet);
-    	}
-    	
     	
     	/// <summary>
     	/// Check whether a given magnet exists within a collection of UI elements.
@@ -733,30 +726,70 @@ namespace AdventureAuthor.Ideas
     		return elements.Contains(magnet);
     	}
     	
-    	    	
+    	        
     	/// <summary>
-    	/// Check whether an equivalent magnet to the given magnet exists within a collection of UI elements.
+    	/// Check whether an equivalent magnet to the given magnet exists in this list.
     	/// </summary>
-    	/// <param name="elements">The UI element collection to check</param>
     	/// <param name="magnet">The magnet to check for</param>
     	/// <returns>True if a magnet with identical field values to the given magnet exists
-    	/// within this collection; false otherwise</returns>
+    	/// within this list; false otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public bool HasEquivalentMagnet(MagnetControl magnet)
+    	{
+    		return HasEquivalentMagnet(magnetsPanel.Children,magnet);
+    	}
+    	
+    	        
+    	/// <summary>
+    	/// Check whether an equivalent magnet to the given magnet exists in a given element collection.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <param name="elements">The UI element collection to check</param>
+    	/// <returns>True if a magnet with identical field values to the given magnet exists
+    	/// within this list; false otherwise</returns>
     	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
     	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
     	public static bool HasEquivalentMagnet(UIElementCollection elements, MagnetControl magnet)
     	{
-    		if (HasMagnet(elements,magnet)) { // return true if the actual object is found
-    			return true;
-    		}
+    		return GetEquivalentMagnet(elements,magnet) != null;
+    	}
+    	
+    	    	
+    	/// <summary>
+    	/// Get an equivalent magnet to the given magnet, if it exists within this magnet list.
+    	/// </summary>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>A magnet with identical field values to the given magnet if it exists
+    	/// within this collection; null otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public MagnetControl GetEquivalentMagnet(MagnetControl magnet)
+    	{
+    		return GetEquivalentMagnet(magnetsPanel.Children,magnet);
+    	}
+    	
+    	    	
+    	/// <summary>
+    	/// Get an equivalent magnet to the given magnet, if it exists within a collection of UI elements.
+    	/// </summary>
+    	/// <param name="elements">The UI element collection to check</param>
+    	/// <param name="magnet">The magnet to check for</param>
+    	/// <returns>A magnet with identical field values to the given magnet if it exists
+    	/// within this collection; null otherwise</returns>
+    	/// <remarks>This checks for an equivalent magnet (i.e. a magnet with identical field values) - 
+    	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
+    	public static MagnetControl GetEquivalentMagnet(UIElementCollection elements, MagnetControl magnet)
+    	{
     		foreach (UIElement element in elements) { // return true if an equivalent object is found
     			if (element is MagnetControl) {
     				MagnetControl magnet2 = (MagnetControl)element;
     				if (magnet.Idea.Equals(magnet2.Idea)) {
-    					return true;
+    					return magnet2;
     				}
     			}
     		}
-    		return false;
+    		return null;
     	}
     	
     	
@@ -881,7 +914,29 @@ namespace AdventureAuthor.Ideas
         internal void OnClick_CreateMagnet(object sender, RoutedEventArgs e)
         {        	
         	EditMagnetWindow window = new EditMagnetWindow();
-        	window.MagnetEdited += new EventHandler<MagnetEventArgs>(newMagnetCreated);
+        	window.MagnetCreated += new EventHandler<MagnetEventArgs>(newMagnetCreated);
+        	window.ShowDialog();
+        }
+    	
+    	
+        internal void OnClick_LuckyDip(object sender, RoutedEventArgs e)
+        {        	
+        	Window window = new Window();
+        	window.SizeToContent = SizeToContent.WidthAndHeight;
+        	window.Background = Brushes.DarkBlue;
+        	StackPanel sp = new StackPanel();
+        	sp.Orientation = Orientation.Horizontal;
+        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage("einstein.png");
+        	einstein.Height = 200;
+        	einstein.Width = 180;
+        	TextBlock tb = new TextBlock();
+        	tb.Text = "Einstein says: \"Why not try making your own cheese? It is cheap and effective!";
+        	tb.Background = Brushes.Transparent;
+        	tb.Foreground = Brushes.White;
+        	tb.FontSize = 18.0f;
+        	sp.Children.Add(einstein);
+        	sp.Children.Add(tb);
+        	window.Content = sp;
         	window.ShowDialog();
         }
 

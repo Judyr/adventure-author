@@ -58,6 +58,17 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
 			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
 			programmerFunctions.Items.Add(logWindow);	
+			
+			MenuButtonItem selectTagWindow = new MenuButtonItem("Select tag window");
+			selectTagWindow.Activate += delegate { 
+				AdventureAuthor.Scripts.UI.SelectTagQuestionPanel panel =
+					new AdventureAuthor.Scripts.UI.SelectTagQuestionPanel();
+				System.Windows.Window window = new System.Windows.Window();
+				window.Content = panel;
+				window.Show(); 
+			
+			};
+			programmerFunctions.Items.Add(selectTagWindow);	
 						
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
@@ -109,12 +120,25 @@ namespace AdventureAuthor.Setup
 							
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate { 
-				LaunchMagnetBoardViewer(); 
+				MagnetBoardViewer.Instance.Show();//LaunchMagnetBoardViewer();
 				BringToFront(MagnetBoardViewer.Instance);
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
 			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
 			aaToolbar.Items.Add(ideasButton);
+							
+			ButtonItem addIdeaButton = new ButtonItem();
+			addIdeaButton.Activate += delegate { 
+				EditMagnetWindow window = new EditMagnetWindow();
+				window.MagnetCreated += delegate(object sender, MagnetEventArgs e) { 
+					OnMagnetSubmitted(new MagnetEventArgs(e.Magnet));
+					Log.WriteAction(LogAction.added,"magnet",e.Magnet.ToString() + " ... added from main toolset");
+				};
+				window.ShowDialog();
+			};
+			addIdeaButton.ToolTipText = "Quickly add a new idea to your Magnet Box";
+			addIdeaButton.Text = "+";
+			aaToolbar.Items.Add(addIdeaButton);
 							
 			ButtonItem analysisButton = new ButtonItem();
 			analysisButton.Activate += delegate { 
@@ -161,7 +185,7 @@ namespace AdventureAuthor.Setup
 				conversationButton.Enabled = true;
 				variableButton.Enabled = true;
 				ideasButton.Enabled = true;
-				analysisButton.Enabled = true;
+				//analysisButton.Enabled = true;
 				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
 			};
@@ -170,7 +194,7 @@ namespace AdventureAuthor.Setup
 				conversationButton.Enabled = false;
 				variableButton.Enabled = false;
 				ideasButton.Enabled = true;
-				analysisButton.Enabled = false;
+				//analysisButton.Enabled = false;
 				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
 			};
@@ -178,68 +202,6 @@ namespace AdventureAuthor.Setup
 			// TODO: 'Ideas' should flash to indicate an idea has 'gone in' - or go from unlit to lit bulb?
 			
 			return aaToolbar;
-		}
-		
-		
-		public static void SetupAddIdeaToolBar(ToolBar toolbar)
-		{
-			toolbar.AddRemoveButtonsVisible = false;
-			toolbar.Text = "Add an idea";
-			toolbar.Margin = new System.Windows.Forms.Padding(3);
-			toolbar.BackColor = System.Drawing.Color.LightBlue;
-			
-			LabelItem label = new LabelItem();
-			label.Text = "Add an idea: ";
-			
-			TextBoxItem ideaEntryBox = new TextBoxItem();			
-			ideaEntryBox.ToolTipText = "Type in your idea here";
-			ideaEntryBox.MinimumControlWidth = 150;
-			System.Windows.Forms.TextBox textBox = (System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl;
-			textBox.MaxLength = Idea.MAX_IDEA_LENGTH;
-			
-			ComboBoxItem ideaCategoryBox = new ComboBoxItem();
-			ideaCategoryBox.ToolTipText = "Select an idea category";
-			ideaCategoryBox.MinimumControlWidth = 100;
-			ideaCategoryBox.ComboBox.SelectedValue = IdeaCategory.Other;
-			ideaCategoryBox.ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			foreach (IdeaCategory cat in Idea.IDEA_CATEGORIES) {
-				ideaCategoryBox.Items.Add(cat);
-			}
-							
-			ButtonItem addButton = new ButtonItem();	
-			addButton.Text = "Add";
-			addButton.Activate += delegate { 
-				string text = ((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text;
-				if (text == String.Empty) {
-					return;
-				}
-				IdeaCategory category;
-				object selected = ((System.Windows.Forms.ComboBox)ideaCategoryBox.ContainedControl).SelectedItem;
-				if (selected == null) {
-					category = IdeaCategory.Other;
-				}
-				else {
-					category = (IdeaCategory)selected;
-				}
-				Idea idea = new Idea(text,category,User.GetCurrentUserName());
-				OnIdeaSubmitted(new IdeaEventArgs(idea));
-				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
-				Log.WriteAction(LogAction.added,"idea",idea.ToString() + " ... added from toolbar");
-			};
-			addButton.ToolTipText = "Add this idea to your ideas screen";
-			
-			ButtonItem clearButton = new ButtonItem();	
-			clearButton.Text = "Clear";
-			clearButton.Activate += delegate { 
-				((System.Windows.Forms.TextBox)ideaEntryBox.ContainedControl).Text = String.Empty;
-			};
-			clearButton.ToolTipText = "Clear this idea";					
-			
-			toolbar.Items.Add(label);
-			toolbar.Items.Add(ideaEntryBox);
-			toolbar.Items.Add(ideaCategoryBox);
-			toolbar.Items.Add(addButton);
-			toolbar.Items.Add(clearButton);
 		}
 	}
 }

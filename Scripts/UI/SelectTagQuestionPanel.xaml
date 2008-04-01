@@ -5,7 +5,7 @@
 	Background="Bisque">
     <StackPanel Orientation="Vertical">
     
-		  <Grid Margin="10" ShowGridLines="true">
+		<Grid Margin="10" ShowGridLines="true">
       	<Grid.RowDefinitions>
   				<RowDefinition/>
   				<RowDefinition/>
@@ -17,7 +17,8 @@
   			</Grid.ColumnDefinitions>
   			<RadioButton Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
   			             Name="radioButtonSelectTag"
-    	               Margin="10">
+  			             GroupName="tagSelectionRadioButtonGroup"
+    	               	 Margin="10">
     	    <RadioButton.Content>
     	      <TextBlock Text="Select a tag" Margin="7,0,0,0" FontSize="14"/>
     	    </RadioButton.Content>
@@ -59,6 +60,7 @@
     	         Content="Only display tags which are..."/>
     	  
     	  <StackPanel Grid.Row="1" Grid.Column="1"
+			          x:Name="objectTypesPanel"
     	              Orientation="Vertical"
     	              Margin="10">
     	    <CheckBox FontSize="12">
@@ -85,38 +87,17 @@
     	  
     	  <Label Grid.Row="0" Grid.Column="2"
     	         VerticalAlignment="Bottom"
-    	         Content="Only display tags which appear in..."/>
+    	         Content="Area to search for tags:"/>
     	  
-    	  <StackPanel Grid.Row="1" Grid.Column="2"
-    	              Orientation="Vertical"
-    	              Margin="10">
-    	    <CheckBox FontSize="12">
-    	      <CheckBox.Content>
-    	        <TextBlock Text="Scratchpad" FontSize="12" Margin="7,0,0,0"/>
-    	      </CheckBox.Content>
-    	    </CheckBox>
-    	    <CheckBox FontSize="12">
-    	      <CheckBox.Content>
-    	        <TextBlock Text="Forest area" FontSize="12" Margin="7,0,0,0"/>
-    	      </CheckBox.Content>
-    	    </CheckBox>
-    	    <CheckBox FontSize="12">
-    	      <CheckBox.Content>
-    	        <TextBlock Text="Area 1" FontSize="12" Margin="7,0,0,0"/>
-    	      </CheckBox.Content>
-    	    </CheckBox>
-    	    <CheckBox FontSize="12">
-    	      <CheckBox.Content>
-    	        <TextBlock Text="Desert" FontSize="12" Margin="7,0,0,0"/>
-    	      </CheckBox.Content>
-    	    </CheckBox>
-    	    
-    	  </StackPanel>
+    	  <ComboBox Grid.Row="1" Grid.Column="2"    	              
+			          x:Name="areaComboBox"
+    	              Margin="10"/>
     	</Grid>
     	
     	<StackPanel Orientation="Vertical" Margin="10">
     	  <RadioButton Name="radioButtonEnterTag" 
     	               FontSize="14"
+  			           GroupName="tagSelectionRadioButtonGroup"
     	               Margin="10">
     	    <RadioButton.Content>
     	      <TextBlock Text="Enter a tag" Margin="7,0,0,0" FontSize="14"/>

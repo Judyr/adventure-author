@@ -312,6 +312,7 @@
     </Compile>
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Evaluation\OptionalWorksheetPart.cs" />
+    <Compile Include="Ideas\BlueprintMagnetControl.cs" />
     <Compile Include="Ideas\EditMagnetWindow.cs">
       <DependentUpon>EditMagnetWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -344,6 +345,7 @@
     <Compile Include="Scripts\Movie.cs" />
     <Compile Include="Scripts\NWN2Colour.cs" />
     <Compile Include="Scripts\ScriptHelper.cs" />
+    <Compile Include="Scripts\Tag.cs" />
     <Compile Include="Scripts\TaggedType.cs" />
     <Compile Include="Scripts\UI\BooleanQuestionPanel.xaml.cs">
       <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>
