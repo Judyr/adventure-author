@@ -173,14 +173,12 @@ namespace AdventureAuthor.Ideas
     		};
     		MagnetRemoved += delegate (object sender, MagnetEventArgs e) {
     			MakeDirty(); 
-    			Log.WriteAction(LogAction.removed,"idea",e.Magnet.ToString());
     		};
     		MagnetMoved += delegate (object sender, MagnetEventArgs e) {
     			MakeDirty(); ;
     		};
     		Cleared += delegate {
     			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing
-    			Log.WriteMessage("cleared board");
     		};
     		Opened += delegate { 
     			Log.WriteAction(LogAction.opened,"magnetboard",Path.GetFileName(filename));
@@ -538,7 +536,7 @@ namespace AdventureAuthor.Ideas
 		
 		public void ClearBoard()
 		{
-			Log.WriteMessage("cleared board:"); // 'cleared' should appear before all the 'removed magnet' messages
+			Log.WriteMessage("cleared board"); // 'cleared' should appear before all the 'removed magnet' messages
 			Clear();
         	OnCleared(new EventArgs());
 		}

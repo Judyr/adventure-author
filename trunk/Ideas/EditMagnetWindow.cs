@@ -18,6 +18,9 @@ namespace AdventureAuthor.Ideas
     	#region Fields
     	
     	private MagnetControl magnet;
+		public MagnetControl Magnet	{
+			get { return magnet; }
+		}
     	
     	#endregion
     	
@@ -32,13 +35,22 @@ namespace AdventureAuthor.Ideas
     		}
     	}
     	
+    	
+    	public EventHandler<MagnetEventArgs> MagnetCreated;    	
+    	protected virtual void OnMagnetCreated(MagnetEventArgs e)
+    	{
+    		EventHandler<MagnetEventArgs> handler = MagnetCreated;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    	
     	#endregion
     	
     	#region Constructors
     	
     	public EditMagnetWindow() : this(null)
-    	{
-    		
+    	{    		
     	}
     	
     	
@@ -63,27 +75,24 @@ namespace AdventureAuthor.Ideas
         private void OnClick_OK(object sender, EventArgs e)
         {
         	if (ideaTextBox.Text == String.Empty) {
-        		Say.Warning("You can't create a blank idea.");
+        		Say.Warning("You haven't written an idea yet.");
+        	}
+        	else if (ideaCategoryComboBox.SelectedItem == null) {
+        		Say.Warning("You haven't chosen a category for your idea yet.");
         	}
         	else {
-        		IdeaCategory category;
-        		if (ideaCategoryComboBox.SelectedItem != null) {
-	        		category = (IdeaCategory)ideaCategoryComboBox.SelectedItem;
-	        	}
-	        	else {
-	        		category = IdeaCategory.Other;
-	        	}
-        		        		
+        		IdeaCategory category = (IdeaCategory)ideaCategoryComboBox.SelectedItem;
         		if (magnet == null) {
         			Idea idea = new Idea(ideaTextBox.Text,category,User.GetCurrentUserName(),DateTime.Now);
         			magnet = new MagnetControl(idea);
+        			OnMagnetCreated(new MagnetEventArgs(magnet));
         		}
         		else {
         			magnet.Text = ideaTextBox.Text;
         			magnet.Category = category;
+        			OnMagnetEdited(new MagnetEventArgs(magnet));
         		}
         		
-        		OnMagnetEdited(new MagnetEventArgs(magnet));
 	        	Close();
         	}
         }

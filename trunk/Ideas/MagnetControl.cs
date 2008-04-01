@@ -281,6 +281,16 @@ namespace AdventureAuthor.Ideas
 				handler(this, e);
 			}
 		}
+		
+		
+		public event EventHandler Moved;		
+		protected virtual void OnMoved(EventArgs e)
+		{
+			EventHandler handler = Moved;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
     			
 		
 		public event EventHandler RequestSendToBack;		
@@ -346,7 +356,7 @@ namespace AdventureAuthor.Ideas
     	
     	#region Constructors
     	    	
-    	private MagnetControl()
+    	protected MagnetControl()
     	{
     		bevel.EdgeProfile = EdgeProfile.Linear;
     		bevel.Relief = 0.3;
@@ -383,19 +393,6 @@ namespace AdventureAuthor.Ideas
     	public MagnetControl(Idea idea) : this()
     	{
             Idea = idea;
-    	}
-    	
-    	
-    	public MagnetControl(Idea idea, double x, double y) : this(idea)
-        {
-            X = x;
-            Y = y;
-        }
-    	
-    	
-    	public MagnetControl(Idea idea, Point location) : this(idea,location.X,location.Y)
-    	{
-    		
     	}
         
         #endregion        
@@ -615,9 +612,9 @@ namespace AdventureAuthor.Ideas
 		
 		public void Move(double right, double down)
 		{
-			Log.WriteMessage("move " + right.ToString() + "," + down);
 			Canvas.SetTop(this,Canvas.GetTop(this) + down);
 			Canvas.SetLeft(this,Canvas.GetLeft(this) + right);
+			OnMoved(new EventArgs());
 		}
 		
 		
@@ -777,7 +774,7 @@ namespace AdventureAuthor.Ideas
     		window.MagnetEdited += delegate(object s, MagnetEventArgs ea) 
     		{
     			OnEdited(ea);
-    			Log.WriteAction(LogAction.edited,"idea");
+    			Log.WriteAction(LogAction.edited,"idea",ea.Magnet.ToString());
     		};
     		window.ShowDialog();
     	}

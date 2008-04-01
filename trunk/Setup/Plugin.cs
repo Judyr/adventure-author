@@ -157,8 +157,9 @@ namespace AdventureAuthor.Setup
 				
 				// Create an instance of the magnets board on loading, so that it's
 				// ready to receive ideas submitted from the main GUI:
-				MagnetBoardViewer.Instance = new MagnetBoardViewer();				
-				sessionWindows.Add(MagnetBoardViewer.Instance);
+				MagnetBoardViewer m = MagnetBoardViewer.Instance;
+//				MagnetBoardViewer.Instance = new MagnetBoardViewer();				
+//				sessionWindows.Add(MagnetBoardViewer.Instance);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();

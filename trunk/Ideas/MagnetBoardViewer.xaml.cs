@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -31,9 +32,14 @@ namespace AdventureAuthor.Ideas
     	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
     	/// </summary>
     	private static MagnetBoardViewer instance;    	
+    	
 		public static MagnetBoardViewer Instance {
-			get { return instance; }
-			set { instance = value; }
+			get { 
+    			if (instance == null) {
+    				instance = new MagnetBoardViewer();
+    			}
+    			return instance; 
+    		}
 		}   
     	    	
    
@@ -75,11 +81,7 @@ namespace AdventureAuthor.Ideas
     	#region Constructors
     	
         public MagnetBoardViewer()
-        {    		
-        	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
-    		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
-    		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
-    	
+        {
         	InitializeComponent();
                                                 
             // Set up 'Show/Hide idea category' menu:
@@ -96,12 +98,44 @@ namespace AdventureAuthor.Ideas
             	checkBox.Checked += showHideChangedHandler;
             	checkBox.Unchecked += showHideChangedHandler;
             	magnetList.showHideCategoriesPanel.Children.Add(checkBox);
-            }          
+            }     
             
-            // Listen for events:            
+    		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
+			try {
+				if (!Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
+					Directory.CreateDirectory(ModuleHelper.MagnetBoardsDirectory);
+				}
+			}
+			catch (Exception e) {
+    			Say.Debug("Failed to create a Magnets board directory for user:\n"+e);
+			}    		
+    		
+    		SetupEventHandlers();
+    		
+    		magnetList.Open(ModuleHelper.IdeasBoxFilename); // previously was outside constructor
+    		    		
+    		//added:
+    		Toolset.Plugin.SessionWindows.Add(this);
+    		
+	    	UpdateMagnetBoxAppearsAtSide(); // wait till magnet box is actually open - handled here
+	    	// rather than in magnet list cos the layout of this window's grid also changes (would be 
+	    	// better to use a dockpanel but couldn't get this to work properly)
+			
+			ElementHost.EnableModelessKeyboardInterop(this);
+        }
+        
+        
+        private static bool addedEventHandlersThatPersistAcrossInstances = false;
+        
+        private void SetupEventHandlers()
+        {
+            // Listen for events:                	
+        	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
+    		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
+    		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
+    		
             EventHandler titleChangedHandler = new EventHandler(UpdateTitleBar);
-            EventHandler<MagnetEventArgs> magnetAddedHandler 
-            	= new EventHandler<MagnetEventArgs>(magnetAdded); 
+            EventHandler<MagnetEventArgs> magnetAddedHandler = new EventHandler<MagnetEventArgs>(magnetAdded); 
             
             ActiveBoard.MagnetAdded += magnetAddedHandler;
             ActiveBoard.Drop += new DragEventHandler(magnetBoardControl_MagnetDropped);   	
@@ -126,25 +160,20 @@ namespace AdventureAuthor.Ideas
             magnetList.MagnetAdded += trackFocusedMagnetHandler;
             
             invalidateUponRotateHandler = new EventHandler(invalidateUponRotate);
-                        
-            Toolset.IdeaSubmitted += new EventHandler<IdeaEventArgs>(Toolset_IdeaSubmitted);
+                                    
+            if (!addedEventHandlersThatPersistAcrossInstances) {
+            	Toolset.MagnetSubmitted += toolset_MagnetSubmitted;
+            	addedEventHandlersThatPersistAcrossInstances = true;
+            }
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
             Closing += new CancelEventHandler(magnetBoardViewer_Closing);
             
             Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
-                        
-    		// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
-			try {
-				if (!Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
-					Directory.CreateDirectory(ModuleHelper.MagnetBoardsDirectory);
-				}
-			}
-			catch (Exception e) {
-    			Say.Debug("Failed to create a Magnets board directory for user:\n"+e);
-			}
-    		
-    		magnetList.Open(ModuleHelper.IdeasBoxFilename); // previously was outside constructor
+                 
+            Closed += delegate { 
+            	instance = null;
+            };
         }
             	
     	#endregion
@@ -332,6 +361,7 @@ namespace AdventureAuthor.Ideas
         			if (SelectedMagnet == magnet) {
         				SelectedMagnet = null;
         			}
+    				Log.WriteAction(LogAction.removed,"idea",magnet.ToString());
         		}
         	}        	
         }
@@ -685,15 +715,23 @@ namespace AdventureAuthor.Ideas
 	         	
 	         	if (ActiveBoard.HasMagnet(dataObject.Magnet)) {
 	         		ActiveBoard.RemoveMagnet(dataObject.Magnet);
+    				Log.WriteAction(LogAction.removed,"idea",dataObject.Magnet.ToString());
 	         	}
 	         }	
         }
         
 
-        private void Toolset_IdeaSubmitted(object sender, IdeaEventArgs e)
+        private void toolset_MagnetSubmitted(object sender, MagnetEventArgs e)
         {
-        	MagnetControl magnet = new MagnetControl(e.Idea);
-        	magnetList.AddMagnet(magnet,true);
+			try {
+        		// full reference to Instance required, or you don't see magnets
+        		// that are sent from the outside the magnet viewer until it's
+        		// closed and opened again:
+				MagnetBoardViewer.Instance.magnetList.AddMagnet(e.Magnet,true);			   
+			}
+			catch (Exception ex) {
+				Say.Error(ex.ToString());
+			}   	
         }
         
         

@@ -54,7 +54,8 @@
 				<MenuItem Name="exportMenu" Header="Export   " 
 				          FontSize="14" IsEnabled="false">
 					<MenuItem Name="exportToPageFormatMenuItem" Header="Export to text file (Adventure Author style)" 
-					          Click="OnClick_ExportTextFile_PageFormat" FontSize="14"/>
+					          Click="OnClick_ExportTextFile_PageFormat" FontSize="14"
+							  IsEnabled="false"/>
 					<MenuItem Name="exportToTextFormatMenuItem" Header="Export to text file (NWN1 style)"
 					          Click="OnClick_ExportTextFile_TreeFormat" FontSize="14"/>
 				</MenuItem>

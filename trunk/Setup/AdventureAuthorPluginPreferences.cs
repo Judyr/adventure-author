@@ -97,25 +97,7 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
-				
-		/// <summary>
-		/// The location of the Neverwinter Nights 2 main install.
-		/// </summary>
-		private string nwn2InstallationDirectory;	
-		[XmlElement]
-		[Description("The location of the Neverwinter Nights 2 main install."), 
-		 Category("General"), Browsable(true)]	
-		public string NWN2InstallationDirectory {
-			get { return nwn2InstallationDirectory; }
-			set { 
-				if (nwn2InstallationDirectory != value) {
-					nwn2InstallationDirectory = value;
-					NotifyPropertyChanged("NWN2InstallationDirectory");
-				}
-			}
-		}	
-					
-		
+			
 		// Evaluation:
 		
 		/// <summary>
@@ -139,22 +121,22 @@ namespace AdventureAuthor.Setup
 		
 		// Conversations:
 						
-		/// <summary>
-		/// The font size of conversation dialogue and speaker names. 
-		/// </summary>
-		private double dialogueFontSize;
-		[XmlElement]
-		[Description("The font size of conversation dialogue and speaker names."), 
-		 Category("Conversations"), Browsable(true)]
-		public double DialogueFontSize {
-			get { return dialogueFontSize; }
-			set { 
-				if (dialogueFontSize != value) {
-					dialogueFontSize = value;
-					NotifyPropertyChanged("DialogueFontSize");
-				}
-			}
-		}
+//		/// <summary>
+//		/// The font size of conversation dialogue and speaker names. 
+//		/// </summary>
+//		private double dialogueFontSize;
+//		[XmlElement]
+//		[Description("The font size of conversation dialogue and speaker names."), 
+//		 Category("Conversations"), Browsable(true)]
+//		public double DialogueFontSize {
+//			get { return dialogueFontSize; }
+//			set { 
+//				if (dialogueFontSize != value) {
+//					dialogueFontSize = value;
+//					NotifyPropertyChanged("DialogueFontSize");
+//				}
+//			}
+//		}
 		
 		
 		// Magnets:
