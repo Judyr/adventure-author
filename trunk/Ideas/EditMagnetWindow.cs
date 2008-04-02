@@ -60,7 +60,23 @@ namespace AdventureAuthor.Ideas
         	
             InitializeComponent();
             ideaTextBox.MaxLength = Idea.MAX_IDEA_LENGTH;
-           	ideaCategoryComboBox.ItemsSource = Idea.IDEA_CATEGORIES;  
+            
+            List<IdeaCategory> validCategories;
+            if (magnet != null && magnet is BlueprintMagnetControl) {
+            	validCategories = new List<IdeaCategory>(1);
+            	validCategories.Add((IdeaCategory)Enum.Parse(typeof(IdeaCategory),"Toolset",true));
+            	ideaCategoryComboBox.IsEnabled = false; // toolset magnets cannot change categories
+            }
+            else { // do this for new magnets, or existing magnets of any kind other than toolset magnets
+            	validCategories = new List<IdeaCategory>(Idea.IDEA_CATEGORIES.Length - 1);
+            	foreach (IdeaCategory category in Idea.IDEA_CATEGORIES) {
+	            	if (category != IdeaCategory.Toolset) {
+	            		validCategories.Add(category);
+	            	}
+           		}
+            }
+            
+           	ideaCategoryComboBox.ItemsSource = validCategories;  
            	
            	if (magnet != null) {
 	        	ideaTextBox.Text = magnet.Idea.Text; 

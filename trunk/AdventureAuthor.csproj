@@ -313,6 +313,7 @@
     <Compile Include="Evaluation\Worksheet.cs" />
     <Compile Include="Evaluation\OptionalWorksheetPart.cs" />
     <Compile Include="Ideas\BlueprintMagnetControl.cs" />
+    <Compile Include="Ideas\BlueprintMagnetControlInfo.cs" />
     <Compile Include="Ideas\EditMagnetWindow.cs">
       <DependentUpon>EditMagnetWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
