@@ -41,6 +41,9 @@ namespace AdventureAuthor.Ideas
     			return instance; 
     		}
 		}   
+    	
+    	
+    	private static bool haveAddedPersistentEventHandlers = false;
     	    	
    
     	public MagnetBoardControl ActiveBoard {
@@ -124,9 +127,7 @@ namespace AdventureAuthor.Ideas
 			ElementHost.EnableModelessKeyboardInterop(this);
         }
         
-        
-        private static bool addedEventHandlersThatPersistAcrossInstances = false;
-        
+                
         private void SetupEventHandlers()
         {
             // Listen for events:                	
@@ -160,19 +161,17 @@ namespace AdventureAuthor.Ideas
             magnetList.MagnetAdded += trackFocusedMagnetHandler;
             
             invalidateUponRotateHandler = new EventHandler(invalidateUponRotate);
-                                    
-            if (!addedEventHandlersThatPersistAcrossInstances) {
-            	Toolset.MagnetSubmitted += toolset_MagnetSubmitted;
-            	addedEventHandlersThatPersistAcrossInstances = true;
-            }
+    				
+            if (!haveAddedPersistentEventHandlers) {
+            	Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);            			
+				Toolset.MagnetSubmitted += new EventHandler<MagnetEventArgs>(magnetSubmittedFromToolset);
+            	haveAddedPersistentEventHandlers = true;
+    		}
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
-            Closing += new CancelEventHandler(magnetBoardViewer_Closing);
-            
-            Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
-                 
+            Closing += new CancelEventHandler(magnetBoardViewer_Closing);                 
             Closed += delegate { 
-            	instance = null;
+            	instance = null; // otherwise you'll try to show the closed window again and raise an exception
             };
         }
             	
@@ -720,20 +719,6 @@ namespace AdventureAuthor.Ideas
 	         }	
         }
         
-
-        private void toolset_MagnetSubmitted(object sender, MagnetEventArgs e)
-        {
-			try {
-        		// full reference to Instance required, or you don't see magnets
-        		// that are sent from the outside the magnet viewer until it's
-        		// closed and opened again:
-				MagnetBoardViewer.Instance.magnetList.AddMagnet(e.Magnet,true);			   
-			}
-			catch (Exception ex) {
-				Say.Error(ex.ToString());
-			}   	
-        }
-        
         
         /// <summary>
         /// When an idea category is shown/hidden, update the UI elements which allows you to show/hide categories.
@@ -769,21 +754,36 @@ namespace AdventureAuthor.Ideas
         
         private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+        	Say.Information("noticed that preferences had changed");        	
         	if (e.PropertyName == "MagnetBoxAppearsAtSide") {
-        		UpdateMagnetBoxAppearsAtSide();
-        		if (appearsAtSideMenuItem.IsChecked != Toolset.Plugin.Options.MagnetBoxAppearsAtSide) {
-        			appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
+        		MagnetBoardViewer.Instance.UpdateMagnetBoxAppearsAtSide();
+        		if (MagnetBoardViewer.Instance.appearsAtSideMenuItem.IsChecked != Toolset.Plugin.Options.MagnetBoxAppearsAtSide) {
+        			MagnetBoardViewer.Instance.appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
         		}
         	} 	
         	if (e.PropertyName == "UseWonkyMagnets") { // magnet list takes care of the actual change
-        		if (wonkyMagnetsMenuItem.IsChecked != Toolset.Plugin.Options.UseWonkyMagnets) {
-        			wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;
+        		if (MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked != Toolset.Plugin.Options.UseWonkyMagnets) {
+        			MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;
         		}
         	}
         }
+		
+
+		private static void magnetSubmittedFromToolset(object sender, MagnetEventArgs e)
+		{
+			try {
+        		// full reference to Instance required, or you don't see magnets
+        		// that are sent from the outside the magnet viewer until it's
+        		// closed and opened again:
+				MagnetBoardViewer.Instance.magnetList.AddMagnet(e.Magnet,true);			   
+			}
+			catch (Exception ex) {
+				Say.Error("Something went wrong when trying to add this magnet to your magnet box.",ex);
+			}   	
+		}
         
         
-        internal void UpdateMagnetBoxAppearsAtSide()
+        private void UpdateMagnetBoxAppearsAtSide()
         {
         	if (Toolset.Plugin.Options.MagnetBoxAppearsAtSide) {
 		       	magnetList.Orientation = Orientation.Vertical;	        
