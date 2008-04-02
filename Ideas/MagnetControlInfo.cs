@@ -18,6 +18,7 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	[Serializable]
 	[XmlRoot("Magnet")]
+	[XmlInclude(typeof(BlueprintMagnetControlInfo))]
 	public class MagnetControlInfo : ISerializableData
 	{
 		[XmlAttribute]
@@ -36,13 +37,13 @@ namespace AdventureAuthor.Ideas
 		/// <summary>
 		/// Constructor for serialization.
 		/// </summary>
-		private MagnetControlInfo()
+		protected MagnetControlInfo()
 		{
 			
 		}
 		
 		
-		public MagnetControlInfo(MagnetControl magnetControl)
+		public MagnetControlInfo(MagnetControl magnetControl) : this()
 		{
 			X = magnetControl.X;
 			Y = magnetControl.Y;
@@ -51,7 +52,7 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-		public UnserializableControl GetControl()
+		public virtual UnserializableControl GetControl()
 		{
 			return new MagnetControl(this);
 		}

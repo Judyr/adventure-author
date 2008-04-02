@@ -352,7 +352,13 @@ namespace AdventureAuthor.Ideas
 	    	ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
 	    	
 	    	foreach (MagnetControlInfo magnetInfo in magnetListInfo.Magnets) {
-	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
+	    		MagnetControl magnet;
+	    		if (magnetInfo is BlueprintMagnetControlInfo) {
+	    			magnet = (BlueprintMagnetControl)((BlueprintMagnetControlInfo)magnetInfo).GetControl();
+	    		}
+	    		else {
+	    			magnet = (MagnetControl)magnetInfo.GetControl();
+	    		}
 	    		AddMagnet(magnet,false);
 	        }
 	        SaveAutomatically = false;
@@ -455,14 +461,8 @@ namespace AdventureAuthor.Ideas
         			magnet.Hide();
         		}
         	}
-        	
-        	
-        	
-        	
-        	
         	    		
-        	OnMagnetAdded(new MagnetEventArgs(magnet));
-        	
+        	OnMagnetAdded(new MagnetEventArgs(magnet));        	
         }
         
         

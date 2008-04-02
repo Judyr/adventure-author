@@ -699,7 +699,7 @@ namespace AdventureAuthor.Ideas
         /// Get an identical copy of this MagnetControl.
         /// </summary>
         /// <returns>An identical copy of this MagnetControl</returns>
-		public object Clone()
+		public virtual object Clone()
 		{
 			MagnetControlInfo info = (MagnetControlInfo)GetSerializable();
 			info.Idea = (Idea)info.Idea.Clone();
@@ -707,7 +707,7 @@ namespace AdventureAuthor.Ideas
 		}
     	
 		
-		public int CompareTo(object obj)
+		public virtual int CompareTo(object obj)
 		{
 			MagnetControl magnet = (MagnetControl)obj;
 			return this.idea.CompareTo(magnet.idea);
