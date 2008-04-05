@@ -189,9 +189,11 @@ namespace AdventureAuthor.Ideas
             // All changes in the magnet list should be serialized automatically:
             MagnetAdded += delegate(object sender, MagnetEventArgs e) {
             	automaticSave(); 
+            	UpdateMagnetCount();
             };
             MagnetDeleted += delegate(object sender, MagnetEventArgs e) {
             	automaticSave(); 
+            	UpdateMagnetCount();
             	Log.WriteAction(LogAction.deleted,"idea",e.Magnet.ToString());
             };
             Scattered += delegate {
@@ -206,25 +208,6 @@ namespace AdventureAuthor.Ideas
             
            	Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
            	UpdateUseWonkyMagnets();
-        }
-
-        
-        private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        	if (e.PropertyName == "UseWonkyMagnets") { // magnet board viewer updates the checkable menu item
-        		UpdateUseWonkyMagnets();
-        	}
-        }
-        
-        
-        private void UpdateUseWonkyMagnets()
-        {
-        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
-        		AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
-        	}
-        	else {
-        		StraightenMagnets();
-        	}
         }
         
         
@@ -352,16 +335,19 @@ namespace AdventureAuthor.Ideas
 	    	ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
 	    	
 	    	foreach (MagnetControlInfo magnetInfo in magnetListInfo.Magnets) {
-	    		MagnetControl magnet;
-	    		if (magnetInfo is BlueprintMagnetControlInfo) {
-	    			magnet = (BlueprintMagnetControl)((BlueprintMagnetControlInfo)magnetInfo).GetControl();
-	    		}
-	    		else {
-	    			magnet = (MagnetControl)magnetInfo.GetControl();
-	    		}
+	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		AddMagnet(magnet,false);
 	        }
 	        SaveAutomatically = false;
+	        
+	        UpdateMagnetCount();
+    	}
+    	
+    	
+    	private void UpdateMagnetCount()
+    	{
+    		this.magnetCountTextBlock.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+    		//this.numberOfMagnetsTextBlock.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
     	}
         
         
@@ -525,6 +511,17 @@ namespace AdventureAuthor.Ideas
         	magnetsPanel.Children.Remove(magnet);        	
         	RemoveHandlers(magnet);	        	
 	    	OnMagnetDeleted(new MagnetEventArgs(magnet));
+        }
+        
+        
+        private void UpdateUseWonkyMagnets()
+        {
+        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
+        		AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
+        	}
+        	else {
+        		StraightenMagnets();
+        	}
         }
                         
         
@@ -826,6 +823,14 @@ namespace AdventureAuthor.Ideas
     				break;    				
     		}
     	}  
+
+        
+        private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+        	if (e.PropertyName == "UseWonkyMagnets") { // magnet board viewer updates the checkable menu item
+        		UpdateUseWonkyMagnets();
+        	}
+        }
     	
     	
     	private void SetOrientation(Orientation orientation)

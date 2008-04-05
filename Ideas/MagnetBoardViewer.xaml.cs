@@ -753,13 +753,9 @@ namespace AdventureAuthor.Ideas
 
         
         private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        	Say.Information("noticed that preferences had changed");        	
+        {     	
         	if (e.PropertyName == "MagnetBoxAppearsAtSide") {
         		MagnetBoardViewer.Instance.UpdateMagnetBoxAppearsAtSide();
-        		if (MagnetBoardViewer.Instance.appearsAtSideMenuItem.IsChecked != Toolset.Plugin.Options.MagnetBoxAppearsAtSide) {
-        			MagnetBoardViewer.Instance.appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
-        		}
         	} 	
         	if (e.PropertyName == "UseWonkyMagnets") { // magnet list takes care of the actual change
         		if (MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked != Toolset.Plugin.Options.UseWonkyMagnets) {
@@ -802,6 +798,10 @@ namespace AdventureAuthor.Ideas
 			    Grid.SetRowSpan(magnetList,1);
 			    Grid.SetColumn(magnetList,0);
 			    Grid.SetColumnSpan(magnetList,2);
+        	}
+        		
+        	if (appearsAtSideMenuItem.IsChecked != Toolset.Plugin.Options.MagnetBoxAppearsAtSide) {
+        		appearsAtSideMenuItem.IsChecked = Toolset.Plugin.Options.MagnetBoxAppearsAtSide;
         	}
         }
         

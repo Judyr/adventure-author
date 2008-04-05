@@ -113,7 +113,9 @@ namespace AdventureAuthor.Variables.UI
 								                "' was set to " + val + " (was " + var.ValueInt + ")");
 							}
         					var.ValueInt = val;
-        				}        				
+        				}
+		        		this.DialogResult = true;
+		        		Close();        				
         			}
         			catch (FormatException) {
         				Say.Warning("You didn't enter a valid number for the starting value.");
@@ -139,14 +141,15 @@ namespace AdventureAuthor.Variables.UI
 							}
         				}
         				var.ValueString = VariableStartingValueTextBox.Text;
-        			}     
+        			}
+		        	this.DialogResult = true;
+		        	Close();          
         		}
             	else {
-            		throw new ArgumentException("Currently you can only add " + STRING_TERM + " and " + INTEGER_TERM + " variables - " 
-            		                            + var.VariableType.ToString() + " is invalid.");            		
+            		throw new ArgumentException("Currently you can only add " + STRING_TERM + " and " + 
+        			                            INTEGER_TERM + " variables - "
+            		                            + var.VariableType.ToString() + " is not supported.");            		
             	}
-        		this.DialogResult = true;
-        		Close();
         	}
         }
         
