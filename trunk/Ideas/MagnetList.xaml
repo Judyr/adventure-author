@@ -22,7 +22,6 @@
 			    <Grid Background="#00008B">      
 				    <Grid.RowDefinitions>
 					    <RowDefinition Height="30"/>
-					    <RowDefinition Height="30"/>
 					    <RowDefinition Height="35"/>
 					    <RowDefinition Height="35"/>
 					    <RowDefinition Height="35"/>
@@ -31,34 +30,63 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>	
-			    	<TextBlock Grid.Row="0" 
-			    	           Background="#00005B" Foreground="White" 
-			    	           MinWidth="500" Height="13" Margin="0,6,0,6"
-			    			   TextAlignment="Center" FontSize="10" HorizontalAlignment="Center">
-			    		<Bold>MAGNET BOX</Bold>
-			    	</TextBlock>	
-			    	<TextBlock Grid.Row="1" 
-			    	           Name="magnetCountTextBlock"
-			    	           Foreground="White"
-			    	           MinWidth="500" Height="13" Margin="6"
-			    			   TextAlignment="Center" FontSize="10" HorizontalAlignment="Center">
-			    		<TextBlock.Text>
-			    			<Binding ElementName="magnetsPanel" Path="Children.Count" Mode="OneWay"/>
-			    		</TextBlock.Text>
-			    	</TextBlock>
-					<Button Grid.Row="2" Click="OnClick_CreateMagnet"
+			    	
+			    	<Grid Grid.Row="0" Background="#00005B" Margin="0,6,0,6">			    	
+				    	<StackPanel Name="titleStackPanel" Grid.Row="0" Orientation="Horizontal" 
+				    	            HorizontalAlignment="Center"
+				    	            Background="#00005B">
+				    		<TextBlock Foreground="White" Background="Transparent"
+					    			   TextAlignment="Right" FontSize="10" 
+					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+					    		<Bold>MAGNET BOX</Bold> (
+					    	</TextBlock>	
+					    	<TextBlock Name="magnetCountTextBlock"
+					    	           Foreground="White" Background="Transparent"
+					    			   TextAlignment="Left" FontSize="10" 
+					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+					    		<TextBlock.Text>
+					    			<Binding ElementName="magnetsPanel" Path="Children.Count" Mode="OneWay"/>
+					    		</TextBlock.Text>
+					    	</TextBlock>
+					    	<TextBlock Foreground="White" Background="Transparent"
+					    			   TextAlignment="Left" FontSize="10" 
+					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+				    			)
+					    	</TextBlock>
+			    		
+			    			<StackPanel.ToolTip>
+				    			<ToolTip DataContext="{Binding ElementName=magnetCountTextBlock}">
+			    					<TextBlock>
+				    					The <Bold>Magnet Box</Bold> is where you keep all your magnets.
+				    					<LineBreak/>
+				    					(The number in brackets is how many magnets you've collected.)
+				    					<!--You currently have
+										<TextBlock x:Name="numberOfMagnetsTextBlock" FontWeight="Bold">
+				    						<TextBlock.Text>
+								    			<Binding Path="Text"/>
+								    		</TextBlock.Text>
+				    					</TextBlock>
+				    					<Bold> magnets</Bold> in your <Bold>Magnet Box</Bold>.-->
+				    				</TextBlock>
+			    				</ToolTip>
+				    		</StackPanel.ToolTip>
+				    	</StackPanel>			    	
+			    	</Grid>
+				    
+				    
+					<Button Grid.Row="1" Click="OnClick_CreateMagnet"
 					    	Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
 					    	<Bold>Create magnet</Bold>
 					</Button>		    	
-					<Button Grid.Row="3" Click="OnClick_Scatter"
+					<Button Grid.Row="2" Click="OnClick_Scatter"
 					        Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
 					 		<Bold>Scatter magnets</Bold>
 					</Button>
-					<Button Grid.Row="4" Click="OnClick_LuckyDip"
+					<Button Grid.Row="3" Click="OnClick_LuckyDip"
 					    	Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
 					    	<Bold>Lucky dip</Bold>
 					</Button>		    
-					<StackPanel Name="showHideCategoriesPanel" Grid.Row="5" Margin="3"
+					<StackPanel Name="showHideCategoriesPanel" Grid.Row="4" Margin="3"
 					            Width="130" Orientation="Vertical"/>
 				</Grid>
 			</Border>			

@@ -75,7 +75,7 @@ namespace AdventureAuthor.Core
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
 			adventureAuthorInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
 			string localApplicationDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			privateUserDirectory = Path.Combine(localApplicationDataFolder,"Adventure Author");
+			//privateUserDirectory = Path.Combine(localApplicationDataFolder,"Adventure Author");
 			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
 		}
@@ -115,24 +115,24 @@ namespace AdventureAuthor.Core
 			set { publicUserDirectory = value; }
 		}
 		
-		
-		private static string privateUserDirectory;
-		public static string PrivateUserDirectory {
-			get { return privateUserDirectory; }
-			set { privateUserDirectory = value; }
-		}
+//		No longer used:		
+//		private static string privateUserDirectory;
+//		public static string PrivateUserDirectory {
+//			get { return privateUserDirectory; }
+//			set { privateUserDirectory = value; }
+//		}
 		
 				
 		public static string DebugDirectory {			
 			get {
-				return Path.Combine(PrivateUserDirectory,"Debug");
+				return Path.Combine(PublicUserDirectory,"Debug");
 			}
 		}	
 		
 		
 		public static string UserLogDirectory {			
 			get {
-				return Path.Combine(PrivateUserDirectory,"User logs");
+				return Path.Combine(PublicUserDirectory,"User logs");
 			}
 		}	
 		

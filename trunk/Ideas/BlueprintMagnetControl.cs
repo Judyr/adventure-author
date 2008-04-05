@@ -23,6 +23,9 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	public class BlueprintMagnetControl : MagnetControl
 	{
+		private static TextBlock resrefTooltip = new TextBlock();
+		
+		
 		protected string blueprintIdentifier;
 		public string BlueprintIdentifier {
 			get { return blueprintIdentifier; }
@@ -36,13 +39,25 @@ namespace AdventureAuthor.Ideas
 		protected TextBlock resRefTextBlock = null;
 		
 		
+		static BlueprintMagnetControl()
+		{
+			resrefTooltip.Inlines.Add("The word in italics is a ");
+			resrefTooltip.Inlines.Add(new Bold(new Run("resref")));
+			resrefTooltip.Inlines.Add(" - a special name that the computer uses to identify a blueprint.\n");
+			resrefTooltip.Inlines.Add("Each blueprint has its own unique ");
+			resrefTooltip.Inlines.Add(new Bold(new Run("resref")));
+			resrefTooltip.Inlines.Add(".");
+		}
+		
+		
 		protected BlueprintMagnetControl() : base() 
 		{
 			resRefTextBlock = new TextBlock();
 			resRefTextBlock.Name = "resrefTextBlock";
 			resRefTextBlock.FontStyle = FontStyles.Italic;
-			resRefTextBlock.ToolTip = "This is the resref - a special name\n" +
-				"that uniquely identifies this particular blueprint.";
+			resRefTextBlock.ToolTip = resrefTooltip;
+			ToolTipService.SetInitialShowDelay(resRefTextBlock,1000);
+			ToolTipService.SetShowDuration(resRefTextBlock,60000);
 			resRefTextBlock.Margin = new Thickness(2);
 			resRefTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
 			magnetMainStackPanel.Children.Insert(0,resRefTextBlock);

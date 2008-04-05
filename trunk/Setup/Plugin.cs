@@ -134,7 +134,7 @@ namespace AdventureAuthor.Setup
 				}
 				try {
 					EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
-					EnsureDirectoryExists(ModuleHelper.PrivateUserDirectory);
+					//EnsureDirectoryExists(ModuleHelper.PrivateUserDirectory);
 					EnsureDirectoryExists(ModuleHelper.DebugDirectory);
 					EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
 					EnsureDirectoryExists(ModuleHelper.WorksheetsDirectory);
