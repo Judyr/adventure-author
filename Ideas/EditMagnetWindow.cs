@@ -26,10 +26,10 @@ namespace AdventureAuthor.Ideas
     	
     	#region Events
     	
-    	public EventHandler<MagnetEventArgs> MagnetEdited;    	
-    	protected virtual void OnMagnetEdited(MagnetEventArgs e)
+    	public EventHandler<MagnetEditedEventArgs> MagnetEdited;    	
+    	protected virtual void OnMagnetEdited(MagnetEditedEventArgs e)
     	{
-    		EventHandler<MagnetEventArgs> handler = MagnetEdited;
+    		EventHandler<MagnetEditedEventArgs> handler = MagnetEdited;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -104,9 +104,11 @@ namespace AdventureAuthor.Ideas
         			OnMagnetCreated(new MagnetEventArgs(magnet));
         		}
         		else {
+        			string originalText = magnet.Text;
+        			IdeaCategory originalCategory = magnet.Category;        			
         			magnet.Text = ideaTextBox.Text;
         			magnet.Category = category;
-        			OnMagnetEdited(new MagnetEventArgs(magnet));
+        			OnMagnetEdited(new MagnetEditedEventArgs(magnet,originalText,originalCategory));
         		}
         		
 	        	Close();

@@ -12,7 +12,7 @@ using System;
 namespace AdventureAuthor.Ideas
 {
 	/// <summary>
-	/// The criterion to sort the magnet list by (e.g. sort alphabetically, or
+	/// The criterion to sort the Magnet Box by (e.g. sort alphabetically, or
 	/// sort into those magnets which have been used and those which haven't.)
 	/// </summary>
 	public enum SortCriterion {

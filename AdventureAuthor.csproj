@@ -327,6 +327,7 @@
     <Compile Include="Ideas\IdeaEventArgs.cs" />
     <Compile Include="Ideas\ISerializableData.cs" />
     <Compile Include="Ideas\MagnetControlDataObject.cs" />
+    <Compile Include="Ideas\MagnetEditedEventArgs.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
     <Compile Include="Ideas\MagnetListInfo.cs" />
     <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
