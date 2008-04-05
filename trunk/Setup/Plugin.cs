@@ -138,7 +138,8 @@ namespace AdventureAuthor.Setup
 					EnsureDirectoryExists(ModuleHelper.DebugDirectory);
 					EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
 					EnsureDirectoryExists(ModuleHelper.WorksheetsDirectory);
-					EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);
+					EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);					
+					//EnsureDirectoryExists(ModuleHelper.CustomScriptsDirectory);
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +

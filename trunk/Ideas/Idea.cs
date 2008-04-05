@@ -150,8 +150,8 @@ namespace AdventureAuthor.Ideas
 				return text == idea.text && 
 					creator == idea.creator && 
 					category == idea.category && 
-					created == idea.created &&
-					isStarred == idea.isStarred;
+					created == idea.created;// &&
+					//isStarred == idea.isStarred;
 			}
 		}
 		

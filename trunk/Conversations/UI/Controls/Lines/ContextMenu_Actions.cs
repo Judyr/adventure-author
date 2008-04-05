@@ -830,7 +830,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
   				string filename = openFileDialog.FileName;
   				FileInfo fileInfo = new FileInfo(filename);  			  				
   				NWN2ScriptFunctor action = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
-							  				                             null, // currently don't handle function script
+							  				                             null, // currently don't handle scripts taking parameters
 							  				                             fileInfo.DirectoryName); 	
 	    		Conversation.CurrentConversation.AddAction(nwn2Line,action);
   			}    		

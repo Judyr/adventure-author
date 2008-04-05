@@ -75,6 +75,7 @@ namespace AdventureAuthor.Ideas
     	private EventHandler magnetControl_RequestRemoveHandler;
     	private MouseButtonEventHandler magnetControl_PreviewMouseLeftButtonDownHandler;
     	private MouseEventHandler magnetControl_PreviewMouseMoveHandler;
+    	private EventHandler magnetControl_EditedOnBoardHandler;
         private RoutedEventHandler magnetGotFocusHandler;
         private RoutedEventHandler magnetLostFocusHandler;
         private EventHandler invalidateUponRotateHandler;
@@ -115,13 +116,13 @@ namespace AdventureAuthor.Ideas
     		
     		SetupEventHandlers();
     		
-    		magnetList.Open(ModuleHelper.IdeasBoxFilename); // previously was outside constructor
+    		magnetList.Open(ModuleHelper.MagnetBoxFilename); // previously was outside constructor
     		    		
     		//added:
     		Toolset.Plugin.SessionWindows.Add(this);
     		
-	    	UpdateMagnetBoxAppearsAtSide(); // wait till magnet box is actually open - handled here
-	    	// rather than in magnet list cos the layout of this window's grid also changes (would be 
+	    	UpdateMagnetBoxAppearsAtSide(); // wait till Magnet Box is actually open - handled here
+	    	// rather than in Magnet Box cos the layout of this window's grid also changes (would be 
 	    	// better to use a dockpanel but couldn't get this to work properly)
 			
 			ElementHost.EnableModelessKeyboardInterop(this);
@@ -134,6 +135,7 @@ namespace AdventureAuthor.Ideas
         	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
     		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
+    		magnetControl_EditedOnBoardHandler = new EventHandler(magnetControl_EditedOnBoard);
     		
             EventHandler titleChangedHandler = new EventHandler(UpdateTitleBar);
             EventHandler<MagnetEventArgs> magnetAddedHandler = new EventHandler<MagnetEventArgs>(magnetAdded); 
@@ -214,6 +216,7 @@ namespace AdventureAuthor.Ideas
 	    			return SaveAsDialog();
 	    		}
 	    		else {
+	    			Say.Debug("Saving to filename: " + ActiveBoard.Filename);
 		    		Save();
 		    		return true;
 	    		}
@@ -331,7 +334,7 @@ namespace AdventureAuthor.Ideas
         {
         	if (magnet != null) {
         		if (magnetList.HasMagnet(magnet)) {
-        			MessageBoxResult result = MessageBox.Show("Permanently delete this idea from the idea box?",
+        			MessageBoxResult result = MessageBox.Show("Permanently delete this idea from the Magnet Box?",
 		        			                  "Delete?", 
 		        			                  MessageBoxButton.OKCancel,
 		        			                  MessageBoxImage.Question,
@@ -346,7 +349,7 @@ namespace AdventureAuthor.Ideas
         		}
         		else {
         			throw new InvalidOperationException("Cannot delete magnets from anywhere other than " +
-        			                                    "the magnet list itself.");
+        			                                    "the Magnet Box itself.");
         		}
         	}
         }
@@ -564,11 +567,21 @@ namespace AdventureAuthor.Ideas
 	        e.Magnet.PreviewMouseMove += magnetControl_PreviewMouseMoveHandler;
 	        e.Magnet.RequestRemove -= magnetControl_RequestRemoveHandler;
 	        e.Magnet.RequestRemove += magnetControl_RequestRemoveHandler;
+	        
+	        // add magnets to the Magnet Box if they were edited on the board:
+	        e.Magnet.Edited -= magnetControl_EditedOnBoardHandler;
+	        //e.Magnet.Starred -= magnetControl_EditedOnBoardHandler;
+	        //e.Magnet.Unstarred -= magnetControl_EditedOnBoardHandler;
+	        if (ActiveBoard.HasMagnet(e.Magnet)) { 
+	        	e.Magnet.Edited += magnetControl_EditedOnBoardHandler;
+	        	//e.Magnet.Starred += magnetControl_EditedOnBoardHandler;
+	        	//e.Magnet.Unstarred += magnetControl_EditedOnBoardHandler;
+	        }
         }
 
         
         /// <summary>
-        /// When the magnet list indicates that a magnet should be removed from it and transferred
+        /// When the Magnet Box indicates that a magnet should be removed from it and transferred
         /// to the active magnet board, create a clone of that magnet and add the clone to the 
         /// magnet board.
         /// </summary>
@@ -582,17 +595,20 @@ namespace AdventureAuthor.Ideas
         
         /// <summary>
         /// When a magnet is removed from the board, and an equivalent magnet does
-        /// not appear on the magnet list, add the removed magnet to the magnet list.
+        /// not appear on the Magnet Box, add the removed magnet to the Magnet Box.
         /// If the transferred magnet was the selected magnet, deselect it.
         /// </summary>
         private void magnetBoardMagnetRemoved(object sender, MagnetEventArgs e)
         {
-        	if (!magnetList.HasEquivalentMagnet(e.Magnet)) {
-        		magnetList.AddMagnet(e.Magnet,true);	
-        	}
-        	if (SelectedMagnet == e.Magnet) {
-        		SelectedMagnet = null;
-        	}
+        	// You can now only add existing magnets to the Magnet Box
+        	// by dropping them onto it.
+        	
+//        	if (!magnetList.HasEquivalentMagnet(e.Magnet)) {
+//        		magnetList.AddMagnet(e.Magnet,true);	
+//        	}
+//        	if (SelectedMagnet == e.Magnet) {
+//        		SelectedMagnet = null;
+//        	}
         }
         
         
@@ -713,13 +729,38 @@ namespace AdventureAuthor.Ideas
 	         	MagnetControlDataObject dataObject = (MagnetControlDataObject)data.GetData(typeof(MagnetControlDataObject));
 	         	
 	         	if (ActiveBoard.HasMagnet(dataObject.Magnet)) {
-	         		ActiveBoard.RemoveMagnet(dataObject.Magnet);
-    				Log.WriteAction(LogAction.removed,"idea",dataObject.Magnet.ToString());
+    				if (!magnetList.HasEquivalentMagnet(dataObject.Magnet)) {
+    					MessageBoxResult result =
+    						MessageBox.Show("Do you want to add this magnet to your Magnet Box?",
+	    					                "Add to Magnet Box?",
+	    					                MessageBoxButton.YesNoCancel);
+    					
+    					if (result == MessageBoxResult.Cancel) {
+    						return;	
+    					}
+    					else {
+    						ActiveBoard.RemoveMagnet(dataObject.Magnet);
+    						Log.WriteAction(LogAction.removed,"idea",dataObject.Magnet.ToString());
+    						if (result == MessageBoxResult.Yes) {
+    							magnetList.AddMagnet(dataObject.Magnet,true);
+    							Log.WriteMessage("added a magnet from the board which did not appear in the Magnet Box (" +
+    							                 dataObject.Magnet + " created by " + 
+    							                 dataObject.Magnet.Creator + ")");
+    						}
+    					}
+    					
+		        		
+		        	}
+	         		else {
+	         			ActiveBoard.RemoveMagnet(dataObject.Magnet);
+    					Log.WriteAction(LogAction.removed,"idea",dataObject.Magnet.ToString());
+	         		}
 	         	}
 	         }	
         }
         
         
+	         		
         /// <summary>
         /// When an idea category is shown/hidden, update the UI elements which allows you to show/hide categories.
         /// Also check the selected magnet has not been hidden, and nullify it if it has.
@@ -757,7 +798,7 @@ namespace AdventureAuthor.Ideas
         	if (e.PropertyName == "MagnetBoxAppearsAtSide") {
         		MagnetBoardViewer.Instance.UpdateMagnetBoxAppearsAtSide();
         	} 	
-        	if (e.PropertyName == "UseWonkyMagnets") { // magnet list takes care of the actual change
+        	if (e.PropertyName == "UseWonkyMagnets") { // Magnet Box takes care of the actual change
         		if (MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked != Toolset.Plugin.Options.UseWonkyMagnets) {
         			MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;
         		}
@@ -774,7 +815,7 @@ namespace AdventureAuthor.Ideas
 				MagnetBoardViewer.Instance.magnetList.AddMagnet(e.Magnet,true);			   
 			}
 			catch (Exception ex) {
-				Say.Error("Something went wrong when trying to add this magnet to your magnet box.",ex);
+				Say.Error("Something went wrong when trying to add this magnet to your Magnet Box.",ex);
 			}   	
 		}
         
@@ -837,11 +878,27 @@ namespace AdventureAuthor.Ideas
         private void magnetControl_RequestRemove(object sender, EventArgs e)
         {
         	MagnetControl magnet = (MagnetControl)sender;
-        	if (ActiveBoard.HasMagnet(magnet)) {
+        	if (ActiveBoard.HasMagnet(magnet)) { 
         		RemoveMagnet(magnet);
         	}
         	else if (magnetList.HasMagnet(magnet)) {
         		DeleteMagnet(magnet);
+        	}
+        }
+        
+        
+        private void magnetControl_EditedOnBoard(object sender, EventArgs e)
+        {
+        	MagnetControl magnet = (MagnetControl)sender;
+        	
+        	// add any magnets edited on the board to the Magnet Box.
+        	// TODO: should ideally appear beside the pre-edited version of the magnet,
+			// but that requires keeping track of what the magnet was like before,
+			// which I haven't put in any code for yet.
+        	if (!magnetList.HasEquivalentMagnet(magnet)) {
+				MagnetControl clone = (MagnetControl)magnet.Clone();
+        		magnetList.AddMagnet(clone,false);
+        		Log.WriteMessage("added the edited version of a board magnet to the Magnet Box (" + magnet + ")");
         	}
         }
         

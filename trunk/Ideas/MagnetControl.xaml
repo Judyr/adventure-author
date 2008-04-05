@@ -6,6 +6,7 @@
 	Focusable="true"
 	MouseDown="magnetControlMouseDown"
 	Canvas.ZIndex="2"
+	VerticalAlignment="Center" HorizontalAlignment="Center"
 	AllowDrop="true">
 	
 	<local:BoardObject.Resources>	

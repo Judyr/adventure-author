@@ -632,7 +632,7 @@ namespace AdventureAuthor.Setup
 
 		
 		/// <summary>
-		/// Create an idea representing the user-selected blueprint, and send it to the magnet list.
+		/// Create an idea representing the user-selected blueprint, and send it to the Magnet Box.
 		/// </summary>
 		private static void BlueprintSentToIdeas(object sender, EventArgs e)
 		{
@@ -641,7 +641,7 @@ namespace AdventureAuthor.Setup
 					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off															
 					BlueprintMagnetControl magnet = new BlueprintMagnetControl(blueprint);
 					OnMagnetSubmitted(new MagnetEventArgs(magnet));
-					Log.WriteAction(LogAction.added,"magnet",magnet.ToString() + " ... added from blueprints");
+					Log.WriteAction(LogAction.added,"idea",magnet.ToString() + " ... added from blueprints");
 				}
 			}
 			else {

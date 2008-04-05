@@ -142,11 +142,11 @@ namespace AdventureAuthor.Setup
 		// Magnets:
 			
 		/// <summary>
-		/// Whether or not magnets in the magnet list will appear perfectly straight or slightly angled.
+		/// Whether or not magnets in the Magnet Box will appear perfectly straight or slightly angled.
 		/// </summary>
 		private bool useWonkyMagnets;
 		[XmlElement]
-		[Description("Whether or not magnets in the magnet list will appear perfectly straight " +
+		[Description("Whether or not magnets in the Magnet Box will appear perfectly straight " +
 		             "or slightly angled."), Category("Ideas"), Browsable(true)]
 		public bool UseWonkyMagnets {
 			get { return useWonkyMagnets; }
@@ -160,12 +160,12 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// Whether or not the magnet list will appear at the right-hand side of the screen, or at the
+		/// Whether or not the Magnet Box will appear at the right-hand side of the screen, or at the
 		/// bottom of the screen.
 		/// </summary>
 		private bool magnetBoxAppearsAtSide;
 		[XmlElement]
-		[Description("Whether or not the magnet list will appear at the right-hand side of the screen, or at the " +
+		[Description("Whether or not the Magnet Box will appear at the right-hand side of the screen, or at the " +
 					 "bottom of the screen."), Category("Ideas"), Browsable(true)]
 		public bool MagnetBoxAppearsAtSide {
 			get { return magnetBoxAppearsAtSide; }
@@ -189,6 +189,13 @@ namespace AdventureAuthor.Setup
 		
 		public AdventureAuthorPluginPreferences()
 		{			
+			// default preferences - will only be used if there's no preferences file found:
+			this.ImageViewer = ImageApp.Default;
+			this.LockInterface = true;
+			this.MagnetBoxAppearsAtSide = false;
+			this.OpenScratchpadByDefault = true;
+			this.UseWonkyMagnets = true;
+			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}
 		

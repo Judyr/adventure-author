@@ -186,7 +186,7 @@ namespace AdventureAuthor.Ideas
             	visibleCategories.Add(category);
             }
             
-            // All changes in the magnet list should be serialized automatically:
+            // All changes in the Magnet Box should be serialized automatically:
             MagnetAdded += delegate(object sender, MagnetEventArgs e) {
             	automaticSave(); 
             	UpdateMagnetCount();
@@ -221,26 +221,26 @@ namespace AdventureAuthor.Ideas
         #region Methods
         
         /// <summary>
-        /// Attempt to open a magnet list at the given filename.
+        /// Attempt to open a Magnet Box at the given filename.
         /// </summary>
-        /// <param name="filename">The location of a magnet list, or a valid location
+        /// <param name="filename">The location of a Magnet Box, or a valid location
         /// where a new one can be created</param>
         /// <remarks>If there is no file at that location (but the location is valid) a new
-        /// magnet list will be saved to it. If the location is invalid, or the existing file
+        /// Magnet Box will be saved to it. If the location is invalid, or the existing file
         /// is corrupted or in the wrong format, tries to delete the corrupted file (giving the 
         /// user the option of backing it up) and create a new one. If anything further goes
-        /// wrong, or the user declines to deal with the corrupted file, the magnet list will
+        /// wrong, or the user declines to deal with the corrupted file, the Magnet Box will
         /// remain functional but not save any ideas.</remarks>
         public void Open(string filename)
         {   
-	        if (!File.Exists(filename)) { // as long as an ideas box can be created at this filename, save to it
-	            Say.Debug("Couldn't find an ideas box at the expected location (" + filename + ")" +
+	        if (!File.Exists(filename)) { // as long as a Magnet Box can be created at this filename, save to it
+	            Say.Debug("Couldn't find a Magnet Box at the expected location (" + filename + ")" +
 	        		     " - will create a new one when required.");
 	          	Filename = filename;
 	          	SaveAutomatically = true;
 	        }
 	        else {
-	          	try { // try to open the ideas box, and if successful, save to it        		
+	          	try { // try to open the Magnet Box, and if successful, save to it        		
 		    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetListInfo));
 			    	MagnetListInfo magnetListInfo = (MagnetListInfo)o;
 			    	Open(magnetListInfo);
@@ -255,7 +255,7 @@ namespace AdventureAuthor.Ideas
 		           		MessageBoxResult result = 
 		           			MessageBox.Show( // this will appear before toolset has finished loading
 		           				  "There was a problem when setting up the Adventure Author fridge magnet application.\n\n" +
-		           				  filename + " is not a valid ideas box file. It may " +
+		           				  filename + " is not a valid Magnet Box file. It may " +
 		           	    	      "be corrupted, or the wrong type of file.\n\n" + 
 		           	    	      "This file must be replaced to continue. Do you want to back up the " +
 		           	    	      "corrupted file in case it can be fixed?",
@@ -273,7 +273,7 @@ namespace AdventureAuthor.Ideas
 					    		saveFileDialog.Filter = Filters.XML;
 					  			saveFileDialog.ValidateNames = true;
 					  			saveFileDialog.OverwritePrompt = true;
-					  			saveFileDialog.Title = "Select location to save copy of corrupted ideas box";
+					  			saveFileDialog.Title = "Select location to save copy of corrupted Magnet Box";
 					  			
 					  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 					  			if (ok) {	
@@ -306,7 +306,7 @@ namespace AdventureAuthor.Ideas
 		           		}
 	           		}
 		           	else { // something non-specific went wrong
-        				Say.Error("Something went wrong when trying to open the ideas box file.",e);
+        				Say.Error("Something went wrong when trying to open the Magnet Box.",e);
         				AbortOpen();
 		           	}
 	           	}
@@ -324,7 +324,7 @@ namespace AdventureAuthor.Ideas
             	
     	
     	/// <summary>
-    	/// Open a magnet list.
+    	/// Open a Magnet Box.
     	/// </summary>
     	/// <param name="magnetListInfo">Serialized data to represent</param>
     	/// <remarks>Changes will not be saved unless you set SaveAutomatically to true following
@@ -352,9 +352,9 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Clear the magnet list.
+        /// Clear the Magnet Box.
         /// </summary>
-        /// <remarks>This is intended for UI functions, rather than to delete all magnets in a magnet list,
+        /// <remarks>This is intended for UI functions, rather than to delete all magnets in a Magnet Box,
         /// so no events are fired</remarks>
         private void Clear()
         {
@@ -374,7 +374,7 @@ namespace AdventureAuthor.Ideas
     				}
     			} 
     			catch (Exception e) {
-    				Say.Error("Changes to the magnet list could not be saved.",e);
+    				Say.Error("Changes to the Magnet Box could not be saved.",e);
     			}
     		}
     	} 
@@ -414,10 +414,11 @@ namespace AdventureAuthor.Ideas
         	AddHandlers(magnet);
         	
         	magnet.Margin = new Thickness(5);
+        	
+        	// update context menu:
         	magnet.bringToFrontMenuItem.IsEnabled = false;
         	magnet.sendToBackMenuItem.IsEnabled = false;
         	magnet.removeDeleteMagnetMenuItem.Header = "Delete"; // more permanent than removing from a magnet board
-        	magnet.VerticalAlignment = VerticalAlignment.Center;
         	
         	magnetsPanel.Children.Add(magnet);
         	
@@ -433,7 +434,7 @@ namespace AdventureAuthor.Ideas
         	magnet.UpdateStarVisibility();
         	        	
         	// If the magnet is newly created, ensure that it is shown, even if it is in a category which
-        	// is currently hidden. If it's been transferred back to the magnet list after being deleted
+        	// is currently hidden. If it's been transferred back to the Magnet Box after being deleted
         	// from a board, then it can retain the same shown/hidden state as its category.
         	bool categoryIsVisible = CategoryIsVisible(magnet.Idea.Category);
         	if (forceShow) {
@@ -453,7 +454,7 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Add magnet list event handlers when a magnet is added
+        /// Add Magnet Box event handlers when a magnet is added
         /// </summary>
         /// <param name="magnet">The magnet to add handlers for</param>
         private void AddHandlers(MagnetControl magnet)
@@ -473,7 +474,7 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Remove magnet list event handlers when a magnet is removed (as it may be going elsewhere)
+        /// Remove Magnet Box event handlers when a magnet is removed (as it may be going elsewhere)
         /// </summary>
         /// <param name="magnet">The magnent to remove handlers from</param>
         private void RemoveHandlers(MagnetControl magnet)
@@ -754,7 +755,7 @@ namespace AdventureAuthor.Ideas
     	
     	    	
     	/// <summary>
-    	/// Get an equivalent magnet to the given magnet, if it exists within this magnet list.
+    	/// Get an equivalent magnet to the given magnet, if it exists within this Magnet Box.
     	/// </summary>
     	/// <param name="magnet">The magnet to check for</param>
     	/// <returns>A magnet with identical field values to the given magnet if it exists
@@ -781,9 +782,10 @@ namespace AdventureAuthor.Ideas
     		foreach (UIElement element in elements) { // return true if an equivalent object is found
     			if (element is MagnetControl) {
     				MagnetControl magnet2 = (MagnetControl)element;
+    				
     				if (magnet.Idea.Equals(magnet2.Idea)) {
-    					return magnet2;
-    				}
+	    				return magnet2;
+	    			}
     			}
     		}
     		return null;
@@ -883,12 +885,12 @@ namespace AdventureAuthor.Ideas
         #region Event handlers
         
         /// <summary>
-        /// Scroll the magnet list by scrolling the mouse wheel.
+        /// Scroll the Magnet Box by scrolling the mouse wheel.
         /// </summary>
         /// <remarks>This is a preview event because scrolling the wheel over the window
         /// should move the list up and down, but not rotate the selected magnet (which is
         /// what usually happens on wheel scroll.) Handling the event will stop
-        /// the selected magnet from rotating, if we are currently over the magnet list.</remarks>
+        /// the selected magnet from rotating, if we are currently over the Magnet Box.</remarks>
         private void magnetListPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
 	        double offset = e.Delta / 2;
@@ -975,7 +977,7 @@ namespace AdventureAuthor.Ideas
         
         
         /// <summary>
-        /// Save all changes to the magnet list automatically, unless you don't have a valid
+        /// Save all changes to the Magnet Box automatically, unless you don't have a valid
         /// filename or something went wrong on a previous attempt to save.
         /// </summary>
         private void MagnetListChanged_SaveAutomatically(object sender, EventArgs e)

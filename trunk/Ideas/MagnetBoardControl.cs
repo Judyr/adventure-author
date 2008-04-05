@@ -78,7 +78,7 @@ namespace AdventureAuthor.Ideas
         private DragEventHandler magnetControl_DropHandler;
         private EventHandler magnetControl_SendToBackHandler;
         private EventHandler magnetControl_BringToFrontHandler;
-        private EventHandler magnetControl_EditedHandler;
+        private EventHandler magnetControl_ChangedOnBoardHandler;
         
         
         private object padlock = new object();
@@ -165,7 +165,7 @@ namespace AdventureAuthor.Ideas
     		magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
     		magnetControl_BringToFrontHandler = new EventHandler(magnetControl_BringToFront);
     		magnetControl_SendToBackHandler = new EventHandler(magnetControl_SendToBack);
-    		magnetControl_EditedHandler = new EventHandler(magnetBoard_Changed);
+    		magnetControl_ChangedOnBoardHandler = new EventHandler(magnetBoard_Changed);
     		Drop += new DragEventHandler(magnetBoard_Drop);
     		
     		MagnetAdded += delegate (object sender, MagnetEventArgs e) {
@@ -281,9 +281,12 @@ namespace AdventureAuthor.Ideas
         	magnet.UpdateStarVisibility();
         	
 			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
+			
+			// update context menu:
         	magnet.bringToFrontMenuItem.IsEnabled = true;
         	magnet.sendToBackMenuItem.IsEnabled = true;
         	magnet.removeDeleteMagnetMenuItem.Header = "Put back in box"; // less permanent than 'Delete' or 'Remove'
+        	
 			magnet.Show();
 			BringInsideBoard(magnet);			
 			
@@ -308,10 +311,12 @@ namespace AdventureAuthor.Ideas
         		magnet.Drop += magnetControl_Drop;
         		magnet.RequestBringToFront += magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack += magnetControl_SendToBackHandler;
-        		magnet.Edited += magnetControl_EditedHandler;
-        		magnet.Starred += magnetControl_EditedHandler;
-        		magnet.Unstarred += magnetControl_EditedHandler;
-        		magnet.Rotated += magnetControl_EditedHandler;
+        		
+        		// make the board dirty when a change is made:
+        		magnet.Edited += magnetControl_ChangedOnBoardHandler;        		
+        		magnet.Starred += magnetControl_ChangedOnBoardHandler;
+        		magnet.Unstarred += magnetControl_ChangedOnBoardHandler;
+        		magnet.Rotated += magnetControl_ChangedOnBoardHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -325,10 +330,11 @@ namespace AdventureAuthor.Ideas
         		magnet.Drop -= magnetControl_Drop;
         		magnet.RequestBringToFront -= magnetControl_BringToFrontHandler;
         		magnet.RequestSendToBack -= magnetControl_SendToBackHandler;
-        		magnet.Edited -= magnetControl_EditedHandler;
-        		magnet.Starred -= magnetControl_EditedHandler;
-        		magnet.Unstarred -= magnetControl_EditedHandler;
-        		magnet.Rotated -= magnetControl_EditedHandler;
+        		
+        		magnet.Edited -= magnetControl_ChangedOnBoardHandler;        		
+        		magnet.Starred -= magnetControl_ChangedOnBoardHandler;
+        		magnet.Unstarred -= magnetControl_ChangedOnBoardHandler;
+        		magnet.Rotated -= magnetControl_ChangedOnBoardHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);
@@ -396,7 +402,7 @@ namespace AdventureAuthor.Ideas
         
     	public void Save()
     	{
-    		if (Filename == null) {
+    		if (Filename == null || Filename == String.Empty) {
     			throw new InvalidOperationException("Save failed: Should not have called Save without first setting a filename.");
     		}
     		else {

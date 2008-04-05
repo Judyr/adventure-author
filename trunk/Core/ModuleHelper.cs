@@ -151,9 +151,16 @@ namespace AdventureAuthor.Core
 		}	
 		
 		
-		public static string IdeasBoxFilename {
+		public static string CustomScriptsDirectory {
 			get {
-				return Path.Combine(PublicUserDirectory,"ideas.xml");
+				return Path.Combine(PublicUserDirectory,"Custom scripts");
+			}
+		}	
+		
+		
+		public static string MagnetBoxFilename {
+			get {
+				return Path.Combine(PublicUserDirectory,"MagnetBox.xml");
 			}
 		}
 		

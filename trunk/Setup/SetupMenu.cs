@@ -132,7 +132,7 @@ namespace AdventureAuthor.Setup
 				EditMagnetWindow window = new EditMagnetWindow();
 				window.MagnetCreated += delegate(object sender, MagnetEventArgs e) { 
 					OnMagnetSubmitted(new MagnetEventArgs(e.Magnet));
-					Log.WriteAction(LogAction.added,"magnet",e.Magnet.ToString() + " ... added from main toolset");
+					Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString() + " ... added from main toolset");
 				};
 				window.ShowDialog();
 			};

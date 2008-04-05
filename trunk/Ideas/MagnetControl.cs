@@ -771,7 +771,7 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_Edit(object sender, EventArgs e)
     	{
     		EditMagnetWindow window = new EditMagnetWindow(this);
-    		window.MagnetEdited += delegate(object s, MagnetEventArgs ea) 
+    		window.MagnetEdited += delegate(object s, MagnetEditedEventArgs ea) 
     		{
     			OnEdited(ea);
     			Log.WriteAction(LogAction.edited,"idea",ea.Magnet.ToString());
