@@ -22,7 +22,7 @@ namespace AdventureAuthor.Utils
         {
             InitializeComponent();
             Log.Message += new EventHandler<LogEventArgs>(Log_Message);
-            DebugLog.Message += new EventHandler<DebugLogEventArgs>(DebugLog_Message);
+            //DebugLog.Message += new EventHandler<DebugLogEventArgs>(DebugLog_Message);
         }
 
         
@@ -77,25 +77,21 @@ namespace AdventureAuthor.Utils
         
 		private void ShowDebugCheckboxUnchecked(object sender, RoutedEventArgs e)
 		{
-			Say.Information("doing something");
 			int count = 0;
 			foreach (Label l in debugmsgs) {
 				count++;
 				l.Visibility = Visibility.Collapsed;
 			}
-			Say.Information("did " + count + " things");
 		}
 		
 		
 		private void ShowDebugCheckboxChecked(object sender, RoutedEventArgs e)
 		{
-			Say.Information("doing something");
 			int count = 0;
 			foreach (Label l in debugmsgs) {
 				count++;
 				l.Visibility = Visibility.Visible;
 			}
-			Say.Information("did " + count + " things");
 		}
     }
 }

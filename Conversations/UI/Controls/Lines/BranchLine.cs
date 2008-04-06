@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
@@ -99,6 +100,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		if (page.LeadLine == this.nwn2Line) {
         			WriterWindow.Instance.DisplayPage(page);
         			WriterWindow.Instance.CentreGraph(false);
+	       			Log.WriteAction(LogAction.viewed,"page","page beginning with: " + page);
         			return;
         		}
         	}        	

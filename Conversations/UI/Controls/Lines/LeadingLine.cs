@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using NWN2Toolset.NWN2.Data.ConversationData;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Conversations.UI.Controls
 {
@@ -102,9 +103,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	foreach (Page page in WriterWindow.Instance.Pages) {
 				if (page.Children.Contains(WriterWindow.Instance.CurrentPage)) {
-        			WriterWindow.Instance.DisplayPage(page);
+        			WriterWindow.Instance.DisplayPage(page);        
         			WriterWindow.Instance.CentreGraph(false);
         			WriterWindow.Instance.FocusOn(this.nwn2Line);
+	        		Log.WriteAction(LogAction.viewed,"page");	
         			return;
 				}
         	}        	

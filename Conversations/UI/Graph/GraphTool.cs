@@ -46,12 +46,12 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            		// seemingly
 	            		Node node = entity as Node;
 	            		if (node != null) {
-	            			Log.WriteAction(LogAction.selected,"node");
+	            			//Log.WriteAction(LogAction.selected,"pagenode");
 	            			WriterWindow.Instance.DisplayPage(node.Page);	            			
-	            			if (centreGraph) {	            	
-	            				Log.WriteMessage("centred graph on the new page.");			
+	            			if (centreGraph) {	            			
 	            				WriterWindow.Instance.CentreGraph(false);
 	            			}
+	       					Log.WriteAction(LogAction.viewed,"page","page beginning with: " + node.Page);
 	            		}
 	            		entity.IsSelected = false; // doesn't help
 	            	}
@@ -61,7 +61,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 	            return false;
         	}
         	catch (Exception ex) {
-        		MessageBox.Show("Error on clicking graph in GraphTool class.\n\n" + ex.ToString());
+        		Say.Error("Something went wrong while the user was clicking on the graph.",ex);
         		return false;
         	}
         }

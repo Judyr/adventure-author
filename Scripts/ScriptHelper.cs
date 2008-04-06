@@ -255,6 +255,9 @@ namespace AdventureAuthor.Scripts
 			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",repository);
 			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",repository);
 			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",repository);
+			
+			// allow player to use (almost) all items by default:
+			module.ModuleInfo.OnClientEnter = ScriptHelper.GetScriptResource("playercanuseallitems",repository);
 		}
 		
 		

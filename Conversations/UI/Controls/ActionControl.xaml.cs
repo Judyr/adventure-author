@@ -120,7 +120,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         private void OnMouseDown(object sender, EventArgs ea)
         {
         	this.attachedTo.Focus();    
-        	Log.WriteAction(LogAction.selected,"line");
+        	//Log.WriteAction(LogAction.selected,"line");
         }
     }
 }

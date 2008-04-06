@@ -207,13 +207,12 @@ namespace AdventureAuthor.Conversations
 		{
 			Speaker existingSpeaker = GetSpeaker(tag);
 			if (existingSpeaker == null) {	
-				if (tag == String.Empty) {
+				if (tag == null || tag == String.Empty) {
 					Log.WriteAction(LogAction.added,"speaker","player");
 				}
 				else {
 					Log.WriteAction(LogAction.added,"speaker",tag);
 				}
-				Log.WriteAction(LogAction.added,"speaker",tag);
 				Speaker speaker = new Speaker(tag);
 				speakers.Add(speaker);
 				AssignColour(speaker);
@@ -531,7 +530,6 @@ namespace AdventureAuthor.Conversations
 				Say.Debug("Cannot assign a null string to this line.");
 			}
 			else {
-				Log.WriteAction(LogAction.edited,"line");
 				line.Line.Text = GetOEIStringFromString(newText);
 				
 				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
@@ -540,6 +538,13 @@ namespace AdventureAuthor.Conversations
 				}
 				else {
 					OnChanged(new ConversationChangedEventArgs(false));
+				}
+				
+				if (line.Speaker == null || line.Speaker == String.Empty) {
+					Log.WriteAction(LogAction.edited,"line","player" + ": " + newText);
+				}
+				else {
+					Log.WriteAction(LogAction.edited,"line",line.Speaker + ": " + newText);
 				}
 			}
 		}
@@ -620,7 +625,12 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The newly created line</returns>
 		public NWN2ConversationConnector AddLine(NWN2ConversationConnector preceding, string speaker)
 		{
-			Log.WriteAction(LogAction.added,"line",speaker);
+			if (speaker == null || speaker == String.Empty) {
+				Log.WriteAction(LogAction.added,"line","player");
+			}
+			else {
+				Log.WriteAction(LogAction.added,"line",speaker);
+			}
 			NWN2ConversationConnector createdLine = _AddLine(preceding,speaker);
 			OnChanged(new ConversationChangedEventArgs(false));
 			return createdLine;
@@ -682,9 +692,15 @@ namespace AdventureAuthor.Conversations
 		
 		public void DeleteLine(NWN2ConversationConnector line)
 		{			
-			Log.WriteAction(LogAction.deleted,"line");
 			_DeleteLine(line);			
 			OnChanged(new ConversationChangedEventArgs(false));
+				
+			if (line.Speaker == null || line.Speaker == String.Empty) {
+				Log.WriteAction(LogAction.deleted,"line","player" + ": " + GetStringFromOEIString(line.Text));
+			}
+			else {
+				Log.WriteAction(LogAction.deleted,"line",line.Speaker + ": " + GetStringFromOEIString(line.Text));
+			}
 		}
 		
 		
@@ -801,8 +817,6 @@ namespace AdventureAuthor.Conversations
 		
 		public void MoveLineIntoChoice(NWN2ConversationConnector line, NWN2ConversationConnector choiceParent)
 		{
-			Log.WriteAction(LogAction.moved,"line","into choice, creating a new branch");
-			
 			NWN2ConversationConnectorCollection existingBranches = GetChildren(choiceParent);
 			
 			if (line == null) {			
@@ -840,6 +854,7 @@ namespace AdventureAuthor.Conversations
 				Copy(line,ref copy);
 				_DeleteLine(line);
 				OnChanged(new ConversationChangedEventArgs(true));
+				Log.WriteAction(LogAction.moved,"line","into choice, creating a new branch");			
 			}
 		}
 		
@@ -922,6 +937,7 @@ namespace AdventureAuthor.Conversations
 				if (selected != null && !IsFiller(selected.Nwn2Line)) {
 					selected.FlushChangesToText();
 				}
+				
 							
 				NwnConv.OEISerialize(false);
 				string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,

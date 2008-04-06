@@ -491,8 +491,6 @@ namespace AdventureAuthor.Conversations.UI
 		/// <param name="page">The page to display</param>
 		public void DisplayPage(Page page)
 		{
-	        Log.WriteAction(LogAction.selected,"page");
-	        
 			// Update references to the currently and previously viewed pages:
 			if (currentPage != page) {
 				previousPage = currentPage;
@@ -612,6 +610,7 @@ namespace AdventureAuthor.Conversations.UI
 		{
 			DisplayPage(pages[0]);
 			CentreGraph(true);
+	      	Log.WriteAction(LogAction.viewed,"page","clicked 'go to start'");
 		}
 		
 		#endregion
@@ -872,6 +871,7 @@ namespace AdventureAuthor.Conversations.UI
 	  				string filename = saveFileDialog.FileName;
 	  				try {	  					
 	  					Conversation.CurrentConversation.ExportToTextFile(filename,format);
+	  					Log.WriteMessage("exported conversation to " + filename + " (format: " + format + ")");
 	  					Process.Start(filename);
 	  				}
 	  				catch (IOException e) {
