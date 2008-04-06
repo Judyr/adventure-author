@@ -44,7 +44,6 @@ namespace AdventureAuthor.Ideas
 			set { 
     			((LinearGradientBrush)Resources["fridgeBrush"]).GradientStops[0].Color = value; 
     			MakeDirty();
-    			Log.WriteAction(LogAction.set,"magnetboardcolour",value.ToString());
     		}
 		}
     	
@@ -180,9 +179,6 @@ namespace AdventureAuthor.Ideas
     		Cleared += delegate {
     			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing
     		};
-    		Opened += delegate { 
-    			Log.WriteAction(LogAction.opened,"magnetboard",Path.GetFileName(filename));
-    		};
     		Closed += delegate { 
     			Log.WriteAction(LogAction.closed,"magnetboard");
     		};
@@ -280,15 +276,15 @@ namespace AdventureAuthor.Ideas
         	
         	magnet.UpdateStarVisibility();
         	
-			magnet.Margin = new Thickness(0); // margin may have been added if the magnet was in the magnetlist
+			magnet.Margin = new Thickness(0); // margin will have been added if the magnet was in the Magnet Box
 			
 			// update context menu:
         	magnet.bringToFrontMenuItem.IsEnabled = true;
         	magnet.sendToBackMenuItem.IsEnabled = true;
-        	magnet.removeDeleteMagnetMenuItem.Header = "Put back in box"; // less permanent than 'Delete' or 'Remove'
+        	magnet.removeDeleteMagnetMenuItem.Header = "Remove";
         	
 			magnet.Show();
-			BringInsideBoard(magnet);			
+			BringInsideBoard(magnet); // doesn't work. TODO - fix or remove		
 			
 			mainCanvas.Children.Add(magnet);
 			UpdateZOrder(magnet,true); // bring to front but avoid raising event
@@ -317,6 +313,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Starred += magnetControl_ChangedOnBoardHandler;
         		magnet.Unstarred += magnetControl_ChangedOnBoardHandler;
         		magnet.Rotated += magnetControl_ChangedOnBoardHandler;
+        		magnet.Moved += magnetControl_ChangedOnBoardHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -335,6 +332,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Starred -= magnetControl_ChangedOnBoardHandler;
         		magnet.Unstarred -= magnetControl_ChangedOnBoardHandler;
         		magnet.Rotated -= magnetControl_ChangedOnBoardHandler;
+        		magnet.Moved -= magnetControl_ChangedOnBoardHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);

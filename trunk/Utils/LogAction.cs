@@ -52,6 +52,8 @@ namespace AdventureAuthor.Utils
 		placed,
 		removed,
 		hid,
-		showed
+		showed,
+		starred,
+		unstarred
 	}
 }

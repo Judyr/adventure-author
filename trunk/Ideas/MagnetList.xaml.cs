@@ -196,9 +196,6 @@ namespace AdventureAuthor.Ideas
             	UpdateMagnetCount();
             	Log.WriteAction(LogAction.deleted,"idea",e.Magnet.ToString());
             };
-            Scattered += delegate {
-            	Log.WriteMessage("scattered " + GetMagnets(true).Count + " magnets");
-            };
             HidCategory += delegate(object sender, MagnetCategoryEventArgs e) { 
             	Log.WriteAction(LogAction.hid,"ideacategory",e.Category.ToString());
             };
@@ -465,7 +462,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited += magnetListChangedHandler;
         		magnet.Starred += magnetListChangedHandler;
         		magnet.Unstarred += magnetListChangedHandler;
-        		magnet.Rotated += magnetListChangedHandler;
+        		//magnet.Rotated += magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to add handlers to magnet.",e);
@@ -476,7 +473,7 @@ namespace AdventureAuthor.Ideas
         /// <summary>
         /// Remove Magnet Box event handlers when a magnet is removed (as it may be going elsewhere)
         /// </summary>
-        /// <param name="magnet">The magnent to remove handlers from</param>
+        /// <param name="magnet">The magnet to remove handlers from</param>
         private void RemoveHandlers(MagnetControl magnet)
         {
         	try {
@@ -485,7 +482,7 @@ namespace AdventureAuthor.Ideas
         		magnet.Edited -= magnetListChangedHandler;
         		magnet.Starred -= magnetListChangedHandler;
         		magnet.Unstarred -= magnetListChangedHandler;
-        		magnet.Rotated -= magnetListChangedHandler;
+        		//magnet.Rotated -= magnetListChangedHandler;
         	}
         	catch (Exception e) {
         		Say.Error("Failed to remove handlers from magnet.",e);

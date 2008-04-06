@@ -118,12 +118,15 @@ namespace AdventureAuthor.Ideas
     		
     		magnetList.Open(ModuleHelper.MagnetBoxFilename); // previously was outside constructor
     		    		
-    		//added:
     		Toolset.Plugin.SessionWindows.Add(this);
     		
+    		// Update user preferences:
 	    	UpdateMagnetBoxAppearsAtSide(); // wait till Magnet Box is actually open - handled here
 	    	// rather than in Magnet Box cos the layout of this window's grid also changes (would be 
 	    	// better to use a dockpanel but couldn't get this to work properly)
+	    	if (wonkyMagnetsMenuItem.IsChecked != Toolset.Plugin.Options.UseWonkyMagnets) {
+        		wonkyMagnetsMenuItem.IsChecked = Toolset.Plugin.Options.UseWonkyMagnets;
+        	}
 			
 			ElementHost.EnableModelessKeyboardInterop(this);
         }
@@ -189,15 +192,7 @@ namespace AdventureAuthor.Ideas
     	
     	public void Open(string filename)
     	{
-    		try {
-    			ActiveBoard.Open(filename);
-    		}
-    		catch (ArgumentException e) {
-    			Say.Error(filename + " is not a valid magnet board file.",e);
-    		}
-    		catch (Exception e) {
-    			Say.Error("Was unable to open magnet board.",e);
-    		}
+    		ActiveBoard.Open(filename);
     	}
     	
     	
@@ -320,12 +315,15 @@ namespace AdventureAuthor.Ideas
         {
         	if (ActiveBoard != null) {
         		List<MagnetControl> visibleMagnets = magnetList.GetMagnets(true);
+        		int scatteredCount = 0;
 	        	foreach (MagnetControl magnet in visibleMagnets) {
         			if (!ActiveBoard.HasEquivalentMagnet(magnet)) {
 	        			MagnetControl clone = (MagnetControl)magnet.Clone();
 	        			ActiveBoard.AddMagnet(clone,true);
+        				scatteredCount++;
         			}
-	        	}        
+	        	}
+        		Log.WriteMessage("scattered " + scatteredCount + " magnet(s)");
         	}
         }
         
@@ -376,7 +374,8 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_New(object sender, RoutedEventArgs e)
     	{
     		New();
-    		Log.WriteAction(LogAction.added,"magnetboard");
+    		Log.WriteAction(LogAction.added,"magnetboard","Untitled");
+    		Log.WriteAction(LogAction.opened,"magnetboard","Untitled");
     	}
     	
     	
@@ -395,7 +394,13 @@ namespace AdventureAuthor.Ideas
 			
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
-  				Open(openFileDialog.FileName);
+  				try {
+  					Open(openFileDialog.FileName);
+  					Log.WriteAction(LogAction.opened,"magnetboard",Path.GetFileName(openFileDialog.FileName));
+  				}
+  				catch (Exception ex) {
+  					Say.Error("Something went wrong when trying to open the magnet board.",ex);
+  				}  				
   			}
     	}
     	
@@ -743,9 +748,9 @@ namespace AdventureAuthor.Ideas
     						Log.WriteAction(LogAction.removed,"idea",dataObject.Magnet.ToString());
     						if (result == MessageBoxResult.Yes) {
     							magnetList.AddMagnet(dataObject.Magnet,true);
-    							Log.WriteMessage("added a magnet from the board which did not appear in the Magnet Box (" +
-    							                 dataObject.Magnet + " created by " + 
-    							                 dataObject.Magnet.Creator + ")");
+    							Log.WriteMessage("added a magnet from the board which did not appear in the Magnet Box -" +
+    							                 dataObject.Magnet + " ... magnet creator was: " + 
+    							                 dataObject.Magnet.Creator);
     						}
     					}
     					
@@ -854,7 +859,8 @@ namespace AdventureAuthor.Ideas
         	bool ok = (bool)colorPicker.ShowDialog();
         	
         	if (ok) {
-        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;
+        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
+    			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
         	}
         }
         
@@ -898,7 +904,7 @@ namespace AdventureAuthor.Ideas
         	if (!magnetList.HasEquivalentMagnet(magnet)) {
 				MagnetControl clone = (MagnetControl)magnet.Clone();
         		magnetList.AddMagnet(clone,false);
-        		Log.WriteMessage("added the edited version of a board magnet to the Magnet Box (" + magnet + ")");
+        		Log.WriteMessage("edited version of magnet was automatically added to Magnet Box -" + magnet);
         	}
         }
         

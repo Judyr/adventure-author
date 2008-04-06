@@ -503,8 +503,10 @@ namespace AdventureAuthor.Ideas
 		
 		public void SetAngle(double angle)
 		{
-			Angle = angle;
-			OnRotated(new EventArgs());
+			if (Angle != angle) {
+				Angle = angle;
+				OnRotated(new EventArgs());
+			}
 		}
     	
     	
@@ -773,8 +775,8 @@ namespace AdventureAuthor.Ideas
     		EditMagnetWindow window = new EditMagnetWindow(this);
     		window.MagnetEdited += delegate(object s, MagnetEditedEventArgs ea) 
     		{
-    			OnEdited(ea);
     			Log.WriteAction(LogAction.edited,"idea",ea.Magnet.ToString());
+    			OnEdited(ea);
     		};
     		window.ShowDialog();
     	}
@@ -795,6 +797,12 @@ namespace AdventureAuthor.Ideas
     	private void OnClick_StarIdea(object sender, EventArgs e) 
     	{
     		IsStarred = ((MenuItem)sender).IsChecked;
+    		if (IsStarred) {
+    			Log.WriteAction(LogAction.starred,"idea",this.ToString());
+    		}
+    		else {
+    			Log.WriteAction(LogAction.unstarred,"idea",this.ToString());
+    		}
     	}
     	
         #endregion
