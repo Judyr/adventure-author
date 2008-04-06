@@ -56,6 +56,7 @@ namespace AdventureAuthor.Conversations.UI
         	
         	Speaker speaker = (Speaker)SpeakersList.SelectedItem;
         	string newTag = newTagTextBox.Text;
+        	string originalTag = speaker.Tag; // for logging
         	
         	if (SpeakersList.SelectedItem == null) {
         		Say.Information("Select a speaker to replace.");
@@ -95,6 +96,8 @@ namespace AdventureAuthor.Conversations.UI
 							}
 						}
 					}
+					
+					Log.WriteMessage("replaced speaker '" + originalTag + "' with '" + newTag + "'");
 					
         			Close();
 //        		}

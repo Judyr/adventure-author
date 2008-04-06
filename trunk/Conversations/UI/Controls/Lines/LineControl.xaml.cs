@@ -234,6 +234,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (Conversation.CurrentConversation != null && WriterWindow.Instance.PreviousPage != null) {
         		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.PreviousPage);
         		WriterWindow.Instance.CentreGraph(false);
+	       		Log.WriteAction(LogAction.viewed,"page","page beginning with: " + WriterWindow.Instance.CurrentPage);
         	}
         }
         
@@ -326,6 +327,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		WriterWindow.Instance.DisplayPage(WriterWindow.Instance.CurrentPage.Parent);
         		WriterWindow.Instance.PageScroll.ScrollToBottom(); // to ensure choice is visible
         		WriterWindow.Instance.CentreGraph(false);
+        		Log.WriteAction(LogAction.viewed,"page","page beginning with: " + WriterWindow.Instance.CurrentPage);
         	}
         }
         
@@ -348,28 +350,28 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
-        	Log.WriteAction(LogAction.selected,"line");
-        	Say.Debug("OnLineControlGotFocus(): " + this.ToString());
+        	//Log.WriteAction(LogAction.selected,"line");
+        	//Say.Debug("OnLineControlGotFocus(): " + this.ToString());
         	SelectLine();
         }
         
         
         protected void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
         {
-        	Say.Debug("OnLineControlLostFocus(): " + this.ToString());
+        	//Say.Debug("OnLineControlLostFocus(): " + this.ToString());
         	DeselectLine();
         }
         
         protected void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
         {      	        	
-        	Say.Debug("OnDialogueGotFocus(): " + this.ToString());
+        	//Say.Debug("OnDialogueGotFocus(): " + this.ToString());
         	SelectLine();
         }
         
         
         protected void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
         {
-        	Say.Debug("OnDialogueLostFocus(): " + this.ToString());
+        	//Say.Debug("OnDialogueLostFocus(): " + this.ToString());
         	DeselectLine();
         }
         
