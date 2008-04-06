@@ -121,7 +121,6 @@ namespace AdventureAuthor.Conversations
 		/// </summary>
 		private void Conversation_OnChanged(object sender, ConversationChangedEventArgs e)
 		{
-			Say.Debug("Conversation_OnChanged()");
 			SaveToWorkingCopy();
 		}		
 				
@@ -526,10 +525,10 @@ namespace AdventureAuthor.Conversations
 		public void SetText(NWN2ConversationConnector line, string newText)
 		{
 			if (line == null) {
-				Say.Error("Cannot operate on a null line.");
+				Say.Debug("Cannot operate on a null line.");
 			}
 			else if (newText == null) {
-				Say.Error("Cannot assign a null string to this line.");
+				Say.Debug("Cannot assign a null string to this line.");
 			}
 			else {
 				Log.WriteAction(LogAction.edited,"line");
@@ -916,13 +915,14 @@ namespace AdventureAuthor.Conversations
 			
 			Log.WriteAction(LogAction.saved,"conversation");
 			
-			// Changes to a line's text are not saved immediately, so save changes before going any further:
-			LineControl selected = WriterWindow.Instance.SelectedLineControl;
-			if (selected != null && !IsFiller(selected.Nwn2Line)) {
-				selected.FlushChangesToText();
-			}
-			
-			lock (padlock) {				
+			lock (padlock) {
+				
+				// Changes to a line's text are not saved immediately, so save changes before going any further:
+				LineControl selected = WriterWindow.Instance.SelectedLineControl;
+				if (selected != null && !IsFiller(selected.Nwn2Line)) {
+					selected.FlushChangesToText();
+				}
+							
 				NwnConv.OEISerialize(false);
 				string originalPath = Path.Combine(form.App.Module.Repository.DirectoryName,
 				                                   WriterWindow.Instance.OriginalFilename+".dlg");
@@ -930,7 +930,9 @@ namespace AdventureAuthor.Conversations
 				                                  WriterWindow.Instance.WorkingFilename+".dlg");
 				File.Copy(workingPath,originalPath,true);
 				isDirty = false;
+				
 			}
+			
 			OnSaved(new EventArgs());
 		}
 		
@@ -939,11 +941,9 @@ namespace AdventureAuthor.Conversations
 		/// This should be called anytime a change is made to the conversation.
 		/// </summary>
 		private void SaveToWorkingCopy() 
-		{
-			if (this != CurrentConversation) {
-				throw new InvalidOperationException("Tried to operate on a closed Conversation.");
-			}
-			
+		{ 
+			//removed check that the conversation was the current conversation, so 
+			//the RemoveReferencesFromVariable method could use it to serialize unopened files
 			try {
 				lock (padlock) {
 					NwnConv.OEISerialize(false); // TODO can still throw an error on OEISerialize			
@@ -959,7 +959,7 @@ namespace AdventureAuthor.Conversations
 		/// <summary>
 		/// Messy - refactor?
 		/// </summary>
-		internal void Serialize()
+		private void Serialize()
 		{
 			lock (padlock) {
 				NwnConv.OEISerialize(false);
@@ -1230,6 +1230,77 @@ namespace AdventureAuthor.Conversations
 				return line.Line.Children;
 			}
 		}
+		
+		
+		/// <summary>
+		/// Remove all references to a given variable in the action/condition scripts
+		/// attached to this conversation.
+		/// </summary>
+		/// <param name="variable">The variable to remove references to</param>
+		/// <remarks>Note that this doesn't do anything with custom scripts, only
+		/// with scripts attached through conversation writer</remarks>
+		public void RemoveReferencesToVariable(NWN2ScriptVariable variable)
+		{    
+			if (Conversation.CurrentConversation != this) {
+				NwnConv.Demand();
+			}
+			
+			int removed = 0;
+				
+	        foreach (NWN2ConversationConnector connector in NwnConv.AllConnectors) {		
+				
+				List<NWN2ScriptFunctor> defunctActions = new List<NWN2ScriptFunctor>();
+				List<NWN2ConditionalFunctor> defunctConditions = new List<NWN2ConditionalFunctor>();
+				
+				for (int i = 0; i < connector.Actions.Count; i++) { 
+					if (DependsOnVariable(connector.Actions[i],variable)) {
+						defunctActions.Add(connector.Actions[i]);
+					}
+				}					
+				for (int i = 0; i < connector.Conditions.Count; i++) { 
+					if (DependsOnVariable(connector.Conditions[i],variable)) {
+						defunctConditions.Add(connector.Conditions[i]);
+					}
+				}										
+				foreach (NWN2ScriptFunctor removable in defunctActions) {
+					connector.Actions.Remove(removable);
+					removed++;
+				}					
+				foreach (NWN2ConditionalFunctor removable in defunctConditions) {
+					connector.Conditions.Remove(removable);
+					removed++;
+				}
+	       	}
+			
+			if (removed > 0) {	
+				// serialize to working copy - if this happens to be the current conversation,
+				// the page view will also be refreshed so you can see the change
+				OnChanged(new ConversationChangedEventArgs(false)); 
+				if (Conversation.CurrentConversation == this) {	
+					SaveToOriginal(); // force a proper Save, since removing references to variables can't be undone
+				}		
+				else { 
+					NwnConv.Release(); // remember to release the resource, unless the conversation writer's using it
+				}
+			}
+		}
+        
+        
+        /// <summary>
+        /// Check whether a particular script functor uses a given variable
+        /// </summary>
+        /// <param name="functor">The script functor to check</param>
+        /// <param name="variable">The variable to check for</param>
+        /// <returns>True if the script functor is dependent upon this variable, false otherwise</returns>
+        private static bool DependsOnVariable(NWN2ScriptFunctor functor, NWN2ScriptVariable variable)
+        {
+			foreach (NWN2ScriptParameter parameter in functor.Parameters) {
+				if (parameter.ValueString == variable.Name) {
+	        		return true;
+				}
+			}	
+        	return false;
+        }
 		
 		
 		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
@@ -1583,6 +1654,7 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		#endregion
+		
 		
 		
 		#endregion

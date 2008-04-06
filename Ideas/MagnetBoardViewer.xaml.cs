@@ -381,7 +381,7 @@ namespace AdventureAuthor.Ideas
     	
     	private void OnClick_Open(object sender, RoutedEventArgs e)
         {		
-			OpenFileDialog openFileDialog = new OpenFileDialog();
+    		OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
     		openFileDialog.DefaultExt = Filters.XML;
     		openFileDialog.Filter = Filters.XML;
@@ -394,7 +394,10 @@ namespace AdventureAuthor.Ideas
 			
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
-  				try {
+  				try {  					
+		    		if (!CloseDialog()) { // if the current board is dirty, offer to save changes (Yes/No/Cancel)
+		    			return;
+		    		}  					
   					Open(openFileDialog.FileName);
   					Log.WriteAction(LogAction.opened,"magnetboard",Path.GetFileName(openFileDialog.FileName));
   				}

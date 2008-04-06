@@ -105,8 +105,7 @@ namespace AdventureAuthor.Variables
 			// Remove all references to this variable in the module's conversations:
         	IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(form.App.Module.Repository.Name); // was modulepath
             if (moduleRepos == null) {
-            	Say.Error("Couldn't locate the module as a resource repository.");
-            	return;
+            	throw new IOException("Couldn't locate the module as a resource repository.");
             }      
         	
         	ushort DLG = BWResourceTypes.GetResourceType("dlg");
@@ -118,42 +117,37 @@ namespace AdventureAuthor.Variables
 				// Deal with the conversation currently open in the Conversation Writer (if there is one): 				
 				if (WriterWindow.Instance != null && 
 				    Conversation.CurrentConversation != null &&
-				    resource.FullName == WriterWindow.Instance.WorkingFilename + ".DLG") {
-					
+				    resource.FullName.ToLower() == WriterWindow.Instance.WorkingFilename + ".dlg")
+				{					
 					conversation = Conversation.CurrentConversation;
 				}
 				else {
-					NWN2GameConversation conv = new NWN2GameConversation(resource);
-					conv.Demand();
-					conversation = new Conversation(conv);
+					try {
+						NWN2GameConversation conv = new NWN2GameConversation(resource);
+						conversation = new Conversation(conv);
+					}
+					catch (Exception e) {
+						Say.Error("Something went wrong when trying to remove references to a variable " +
+					          	  "in a conversation.",e);
+						
+						Say.Debug("Failed to demand conversation to delete variable references - " +
+						          "probably an OutOfMemoryException due to a bad file. Continue on" +
+						          "to next conversation.");
+						Say.Debug(e.ToString());
+						continue;
+					}
 				}
 				
-	        	foreach (NWN2ConversationConnector connector in conversation.NwnConv.AllConnectors) {		
-					
-					List<NWN2ScriptFunctor> defunctActions = new List<NWN2ScriptFunctor>();
-					List<NWN2ConditionalFunctor> defunctConditions = new List<NWN2ConditionalFunctor>();
-					
-					for (int i = 0; i < connector.Actions.Count; i++) { 
-						if (DependsOnVariable(connector.Actions[i],variable)) {
-							defunctActions.Add(connector.Actions[i]);
-						}
-					}					
-					for (int i = 0; i < connector.Conditions.Count; i++) { 
-						if (DependsOnVariable(connector.Conditions[i],variable)) {
-							defunctConditions.Add(connector.Conditions[i]);
-						}
-					}										
-					foreach (NWN2ScriptFunctor removable in defunctActions) {
-						Conversation.CurrentConversation.DeleteAction(connector,removable);
-					}					
-					foreach (NWN2ConditionalFunctor removable in defunctConditions) {
-						Conversation.CurrentConversation.DeleteCondition(connector,removable);
-					}
-	       		}
-				
-				if (conversation != Conversation.CurrentConversation) {
-					conversation.Serialize();
-					conversation.NwnConv.Release();
+				try {
+					conversation.RemoveReferencesToVariable(variable);
+				}
+				catch (OutOfMemoryException oe) {
+					Say.Debug("Tried to remove references to a variable in what may have been a corrupt file.");
+					Say.Debug(oe.ToString());
+				}
+				catch (Exception e) {
+					Say.Error("Something went wrong when trying to remove references to a variable " +
+					          "in a conversation.",e);
 				}
 			}
 			
@@ -162,23 +156,6 @@ namespace AdventureAuthor.Variables
 			
 			// TODO once the code for OnEvent stuff has been done
 		}
-        
-        
-        /// <summary>
-        /// Check whether a particular script functor uses the variable represented by this control
-        /// </summary>
-        /// <param name="functor">The script functor to check</param>
-        /// <param name="variable">The variable to check for</param>
-        /// <returns>True if the script functor is dependent upon this variable, false otherwise</returns>
-        private static bool DependsOnVariable(NWN2ScriptFunctor functor, NWN2ScriptVariable variable)
-        {
-			foreach (NWN2ScriptParameter parameter in functor.Parameters) {
-				if (parameter.ValueString == variable.Name) {
-	        		return true;
-				}
-			}	
-        	return false;
-        }
         
         
         /// <summary>
