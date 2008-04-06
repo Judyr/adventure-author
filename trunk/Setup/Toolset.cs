@@ -884,9 +884,6 @@ namespace AdventureAuthor.Setup
 		private static void SetupResourceViewersLeaf()
 		{
 			if (tabbedGroupsCollection.ActiveLeaf != null) {
-				// Set font size:
-				tabbedGroupsCollection.ActiveLeaf.TabControl.Font = ModuleHelper.ADVENTURE_AUTHOR_FONT;
-									
 				// Dispose the [<], [>] and [X] controls:
 				List<Control> controls = GetControls(tabbedGroupsCollection.ActiveLeaf.TabControl);
 				for (int i = 0; i < 3; i++) {

@@ -75,7 +75,7 @@ namespace AdventureAuthor.Ideas
     	private EventHandler magnetControl_RequestRemoveHandler;
     	private MouseButtonEventHandler magnetControl_PreviewMouseLeftButtonDownHandler;
     	private MouseEventHandler magnetControl_PreviewMouseMoveHandler;
-    	private EventHandler magnetControl_EditedOnBoardHandler;
+    	//private EventHandler magnetControl_EditedOnBoardHandler;
         private RoutedEventHandler magnetGotFocusHandler;
         private RoutedEventHandler magnetLostFocusHandler;
         private EventHandler invalidateUponRotateHandler;
@@ -87,7 +87,10 @@ namespace AdventureAuthor.Ideas
         public MagnetBoardViewer()
         {
         	InitializeComponent();
-                                                
+        	
+        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
+			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
+		                                  
             // Set up 'Show/Hide idea category' menu:
             RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
             foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
@@ -138,7 +141,7 @@ namespace AdventureAuthor.Ideas
         	magnetControl_RequestRemoveHandler = new EventHandler(magnetControl_RequestRemove);
     		magnetControl_PreviewMouseLeftButtonDownHandler = new MouseButtonEventHandler(DragSource_PreviewMouseLeftButtonDown);
     		magnetControl_PreviewMouseMoveHandler = new MouseEventHandler(DragSource_PreviewMouseMove);
-    		magnetControl_EditedOnBoardHandler = new EventHandler(magnetControl_EditedOnBoard);
+    		//magnetControl_EditedOnBoardHandler = new EventHandler(magnetControl_EditedOnBoard);
     		
             EventHandler titleChangedHandler = new EventHandler(UpdateTitleBar);
             EventHandler<MagnetEventArgs> magnetAddedHandler = new EventHandler<MagnetEventArgs>(magnetAdded); 
@@ -577,14 +580,14 @@ namespace AdventureAuthor.Ideas
 	        e.Magnet.RequestRemove += magnetControl_RequestRemoveHandler;
 	        
 	        // add magnets to the Magnet Box if they were edited on the board:
-	        e.Magnet.Edited -= magnetControl_EditedOnBoardHandler;
+	        //e.Magnet.Edited -= magnetControl_EditedOnBoardHandler;
 	        //e.Magnet.Starred -= magnetControl_EditedOnBoardHandler;
 	        //e.Magnet.Unstarred -= magnetControl_EditedOnBoardHandler;
-	        if (ActiveBoard.HasMagnet(e.Magnet)) { 
-	        	e.Magnet.Edited += magnetControl_EditedOnBoardHandler;
+	        //if (ActiveBoard.HasMagnet(e.Magnet)) { 
+	        //	e.Magnet.Edited += magnetControl_EditedOnBoardHandler;
 	        	//e.Magnet.Starred += magnetControl_EditedOnBoardHandler;
 	        	//e.Magnet.Unstarred += magnetControl_EditedOnBoardHandler;
-	        }
+	        //}
         }
 
         
@@ -898,22 +901,21 @@ namespace AdventureAuthor.Ideas
         
         private void magnetControl_EditedOnBoard(object sender, EventArgs e)
         {
-        	MagnetControl magnet = (MagnetControl)sender;
-        	
-        	// add any magnets edited on the board to the Magnet Box.
-        	// TODO: should ideally appear beside the pre-edited version of the magnet,
-			// but that requires keeping track of what the magnet was like before,
-			// which I haven't put in any code for yet.
-        	if (!magnetList.HasEquivalentMagnet(magnet)) {
-				MagnetControl clone = (MagnetControl)magnet.Clone();
-        		magnetList.AddMagnet(clone,false);
-        		Log.WriteMessage("edited version of magnet was automatically added to Magnet Box -" + magnet);
-        	}
+//        	MagnetControl magnet = (MagnetControl)sender;
+//        	
+//        	// add any magnets edited on the board to the Magnet Box.
+//        	// TODO: should ideally appear beside the pre-edited version of the magnet,
+//			// but that requires keeping track of what the magnet was like before,
+//			// which I haven't put in any code for yet.
+//        	if (!magnetList.HasEquivalentMagnet(magnet)) {
+//				MagnetControl clone = (MagnetControl)magnet.Clone();
+//        		magnetList.AddMagnet(clone,false);
+//        		Log.WriteMessage("edited version of magnet was automatically added to Magnet Box -" + magnet);
+//        	}
         }
         
         #endregion
-        
-        
+                
         #region Drag-drop
 
         private void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)

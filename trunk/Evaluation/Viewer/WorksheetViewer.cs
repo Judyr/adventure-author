@@ -99,6 +99,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     	{
     		InitializeComponent();
     		
+    		MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
+			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
+				
     		Log.WriteAction(LogAction.launched,"evaluation");   
     		
     		Closing += new CancelEventHandler(viewerClosing);

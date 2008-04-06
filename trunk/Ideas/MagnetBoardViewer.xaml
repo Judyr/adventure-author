@@ -5,7 +5,6 @@
 	PreviewKeyDown="previewKeyDown"
     MouseWheel="magnetBoardViewerMouseWheel"
 	Title="Untitled - Ideas"
-	MinWidth="800" MinHeight="600"
 	WindowState="Maximized"
     >
 		
