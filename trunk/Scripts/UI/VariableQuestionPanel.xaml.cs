@@ -31,16 +31,21 @@ namespace AdventureAuthor.Scripts.UI
     		if (type != NWN2ScriptVariableType.Int && type != NWN2ScriptVariableType.String) {
     			throw new ArgumentException("Variables other than strings and ints are not currently supported.");
     		}
+            
+            GotFocus += delegate { 
+            	PopulateVariableList(); // refresh variable list when returning from variable manager
+            };
     		    		
             InitializeComponent();
+            
             QuestionLabel.Text = question;
             this.type = type;
-            PopulateVariableList();
         }
              
     	
     	/// <summary>
-        /// Returns an object representing an answer to the question posed by this panel - the type of object depends on the type of question.
+        /// Returns an object representing an answer to the question posed by this panel - 
+        /// the type of object depends on the type of question.
         /// </summary>
         public override object Answer
         {
@@ -68,13 +73,13 @@ namespace AdventureAuthor.Scripts.UI
         #region Event handlers
         
         /// <summary>
-        /// Launch the variable manager window, to allow users to add/delete/edit variables before setting/getting them through scripting.
+        /// Launch the variable manager window, to allow users to add/delete/edit variables 
+        /// before setting/getting them through scripting.
         /// </summary>
         private void OnClick_LaunchVariableManagerButton(object sender, EventArgs ea)
         {
         	Toolset.LaunchVariableManager();
         	Toolset.BringToFront(VariablesWindow.Instance);
-            PopulateVariableList(); // variables may have changed
         }
         
         #endregion

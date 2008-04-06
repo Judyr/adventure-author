@@ -1132,8 +1132,8 @@ namespace AdventureAuthor.Setup
 					VariablesWindow.Instance = new VariablesWindow();
 					Plugin.ModuleWindows.Add(VariablesWindow.Instance);
 				}
-				ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
-				VariablesWindow.Instance.Show();
+				//ElementHost.EnableModelessKeyboardInterop(VariablesWindow.Instance);
+				VariablesWindow.Instance.ShowDialog();
 			}
 			catch (Exception e) {
 				Say.Error("Could not open variable manager.",e);

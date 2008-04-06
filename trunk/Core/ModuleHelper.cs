@@ -625,7 +625,6 @@ namespace AdventureAuthor.Core
 		
 		public static void Bake()
 		{			
-			Log.WriteMessage("baking module");
 			form.App.DoBakeAll(false,false);
 			Log.WriteMessage("baked module");
 		}
