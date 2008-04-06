@@ -29,7 +29,6 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   	mc:Ignorable="PresentationOptions"
     Title="Conversation Writer" WindowState="Maximized"
-    MinWidth="800" MinHeight="600"
     Background="LightYellow" AllowDrop="false"
     Closing="OnClosing" Closed="OnClosed"
 	>
@@ -82,7 +81,20 @@
 				<StackPanel Name="buttonsPanel" Orientation="Vertical" Background="LightYellow" IsEnabled="false" >
 					<StackPanel.Resources>
 						<Style TargetType="Button">
-							<Setter Property="FrameworkElement.Width" Value="270"/>
+							<Setter Property="FrameworkElement.Width" Value="240"/>
+							<Setter Property="FrameworkElement.Height" Value="35"/>
+							<Setter Property="Control.Padding" Value="4,4,4,4"/>
+							<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
+							<Setter Property="TextElement.Foreground">
+								<Setter.Value>
+									<SolidColorBrush PresentationOptions:Freeze="True">#FF7C4400</SolidColorBrush>
+								</Setter.Value>
+							</Setter>
+							<Setter Property="TextElement.FontSize" Value="16"/>
+							<Setter Property="TextElement.FontWeight" Value="Normal"/>
+						</Style>
+						<Style TargetType="uiw:SpeakerButton">
+							<Setter Property="FrameworkElement.Width" Value="240"/>
 							<Setter Property="FrameworkElement.Height" Value="35"/>
 							<Setter Property="Control.Padding" Value="4,4,4,4"/>
 							<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>

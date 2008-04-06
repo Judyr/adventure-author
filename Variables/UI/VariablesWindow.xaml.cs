@@ -26,6 +26,10 @@ namespace AdventureAuthor.Variables.UI
         public VariablesWindow()
         {
             InitializeComponent();
+            
+            MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
+			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
+		          
             RefreshVariablesList();
             this.Loaded += delegate { Log.WriteAction(LogAction.launched, "variablemanager"); };
             this.Closing += delegate { 

@@ -39,6 +39,9 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class Tools
 	{		
+		public const double MINIMUMWINDOWWIDTH = 640;
+		public const double MINIMUMWINDOWHEIGHT = 480;
+		
 		// TODO make the string methods into Automatic Methods on string
 		
 		/// <summary>

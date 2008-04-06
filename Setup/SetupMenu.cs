@@ -198,9 +198,8 @@ namespace AdventureAuthor.Setup
 				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
 			};
-        		
-			// TODO: 'Ideas' should flash to indicate an idea has 'gone in' - or go from unlit to lit bulb?
-			
+        	
+			aaToolbar.AddRemoveButtonsVisible = false;
 			return aaToolbar;
 		}
 	}

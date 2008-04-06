@@ -205,6 +205,9 @@ namespace AdventureAuthor.Conversations.UI
 //    		this.PreviewDrop += delegate(object sender, DragEventArgs e) { 
 //    			Say.Information("Source: " + e.Source + "\n\nOriginal source: " + e.OriginalSource);
 //    		};
+
+			MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
+			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
 		}
 		
 		

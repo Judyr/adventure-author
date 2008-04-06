@@ -61,9 +61,8 @@ namespace AdventureAuthor.Core
 		public const int DEFAULT_AREA_LENGTH = 12; // equates to 6 red gridbox lengths on the map grid
 		public const int MAX_AREA_LENGTH = 16; // equates to 8 red gridbox lengths on the map grid
 		public const string NAME_OF_SCRATCHPAD_AREA = "Scratchpad";
-		public static readonly Font ADVENTURE_AUTHOR_FONT = new Font("Arial",10.0F);
 		
-		#endregion Constants
+		#endregion
 			
 		#region Global variables
 				
@@ -604,22 +603,29 @@ namespace AdventureAuthor.Core
 		/// </summary>
 		private static void RunNWN2()
 		{
-			// create a copy of the log from the last game (otherwise it will be over-written):
-			ProcessStartInfo copylogStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"copylog.bat"));
-			Process.Start(copylogStartInfo);
-			
-			// start the game:
-			Log.WriteAction(LogAction.launched,"game");
-			form.App.RunModule(String.Empty,false,false,false);
-			
-//			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
-//			nwn2mainStartInfo.RedirectStandardOutput = true;
-//			nwn2mainStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-//			nwn2mainStartInfo.UseShellExecute = false;
-//			Process nwn2main = new Process();
-//			nwn2main.StartInfo = nwn2mainStartInfo;
-//			nwn2main.Disposed += delegate { Log.WriteAction(LogAction.exited,"game",CurrentAdventure.Name); }; doesn't seem to work
-//			nwn2main.Start();
+			try {				 
+				// create a copy of the log from the last game (otherwise it will be over-written):
+				string path = Path.Combine(Nwn2InstallDirectory,"copylog.bat");
+				ProcessStartInfo copylogStartInfo = new ProcessStartInfo(path);
+				Process.Start(copylogStartInfo);
+				
+				// start the game:
+				form.App.RunModule(String.Empty,false,false,false);
+				Log.WriteAction(LogAction.launched,"game");
+				
+	//			ProcessStartInfo nwn2mainStartInfo = new ProcessStartInfo(Path.Combine(System.Environment.CurrentDirectory,"nwn2main.exe"));
+	//			nwn2mainStartInfo.RedirectStandardOutput = true;
+	//			nwn2mainStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+	//			nwn2mainStartInfo.UseShellExecute = false;
+	//			Process nwn2main = new Process();
+	//			nwn2main.StartInfo = nwn2mainStartInfo;
+	//			nwn2main.Disposed += delegate { Log.WriteAction(LogAction.exited,"game",CurrentAdventure.Name); }; doesn't seem to work
+	//			nwn2main.Start();
+			}
+			catch (Exception e) {
+				Say.Error("Something went wrong when trying to run the game from the toolset\n\n" +
+				          "Try running the game from the Neverwinter Nights 2 shortcut instead.",e);
+			}
 		}
 		
 		
