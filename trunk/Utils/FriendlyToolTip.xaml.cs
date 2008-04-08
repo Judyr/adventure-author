@@ -46,7 +46,7 @@ namespace AdventureAuthor.Setup.UI
             InitializeComponent();
             TitleLabel.Content = title;
             MainText.Text = message;
-            SeperatorLine.Visibility = Visibility.Collapsed;
+            SeparatorLine.Visibility = Visibility.Collapsed;
             HintPanel.Visibility = Visibility.Collapsed;
         }
         

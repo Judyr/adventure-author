@@ -82,17 +82,17 @@ namespace AdventureAuthor.Variables
 		/// <param name="removeReferences">True to also remove all references in conversations and scripts, false to only delete the variable</param>
 		public static void Delete(NWN2ScriptVariable variable, bool removeReferences)
 		{			
-			Log.WriteAction(LogAction.deleted,"variable",variable.Name);
-			
-			if (removeReferences) {
-				RemoveReferences(variable);
-			}
+//			if (removeReferences) {
+//				RemoveReferences(variable);
+//			}
 			
 			form.App.Module.ModuleInfo.Variables.Remove(variable);
 			ModuleHelper.Save();
 			if (VariablesWindow.Instance != null) {
 				VariablesWindow.Instance.RefreshVariablesList();
 			}
+			
+			Log.WriteAction(LogAction.deleted,"variable",variable.Name);			
 		}
 		
 			
@@ -101,7 +101,7 @@ namespace AdventureAuthor.Variables
 		/// </summary>
 		/// <param name="variable">The variable to remove references for</param>
 		public static void RemoveReferences(NWN2ScriptVariable variable)
-		{			
+		{	
 			// Remove all references to this variable in the module's conversations:
         	IResourceRepository moduleRepos = ResourceManager.Instance.GetRepositoryByName(form.App.Module.Repository.Name); // was modulepath
             if (moduleRepos == null) {

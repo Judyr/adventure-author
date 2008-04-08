@@ -114,6 +114,7 @@ namespace AdventureAuthor.Core
 			set { publicUserDirectory = value; }
 		}
 		
+		
 //		No longer used:		
 //		private static string privateUserDirectory;
 //		public static string PrivateUserDirectory {

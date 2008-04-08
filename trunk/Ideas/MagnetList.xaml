@@ -7,6 +7,13 @@
 	>
 		<Grid>
 		
+			<Grid.Resources>
+				<Style x:Key="toolTipStyle" TargetType="UIElement">
+					<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
+					<Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+				</Style>
+			</Grid.Resources>
+		
 			<Grid.RowDefinitions>
 				<RowDefinition x:Name="row0"/>
 				<RowDefinition x:Name="row1"/>
@@ -31,26 +38,38 @@
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>	
 			    	
+			    	<Grid.Resources>
+			    		<Style TargetType="Button">
+			    			<Setter Property="Width" Value="140"/>
+			    			<Setter Property="Height" Value="25"/>
+			    			<Setter Property="Margin" Value="5"/>
+			    			<Setter Property="HorizontalAlignment" Value="Center"/>
+			    		</Style>
+			    	</Grid.Resources>
+			    	
 			    	<Grid Grid.Row="0" Background="#00005B" Margin="0,6,0,6">			    	
 				    	<StackPanel Name="titleStackPanel" Grid.Row="0" Orientation="Horizontal" 
 				    	            HorizontalAlignment="Center"
 				    	            Background="#00005B">
-				    		<TextBlock Foreground="White" Background="Transparent"
-					    			   TextAlignment="Right" FontSize="10" 
-					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+				    		<StackPanel.Resources>
+				    			<Style TargetType="TextBlock">
+				    				<Setter Property="Foreground" Value="White"/>
+				    				<Setter Property="Background" Value="Transparent"/>
+				    				<Setter Property="FontSize" Value="10"/>
+				    				<Setter Property="VerticalAlignment" Value="Center"/>
+				    				<Setter Property="HorizontalAlignment" Value="Center"/>
+				    			</Style>
+				    		</StackPanel.Resources>
+				    		<TextBlock TextAlignment="Right">
 					    		<Bold>MAGNET BOX</Bold> (
 					    	</TextBlock>	
 					    	<TextBlock Name="magnetCountTextBlock"
-					    	           Foreground="White" Background="Transparent"
-					    			   TextAlignment="Left" FontSize="10" 
-					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+				    		           TextAlignment="Left">
 					    		<TextBlock.Text>
 					    			<Binding ElementName="magnetsPanel" Path="Children.Count" Mode="OneWay"/>
 					    		</TextBlock.Text>
 					    	</TextBlock>
-					    	<TextBlock Foreground="White" Background="Transparent"
-					    			   TextAlignment="Left" FontSize="10" 
-					    	           VerticalAlignment="Center" HorizontalAlignment="Center">
+					    	<TextBlock TextAlignment="Left">
 				    			)
 					    	</TextBlock>
 			    		
@@ -71,19 +90,21 @@
 			    				</ToolTip>
 				    		</StackPanel.ToolTip>
 				    	</StackPanel>			    	
-			    	</Grid>
+			    	</Grid>				    
 				    
-				    
-					<Button Grid.Row="1" Click="OnClick_CreateMagnet"
-					    	Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
-					    	<Bold>Create magnet</Bold>
+					<Button Name="createMagnetButton" Grid.Row="1" Click="OnClick_CreateMagnet">
+					    <Bold>Create magnet</Bold>
+			    		<Button.ToolTip>
+							Create a new magnet and add it to your Magnet Box.
+						</Button.ToolTip>
 					</Button>		    	
-					<Button Grid.Row="2" Click="OnClick_Scatter"
-					        Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
-					 		<Bold>Scatter magnets</Bold>
+					<Button Name="scatterMagnetsButton" Grid.Row="2" Click="OnClick_Scatter">
+					 	<Bold>Scatter magnets</Bold>
+			    		<Button.ToolTip>
+							Randomly scatter the unused visible magnets in your Magnet Box onto the board.
+						</Button.ToolTip>
 					</Button>
-					<!--<Button Grid.Row="3" Click="OnClick_LuckyDip"
-					    	Width="140" Height="25" Margin="5" HorizontalAlignment="Center">
+					<!--<Button Grid.Row="3" Click="OnClick_LuckyDip">
 					    	<Bold>Lucky dip</Bold>
 					</Button>	-->	    
 					<StackPanel Name="showHideCategoriesPanel" Grid.Row="4" Margin="3"
