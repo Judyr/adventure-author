@@ -41,7 +41,7 @@ namespace AdventureAuthor.Ideas
     	private string filename;    	
 		public string Filename {
 			get { return filename; }
-			set { 
+			set {
 				filename = value;
 			}
 		}     	
@@ -271,6 +271,7 @@ namespace AdventureAuthor.Ideas
 					  			saveFileDialog.ValidateNames = true;
 					  			saveFileDialog.OverwritePrompt = true;
 					  			saveFileDialog.Title = "Select location to save copy of corrupted Magnet Box";
+					  			saveFileDialog.InitialDirectory = ModuleHelper.PublicUserDirectory;
 					  			
 					  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 					  			if (ok) {	

@@ -25,7 +25,8 @@ namespace AdventureAuthor.Variables.UI
     	
         public VariableControl(NWN2ScriptVariable variable)
         {
-        	if (variable.VariableType != NWN2ScriptVariableType.String && variable.VariableType != NWN2ScriptVariableType.Int) {
+        	if (variable.VariableType != NWN2ScriptVariableType.String && 
+        	    variable.VariableType != NWN2ScriptVariableType.Int) {
             	throw new ArgumentException("Currently you can only add string and integer variables - " 
             	                            + var.VariableType.ToString() + " is invalid.");     
         	}
@@ -50,7 +51,7 @@ namespace AdventureAuthor.Variables.UI
             	case NWN2ScriptVariableType.String:
             		return "Word(s)";
             	case NWN2ScriptVariableType.Float:
-            		return "Decimal";
+            		return "Decimal"; // not currently used
             	default: 
             		return var.ToString();
             }
@@ -59,8 +60,10 @@ namespace AdventureAuthor.Variables.UI
         
         private void OnClick_Delete(object sender, EventArgs ea)
         {
-        	string warning = "Any actions/conditions which reference this variable will also be deleted. This operation cannot " +
-        	                 "be undone. Are you sure you want to delete this variable?";
+//        	string warning = "Any actions/conditions which reference this variable will also be deleted. This operation cannot " +
+//        	                 "be undone. Are you sure you want to delete this variable?";
+
+        	string warning = "Are you sure you want to delete this variable?";
         	if (MessageBox.Show(warning,"Delete", MessageBoxButtons.YesNo) == DialogResult.Yes) {
         		VariableManager.Delete(var,true);
         	} 

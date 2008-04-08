@@ -32,9 +32,9 @@ namespace AdventureAuthor.Scripts.UI
     			throw new ArgumentException("Variables other than strings and ints are not currently supported.");
     		}
             
-            GotFocus += delegate { 
-            	PopulateVariableList(); // refresh variable list when returning from variable manager
-            };
+//            GotFocus += delegate { // means you can't select anything cos it refreshes each time you click combobox
+//            	PopulateVariableList(); // refresh variable list when returning from variable manager
+//            };
     		    		
             InitializeComponent();
             
@@ -80,6 +80,7 @@ namespace AdventureAuthor.Scripts.UI
         {
         	Toolset.LaunchVariableManager();
         	Toolset.BringToFront(VariablesWindow.Instance);
+        	PopulateVariableList(); // TODO this will only work correctly as long as VM is modeless
         }
         
         #endregion

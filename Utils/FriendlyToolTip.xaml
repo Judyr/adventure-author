@@ -4,7 +4,7 @@
     <StackPanel>
 		<Label Name="TitleLabel" FontWeight="Bold" Background="Green" Foreground="White"/>
 		<TextBlock Name="MainText" Padding="10" TextWrapping="WrapWithOverflow" Width="200"/>
-		<Line Name="SeperatorLine" Stroke="Black" StrokeThickness="1" X1="0" X2="200"/>
+		<Line Name="SeparatorLine" Stroke="Black" StrokeThickness="1" X1="0" X2="200"/>
 		<StackPanel Name="HintPanel" Orientation="Horizontal">
     		<TextBlock Name="HintText" Padding="10" TextWrapping="WrapWithOverflow" Width="200" FontWeight="Bold"/>
     	</StackPanel>
