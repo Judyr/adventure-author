@@ -35,8 +35,8 @@ namespace AdventureAuthor.Setup
 //			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
 			MenuButtonItem bakeModule = new MenuButtonItem("Bake module");
 			bakeModule.Activate += delegate { BakeModuleDialog(); };
-			MenuButtonItem runModule = new MenuButtonItem("Run module");
-			runModule.Activate += delegate { RunModuleDialog(); };
+//			MenuButtonItem runModule = new MenuButtonItem("Run module");
+//			runModule.Activate += delegate { RunModuleDialog(); };
 			MenuButtonItem closeModule = new MenuButtonItem("Close module");
 			closeModule.Activate += delegate { CloseModuleDialog(); };
 							
@@ -79,10 +79,10 @@ namespace AdventureAuthor.Setup
 			                           	openModule,
 			                           	saveModule,
 			                           	bakeModule,
-			                           	runModule,
+//			                           	runModule,
 			                           	closeModule,
 			                           	newArea,
-			                           	programmerFunctions,
+//			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
 			                           });	
 			
