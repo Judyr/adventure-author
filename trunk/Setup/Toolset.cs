@@ -547,7 +547,7 @@ namespace AdventureAuthor.Setup
 										
 					if (menuBarItem.Text == "&File") {	
 						fileMenu = menuBarItem;
-						SetupFileMenu(menuBarItem);
+						SaveModuleAsDialog(menuBarItem);
 					}
 //					else if (menuBarItem.Text == "&Edit") {
 //						
@@ -616,6 +616,8 @@ namespace AdventureAuthor.Setup
 			// locking/unlocking the interface when user settings change in future.
             Plugin.Options.PropertyChanged += UpdateLockedStatus;            
 			SetInterfaceLock(Plugin.Options.LockInterface);
+			areaContentsView.BringToFront();
+			areaContentsView.Focus();
 		}
 		
 		
@@ -842,7 +844,7 @@ namespace AdventureAuthor.Setup
 		{
 			form.App.Text = "Adventure Author";
 			if (form.App.Module != null && form.App.Module.LocationType == ModuleLocationType.Directory) {
-				form.App.Text += ": " + form.App.Module.Name;
+				form.App.Text += ": " + form.App.Module.FileName;
 			}
 		}	
 		
@@ -1013,7 +1015,24 @@ namespace AdventureAuthor.Setup
 			
 			try {
 				NWN2SaveDirectoryDialog dialog = new NWN2SaveDirectoryDialog();
-				if (dialog.ShowDialog(form.App) == DialogResult.OK) {					
+				string suggestedName;
+				int startOfUserName = form.App.Module.FileName.LastIndexOf(User.GetCurrentUserName());
+				if (startOfUserName > 0) {
+					suggestedName = form.App.Module.FileName.Substring(0,startOfUserName);
+				}
+				else {
+					suggestedName = form.App.Module.FileName + " ";
+				}
+				suggestedName += User.GetCurrentUserName() + " " + 
+								 Tools.GetDateStamp(true) + " " +
+								 Tools.GetTimeStamp(true);
+				
+				dialog.DirectoryName = suggestedName;
+				
+				if (dialog.ShowDialog(form.App) == DialogResult.OK) {	
+					Say.Information("Saving your module under a new name can take up to a minute, \n" +
+					                "during which time the toolset will stop responding.\n\n" +
+					                "You'll see a message when your module has finished saving.");
 					ModuleHelper.SaveAs(dialog.DirectoryName);
 				}
 			}
@@ -1029,7 +1048,6 @@ namespace AdventureAuthor.Setup
 				Say.Debug("Tried to bake when no module was open.");
 				return;
 			}
-			
 			
 			ModuleHelper.Bake();
 		}	
