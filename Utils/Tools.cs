@@ -110,28 +110,35 @@ namespace AdventureAuthor.Utils
 		/// Get a string representing the current date.
 		/// </summary>
 		/// <returns>A string representing the date in days, months and years</returns>
-		public static string GetDateStamp()
+		public static string GetDateStamp(bool forNWN2ModuleFilename)
 		{
 			DateTime now = DateTime.Now;
-			return now.Day + "." + now.Month + "." + now.Year;
+			string divider;
+			if (forNWN2ModuleFilename) {
+				divider = "-";
+			}
+			else {
+				divider = ".";
+			}
+			return now.Day + divider + now.Month + divider + now.Year;
 		}
 		
 		
 		/// <summary>
 		/// Get a string representing the current time.
 		/// </summary>
-		/// <param name="validForFilename">True if the string should only contain valid characters for filenames, false otherwise</param>
+		/// <param name="filenameFriendly">True if the string should only contain valid characters for filenames, false otherwise</param>
 		/// <returns>A string representing the current time in hours, minutes and seconds</returns>
-		public static string GetTimeStamp(bool forFilename)
+		public static string GetTimeStamp(bool filenameFriendly)
 		{
-			if (!forFilename) {
+			if (!filenameFriendly) {
 				return GetNWN2StyleTimeStamp();
 			}
 			
 			DateTime d = DateTime.Now;
 			StringBuilder timestamp = new StringBuilder();
 			string divider;
-			if (forFilename) {
+			if (filenameFriendly) {
 				divider = "";
 			}
 			else {

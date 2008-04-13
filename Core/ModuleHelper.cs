@@ -31,6 +31,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Security.AccessControl;
 using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Setup;
@@ -151,7 +152,7 @@ namespace AdventureAuthor.Core
 		}	
 		
 		
-		public static string CustomScriptsDirectory {
+		public static string CustomScriptsDirectory { // not currently used (better to store scripts in modules?)
 			get {
 				return Path.Combine(PublicUserDirectory,"Custom scripts");
 			}
@@ -278,8 +279,6 @@ namespace AdventureAuthor.Core
 				
 		public static NWN2GameModule CreateAndOpenModule(string name)
 		{			
-			Log.WriteAction(LogAction.added,"module",name);
-			
 			// Create the module object:
 			NWN2GameModule mod = new NWN2GameModule();
 			mod.Name = name;
@@ -310,6 +309,8 @@ namespace AdventureAuthor.Core
 					          " in module '" + name + "', but there was no such area.");
 				}
 			}
+			
+			Log.WriteAction(LogAction.added,"module",name);			
 
 			return mod;
 		}	
@@ -327,8 +328,6 @@ namespace AdventureAuthor.Core
 		/// <param name="name">Name of the module to open.</param>
 		public static bool Open(string name)
 		{
-			Log.WriteAction(LogAction.opened,"module",name);
-			
 			if (ModuleIsOpen()) {
 				CloseModule();
 			}
@@ -339,7 +338,8 @@ namespace AdventureAuthor.Core
 					AreaHelper.ApplyLogging(area);
 				}
 				
-				OnModuleOpened(new EventArgs());
+				Log.WriteAction(LogAction.opened,"module",name);	
+				OnModuleOpened(new EventArgs());		
 				return true;
 			}
 			catch (DirectoryNotFoundException e) {
@@ -356,10 +356,8 @@ namespace AdventureAuthor.Core
 				return;
 			}
 			if (form.App.Module.LocationType != ModuleLocationType.Directory) {
-				Say.Error("Can't save a module that is not stored as a directory."); // shouldn't happen
+				throw new IOException("Can't save a module that is not stored as a directory."); // shouldn't happen
 			}
-					
-			Log.WriteAction(LogAction.saved,"module");
 						
 		    form.App.WaitForPanelsToSave();  	        
 		    if (form.VersionControlManager.OnModuleSaving()) {
@@ -370,34 +368,48 @@ namespace AdventureAuthor.Core
 		       	progress.Text = "Saving";
 		       	progress.Message = "Saving '" + form.App.Module.FileName + "'";
 		       	progress.WorkerThread = new ThreadedProgressDialog.WorkerThreadDelegate(save.Go);
+		       	// This dialog doesn't actually assign DialogResult (it's always Cancel), so
+		       	// don't try to use it (grrrrrr):
 		       	progress.ShowDialog(form.App);
+		       	Log.WriteAction(LogAction.saved,"module");
+				OnModuleSaved(new EventArgs());
 		    }
-		        
-		    OnModuleSaved(new EventArgs());
+		}
+		
+		
+		private static void CopyTo(string copyName)
+		{
+			string newPath = Path.Combine(NWN2ToolsetMainForm.ModulesDirectory,copyName);
+			Directory.CreateDirectory(newPath);
+			CopyFilesAndSubfolders(GetCurrentModulePath(),newPath);
 		}
 					
 		
 		public static void SaveAs(string newName)
 		{	 	
 			try {
-				throw new NotImplementedException();
+				string oldName = form.App.Module.FileName;
+				if (oldName == newName) {
+					Save();
+					Say.Information("Saved module as '" + form.App.Module.FileName + "'.");
+				}
+				else {
+					form.App.Module.FileName = newName;
+					Save();
+					// NB: Should return at this point if the user was given the opportunity to cancel
+					// (because the module didn't have a start location) and took it, but unfortunately
+					// it isn't possible to detect this (DialogResult isn't assigned properly), so
+					// might just have to live with this error.
+					CopyTo(oldName);	
+					Say.Information("Saved module as '" + form.App.Module.FileName + "'.");
+				}				
 			}
-			catch (NotImplementedException) {
-				Say.Error("Not implemented yet.");
+			catch (Exception e) {
+				Say.Error("Something went wrong when creating a copy of this module.",e);
 			}
-			
-			// TODO: Implement
-			// ..... Simply replacing module.Filename with newName in the two places it's used in Save
-			// doesn't work, as the existing module is now saved as newName, with nothing under the original
-			// name of module.Filename. 
-			// If we clone the existing module to the new location and then open it, that would work,
-			// except that 
-			
-			
-			// Clone the existing module to a new location - this will
 		}
-				
-		/*
+			
+		
 		/// <summary>
 		/// Create a date-stamped backup copy of this Adventure.
 		/// </summary>
@@ -411,7 +423,7 @@ namespace AdventureAuthor.Core
 				// Copy the module files to the backup directory:
 				DirectoryInfo di = new DirectoryInfo(backupPath);
 				di.Create();
-				CopyFolders(originalPath,backupPath);	
+				CopyFilesAndSubfolders(originalPath,backupPath);	
 								
 				// If given a justification for the backup, write it to a file in the backup directory:
 				if (reason != string.Empty) {
@@ -419,7 +431,7 @@ namespace AdventureAuthor.Core
 					StreamWriter sw = new StreamWriter(reasonForBackup.OpenWrite());					
 					sw.WriteLine("Reason for backup:  " + reason);
 					sw.WriteLine();					
-					sw.WriteLine("Created " + Tools.GetDateStamp());	
+					sw.WriteLine("Created " + Tools.GetDateStamp(false));	
 					sw.Flush();
 					sw.Close();
 				}
@@ -432,7 +444,8 @@ namespace AdventureAuthor.Core
 		
 		private static string GetDirectoryPathForBackup()
 		{
-			string path = Path.Combine(ModuleHelper.BackupDir,form.App.Module.Name+"_"+Tools.GetDateStamp()+"___");			
+			string backupDirectory = Path.Combine(ModuleHelper.PublicUserDirectory,"backups");//ModuleHelper.BackupDir;
+			string path = Path.Combine(backupDirectory,form.App.Module.Name+"_"+Tools.GetDateStamp(true)+"___");			
 			int count = 1;	
 			string newpath = path;
 			while (Directory.Exists(newpath)) { // keep trying directory names until one is not taken
@@ -440,17 +453,17 @@ namespace AdventureAuthor.Core
 				newpath = path + count.ToString();
 			}			
 			return newpath;
-		}		
+		}	
 		
 		
-		private static void CopyFolders(string source, string destination)
+		private static void CopyFilesAndSubfolders(string source, string destination)
 		{
 	    	DirectoryInfo di = new DirectoryInfo(source);
 	    	CopyFiles(source, destination);
 	    	foreach (DirectoryInfo d in di.GetDirectories()) {
 	       		string newDir = Path.Combine(destination, d.Name);
 	       		Directory.CreateDirectory(newDir);
-	       		CopyFolders(d.FullName, newDir);
+	       		CopyFilesAndSubfolders(d.FullName, newDir);
 	   		}
 		}
 		
@@ -464,8 +477,7 @@ namespace AdventureAuthor.Core
 	       		string destFile = Path.Combine(destination, f.Name);
 	       		File.Copy(sourceFile, destFile);
 	    	}
-		}	
-		*/				
+		}				
 		
 		/// <summary>
 		/// Used to retrieve a module from disk.
@@ -497,29 +509,10 @@ namespace AdventureAuthor.Core
 				Say.Debug("No module was open to be closed.");
 				return;
 			}
-			
-			Log.WriteAction(LogAction.closed,"module",form.App.Module.Name);
-			
+						
 			CloseModule();
+			Log.WriteAction(LogAction.closed,"module",form.App.Module.Name);
 			OnModuleClosed(new EventArgs());
-		}
-		
-		
-		/// <summary>
-		/// Close the currently open module.
-		/// </summary>
-		private static void OriginalCloseModule()
-		{
-			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {				
-				OEIShared.Actions.ActionManager.Manager.Clear(); // ??	
-				form.App.Module.CloseModule();            
-		        form.VersionControlManager.OnModuleClosed();            
-		        form.App.ClearHandlersForGameResourceContainer(form.App.Module);	                  
-		        if (form.App.Module != null) {
-		        	form.App.Module.Dispose();
-		        }	
-		        form.App.DoNewModule(true);	
-			}
 		}
 		
 		
@@ -565,10 +558,7 @@ namespace AdventureAuthor.Core
 		        form.App.DoNewModule(true);	
 			}
 		}
-			
-			 
-			
-				
+						 	
 		
 		/// <summary>
 		/// Run the currently open Adventure.
@@ -772,7 +762,6 @@ namespace AdventureAuthor.Core
 		/// </summary>
 		/// <param name="type">The type of resource to check - adventure, conversation or script</param>
 		/// <param name="name">The name to check for</param>
-		/// <exception cref="IOException">Thrown if AdventureAuthor data is found without a module, or vice versa.</exception>
 		/// <returns>Returns false if a resource of the given type already exists with this name, true otherwise</returns>
 		public static bool IsAvailableModuleName(string name)
 		{

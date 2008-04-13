@@ -21,7 +21,7 @@ namespace AdventureAuthor.Setup
 		private static ToolBar aaToolbar;
 		private static ToolBar addIdeaToolbar;
 		
-		private static MenuBarItem SetupFileMenu(MenuBarItem fileMenu)
+		private static MenuBarItem SaveModuleAsDialog(MenuBarItem fileMenu)
 		{
 			mainFileMenu = fileMenu;
 			fileMenu.Items.Clear();							
@@ -31,8 +31,8 @@ namespace AdventureAuthor.Setup
 			openModule.Activate += delegate { OpenModuleDialog(); };
 			MenuButtonItem saveModule = new MenuButtonItem("Save module");
 			saveModule.Activate += delegate { SaveModuleDialog(); };
-//			MenuButtonItem saveAdventureAs = new MenuButtonItem("Save As");
-//			saveAdventureAs.Activate += delegate { SaveAdventureAsDialog(); };
+			MenuButtonItem saveModuleAs = new MenuButtonItem("Save module As");
+			saveModuleAs.Activate += delegate { SaveModuleAsDialog(); };
 			MenuButtonItem bakeModule = new MenuButtonItem("Bake module");
 			bakeModule.Activate += delegate { BakeModuleDialog(); };
 //			MenuButtonItem runModule = new MenuButtonItem("Run module");
@@ -40,7 +40,7 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem closeModule = new MenuButtonItem("Close module");
 			closeModule.Activate += delegate { CloseModuleDialog(); };
 							
-			MenuButtonItem newArea = new MenuButtonItem("New area");
+			MenuButtonItem newArea = new MenuButtonItem("Create new area");
 			newArea.BeginGroup = true;
 			newArea.Activate += delegate { NewAreaDialog(); };
 			
@@ -78,6 +78,7 @@ namespace AdventureAuthor.Setup
 			                           	newModule,
 			                           	openModule,
 			                           	saveModule,
+			                           	saveModuleAs,
 			                           	bakeModule,
 //			                           	runModule,
 			                           	closeModule,

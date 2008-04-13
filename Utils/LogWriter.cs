@@ -24,7 +24,7 @@ namespace AdventureAuthor.Utils
 		
 		public static void StartRecording()
 		{			
-			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp() + " " + Tools.GetTimeStamp(true);
+			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true);
 			string path = GetUnusedPath(ModuleHelper.UserLogDirectory,preferredFilename,"log");						
 			FileInfo f = new FileInfo(path);				
 			Stream s = f.Open(FileMode.Create);
