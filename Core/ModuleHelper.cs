@@ -277,11 +277,11 @@ namespace AdventureAuthor.Core
 		}
 		
 				
-		public static NWN2GameModule CreateAndOpenModule(string name)
+		public static NWN2GameModule CreateAndOpenModule(string moduleName)
 		{			
 			// Create the module object:
 			NWN2GameModule mod = new NWN2GameModule();
-			mod.Name = name;
+			mod.Name = moduleName;
 			mod.LocationType = ModuleLocationType.Directory;
 			mod.FileName = Path.Combine(form.ModulesDirectory,mod.Name);	
 			mod.ModuleInfo.XPScale = 0; // player will gain no experience
@@ -294,23 +294,32 @@ namespace AdventureAuthor.Core
 				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
 			}		
 			
-			// Write the module to disk and open it:
+			// Write the module to disk:
 			Serialize(mod);
-			Open(name);
 			
-			// Create a scratchpad area and open it:
-			AreaHelper.CreateArea(NAME_OF_SCRATCHPAD_AREA,true,DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
+			// Open the module:
+			Open(moduleName);
+			
+			// Create a scratchpad area:
+			NWN2GameArea scratchpad = AreaHelper.CreateArea(form.App.Module,NAME_OF_SCRATCHPAD_AREA,true,DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
+// TODO do this properly - it doesn't display at first, and doesn't persist if you don't save the module
+// the first time you open it.
+//			if (scratchpad != null) {
+//				AreaHelper.PlaceStartLocationAtCentre(scratchpad);
+//			}
+			
+			// Open the scratchpad area:
 			if (Toolset.Plugin.Options.OpenScratchpadByDefault && form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA] != null) {
-				try {
+				try {					
 					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
 				}
 				catch (FileNotFoundException) { 
 					Say.Debug("Tried to open " + NAME_OF_SCRATCHPAD_AREA  + 
-					          " in module '" + name + "', but there was no such area.");
+					          " in module '" + moduleName + "', but there was no such area.");
 				}
 			}
 			
-			Log.WriteAction(LogAction.added,"module",name);			
+			Log.WriteAction(LogAction.added,"module",moduleName);			
 
 			return mod;
 		}	
@@ -339,7 +348,7 @@ namespace AdventureAuthor.Core
 				}
 				
 				Log.WriteAction(LogAction.opened,"module",name);	
-				OnModuleOpened(new EventArgs());		
+				OnModuleOpened(new EventArgs());					
 				return true;
 			}
 			catch (DirectoryNotFoundException e) {

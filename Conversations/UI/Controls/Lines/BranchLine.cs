@@ -42,9 +42,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
 		public BranchLine(NWN2ConversationConnector line) : base(line)
 		{        
 			// TODO: make into less of a mess
-			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus2);
-			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);
-			Dialogue.GotFocus += new RoutedEventHandler(OnDialogueGotFocus);
+//			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus2);
+//			Dialogue.LostFocus += new RoutedEventHandler(OnDialogueLostFocus);
+//			Dialogue.GotFocus += new RoutedEventHandler(OnDialogueGotFocus);
         	this.KeyDown += new KeyEventHandler(OnKeyDown);
         	
         	this.MouseDoubleClick += new MouseButtonEventHandler(OnMouseDoubleClick_GoToPage);

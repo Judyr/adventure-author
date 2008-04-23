@@ -39,34 +39,36 @@ using NWN2Toolset.NWN2.Views;
 using AdventureAuthor.Scripts;
 using OEIShared.Utils;
 using OEIShared.IO;
+using OEIShared.OEIMath;
+using Microsoft.DirectX;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Core
 {
 	public static class AreaHelper
 	{
-		public static void CreateArea(string name)
+		public static NWN2GameArea CreateArea(NWN2GameModule module, string name)
 		{
-			CreateArea(name,true,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);
+			return CreateArea(module,name,true,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);
 		}
 		
 		
-		public static void CreateArea(string name, bool exterior)
+		public static NWN2GameArea CreateArea(NWN2GameModule module, string name, bool exterior)
 		{
-			CreateArea(name,exterior,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);		
+			return CreateArea(module,name,exterior,ModuleHelper.MIN_AREA_LENGTH,ModuleHelper.MIN_AREA_LENGTH);		
 		}
 				
 		
-		public static void CreateArea(string name, bool exterior, int width, int height)
+		public static NWN2GameArea CreateArea(NWN2GameModule module, string name, bool exterior, int width, int height)
 		{
-			if (!ModuleHelper.ModuleIsOpen()) {
-				throw new InvalidOperationException("No game module is open to operate on.");
-			}
+//			if (!ModuleHelper.ModuleIsOpen()) {
+//				throw new InvalidOperationException("No game module is open to operate on.");
+//			}
 			
 			// Create a new area object:
 			NWN2GameArea area = new NWN2GameArea(name,
-			                                     form.App.Module.Repository.DirectoryName,
-			                                     form.App.Module.Repository);
+			                                     module.Repository.DirectoryName,
+			                                     module.Repository);
 			area.HasTerrain = exterior;
 			area.Size = GetValidAreaSize(width,height);
 						
@@ -84,6 +86,8 @@ namespace AdventureAuthor.Core
 			form.App.Module.AddResource(area);
 						
 			area.OEISerialize();
+			
+			return area;
 		}
 		
 		
@@ -97,12 +101,25 @@ namespace AdventureAuthor.Core
 		}
 		
 		
+		public static void PlaceStartLocationAtCentre(NWN2GameArea area)
+		{
+			NWN2GameModule module = (NWN2GameModule)area.Module;
+			module.ModuleInfo.EntryArea = area.AreaResource;
+			module.ModuleInfo.EntryOrientation = new RHQuaternion(0,0,0,0);
+			BoundingBox3 areaBounds = area.GetBoundsOfArea();
+			
+			module.ModuleInfo.EntryPosition = new Vector3(80 + (areaBounds.Length/2),
+			                                              80 + (areaBounds.Height/2),
+			                                              0);
+		}
+		
+		
 		/// <summary>
 		/// Open an area in the toolset.
 		/// </summary>
 		/// <param name="area">The name of the area to open</param>
-		/// <returns>True if the area was successfully opened, false otherwise.</returns>
-		public static void Open(string name)		
+		/// <returns>The area that was opened</returns>
+		public static NWN2GameArea Open(string name)		
 		{	
 			if (!ModuleHelper.ModuleIsOpen()) {
 				throw new InvalidOperationException("No game module is open to operate on.");
@@ -114,7 +131,8 @@ namespace AdventureAuthor.Core
 			}
 			else if (form.App.GetViewerForResource(area) == null) { // if the area is not already open
 				form.App.ShowResource(area);
-			}			
+			}		
+			return area;
 		}	
 			
 				

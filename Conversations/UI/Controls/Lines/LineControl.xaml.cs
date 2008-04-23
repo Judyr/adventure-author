@@ -155,9 +155,60 @@ namespace AdventureAuthor.Conversations.UI.Controls
 
         	WriterWindow.Instance.ViewedPage += new EventHandler(LineControl_OnViewedPage);
         	
-        	Dialogue.LostFocus += delegate { 
-        		Dialogue.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
-        	};
+        	Dialogue.LostFocus += new RoutedEventHandler(Dialogue_LostFocus);
+        	Dialogue.GotFocus += new RoutedEventHandler(Dialogue_GotFocus);
+        }
+
+        void Dialogue_GotFocus(object sender, RoutedEventArgs e)
+        {
+        	Say.Debug("BEGIN Dialogue_GotFocus (" + Dialogue.Text + ")");
+        	SelectLine();
+        	e.Handled = true;
+        	Say.Debug("END Dialogue_GotFocus (" + Dialogue.Text + ")");
+        }
+
+        void Dialogue_LostFocus(object sender, RoutedEventArgs e)
+        {
+        	Say.Debug("BEGIN Dialogue_LostFocus (" + Dialogue.Text + ")");
+        	Dialogue.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
+        	FlushChangesToText();
+        	
+        	DeselectLine();
+        	
+        	try {
+	        	// Move the text cursor, which should have the effect of hiding it
+	        	// (dealing with ugly persistent cursors across textboxes when we only really want one):
+	        	if (Dialogue.SelectionStart == 0 && Dialogue.Text.Length > 1) {
+	        		Dialogue.SelectionStart = 1;
+	        	}
+	        	else {
+	        		Dialogue.SelectionStart = 0;
+	        	}
+        	}
+        	catch (Exception x) {
+        		Say.Debug("Exception on changing SelectionStart of Dialogue.");
+        	}
+        	
+        	
+
+        	
+        	e.Handled = true;
+        	Say.Debug("END Dialogue_LostFocus (" + Dialogue.Text + ")");
+        }
+        
+        protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
+        {      	        	
+        	Say.Debug("BEGIN OnLineControlGotFocus (" + Dialogue.Text + ")");
+        	SelectLine();
+        	Say.Debug("END OnLineControlGotFocus (" + Dialogue.Text + ")");
+        }
+        
+        
+        protected void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
+        {
+        	Say.Debug("BEGIN OnLineControlLostFocus (" + Dialogue.Text + ")");
+        	DeselectLine();
+        	Say.Debug("END OnLineControlLostFocus (" + Dialogue.Text + ")");
         }
         
         
@@ -195,13 +246,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         #region Event handlers
         
-        /// <summary>
-        /// Save changes made to dialogue, if necessary updating node labels on the graph.
-        /// </summary>
-        protected void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
-        {
-        	FlushChangesToText();
-        }
+//        /// <summary>
+//        /// Save changes made to dialogue, if necessary updating node labels on the graph.
+//        /// </summary>
+//        protected void OnDialogueLostFocus2(object sender, RoutedEventArgs e)
+//        {
+//        	Say.Debug("BEGIN OnDialogueLostFocus2 (" + Dialogue.Text + ")");
+//        	FlushChangesToText();
+//        	Say.Debug("END OnDialogueLostFocus2 (" + Dialogue.Text + ")");
+//        }
         
         
         /// <summary>
@@ -223,6 +276,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         /// </summary>
         internal void FlushChangesToText()
         {
+        	Say.Debug("FlushChangesToText");
         	if (Conversation.GetStringFromOEIString(nwn2Line.Line.Text) != Dialogue.Text) {
         		Conversation.CurrentConversation.SetText(nwn2Line,Dialogue.Text);
         	}
@@ -334,7 +388,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void OnMouseDown(object sender, MouseEventArgs ea)
         {        	
+        	Say.Debug("BEGIN OnMouseDown");
 			Focus();
+        	Say.Debug("END OnMouseDown");
         }        
         
         
@@ -348,32 +404,20 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         
         
-        protected void OnLineControlGotFocus(object sender, RoutedEventArgs rea)
-        {      	        	
-        	//Log.WriteAction(LogAction.selected,"line");
-        	//Say.Debug("OnLineControlGotFocus(): " + this.ToString());
-        	SelectLine();
-        }
+//        protected void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
+//        {      	        	
+//        	Say.Debug("BEGIN OnDialogueGotFocus (" + Dialogue.Text + ")");
+//        	SelectLine();
+//        	Say.Debug("END OnDialogueGotFocus (" + Dialogue.Text + ")");
+//        }
         
         
-        protected void OnLineControlLostFocus(object sender, RoutedEventArgs rea)
-        {
-        	//Say.Debug("OnLineControlLostFocus(): " + this.ToString());
-        	DeselectLine();
-        }
-        
-        protected void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
-        {      	        	
-        	//Say.Debug("OnDialogueGotFocus(): " + this.ToString());
-        	SelectLine();
-        }
-        
-        
-        protected void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
-        {
-        	//Say.Debug("OnDialogueLostFocus(): " + this.ToString());
-        	DeselectLine();
-        }
+//        protected void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
+//        {
+//        	Say.Debug("BEGIN OnDialogueLostFocus (" + Dialogue.Text + ")");
+//        	DeselectLine();
+//        	Say.Debug("END OnDialogueLostFocus (" + Dialogue.Text + ")");
+//        }
         
    
         
@@ -381,22 +425,29 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void SelectLine()
         {
-        	WriterWindow.Instance.SelectedLineControl = this;
-        	
-        	Background = Brushes.Wheat;
-			Dialogue.IsEditable = true;
-
-        	SwitchOn(DeleteLineButton);
-        	if (conditionalControl != null) {
-//        		SwitchOn(conditionalControl.EditConditionsButton);
-//        		SwitchOn(conditionalControl.DeleteConditionsButton);
-        	} 
-        	foreach (ActionControl actionControl in actionControls) {
-//        		SwitchOn(actionControl.EditActionButton);
-//        		SwitchOn(actionControl.DeleteActionButton);
+        	try {
+	//        	Say.Debug("BEGIN SelectLine (" + Dialogue.Text + ")");
+	        	WriterWindow.Instance.SelectedLineControl = this;
+	        	
+	        	Background = Brushes.Wheat;
+				Dialogue.IsEditable = true;
+	
+	        	SwitchOn(DeleteLineButton);
+	//        	if (conditionalControl != null) {
+	//        		SwitchOn(conditionalControl.EditConditionsButton);
+	//        		SwitchOn(conditionalControl.DeleteConditionsButton);
+	//        	} 
+	//        	foreach (ActionControl actionControl in actionControls) {
+	//        		SwitchOn(actionControl.EditActionButton);
+	//        		SwitchOn(actionControl.DeleteActionButton);
+	//        	}
+	        	if (soundControl != null) {
+	        		SwitchOn(soundControl.PlaySoundButton);
+	        	}
+	//        	Say.Debug("END SelectLine (" + Dialogue.Text + ")");
         	}
-        	if (soundControl != null) {
-        		SwitchOn(soundControl.PlaySoundButton);
+        	catch (Exception ex) {
+        		Say.Error("Something went wrong when deselecting a line.",ex);
         	}
         }
         
@@ -404,32 +455,38 @@ namespace AdventureAuthor.Conversations.UI.Controls
         // TODO override
         protected void DeselectLine()
         {
-        	if (this is BranchLine) {
-        		Background = Brushes.AliceBlue;
+        	try {
+	//        	Say.Debug("BEGIN DeselectLine (" + Dialogue.Text + ")");
+	        	if (this is BranchLine) {
+	        		Background = Brushes.AliceBlue;
+	        	}
+	        	else {
+	        		Background = Brushes.LightYellow;
+	        	}
+				Dialogue.IsEditable = false;
+	        	
+	        	SwitchOff(DeleteLineButton);
+	//        	if (conditionalControl != null) {
+	//        		SwitchOff(conditionalControl.EditConditionsButton);
+	//        		SwitchOff(conditionalControl.DeleteConditionsButton);
+	//        	} 
+	//        	foreach (ActionControl actionControl in actionControls) {
+	//        		SwitchOff(actionControl.EditActionButton);
+	//        		SwitchOff(actionControl.DeleteActionButton);
+	//        	}
+	        	if (soundControl != null) {
+	        		SwitchOff(soundControl.PlaySoundButton);
+	        	}
+	//        	Say.Debug("END DeselectLine (" + Dialogue.Text + ")");
         	}
-        	else {
-        		Background = Brushes.LightYellow;
-        	}
-			Dialogue.IsEditable = false;
-        	
-        	SwitchOff(DeleteLineButton);
-        	if (conditionalControl != null) {
-//        		SwitchOff(conditionalControl.EditConditionsButton);
-//        		SwitchOff(conditionalControl.DeleteConditionsButton);
-        	} 
-        	foreach (ActionControl actionControl in actionControls) {
-//        		SwitchOff(actionControl.EditActionButton);
-//        		SwitchOff(actionControl.DeleteActionButton);
-        	}
-        	if (soundControl != null) {
-        		SwitchOff(soundControl.PlaySoundButton);
+        	catch (Exception ex) {
+        		Say.Error("Something went wrong when deselecting a line.",ex);
         	}
         }
         
         
         protected void SwitchOn(Control c)
         {
-        	Say.Debug("Switched on " + c.Name);
         	c.IsEnabled = true;
         	c.Visibility = Visibility.Visible;
         }
@@ -437,7 +494,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         protected void SwitchOff(Control c)
         {
-        	Say.Debug("Switched off " + c.Name);
         	c.IsEnabled = false;
         	c.Visibility = Visibility.Hidden;
         }
