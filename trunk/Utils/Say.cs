@@ -66,6 +66,7 @@ namespace AdventureAuthor.Utils
 			Error(String.Empty,e);
 		}
 		
+		
 		public static void Hint(string message)
 		{
 			if (!ModuleHelper.BeQuiet) {

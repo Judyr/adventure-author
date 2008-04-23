@@ -120,11 +120,20 @@ namespace AdventureAuthor.Conversations.UI
     	/// </summary>
     	private LineControl selectedLineControl;
 		public LineControl SelectedLineControl {
-			get { return selectedLineControl; }
-			set { selectedLineControl = value; 
-				if (selectedLineControl == null) Say.Debug("Set CurrentControl to null."); 
-				else Say.Debug("Set CurrentControl to value: " + selectedLineControl.Nwn2Line.ToString());}
+			get {
+				lock (padlock) {
+					return selectedLineControl;
+				}
+    		}
+			set { 
+				lock (padlock) {
+					selectedLineControl = value;
+				}
+    		}
 		}
+    	
+    	
+    	private object padlock = new object();
     	    	
     	
     	/// <summary>
@@ -202,9 +211,9 @@ namespace AdventureAuthor.Conversations.UI
             	}
             };
     		
-//    		this.PreviewDrop += delegate(object sender, DragEventArgs e) { 
-//    			Say.Information("Source: " + e.Source + "\n\nOriginal source: " + e.OriginalSource);
-//    		};
+    		this.PreviewDrop += delegate(object sender, DragEventArgs e) { 
+    			Say.Debug("Source: " + e.Source + "  \n\nOriginal source: " + e.OriginalSource);
+    		};
 
 			MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
@@ -468,7 +477,7 @@ namespace AdventureAuthor.Conversations.UI
         	exportMenu.IsEnabled = true;
         	closeMenuItem.IsEnabled = true;
         	optionsMenu.IsEnabled = true;        	
-        	replaceSpeakerMenuItem.IsEnabled =  Conversation.CurrentConversation.Speakers.Count > 1;       		
+        	replaceSpeakerMenuItem.IsEnabled = Conversation.CurrentConversation.Speakers.Count > 1;       		
         }
         
         
@@ -1206,7 +1215,7 @@ namespace AdventureAuthor.Conversations.UI
                 
         
         private void lineControl_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
+        {return;
             if (mouseDownOnDraggable && e.LeftButton == MouseButtonState.Pressed && !IsDragging)
             {
                 Point position = e.GetPosition(null);
@@ -1226,15 +1235,12 @@ namespace AdventureAuthor.Conversations.UI
         /// <param name="e">Event arguments from the preview mouse left button down event</param>
         /// <returns>True if the event source can be dragged; false otherwise</returns>
         private bool IsDraggable(MouseButtonEventArgs e)
-        {        	
+        {        return false;
         	if (!(e.Source is BranchLine || e.Source is Line)) { // only these are draggable
         		return false;
         	}
         	
         	LineControl lineControl = (LineControl)e.Source;        	
-//        	if (e.OriginalSource is EditableTextBlock && ((EditableTextBlock)e.OriginalSource).IsEditable) {
-//        		return false; // don't drag if the user is actually selecting text
-//        	}
         	if (e.OriginalSource is SwitchableTextBox && ((SwitchableTextBox)e.OriginalSource).IsEditable) {
         		return false; // don't drag if the user is actually selecting text
         	}
@@ -1244,14 +1250,14 @@ namespace AdventureAuthor.Conversations.UI
 
         
         private void lineControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
+        {return;
         	_startPoint = e.GetPosition(null);       	
         	mouseDownOnDraggable = IsDraggable(e);
         }
         
 
         private void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-        {
+        {return;
             e.UseDefaultCursors = false;
             e.Handled = true;
         }
@@ -1270,7 +1276,7 @@ namespace AdventureAuthor.Conversations.UI
 
 
         private void StartDragInProcAdorner(MouseEventArgs e)
-        {
+        {return;
             // Let's define our DragScope .. In this case it is every thing inside our main window .. 
             //DragScope = Application.Current.MainWindow.Content as FrameworkElement;
             DragScope = this.Content as FrameworkElement;
@@ -1314,8 +1320,9 @@ namespace AdventureAuthor.Conversations.UI
             // Construct data object:
             DataObject dataObject = new DataObject(e.Source.GetType(),e.Source);
         	
-        	
+            Say.Debug("about to DoDragDrop");
             DragDropEffects de = DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move);
+            Say.Debug("concluded DoDragDrop");
             
              // Clean up our mess :) 
             DragScope.AllowDrop = previousDrop;
@@ -1335,7 +1342,7 @@ namespace AdventureAuthor.Conversations.UI
 
         private bool _dragHasLeftScope = false; 
         private void DragScope_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
-        {
+        {return;
             if (this._dragHasLeftScope)
             {
                 e.Action = DragAction.Cancel;
@@ -1346,7 +1353,7 @@ namespace AdventureAuthor.Conversations.UI
 
 
         private void DragScope_DragLeave(object sender, DragEventArgs e)
-        {
+        {return;
             if (e.OriginalSource == DragScope)
             {
                 Point p = e.GetPosition(DragScope);
@@ -1364,7 +1371,7 @@ namespace AdventureAuthor.Conversations.UI
 
 
         private void Window1_DragOver(object sender, DragEventArgs args)
-        {
+        {        	return;
             if (_adorner != null)
             {
                 _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */ ;
@@ -1385,27 +1392,14 @@ namespace AdventureAuthor.Conversations.UI
         
         
         private void lineControl_OnDrop(object sender, DragEventArgs e)
-        {        	        
+        {        	 return;
+        	Say.Debug("began lineControl_OnDrop");
+        	
         	LineControl dropTarget = (LineControl)sender;
         	        	
         	LineControl dragSource;        	
         	if (e.Data.GetDataPresent(typeof(Line))) {
         		dragSource = (Line)e.Data.GetData(typeof(Line));
-        	}
-        	else if (e.Data.GetDataPresent(typeof(BranchLine))) {
-        		dragSource = (BranchLine)e.Data.GetData(typeof(BranchLine));
-        	}
-        	else {
-        		return;
-        	}
-        	
-        	if (dragSource is BranchLine) {
-        		if (dropTarget is BranchLine) { // re-ordering branches within a choice
-	        		int dropTargetIndex = dropTarget.Nwn2Line.Parent.Line.Children.IndexOf(dropTarget.Nwn2Line);
-	        		Conversation.CurrentConversation.MoveLineWithinChoice(dragSource.Nwn2Line,dropTargetIndex);
-        		}
-        	}
-        	else if (dragSource is Line) {
         		if (dropTarget is Line) { // re-ordering lines on a page
         			Conversation.CurrentConversation.MoveLine(dragSource.Nwn2Line,dropTarget.Nwn2Line);
         		}
@@ -1416,8 +1410,17 @@ namespace AdventureAuthor.Conversations.UI
         			Conversation.CurrentConversation.MoveLineIntoChoice(dragSource.Nwn2Line,dropTarget.Nwn2Line.Parent);
         		}
         	}
+        	else if (e.Data.GetDataPresent(typeof(BranchLine))) {
+        		dragSource = (BranchLine)e.Data.GetData(typeof(BranchLine));
+        		if (dropTarget is BranchLine) { // re-ordering branches within a choice
+	        		int dropTargetIndex = dropTarget.Nwn2Line.Parent.Line.Children.IndexOf(dropTarget.Nwn2Line);
+	        		Conversation.CurrentConversation.MoveLineWithinChoice(dragSource.Nwn2Line,dropTargetIndex);
+        		}
+        	}
         	
         	e.Handled = true;
+        	
+        	Say.Debug("finished lineControl_OnDrop");
         }
         
         #endregion 

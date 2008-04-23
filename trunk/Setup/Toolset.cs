@@ -996,6 +996,20 @@ namespace AdventureAuthor.Setup
 				Say.Debug("Tried to save when no module was open.");
 				return;
 			}
+			// This resource will be an area (resourceType 2012) if a start location has been
+			// assigned, but just an anonymous resource file (.RES) if not - often, checking whether
+			// an object is just a .RES file seems to be the equivalent of checking whether it's
+			// null (since it often isn't null where you'd expect it to be.)
+//	Commented out in favour of placing a start location automatically at the centre of the scratchpad.
+//	Note that the start location will not appear until the second time you open the module.
+// TODO also note if uncommenting this code: it will not check for INVALID start locations,
+// which will pass this check but then raise the Obsidian dialog box as well.
+//			if (form.App.Module.ModuleInfo.EntryArea.ResourceType == 0) {
+//				Say.Warning("You can't save your module until you choose a Start Location.\n\n" +
+//				            "Open an area, click the Set Start Location button, and then click on a clear " +
+//				            "patch of ground to place the start location. Then try saving again.");
+//				return;
+//			}
 			
 			try {
 				ModuleHelper.Save();
@@ -1096,13 +1110,10 @@ namespace AdventureAuthor.Setup
 				return;
 			}
 			
-			//CreateChapter_Form chapterForm = new CreateChapter_Form();
-			//chapterForm.ShowDialog(form.App);
-			
 			NWN2NewAreaWizard wizard = new NWN2NewAreaWizard(form.App.Module.GetTemporaryName(ModuleResourceType.Area));
 			wizard.cWizardCompleteHandler += delegate(string sName, Size cSize, bool bInterior) 
 			{  
-				AreaHelper.CreateArea(sName,!bInterior,cSize.Width,cSize.Height);
+				AreaHelper.CreateArea(form.App.Module,sName,!bInterior,cSize.Width,cSize.Height);
 			};
 			wizard.ShowDialog(form.App);
 		}

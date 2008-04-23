@@ -29,7 +29,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   	mc:Ignorable="PresentationOptions"
     Title="Conversation Writer" WindowState="Maximized"
-    Background="LightYellow" AllowDrop="false"
+    Background="LightYellow" AllowDrop="true"
     Closing="OnClosing" Closed="OnClosed"
 	>
 				
