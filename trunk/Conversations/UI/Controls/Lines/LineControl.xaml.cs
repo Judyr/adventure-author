@@ -403,22 +403,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         
         
-        
-//        protected void OnDialogueGotFocus(object sender, RoutedEventArgs rea)
-//        {      	        	
-//        	Say.Debug("BEGIN OnDialogueGotFocus (" + Dialogue.Text + ")");
-//        	SelectLine();
-//        	Say.Debug("END OnDialogueGotFocus (" + Dialogue.Text + ")");
-//        }
-        
-        
-//        protected void OnDialogueLostFocus(object sender, RoutedEventArgs rea)
-//        {
-//        	Say.Debug("BEGIN OnDialogueLostFocus (" + Dialogue.Text + ")");
-//        	DeselectLine();
-//        	Say.Debug("END OnDialogueLostFocus (" + Dialogue.Text + ")");
-//        }
-        
    
         
         #region Selecting lines
