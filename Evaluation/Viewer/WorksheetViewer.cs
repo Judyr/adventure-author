@@ -44,7 +44,7 @@ namespace AdventureAuthor.Evaluation.Viewer
 		public Mode EvaluationMode {
 			get { return evaluationMode; }
 			internal set {
-				evaluationMode = value;				
+				evaluationMode = value;	
 				Log.WriteAction(LogAction.mode,"evaluation_" + evaluationMode);
 			}
 		}
@@ -112,6 +112,14 @@ namespace AdventureAuthor.Evaluation.Viewer
             
     		EvaluationMode = mode;
     		
+    		Loaded += delegate { 
+    			// Don't offer to open a worksheet in Design mode, as you may be designing
+    			// a worksheet from scratch. (Does this make the UI less predictable?)
+    			if (evaluationMode == Mode.Complete || evaluationMode == Mode.Discuss) {
+    				OpenDialog();
+    			}
+    		};
+    		
     		// Edit worksheet titles in design mode only; fill in name and date in complete/discuss mode only
     		switch (EvaluationMode) {
     				
@@ -141,7 +149,6 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			EditMenu.Visibility = Visibility.Collapsed;	    		
     				SwitchModesMenuItem.Header = "Switch to Discuss mode";
     				switchModeButton.Content = "Switch to Discuss mode";
-    				OpenDialog();
 		    		break;
     				
     			case Mode.Discuss:
@@ -157,7 +164,6 @@ namespace AdventureAuthor.Evaluation.Viewer
 	    			EditMenu.Visibility = Visibility.Collapsed; 		
     				SwitchModesMenuItem.Header = "Switch to Complete mode";
     				switchModeButton.Content = "Switch to Complete mode";
-    				OpenDialog();
 		    		break;
     		}
     		
@@ -239,7 +245,7 @@ namespace AdventureAuthor.Evaluation.Viewer
     		if (EvaluationMode != Mode.Design) {    			
     			string warning = "This worksheet contains duplicate sections or questions " +
 						    	 "and cannot be opened. Try opening and then saving the worksheet " +
-						    	 "in designer mode to fix this problem.";    			
+						    	 "in designer mode - doing so will rename the duplicate sections and fix this problem.";    			
     			List<string> sectionTitles = new List<string>(worksheet.Sections.Count);
 	    		foreach (Section section in worksheet.Sections) {
     				if (sectionTitles.Contains(section.Title)) {
@@ -554,7 +560,9 @@ namespace AdventureAuthor.Evaluation.Viewer
     		control.Deactivated += delegate { 
     			OnChanged(new EventArgs()); 
     		};
-    		control.Changed += delegate { OnChanged(new EventArgs()); };
+    		control.Changed += delegate { 
+    			OnChanged(new EventArgs()); 
+    		};
     		control.BringIntoView();
     		OnChanged(new EventArgs());
     	}

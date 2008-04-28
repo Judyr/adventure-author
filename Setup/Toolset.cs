@@ -1175,6 +1175,7 @@ namespace AdventureAuthor.Setup
 			try {
 				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {
 					WorksheetViewer.Instance = new WorksheetViewer(mode);
+					
 					Plugin.SessionWindows.Add(WorksheetViewer.Instance);
 				}
 				ElementHost.EnableModelessKeyboardInterop(WorksheetViewer.Instance);
