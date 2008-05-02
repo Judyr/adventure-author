@@ -532,8 +532,8 @@ namespace AdventureAuthor.Conversations
 			else {
 				line.Line.Text = GetOEIStringFromString(newText);
 				
-				// If this is the first line of a non-root node, the node labels on the graph will need to be refreshed:
-				if (line.Parent != null && line.Parent.Line.Children.Count > 1) { 
+				// If this line comes at the beginning of a page, refresh the node labels on the graph:
+				if (GetGeneration(line).Count > 1) {
 					OnChanged(new ConversationChangedEventArgs(true));
 				}
 				else {
@@ -667,7 +667,7 @@ namespace AdventureAuthor.Conversations
 		
 		public NWN2ConversationConnectorCollection DeleteLineFromChoice(NWN2ConversationConnector line)
 		{			
-			NWN2ConversationConnectorCollection siblings = GetSiblings(line);
+			NWN2ConversationConnectorCollection siblings = GetGeneration(line);
 			if (siblings.Count < 2) {
 				throw new InvalidOperationException("Illegal call to DeleteLineFromChoice - given line was not part " +
 				                                   "of a choice. Call DeleteLine instead.");
@@ -707,7 +707,7 @@ namespace AdventureAuthor.Conversations
 		private void _DeleteLine(NWN2ConversationConnector line)
 		{
 			Say.Debug("Ran DeleteLine");
-			if (GetSiblings(line).Count > 1) {
+			if (GetGeneration(line).Count > 1) {
 				throw new InvalidOperationException("Called DeleteLine illegally - call DeleteLineFromChoice if you want to " +
 					                                "delete a line which has siblings other than itself.");
 			}
@@ -832,7 +832,7 @@ namespace AdventureAuthor.Conversations
 			    throw new InvalidOperationException("Illegal call to MoveLineIntoChoice - call MoveLine " +
 			    	                                "if you just want to move a line to a different (non-choice) position.");
 			}
-			if (GetSiblings(line).Count > 1) {
+			if (GetGeneration(line).Count > 1) {
 				throw new InvalidOperationException("Cannot move an existing branch line into another choice. " + 
 				                                    "Call MoveLineWithinChoice instead.");
 			}
@@ -1222,7 +1222,7 @@ namespace AdventureAuthor.Conversations
 		/// </summary>
 		/// <param name="line">The line to return the siblings of.</param>
 		/// <returns>The siblings of the line, AND the line itself (i.e. all of the line's parent's children)</returns>
-		public NWN2ConversationConnectorCollection GetSiblings(NWN2ConversationConnector line)
+		public NWN2ConversationConnectorCollection GetGeneration(NWN2ConversationConnector line)
 		{
 			if (line == null) {
 				throw new ArgumentNullException("line","Can't operate on a null line.");
