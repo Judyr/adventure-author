@@ -100,6 +100,13 @@ namespace AdventureAuthor.Core
 			get { return nwn2InstallDirectory; }
 			set { nwn2InstallDirectory = value; }
 		}
+				
+		
+		private static string modulesDirectory;
+		public static string ModulesDirectory {
+			get { return modulesDirectory; }
+			set { modulesDirectory = value; }
+		}
 		
 		
 		private static string adventureAuthorInstallDirectory;		

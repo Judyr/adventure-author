@@ -941,12 +941,23 @@ namespace AdventureAuthor.Setup
 		private static void OpenModuleDialog()
 		{
 			if (ModuleHelper.ModuleIsOpen() && !CloseModuleDialog()) {
-				return; // if they change their mind when prompted to close the current adventure
+				return; // if they change their mind when prompted to close the current module
 			}
 			
 			FolderBrowserDialog openFolder = new FolderBrowserDialog();
-			openFolder.Description = "Choose a module (directory format only)";
-			openFolder.RootFolder = System.Environment.SpecialFolder.MyDocuments;
+			openFolder.Description = "Choose a module to open. \n\nRemember, each module is stored as " + 
+				"a folder, not as a file.";
+			
+			// Expand modules folder (don't use openFolder.RootFolder as it only accepts SpecialFolder constants):
+			DirectoryInfo modulesDirectory = new DirectoryInfo(form.ModulesDirectory);
+			DirectoryInfo[] modules = modulesDirectory.GetDirectories("*",SearchOption.TopDirectoryOnly);
+			if (modules.Length > 0) {
+				openFolder.SelectedPath = modules[0].FullName;
+			}
+			else {
+				openFolder.SelectedPath = form.ModulesDirectory; 
+			}
+			
 			openFolder.ShowNewFolderButton = false;
 			DialogResult result = openFolder.ShowDialog(form.App);
 			if (result == DialogResult.OK) {

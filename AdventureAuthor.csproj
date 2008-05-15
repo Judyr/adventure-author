@@ -528,7 +528,6 @@
     <Folder Include="Achievements" />
     <Folder Include="Evaluation" />
     <Folder Include="Ideas" />
-    <Folder Include="Tasks" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
