@@ -10,7 +10,6 @@ using AdventureAuthor.Core;
 using AdventureAuthor.Evaluation.Viewer;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Setup;
-using AdventureAuthor.Scripts.UI;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation.Viewer

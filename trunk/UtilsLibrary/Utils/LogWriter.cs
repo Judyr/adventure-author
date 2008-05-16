@@ -10,7 +10,6 @@
 using System;
 using System.IO;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -20,12 +19,19 @@ namespace AdventureAuthor.Utils
 	public static class LogWriter
 	{
 		private static StreamWriter writer = null;				
+				
+		
+		private static string logDirectory;
+		public static string LogDirectory {
+			get { return logDirectory; }
+			set { logDirectory = value; }
+		}
 		
 		
 		public static void StartRecording()
 		{			
 			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true);
-			string path = GetUnusedPath(ModuleHelper.UserLogDirectory,preferredFilename,"log");						
+			string path = GetUnusedPath(logDirectory,preferredFilename,"log");						
 			FileInfo f = new FileInfo(path);				
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);

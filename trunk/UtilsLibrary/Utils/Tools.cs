@@ -29,8 +29,6 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.IO;
-using TD.SandBar;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -220,27 +218,6 @@ namespace AdventureAuthor.Utils
 				default:
 					throw new ArgumentException("Not valid month number");
 			}
-		}
-		
-		
-		
-		internal static void SetXAMLButtonImage(Button button, string imageName, string alternateText)
-		{
-        	try {
-				button.Content = ResourceHelper.GetImage(imageName);
-        	}
-        	catch (Exception e) {
-        		Say.Debug("Couldn't assign image for interface button: " + e);
-        		button.Content = alternateText;
-        	}
-		}
-		
-		
-		internal static void SetSandbarButtonImage(ButtonItem button, string imageName, string buttonText)
-		{		
-			button.Image = ResourceHelper.GetBitmap(imageName);
-            button.Text = buttonText;
-            button.BeginGroup = true;
-		}
+		}	
 	}
 }

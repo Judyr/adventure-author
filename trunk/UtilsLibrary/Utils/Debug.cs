@@ -27,7 +27,6 @@
 using System;
 using System.IO;
 using System.Text;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -48,6 +47,7 @@ namespace AdventureAuthor.Utils
 		{
 			OnMessage(new DebugLogEventArgs(message,null));
 		}
+		
 			
 		public static void Write(Exception e)
 		{

@@ -27,26 +27,39 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
 	// TODO: Create pretty forms with readable text (base text size on user age settings?) instead of message boxes.
 	public static class Say
-	{		
-		public static void Debug(string message) {
-			if (ModuleHelper.Debug) {
-				DebugLog.Write(message);
-			}
+	{				
+		static Say() {
+			beQuiet = false;
 		}
 		
-		public static void Error(string message) {
+			
+		private static bool beQuiet;	
+		public static bool BeQuiet {
+			get	{ return beQuiet; }
+			set	{ beQuiet = value; } 
+		}
+		
+		
+		public static void Debug(string message) 
+		{
+			DebugLog.Write(message);
+		}
+		
+		
+		public static void Error(string message) 
+		{
 			Error(message,null);
 		}
 		
+		
 		public static void Error(string message, Exception e)
 		{
-			if (!ModuleHelper.BeQuiet) {
+			if (!BeQuiet) {
 				if (e != null) {
 					message += "\n\n" + e.ToString();
 				}
@@ -61,6 +74,7 @@ namespace AdventureAuthor.Utils
 			Debug(logMessage.ToString());
 		}
 		
+		
 		public static void Error(Exception e)
 		{
 			Error(String.Empty,e);
@@ -69,22 +83,25 @@ namespace AdventureAuthor.Utils
 		
 		public static void Hint(string message)
 		{
-			if (!ModuleHelper.BeQuiet) {
+			if (!BeQuiet) {
 				MessageBox.Show("HINT: \n\n " + message);
 			}
 		}
 		
+		
 		public static void Information(string message)
 		{
-			if (!ModuleHelper.BeQuiet) {
+			if (!BeQuiet) {
 				MessageBox.Show(message);
 			}
 		}
+		
 		
 		public static bool? Question(string text, MessageBoxButtons buttons)
 		{
 			return Say.Question(text, String.Empty, buttons);
 		}
+		
 		
 		public static bool? Question(string message, string caption, MessageBoxButtons buttons)
 		{
@@ -92,7 +109,7 @@ namespace AdventureAuthor.Utils
 				throw new NotImplementedException();
 			}
 			
-			if (!ModuleHelper.BeQuiet) {
+			if (!BeQuiet) {
 				DialogResult result = MessageBox.Show(message,caption,buttons);
 				if (result == DialogResult.Cancel) {
 					return null;
@@ -109,9 +126,10 @@ namespace AdventureAuthor.Utils
 			}
 		}
 		
+		
 		public static void Warning(string message)
 		{
-			if (!ModuleHelper.BeQuiet) {
+			if (!BeQuiet) {
 				MessageBox.Show("WARNING: \n\n " + message);
 			}
 			

@@ -870,7 +870,7 @@ namespace AdventureAuthor.Setup
 		{
 			grid.ValueChanged += delegate(object sender, NWN2PropertyValueChangedEventArgs e) 
 			{ 
-				Log.WritePropertyChange(e); 
+				NWN2Utils.WritePropertyChangeToLog(e);
 			};
 			grid.PreviewStateChanged += delegate 
 			{ 
@@ -1096,7 +1096,7 @@ namespace AdventureAuthor.Setup
 		internal static bool CloseModuleDialog()
 		{
 			if (ModuleHelper.ModuleIsOpen()) {
-				if (!ModuleHelper.BeQuiet) {
+				if (!Say.BeQuiet) {
 					switch (MessageBox.Show("Do you want to save the current module?", 
 						                    "Save?",
 						                    MessageBoxButtons.YesNoCancel, 

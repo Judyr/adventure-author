@@ -196,6 +196,7 @@
       <DependentUpon>ConditionControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Conversations\UI\Controls\DialogueTextBox.cs" />
     <Compile Include="Conversations\UI\Controls\EndConversationControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>EndConversationControl.xaml</DependentUpon>
@@ -395,46 +396,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
+    <Compile Include="Setup\NWN2Utils.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="Setup\SetupMenu.cs" />
+    <Compile Include="Setup\TextBoxItem.cs" />
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Utils\Debug.cs" />
-    <Compile Include="Utils\DebugLogEventArgs.cs" />
-    <Compile Include="Utils\DebugWriter.cs" />
-    <Compile Include="Utils\Filters.cs" />
-    <Compile Include="Utils\FriendlyToolTip.xaml.cs">
-      <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utils\Log.cs" />
-    <Compile Include="Utils\LogAction.cs" />
-    <Compile Include="Utils\LogEventArgs.cs" />
-    <Compile Include="Utils\LogWindow.xaml.cs">
-      <DependentUpon>LogWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utils\LogWriter.cs" />
-    <Compile Include="Utils\Measurement.cs" />
-    <Compile Include="Utils\ReportingTextBox.cs" />
-    <Compile Include="Utils\ResourceHelper.cs" />
-    <Compile Include="Utils\RGBPicker.xaml.cs">
-      <DependentUpon>RGBPicker.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utils\Say.cs" />
-    <Compile Include="Utils\SerializableDictionary.cs" />
-    <Compile Include="Utils\Serialization.cs" />
-    <Compile Include="Utils\SwitchableTextBox.cs" />
-    <Compile Include="Utils\TeacherPasswordDialog.xaml.cs">
-      <DependentUpon>TeacherPasswordDialog.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utils\TextBoxItem.cs" />
-    <Compile Include="Utils\TextEditedEventArgs.cs" />
-    <Compile Include="Utils\Tools.cs" />
-    <Compile Include="Utils\User.cs" />
+    <Compile Include="Setup\UITools.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -505,10 +474,6 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
-    <Page Include="Utils\FriendlyToolTip.xaml" />
-    <Page Include="Utils\LogWindow.xaml" />
-    <Page Include="Utils\RGBPicker.xaml" />
-    <Page Include="Utils\TeacherPasswordDialog.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />
@@ -531,12 +496,15 @@
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
-    <Folder Include="Utils" />
     <Folder Include="Setup" />
     <Folder Include="Variables\UI" />
     <ProjectReference Include="..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
       <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
       <Name>ColorPicker</Name>
+    </ProjectReference>
+    <ProjectReference Include="UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

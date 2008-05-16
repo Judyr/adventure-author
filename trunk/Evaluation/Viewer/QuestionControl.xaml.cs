@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.IO;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Core;
+using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -100,10 +100,10 @@ namespace AdventureAuthor.Evaluation.Viewer
             	AddReplyButton.Visibility = Visibility.Collapsed;
             }
             
-            Tools.SetXAMLButtonImage(DeleteQuestionButton,"delete.png","delete");
-            Tools.SetXAMLButtonImage(MoveDownButton,"07.png","down");
-            Tools.SetXAMLButtonImage(MoveUpButton,"08.png","up");
-            Tools.SetXAMLButtonImage(AddReplyButton,"29.png","Add comment");
+            UITools.SetXAMLButtonImage(DeleteQuestionButton,"delete.png","delete");
+            UITools.SetXAMLButtonImage(MoveDownButton,"07.png","down");
+            UITools.SetXAMLButtonImage(MoveUpButton,"08.png","up");
+            UITools.SetXAMLButtonImage(AddReplyButton,"29.png","Add comment");
         }
 
         

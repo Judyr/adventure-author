@@ -185,17 +185,17 @@
     	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
     	      Width="10" Background="Transparent"/>
     	
-    	<utils:SwitchableTextBox 
+    	<uic:DialogueTextBox
     		 x:Name="Dialogue"
 	    	 Grid.Row="1" Grid.Column="3"
     		 AllowDrop="true"
 	    	 TextWrapping="Wrap" AcceptsReturn="false"
 	    	 FontSize="22" FontWeight="4" Focusable="true"
 	    	 BorderThickness="1" IsEditable="false" Padding="4">
-	    	<utils:SwitchableTextBox.Text>
+	    	<uic:DialogueTextBox.Text>
 	    		<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>
-	    	</utils:SwitchableTextBox.Text>    
-	    </utils:SwitchableTextBox>
+	    	</uic:DialogueTextBox.Text>    
+	    </uic:DialogueTextBox>
     	
 	
 		<StackPanel x:Name="ActionsPanel" 

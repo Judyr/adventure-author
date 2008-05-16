@@ -68,9 +68,6 @@ namespace AdventureAuthor.Core
 		#region Global variables
 				
 		static ModuleHelper() {
-			beQuiet = false;
-			debug = true;
-			
 			FileInfo nwn2ExeFile = new FileInfo(Application.ExecutablePath);
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
 			adventureAuthorInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
@@ -78,20 +75,6 @@ namespace AdventureAuthor.Core
 			//privateUserDirectory = Path.Combine(localApplicationDataFolder,"Adventure Author");
 			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
-		}
-		
-						
-		private static bool beQuiet;	
-		public static bool BeQuiet {
-			get	{ return beQuiet; }
-			set	{ beQuiet = value; } 
-		}
-		
-		
-		private static bool debug;
-		public static bool Debug {
-			get	{ return debug; }
-			set	{ debug = value; } 
 		}
 		
 		
@@ -121,15 +104,6 @@ namespace AdventureAuthor.Core
 			get { return publicUserDirectory; }
 			set { publicUserDirectory = value; }
 		}
-		
-		
-//		No longer used:		
-//		private static string privateUserDirectory;
-//		public static string PrivateUserDirectory {
-//			get { return privateUserDirectory; }
-//			set { privateUserDirectory = value; }
-//		}
-		
 				
 		public static string DebugDirectory {			
 			get {
@@ -157,14 +131,7 @@ namespace AdventureAuthor.Core
 				return Path.Combine(PublicUserDirectory,"Magnet boards");
 			}
 		}	
-		
-		
-		public static string CustomScriptsDirectory { // not currently used (better to store scripts in modules?)
-			get {
-				return Path.Combine(PublicUserDirectory,"Custom scripts");
-			}
-		}	
-		
+				
 		
 		public static string MagnetBoxFilename {
 			get {

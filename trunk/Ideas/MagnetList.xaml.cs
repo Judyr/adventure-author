@@ -246,7 +246,7 @@ namespace AdventureAuthor.Ideas
 	           	} 
 	           	catch (Exception e) {
 	           		if (e.InnerException is InvalidOperationException) {
-        				if (ModuleHelper.BeQuiet) { // don't show dialog if in quiet (automated) mode
+        				if (Say.BeQuiet) { // don't show dialog if in quiet (automated) mode
         					AbortOpen();
         				}
 		           		MessageBoxResult result = 

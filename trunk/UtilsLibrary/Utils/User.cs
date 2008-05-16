@@ -9,7 +9,6 @@
 
 using System;
 using System.Windows.Forms;
-using NWN2Toolset.NWN2.Data;
 
 namespace AdventureAuthor.Utils
 {
@@ -21,12 +20,6 @@ namespace AdventureAuthor.Utils
 		public static string GetCurrentUserName()
 		{
 			return SystemInformation.UserName;
-		}
-		
-		
-		public static string GetOwner(NWN2GameModule module)
-		{
-			throw new NotImplementedException();
 		}
 		
 		
