@@ -12,7 +12,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TD.SandBar;
 
-namespace AdventureAuthor.Utils
+namespace AdventureAuthor.Setup
 {
 	/// <summary>
 	/// For use with the Sandbar library - hosts a textbox in order to add it to a ToolBar.

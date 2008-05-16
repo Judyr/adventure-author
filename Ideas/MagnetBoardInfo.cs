@@ -11,8 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Windows.Media;
-using AdventureAuthor.Ideas;
-using AdventureAuthor.Utils;
 using System.Windows.Controls;
 using System.Windows;
 

@@ -37,6 +37,7 @@ using NWN2Toolset.NWN2.Data.TypedCollections;
 using NWN2Toolset.NWN2.IO;
 using NWN2Toolset.NWN2.Views;
 using AdventureAuthor.Scripts;
+using AdventureAuthor.Setup;
 using OEIShared.Utils;
 using OEIShared.IO;
 using OEIShared.OEIMath;
@@ -141,7 +142,7 @@ namespace AdventureAuthor.Core
 			INWN2Viewer viewer = form.App.GetViewerForResource(area);
 				
 			if (viewer != null) {	
-				if (!ModuleHelper.BeQuiet) {
+				if (!Say.BeQuiet) {
 					// Show a dialog asking the user if they want to save:
 					DialogResult result = MessageBox.Show("Save changes to this area?",
 					                    				  "Save", 
@@ -174,7 +175,7 @@ namespace AdventureAuthor.Core
 		{
 			INWN2Instance instance = value as INWN2Instance;
 			if (instance != null) {
-				Log.WriteAction(LogAction.added,Log.GetNWN2TypeName(value),instance.Name);
+				Log.WriteAction(LogAction.added,NWN2Utils.GetNWN2TypeName(value),instance.Name);
 				try {
 					ScriptHelper.ApplyDefaultScripts(instance);
 				}
@@ -183,7 +184,7 @@ namespace AdventureAuthor.Core
 				}
 			}
 			else {
-				Log.WriteAction(LogAction.added,Log.GetNWN2TypeName(value));
+				Log.WriteAction(LogAction.added,NWN2Utils.GetNWN2TypeName(value));
 			}
 		}
 		
@@ -192,10 +193,10 @@ namespace AdventureAuthor.Core
 		{
 			INWN2Instance instance = value as INWN2Instance;
 			if (instance != null) {
-				Log.WriteAction(LogAction.deleted,Log.GetNWN2TypeName(value),instance.Name);
+				Log.WriteAction(LogAction.deleted,NWN2Utils.GetNWN2TypeName(value),instance.Name);
 			}
 			else {
-				Log.WriteAction(LogAction.deleted,Log.GetNWN2TypeName(value));
+				Log.WriteAction(LogAction.deleted,NWN2Utils.GetNWN2TypeName(value));
 			}
 		}
 		

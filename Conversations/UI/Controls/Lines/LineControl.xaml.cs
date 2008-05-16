@@ -328,7 +328,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}        		
         	
         	if (this is BranchLine) {
-	       		if (!ModuleHelper.BeQuiet) {   
+	       		if (!Say.BeQuiet) {   
         			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
         			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
         				Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
@@ -362,7 +362,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	}
         	else {
 	        	// Only ask to confirm deletion if the line is not blank, or has an action associated with it:
-//	        	if (!ModuleHelper.BeQuiet && ((nwn2Line.Text.Strings.Count > 0 && nwn2Line.Text.Strings[0].Value.Length > 0) || nwn2Line.Actions.Count > 0)) {
+//	        	if (!Say.BeQuiet && ((nwn2Line.Text.Strings.Count > 0 && nwn2Line.Text.Strings[0].Value.Length > 0) || nwn2Line.Actions.Count > 0)) {
 		        	MessageBoxResult result = MessageBox.Show("Delete?","Are you sure?", MessageBoxButton.YesNo);
 		        	if (result == MessageBoxResult.Yes) {
 		        		Conversation.CurrentConversation.DeleteLine(this.nwn2Line);

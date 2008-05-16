@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -56,7 +57,7 @@ namespace AdventureAuthor.Evaluation.Viewer
             }            
             Open(reply);
             
-            Tools.SetXAMLButtonImage(DeleteButton,"delete.png","delete");
+            UITools.SetXAMLButtonImage(DeleteButton,"delete.png","delete");
             DeleteButton.ToolTip = "Delete this comment\n(teachers only)";
             EditButton.ToolTip = "Edit this comment\n(teachers only)";
         }

@@ -21,6 +21,7 @@ namespace AdventureAuthor.Setup
 		private static ToolBar aaToolbar;
 		private static ToolBar addIdeaToolbar;
 		
+		
 		private static MenuBarItem SaveModuleAsDialog(MenuBarItem fileMenu)
 		{
 			mainFileMenu = fileMenu;
@@ -105,7 +106,7 @@ namespace AdventureAuthor.Setup
 			};
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
 			conversationButton.Enabled = false;
-			Tools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
+			UITools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
 			
 			aaToolbar.Items.Add(conversationButton);
 							
@@ -116,7 +117,7 @@ namespace AdventureAuthor.Setup
 			};
 			variableButton.ToolTipText = "Manage game variables";
 			variableButton.Enabled = false;
-			Tools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
+			UITools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
 			aaToolbar.Items.Add(variableButton);
 							
 			ButtonItem ideasButton = new ButtonItem();
@@ -125,7 +126,7 @@ namespace AdventureAuthor.Setup
 				BringToFront(MagnetBoardViewer.Instance);
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
-			Tools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
+			UITools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
 			aaToolbar.Items.Add(ideasButton);
 							
 			ButtonItem addIdeaButton = new ButtonItem();
@@ -153,7 +154,7 @@ namespace AdventureAuthor.Setup
 					Say.Information("There are no areas to display in map view.");
 				}
 			};
-			Tools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
+			UITools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
 			analysisButton.ToolTipText = "Read a useful analysis of your game";
 			analysisButton.Enabled = false;
 			analysisButton.Visible = false;
@@ -170,13 +171,13 @@ namespace AdventureAuthor.Setup
 				}
 				BringToFront(WorksheetViewer.Instance);
 			};
-			Tools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
+			UITools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
 			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 			aaToolbar.Items.Add(evaluationButton);
 														
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate { };
-			Tools.SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
+			UITools.SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
 			achievementsButton.Enabled = false;
 			achievementsButton.Visible = false;
 			achievementsButton.ToolTipText = "View your achievements";

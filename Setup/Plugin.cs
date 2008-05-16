@@ -133,6 +133,9 @@ namespace AdventureAuthor.Setup
 					          "If this is the case, try reinstalling Adventure Author.");
 				}
 				try {
+					LogWriter.LogDirectory = ModuleHelper.UserLogDirectory;
+					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;
+					
 					EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
 					//EnsureDirectoryExists(ModuleHelper.PrivateUserDirectory);
 					EnsureDirectoryExists(ModuleHelper.DebugDirectory);

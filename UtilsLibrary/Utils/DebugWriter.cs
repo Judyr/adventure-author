@@ -10,7 +10,6 @@
 using System;
 using System.IO;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -20,13 +19,20 @@ namespace AdventureAuthor.Utils
 	public static class DebugWriter
 	{
 		private static StreamWriter writer = null;				
+				
+		
+		private static string debugDirectory;
+		public static string DebugDirectory {
+			get { return debugDirectory; }
+			set { debugDirectory = value; }
+		}			
 		
 		
 		public static void StartRecording()
 		{			
 			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " 
 				+ Tools.GetTimeStamp(true);
-			string path = LogWriter.GetUnusedPath(ModuleHelper.DebugDirectory,preferredFilename,"debug");
+			string path = LogWriter.GetUnusedPath(debugDirectory,preferredFilename,"debug");
 			FileInfo f = new FileInfo(path);			
 			Stream s = f.Open(FileMode.Create);
 			writer = new StreamWriter(s);

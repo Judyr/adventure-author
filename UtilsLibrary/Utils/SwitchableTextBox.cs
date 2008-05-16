@@ -12,7 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using AdventureAuthor.Conversations.UI.Controls;
 
 namespace AdventureAuthor.Utils
 {
@@ -55,38 +54,6 @@ namespace AdventureAuthor.Utils
 		
 		public SwitchableTextBox() : this(true)
 		{			
-		}
-		
-		
-		/// <summary>
-		/// Allow LineControls to be dragged over and dropped on this textbox.
-		/// </summary>
-		protected override void OnDragOver(DragEventArgs e)
-		{
-			if (e.Data.GetDataPresent(typeof(LineControl)) ||
-			    e.Data.GetDataPresent(typeof(Line)) ||
-			    e.Data.GetDataPresent(typeof(BranchLine))) 
-			{
-				return;
-			}
-			
-			base.OnDragOver(e);
-		}
-		
-		
-		/// <summary>
-		/// Allow LineControls to be dragged over and dropped on this textbox.
-		/// </summary>
-		protected override void OnDrop(DragEventArgs e)
-		{
-			if (e.Data.GetDataPresent(typeof(LineControl)) ||
-			    e.Data.GetDataPresent(typeof(Line)) ||
-			    e.Data.GetDataPresent(typeof(BranchLine))) 
-			{
-				return;
-			}
-			
-			base.OnDragOver(e);
 		}
 		
 		

@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Ideas
 {

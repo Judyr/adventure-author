@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.IO;
-using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Evaluation.Viewer
 {
@@ -78,9 +78,9 @@ namespace AdventureAuthor.Evaluation.Viewer
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
             
-            Tools.SetXAMLButtonImage(DeleteSectionButton,"delete.png","delete");
-            Tools.SetXAMLButtonImage(MoveSectionDownButton,"07.png","down");
-            Tools.SetXAMLButtonImage(MoveSectionUpButton,"08.png","up");
+            UITools.SetXAMLButtonImage(DeleteSectionButton,"delete.png","delete");
+            UITools.SetXAMLButtonImage(MoveSectionDownButton,"07.png","down");
+            UITools.SetXAMLButtonImage(MoveSectionUpButton,"08.png","up");
         }  
 			        
 			

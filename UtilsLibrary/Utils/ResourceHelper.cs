@@ -11,7 +11,6 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.IO;
-using AdventureAuthor.Core;
 
 namespace AdventureAuthor.Utils
 {
@@ -25,10 +24,9 @@ namespace AdventureAuthor.Utils
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <returns></returns>
-		public static Image GetImage(string filename)
+		public static Image GetImage(string path)
 		{			
 	        Image image = new Image();
-			string path = Path.Combine(ModuleHelper.ImagesDir,filename);
 	        ImageSourceConverter sourceConverter = new ImageSourceConverter();
 	        image.Source = (ImageSource)sourceConverter.ConvertFromString(path);            
 	        return image;
@@ -40,9 +38,8 @@ namespace AdventureAuthor.Utils
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <returns></returns>
-		public static System.Drawing.Bitmap GetBitmap(string filename)
+		public static System.Drawing.Bitmap GetBitmap(string path)
 		{
-			string path = Path.Combine(ModuleHelper.ImagesDir,filename);
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(path);
             return bitmap;
 		}

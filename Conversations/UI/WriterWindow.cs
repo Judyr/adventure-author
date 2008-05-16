@@ -985,7 +985,7 @@ namespace AdventureAuthor.Conversations.UI
 				if (SelectedLineControl != null && !Conversation.IsFiller(SelectedLineControl.Nwn2Line)) {
 					SelectedLineControl.FlushChangesToText();
 				}	
-				if (!ModuleHelper.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
+				if (!Say.BeQuiet && Conversation.CurrentConversation.IsDirty) {	
 					MessageBoxResult result = MessageBox.Show("Save?", "Save changes to this conversation?", MessageBoxButton.YesNoCancel);
 					if (result == MessageBoxResult.Cancel) {
 						return false;
@@ -1241,7 +1241,7 @@ namespace AdventureAuthor.Conversations.UI
         	}
         	
         	LineControl lineControl = (LineControl)e.Source;        	
-        	if (e.OriginalSource is SwitchableTextBox && ((SwitchableTextBox)e.OriginalSource).IsEditable) {
+        	if (e.OriginalSource is DialogueTextBox && ((DialogueTextBox)e.OriginalSource).IsEditable) {
         		return false; // don't drag if the user is actually selecting text
         	}
         	
