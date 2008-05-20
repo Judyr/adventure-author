@@ -218,6 +218,30 @@ namespace AdventureAuthor.Utils
 				default:
 					throw new ArgumentException("Not valid month number");
 			}
-		}	
+		}
+		
+			
+		public static void SetXAMLButtonImage(System.Windows.Controls.Button button, string path, string alternateText)
+		{
+	       	try {
+				button.Content = ResourceHelper.GetImage(path);
+	       	}
+	       	catch (Exception e) {
+	       		Say.Debug("Couldn't assign image for interface button: " + e);
+	       		button.Content = alternateText;
+	       	}
+		}
+						
+		
+		/// <summary>
+		/// Check that a given directory exists; if it doesn't, create it.
+		/// </summary>
+		/// <param name="directory">The directory to check for/create</param>
+		public static void EnsureDirectoryExists(string directory)
+		{
+			if (!Directory.Exists(directory)) {
+				Directory.CreateDirectory(directory);	
+			}	
+		}
 	}
 }

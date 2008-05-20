@@ -136,13 +136,10 @@ namespace AdventureAuthor.Setup
 					LogWriter.LogDirectory = ModuleHelper.UserLogDirectory;
 					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;
 					
-					EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
-					//EnsureDirectoryExists(ModuleHelper.PrivateUserDirectory);
-					EnsureDirectoryExists(ModuleHelper.DebugDirectory);
-					EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
-					EnsureDirectoryExists(ModuleHelper.WorksheetsDirectory);
-					EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);					
-					//EnsureDirectoryExists(ModuleHelper.CustomScriptsDirectory);
+					Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
+					Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
+					Tools.EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
+					Tools.EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
@@ -211,18 +208,6 @@ namespace AdventureAuthor.Setup
 			Log.WriteAction(LogAction.exited,"toolset");
 			LogWriter.StopRecording();
 			DebugWriter.StopRecording();
-		}
-				
-		
-		/// <summary>
-		/// Check that a given directory exists; if it doesn't, create it.
-		/// </summary>
-		/// <param name="directory">The directory to check for/create</param>
-		private void EnsureDirectoryExists(string directory)
-		{
-			if (!Directory.Exists(directory)) {
-				Directory.CreateDirectory(directory);	
-			}	
 		}
 		
 				
