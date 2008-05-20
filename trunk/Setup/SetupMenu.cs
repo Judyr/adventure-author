@@ -1,9 +1,10 @@
 using System;
+using System.IO;
 using System.Windows.Forms.Integration;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Core;
 using AdventureAuthor.Conversations.UI;
-using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Evaluation;
 using AdventureAuthor.Ideas;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
@@ -106,7 +107,7 @@ namespace AdventureAuthor.Setup
 			};
 			conversationButton.ToolTipText = "Write interactive conversations for game characters";
 			conversationButton.Enabled = false;
-			UITools.SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
+			SetSandbarButtonImage(conversationButton,"speechbubblesblue.png","Conversations");
 			
 			aaToolbar.Items.Add(conversationButton);
 							
@@ -117,7 +118,7 @@ namespace AdventureAuthor.Setup
 			};
 			variableButton.ToolTipText = "Manage game variables";
 			variableButton.Enabled = false;
-			UITools.SetSandbarButtonImage(variableButton,"gear.png","Variables");
+			SetSandbarButtonImage(variableButton,"gear.png","Variables");
 			aaToolbar.Items.Add(variableButton);
 							
 			ButtonItem ideasButton = new ButtonItem();
@@ -126,7 +127,7 @@ namespace AdventureAuthor.Setup
 				BringToFront(MagnetBoardViewer.Instance);
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
-			UITools.SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
+			SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
 			aaToolbar.Items.Add(ideasButton);
 							
 			ButtonItem addIdeaButton = new ButtonItem();
@@ -154,7 +155,7 @@ namespace AdventureAuthor.Setup
 					Say.Information("There are no areas to display in map view.");
 				}
 			};
-			UITools.SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
+			SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
 			analysisButton.ToolTipText = "Read a useful analysis of your game";
 			analysisButton.Enabled = false;
 			analysisButton.Visible = false;
@@ -171,13 +172,13 @@ namespace AdventureAuthor.Setup
 				}
 				BringToFront(WorksheetViewer.Instance);
 			};
-			UITools.SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
+			SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
 			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 			aaToolbar.Items.Add(evaluationButton);
 														
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate { };
-			UITools.SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
+			SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
 			achievementsButton.Enabled = false;
 			achievementsButton.Visible = false;
 			achievementsButton.ToolTipText = "View your achievements";
@@ -203,6 +204,15 @@ namespace AdventureAuthor.Setup
         	
 			aaToolbar.AddRemoveButtonsVisible = false;
 			return aaToolbar;
+		}
+		
+		
+		private static void SetSandbarButtonImage(ButtonItem button, string filename, string buttonText)
+		{		
+			string path = Path.Combine(ModuleHelper.ImagesDir,filename);
+			button.Image = ResourceHelper.GetBitmap(path);
+	        button.Text = buttonText;
+	        button.BeginGroup = true;
 		}
 	}
 }

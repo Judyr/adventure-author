@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Evaluation;
 using NWN2Toolset;
 using OEILocalization;
 
@@ -98,25 +98,6 @@ namespace AdventureAuthor.Setup
 		}
 		
 			
-		// Evaluation:
-		
-		/// <summary>
-		/// The default application to open images in.
-		/// </summary>
-		private ImageApp imageViewer;
-		[XmlElement]
-		[Description("The default application to open images in (usually when viewing a piece of evidence" + 
-					 "in the Evaluation application)."),
-		 Category("Evaluation"), Browsable(true)]
-		public ImageApp ImageViewer {
-			get { return imageViewer; }
-			set { 
-				if (imageViewer != value) {
-					imageViewer = value;
-					NotifyPropertyChanged("ImageViewer");
-				}
-			}
-		}	
 		
 		
 		// Conversations:
@@ -190,7 +171,6 @@ namespace AdventureAuthor.Setup
 		public AdventureAuthorPluginPreferences()
 		{			
 			// default preferences - will only be used if there's no preferences file found:
-			this.ImageViewer = ImageApp.Default;
 			this.LockInterface = true;
 			this.MagnetBoxAppearsAtSide = false;
 			this.OpenScratchpadByDefault = true;

@@ -41,7 +41,7 @@ using AdventureAuthor.Core.UI;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Ideas;
-using AdventureAuthor.Evaluation.Viewer;
+using AdventureAuthor.Evaluation;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Analysis.UI;
 using Crownwood.DotNetMagic.Common;
@@ -1178,24 +1178,7 @@ namespace AdventureAuthor.Setup
 		}	
 		
 		
-		/// <summary>
-		/// Bring up the Evaluation window.
-		/// </summary>
-		public static void LaunchEvaluation(Mode mode)
-		{
-			try {
-				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {
-					WorksheetViewer.Instance = new WorksheetViewer(mode);
-					
-					Plugin.SessionWindows.Add(WorksheetViewer.Instance);
-				}
-				ElementHost.EnableModelessKeyboardInterop(WorksheetViewer.Instance);
-				WorksheetViewer.Instance.Show();
-			}
-			catch (Exception e) {
-				Say.Error("Could not open evaluation viewer.",e);
-			}
-		}		
+	
 		
 		
 		/// <summary>

@@ -119,13 +119,6 @@ namespace AdventureAuthor.Core
 		}	
 		
 		
-		public static string WorksheetsDirectory {
-			get {
-				return Path.Combine(PublicUserDirectory,"Worksheets");
-			}
-		}
-		
-		
 		public static string MagnetBoardsDirectory {
 			get {
 				return Path.Combine(PublicUserDirectory,"Magnet boards");
