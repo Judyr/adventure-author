@@ -43,16 +43,53 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="ActivatableControl.cs" />
+    <Compile Include="ActivationEventArgs.cs" />
+    <Compile Include="AddReplyWindow.xaml.cs" />
+    <Compile Include="Answer.cs" />
     <Compile Include="App.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="CommentControl.cs" />
+    <Compile Include="Evidence.cs" />
+    <Compile Include="EvidenceControl.cs" />
+    <Compile Include="EvidenceControlStatus.cs" />
     <Compile Include="ImageApp.cs" />
+    <Compile Include="IStarred.cs" />
+    <Compile Include="Mode.cs" />
+    <Compile Include="MovingEventArgs.cs" />
+    <Compile Include="OptionalWorksheetPart.cs" />
+    <Compile Include="OptionalWorksheetPartControl.cs" />
+    <Compile Include="OptionalWorksheetPartControlEventArgs.cs" />
+    <Compile Include="Question.cs" />
+    <Compile Include="QuestionControl.xaml.cs" />
+    <Compile Include="Rating.cs" />
+    <Compile Include="RatingControl.xaml.cs" />
+    <Compile Include="Reply.cs" />
+    <Compile Include="ReplyControl.xaml.cs" />
+    <Compile Include="ReplyEventArgs.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="Section.cs" />
+    <Compile Include="SectionControl.cs" />
+    <Compile Include="SelectModeWindow.xaml.cs" />
+    <Compile Include="Worksheet.cs" />
     <Compile Include="WorksheetPreferences.cs" />
+    <Compile Include="WorksheetViewer.cs" />
     <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>
     </ProjectReference>
+    <Page Include="AddReplyWindow.xaml" />
+    <Page Include="CommentControl.xaml" />
+    <Page Include="EvidenceControl.xaml" />
+    <Page Include="QuestionControl.xaml" />
+    <Page Include="RatingControl.xaml" />
+    <Page Include="ReplyControl.xaml" />
+    <Page Include="SectionControl.xaml" />
+    <Page Include="SelectModeWindow.xaml" />
+    <Page Include="WorksheetViewer.xaml" />
   </ItemGroup>
 </Project>
