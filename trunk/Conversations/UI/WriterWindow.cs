@@ -882,7 +882,7 @@ namespace AdventureAuthor.Conversations.UI
 	  			if (ok) {	  				
 	  				string filename = saveFileDialog.FileName;
 	  				try {	  					
-	  					Conversation.CurrentConversation.ExportToTextFile(filename,format);
+	  					Conversation.ExportToTextFile(Conversation.CurrentConversation,filename,format);
 	  					Log.WriteMessage("exported conversation to " + filename + " (format: " + format + ")");
 	  					Process.Start(filename);
 	  				}

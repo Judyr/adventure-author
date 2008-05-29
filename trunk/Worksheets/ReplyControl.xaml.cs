@@ -32,15 +32,33 @@ namespace AdventureAuthor.Evaluation
     	
     	private string authorName;
     	
+    	private Reply reply;
+		public Reply Reply {
+			get { return reply; }
+			set { 
+				reply = value; 
+				Open(reply);
+			}
+		}
+    	
     	#endregion
     	
     	#region Events
     	
-    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleted;
-    	
+    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleted;    	
     	protected virtual void OnDeleted(OptionalWorksheetPartControlEventArgs e)
     	{
     		EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleted;
+    		if (handler != null) {
+    			handler(this,e);
+    		}
+    	}
+    	
+    	
+    	public event EventHandler Edited;    	
+    	protected virtual void OnEdited(EventArgs e)
+    	{
+    		EventHandler handler = Edited;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -107,18 +125,8 @@ namespace AdventureAuthor.Evaluation
         private void OnClick_Edit(object sender, RoutedEventArgs e)
         {
         	if (User.IdentifyTeacherOrDemandPassword()) {
-        		AddReplyWindow window = new AddReplyWindow((Reply)GetWorksheetPart());
-        		window.ReplyAdded += new EventHandler<OptionalWorksheetPartEventArgs>(ReplyEdited);
-        		window.ShowDialog();
+        		OnEdited(new EventArgs());
         	}
-        }
-
-        
-        private void ReplyEdited(object sender, OptionalWorksheetPartEventArgs e)
-        {
-        	Reply reply = (Reply)e.Part;
-        	Log.WriteAction(LogAction.edited,"reply",reply.ToString());
-        	Open(reply);
         }
 		
         

@@ -35,7 +35,7 @@ namespace AdventureAuthor.Variables.UI
         	
             InitializeComponent();    
             
-            DeleteButton.Content = ResourceHelper.GetImage("delete.png"); // NB: was commented out - why?
+            DeleteButton.Content = ResourceHelper.GetImage(Path.Combine(ModuleHelper.ImagesDir,"delete.png")); // NB: was commented out - why?
             
             VariableNameTextBox.Text = var.Name;
             VariableTypeTextBox.Text = GetVariableType(var);

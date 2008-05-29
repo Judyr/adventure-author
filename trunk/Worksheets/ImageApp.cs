@@ -12,8 +12,7 @@ using System;
 namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
-	/// Image viewers to launch pictures in from
-	/// the evaluation application.
+	/// Image viewers to launch pictures in.
 	/// </summary>
 	public enum ImageApp {
 		MicrosoftPaint,

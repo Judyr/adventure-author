@@ -90,7 +90,7 @@ namespace AdventureAuthor.Evaluation
     	
     	#endregion
     	    	    	    	
-    	#region Constructors    	   	
+    	#region Constructors    
     	
     	public WorksheetViewer(Mode mode)
     	{
@@ -863,25 +863,29 @@ namespace AdventureAuthor.Evaluation
     		saveFileDialog.DefaultExt = Filters.TXT;
     		saveFileDialog.Filter = Filters.TXT;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to export worksheet to";  		
-  		
-			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
-				saveFileDialog.InitialDirectory = WorksheetPreferences.Instance.SavedWorksheetsDirectory;
-			}	
-	  		// get the default filename from the worksheet filename:
-	  		try {
-	  			saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,
-	  			                                       Path.GetFileNameWithoutExtension(filename) + ".txt");
+  			saveFileDialog.Title = "Select location to export worksheet to";  	  			
+  			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+			
+	  		// try to get the default filename from the worksheet filename:
+	  		string suggestedFileName;
+	  		if (filename == null || filename == String.Empty) {
+	  			suggestedFileName = "Untitled.txt";
 	  		}
-	  		catch (Exception e) {
-	  			Say.Error(e);
-	  		};
+	  		else {
+	  			try {
+	  				suggestedFileName = Path.GetFileNameWithoutExtension(filename) + ".txt";
+		  		}
+		  		catch (Exception e) {
+		  			Say.Debug("Failed to get a suggested filename for worksheet - " + e);
+		  			suggestedFileName = "Untitled.txt";
+		  		};
+	  		}
+	  		saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,suggestedFileName);
   			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string exportFilename = saveFileDialog.FileName;
-  				Log.WriteAction(LogAction.exported,"worksheet",Path.GetFileName(exportFilename));
-  			
+  				Log.WriteAction(LogAction.exported,"worksheet",Path.GetFileName(exportFilename));  			
   				try {
   					ExportToTextFile(exportFilename);
   					Process.Start(exportFilename);
