@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Core;
@@ -931,7 +930,7 @@ namespace AdventureAuthor.Ideas
         	window.Background = Brushes.DarkBlue;
         	StackPanel sp = new StackPanel();
         	sp.Orientation = Orientation.Horizontal;
-        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage("einstein.png");
+        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage(Path.Combine(ModuleHelper.ImagesDir,"einstein.png"));
         	einstein.Height = 200;
         	einstein.Width = 180;
         	TextBlock tb = new TextBlock();

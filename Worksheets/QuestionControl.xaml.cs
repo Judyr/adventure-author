@@ -156,8 +156,11 @@ namespace AdventureAuthor.Evaluation
         		throw new ArgumentNullException("Can't add a null reply field.");
         	}            	
         	RepliesPanel.Children.Add(control);
-        	control.Changed += delegate { OnChanged(new EventArgs()); };;
+        	control.Changed += delegate { OnChanged(new EventArgs()); };
         	control.Deleted += new EventHandler<OptionalWorksheetPartControlEventArgs>(replyControl_Deleted);
+        	control.Edited += delegate(object sender, EventArgs e) {
+        		ShowReplyDialog((ReplyControl)sender);
+        	};
         	OnChanged(new EventArgs());
         }
 			        
@@ -222,17 +225,39 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_AddReply(object sender, EventArgs e)
         {
-        	AddReplyWindow window = new AddReplyWindow();
-        	window.ReplyAdded += new EventHandler<OptionalWorksheetPartEventArgs>(ReplyAdded);
-        	window.ShowDialog();        	
+        	ShowReplyDialog();
         }
-
         
-        private void ReplyAdded(object sender, OptionalWorksheetPartEventArgs e)
+        
+        private void ShowReplyDialog()
         {
-        	Reply reply = (Reply)e.Part;
-        	Log.WriteAction(LogAction.added,"reply",reply.ToString());
-        	AddReplyField(reply);
+        	ShowReplyDialog(null);
+        }
+        
+        
+        private void ShowReplyDialog(ReplyControl replyControl)
+        {
+        	AddReplyWindow window;
+        	if (replyControl != null) { // editing an existing reply
+        		window = new AddReplyWindow(replyControl.Reply);
+        		window.ReplyEdited += delegate(object sender, OptionalWorksheetPartEventArgs e) { 
+        			Reply reply = (Reply)e.Part;
+        			Log.WriteAction(LogAction.edited,"reply",reply.ToString());
+        			replyControl.Reply = reply;
+        		};
+        	}
+        	else { // adding a new reply
+        		window = new AddReplyWindow();
+        		window.ReplyEdited += delegate(object sender, OptionalWorksheetPartEventArgs e) { 
+        			Reply reply = (Reply)e.Part;
+        			Log.WriteAction(LogAction.added,"reply",reply.ToString());
+        			AddReplyField(reply);
+        		};
+        	}
+        	Brush background = Background;
+        	Background = Brushes.LightSalmon;
+        	window.ShowDialog();
+        	Background = background;
         }
         
         

@@ -147,7 +147,7 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		
-		private StreamWriter sw;
+		private static StreamWriter sw;
 		
 		
 		/// <summary>
@@ -986,28 +986,39 @@ namespace AdventureAuthor.Conversations
 					
 		#region General methods
 		
-		public void ExportToTextFile(string filename, ExportFormat format)
+//		public static void ExportAllConversationsInDirectoryToTextFile(string directory, ExportFormat format, SearchOption searchOption)
+//		{
+//			DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+//			foreach (FileInfo dlgFile in directoryInfo.GetFiles("*.dlg",searchOption)) {
+//				WriterWindow.Instance.Open(Path.GetFileNameWithoutExtension(dlgFile.Name));
+//				ExportToTextFile(CurrentConversation,WriterWindow.Instance.OriginalFilename+".txt", ExportFormat.TreeFormat);
+//			}
+//		}
+		
+		
+		public static void ExportToTextFile(Conversation conversation, string exportFilename, ExportFormat format)
 		{
-			FileInfo fi = new FileInfo(filename);
+			FileInfo fi = new FileInfo(exportFilename);
 			if (sw != null) {
 				sw.Dispose();
 			}
 			sw = fi.CreateText();
 			sw.AutoFlush = false;
 			
-			sw.WriteLine(Path.GetFileName(filename));
+			sw.WriteLine(Path.GetFileName(exportFilename));
 			sw.WriteLine();
 			
 			switch (format) {
 					
 				case ExportFormat.PageFormat:
-					foreach (Page page in WriterWindow.Instance.Pages) {
-						WritePage(page);
-					}
+					Say.Information("Not implemented - use tree format instead.");
+//					foreach (Page page in WriterWindow.Instance.Pages) {
+//						WritePage(page);
+//					}
 					break;
 					
 				case ExportFormat.TreeFormat:
-					Write(nwnConv.StartingList,String.Empty,true);
+					Write(conversation.nwnConv.StartingList,String.Empty,true);
 					break;
 			}
 			
@@ -1057,7 +1068,7 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		
-		private void WriteSingleLine(NWN2ConversationConnector line, string indent)
+		private static void WriteSingleLine(NWN2ConversationConnector line, string indent)
 		{
 			if (line == null) {
 				throw new ArgumentNullException("Tried to write a null line to file.");
@@ -1084,7 +1095,7 @@ namespace AdventureAuthor.Conversations
 		}
 		
 		
-		private void Write(NWN2ConversationConnectorCollection siblings, string indent, bool increaseIndent)
+		private static void Write(NWN2ConversationConnectorCollection siblings, string indent, bool increaseIndent)
 		{
 			switch (siblings.Count) {
 				case 0:
