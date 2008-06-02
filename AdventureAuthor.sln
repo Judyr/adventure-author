@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAUtils", "UtilsLibrary\AAU
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worksheets", "Worksheets\Worksheets.csproj", "{FE28833C-EDC9-48FC-80E4-4CE168E828DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magnets", "Magnets\Magnets.csproj", "{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,5 +98,9 @@ Global
 		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal
