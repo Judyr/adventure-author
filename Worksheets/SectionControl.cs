@@ -4,7 +4,6 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.IO;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Evaluation
 {

@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Evaluation
 {

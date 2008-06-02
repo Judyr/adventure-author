@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation
@@ -184,12 +183,21 @@ namespace AdventureAuthor.Evaluation
     	}
     	
 
-    	private void viewerClosing(object sender, CancelEventArgs e)
+    	private void viewerClosing(object sender, CancelEventArgs ea)
     	{	
 			if (!CloseWorksheetDialog()) {
-				e.Cancel = true;
+				ea.Cancel = true;
 			}
     		else {
+    			try {
+	    			// Serialize the user's preferences:
+	    			Serialization.Serialize(WorksheetPreferences.DefaultWorksheetPreferencesPath,WorksheetPreferences.Instance);
+    			}
+    			catch (Exception e) {
+    				Say.Error("Something went wrong when trying to save your preferences - the choices " +
+    				          "you have made may not have been saved.",e);
+    			}
+    			
     			Log.WriteAction(LogAction.exited,"evaluation");
     		}
     	}

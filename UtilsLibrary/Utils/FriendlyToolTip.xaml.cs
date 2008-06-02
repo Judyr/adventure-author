@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AdventureAuthor.Setup.UI
+namespace AdventureAuthor.Utils
 {
     public partial class FriendlyToolTip : ToolTip
     {
