@@ -1,0 +1,9 @@
+﻿<Window x:Class="Magnets.Window1"
+	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="Magnets" Height="300" Width="300"
+	>
+	<Grid>
+         <Button Click="OnClickButton" Height="30" Width="200" Background="Red"/>		
+	</Grid>
+</Window>

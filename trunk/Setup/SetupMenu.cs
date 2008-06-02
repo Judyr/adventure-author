@@ -75,6 +75,27 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
 			exitAdventureAuthor.Activate += delegate { form.App.Close(); };
+			
+			MenuButtonItem testingMessageQueue = new MenuButtonItem("Testing messages");
+			testingMessageQueue.Activate += delegate { 
+				System.Messaging.MessageQueue queue = null;
+				
+				string queueName = System.IO.Path.Combine(System.Environment.MachineName,"otheronefollows");
+			
+				if (System.Messaging.MessageQueue.Exists(queueName))
+				queue = new System.Messaging.MessageQueue(queueName);
+				else
+				queue = System.Messaging.MessageQueue.Create(queueName, false);
+				
+				
+				
+				System.Messaging.Message[] messages = queue.GetAllMessages();
+				
+				foreach (System.Messaging.Message message in messages)
+				{
+					Say.Information(message.Label + "\n\n" + message.Body.ToString());
+				}
+			};
 									
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newModule,
@@ -87,6 +108,7 @@ namespace AdventureAuthor.Setup
 			                           	newArea,
 //			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
+			                           	testingMessageQueue
 			                           });	
 			
 			return fileMenu;

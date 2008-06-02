@@ -72,7 +72,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		public string ToolTipText {
 			get {
 				if (parentNode == null) { // root
-					return "Start";
+					return parentNode.Text;
 				}
 				else {
 					return Conversation.GetStringFromOEIString(page.LeadLine.Text);
@@ -104,7 +104,7 @@ namespace AdventureAuthor.Conversations.UI.Graph
 		private void SetLabel()
 		{
 			if (this.parentNode == null) { // root
-				this.Text = "Start";
+				this.Text = "Page 1";
 			}
 			else {			
 				string newText = Conversation.GetStringFromOEIString(this.page.LeadLine.Text);

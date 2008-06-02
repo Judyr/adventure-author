@@ -212,10 +212,11 @@ namespace AdventureAuthor.Evaluation
 						break;
 					case ImageApp.MicrosoftPaint:
 						try {
-							Process.Start("mspaint.exe",filename);
+							string mspaintpath = Path.Combine(System.Environment.SystemDirectory,"mspaint.exe");
+							Process.Start(mspaintpath,filename);
 						}
 						catch (Exception) {
-							Say.Information("Couldn't find Microsoft Paint on this system - opening with " +
+							Say.Information("Couldn't find Microsoft Paint - opening with " +
 							                "default application instead.");
 							Process.Start(filename);
 						}
