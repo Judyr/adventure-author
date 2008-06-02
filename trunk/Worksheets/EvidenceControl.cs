@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation

@@ -70,11 +70,12 @@ namespace AdventureAuthor.Core
 		static ModuleHelper() {
 			FileInfo nwn2ExeFile = new FileInfo(Application.ExecutablePath);
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
-			adventureAuthorInstallDirectory = Path.Combine(nwn2InstallDirectory,"AdventureAuthor");
 			string localApplicationDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			//privateUserDirectory = Path.Combine(localApplicationDataFolder,"Adventure Author");
 			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
+			
+			// TODO: get this value from the registry
+			adventureAuthorInstallDirectory = @"C:\Program Files\Heriot-Watt University\Adventure Author";
 		}
 		
 		

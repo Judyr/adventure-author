@@ -8,11 +8,10 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Forms.Integration;
+using System.IO;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Setup;
-using System.Windows.Forms.Integration;
 
 namespace AdventureAuthor.Evaluation
 {

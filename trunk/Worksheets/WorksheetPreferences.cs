@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Reflection;
 using AdventureAuthor.Utils;
+using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation
 {
@@ -46,14 +47,24 @@ namespace AdventureAuthor.Evaluation
 		public static WorksheetPreferences Instance {
 			get {
 				if (instance == null) {
-					instance = new WorksheetPreferences();
+	            	// Look for a saved preferences file in the default path - if it's not
+	            	// there, use a generic set of preferences:
+					if (File.Exists(defaultWorksheetPreferencesPath) &&
+					    Serialization.IsSerialisedObjectOfType(defaultWorksheetPreferencesPath,typeof(WorksheetPreferences))) 
+					{
+						object o = Serialization.Deserialize(defaultWorksheetPreferencesPath,typeof(WorksheetPreferences));
+						WorksheetPreferences.Instance = (WorksheetPreferences)o;
+					}
+					else {
+						instance = new WorksheetPreferences();
+					}
 				}
 				return instance;
 			}
 			set {
 				instance = value;
 			}
-		}
+		}		
 		
 		
 		/// <summary>
@@ -63,12 +74,6 @@ namespace AdventureAuthor.Evaluation
 		[XmlElement]
 		public string InstallDirectory {
 			get { return installDirectory; }
-			set { 
-				if (installDirectory != value) {
-					installDirectory = value;
-					NotifyPropertyChanged("InstallDirectory");
-				}
-			}
 		}
 		
 		
@@ -85,6 +90,16 @@ namespace AdventureAuthor.Evaluation
 					NotifyPropertyChanged("SavedWorksheetsDirectory");
 				}
 			}
+		}
+		
+		
+		/// <summary>
+		/// The path where user preferences are kept.
+		/// </summary>
+		private static string defaultWorksheetPreferencesPath;
+		[XmlElement]
+		public static string DefaultWorksheetPreferencesPath {
+			get { return defaultWorksheetPreferencesPath; }
 		}
 		
 		
@@ -109,7 +124,11 @@ namespace AdventureAuthor.Evaluation
 		
 		static WorksheetPreferences()
 		{
-			instance = null;
+			instance = null;	
+			
+			string myDocumentsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			string defaultSavedWorksheetsDirectory = Path.Combine(myDocumentsDirectory,"Worksheets");
+			defaultWorksheetPreferencesPath = Path.Combine(defaultSavedWorksheetsDirectory,"WorksheetsPreferences.xml");
 		}
  
 		
@@ -117,9 +136,11 @@ namespace AdventureAuthor.Evaluation
 		{			
 			// default preferences - should only be used if there's no preferences file found:
 			this.ImageViewer = ImageApp.Default;
-			this.InstallDirectory = @"C:\Program Files\Heriot-Watt University\Worksheets";
 			string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			this.SavedWorksheetsDirectory = Path.Combine(myDocumentsPath,"Worksheets");
+			this.SavedWorksheetsDirectory = Path.Combine(myDocumentsPath,"Worksheets");		
+			
+			// TODO get the install directory from the registry:
+			installDirectory = @"C:\Program Files\Heriot-Watt University\Worksheets";			
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}
