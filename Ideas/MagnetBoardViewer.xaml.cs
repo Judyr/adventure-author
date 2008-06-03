@@ -231,8 +231,8 @@ namespace AdventureAuthor.Ideas
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.XML;
-    		saveFileDialog.Filter = Filters.XML;
+    		saveFileDialog.DefaultExt = Filters.XML_ALL;
+    		saveFileDialog.Filter = Filters.XML_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save magnet board to";
 			if (Directory.Exists(ModuleHelper.MagnetBoardsDirectory)) {
@@ -386,8 +386,8 @@ namespace AdventureAuthor.Ideas
         {		
     		OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = Filters.XML;
-    		openFileDialog.Filter = Filters.XML;
+    		openFileDialog.DefaultExt = Filters.XML_ALL;
+    		openFileDialog.Filter = Filters.XML_ALL;
 			openFileDialog.Title = "Select a magnet board file to open";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;

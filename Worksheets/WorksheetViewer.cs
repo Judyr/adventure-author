@@ -832,9 +832,9 @@ namespace AdventureAuthor.Evaluation
     	{    				
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = Filters.XML;
-    		openFileDialog.Filter = Filters.XML;
-			openFileDialog.Title = "Select a worksheet file to open";
+    		openFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
+    		openFileDialog.Filter = Filters.WORKSHEETS_ALL;
+			openFileDialog.Title = "Select a worksheet to open";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;
 			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
@@ -868,8 +868,8 @@ namespace AdventureAuthor.Evaluation
     	    SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.TXT;
-    		saveFileDialog.Filter = Filters.TXT;
+    		saveFileDialog.DefaultExt = Filters.TXT_ALL;
+    		saveFileDialog.Filter = Filters.TXT_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to export worksheet to";  	  			
   			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1035,8 +1035,8 @@ namespace AdventureAuthor.Evaluation
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.XML;
-    		saveFileDialog.Filter = Filters.XML;
+    		saveFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
+    		saveFileDialog.Filter = Filters.WORKSHEETS_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save worksheet to";
 			saveFileDialog.RestoreDirectory = false;
@@ -1117,8 +1117,8 @@ namespace AdventureAuthor.Evaluation
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.XML;
-    		saveFileDialog.Filter = Filters.XML;
+    		saveFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
+    		saveFileDialog.Filter = Filters.WORKSHEETS_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save blank copy to";  			
 			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {

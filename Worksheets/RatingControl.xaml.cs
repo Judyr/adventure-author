@@ -59,9 +59,9 @@ namespace AdventureAuthor.Evaluation
 				SelectedStars = 0;
         	}
             
-            ToolTip = "How much do you agree with the question?\n" +
-            		  "1 star - I do not agree at all.\n" +
-            		  "5 stars - I agree completely.";
+            ToolTip = "Highlight between 1 and 5 stars to answer this question.\n" +
+            			"Click the left-most star to highlight only 1 star,\n" +
+            			"and the right-most to highlight all 5.";
         }
     	
     	

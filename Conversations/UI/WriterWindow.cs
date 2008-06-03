@@ -865,8 +865,8 @@ namespace AdventureAuthor.Conversations.UI
 	    		SaveFileDialog saveFileDialog = new SaveFileDialog();
 	    		saveFileDialog.AddExtension = true;
 	    		saveFileDialog.CheckPathExists = true;
-	    		saveFileDialog.DefaultExt = Filters.TXT;
-	    		saveFileDialog.Filter = Filters.TXT;
+	    		saveFileDialog.DefaultExt = Filters.TXT_ALL;
+	    		saveFileDialog.Filter = Filters.TXT_ALL;
 	  			saveFileDialog.ValidateNames = true;
 	  			saveFileDialog.Title = "Select location to export conversation to";
 	  			

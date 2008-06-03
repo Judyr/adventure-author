@@ -17,13 +17,22 @@ namespace AdventureAuthor.Utils
 	public static class Filters
 	{
     	#region Constants
+    	
+    	// TODO separate all filters into TXT and TXT_ALL, where TXT_ALL is TXT + "|" + ALL
+    	// TODO check every use of a filter to set it to the correct one (TXT versus TXT_ALL)
     	    	
-    	public const string TXT = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-    	public const string XML = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
-    	public const string PICTURES = "Pictures (*.jpg;*.jpeg;*.bmp;*.png;*.gif)|*.jpg;*.jpeg;*.bmp;*.png;*.gif";
-    	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";
-    	public const string ALL = "All files (*.*)|*.*";    	
-    	public const string WORKSHEET_EVIDENCE = PICTURES + "|" + ALL;
+    	public const string TXT = "Text files (*.txt)|*.txt";    	
+    	public const string XML = "XML files (*.xml)|*.xml";    	
+    	public const string PICTURES = "Pictures (*.jpg;*.jpeg;*.bmp;*.png;*.gif)|*.jpg;*.jpeg;*.bmp;*.png;*.gif";    	
+    	public const string WORKSHEETS = "Worksheet files (*.worksheet)|*.worksheet";    	
+    	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";    	
+    	public const string ALL = "All files (*.*)|*.*";    	    	
+    	
+    	public const string TXT_ALL = TXT + "|" + ALL;  
+    	public const string XML_ALL = XML + "|" + ALL;  
+    	public const string PICTURES_ALL = PICTURES + "|" + ALL;  
+    	public const string WORKSHEETS_ALL = WORKSHEETS + "|" + ALL;  
+    	public const string COMPILEDSCRIPTS_ALL = COMPILEDSCRIPTS + "|" + ALL; 
     	
     	#endregion
 	}
