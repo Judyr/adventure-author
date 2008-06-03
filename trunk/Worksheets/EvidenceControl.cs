@@ -127,8 +127,9 @@ namespace AdventureAuthor.Evaluation
             else {
             	Filename = evidence.Value;
             }
-			
-            ClearLink.ToolTip = "Remove supporting evidence";
+            
+            SelectLink.ToolTip = "Add a piece of evidence which\nsupports your other answers.";
+            ClearLink.ToolTip = "Remove the current supporting evidence.";
         }
         
         #endregion
@@ -145,8 +146,8 @@ namespace AdventureAuthor.Evaluation
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = Filters.WORKSHEET_EVIDENCE;
-    		openFileDialog.Filter = Filters.WORKSHEET_EVIDENCE;
+    		openFileDialog.DefaultExt = Filters.PICTURES_ALL;
+    		openFileDialog.Filter = Filters.PICTURES_ALL;
 			openFileDialog.Title = "Select a file to attach as evidence";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;

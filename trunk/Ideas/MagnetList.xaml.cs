@@ -265,8 +265,8 @@ namespace AdventureAuthor.Ideas
 		           				SaveFileDialog saveFileDialog = new SaveFileDialog();
 					    		saveFileDialog.AddExtension = true;
 					    		saveFileDialog.CheckPathExists = true;
-					    		saveFileDialog.DefaultExt = Filters.XML;
-					    		saveFileDialog.Filter = Filters.XML;
+					    		saveFileDialog.DefaultExt = Filters.XML_ALL;
+					    		saveFileDialog.Filter = Filters.XML_ALL;
 					  			saveFileDialog.ValidateNames = true;
 					  			saveFileDialog.OverwritePrompt = true;
 					  			saveFileDialog.Title = "Select location to save copy of corrupted Magnet Box";
