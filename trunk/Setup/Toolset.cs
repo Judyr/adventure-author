@@ -64,6 +64,8 @@ using NWN2Toolset.Plugins;
 using OEIShared.IO.TwoDA;
 using OEIShared.Utils;
 using TD.SandBar;
+using System.IO;
+using System.IO.Pipes;
 using crown = Crownwood.DotNetMagic.Controls;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
@@ -607,6 +609,26 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
+			// If a MagnetSubmitted event is raised, that magnet should now be
+			// sent to the Magnets application (if it can be found):
+			MagnetSubmitted += delegate(object sender, MagnetEventArgs e) 
+			{  
+				using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
+				{
+					try {
+						client.Connect(500);
+						using (StreamWriter writer = new StreamWriter(client))
+						{
+							writer.AutoFlush = true;
+							writer.WriteLine(e.Magnet);
+						}
+					}
+					catch (TimeoutException) {
+						Say.Warning("I couldn't find the Fridge Magnets application to send the blueprint to.");
+					}
+				}
+			};
+			
 			// Set up the interface for initial use - update the title bar, and disable
 			// parts of the interface which require an open module to be useful.
 			UpdateTitleBar();		
@@ -618,6 +640,21 @@ namespace AdventureAuthor.Setup
 			SetInterfaceLock(Plugin.Options.LockInterface);
 			areaContentsView.BringToFront();
 			areaContentsView.Focus();
+		}
+		
+		private static NamedPipeClientStream client = null;
+		
+		
+		private static void connectToPipe(string pipeName)
+		{
+			if (client == null) {
+				client = new NamedPipeClientStream(".",pipeName,PipeDirection.Out);
+			}
+			else {
+				
+			}
+			
+			
 		}
 		
 		
@@ -822,7 +859,7 @@ namespace AdventureAuthor.Setup
 				}
 			}
 			catch (Exception e) {
-				Say.Error("Erorr in resourceviewerclosed",e);
+				Say.Error("Error in resourceviewerclosed",e);
 			}
 		}
 		

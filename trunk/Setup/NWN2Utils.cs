@@ -86,7 +86,7 @@ namespace AdventureAuthor.Setup
 					return "encounter";
 				}
 				else if (o is NWN2EnvironmentInstance) {
-					return "environment";
+					return "environmentobject";
 				}
 				else if (o is NWN2ItemInstance) {
 					return "item";
