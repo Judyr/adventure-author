@@ -110,7 +110,7 @@ namespace AdventureAuthor.Evaluation
     			
         public EvidenceControl(Evidence evidence)
         {        
-        	properName = "Evidence";
+        	properName = "evidence";
         	
     		if (evidence == null) {
         		evidence = new Evidence();

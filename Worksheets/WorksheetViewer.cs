@@ -349,16 +349,16 @@ namespace AdventureAuthor.Evaluation
 	    	}
 	    		    	
             DateField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetDate",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"worksheetdate",e.NewValue);
             };
             DesignerNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetDesignerName",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"worksheetdesignername",e.NewValue);
             };
             EvaluatorNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetEvaluatorName",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"worksheetevaluatorname",e.NewValue);
             };
             TitleField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetTitle",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"worksheettitle",e.NewValue);
             };
 	    	
 	    	DateField.TextChanged += delegate { 

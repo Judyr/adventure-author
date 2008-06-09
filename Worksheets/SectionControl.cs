@@ -43,7 +43,7 @@ namespace AdventureAuthor.Evaluation
     	
         public SectionControl(Section section) 	
         {
-        	properName = "Section";
+        	properName = "section";
         	
         	if (section == null) {
         		section = new Section();

@@ -10,6 +10,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Messaging;
+using System.IO;
+using System.IO.Pipes;
+using System.Threading;
+using AdventureAuthor.Utils;
 
 namespace Magnets
 {
@@ -17,32 +21,41 @@ namespace Magnets
 	/// Interaction logic for Window1.xaml
 	/// </summary>
 	public partial class Window1 : Window
-	{
-		public static MessageQueue queue = null;
+	{		
+		private static string pipeName = "magnets";
 		
 		
 		public Window1()
 		{
-			InitializeComponent();
-			try {
-				 
+			InitializeComponent();					
 			
-				string queueName = System.IO.Path.Combine(System.Environment.MachineName,"otheronefollows");
-				
-				if (MessageQueue.Exists(queueName))
-				queue = new MessageQueue(queueName);
-				else
-				queue = MessageQueue.Create(queueName, false);
-			}
-			catch (Exception e) {
-				MessageBox.Show(e.ToString());
-			}
+			Loaded += delegate { 
+				Thread thread = new Thread(new ThreadStart(listenForConnection));
+				thread.Priority = ThreadPriority.BelowNormal;
+				thread.Start(); 
+			};
 		}
 		
 		
-		public void OnClickButton(object sender, EventArgs e)
+		private void listenForConnection()
 		{
-			queue.Send("This is the message body","I am a message - welcome me");
+			using (NamedPipeServerStream server = new NamedPipeServerStream(pipeName,PipeDirection.In))
+			{
+				server.WaitForConnection();
+				
+				string message;			
+				using (StreamReader reader = new StreamReader(server)) // when this is disposed, will it dispose the Server?
+				{
+					while ((message = reader.ReadLine()) != null) {
+						Console.WriteLine("Received: " + message);
+					}
+					if (server.IsConnected) {
+						server.Disconnect();
+					}
+				}				
+			}
+				
+			listenForConnection();
 		}
 	}
 }

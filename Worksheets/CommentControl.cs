@@ -13,7 +13,7 @@ namespace AdventureAuthor.Evaluation
     	
     	public CommentControl(Comment comment)
         {    		
-        	properName = "Comment";
+        	properName = "comment";
         	
         	if (comment == null) {
     			comment = new Comment();

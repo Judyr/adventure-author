@@ -38,7 +38,7 @@ namespace AdventureAuthor.Evaluation
         
     	public RatingControl(Rating rating)
         {
-        	properName = "StarRating";        	
+        	properName = "starrating";        	
         	
     		if (rating == null) {
     			rating = new Rating();

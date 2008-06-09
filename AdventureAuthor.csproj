@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectGuid>{6C3192D1-C3CC-499B-B443-24AE5FC16914}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +12,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <DocumentationFile>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\AdventureAuthor.xml</DocumentationFile>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\</OutputPath>
@@ -99,6 +100,9 @@
     <Reference Include="System.Configuration">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Private>False</Private>
     </Reference>
@@ -140,7 +144,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
     <Compile Include="Achievements\AchievedEventArgs.cs" />
     <Compile Include="Achievements\ArchitectAchievement.cs" />

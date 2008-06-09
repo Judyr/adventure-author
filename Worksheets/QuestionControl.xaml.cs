@@ -45,7 +45,7 @@ namespace AdventureAuthor.Evaluation
     	
         public QuestionControl(Question question)
         {
-        	properName = "Question";
+        	properName = "question";
         	
         	if (question == null) {
         		question = new Question();
