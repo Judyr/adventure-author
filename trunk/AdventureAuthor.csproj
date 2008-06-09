@@ -261,34 +261,6 @@
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Ideas\BlueprintMagnetControl.cs" />
-    <Compile Include="Ideas\BlueprintMagnetControlInfo.cs" />
-    <Compile Include="Ideas\EditMagnetWindow.cs">
-      <DependentUpon>EditMagnetWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ideas\Board.cs" />
-    <Compile Include="Ideas\BoardObject.cs" />
-    <Compile Include="Ideas\MagnetCategoryEventArgs.cs" />
-    <Compile Include="Ideas\MagnetDragAdorner.cs" />
-    <Compile Include="Ideas\Idea.cs" />
-    <Compile Include="Ideas\IdeaCategory.cs" />
-    <Compile Include="Ideas\IdeaEventArgs.cs" />
-    <Compile Include="Ideas\ISerializableData.cs" />
-    <Compile Include="Ideas\MagnetControlDataObject.cs" />
-    <Compile Include="Ideas\MagnetEditedEventArgs.cs" />
-    <Compile Include="Ideas\MagnetEventArgs.cs" />
-    <Compile Include="Ideas\MagnetListInfo.cs" />
-    <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
-    <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
-    <Compile Include="Ideas\SortCriterion.cs" />
-    <Compile Include="Ideas\UnserializableControl.cs" />
-    <Compile Include="Ideas\MagnetBoardInfo.cs" />
-    <Compile Include="Ideas\MagnetControl.cs" />
-    <Compile Include="Ideas\MagnetBoardControl.cs" />
-    <Compile Include="Ideas\MagnetBoardViewer.xaml.cs" />
-    <Compile Include="Ideas\MagnetControlInfo.cs" />
-    <Compile Include="Ideas\MagnetList.xaml.cs" />
     <Compile Include="Scripts\Actions.cs" />
     <Compile Include="Scripts\Animation.cs" />
     <Compile Include="Scripts\Conditions.cs" />
@@ -396,11 +368,6 @@
     <Page Include="Conversations\UI\NewConversation.xaml" />
     <Page Include="Conversations\UI\SoundWindow.xaml" />
     <Page Include="Core\UI\NewModule.xaml" />
-    <Page Include="Ideas\EditMagnetWindow.xaml" />
-    <Page Include="Ideas\MagnetControl.xaml" />
-    <Page Include="Ideas\MagnetBoardControl.xaml" />
-    <Page Include="Ideas\MagnetBoardViewer.xaml" />
-    <Page Include="Ideas\MagnetList.xaml" />
     <Page Include="Scripts\UI\BooleanQuestionPanel.xaml" />
     <Page Include="Scripts\UI\EnumQuestionPanel.xaml" />
     <Page Include="Scripts\UI\FloatQuestionPanel.xaml" />
@@ -428,7 +395,6 @@
     <Folder Include="Journal\UI" />
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
-    <Folder Include="Ideas" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
