@@ -143,27 +143,27 @@ namespace AdventureAuthor.Setup
 			SetSandbarButtonImage(variableButton,"gear.png","Variables");
 			aaToolbar.Items.Add(variableButton);
 							
-			ButtonItem ideasButton = new ButtonItem();
-			ideasButton.Activate += delegate { 
-				MagnetBoardViewer.Instance.Show();//LaunchMagnetBoardViewer();
-				BringToFront(MagnetBoardViewer.Instance);
-			};
-			ideasButton.ToolTipText = "Record and review your ideas";
-			SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
-			aaToolbar.Items.Add(ideasButton);
+//			ButtonItem ideasButton = new ButtonItem();
+//			ideasButton.Activate += delegate { 
+//				MagnetBoardViewer.Instance.Show();
+//				BringToFront(MagnetBoardViewer.Instance);
+//			};
+//			ideasButton.ToolTipText = "Record and review your ideas";
+//			SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
+//			aaToolbar.Items.Add(ideasButton);
 							
-			ButtonItem addIdeaButton = new ButtonItem();
-			addIdeaButton.Activate += delegate { 
-				EditMagnetWindow window = new EditMagnetWindow();
-				window.MagnetCreated += delegate(object sender, MagnetEventArgs e) { 
-					OnMagnetSubmitted(new MagnetEventArgs(e.Magnet));
-					Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString() + " ... added from main toolset");
-				};
-				window.ShowDialog();
-			};
-			addIdeaButton.ToolTipText = "Quickly add a new idea to your Magnet Box";
-			addIdeaButton.Text = "+";
-			aaToolbar.Items.Add(addIdeaButton);
+//			ButtonItem addIdeaButton = new ButtonItem();
+//			addIdeaButton.Activate += delegate { 
+//				EditMagnetWindow window = new EditMagnetWindow();
+//				window.MagnetCreated += delegate(object sender, MagnetEventArgs e) { 
+//					OnMagnetSubmitted(new MagnetEventArgs(e.Magnet));
+//					Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString() + " ... added from main toolset");
+//				};
+//				window.ShowDialog();
+//			};
+//			addIdeaButton.ToolTipText = "Quickly add a new idea to your Magnet Box";
+//			addIdeaButton.Text = "+";
+//			aaToolbar.Items.Add(addIdeaButton);
 							
 			ButtonItem analysisButton = new ButtonItem();
 			analysisButton.Activate += delegate { 
@@ -209,7 +209,7 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleOpened += delegate {  
 				conversationButton.Enabled = true;
 				variableButton.Enabled = true;
-				ideasButton.Enabled = true;
+				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = true;
 				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
@@ -218,7 +218,7 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleClosed += delegate {  
 				conversationButton.Enabled = false;
 				variableButton.Enabled = false;
-				ideasButton.Enabled = true;
+				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = false;
 				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;

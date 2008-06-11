@@ -18,7 +18,7 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	[Serializable]
 	[XmlRoot("Magnet")]
-	[XmlInclude(typeof(BlueprintMagnetControlInfo))]
+	//[XmlInclude(typeof(BlueprintMagnetControlInfo))]
 	public class MagnetControlInfo : ISerializableData
 	{
 		[XmlAttribute]

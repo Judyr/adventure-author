@@ -402,9 +402,9 @@
     <Folder Include="Scripts\UI" />
     <Folder Include="Setup" />
     <Folder Include="Variables\UI" />
-    <ProjectReference Include="..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
-      <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
-      <Name>ColorPicker</Name>
+    <ProjectReference Include="Magnets\Magnets.csproj">
+      <Project>{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}</Project>
+      <Name>Magnets</Name>
     </ProjectReference>
     <ProjectReference Include="UtilsLibrary\AAUtils.csproj">
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>

@@ -94,7 +94,7 @@
 	</local:BoardObject.ContextMenu>
 	
     <Border Name="magnetBorder" BorderThickness="2" BorderBrush="Black">
-		<StackPanel Name="magnetMainStackPanel" Margin="8" Orientation="Vertical">
+		<StackPanel Name="magnetMainStackPanel" x:FieldModifier="public" Margin="8" Orientation="Vertical">
 		    <TextBlock x:Name="IdeaTextBox" Grid.Row="0" Grid.Column="0" FontSize="16"
 			  	         TextWrapping="Wrap" TextAlignment="Center" Focusable="true"
 			   	         VerticalAlignment="Center" HorizontalAlignment="Center"/>

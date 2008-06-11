@@ -68,6 +68,7 @@ using System.IO;
 using System.IO.Pipes;
 using crown = Crownwood.DotNetMagic.Controls;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using AdventureAuthor.Ideas;
 
 namespace AdventureAuthor.Setup
 {		

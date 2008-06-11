@@ -126,9 +126,9 @@ namespace AdventureAuthor.Evaluation
 		{
 			instance = null;	
 			
-			string myDocumentsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			string defaultSavedWorksheetsDirectory = Path.Combine(myDocumentsDirectory,"Worksheets");
-			defaultWorksheetPreferencesPath = Path.Combine(defaultSavedWorksheetsDirectory,"WorksheetsPreferences.xml");
+			string localAppDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);			
+			string localAppDataForWorksheetsDirectory = Path.Combine(localAppDataDirectory,"Worksheets");
+			defaultWorksheetPreferencesPath = Path.Combine(localAppDataForWorksheetsDirectory,"WorksheetsPreferences.xml");
 		}
  
 		

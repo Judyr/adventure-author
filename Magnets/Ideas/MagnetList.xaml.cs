@@ -12,8 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Core;
-using AdventureAuthor.Setup;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
@@ -83,8 +81,7 @@ namespace AdventureAuthor.Ideas
 		}
         
         
-        private MouseButtonEventHandler magnetControl_MouseDoubleClickHandler;        
-        private EventHandler<MagnetEventArgs> magnetControl_SelectedHandler;        
+        private MouseButtonEventHandler magnetControl_MouseDoubleClickHandler;     
         private DragEventHandler magnetControl_DropHandler;
         private EventHandler magnetListChangedHandler;
     	
@@ -202,7 +199,7 @@ namespace AdventureAuthor.Ideas
             	Log.WriteAction(LogAction.showed,"ideacategory",e.Category.ToString());
             };
             
-           	Toolset.Plugin.Options.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
+           	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
            	UpdateUseWonkyMagnets();
         }
         
@@ -270,7 +267,7 @@ namespace AdventureAuthor.Ideas
 					  			saveFileDialog.ValidateNames = true;
 					  			saveFileDialog.OverwritePrompt = true;
 					  			saveFileDialog.Title = "Select location to save copy of corrupted Magnet Box";
-					  			saveFileDialog.InitialDirectory = ModuleHelper.PublicUserDirectory;
+					  			saveFileDialog.InitialDirectory = FridgeMagnetPreferences.Instance.SavedMagnetBoxesDirectory;
 					  			
 					  			bool ok = (bool)saveFileDialog.ShowDialog();  				
 					  			if (ok) {	
@@ -420,7 +417,7 @@ namespace AdventureAuthor.Ideas
         	magnetsPanel.Children.Add(magnet);
         	
         	// Angle the magnet consistently with current policy:
-        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
+        	if (FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
 	        	bool angleToLeft = magnetsPanel.Children.IndexOf(magnet) % 2 == 0;
 	        	magnet.RandomiseAngle(MAXIMUM_ANGLE_IN_EITHER_DIRECTION,angleToLeft);
         	}
@@ -514,7 +511,7 @@ namespace AdventureAuthor.Ideas
         
         private void UpdateUseWonkyMagnets()
         {
-        	if (Toolset.Plugin.Options.UseWonkyMagnets) {
+        	if (FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
         		AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
         	}
         	else {
@@ -930,7 +927,8 @@ namespace AdventureAuthor.Ideas
         	window.Background = Brushes.DarkBlue;
         	StackPanel sp = new StackPanel();
         	sp.Orientation = Orientation.Horizontal;
-        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage(Path.Combine(ModuleHelper.ImagesDir,"einstein.png"));
+        	string einsteinPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"einstein.png");
+        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage(einsteinPath);
         	einstein.Height = 200;
         	einstein.Width = 180;
         	TextBlock tb = new TextBlock();

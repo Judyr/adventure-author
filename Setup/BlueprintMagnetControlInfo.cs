@@ -9,6 +9,7 @@
 
 using System;
 using System.Xml.Serialization;
+using AdventureAuthor.Ideas;
 
 namespace AdventureAuthor.Ideas
 {

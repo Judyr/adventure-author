@@ -11,13 +11,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Ideas
 {
 	[Serializable]
 	[XmlRoot]
-	public class Idea : IComparable, ICloneable, IStarred
+	public class Idea : IComparable, ICloneable
 	{
 		#region Constants
 		
