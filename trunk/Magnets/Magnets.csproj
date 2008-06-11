@@ -49,10 +49,12 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Messaging" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -73,7 +75,6 @@
     <Compile Include="Ideas\ISerializableData.cs" />
     <Compile Include="Ideas\MagnetBoardControl.cs" />
     <Compile Include="Ideas\MagnetBoardInfo.cs" />
-    <Compile Include="Ideas\MagnetBoardViewer.xaml.cs" />
     <Compile Include="Ideas\MagnetCategoryEventArgs.cs" />
     <Compile Include="Ideas\MagnetControl.cs" />
     <Compile Include="Ideas\MagnetControlDataObject.cs" />
@@ -87,16 +88,17 @@
     <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
     <Compile Include="Ideas\SortCriterion.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />
-    <Compile Include="Window1.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Window1.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="FridgeMagnetPreferences.cs" />
+    <Compile Include="MagnetBoardViewer.xaml.cs" />
     <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
-    <Page Include="Ideas\MagnetBoardViewer.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />
     <Page Include="Ideas\MagnetList.xaml" />
-    <Page Include="Window1.xaml" />
+    <Page Include="MagnetBoardViewer.xaml" />
+    <ProjectReference Include="..\..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
+      <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
+      <Name>ColorPicker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>

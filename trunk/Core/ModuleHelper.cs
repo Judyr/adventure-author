@@ -106,6 +106,7 @@ namespace AdventureAuthor.Core
 			set { publicUserDirectory = value; }
 		}
 				
+		
 		public static string DebugDirectory {			
 			get {
 				return Path.Combine(PublicUserDirectory,"Debug");
@@ -118,20 +119,6 @@ namespace AdventureAuthor.Core
 				return Path.Combine(PublicUserDirectory,"User logs");
 			}
 		}	
-		
-		
-		public static string MagnetBoardsDirectory {
-			get {
-				return Path.Combine(PublicUserDirectory,"Magnet boards");
-			}
-		}	
-				
-		
-		public static string MagnetBoxFilename {
-			get {
-				return Path.Combine(PublicUserDirectory,"MagnetBox.xml");
-			}
-		}
 		
 		
 		public static string ImagesDir {			

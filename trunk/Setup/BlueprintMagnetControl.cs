@@ -15,6 +15,7 @@ using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Templates;
 using OEIShared.Utils;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Ideas;
 
 namespace AdventureAuthor.Ideas
 {
@@ -38,7 +39,7 @@ namespace AdventureAuthor.Ideas
 		
 		protected TextBlock resRefTextBlock = null;
 		
-		
+				
 		static BlueprintMagnetControl()
 		{
 			resrefTooltip.Inlines.Add("The word in italics is a ");
@@ -52,6 +53,7 @@ namespace AdventureAuthor.Ideas
 		
 		protected BlueprintMagnetControl() : base() 
 		{
+			canChangeCategory = false;
 			resRefTextBlock = new TextBlock();
 			resRefTextBlock.Name = "resrefTextBlock";
 			resRefTextBlock.FontStyle = FontStyles.Italic;

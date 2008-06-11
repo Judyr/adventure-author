@@ -139,7 +139,6 @@ namespace AdventureAuthor.Setup
 					Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
 					Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
 					Tools.EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
-					Tools.EnsureDirectoryExists(ModuleHelper.MagnetBoardsDirectory);
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
@@ -155,12 +154,6 @@ namespace AdventureAuthor.Setup
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording();
-				
-				// Create an instance of the magnets board on loading, so that it's
-				// ready to receive ideas submitted from the main GUI:
-				MagnetBoardViewer m = MagnetBoardViewer.Instance;
-//				MagnetBoardViewer.Instance = new MagnetBoardViewer();				
-//				sessionWindows.Add(MagnetBoardViewer.Instance);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();

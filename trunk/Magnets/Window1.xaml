@@ -1,9 +1,0 @@
-﻿<Window x:Class="Magnets.Window1"
-	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	Title="Magnets" Height="300" Width="300"
-	>
-	<StackPanel>
-        <TextBlock Name="myTextBlock" Height="250" Width="250" Background="Black" Foreground="Green"></TextBlock>
-	</StackPanel>
-</Window>

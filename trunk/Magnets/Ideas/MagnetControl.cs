@@ -88,7 +88,7 @@ namespace AdventureAuthor.Ideas
     	
     	protected static readonly OuterGlowBitmapEffect glow = new OuterGlowBitmapEffect();
     	protected static readonly BevelBitmapEffect bevel = new BevelBitmapEffect();
-    	
+    	    	    	
     	#endregion    	
     	
     	#region Fields
@@ -179,6 +179,12 @@ namespace AdventureAuthor.Ideas
 			}
 		}
 		
+		
+		protected bool canChangeCategory;
+		public bool CanChangeCategory {
+			get { return canChangeCategory; }
+		}
+		
 			
 		public DateTime Created {
 			get {
@@ -247,7 +253,7 @@ namespace AdventureAuthor.Ideas
     		get {     			
 				return ((RotateTransform)RenderTransform).Angle;
     		}
-			internal set { 
+			set { 
     			((RotateTransform)RenderTransform).Angle = value;
 			}
 		}    
@@ -357,6 +363,7 @@ namespace AdventureAuthor.Ideas
     	    	
     	protected MagnetControl()
     	{
+    		canChangeCategory = true;
     		bevel.EdgeProfile = EdgeProfile.Linear;
     		bevel.Relief = 0.3;
     		
