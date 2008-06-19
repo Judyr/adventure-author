@@ -94,6 +94,16 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		/// <summary>
+		/// The folder where local application data is kept for this application.
+		/// </summary>
+		private static string localAppDataForWorksheetsDirectory;
+		[XmlElement]
+		public static string LocalAppDataForWorksheetsDirectory {
+			get { return localAppDataForWorksheetsDirectory; }
+		}
+		
+		
+		/// <summary>
 		/// The path where user preferences are kept.
 		/// </summary>
 		private static string defaultWorksheetPreferencesPath;
@@ -127,7 +137,7 @@ namespace AdventureAuthor.Evaluation
 			instance = null;	
 			
 			string localAppDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);			
-			string localAppDataForWorksheetsDirectory = Path.Combine(localAppDataDirectory,"Worksheets");
+			localAppDataForWorksheetsDirectory = Path.Combine(localAppDataDirectory,"Worksheets");
 			defaultWorksheetPreferencesPath = Path.Combine(localAppDataForWorksheetsDirectory,"WorksheetsPreferences.xml");
 		}
  

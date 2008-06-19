@@ -145,8 +145,7 @@ namespace AdventureAuthor.Setup
 							
 //			ButtonItem ideasButton = new ButtonItem();
 //			ideasButton.Activate += delegate { 
-//				MagnetBoardViewer.Instance.Show();
-//				BringToFront(MagnetBoardViewer.Instance);
+				// Process.Run(etc.) - not Instance.Show() anymore
 //			};
 //			ideasButton.ToolTipText = "Record and review your ideas";
 //			SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");

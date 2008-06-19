@@ -199,7 +199,6 @@ namespace AdventureAuthor.Ideas
             	Log.WriteAction(LogAction.showed,"ideacategory",e.Category.ToString());
             };
             
-           	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
            	UpdateUseWonkyMagnets();
         }
         
@@ -262,8 +261,8 @@ namespace AdventureAuthor.Ideas
 		           				SaveFileDialog saveFileDialog = new SaveFileDialog();
 					    		saveFileDialog.AddExtension = true;
 					    		saveFileDialog.CheckPathExists = true;
-					    		saveFileDialog.DefaultExt = Filters.XML_ALL;
-					    		saveFileDialog.Filter = Filters.XML_ALL;
+					    		saveFileDialog.DefaultExt = Filters.MAGNETBOXES_ALL;
+					    		saveFileDialog.Filter = Filters.MAGNETBOXES_ALL;
 					  			saveFileDialog.ValidateNames = true;
 					  			saveFileDialog.OverwritePrompt = true;
 					  			saveFileDialog.Title = "Select location to save copy of corrupted Magnet Box";
@@ -443,7 +442,7 @@ namespace AdventureAuthor.Ideas
         		}
         	}
         	    		
-        	OnMagnetAdded(new MagnetEventArgs(magnet));        	
+        	OnMagnetAdded(new MagnetEventArgs(magnet));  
         }
         
         
@@ -509,7 +508,7 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void UpdateUseWonkyMagnets()
+        internal void UpdateUseWonkyMagnets()
         {
         	if (FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
         		AngleMagnets(MAXIMUM_ANGLE_IN_EITHER_DIRECTION);
@@ -819,14 +818,6 @@ namespace AdventureAuthor.Ideas
     				break;    				
     		}
     	}  
-
-        
-        private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        	if (e.PropertyName == "UseWonkyMagnets") { // magnet board viewer updates the checkable menu item
-        		UpdateUseWonkyMagnets();
-        	}
-        }
     	
     	
     	private void SetOrientation(Orientation orientation)
@@ -866,6 +857,7 @@ namespace AdventureAuthor.Ideas
     				scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
     				break;
     		}
+    		
     	}
     	
 		

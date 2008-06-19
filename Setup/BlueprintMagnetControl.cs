@@ -167,7 +167,7 @@ namespace AdventureAuthor.Ideas
 		/// </summary>
 		/// <param name="blueprint">The blueprint to describe</param>
 		/// <returns>A description of a given blueprint</returns>
-		private static string GetTextForBlueprintMagnet(INWN2Blueprint blueprint)
+		internal static string GetTextForBlueprintMagnet(INWN2Blueprint blueprint)
 		{
 			string text;
 			

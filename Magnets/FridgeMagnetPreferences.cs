@@ -136,6 +136,16 @@ namespace AdventureAuthor.Ideas
 		
 		
 		/// <summary>
+		/// The folder where local application data is kept for this application.
+		/// </summary>
+		private static string localAppDataForMagnetsDirectory;
+		[XmlElement]
+		public static string LocalAppDataForMagnetsDirectory {
+			get { return localAppDataForMagnetsDirectory; }
+		}
+		
+		
+		/// <summary>
 		/// The path where user preferences are kept.
 		/// </summary>
 		private static string defaultFridgeMagnetPreferencesPath;
@@ -143,6 +153,7 @@ namespace AdventureAuthor.Ideas
 		public static string DefaultFridgeMagnetPreferencesPath {
 			get { return defaultFridgeMagnetPreferencesPath; }
 		}
+		
 		
 		// Magnets:
 			
@@ -191,7 +202,7 @@ namespace AdventureAuthor.Ideas
 			instance = null;	
 			
 			string localAppDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);			
-			string localAppDataForMagnetsDirectory = Path.Combine(localAppDataDirectory,"Fridge Magnets");
+			localAppDataForMagnetsDirectory = Path.Combine(localAppDataDirectory,"Fridge Magnets");
 			defaultFridgeMagnetPreferencesPath = Path.Combine(localAppDataForMagnetsDirectory,"FridgeMagnetsPreferences.xml");
 		}
  
@@ -203,7 +214,7 @@ namespace AdventureAuthor.Ideas
 			userFridgeMagnetsDirectory = Path.Combine(myDocumentsPath,"Fridge Magnets");
 			savedMagnetBoardsDirectory = Path.Combine(userFridgeMagnetsDirectory,"Magnet boards");
 			savedMagnetBoxesDirectory = Path.Combine(userFridgeMagnetsDirectory,"Magnet boxes");
-			activeMagnetBoxPath = Path.Combine(userFridgeMagnetsDirectory,"MyMagnetBox.box");
+			activeMagnetBoxPath = Path.Combine(savedMagnetBoxesDirectory,"MyMagnetBox.box");
 			useWonkyMagnets = true;
 			magnetBoxAppearsAtSide = true;
 						
