@@ -614,20 +614,7 @@ namespace AdventureAuthor.Setup
 			// sent to the Magnets application (if it can be found):
 			MagnetSubmitted += delegate(object sender, MagnetEventArgs e) 
 			{  
-				using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
-				{
-					try {
-						client.Connect(500);
-						using (StreamWriter writer = new StreamWriter(client))
-						{
-							writer.AutoFlush = true;
-							writer.WriteLine(e.Magnet);
-						}
-					}
-					catch (TimeoutException) {
-						Say.Warning("I couldn't find the Fridge Magnets application to send the blueprint to.");
-					}
-				}
+				SendMagnet(e.Magnet);
 			};
 			
 			// Set up the interface for initial use - update the title bar, and disable
@@ -643,19 +630,30 @@ namespace AdventureAuthor.Setup
 			areaContentsView.Focus();
 		}
 		
-		private static NamedPipeClientStream client = null;
 		
-		
-		private static void connectToPipe(string pipeName)
+		private static void SendMagnet(object obj)
 		{
-			if (client == null) {
-				client = new NamedPipeClientStream(".",pipeName,PipeDirection.Out);
-			}
-			else {
+			using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
+			{
+				try { // doesn't seem to require longer than this
+					client.Connect(50);
+				}
+				catch (TimeoutException) {
+					try { // but have a second attempt in case the computer is going slow?
+						client.Connect(500);
+					}
+					catch (TimeoutException) {
+						Say.Warning("Fridge Magnets must be open in order to send magnets from the toolset.");
+						return;
+					}
+				}
 				
+				using (StreamWriter writer = new StreamWriter(client))
+				{
+					writer.AutoFlush = true;
+					writer.WriteLine(obj);
+				}				
 			}
-			
-			
 		}
 		
 		
@@ -678,10 +676,21 @@ namespace AdventureAuthor.Setup
 		{
 			if (blueprintView != null) {
 				if (blueprintView.Selection.Length > 0) {					
-					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off															
-					BlueprintMagnetControl magnet = new BlueprintMagnetControl(blueprint);
-					OnMagnetSubmitted(new MagnetEventArgs(magnet));
-					Log.WriteAction(LogAction.added,"idea",magnet.ToString() + " ... added from blueprints");
+					INWN2Blueprint blueprint = (INWN2Blueprint)blueprintView.Selection[0]; // multiselect should be off	
+					
+					// Currently experiencing a problem where BlueprintMagnetControl cannot construct
+					// because it can't find the MagnetControl resource:
+//					BlueprintMagnetControl magnet = new BlueprintMagnetControl(blueprint);	
+//					ISerializableData magnetInfo = magnet.GetSerializable();
+//					SendMagnet(magnetInfo);
+					//OnMagnetSubmitted(new MagnetEventArgs(magnet));
+					
+					blueprint.OEIUnserialize(blueprint.Resource.GetStream(false)); // fetch from disk
+					string text = BlueprintMagnetControl.GetTextForBlueprintMagnet(blueprint);					
+					SendMagnet(text);
+					blueprint.Resource.Release();
+					
+					Log.WriteAction(LogAction.added,"idea",text + " ... added from blueprints");
 				}
 			}
 			else {

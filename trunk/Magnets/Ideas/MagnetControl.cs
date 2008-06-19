@@ -382,7 +382,7 @@ namespace AdventureAuthor.Ideas
 			SizeChanged += new SizeChangedEventHandler(UpdateCentrePointOfRotation);
 			
 			TaskSubmitted += delegate { 
-				Log.WriteAction(LogAction.added,"task","update me with details about the task that was submitted.");
+				Log.WriteAction(LogAction.added,"task","update logging software with details about the task that was submitted.");
 			};
     	} 
     	

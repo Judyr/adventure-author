@@ -16,7 +16,7 @@ namespace AdventureAuthor.Utils
 {
     public partial class TeacherPasswordDialog : Window
     {
-    	private const string TEACHER_PASSWORD = "tessa";
+    	private const string TEACHER_PASSWORD = "password";
     	
     	
     	private bool receivedCorrectPassword = false;    	

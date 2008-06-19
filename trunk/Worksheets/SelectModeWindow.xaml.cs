@@ -21,8 +21,9 @@ namespace AdventureAuthor.Evaluation
         {        	
             InitializeComponent();
             
-            try {
-            	Tools.EnsureDirectoryExists(WorksheetPreferences.Instance.SavedWorksheetsDirectory);
+            try {       	
+    			Tools.EnsureDirectoryExists(WorksheetPreferences.LocalAppDataForWorksheetsDirectory);
+            	Tools.EnsureDirectoryExists(WorksheetPreferences.Instance.SavedWorksheetsDirectory);     
             }
             catch (Exception e) {
             	Say.Error("A problem was encountered when trying to create a folder for saved worksheets.",e);

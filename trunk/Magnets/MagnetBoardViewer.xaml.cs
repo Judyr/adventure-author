@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using AdventureAuthor.Utils;
+using AdventureAuthor.Ideas;
 using Microsoft.Win32;
 using Microsoft.Samples.CustomControls;
 using System.IO.Pipes;
@@ -22,30 +23,14 @@ namespace AdventureAuthor.Ideas
     /// <summary>
     /// Interaction logic for MagnetBoardViewer.xaml
     /// </summary>
-
     public partial class MagnetBoardViewer : Window
     {    
-    	#region Fields  
-    	
-    	/// <summary>
-    	/// The single instance of the magnets window.
-    	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
-    	/// </summary>
-    	private static MagnetBoardViewer instance;    	
-    	
-		public static MagnetBoardViewer Instance {
-			get { 
-    			if (instance == null) {
-    				instance = new MagnetBoardViewer();
-    			}
-    			return instance; 
-    		}
-		}   
-    	
-    	
-    	private static bool haveAddedPersistentEventHandlers = false;
-    	    	
+    	#region Fields 
    
+    	/// <summary>
+    	/// The magnet board. This is currently always the same regardless of which magnet board configuration
+    	/// the user has opened, but leaves open the possibility of having multiple magnet boards open at once.
+    	/// </summary>
     	public MagnetBoardControl ActiveBoard {
     		get {
     			return magneticSurface;
@@ -75,7 +60,6 @@ namespace AdventureAuthor.Ideas
     	private EventHandler magnetControl_RequestRemoveHandler;
     	private MouseButtonEventHandler magnetControl_PreviewMouseLeftButtonDownHandler;
     	private MouseEventHandler magnetControl_PreviewMouseMoveHandler;
-    	//private EventHandler magnetControl_EditedOnBoardHandler;
         private RoutedEventHandler magnetGotFocusHandler;
         private RoutedEventHandler magnetLostFocusHandler;
         private EventHandler invalidateUponRotateHandler;
@@ -108,7 +92,7 @@ namespace AdventureAuthor.Ideas
             }     
                 		
 			try {
-            	// Ideally user should save ideas boards to User/Adventure Author/Magnet boards:
+    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.LocalAppDataForMagnetsDirectory);
     			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoardsDirectory);
     			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoxesDirectory);
     			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.UserFridgeMagnetsDirectory);
@@ -127,6 +111,9 @@ namespace AdventureAuthor.Ideas
 	    	// better to use a dockpanel but couldn't get this to work properly)
 	    	if (wonkyMagnetsMenuItem.IsChecked != FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
         		wonkyMagnetsMenuItem.IsChecked = FridgeMagnetPreferences.Instance.UseWonkyMagnets;
+        	}
+	    	if (appearsAtSideMenuItem.IsChecked != FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
+        		appearsAtSideMenuItem.IsChecked = FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide;
         	}
 			
 			ElementHost.EnableModelessKeyboardInterop(this);
@@ -175,42 +162,69 @@ namespace AdventureAuthor.Ideas
             
             invalidateUponRotateHandler = new EventHandler(invalidateUponRotate);
     				
-            if (!haveAddedPersistentEventHandlers) {
-            	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);            			
-				haveAddedPersistentEventHandlers = true;
-    		}
+            // previously had to keep a static bool variable to check that this was only added on the first constructor call
+            // and not on any subsequent constructor calls, but it's not using Singleton anymore so this is no longer necessary:
+           	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
-            Closing += new CancelEventHandler(magnetBoardViewer_Closing);                 
-            Closed += delegate { 
-            	instance = null; // otherwise you'll try to show the closed window again and raise an exception
-            };
+            Closing += new CancelEventHandler(magnetBoardViewer_Closing);   
         }
             	
     	#endregion
     	
     	#region Methods
     	
-    	#region Pipes    	
+    	#region Pipes    	    	
+    	
+//    	public EventHandler<MessageReceivedEventArgs> MessageReceived;    	
+//    	protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
+//    	{
+//    		EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
+//    		if (handler != null) {
+//    			handler(this,e);
+//    		}
+//    	}
+    	
     	
 		private static string pipeName = "magnets";
 		
 		
+		
+		public delegate void AddToolsetMagnetDelegate(string message);
+		
+		private void AddToolsetMagnet(string message)
+		{
+			Idea idea = new Idea(message,
+			                     IdeaCategory.Toolset,
+			                     User.GetCurrentUserName(),
+			                     DateTime.Now);
+			MagnetControl magnet = new MagnetControl(idea);
+				
+			magnetList.AddMagnet(magnet,true);
+		}
+		
+				
 		private void listenForConnection()
 		{
 			using (NamedPipeServerStream server = new NamedPipeServerStream(pipeName,PipeDirection.In))
 			{
-				server.WaitForConnection();
+				server.WaitForConnection();			
 				
-				XmlSerializer serializer = new XmlSerializer(typeof(MagnetControl));
+				
+//				XmlSerializer serializer = new XmlSerializer(typeof(MagnetControlInfo));
 				try {
-					object obj = serializer.Deserialize(server);
-					MagnetControl magnet = (MagnetControl)obj;
+//					object obj = serializer.Deserialize(server);
 					
-		        	// full reference to Instance required, or you don't see magnets
-		        	// that are sent from the outside the magnet viewer until it's
-		        	// closed and opened again:
-					MagnetBoardViewer.Instance.magnetList.AddMagnet(magnet,true);		
+					using (StreamReader reader = new StreamReader(server))
+					{						
+						string message;
+						while ((message = reader.ReadLine()) != null) {
+							
+							this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+							                            new AddToolsetMagnetDelegate(AddToolsetMagnet),
+							                            message);
+						}						
+					}					
 				}
 				catch (Exception e) {
 					Say.Error("Could not deserialize the object.",e);
@@ -269,8 +283,8 @@ namespace AdventureAuthor.Ideas
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.XML_ALL;
-    		saveFileDialog.Filter = Filters.XML_ALL;
+    		saveFileDialog.DefaultExt = Filters.MAGNETBOARDS_ALL;
+    		saveFileDialog.Filter = Filters.MAGNETBOARDS_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save magnet board to";
 			if (Directory.Exists(FridgeMagnetPreferences.Instance.SavedMagnetBoardsDirectory)) {
@@ -424,8 +438,8 @@ namespace AdventureAuthor.Ideas
         {		
     		OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = Filters.XML_ALL;
-    		openFileDialog.Filter = Filters.XML_ALL;
+    		openFileDialog.DefaultExt = Filters.MAGNETBOARDS_ALL;
+    		openFileDialog.Filter = Filters.MAGNETBOARDS_ALL;
 			openFileDialog.Title = "Select a magnet board file to open";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;
@@ -591,13 +605,17 @@ namespace AdventureAuthor.Ideas
         
         private void useWonkyMagnetsCheckedOrUnchecked(object sender, RoutedEventArgs e)
         {
-        	FridgeMagnetPreferences.Instance.UseWonkyMagnets = wonkyMagnetsMenuItem.IsChecked;
+        	if (FridgeMagnetPreferences.Instance.UseWonkyMagnets != wonkyMagnetsMenuItem.IsChecked) {        		
+        		FridgeMagnetPreferences.Instance.UseWonkyMagnets = wonkyMagnetsMenuItem.IsChecked;
+        	}
         }
         
         
         private void appearsAtSideCheckedOrUnchecked(object sender, EventArgs e)
         {
-        	FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide = appearsAtSideMenuItem.IsChecked;
+        	if (FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide != appearsAtSideMenuItem.IsChecked) {        		
+        		FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide = appearsAtSideMenuItem.IsChecked;
+        	}
         }       
 
         
@@ -845,11 +863,15 @@ namespace AdventureAuthor.Ideas
         private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
         {     	
         	if (e.PropertyName == "MagnetBoxAppearsAtSide") {
-        		MagnetBoardViewer.Instance.UpdateMagnetBoxAppearsAtSide();
+        		UpdateMagnetBoxAppearsAtSide();
+	        	if (appearsAtSideMenuItem.IsChecked != FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
+	        		appearsAtSideMenuItem.IsChecked = FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide;
+	        	}
         	} 	
-        	if (e.PropertyName == "UseWonkyMagnets") { // Magnet Box takes care of the actual change
-        		if (MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked != FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
-        			MagnetBoardViewer.Instance.wonkyMagnetsMenuItem.IsChecked = FridgeMagnetPreferences.Instance.UseWonkyMagnets;
+        	if (e.PropertyName == "UseWonkyMagnets") {
+        		magnetList.UpdateUseWonkyMagnets();
+        		if (wonkyMagnetsMenuItem.IsChecked != FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
+        			wonkyMagnetsMenuItem.IsChecked = FridgeMagnetPreferences.Instance.UseWonkyMagnets;
         		}
         	}
         }
@@ -859,8 +881,8 @@ namespace AdventureAuthor.Ideas
         {
         	if (FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
 		       	magnetList.Orientation = Orientation.Vertical;	        
-			    Grid.SetRowSpan(magneticSurface,2);
-			    Grid.SetColumnSpan(magneticSurface,1);
+			    Grid.SetRowSpan(ActiveBoard,2);
+			    Grid.SetColumnSpan(ActiveBoard,1);
 			    Grid.SetRow(magnetList,1);
 			    Grid.SetRowSpan(magnetList,2);
 			    Grid.SetColumn(magnetList,1);
@@ -868,16 +890,12 @@ namespace AdventureAuthor.Ideas
         	}
         	else {
 		        magnetList.Orientation = Orientation.Horizontal;	        
-			    Grid.SetRowSpan(magneticSurface,1);
-			    Grid.SetColumnSpan(magneticSurface,2);
+			    Grid.SetRowSpan(ActiveBoard,1);
+			    Grid.SetColumnSpan(ActiveBoard,2);
 			    Grid.SetRow(magnetList,2);
 			    Grid.SetRowSpan(magnetList,1);
 			    Grid.SetColumn(magnetList,0);
 			    Grid.SetColumnSpan(magnetList,2);
-        	}
-        		
-        	if (appearsAtSideMenuItem.IsChecked != FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
-        		appearsAtSideMenuItem.IsChecked = FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide;
         	}
         }
         
@@ -901,13 +919,18 @@ namespace AdventureAuthor.Ideas
 				e.Cancel = true;
 			}
         	else {
-        		try {
-        			Log.WriteAction(LogAction.exited,"magnets");
-        		}
-        		catch (Exception) {
-        			// already disposed because the toolset is closing
-        		}
-        	}
+    			try {
+	    			// Serialize the user's preferences:
+	    			Serialization.Serialize(FridgeMagnetPreferences.DefaultFridgeMagnetPreferencesPath,
+	    			                        FridgeMagnetPreferences.Instance);
+    			}
+    			catch (Exception ex) {
+    				Say.Error("Something went wrong when trying to save your preferences - the choices " +
+    				          "you have made may not have been saved.",ex);
+    			}
+    			
+    			Log.WriteAction(LogAction.exited,"magnets");
+    		}
         }
         
         
