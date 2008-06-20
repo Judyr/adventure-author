@@ -90,6 +90,7 @@
     <Compile Include="Ideas\SortCriterion.cs" />
     <Compile Include="Ideas\UnserializableControl.cs" />
     <Compile Include="FridgeMagnetPreferences.cs" />
+    <Compile Include="CountdownTimer.cs" />
     <Compile Include="MagnetBoardViewer.xaml.cs" />
     <Compile Include="MessageReceivedEventArgs.cs" />
     <Compile Include="SystemTray.cs" />

@@ -121,10 +121,21 @@ namespace AdventureAuthor.Ideas
 			Loaded += delegate { 
 				pipeCommunicationThread = new Thread(new ThreadStart(listenForConnection));
 				pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
-				pipeCommunicationThread.Start();
-			};
+				pipeCommunicationThread.Start();	
+				LaunchInSystemTray();			
+				Hide(); // must be hidden last, or other constructor stuff never seems to happen
+			};		
 			
-			LaunchInSystemTray();
+			// clean up after yourself, for god's sake, you're a mess:
+			Closed += delegate { 
+				if (trayIcon != null) {
+					trayIcon.Visible = false;
+					trayIcon.Dispose();
+				}
+				if (pipeCommunicationThread != null) {
+					pipeCommunicationThread.Join();    	
+				}	    		
+			};
         }
         
                 
@@ -193,7 +204,7 @@ namespace AdventureAuthor.Ideas
 				
 			magnetList.AddMagnet(magnet,true);
 			
-			ShowIdeaSavedBalloon();
+			ShowBalloon("Your idea was saved.",10000);
 		}
 		
 		
