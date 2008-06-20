@@ -356,20 +356,15 @@ namespace AdventureAuthor.Ideas
     	{
     		string title;
     		if (ActiveBoard.Filename == null || ActiveBoard.Filename == String.Empty) {
-    			if (ActiveBoard.Dirty) {
-    				title = "Untitled* - Ideas";
-    			}
-    			else {
-    				title = "Untitled - Ideas";
-    			}
+    			title = "Fridge Magnets";
     		}
     		else {
     			string filename = Path.GetFileName(ActiveBoard.Filename);
     			if (ActiveBoard.Dirty) {
-    				title = filename + "* - Ideas";
+    				title = filename + "* - Fridge Magnets";
     			}
     			else {
-    				title = filename + " - Ideas";
+    				title = filename + " - Fridge Magnets";
     			}
     		}
     		

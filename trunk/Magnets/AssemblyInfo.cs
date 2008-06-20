@@ -13,9 +13,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Magnets")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Save your ideas as fridge magnets, and then build interesting configurations" +
+                               "on magnet boards.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Heriot-Watt University")]
 [assembly: AssemblyProduct("Magnets")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
