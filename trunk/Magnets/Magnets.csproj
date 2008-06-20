@@ -48,6 +48,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -91,6 +92,7 @@
     <Compile Include="FridgeMagnetPreferences.cs" />
     <Compile Include="MagnetBoardViewer.xaml.cs" />
     <Compile Include="MessageReceivedEventArgs.cs" />
+    <Compile Include="SystemTray.cs" />
     <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />

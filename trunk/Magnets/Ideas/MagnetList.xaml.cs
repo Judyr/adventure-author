@@ -340,6 +340,7 @@ namespace AdventureAuthor.Ideas
     	private void UpdateMagnetCount()
     	{
     		this.magnetCountTextBlock.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+    		
     		//this.numberOfMagnetsTextBlock.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
     	}
         
@@ -910,6 +911,13 @@ namespace AdventureAuthor.Ideas
         	window.MagnetCreated += new EventHandler<MagnetEventArgs>(newMagnetCreated);
         	window.ShowDialog();
         }
+
+        
+        private void newMagnetCreated(object sender, MagnetEventArgs e)
+        {
+        	AddMagnet(e.Magnet,true);
+			Log.WriteAction(LogAction.added,"idea",e.Magnet.Idea.ToString() + " ... added from magnets app");
+        }
     	
     	
         internal void OnClick_LuckyDip(object sender, RoutedEventArgs e)
@@ -932,13 +940,6 @@ namespace AdventureAuthor.Ideas
         	sp.Children.Add(tb);
         	window.Content = sp;
         	window.ShowDialog();
-        }
-
-        
-        private void newMagnetCreated(object sender, MagnetEventArgs e)
-        {
-        	AddMagnet(e.Magnet,true);
-			Log.WriteAction(LogAction.added,"idea",e.Magnet.Idea.ToString() + " ... added from magnets app");
         }
         
         
