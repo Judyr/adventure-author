@@ -643,7 +643,7 @@ namespace AdventureAuthor.Setup
 						client.Connect(500);
 					}
 					catch (TimeoutException) {
-						Say.Warning("Fridge Magnets must be open in order to send magnets from the toolset.");
+						Say.Warning("You need to run Fridge Magnets before you can do this.");
 						return;
 					}
 				}

@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:AdventureAuthor.Ideas"
 	PreviewKeyDown="previewKeyDown"
     MouseWheel="magnetBoardViewerMouseWheel"
-	Title="Untitled - Ideas"
+	Title="Fridge Magnets"
 	WindowState="Maximized"
     >
 		
