@@ -40,7 +40,8 @@ namespace AdventureAuthor.Ideas
 		private static string unlitbulbPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"unlitbulb.ico");
 		private static System.Drawing.Icon litIcon = new System.Drawing.Icon(litbulbPath);
 		private static System.Drawing.Icon unlitIcon = new System.Drawing.Icon(unlitbulbPath);
-		private System.Windows.Forms.NotifyIcon trayIcon;
+		private System.Windows.Forms.NotifyIcon trayIcon;		
+		//DELETEMEprivate CountdownTimer lightbulbTimer;
 		
 		#endregion
 		
@@ -53,9 +54,8 @@ namespace AdventureAuthor.Ideas
     	private void LaunchInSystemTray()
     	{    		
     		trayIcon = new System.Windows.Forms.NotifyIcon();
-			trayIcon.Icon = new System.Drawing.Icon(unlitbulbPath);
+    		SwitchBulbOff();
     		trayIcon.Visible = true; 
-    		trayIcon.BalloonTipText = "Your idea was saved.";	
     		UpdateMagnetCountToolTip();	
     		
     		// Set up context menu:			
@@ -97,8 +97,16 @@ namespace AdventureAuthor.Ideas
 			
 			// If the user hovers the mouse over the system tray icon, display
 			// a balloon tooltip informing them of their total magnet count:
-			trayIcon.MouseMove += delegate { UpdateMagnetCountToolTip(); };			
-    	}   	
+			trayIcon.MouseMove += delegate { UpdateMagnetCountToolTip(); };	
+    		trayIcon.BalloonTipClosed += delegate { SwitchBulbOff(); };
+    		trayIcon.BalloonTipShown += delegate { SwitchBulbOn(); };
+//			DELETEME
+//			lightbulbTimer = new CountdownTimer();
+//			lightbulbTimer.StartedCountdown += new EventHandler(lightbulbTimer_StartedCountdown);
+//			lightbulbTimer.ReachedZero += new EventHandler(lightbulbTimer_ReachedZero);
+			
+			ShowBalloon("Double-click me to start working with Fridge Magnets!",12000);
+    	} 
 		
     	
     	/// <summary>
@@ -143,32 +151,48 @@ namespace AdventureAuthor.Ideas
 		{
 			trayIcon.Icon = unlitIcon;
 		}    
-        
-    	
+		
+		
     	/// <summary>
     	/// When this method is run, the system tray lightbulb icon will light up, and
     	/// display a balloon tooltip informing the user that their idea has been saved.
     	/// </summary>
-    	private void ShowIdeaSavedBalloon()
+    	private void ShowBalloon(string message, int illuminationTime)
     	{
-    		// Bulb stays on for 5 seconds longer, to account for the inexplicably long
-    		// fade-out of the NotifyIcon's balloon tip:
-    		System.Timers.Timer timer = new System.Timers.Timer(8000);
-    		timer.AutoReset = false;
-	    	timer.Elapsed += delegate { 
-	    		SwitchBulbOff();
-	    		timer.Stop();
-	    	};
-	    	
-	    	trayIcon.ShowBalloonTip(3000,null,"Your idea was saved.",ToolTipIcon.None);
-	    	SwitchBulbOn();
-	    	
-	    	timer.Start();   
+    		//DELETEMElightbulbTimer.CountdownTime = illuminationTime;
+    		
+    		trayIcon.ShowBalloonTip(illuminationTime,null,message,ToolTipIcon.None);
+    		
+//    		// Bulb stays on for 6 seconds longer, to account for the inexplicably long
+//    		// fade-out of the NotifyIcon's balloon tip:
+//    		System.Timers.Timer timer = new System.Timers.Timer(9000);
+//    		timer.AutoReset = false;
+//	    	timer.Elapsed += delegate { 
+//	    		SwitchBulbOff();
+//	    		timer.Stop();
+//	    	};
+//	    	
+//	    	trayIcon.ShowBalloonTip(3000,null,message,ToolTipIcon.None);
+//	    	SwitchBulbOn();
+//	    	
+//	    	timer.Start();   
     	}
     	
     	#endregion
     	    	
-    	#region Event handlers
+    	#region Event handlers    	
+
+    	private void lightbulbTimer_ReachedZero(object sender, EventArgs e)
+    	{
+    		SwitchBulbOff();
+    	}
+    	
+
+    	private void lightbulbTimer_StartedCountdown(object sender, EventArgs e)
+    	{
+    		SwitchBulbOn();
+    	}
+    	
     	
     	/// <summary>
     	/// Hide the main window when the user attempts to close it.
@@ -218,7 +242,7 @@ namespace AdventureAuthor.Ideas
         private void newMagnetCreated(object sender, MagnetEventArgs e)
         {
         	magnetList.AddMagnet(e.Magnet,true);
-    		ShowIdeaSavedBalloon();
+    		ShowBalloon("Your idea was saved.",10000);
 			Log.WriteAction(LogAction.added,"idea",e.Magnet.Idea.ToString() + " ... added from magnets app");
         }    
     	    	
@@ -265,8 +289,6 @@ namespace AdventureAuthor.Ideas
     		}
     		
     		System.Windows.Application.Current.Shutdown();
-    		trayIcon.Dispose();
-    		pipeCommunicationThread.Join();    	
     	}
     	
     	#endregion    	
