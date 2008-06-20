@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.IO.Pipes;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -8,15 +11,9 @@ using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Xml;
-using System.Xml.Serialization;
-using System.ComponentModel;
 using AdventureAuthor.Utils;
-using AdventureAuthor.Ideas;
-using Microsoft.Win32;
 using Microsoft.Samples.CustomControls;
-using System.IO.Pipes;
-using System.Threading;
+using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
 {
@@ -27,6 +24,8 @@ namespace AdventureAuthor.Ideas
     {    
     	#region Fields 
    
+    	private Thread pipeCommunicationThread;
+    	
     	/// <summary>
     	/// The magnet board. This is currently always the same regardless of which magnet board configuration
     	/// the user has opened, but leaves open the possibility of having multiple magnet boards open at once.
@@ -120,10 +119,12 @@ namespace AdventureAuthor.Ideas
 			
 			// listen for magnets being sent from the toolset or other applications:
 			Loaded += delegate { 
-				Thread thread = new Thread(new ThreadStart(listenForConnection));
-				thread.Priority = ThreadPriority.BelowNormal;
-				thread.Start(); 
+				pipeCommunicationThread = new Thread(new ThreadStart(listenForConnection));
+				pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
+				pipeCommunicationThread.Start();
 			};
+			
+			LaunchInSystemTray();
         }
         
                 
@@ -174,17 +175,7 @@ namespace AdventureAuthor.Ideas
     	
     	#region Methods
     	
-    	#region Pipes    	    	
-    	
-//    	public EventHandler<MessageReceivedEventArgs> MessageReceived;    	
-//    	protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
-//    	{
-//    		EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
-//    		if (handler != null) {
-//    			handler(this,e);
-//    		}
-//    	}
-    	
+    	#region Pipes   
     	
 		private static string pipeName = "magnets";
 		
@@ -201,9 +192,12 @@ namespace AdventureAuthor.Ideas
 			MagnetControl magnet = new MagnetControl(idea);
 				
 			magnetList.AddMagnet(magnet,true);
+			
+			ShowIdeaSavedBalloon();
 		}
 		
-				
+		
+		
 		private void listenForConnection()
 		{
 			using (NamedPipeServerStream server = new NamedPipeServerStream(pipeName,PipeDirection.In))
@@ -217,8 +211,13 @@ namespace AdventureAuthor.Ideas
 					
 					using (StreamReader reader = new StreamReader(server))
 					{						
-						string message;
-						while ((message = reader.ReadLine()) != null) {
+						string message;						
+						
+						while ((message = reader.ReadLine()) != null) {		
+							
+							if (message == ABORTMESSAGE) { // received instruction to stop listening
+								return;
+							}
 							
 							this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
 							                            new AddToolsetMagnetDelegate(AddToolsetMagnet),
@@ -238,6 +237,9 @@ namespace AdventureAuthor.Ideas
 		}
 		
     	#endregion
+    	
+    	
+    	
     	
     	public void New()
     	{
