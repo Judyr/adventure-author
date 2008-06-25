@@ -27,6 +27,7 @@ namespace AdventureAuthor.Utils
 		{
 			// TODO serialise (and encrypt?) a list of users
 			// have a way of nominating someone as a teacher
+			
 			return false;
 		}
 		

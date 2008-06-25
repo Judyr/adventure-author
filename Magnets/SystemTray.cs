@@ -241,8 +241,8 @@ namespace AdventureAuthor.Ideas
 			
     	private void DisplayAboutScreen(object sender, EventArgs e)
     	{
-    		Say.Information("Fridge Magnets\nversion 1.0\n\n" +
-    		                "Keiron Nicholson and Dr. Judy Robertson\nHeriot-Watt University");
+    		AboutWindow window = new AboutWindow();
+    		window.ShowDialog();
     	}
     	    	
     	
