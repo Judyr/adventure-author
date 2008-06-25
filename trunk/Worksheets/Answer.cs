@@ -15,7 +15,7 @@ using AdventureAuthor.Evaluation;
 namespace AdventureAuthor.Evaluation
 {
 	[XmlRoot]
-	public abstract class Answer : OptionalWorksheetPart
+	public abstract class Answer : CardPart
 	{	
 		[XmlElement]
 		protected string val;		

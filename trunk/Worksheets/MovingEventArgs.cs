@@ -30,9 +30,9 @@ using AdventureAuthor.Evaluation;
 namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
-	/// Arguments to accompany the event of a request for a worksheet part to be moved to a different position.
+	/// Arguments to accompany the event of a request for a Comment Card part to be moved to a different position.
 	/// </summary>
-	public class MovingEventArgs : OptionalWorksheetPartControlEventArgs
+	public class MovingEventArgs : CardPartControlEventArgs
 	{
 		/// <summary>
 		/// True if the control is requesting a move up; false if the control is requesting a move down.
@@ -49,7 +49,7 @@ namespace AdventureAuthor.Evaluation
 		/// <param name="movingControl">The control to be moved</param>
 		/// <param name="moveUp">True if the control is requesting a move up; false if it's requesting a move down</param>
 		/// <param name="parentControl">The owner of the control to be moved</param>
-		public MovingEventArgs(OptionalWorksheetPartControl control, 
+		public MovingEventArgs(CardPartControl control, 
 		                       bool moveUp) : base(control)
 		{
 			this.moveUp = moveUp;

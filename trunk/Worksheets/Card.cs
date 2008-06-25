@@ -9,7 +9,7 @@ namespace AdventureAuthor.Evaluation
 {
 	[Serializable]
 	[XmlRoot]
-	public class Worksheet
+	public class Card
 	{
 		[XmlAttribute]
 		private string title;		
@@ -53,13 +53,13 @@ namespace AdventureAuthor.Evaluation
 		/// <summary>
 		/// Default constructor for the purposes of serialization.
 		/// </summary>
-		public Worksheet()
+		public Card()
 		{			
 			this.sections = new List<Section>(1);
 		}
 		
 		
-		public Worksheet(string title, string designerName, string evaluatorName, string date) : this()
+		public Card(string title, string designerName, string evaluatorName, string date) : this()
 		{
 			this.title = title;
 			this.designerName = designerName;
@@ -98,14 +98,14 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		/// <summary>
-		/// Create a blank copy of this worksheet in which all the fields are blank.
+		/// Create a copy of this card in which all the fields are blank.
 		/// </summary>
-		/// <returns>Returns a blank copy of an existing worksheet, in which all the fields are blank</returns>
-		public Worksheet GetBlankCopy()
+		/// <returns>Returns a blank copy of an existing card, in which all the fields are blank</returns>
+		public Card GetBlankCopy()
 		{
-			Worksheet worksheet = GetCopy();
-			worksheet.Clear();
-			return worksheet;
+			Card card = GetCopy();
+			card.Clear();
+			return card;
 		}
 		
 		
@@ -120,16 +120,16 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public Worksheet GetCopy()
+		public Card GetCopy()
 		{
-			return (Worksheet)MemberwiseClone();
+			return (Card)MemberwiseClone();
 		}
 		
 		
 		/// <summary>
-		/// Check whether a worksheet has had any of its fields filled in.
+		/// Check whether a card has had any of its fields filled in.
 		/// </summary>
-		/// <returns>True if the fields of this worksheet are entirely blank; false otherwise</returns>
+		/// <returns>True if the fields of this card are entirely blank; false otherwise</returns>
 		public bool IsBlank()
 		{
 			if ((EvaluatorName != null && EvaluatorName != String.Empty) || 

@@ -13,12 +13,12 @@ namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
 	/// The mode to run the evaluation application in, allowing users to either 
-	/// build worksheets, fill them in or discuss completed worksheets.
+	/// design their own Comment Cards, or fill in and discuss existing Comment Cards.
 	/// </summary>
 	public enum Mode
 	{		
-    	Design, // design and build a worksheet from scratch, or edit an existing worksheet
-    	Complete, // fill in the answer fields in an existing worksheet
-    	Discuss // add comments on a worksheet which has been filled in
+    	Design, // design and build a Comment Card from scratch, or edit an existing Comment Card
+    	Complete, // fill in the answer fields in an existing Comment Card
+    	Discuss // add replies to a Comment Card which has been filled in
 	}
 }

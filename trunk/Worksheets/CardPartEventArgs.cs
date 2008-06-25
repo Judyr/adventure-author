@@ -14,15 +14,15 @@ namespace AdventureAuthor.Evaluation
 	/// <summary>
 	/// Description of ReplyAddedEventArgs.
 	/// </summary>
-	public class OptionalWorksheetPartEventArgs : EventArgs
+	public class CardPartEventArgs : EventArgs
 	{
-		private OptionalWorksheetPart part;		
-		public OptionalWorksheetPart Part {
+		private CardPart part;		
+		public CardPart Part {
 			get { return part; }
 		}
 				
 		
-		public OptionalWorksheetPartEventArgs(OptionalWorksheetPart part)
+		public CardPartEventArgs(CardPart part)
 		{
 			this.part = part;
 		}

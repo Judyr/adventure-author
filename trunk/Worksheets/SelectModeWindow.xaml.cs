@@ -22,11 +22,11 @@ namespace AdventureAuthor.Evaluation
             InitializeComponent();
             
             try {       	
-    			Tools.EnsureDirectoryExists(WorksheetPreferences.LocalAppDataForWorksheetsDirectory);
-            	Tools.EnsureDirectoryExists(WorksheetPreferences.Instance.SavedWorksheetsDirectory);     
+    			Tools.EnsureDirectoryExists(EvaluationPreferences.LocalAppDataDirectory);
+            	Tools.EnsureDirectoryExists(EvaluationPreferences.Instance.SavedCommentCardsDirectory);     
             }
             catch (Exception e) {
-            	Say.Error("A problem was encountered when trying to create a folder for saved worksheets.",e);
+            	Say.Error("A problem was encountered when trying to create a folder for saved Comment Cards.",e);
             }            
         }
 
@@ -48,19 +48,19 @@ namespace AdventureAuthor.Evaluation
         
         
         /// <summary>
-		/// Bring up the Worksheets window.
+		/// Bring up the Comment Card window.
 		/// </summary>
 		public static void Launch(Mode mode)
 		{
 			try {
-				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {
-					WorksheetViewer.Instance = new WorksheetViewer(mode);
+				if (CardViewer.Instance == null || !CardViewer.Instance.IsLoaded) {
+					CardViewer.Instance = new CardViewer(mode);
 				}
-				ElementHost.EnableModelessKeyboardInterop(WorksheetViewer.Instance);
-				WorksheetViewer.Instance.Show();
+				ElementHost.EnableModelessKeyboardInterop(CardViewer.Instance);
+				CardViewer.Instance.Show();
 			}
 			catch (Exception e) {
-				Say.Error("A problem was encounted when trying to open the Worksheets application.",e);
+				Say.Error("A problem was encounted when trying to open the Comment Cards application.",e);
 			}
 		}	
     }

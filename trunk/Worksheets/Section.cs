@@ -18,7 +18,7 @@ namespace AdventureAuthor.Evaluation
 	/// </summary>
 	[Serializable]
 	[XmlRoot]
-	public class Section : OptionalWorksheetPart
+	public class Section : CardPart
 	{					
 		[XmlAttribute]
 		protected string title;		
@@ -48,7 +48,7 @@ namespace AdventureAuthor.Evaluation
 		}
 						
 		
-		public override OptionalWorksheetPartControl GetControl()
+		public override CardPartControl GetControl()
 		{
 			return new SectionControl(this);
 		}

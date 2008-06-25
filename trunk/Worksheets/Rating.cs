@@ -47,7 +47,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override OptionalWorksheetPartControl GetControl()
+		public override CardPartControl GetControl()
 		{
 			RatingControl rating = new RatingControl(this);			
 			return rating;

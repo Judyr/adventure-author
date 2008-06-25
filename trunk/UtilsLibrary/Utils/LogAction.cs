@@ -34,7 +34,7 @@ namespace AdventureAuthor.Utils
 		moved,
 		viewed,		
 		
-		// entered a mode (e.g. toolset_SelectObjects, toolset_PaintTerrain, worksheet_Design):
+		// entered a mode (e.g. toolset_SelectObjects, toolset_PaintTerrain, commentcard_Design):
 		mode,
 		
 		// selected just means giving it focus:
@@ -44,7 +44,7 @@ namespace AdventureAuthor.Utils
 		// clicks something in the terrain editor window or area contents window 
 		clicked,
 		
-		// relating to worksheet designer:
+		// relating to Comment Cards designer:
 		activated,
 		deactivated,
 		

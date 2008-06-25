@@ -16,7 +16,7 @@ namespace AdventureAuthor.Evaluation
 	/// Description of Response.
 	/// </summary>
 	[Serializable]
-	public class Reply : OptionalWorksheetPart
+	public class Reply : CardPart
 	{
 		private string replier;			
 		public string Replier {
@@ -58,7 +58,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override OptionalWorksheetPartControl GetControl()
+		public override CardPartControl GetControl()
 		{
 			ReplyControl replyControl = new ReplyControl(this);
 			return replyControl;

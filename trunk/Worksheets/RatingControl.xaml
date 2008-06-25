@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<local:OptionalWorksheetPartControl 
+<local:CardPartControl 
 	x:Class="AdventureAuthor.Evaluation.RatingControl" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -78,4 +78,4 @@
 		    </CheckBox.LayoutTransform>   
 		</CheckBox>
 	</StackPanel>
-</local:OptionalWorksheetPartControl>
+</local:CardPartControl>

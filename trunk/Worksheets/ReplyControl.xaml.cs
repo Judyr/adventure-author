@@ -14,7 +14,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
-    public partial class ReplyControl : OptionalWorksheetPartControl
+    public partial class ReplyControl : CardPartControl
     {    	
     	#region Constants
     	
@@ -44,10 +44,10 @@ namespace AdventureAuthor.Evaluation
     	
     	#region Events
     	
-    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleted;    	
-    	protected virtual void OnDeleted(OptionalWorksheetPartControlEventArgs e)
+    	public event EventHandler<CardPartControlEventArgs> Deleted;    	
+    	protected virtual void OnDeleted(CardPartControlEventArgs e)
     	{
-    		EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleted;
+    		EventHandler<CardPartControlEventArgs> handler = Deleted;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -68,16 +68,16 @@ namespace AdventureAuthor.Evaluation
         public ReplyControl(Reply reply)
         {
             InitializeComponent();
-            if (WorksheetViewer.Instance.EvaluationMode == Mode.Complete) {
+            if (CardViewer.Instance.EvaluationMode == Mode.Complete) {
             	DeleteButton.Visibility = Visibility.Collapsed;
             	EditButton.Visibility = Visibility.Collapsed;
             }            
             Open(reply);
             
-            string imagePath = Path.Combine(WorksheetPreferences.Instance.InstallDirectory,"delete.png");
+            string imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"delete.png");
             Tools.SetXAMLButtonImage(DeleteButton,imagePath,"delete");
-            DeleteButton.ToolTip = "Delete this comment\n(teachers only)";
-            EditButton.ToolTip = "Edit this comment\n(teachers only)";
+            DeleteButton.ToolTip = "Delete this reply\n(teachers only)";
+            EditButton.ToolTip = "Edit this reply\n(teachers only)";
         }
         
         
@@ -115,8 +115,8 @@ namespace AdventureAuthor.Evaluation
         private void OnClick_Delete(object sender, RoutedEventArgs e)
         {
         	if (User.IdentifyTeacherOrDemandPassword()) {
-        		Log.WriteAction(LogAction.deleted,"reply",GetWorksheetPart().ToString());
-        		OnDeleted(new OptionalWorksheetPartControlEventArgs(this));
+        		Log.WriteAction(LogAction.deleted,"reply",GetCardPart().ToString());
+        		OnDeleted(new CardPartControlEventArgs(this));
         	}
         }
         
@@ -172,7 +172,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
         
-        protected override OptionalWorksheetPart GetWorksheetPartObject()
+        protected override CardPart GetCardPartObject()
 		{
         	Reply reply = new Reply();
         	reply.Replier = authorName;

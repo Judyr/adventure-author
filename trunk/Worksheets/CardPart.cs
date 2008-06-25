@@ -13,7 +13,7 @@ using AdventureAuthor.Evaluation;
 
 namespace AdventureAuthor.Evaluation
 {
-	public abstract class OptionalWorksheetPart
+	public abstract class CardPart
 	{
 		[XmlAttribute]
 		protected bool include = true;
@@ -23,7 +23,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public abstract OptionalWorksheetPartControl GetControl();
+		public abstract CardPartControl GetControl();
 		
 		
 		public abstract bool IsBlank();		
