@@ -160,7 +160,7 @@ namespace AdventureAuthor.Evaluation
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
 	    			EditMenu.Visibility = Visibility.Collapsed; 		
-    				SwitchModesMenuItem.Header = "Switch to Complete mode";
+    				SwitchModesMenuItem.Header = "Enter Complete mode";
     				switchModeButton.Content = "Switch to Complete mode";
 		    		break;
     		}
