@@ -14,7 +14,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
-	public abstract class OptionalWorksheetPartControl : ActivatableControl
+	public abstract class CardPartControl : ActivatableControl
 	{		
 		#region Fields
 		
@@ -41,7 +41,7 @@ namespace AdventureAuthor.Evaluation
 		
 		#region Constructors
 		
-		protected OptionalWorksheetPartControl()
+		protected CardPartControl()
 		{
 		}
 				
@@ -51,26 +51,26 @@ namespace AdventureAuthor.Evaluation
 		
 		public abstract void ShowActivationControls();
 		public abstract void HideActivationControls();			
-		protected abstract OptionalWorksheetPart GetWorksheetPartObject();
+		protected abstract CardPart GetCardPartObject();
 		
-		public OptionalWorksheetPart GetWorksheetPart()
+		public CardPart GetCardPart()
 		{
-			OptionalWorksheetPart part = GetWorksheetPartObject();
+			CardPart part = GetCardPartObject();
 			if (part == null) {
-				throw new InvalidOperationException("GetWorksheetPart() returned a null reference.");
+				throw new InvalidOperationException("GetCardPart() returned a null reference.");
 			}      
 			
-			// This worksheet part should only be included if its control has been set to 'active':
+			// This CardPart should only be included if its control has been set to 'active':
 			part.Include = this.isActive;
 			return part;
 		}		
 		
 				
-		protected void SetInitialActiveStatus(OptionalWorksheetPart representedWorksheetPart)
+		protected void SetInitialActiveStatus(CardPart representedCardPart)
 		{          
-            if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
+            if (CardViewer.Instance.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
 				ShowActivationControls();
-	    		if (representedWorksheetPart.Include) {
+	    		if (representedCardPart.Include) {
 					Activate();
 	    		}
 	    		else {
@@ -85,7 +85,7 @@ namespace AdventureAuthor.Evaluation
         
 		public override string ToString()
 		{
-			return GetWorksheetPartObject().ToString();
+			return GetCardPartObject().ToString();
 		}
 		
 		

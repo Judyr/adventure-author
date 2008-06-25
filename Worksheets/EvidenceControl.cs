@@ -17,7 +17,7 @@ using Microsoft.Win32;
 
 namespace AdventureAuthor.Evaluation
 {
-    public partial class EvidenceControl : OptionalWorksheetPartControl
+    public partial class EvidenceControl : CardPartControl
     {    	
     	#region Constants
     	
@@ -206,7 +206,7 @@ namespace AdventureAuthor.Evaluation
 			}
 			
 			if (IsImage(filename)) {
-				switch (WorksheetPreferences.Instance.ImageViewer) {
+				switch (EvaluationPreferences.Instance.ImageViewer) {
 					case ImageApp.Default:
 						Process.Start(filename);
 						break;
@@ -289,7 +289,7 @@ namespace AdventureAuthor.Evaluation
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
-    		ActivateCheckBox.ToolTip = "Click to deactivate this answer field\n(will not appear in worksheet)";
+    		ActivateCheckBox.ToolTip = "Click to deactivate this answer field.\n(Won't appear to users filling out this Comment Card.)";
     	}
     	
         
@@ -304,7 +304,7 @@ namespace AdventureAuthor.Evaluation
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
-    		ActivateCheckBox.ToolTip = "Click to activate this answer field\n(will not appear in worksheet)";
+    		ActivateCheckBox.ToolTip = "Click to activate this answer field.\n(Won't appear to users filling out this Comment Card.)";
     	}
     	
     	
@@ -320,7 +320,7 @@ namespace AdventureAuthor.Evaluation
 		}
     	
         
-        protected override OptionalWorksheetPart GetWorksheetPartObject()
+        protected override CardPart GetCardPartObject()
 		{
 			return new Evidence(filename);
 		}

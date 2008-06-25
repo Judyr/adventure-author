@@ -184,16 +184,16 @@ namespace AdventureAuthor.Setup
 						
 			ButtonItem evaluationButton = new ButtonItem();
 			evaluationButton.Activate += delegate { 
-				if (WorksheetViewer.Instance == null || !WorksheetViewer.Instance.IsLoaded) {					
+				if (CardViewer.Instance == null || !CardViewer.Instance.IsLoaded) {					
 					SelectModeWindow selectModeWindow = new SelectModeWindow();
 					bool cancelled = !((bool)selectModeWindow.ShowDialog());
 					if (cancelled) {
 						return;	
 					}
 				}
-				BringToFront(WorksheetViewer.Instance);
+				BringToFront(CardViewer.Instance);
 			};
-			SetSandbarButtonImage(evaluationButton,"clipboard.png","Evaluation");
+			SetSandbarButtonImage(evaluationButton,"clipboard.png","Comment Cards");
 			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 			aaToolbar.Items.Add(evaluationButton);
 														

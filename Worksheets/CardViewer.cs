@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Text.RegularExpressions;
 using AdventureAuthor.Evaluation;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -15,24 +16,22 @@ namespace AdventureAuthor.Evaluation
 	/// A window which provides a number of criteria for evaluating a module
 	/// and elicits a response from the user as to how well they have been met.
 	/// </summary>
-    public partial class WorksheetViewer : Window
+    public partial class CardViewer : Window
     {    	
     	#region Constants
     	    	
     	private string DEFAULT_TITLE = "Evaluation";
-    	private string LOCKANSWERSDESCRIPTION = "Lock worksheet";
-    	private string UNLOCKANSWERSDESCRIPTION = "Unlock worksheet";
     	
     	#endregion
     	    	
     	#region Fields
     	
     	/// <summary>
-    	/// The single instance of the worksheet viewer window.
+    	/// The single instance of the Comment Card viewer window.
     	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
     	/// </summary>
-    	private static WorksheetViewer instance;    	
-		public static WorksheetViewer Instance {
+    	private static CardViewer instance;    	
+		public static CardViewer Instance {
 			get { return instance; }
 			set { instance = value; }
 		}   
@@ -48,7 +47,7 @@ namespace AdventureAuthor.Evaluation
 		}
     	
     	
-    	private Worksheet originalWorksheet;
+    	private Card originalCard;
     	
     	
     	private string filename;    	
@@ -62,7 +61,7 @@ namespace AdventureAuthor.Evaluation
     	
     	
     	/// <summary>
-    	/// True if the worksheet fields have been changed since the last save; false otherwise.
+    	/// True if fields have been changed since the last save; false otherwise.
     	/// </summary>
     	private bool dirty = false;    	
 		internal bool Dirty {
@@ -93,7 +92,7 @@ namespace AdventureAuthor.Evaluation
     	    	    	    	
     	#region Constructors    
     	
-    	public WorksheetViewer(Mode mode)
+    	public CardViewer(Mode mode)
     	{
     		InitializeComponent();
     		
@@ -103,22 +102,23 @@ namespace AdventureAuthor.Evaluation
     		Log.WriteAction(LogAction.launched,"evaluation");   
     		
     		Closing += new CancelEventHandler(viewerClosing);
-    		Changed += new EventHandler(WorksheetChanged);
+    		Changed += new EventHandler(changeMade);
             
-    		WorksheetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
+    		EvaluationPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             updateImageViewerSelectionMenu();
             
     		EvaluationMode = mode;
     		
     		Loaded += delegate { 
-    			// Don't offer to open a worksheet in Design mode, as you may be designing
-    			// a worksheet from scratch. (Does this make the UI less predictable?)
     			if (evaluationMode == Mode.Complete || evaluationMode == Mode.Discuss) {
     				OpenDialog();
     			}
+    			else {
+    				OpenNewCard();
+    			}
     		};
     		
-    		// Edit worksheet titles in design mode only; fill in name and date in complete/discuss mode only
+    		// Edit titles in design mode only; fill in name and date in complete/discuss mode only
     		switch (EvaluationMode) {
     				
     			case Mode.Design:
@@ -165,14 +165,14 @@ namespace AdventureAuthor.Evaluation
 		    		break;
     		}
     		
-    		// Ideally user should save worksheets to User/Adventure Author/Worksheets:
+    		// Ideally user should save Comment Cards to User/Adventure Author/Comment Cards:
 			try {
-				if (!Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
-					Directory.CreateDirectory(WorksheetPreferences.Instance.SavedWorksheetsDirectory);
+				if (!Directory.Exists(EvaluationPreferences.Instance.SavedCommentCardsDirectory)) {
+					Directory.CreateDirectory(EvaluationPreferences.Instance.SavedCommentCardsDirectory);
 				}
 			}
 			catch (Exception e) {
-    			Say.Debug("Failed to create a Worksheets directory for user:\n"+e);
+    			Say.Debug("Failed to create a Comment Cards directory for user:\n"+e);
 			}     		
     	}
 
@@ -187,13 +187,13 @@ namespace AdventureAuthor.Evaluation
 
     	private void viewerClosing(object sender, CancelEventArgs ea)
     	{	
-			if (!CloseWorksheetDialog()) {
+			if (!CloseCardDialog()) {
 				ea.Cancel = true;
 			}
     		else {
     			try {
 	    			// Serialize the user's preferences:
-	    			Serialization.Serialize(WorksheetPreferences.DefaultWorksheetPreferencesPath,WorksheetPreferences.Instance);
+	    			Serialization.Serialize(EvaluationPreferences.DefaultPreferencesPath,EvaluationPreferences.Instance);
     			}
     			catch (Exception e) {
     				Say.Error("Something went wrong when trying to save your preferences - the choices " +
@@ -207,7 +207,7 @@ namespace AdventureAuthor.Evaluation
     	
     	private void updateImageViewerSelectionMenu()
     	{
-    		switch (WorksheetPreferences.Instance.ImageViewer) {
+    		switch (EvaluationPreferences.Instance.ImageViewer) {
     			case ImageApp.Default:
     				if (!UseDefaultMenuItem.IsChecked) {
 	    				UseDefaultMenuItem.IsChecked = true;
@@ -236,28 +236,28 @@ namespace AdventureAuthor.Evaluation
     	#region Methods
     	
     	/// <summary>
-    	/// Open a worksheet.
+    	/// Open a Comment Card.
     	/// </summary>
-    	/// <param name="worksheet">The worksheet to open</param>
-    	/// <param name="sourceFilename">The filename this worksheet was deserialized from,
-    	/// or null if the worksheet was created in code</param>
-    	private void Open(Worksheet worksheet, string sourceFilename)
+    	/// <param name="card">The Comment Card to open</param>
+    	/// <param name="sourceFilename">The filename this Comment Card was deserialized from,
+    	/// or null if the Comment Card was created in code</param>
+    	private void Open(Card card, string sourceFilename)
     	{
-    		CloseWorksheetDialog();	    					
+    		CloseCardDialog();	    					
     		    		
     		// Check whether there are duplicated question or section titles - if there are, then
-    		// prevent the user from opening the worksheet unless they're in design mode (it's 
-    		// relatively easy to fix when the whole worksheet is displayed, but more of a pain
-    		// when some parts of the worksheet are inactive and do not have on-screen controls.)
+    		// prevent the user from opening the Comment Card unless they're in design mode (it's 
+    		// relatively easy to fix when the whole Comment Card is displayed, but more of a pain
+    		// when some parts of the Comment Card are inactive and do not have on-screen controls.)
     		if (EvaluationMode != Mode.Design) {    			
-    			string warning = "This worksheet contains duplicate sections or questions " +
-						    	 "and cannot be opened. Try opening and then saving the worksheet " +
+    			string warning = "This Comment Card contains duplicate sections or questions " +
+						    	 "and cannot be opened. Try opening and then saving the Comment Card " +
 						    	 "in designer mode - doing so will rename the duplicate sections and fix this problem.";    			
-    			List<string> sectionTitles = new List<string>(worksheet.Sections.Count);
-	    		foreach (Section section in worksheet.Sections) {
+    			List<string> sectionTitles = new List<string>(card.Sections.Count);
+	    		foreach (Section section in card.Sections) {
     				if (sectionTitles.Contains(section.Title)) {
 	    				Say.Error(warning);
-	    				CloseWorksheet();
+	    				CloseCard();
     					return;
 	    			}
 	    			else {
@@ -267,7 +267,7 @@ namespace AdventureAuthor.Evaluation
     				foreach (Question question in section.Questions) {
 	    				if (questionTitles.Contains(question.Text)) {
 		    				Say.Error(warning);
-	    					CloseWorksheet();
+	    					CloseCard();
 	    					return;
 		    			}
 		    			else {
@@ -277,27 +277,27 @@ namespace AdventureAuthor.Evaluation
 	    		}
     		}    		
     		
-    		if (EvaluationMode == Mode.Design && !worksheet.IsBlank()) {    			
-    			string message = "Someone has already written on this worksheet - " +
+    		if (EvaluationMode == Mode.Design && !card.IsBlank()) {    			
+    			string message = "Someone has already written on this Comment Card - " +
     				"once you're finished, save under a different filename, " + 
     				"or they'll lose their work.";
     			Say.Information(message);
-    			worksheet = worksheet.GetBlankCopy();
+    			card = card.GetBlankCopy();
     			Filename = null;  			
     		}
     		else {
     			Filename = sourceFilename;
     		}
     		
-    		Log.WriteAction(LogAction.opened,"worksheet",Path.GetFileName(filename));
+    		Log.WriteAction(LogAction.opened,"commentcard",Path.GetFileName(filename));
     		
-	    	originalWorksheet = worksheet;
-	    	TitleField.SetText(worksheet.Title);
-	    	DateField.SetText(worksheet.Date);
-	    	DesignerNameField.SetText(worksheet.DesignerName);
-	    	EvaluatorNameField.SetText(worksheet.EvaluatorName);
+	    	originalCard = card;
+	    	TitleField.SetText(card.Title);
+	    	DateField.SetText(card.Date);
+	    	DesignerNameField.SetText(card.DesignerName);
+	    	EvaluatorNameField.SetText(card.EvaluatorName);
 	    	    		
-	    	foreach (Section section in worksheet.Sections) {	    			
+	    	foreach (Section section in card.Sections) {	    			
 	    		if (EvaluationMode == Mode.Design || section.Include) {
 	    			try {	    					
 		    			SectionControl sectionControl = AddSection(section);
@@ -310,7 +310,7 @@ namespace AdventureAuthor.Evaluation
 		    						questionControl.Activate();
 		    						questionControl.HideActivationControls();
 		    					}
-				    			foreach (OptionalWorksheetPartControl answerControl in questionControl.AnswersPanel.Children) {
+				    			foreach (CardPartControl answerControl in questionControl.AnswersPanel.Children) {
 				    				if (EvaluationMode == Mode.Design && !questionControl.IsActive) {
 				    					answerControl.Deactivate(true);
 				    				}
@@ -322,7 +322,7 @@ namespace AdventureAuthor.Evaluation
 			    							ec.ClearLink.IsEnabled = false;
 			    						}
 			    						else {
-			    							// activating a control should usually make the worksheet dirty,
+			    							// activating a control should usually make the Comment Card dirty,
 			    							// but not in this case:
 			    							bool isDirty = Dirty;
 				    						answerControl.Activate();    						
@@ -337,7 +337,7 @@ namespace AdventureAuthor.Evaluation
 		    			}
 	    			}
 	    			catch (InvalidDataException e) {
-	    				CloseWorksheet();
+	    				CloseCard();
 	    				Say.Error(e);
 	    				return;
 	    			}
@@ -345,16 +345,16 @@ namespace AdventureAuthor.Evaluation
 	    	}
 	    		    	
             DateField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetdate",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"commentcarddate",e.NewValue);
             };
             DesignerNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetdesignername",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"commentcarddesignername",e.NewValue);
             };
             EvaluatorNameField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheetevaluatorname",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"commentcardevaluatorname",e.NewValue);
             };
             TitleField.TextEdited += delegate(object sender, TextEditedEventArgs e) {
-            	Log.WriteAction(LogAction.edited,"worksheettitle",e.NewValue);
+            	Log.WriteAction(LogAction.edited,"commentcardtitle",e.NewValue);
             };
 	    	
 	    	DateField.TextChanged += delegate { 
@@ -427,19 +427,19 @@ namespace AdventureAuthor.Evaluation
     		}
     			
     		try {
-	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(Worksheet));
-	    		Worksheet worksheet = (Worksheet)o;
-	    		Open(worksheet,filename);
+	    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(Card));
+	    		Card card = (Card)o;
+	    		Open(card,filename);
     		}
     		catch (Exception e) {
-    			Say.Error("Was unable to open worksheet.",e);
-    			CloseWorksheet();
+    			Say.Error("Was unable to open Comment Card.",e);
+    			CloseCard();
     			this.Filename = null;
     		}
     	}
     	
     	
-    	private string GetTitle(OptionalWorksheetPartControl control)
+    	private string GetTitle(CardPartControl control)
     	{
     		if (control is SectionControl) {
     			return ((SectionControl)control).SectionTitleTextBox.Text;
@@ -454,7 +454,7 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void SetTitle(OptionalWorksheetPartControl control, string title)
+    	private void SetTitle(CardPartControl control, string title)
     	{
     		if (control is SectionControl) {
     			((SectionControl)control).SectionTitleTextBox.SetText(title);
@@ -472,9 +472,9 @@ namespace AdventureAuthor.Evaluation
 		private void ValidateTitles(UIElementCollection controls)
     	{
 			List<string> titles = new List<string>(controls.Count);
-    		List<OptionalWorksheetPartControl> controlsWithDuplicateTitles 
-    			= new List<OptionalWorksheetPartControl>(controls.Count);
-    		foreach (OptionalWorksheetPartControl control in controls) {
+    		List<CardPartControl> controlsWithDuplicateTitles 
+    			= new List<CardPartControl>(controls.Count);
+    		foreach (CardPartControl control in controls) {
     			string title = GetTitle(control);    			
     			if (titles.Contains(title)) {
     				controlsWithDuplicateTitles.Add(control);
@@ -484,7 +484,7 @@ namespace AdventureAuthor.Evaluation
     			}
     		}
     		
-    		foreach (OptionalWorksheetPartControl control in controlsWithDuplicateTitles) {
+    		foreach (CardPartControl control in controlsWithDuplicateTitles) {
     			string originalTitle = GetTitle(control);
     			string newTitle = originalTitle;
     			int count = 1;
@@ -553,7 +553,7 @@ namespace AdventureAuthor.Evaluation
         		throw new ArgumentNullException("Can't add a null section field.");
         	}   
     		SectionsPanel.Children.Add(control);
-    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(sectionControl_Deleting);
+    		control.Deleting += new EventHandler<CardPartControlEventArgs>(sectionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(sectionControl_Moving);
     		control.Activated += delegate { 
     			OnChanged(new EventArgs());
@@ -571,8 +571,8 @@ namespace AdventureAuthor.Evaluation
     	    	
     	private bool Save()
     	{
-    		if (originalWorksheet == null) {
-    			Say.Error("Save failed: Should not have called Save without opening a worksheet.");
+    		if (originalCard == null) {
+    			Say.Error("Save failed: Should not have called Save without opening a Comment Card.");
     			return false;
     		}
     		else if (filename == null) {
@@ -580,8 +580,8 @@ namespace AdventureAuthor.Evaluation
     			return false;
     		}
     		else {
-    			Log.WriteAction(LogAction.saved,"worksheet",Path.GetFileName(Filename));
-	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,GetWorksheet());
+    			Log.WriteAction(LogAction.saved,"commentcard",Path.GetFileName(Filename));
+	    		AdventureAuthor.Utils.Serialization.Serialize(Filename,GetCard());
 	    		if (Dirty) {
 	    			Dirty = false;
 	    		}
@@ -590,14 +590,14 @@ namespace AdventureAuthor.Evaluation
     	}
     	    	
     	
-    	public void CloseWorksheet()
+    	public void CloseCard()
     	{
     		if (filename != null && filename != String.Empty) {
-    			Log.WriteAction(LogAction.closed,"worksheet",Path.GetFileName(Filename));
+    			Log.WriteAction(LogAction.closed,"commentcard",Path.GetFileName(Filename));
     		}
     		
     		Filename = null;
-    		originalWorksheet = null;
+    		originalCard = null;
     		
     		TitleField.Clear();
     		DesignerNameField.Clear();
@@ -635,41 +635,41 @@ namespace AdventureAuthor.Evaluation
     	
     	
     	/// <summary>
-    	/// Construct a worksheet object (including the user's entries)
+    	/// Construct a Comment Card object (including the user's entries)
     	/// </summary>
-    	/// <returns>A worksheet object, or null if no worksheet is open</returns>
-    	public Worksheet GetWorksheet()
+    	/// <returns>A Comment Card object, or null if no Comment Card is open</returns>
+    	public Card GetCard()
     	{
-    		Worksheet ws = null;
+    		Card ws = null;
     		
     		switch (EvaluationMode) {
     		
-	    		// In design mode, everything in the worksheet is displayed on the screen, even the parts
+	    		// In design mode, everything in the Comment Card is displayed on the screen, even the parts
 	    		// which are inactive, so we can just save everything that's represented by a control.
 	    		
     			case Mode.Design:
     				
-		    		ws = new Worksheet(TitleField.Text,DesignerNameField.Text,EvaluatorNameField.Text,DateField.Text);	    		
+		    		ws = new Card(TitleField.Text,DesignerNameField.Text,EvaluatorNameField.Text,DateField.Text);	    		
 		    		ValidateTitles(); // ensure all section and question names are unique
 			    	foreach (SectionControl sc in SectionsPanel.Children) {
-		    			ws.Sections.Add((Section)sc.GetWorksheetPart());
+		    			ws.Sections.Add((Section)sc.GetCardPart());
 			    	}
 		    		break;
 		    		
-	    		// When not in design mode, some worksheet parts are excluded - i.e. they're not displayed
+	    		// When not in design mode, some Comment Card parts are excluded - i.e. they're not displayed
 	    		// on the UI, but we still want to remember their existence. As a result we can't just
 	    		// save only the questions and answers on the UI, as we will end up losing the ones that
-	    		// have been excluded. Instead, we find the original worksheet part that each control corresponds 
+	    		// have been excluded. Instead, we find the original Comment Card part that each control corresponds 
 	    		// to, and if the control has a new value, we save it over the original value. The exception
 	    		// is replies, since these cannot be excluded, so we don't have to check them against an original
 	    		// value.
 		    		
 		    	default:
 	    		
-	    			if (originalWorksheet == null) {
-	    				throw new ArgumentException("Could not find object representing the opened worksheet.");
+	    			if (originalCard == null) {
+	    				throw new ArgumentException("Could not find object representing the opened Comment Card.");
 	    			}    			
-	    			ws = originalWorksheet.GetCopy();
+	    			ws = originalCard.GetCopy();
 	    			if (ws.Title != TitleField.Text) {
 	    				ws.Title = TitleField.Text;
 	    			}
@@ -686,7 +686,7 @@ namespace AdventureAuthor.Evaluation
 	    			foreach (SectionControl sc in SectionsPanel.Children) {
 	    				foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
 	    					Question question = ws.GetQuestion(qc.QuestionTitle.Text,sc.SectionTitleTextBox.Text);
-	    					Question question2 = (Question)qc.GetWorksheetPart();
+	    					Question question2 = (Question)qc.GetCardPart();
 	    					
 	    					if (question != null && question2 != null) {
 	    						if (question.Text != question2.Text) {
@@ -756,7 +756,7 @@ namespace AdventureAuthor.Evaluation
     		
     		foreach (SectionControl sc in SectionsPanel.Children) {
     			foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
-    				foreach (OptionalWorksheetPartControl ac in qc.AnswersPanel.Children) {
+    				foreach (CardPartControl ac in qc.AnswersPanel.Children) {
     					if (mode == Mode.Complete) {
     						ac.Enable();    						
     					}
@@ -768,7 +768,7 @@ namespace AdventureAuthor.Evaluation
     							ec.ClearLink.IsEnabled = false;
     						}
     						else {
-    							// activating a control should usually make the worksheet dirty,
+    							// activating a control should usually make the Comment Card dirty,
     							// but not in this case:
     							bool isDirty = Dirty;
 	    						ac.Activate();    						
@@ -806,14 +806,20 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnClick_New(object sender, EventArgs e)
     	{    		
+    		OpenNewCard();
+    	}
+    	
+    	
+    	private void OpenNewCard()
+    	{	
     		try {
-    			Log.WriteAction(LogAction.added,"worksheet");
-    			Open(new Worksheet(),null);
+    			Log.WriteAction(LogAction.added,"commentcard");
+    			Open(new Card(),null);
     			AddNewSection();
     		}
     		catch (Exception ex) {
-    			Say.Error("Was unable to open worksheet.",ex);
-    			CloseWorksheet();
+    			Say.Error("Was unable to create Comment Card.",ex);
+    			CloseCard();
     		}
     	}
     	
@@ -828,13 +834,13 @@ namespace AdventureAuthor.Evaluation
     	{    				
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
-    		openFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
-    		openFileDialog.Filter = Filters.WORKSHEETS_ALL;
-			openFileDialog.Title = "Select a worksheet to open";
+    		openFileDialog.DefaultExt = Filters.COMMENTCARDS_ALL;
+    		openFileDialog.Filter = Filters.COMMENTCARDS_ALL;
+			openFileDialog.Title = "Select a Comment Card to open";
 			openFileDialog.Multiselect = false;
 			openFileDialog.RestoreDirectory = false;
-			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
-				openFileDialog.InitialDirectory = WorksheetPreferences.Instance.SavedWorksheetsDirectory;
+			if (Directory.Exists(EvaluationPreferences.Instance.SavedCommentCardsDirectory)) {
+				openFileDialog.InitialDirectory = EvaluationPreferences.Instance.SavedCommentCardsDirectory;
 			}	
 			else { // if you give it an invalid InitialDirectory, the dialog will (silently) refuse to load
 				openFileDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
@@ -867,10 +873,10 @@ namespace AdventureAuthor.Evaluation
     		saveFileDialog.DefaultExt = Filters.TXT_ALL;
     		saveFileDialog.Filter = Filters.TXT_ALL;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to export worksheet to";  	  			
+  			saveFileDialog.Title = "Select location to export Comment Card to";  	  			
   			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 			
-	  		// try to get the default filename from the worksheet filename:
+	  		// try to get the default filename from the filename:
 	  		string suggestedFileName;
 	  		if (filename == null || filename == String.Empty) {
 	  			suggestedFileName = "Untitled.txt";
@@ -880,7 +886,7 @@ namespace AdventureAuthor.Evaluation
 	  				suggestedFileName = Path.GetFileNameWithoutExtension(filename) + ".txt";
 		  		}
 		  		catch (Exception e) {
-		  			Say.Debug("Failed to get a suggested filename for worksheet - " + e);
+		  			Say.Debug("Failed to get a suggested filename for Comment Card - " + e);
 		  			suggestedFileName = "Untitled.txt";
 		  		};
 	  		}
@@ -889,13 +895,13 @@ namespace AdventureAuthor.Evaluation
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string exportFilename = saveFileDialog.FileName;
-  				Log.WriteAction(LogAction.exported,"worksheet",Path.GetFileName(exportFilename));  			
+  				Log.WriteAction(LogAction.exported,"commentcard",Path.GetFileName(exportFilename));  			
   				try {
   					ExportToTextFile(exportFilename);
   					Process.Start(exportFilename);
   				}
   				catch (IOException e) {
-  					Say.Error("Failed to export worksheet.",e);
+  					Say.Error("Failed to export Comment Card.",e);
   				}
   			}
     	}
@@ -908,15 +914,15 @@ namespace AdventureAuthor.Evaluation
 			StreamWriter sw = fi.CreateText();
 			sw.AutoFlush = false;
 			
-			Worksheet worksheet = GetWorksheet();
-			sw.WriteLine("Worksheet:\t" + worksheet.Title);
-			sw.WriteLine("Game designer:\t" + worksheet.DesignerName);
-			sw.WriteLine("Evaluator:\t" + worksheet.EvaluatorName);
-			sw.WriteLine("Filled in on:\t" + worksheet.Date);
+			Card card = GetCard();
+			sw.WriteLine("Comment Card:\t" + card.Title);
+			sw.WriteLine("Game designer:\t" + card.DesignerName);
+			sw.WriteLine("Evaluator:\t" + card.EvaluatorName);
+			sw.WriteLine("Filled in on:\t" + card.Date);
 			sw.WriteLine();
 			sw.WriteLine();
 						
-			foreach (Section section in worksheet.Sections) {
+			foreach (Section section in card.Sections) {
 				// Check that a section has not been excluded, either because it has been excluded explicitly
 				// or because it has no questions which are to be included:
 				if (!section.Include) {
@@ -951,7 +957,7 @@ namespace AdventureAuthor.Evaluation
 						}
 						if (question.Replies.Count > 0) {
 							sw.WriteLine();
-							sw.WriteLine("Comments:");
+							sw.WriteLine("Replies:");
 							foreach (Reply reply in question.Replies) {
 								sw.WriteLine("- " + reply.ToString());
 							}
@@ -968,13 +974,13 @@ namespace AdventureAuthor.Evaluation
 		}		
   			   	    	    	
     	
-    	private void sectionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
+    	private void sectionControl_Deleting(object sender, CardPartControlEventArgs e)
     	{
     		DeleteFrom(e.Control,SectionsPanel.Children);
     	}
     	
     	
-    	internal static void DeleteFrom(OptionalWorksheetPartControl deleting, UIElementCollection siblings)
+    	internal static void DeleteFrom(CardPartControl deleting, UIElementCollection siblings)
     	{
     		if (siblings.Contains(deleting)) {
     			siblings.Remove(deleting);
@@ -983,7 +989,7 @@ namespace AdventureAuthor.Evaluation
     		else {
     			throw new InvalidOperationException("Received instruction to delete a control " + 
     			                                    "( " + deleting.ToString() +
-    			                                    ") that was not a part of this worksheet.");
+    			                                    ") that was not a part of this Comment Card.");
     		}
     	}
     	
@@ -994,7 +1000,7 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	internal static void MoveWithin(OptionalWorksheetPartControl moving, UIElementCollection siblings, bool moveUp)
+    	internal static void MoveWithin(CardPartControl moving, UIElementCollection siblings, bool moveUp)
     	{    		
     		if (siblings.Contains(moving)) {
     			if (siblings.Count > 1) {   
@@ -1021,7 +1027,7 @@ namespace AdventureAuthor.Evaluation
     		else {
     			throw new InvalidOperationException("Received instruction to move a control " + 
     			                                    "( " + moving +
-    			                                    ") that was not a part of this worksheet.");
+    			                                    ") that was not a part of this Comment Card.");
     		}
     	}
     	
@@ -1031,14 +1037,29 @@ namespace AdventureAuthor.Evaluation
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
-    		saveFileDialog.Filter = Filters.WORKSHEETS_ALL;
+    		saveFileDialog.DefaultExt = Filters.COMMENTCARDS_ALL;
+    		saveFileDialog.Filter = Filters.COMMENTCARDS_ALL;
   			saveFileDialog.ValidateNames = true;
-  			saveFileDialog.Title = "Select location to save worksheet to";
+  			saveFileDialog.Title = "Select location to save Comment Card to";
 			saveFileDialog.RestoreDirectory = false;
-  			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
-  				saveFileDialog.InitialDirectory = WorksheetPreferences.Instance.SavedWorksheetsDirectory;
+  			if (Directory.Exists(EvaluationPreferences.Instance.SavedCommentCardsDirectory)) {
+  				saveFileDialog.InitialDirectory = EvaluationPreferences.Instance.SavedCommentCardsDirectory;
   			}
+			
+//			TODO: Would like to fix the following, so that it suggests a filename based on your card title,
+//			but have had problems stripping out invalid characters - and if you don't, leaving punctuation in
+//			somehow concatenates the file filter onto the filename, while leaving a ':' in causes a crash.
+//			
+//			string invalidChars = "<|>|!|:|.";
+//			//string invalidChars = "<|>|:|.|?|!|\\|/|\"";			
+//			if (TitleField.Text != null && TitleField.Text != String.Empty) {
+//				string suggestedTitle = TitleField.Text;
+//				Say.Information(suggestedTitle + "\n\nreplacing: " + invalidChars);
+//				suggestedTitle = Regex.Replace(suggestedTitle,invalidChars,"");
+//				
+//				Say.Information("wound up with: " + suggestedTitle);
+//				saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,suggestedTitle);
+//			}			
   				
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
@@ -1054,7 +1075,7 @@ namespace AdventureAuthor.Evaluation
     	
     	private bool SaveDialog() 
     	{    		
-    		if (originalWorksheet == null) {
+    		if (originalCard == null) {
     			return false;
     		}
     		else if (Filename == null) { // get a filename to save to if there isn't one already    		
@@ -1065,7 +1086,7 @@ namespace AdventureAuthor.Evaluation
 	    			return Save();
 	    		}
 	    		catch (Exception e) {
-	    			Say.Error("Failed to save worksheet.",e);
+	    			Say.Error("Failed to save Comment Card.",e);
 	    			return false;
 	    		}
     		}
@@ -1074,15 +1095,15 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnClick_Close(object sender, EventArgs e)
     	{
-    		CloseWorksheetDialog();
+    		CloseCardDialog();
     	}
     	
     	
-    	private bool CloseWorksheetDialog()
+    	private bool CloseCardDialog()
     	{
     		if (dirty) {
     			MessageBoxResult result = 
-    				MessageBox.Show("Save changes to this worksheet?","Save changes?",MessageBoxButton.YesNoCancel);
+    				MessageBox.Show("Save changes to this Comment Card?","Save changes?",MessageBoxButton.YesNoCancel);
     			switch (result) {
     				case MessageBoxResult.Cancel:
     					return false;
@@ -1097,34 +1118,34 @@ namespace AdventureAuthor.Evaluation
     			}    			
     		}
     		
-    		CloseWorksheet();
+    		CloseCard();
     		return true;
     	}
     	
     	
     	private void OnClick_MakeBlankCopy(object sender, EventArgs e)
     	{
-  			Worksheet original = GetWorksheet();
+  			Card original = GetCard();
   			if (original == null) {
   				return;
   			}
-	    	Worksheet blankCopy = original.GetBlankCopy(); 
+	    	Card blankCopy = original.GetBlankCopy(); 
 	    	
     		SaveFileDialog saveFileDialog = new SaveFileDialog();
     		saveFileDialog.AddExtension = true;
     		saveFileDialog.CheckPathExists = true;
-    		saveFileDialog.DefaultExt = Filters.WORKSHEETS_ALL;
-    		saveFileDialog.Filter = Filters.WORKSHEETS_ALL;
+    		saveFileDialog.DefaultExt = Filters.COMMENTCARDS_ALL;
+    		saveFileDialog.Filter = Filters.COMMENTCARDS_ALL;
   			saveFileDialog.ValidateNames = true;
   			saveFileDialog.Title = "Select location to save blank copy to";  			
-			if (Directory.Exists(WorksheetPreferences.Instance.SavedWorksheetsDirectory)) {
-				saveFileDialog.InitialDirectory = WorksheetPreferences.Instance.SavedWorksheetsDirectory;
+			if (Directory.Exists(EvaluationPreferences.Instance.SavedCommentCardsDirectory)) {
+				saveFileDialog.InitialDirectory = EvaluationPreferences.Instance.SavedCommentCardsDirectory;
 			}	
   			
   			bool ok = (bool)saveFileDialog.ShowDialog();  				
   			if (ok) {
   				string filename = saveFileDialog.FileName;  
-  				Log.WriteAction(LogAction.saved,"worksheet","blank copy -" + Path.GetFileName(filename));
+  				Log.WriteAction(LogAction.saved,"commentcard","blank copy -" + Path.GetFileName(filename));
 	    		AdventureAuthor.Utils.Serialization.Serialize(filename,blankCopy);
 	    		Say.Information("Created blank copy at " + filename);
   			}
@@ -1137,7 +1158,7 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void WorksheetChanged(object sender, EventArgs e)
+    	private void changeMade(object sender, EventArgs e)
     	{
     		if (!Dirty) {
     			Dirty = true;
@@ -1151,7 +1172,7 @@ namespace AdventureAuthor.Evaluation
         		throw new InvalidOperationException("Should not have been possible to click this " +
         		                                    "when not in designer mode.");
         	}  			
-        	else if (GetWorksheet() == null) {
+        	else if (GetCard() == null) {
   				return;
   			}
         	
@@ -1161,13 +1182,13 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnChecked_UsePaint(object sender, EventArgs e)
     	{
-    		WorksheetPreferences.Instance.ImageViewer = ImageApp.MicrosoftPaint;
+    		EvaluationPreferences.Instance.ImageViewer = ImageApp.MicrosoftPaint;
     	}
     	
     	
     	private void OnChecked_UseDefault(object sender, EventArgs e)
     	{
-    		WorksheetPreferences.Instance.ImageViewer = ImageApp.Default;    		
+    		EvaluationPreferences.Instance.ImageViewer = ImageApp.Default;    		
     	}
     	
     	

@@ -16,7 +16,7 @@ namespace AdventureAuthor.Evaluation
 	[Serializable]
 	[XmlRoot]
 	[XmlInclude(typeof(Rating)), XmlInclude(typeof(Evidence)), XmlInclude(typeof(Comment))]
-	public class Question : OptionalWorksheetPart
+	public class Question : CardPart
 	{				
 		/// <summary>
 		/// The text of this question.
@@ -32,7 +32,7 @@ namespace AdventureAuthor.Evaluation
 		/// <summary>
 		/// Answers to this question.
 		/// </summary>
-		/// <remarks>A worksheet question may require multiple answers
+		/// <remarks>A question may require multiple answers
 		/// e.g. a star rating, a comment, and the URL of supporting evidence</remarks>
 		[XmlArray]
 		private List<Answer> answers;
@@ -45,9 +45,9 @@ namespace AdventureAuthor.Evaluation
 		/// <summary>
 		/// A series of replies made to this question once it has been answered.
 		/// </summary>
-		/// <remarks>Usually the initial comment will relate directly to the answers for this question,
+		/// <remarks>Usually the initial reply will relate directly to the answers for this question,
 		/// for example a teacher marking a pupil's answers, or a designer responding to a playtester's
-		/// criticisms. Subsequent comments may directly reply to previous comments, or simply to the
+		/// criticisms. Subsequent replies may directly relate to previous replies, or simply to the
 		/// question in general.</remarks>
 		[XmlElement]
 		private List<Reply> replies;			
@@ -70,7 +70,7 @@ namespace AdventureAuthor.Evaluation
 		}
 		
 		
-		public override OptionalWorksheetPartControl GetControl()
+		public override CardPartControl GetControl()
 		{
 			return new QuestionControl(this);
 		}

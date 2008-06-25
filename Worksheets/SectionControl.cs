@@ -7,7 +7,7 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Evaluation
 {
-    public partial class SectionControl : OptionalWorksheetPartControl
+    public partial class SectionControl : CardPartControl
     {     	
     	#region Fields
     	
@@ -17,11 +17,11 @@ namespace AdventureAuthor.Evaluation
     	
     	#region Events
     	
-    	public event EventHandler<OptionalWorksheetPartControlEventArgs> Deleting;  
+    	public event EventHandler<CardPartControlEventArgs> Deleting;  
     	
-		protected virtual void OnDeleting(OptionalWorksheetPartControlEventArgs e)
+		protected virtual void OnDeleting(CardPartControlEventArgs e)
 		{
-			EventHandler<OptionalWorksheetPartControlEventArgs> handler = Deleting;
+			EventHandler<CardPartControlEventArgs> handler = Deleting;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -65,23 +65,23 @@ namespace AdventureAuthor.Evaluation
             SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
-        		if (WorksheetViewer.Instance.EvaluationMode == Mode.Design || question.Include) {	
+        		if (CardViewer.Instance.EvaluationMode == Mode.Design || question.Include) {	
 		        	AddQuestionField(question);
         		}
         	}
                            
-            if (WorksheetViewer.Instance.EvaluationMode == Mode.Design) {
+            if (CardViewer.Instance.EvaluationMode == Mode.Design) {
             	AddQuestionButton.Visibility = Visibility.Visible;
             	DeleteSectionButton.Visibility = Visibility.Visible;
             	MoveSectionDownButton.Visibility = Visibility.Visible;
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
             
-            string imagePath = Path.Combine(WorksheetPreferences.Instance.InstallDirectory,"delete.png");
+            string imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"delete.png");
             Tools.SetXAMLButtonImage(DeleteSectionButton,imagePath,"delete");
-            imagePath = Path.Combine(WorksheetPreferences.Instance.InstallDirectory,"07.png");
+            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"07.png");
             Tools.SetXAMLButtonImage(MoveSectionDownButton,imagePath,"down");
-            imagePath = Path.Combine(WorksheetPreferences.Instance.InstallDirectory,"08.png");
+            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"08.png");
             Tools.SetXAMLButtonImage(MoveSectionUpButton,imagePath,"up");
         }  
 			        
@@ -111,7 +111,7 @@ namespace AdventureAuthor.Evaluation
         		control.Background = (Brush)Resources["Stripe2Brush"];
         	}         	
         	QuestionsPanel.Children.Add(control);    	
-    		control.Deleting += new EventHandler<OptionalWorksheetPartControlEventArgs>(questionControl_Deleting);
+    		control.Deleting += new EventHandler<CardPartControlEventArgs>(questionControl_Deleting);
     		control.Moving += new EventHandler<MovingEventArgs>(questionControl_Moving);
     		control.Activated += delegate { OnChanged(new EventArgs()); };
     		control.Deactivated += delegate { OnChanged(new EventArgs()); };
@@ -138,21 +138,21 @@ namespace AdventureAuthor.Evaluation
     	
     	private void questionControl_Moving(object sender, MovingEventArgs e)
     	{
-    		WorksheetViewer.MoveWithin(e.Control,QuestionsPanel.Children,e.MoveUp);
+    		CardViewer.MoveWithin(e.Control,QuestionsPanel.Children,e.MoveUp);
     		SetBackgrounds();
     	}
     	    	
     	
-    	private void questionControl_Deleting(object sender, OptionalWorksheetPartControlEventArgs e)
+    	private void questionControl_Deleting(object sender, CardPartControlEventArgs e)
     	{
-    		WorksheetViewer.DeleteFrom(e.Control,QuestionsPanel.Children);
+    		CardViewer.DeleteFrom(e.Control,QuestionsPanel.Children);
     		SetBackgrounds();
     	}
         
         
         private void OnClick_DeleteSection(object sender, EventArgs e)
         {
-        	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
         	}
         	
@@ -172,7 +172,7 @@ namespace AdventureAuthor.Evaluation
         	                                          MessageBoxOptions.None);
         	if (result == MessageBoxResult.OK) {
         		Log.WriteAction(LogAction.deleted,"section");
-        		OnDeleting(new OptionalWorksheetPartControlEventArgs(this));
+        		OnDeleting(new CardPartControlEventArgs(this));
         	}
         }        
         
@@ -205,7 +205,7 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_AddQuestion(object sender, EventArgs e)
         {
-        	if (WorksheetViewer.Instance.EvaluationMode != Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
         		throw new InvalidOperationException("Should not have been possible to call Add Question " +
         		                                    "when not in designer mode.");
         	}
@@ -227,7 +227,7 @@ namespace AdventureAuthor.Evaluation
     	protected void EnableChildren()
     	{
     		foreach (UIElement element in QuestionsPanel.Children) {
-    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			CardPartControl part = element as CardPartControl;
     			if (part != null) {
     				part.Enable();
     			}
@@ -249,14 +249,14 @@ namespace AdventureAuthor.Evaluation
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
-    		ActivateCheckBox.ToolTip = "Click to deactivate this section\n(will not appear in worksheet)";
+    		ActivateCheckBox.ToolTip = "Click to deactivate this section.\n(Won't appear to users filling out this Comment Card.)";
     	}
     	
     	
     	protected void ActivateChildren()
     	{
     		foreach (UIElement element in QuestionsPanel.Children) {
-    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			CardPartControl part = element as CardPartControl;
     			if (part != null) {
     				part.Activate();
     			}
@@ -278,14 +278,14 @@ namespace AdventureAuthor.Evaluation
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
-    		ActivateCheckBox.ToolTip = "Click to activate this section\n(will appear in worksheet)";
+    		ActivateCheckBox.ToolTip = "Click to activate this section.\n(Will appear to users filling out this Comment Card.)";
     	}
     	
     	
     	protected void DeactivateChildren()
     	{
     		foreach (UIElement element in QuestionsPanel.Children) {
-    			OptionalWorksheetPartControl part = element as OptionalWorksheetPartControl;
+    			CardPartControl part = element as CardPartControl;
     			if (part != null) {
     				part.Deactivate(true);
     			}
@@ -303,13 +303,13 @@ namespace AdventureAuthor.Evaluation
 		}
         
         
-        protected override OptionalWorksheetPart GetWorksheetPartObject()
+        protected override CardPart GetCardPartObject()
         {
         	Section section = new Section(SectionTitleTextBox.Text);   			
    			foreach (UIElement element in QuestionsPanel.Children) {
    				QuestionControl qc = element as QuestionControl;
    				if (qc != null) {
-   					Question question = (Question)qc.GetWorksheetPart();
+   					Question question = (Question)qc.GetCardPart();
    					section.Questions.Add(question);
    				}
    			}   			

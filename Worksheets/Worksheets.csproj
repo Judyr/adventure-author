@@ -72,27 +72,23 @@
     <Compile Include="IStarred.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="MovingEventArgs.cs" />
-    <Compile Include="OptionalWorksheetPart.cs" />
-    <Compile Include="OptionalWorksheetPartControl.cs" />
-    <Compile Include="OptionalWorksheetPartControlEventArgs.cs" />
+    <Compile Include="CardPart.cs" />
+    <Compile Include="CardPartControl.cs" />
+    <Compile Include="CardPartControlEventArgs.cs" />
     <Compile Include="Question.cs" />
     <Compile Include="QuestionControl.xaml.cs" />
     <Compile Include="Rating.cs" />
     <Compile Include="RatingControl.xaml.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="ReplyControl.xaml.cs" />
-    <Compile Include="ReplyEventArgs.cs" />
+    <Compile Include="CardPartEventArgs.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="SectionControl.cs" />
     <Compile Include="SelectModeWindow.xaml.cs" />
-    <Compile Include="Worksheet.cs" />
-    <Compile Include="WorksheetPreferences.cs" />
-    <Compile Include="WorksheetViewer.cs" />
-    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
-      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
-      <Name>AAUtils</Name>
-    </ProjectReference>
+    <Compile Include="Card.cs" />
+    <Compile Include="EvaluationPreferences.cs" />
+    <Compile Include="CardViewer.cs" />
     <Page Include="AddReplyWindow.xaml" />
     <Page Include="CommentControl.xaml" />
     <Page Include="EvidenceControl.xaml" />
@@ -101,6 +97,10 @@
     <Page Include="ReplyControl.xaml" />
     <Page Include="SectionControl.xaml" />
     <Page Include="SelectModeWindow.xaml" />
-    <Page Include="WorksheetViewer.xaml" />
+    <Page Include="CardViewer.xaml" />
+    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

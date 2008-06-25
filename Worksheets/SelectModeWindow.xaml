@@ -7,7 +7,7 @@
 	WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
 	<StackPanel Orientation="Vertical" Margin="20">
 		<Button
-			Content="Fill in a worksheet"
+			Content="Fill in a Comment Card"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Top"
 			Height="34"
@@ -17,7 +17,7 @@
 			Click="OnClick_CompleteMode"/>
 		<Button
 			FontSize="14"
-			Content="Construct a worksheet (teachers only)"
+			Content="Design your own Comment Card"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Bottom"
 			Height="34"

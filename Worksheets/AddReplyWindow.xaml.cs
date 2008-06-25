@@ -30,11 +30,11 @@ namespace AdventureAuthor.Evaluation
     	
     	#region Events
     	
-    	public EventHandler<OptionalWorksheetPartEventArgs> ReplyEdited;
+    	public EventHandler<CardPartEventArgs> ReplyEdited;
     	
-    	protected virtual void OnReplyEdited(OptionalWorksheetPartEventArgs e)
+    	protected virtual void OnReplyEdited(CardPartEventArgs e)
     	{
-    		EventHandler<OptionalWorksheetPartEventArgs> handler = ReplyEdited;
+    		EventHandler<CardPartEventArgs> handler = ReplyEdited;
     		if (handler != null) {
     			handler(this,e);
     		}
@@ -105,7 +105,7 @@ namespace AdventureAuthor.Evaluation
 	        		return;
 	        	}
 	        	
-	        	OnReplyEdited(new OptionalWorksheetPartEventArgs(reply));
+	        	OnReplyEdited(new CardPartEventArgs(reply));
 	        	Close();
         	}
         }

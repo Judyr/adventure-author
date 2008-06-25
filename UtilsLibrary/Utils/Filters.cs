@@ -19,7 +19,7 @@ namespace AdventureAuthor.Utils
     	public const string TXT = "Text files (*.txt)|*.txt";    	
     	public const string XML = "XML files (*.xml)|*.xml";    	
     	public const string PICTURES = "Pictures (*.jpg;*.jpeg;*.bmp;*.png;*.gif)|*.jpg;*.jpeg;*.bmp;*.png;*.gif";    	
-    	public const string WORKSHEETS = "Worksheet files (*.wrk)|*.wrk";    	  	
+    	public const string COMMENTCARDS = "Comment Cards (*.crd)|*.crd";    	  	
     	public const string MAGNETBOARDS = "Magnet board files (*.brd)|*.brd";    	  	
     	public const string MAGNETBOXES = "Magnet box files (*.box)|*.box";    	
     	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";    	
@@ -28,7 +28,7 @@ namespace AdventureAuthor.Utils
     	public const string TXT_ALL = TXT + "|" + ALL;
     	public const string XML_ALL = XML + "|" + ALL;
     	public const string PICTURES_ALL = PICTURES + "|" + ALL;
-    	public const string WORKSHEETS_ALL = WORKSHEETS + "|" + ALL;
+    	public const string COMMENTCARDS_ALL = COMMENTCARDS + "|" + ALL;
     	public const string MAGNETBOARDS_ALL = MAGNETBOARDS + "|" + ALL;
     	public const string MAGNETBOXES_ALL = MAGNETBOXES + "|" + ALL;
     	public const string COMPILEDSCRIPTS_ALL = COMPILEDSCRIPTS + "|" + ALL;

@@ -18,11 +18,11 @@ using Microsoft.Win32;
 namespace AdventureAuthor.Evaluation
 {
 	/// <summary>
-	/// Description of WorksheetPreferences.
+	/// Description of EvaluationPreferences.
 	/// </summary>
 	[Serializable]
 	[XmlRoot]
-	public class WorksheetPreferences : INotifyPropertyChanged
+	public class EvaluationPreferences : INotifyPropertyChanged
 	{
 		#region Events	
 		
@@ -42,21 +42,21 @@ namespace AdventureAuthor.Evaluation
 		/// <summary>
 		/// The single instance of this class.
 		/// </summary>
-		private static WorksheetPreferences instance;
+		private static EvaluationPreferences instance;
 		[XmlIgnore]
-		public static WorksheetPreferences Instance {
+		public static EvaluationPreferences Instance {
 			get {
 				if (instance == null) {
 	            	// Look for a saved preferences file in the default path - if it's not
 	            	// there, use a generic set of preferences:
-					if (File.Exists(defaultWorksheetPreferencesPath) &&
-					    Serialization.IsSerialisedObjectOfType(defaultWorksheetPreferencesPath,typeof(WorksheetPreferences))) 
+					if (File.Exists(defaultPreferencesPath) &&
+					    Serialization.IsSerialisedObjectOfType(defaultPreferencesPath,typeof(EvaluationPreferences))) 
 					{
-						object o = Serialization.Deserialize(defaultWorksheetPreferencesPath,typeof(WorksheetPreferences));
-						WorksheetPreferences.Instance = (WorksheetPreferences)o;
+						object o = Serialization.Deserialize(defaultPreferencesPath,typeof(EvaluationPreferences));
+						EvaluationPreferences.Instance = (EvaluationPreferences)o;
 					}
 					else {
-						instance = new WorksheetPreferences();
+						instance = new EvaluationPreferences();
 					}
 				}
 				return instance;
@@ -68,7 +68,7 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		/// <summary>
-		/// The path of the worksheets installation. 
+		/// The path of the Comment Cards installation. 
 		/// </summary>
 		private string installDirectory;
 		[XmlElement]
@@ -78,16 +78,16 @@ namespace AdventureAuthor.Evaluation
 		
 		
 		/// <summary>
-		/// The path where saved worksheets are kept for this user account.
+		/// The path where saved Comment Cards are kept for this user account.
 		/// </summary>
-		private string savedWorksheetsDirectory;
+		private string savedCommentCardsDirectory;
 		[XmlElement]
-		public string SavedWorksheetsDirectory {
-			get { return savedWorksheetsDirectory; }
+		public string SavedCommentCardsDirectory {
+			get { return savedCommentCardsDirectory; }
 			set { 
-				if (savedWorksheetsDirectory != value) {
-					savedWorksheetsDirectory = value;
-					NotifyPropertyChanged("SavedWorksheetsDirectory");
+				if (savedCommentCardsDirectory != value) {
+					savedCommentCardsDirectory = value;
+					NotifyPropertyChanged("SavedCommentCardsDirectory");
 				}
 			}
 		}
@@ -96,20 +96,20 @@ namespace AdventureAuthor.Evaluation
 		/// <summary>
 		/// The folder where local application data is kept for this application.
 		/// </summary>
-		private static string localAppDataForWorksheetsDirectory;
+		private static string localAppDataDirectory;
 		[XmlElement]
-		public static string LocalAppDataForWorksheetsDirectory {
-			get { return localAppDataForWorksheetsDirectory; }
+		public static string LocalAppDataDirectory {
+			get { return localAppDataDirectory; }
 		}
 		
 		
 		/// <summary>
 		/// The path where user preferences are kept.
 		/// </summary>
-		private static string defaultWorksheetPreferencesPath;
+		private static string defaultPreferencesPath;
 		[XmlElement]
-		public static string DefaultWorksheetPreferencesPath {
-			get { return defaultWorksheetPreferencesPath; }
+		public static string DefaultPreferencesPath {
+			get { return defaultPreferencesPath; }
 		}
 		
 		
@@ -132,25 +132,25 @@ namespace AdventureAuthor.Evaluation
 
 		#region Constructors			
 		
-		static WorksheetPreferences()
+		static EvaluationPreferences()
 		{
 			instance = null;	
 			
-			string localAppDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);			
-			localAppDataForWorksheetsDirectory = Path.Combine(localAppDataDirectory,"Worksheets");
-			defaultWorksheetPreferencesPath = Path.Combine(localAppDataForWorksheetsDirectory,"WorksheetsPreferences.xml");
+			string genericLocalApplicationDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);			
+			localAppDataDirectory = Path.Combine(genericLocalApplicationDataDirectory,"Comment Cards");
+			defaultPreferencesPath = Path.Combine(localAppDataDirectory,"CommentCardsPreferences.xml");
 		}
  
 		
-		public WorksheetPreferences()
+		public EvaluationPreferences()
 		{			
 			// default preferences - should only be used if there's no preferences file found:
 			this.ImageViewer = ImageApp.Default;
 			string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			this.SavedWorksheetsDirectory = Path.Combine(myDocumentsPath,"Worksheets");		
+			this.SavedCommentCardsDirectory = Path.Combine(myDocumentsPath,"Comment Cards");		
 			
 			// TODO get the install directory from the registry:
-			installDirectory = @"C:\Program Files\Heriot-Watt University\Worksheets";			
+			installDirectory = @"C:\Program Files\Heriot-Watt University\Comment Cards";			
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}
