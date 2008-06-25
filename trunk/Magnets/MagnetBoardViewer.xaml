@@ -61,6 +61,10 @@
 				<Separator/>
 	    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour" FontSize="14"/>
 			</MenuItem>
+			<MenuItem x:Name="helpMenu" Header="Help">
+				<MenuItem Header="Help" Click="OnClick_Help"/>
+				<MenuItem Header="About" Click="OnClick_About"/>
+			</MenuItem>
 		</Menu>	
 			
 		<local:MagnetList x:Name="magnetList" 

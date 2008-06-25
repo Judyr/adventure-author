@@ -20,6 +20,8 @@ namespace AdventureAuthor.Evaluation
     	#region Constants
     	    	
     	private string DEFAULT_TITLE = "Evaluation";
+    	private string LOCKANSWERSDESCRIPTION = "Lock worksheet";
+    	private string UNLOCKANSWERSDESCRIPTION = "Unlock worksheet";
     	
     	#endregion
     	    	
@@ -275,19 +277,13 @@ namespace AdventureAuthor.Evaluation
 	    		}
     		}    		
     		
-    		if (EvaluationMode == Mode.Design && !worksheet.IsBlank()) {
-    			MessageBoxResult result = MessageBox.Show("The worksheet you are trying to open has been partially " +
-    			                                          "filled in, and cannot be re-designed.\n\n" +
-    			                                          "Would you like to create a blank copy to work on?",
-    			                                          "Create blank copy?",
-    			                                          MessageBoxButton.OKCancel);
-    			if (result == MessageBoxResult.OK) {
-    				worksheet = worksheet.GetBlankCopy();
-    				Filename = null;
-    			}
-    			else {
-    				return;
-    			}    			
+    		if (EvaluationMode == Mode.Design && !worksheet.IsBlank()) {    			
+    			string message = "Someone has already written on this worksheet - " +
+    				"once you're finished, save under a different filename, " + 
+    				"or they'll lose their work.";
+    			Say.Information(message);
+    			worksheet = worksheet.GetBlankCopy();
+    			Filename = null;  			
     		}
     		else {
     			Filename = sourceFilename;

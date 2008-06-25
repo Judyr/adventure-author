@@ -123,7 +123,7 @@ namespace AdventureAuthor.Ideas
 				pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
 				pipeCommunicationThread.Start();	
 				LaunchInSystemTray();			
-				Hide(); // must be hidden last, or other constructor stuff never seems to happen
+				//Hide(); // must be hidden last, or other constructor stuff never seems to happen
 			};		
 			
 			// clean up after yourself, for god's sake, you're a mess:
@@ -918,6 +918,19 @@ namespace AdventureAuthor.Ideas
         		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
     			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
         	}
+        }
+        
+        
+        private void OnClick_Help(object sender, EventArgs e)
+        {
+        	Say.Information("No help for you! HA!");
+        }
+        
+        
+        private void OnClick_About(object sender, EventArgs e)
+        {
+        	AboutWindow window = new AboutWindow("Fridge Magnets","Created by Keiron Nicholson",null);
+        	window.ShowDialog();
         }
         
         
