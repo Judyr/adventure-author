@@ -21,6 +21,8 @@ namespace AdventureAuthor.Evaluation
     	#region Constants
     	    	
     	private string DEFAULT_TITLE = "Evaluation";
+    	private const string COMPLETE_MODE_DESCRIPTION = "Switch to Complete Mode";
+    	private const string DISCUSS_MODE_DESCRIPTION = "Switch to Discuss Mode";
     	
     	#endregion
     	    	
@@ -145,8 +147,8 @@ namespace AdventureAuthor.Evaluation
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
 	    			EditMenu.Visibility = Visibility.Collapsed;	    		
-    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
-    				switchModeButton.Content = "Switch to Discuss mode";
+    				SwitchModesMenuItem.Header = DISCUSS_MODE_DESCRIPTION;
+    				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
 		    		break;
     				
     			case Mode.Discuss:
@@ -160,8 +162,8 @@ namespace AdventureAuthor.Evaluation
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
 	    			EditMenu.Visibility = Visibility.Collapsed; 		
-    				SwitchModesMenuItem.Header = "Enter Complete mode";
-    				switchModeButton.Content = "Switch to Complete mode";
+    				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
+    				switchModeButton.Content =COMPLETE_MODE_DESCRIPTION;
 		    		break;
     		}
     		
@@ -389,12 +391,12 @@ namespace AdventureAuthor.Evaluation
 		    		break;
 		    	case Mode.Complete:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		switchModeButton.Content = "Switch to Discuss mode";
+		    		switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
 		    		switchModeButton.Visibility = Visibility.Visible;
 		    		break;
 		    	case Mode.Discuss:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		switchModeButton.Content = "Switch to Complete mode";
+		    		switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
 		    		switchModeButton.Visibility = Visibility.Visible;
 		    		break;
 		    }
@@ -740,15 +742,15 @@ namespace AdventureAuthor.Evaluation
     				DateField.IsEnabled = true;
     				DesignerNameField.IsEnabled = true;
     				EvaluatorNameField.IsEnabled = true;
-    				SwitchModesMenuItem.Header = "Switch to Discuss mode";
-    				switchModeButton.Content = "Switch to Discuss mode";
+    				SwitchModesMenuItem.Header = DISCUSS_MODE_DESCRIPTION;
+    				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
     				break;
     			case Mode.Discuss:
     				DateField.IsEnabled = false;
     				DesignerNameField.IsEnabled = false;
     				EvaluatorNameField.IsEnabled = false;
-    				SwitchModesMenuItem.Header = "Switch to Complete mode";
-    				switchModeButton.Content = "Switch to Complete mode";
+    				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
+    				switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
     				break;
     			case Mode.Design:
     				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
