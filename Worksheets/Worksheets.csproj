@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="badly.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentControl.cs" />
     <Compile Include="Evidence.cs" />
