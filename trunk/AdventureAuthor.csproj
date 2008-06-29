@@ -410,9 +410,9 @@
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>
     </ProjectReference>
-    <ProjectReference Include="Worksheets\Worksheets.csproj">
+    <ProjectReference Include="Worksheets\Comment Cards.csproj">
       <Project>{FE28833C-EDC9-48FC-80E4-4CE168E828DD}</Project>
-      <Name>Worksheets</Name>
+      <Name>Comment Cards</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

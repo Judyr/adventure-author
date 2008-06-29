@@ -12,11 +12,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Worksheets")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Comment Cards")]
+[assembly: AssemblyDescription("Software for teacher and peer evaluation of children's work through Comment Cards.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Worksheets")]
+[assembly: AssemblyProduct("Comment Cards")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

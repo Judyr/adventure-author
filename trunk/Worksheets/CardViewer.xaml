@@ -52,7 +52,8 @@
 		</StackPanel>
 		<ScrollViewer Name="Scroller" Grid.Row="1" Grid.Column="0"
 					  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Focusable="false">
-	    	<StackPanel Orientation="Vertical">				
+	    	<StackPanel Orientation="Vertical">	
+				
 				<StackPanel Orientation="Vertical" Margin="10">
 	    			<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
 			    		<Label Name="TitleLabel" Content="Title: " Margin="5" FontSize="14" Visibility="Hidden"/>

@@ -101,9 +101,9 @@ namespace AdventureAuthor.Evaluation
 	        	}
 	        	
 	        	// Check that the user is a teacher before allowing them to add a teacher response:
-	        	if (reply.ReplierType == Role.Teacher && !User.IdentifyTeacherOrDemandPassword()) {
-	        		return;
-	        	}
+	        	//if (reply.ReplierType == Role.Teacher && !User.IdentifyTeacherOrDemandPassword()) {
+	        	//	return;
+	        	//}
 	        	
 	        	OnReplyEdited(new CardPartEventArgs(reply));
 	        	Close();
