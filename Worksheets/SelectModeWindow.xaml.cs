@@ -40,10 +40,8 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_DesignMode(object sender, EventArgs e)
         {
-        	if (User.IdentifyTeacherOrDemandPassword()) {
-        		Launch(Mode.Design);
-        		Close();
-        	}
+        	Launch(Mode.Design);
+        	Close();
         }
         
         

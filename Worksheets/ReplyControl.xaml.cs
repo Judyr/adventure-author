@@ -114,18 +114,18 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_Delete(object sender, RoutedEventArgs e)
         {
-        	if (User.IdentifyTeacherOrDemandPassword()) {
+        	//if (User.IdentifyTeacherOrDemandPassword()) {
         		Log.WriteAction(LogAction.deleted,"reply",GetCardPart().ToString());
         		OnDeleted(new CardPartControlEventArgs(this));
-        	}
+        	//}
         }
         
         
         private void OnClick_Edit(object sender, RoutedEventArgs e)
         {
-        	if (User.IdentifyTeacherOrDemandPassword()) {
+        	//if (User.IdentifyTeacherOrDemandPassword()) {
         		OnEdited(new EventArgs());
-        	}
+        	//}
         }
 		
         
