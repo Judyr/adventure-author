@@ -68,7 +68,7 @@ namespace AdventureAuthor.Evaluation
 				
 		protected void SetInitialActiveStatus(CardPart representedCardPart)
 		{          
-            if (CardViewer.Instance.EvaluationMode == Mode.Design) { // show 'Active?' control, and assume that control is Active to begin with
+            if (CardViewer.Instance.EvaluationMode == Mode.Designer) { // show 'Active?' control, and assume that control is Active to begin with
 				ShowActivationControls();
 	    		if (representedCardPart.Include) {
 					Activate();

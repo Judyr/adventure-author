@@ -182,20 +182,20 @@ namespace AdventureAuthor.Setup
 			analysisButton.Visible = false;
 			aaToolbar.Items.Add(analysisButton);
 						
-			ButtonItem evaluationButton = new ButtonItem();
-			evaluationButton.Activate += delegate { 
-				if (CardViewer.Instance == null || !CardViewer.Instance.IsLoaded) {					
-					SelectModeWindow selectModeWindow = new SelectModeWindow();
-					bool cancelled = !((bool)selectModeWindow.ShowDialog());
-					if (cancelled) {
-						return;	
-					}
-				}
-				BringToFront(CardViewer.Instance);
-			};
-			SetSandbarButtonImage(evaluationButton,"clipboard.png","Comment Cards");
-			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
-			aaToolbar.Items.Add(evaluationButton);
+//			ButtonItem evaluationButton = new ButtonItem();
+//			evaluationButton.Activate += delegate { 
+//				if (CardViewer.Instance == null || !CardViewer.Instance.IsLoaded) {					
+//					SelectModeWindow selectModeWindow = new SelectModeWindow();
+//					bool cancelled = !((bool)selectModeWindow.ShowDialog());
+//					if (cancelled) {
+//						return;	
+//					}
+//				}
+//				BringToFront(CardViewer.Instance);
+//			};
+//			SetSandbarButtonImage(evaluationButton,"clipboard.png","Comment Cards");
+//			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
+//			aaToolbar.Items.Add(evaluationButton);
 														
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate { };
@@ -210,7 +210,7 @@ namespace AdventureAuthor.Setup
 				variableButton.Enabled = true;
 				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = true;
-				evaluationButton.Enabled = true;
+//				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
 			};
 			
@@ -219,7 +219,7 @@ namespace AdventureAuthor.Setup
 				variableButton.Enabled = false;
 				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = false;
-				evaluationButton.Enabled = true;
+//				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
 			};
         	

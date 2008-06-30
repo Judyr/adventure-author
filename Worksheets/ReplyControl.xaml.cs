@@ -68,7 +68,7 @@ namespace AdventureAuthor.Evaluation
         public ReplyControl(Reply reply)
         {
             InitializeComponent();
-            if (CardViewer.Instance.EvaluationMode == Mode.Complete) {
+            if (CardViewer.Instance.EvaluationMode == Mode.User_Complete) {
             	DeleteButton.Visibility = Visibility.Collapsed;
             	EditButton.Visibility = Visibility.Collapsed;
             }            

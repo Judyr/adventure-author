@@ -17,8 +17,8 @@ namespace AdventureAuthor.Evaluation
 	/// </summary>
 	public enum Mode
 	{		
-    	Design, // design and build a Comment Card from scratch, or edit an existing Comment Card
-    	Complete, // fill in the answer fields in an existing Comment Card
-    	Discuss // add replies to a Comment Card which has been filled in
+    	Designer, // design and build a Comment Card from scratch, or edit an existing Comment Card
+    	User_Complete, // fill in the answer fields in an existing Comment Card
+    	User_Discuss // add replies to a Comment Card which has been filled in
 	}
 }

@@ -66,18 +66,18 @@ namespace AdventureAuthor.Evaluation
             SetInitialActiveStatus(question);
             
 		    foreach (Answer answer in question.Answers) {
-		    	if (CardViewer.Instance.EvaluationMode == Mode.Design || answer.Include) {
+		    	if (CardViewer.Instance.EvaluationMode == Mode.Designer || answer.Include) {
 		    		AddAnswerField(answer);
 		    	}
 		    }
             
             foreach (Reply reply in question.Replies) {
-            	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
+            	if (CardViewer.Instance.EvaluationMode != Mode.Designer) {
             		AddReplyField(reply);
             	}
             }
                  
-            if (CardViewer.Instance.EvaluationMode == Mode.Design) {
+            if (CardViewer.Instance.EvaluationMode == Mode.Designer) {
             	ControlPanel.Visibility = Visibility.Visible;
             	ControlPanel.Width = 80;
             	ControlPanel.MaxWidth = 80;
@@ -92,7 +92,7 @@ namespace AdventureAuthor.Evaluation
             	QuestionAndControlsColumn.Width = new GridLength(350);
             }
             	
-            if (CardViewer.Instance.EvaluationMode == Mode.Discuss) {
+            if (CardViewer.Instance.EvaluationMode == Mode.User_Discuss) {
             	AddReplyButton.Visibility = Visibility.Visible;
             }
             else {
@@ -191,7 +191,7 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_DeleteQuestion(object sender, EventArgs e)
         {
-        	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode != Mode.Designer) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a question.");
         	}
         	

@@ -20,7 +20,7 @@ namespace AdventureAuthor.Evaluation
     {    	
     	#region Constants
     	    	
-    	private string DEFAULT_TITLE = "Evaluation";
+    	private string DEFAULT_TITLE = "Comment Cards";
     	private const string COMPLETE_MODE_DESCRIPTION = "Switch to Complete Mode";
     	private const string DISCUSS_MODE_DESCRIPTION = "Switch to Discuss Mode";
     	
@@ -92,11 +92,22 @@ namespace AdventureAuthor.Evaluation
     	
     	#endregion
     	    	    	    	
-    	#region Constructors    
+    	#region Constructors   
+    	
+    	public CardViewer() : this(Mode.User_Complete)
+    	{
+    		
+    	}
+    	
     	
     	public CardViewer(Mode mode)
     	{
-    		InitializeComponent();
+    		InitializeComponent();    		    		
+    		
+    		CardViewer.Instance = this;
+    			
+    		ShowSelectModeScreen();
+    		Title = DEFAULT_TITLE;
     		
     		MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
@@ -111,19 +122,10 @@ namespace AdventureAuthor.Evaluation
             
     		EvaluationMode = mode;
     		
-    		Loaded += delegate { 
-    			if (evaluationMode == Mode.Complete || evaluationMode == Mode.Discuss) {
-    				OpenDialog();
-    			}
-    			else {
-    				OpenNewCard();
-    			}
-    		};
-    		
     		// Edit titles in design mode only; fill in name and date in complete/discuss mode only
     		switch (EvaluationMode) {
     				
-    			case Mode.Design:
+    			case Mode.Designer:
 	    			TitleField.IsEnabled = true;
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
@@ -136,7 +138,7 @@ namespace AdventureAuthor.Evaluation
 	    			EditMenu.Visibility = Visibility.Visible;
     				break;
     				
-    			case Mode.Complete:
+    			case Mode.User_Complete:
 	    			TitleField.IsEnabled = false;
 		    		DesignerNameField.IsEnabled = true;
 		    		EvaluatorNameField.IsEnabled = true;
@@ -151,7 +153,7 @@ namespace AdventureAuthor.Evaluation
     				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
 		    		break;
     				
-    			case Mode.Discuss:
+    			case Mode.User_Discuss:
 	    			TitleField.IsEnabled = false;
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
@@ -165,17 +167,15 @@ namespace AdventureAuthor.Evaluation
     				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
     				switchModeButton.Content =COMPLETE_MODE_DESCRIPTION;
 		    		break;
-    		}
-    		
-    		// Ideally user should save Comment Cards to User/Adventure Author/Comment Cards:
-			try {
-				if (!Directory.Exists(EvaluationPreferences.Instance.SavedCommentCardsDirectory)) {
-					Directory.CreateDirectory(EvaluationPreferences.Instance.SavedCommentCardsDirectory);
-				}
-			}
-			catch (Exception e) {
-    			Say.Debug("Failed to create a Comment Cards directory for user:\n"+e);
-			}     		
+    		}    		
+            
+            try {       	
+    			Tools.EnsureDirectoryExists(EvaluationPreferences.LocalAppDataDirectory);
+            	Tools.EnsureDirectoryExists(EvaluationPreferences.Instance.SavedCommentCardsDirectory);     
+            }
+            catch (Exception e) {
+            	Say.Error("A problem was encountered when trying to create a folder for saved Comment Cards.",e);
+            }   
     	}
 
     	
@@ -251,7 +251,7 @@ namespace AdventureAuthor.Evaluation
     		// prevent the user from opening the Comment Card unless they're in design mode (it's 
     		// relatively easy to fix when the whole Comment Card is displayed, but more of a pain
     		// when some parts of the Comment Card are inactive and do not have on-screen controls.)
-    		if (EvaluationMode != Mode.Design) {    			
+    		if (EvaluationMode != Mode.Designer) {    			
     			string warning = "This Comment Card contains duplicate sections or questions " +
 						    	 "and cannot be opened. Try opening and then saving the Comment Card " +
 						    	 "in designer mode - doing so will rename the duplicate sections and fix this problem.";    			
@@ -279,7 +279,7 @@ namespace AdventureAuthor.Evaluation
 	    		}
     		}    		
     		
-    		if (EvaluationMode == Mode.Design && !card.IsBlank()) {    			
+    		if (EvaluationMode == Mode.Designer && !card.IsBlank()) {    			
     			string message = "Someone has already written on this Comment Card - " +
     				"once you're finished, save under a different filename, " + 
     				"or they'll lose their work.";
@@ -300,23 +300,23 @@ namespace AdventureAuthor.Evaluation
 	    	EvaluatorNameField.SetText(card.EvaluatorName);
 	    	    		
 	    	foreach (Section section in card.Sections) {	    			
-	    		if (EvaluationMode == Mode.Design || section.Include) {
+	    		if (EvaluationMode == Mode.Designer || section.Include) {
 	    			try {	    					
 		    			SectionControl sectionControl = AddSection(section);
 		    			if (sectionControl != null) {					    		
 				    		foreach (QuestionControl questionControl in sectionControl.QuestionsPanel.Children) {
-				    			if (EvaluationMode == Mode.Design && !sectionControl.IsActive) {
+				    			if (EvaluationMode == Mode.Designer && !sectionControl.IsActive) {
 				    				questionControl.Deactivate(true);
 				    			}
-		    					else if (EvaluationMode == Mode.Discuss) {
+		    					else if (EvaluationMode == Mode.User_Discuss) {
 		    						questionControl.Activate();
 		    						questionControl.HideActivationControls();
 		    					}
 				    			foreach (CardPartControl answerControl in questionControl.AnswersPanel.Children) {
-				    				if (EvaluationMode == Mode.Design && !questionControl.IsActive) {
+				    				if (EvaluationMode == Mode.Designer && !questionControl.IsActive) {
 				    					answerControl.Deactivate(true);
 				    				}
-			    					else if (EvaluationMode == Mode.Discuss) {
+			    					else if (EvaluationMode == Mode.User_Discuss) {
 			    						if (answerControl is EvidenceControl) {
 			    							EvidenceControl ec = (EvidenceControl)answerControl;
 			    							ec.ViewLink.IsEnabled = true;
@@ -385,16 +385,16 @@ namespace AdventureAuthor.Evaluation
 		    BorderClosingRectangle.Visibility = Visibility.Visible;
 		    
 		    switch (EvaluationMode) {
-		    	case Mode.Design:
+		    	case Mode.Designer:
 		    		//addSectionButton.Visibility = Visibility.Visible; currently disabled cos it makes UI look crap
 		    		switchModeButton.Visibility = Visibility.Collapsed;
 		    		break;
-		    	case Mode.Complete:
+		    	case Mode.User_Complete:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
 		    		switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
 		    		switchModeButton.Visibility = Visibility.Visible;
 		    		break;
-		    	case Mode.Discuss:
+		    	case Mode.User_Discuss:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
 		    		switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
 		    		switchModeButton.Visibility = Visibility.Visible;
@@ -529,7 +529,7 @@ namespace AdventureAuthor.Evaluation
     		if (section == null) {
         		throw new ArgumentNullException("Can't add a null section field.");
         	}
-    		if (EvaluationMode != Mode.Design) { // check that this section actually has some active questions to display
+    		if (EvaluationMode != Mode.Designer) { // check that this section actually has some active questions to display
 	    		bool hasQuestions = false;
 	    		foreach (Question question in section.Questions) {
 	    			if (question.Include) {
@@ -633,6 +633,8 @@ namespace AdventureAuthor.Evaluation
     		SectionsPanel.Children.Clear();
     		
     		Dirty = false;
+    		
+    		ShowSelectModeScreen();
     	}
     	
     	
@@ -649,7 +651,7 @@ namespace AdventureAuthor.Evaluation
 	    		// In design mode, everything in the Comment Card is displayed on the screen, even the parts
 	    		// which are inactive, so we can just save everything that's represented by a control.
 	    		
-    			case Mode.Design:
+    			case Mode.Designer:
     				
 		    		ws = new Card(TitleField.Text,DesignerNameField.Text,EvaluatorNameField.Text,DateField.Text);	    		
 		    		ValidateTitles(); // ensure all section and question names are unique
@@ -727,7 +729,7 @@ namespace AdventureAuthor.Evaluation
 	    		}
     			fn += " - Evaluation";
 			}
-    		if (EvaluationMode == Mode.Design) {
+    		if (EvaluationMode == Mode.Designer) {
     			fn += " (Designer Mode)";
     		}
     		
@@ -738,31 +740,31 @@ namespace AdventureAuthor.Evaluation
     	private void SwitchTo(Mode mode)
     	{
     		switch (mode) {
-    			case Mode.Complete:
+    			case Mode.User_Complete:
     				DateField.IsEnabled = true;
     				DesignerNameField.IsEnabled = true;
     				EvaluatorNameField.IsEnabled = true;
     				SwitchModesMenuItem.Header = DISCUSS_MODE_DESCRIPTION;
     				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
     				break;
-    			case Mode.Discuss:
+    			case Mode.User_Discuss:
     				DateField.IsEnabled = false;
     				DesignerNameField.IsEnabled = false;
     				EvaluatorNameField.IsEnabled = false;
     				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
     				switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
     				break;
-    			case Mode.Design:
+    			case Mode.Designer:
     				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
     		}
     		
     		foreach (SectionControl sc in SectionsPanel.Children) {
     			foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
     				foreach (CardPartControl ac in qc.AnswersPanel.Children) {
-    					if (mode == Mode.Complete) {
+    					if (mode == Mode.User_Complete) {
     						ac.Enable();    						
     					}
-    					else if (mode == Mode.Discuss) {
+    					else if (mode == Mode.User_Discuss) {
     						if (ac is EvidenceControl) {
     							EvidenceControl ec = (EvidenceControl)ac;
     							ec.ViewLink.IsEnabled = true;
@@ -782,17 +784,17 @@ namespace AdventureAuthor.Evaluation
     					}
     				}
     				foreach (ReplyControl rc in qc.RepliesPanel.Children) {
-    					if (mode == Mode.Complete) {
+    					if (mode == Mode.User_Complete) {
     						rc.HideEditControls();
     					}
-    					else if (mode == Mode.Discuss) {
+    					else if (mode == Mode.User_Discuss) {
     						rc.ShowEditControls();
     					}
     				}
-    				if (mode == Mode.Complete) {
+    				if (mode == Mode.User_Complete) {
     					qc.AddReplyButton.Visibility = Visibility.Collapsed;
     				}
-    				else if (mode == Mode.Discuss) {
+    				else if (mode == Mode.User_Discuss) {
     					qc.AddReplyButton.Visibility = Visibility.Visible;
     				}
     			}
@@ -802,9 +804,55 @@ namespace AdventureAuthor.Evaluation
     		UpdateTitleBar();    		
     	}    	
     	
+    	
+    	private void ShowMainScreen()
+    	{
+    		this.SelectModePanel.Visibility = Visibility.Collapsed;
+    		this.SelectModePanel.IsEnabled = false;
+    		this.MainCommentCardsPanel.Visibility = Visibility.Visible;
+    		this.MainCommentCardsPanel.IsEnabled = true;
+    	}  	
+    	
+    	
+    	private void ShowSelectModeScreen()
+    	{
+    		this.SelectModePanel.Visibility = Visibility.Visible;
+    		this.SelectModePanel.IsEnabled = true;
+    		this.MainCommentCardsPanel.Visibility = Visibility.Collapsed;
+    		this.MainCommentCardsPanel.IsEnabled = false;
+    	}
+    	
+    	
+    	private void LaunchForDesigner()
+    	{
+    		EvaluationMode = Mode.Designer;
+    		OpenNewCard();   		
+    		ShowMainScreen();
+    	}
+    	
+    	
+    	private void LaunchForUser()
+    	{
+    		EvaluationMode = Mode.User_Complete;
+    		OpenDialog(); 
+    		ShowMainScreen();
+    	}
+    	
     	#endregion
     	    	
     	#region Event handlers
+    	
+    	private void enterAsDesigner(object sender, EventArgs e)
+    	{
+    		LaunchForDesigner();
+    	}
+    	
+    	
+    	private void enterAsUser(object sender, EventArgs e)
+    	{
+    		LaunchForUser();
+    	}
+    	
     	
     	private void OnClick_New(object sender, EventArgs e)
     	{    		
@@ -1099,6 +1147,12 @@ namespace AdventureAuthor.Evaluation
     	{
     		CloseCardDialog();
     	}
+    		
+    		
+    	private void OnClick_SwitchUserMode(object sender, EventArgs e)
+    	{
+    		CloseCardDialog();
+    	}
     	
     	
     	private bool CloseCardDialog()
@@ -1170,7 +1224,7 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_AddSection(object sender, EventArgs e)
         {
-        	if (EvaluationMode != Mode.Design) {
+        	if (EvaluationMode != Mode.Designer) {
         		throw new InvalidOperationException("Should not have been possible to click this " +
         		                                    "when not in designer mode.");
         	}  			
@@ -1194,16 +1248,16 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void OnClick_SwitchMode(object sender, EventArgs e)
+    	private void OnClick_SwitchBetweenCompleteAndDiscuss(object sender, EventArgs e)
     	{
     		switch (EvaluationMode) {
-    			case Mode.Design:
+    			case Mode.Designer:
     				throw new InvalidOperationException("Cannot switch to another mode from design mode.");
-    			case Mode.Complete:
-    				SwitchTo(Mode.Discuss);
+    			case Mode.User_Complete:
+    				SwitchTo(Mode.User_Discuss);
     				break;
-    			case Mode.Discuss:
-    				SwitchTo(Mode.Complete);
+    			case Mode.User_Discuss:
+    				SwitchTo(Mode.User_Complete);
     				break;
     		}
     	}
