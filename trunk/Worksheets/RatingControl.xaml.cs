@@ -78,7 +78,7 @@ namespace AdventureAuthor.Evaluation
         		StarsPanel.Children.Add(button);
         	}
         	int width = maxStars * 40;
-        	if (CardViewer.Instance.EvaluationMode == Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode == Mode.Designer) {
         		width += 30; // leave space for the activation checkbox
         	}
         	Width = width;

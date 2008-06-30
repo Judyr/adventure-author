@@ -86,7 +86,6 @@
     <Compile Include="Role.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="SectionControl.cs" />
-    <Compile Include="SelectModeWindow.xaml.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="EvaluationPreferences.cs" />
     <Compile Include="CardViewer.cs" />
@@ -97,7 +96,6 @@
     <Page Include="RatingControl.xaml" />
     <Page Include="ReplyControl.xaml" />
     <Page Include="SectionControl.xaml" />
-    <Page Include="SelectModeWindow.xaml" />
     <Page Include="CardViewer.xaml" />
     <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>

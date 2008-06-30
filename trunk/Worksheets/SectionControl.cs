@@ -65,12 +65,12 @@ namespace AdventureAuthor.Evaluation
             SetInitialActiveStatus(section); 
             
         	foreach (Question question in section.Questions) {
-        		if (CardViewer.Instance.EvaluationMode == Mode.Design || question.Include) {	
+        		if (CardViewer.Instance.EvaluationMode == Mode.Designer || question.Include) {	
 		        	AddQuestionField(question);
         		}
         	}
                            
-            if (CardViewer.Instance.EvaluationMode == Mode.Design) {
+            if (CardViewer.Instance.EvaluationMode == Mode.Designer) {
             	AddQuestionButton.Visibility = Visibility.Visible;
             	DeleteSectionButton.Visibility = Visibility.Visible;
             	MoveSectionDownButton.Visibility = Visibility.Visible;
@@ -152,7 +152,7 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_DeleteSection(object sender, EventArgs e)
         {
-        	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode != Mode.Designer) {
         		throw new InvalidOperationException("Should not have been possible to try to delete a section.");
         	}
         	
@@ -205,7 +205,7 @@ namespace AdventureAuthor.Evaluation
         
         private void OnClick_AddQuestion(object sender, EventArgs e)
         {
-        	if (CardViewer.Instance.EvaluationMode != Mode.Design) {
+        	if (CardViewer.Instance.EvaluationMode != Mode.Designer) {
         		throw new InvalidOperationException("Should not have been possible to call Add Question " +
         		                                    "when not in designer mode.");
         	}
