@@ -409,15 +409,19 @@ namespace AdventureAuthor.Evaluation
 		    EditMenu.IsEnabled = true;
 		    OptionsMenu.IsEnabled = true;
 		    
-		    if (Filename == null || Filename == String.Empty) {
-		    	Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
-		    }
-		    else {
-		    	Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
-		    				   // meaningless TextChanged event when the Title, Name and Date fields are created
-		    }    
+		    Dirty = false; // never require user to save a file that has had no changes made, even a blank file
+		    
+//		    if (Filename == null || Filename == String.Empty) {
+//		    	Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
+//		    }
+//		    else {
+//		    	Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
+//		    				   // meaningless TextChanged event when the Title, Name and Date fields are created
+//		    }    
 		    
 		    Scroller.ScrollToTop();
+		    
+		    ShowMainScreen();
     	} 
     	
     	    	
@@ -720,18 +724,15 @@ namespace AdventureAuthor.Evaluation
     	{
     		string fn;
 			if (filename == null || filename == String.Empty) {
-    			fn = "Untitled*";
+    			fn = "Comment Cards";
 			}
 			else {
     			fn = Path.GetFileName(filename);
 	    		if (dirty) {
 	    			fn += "*";
 	    		}
-    			fn += " - Evaluation";
+    			fn += " - Comment Cards";
 			}
-    		if (EvaluationMode == Mode.Designer) {
-    			fn += " (Designer Mode)";
-    		}
     		
     		Title = fn;
     	}
@@ -826,7 +827,8 @@ namespace AdventureAuthor.Evaluation
     	private void LaunchForDesigner()
     	{
     		EvaluationMode = Mode.Designer;
-    		OpenNewCard();   		
+    		OpenNewCard();
+    		Dirty = false;
     		ShowMainScreen();
     	}
     	
