@@ -8,7 +8,7 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Evaluation
 {
 	[Serializable]
-	[XmlRoot]
+	[XmlRoot(ElementName="Worksheet")]
 	public class Card
 	{
 		[XmlAttribute]

@@ -372,7 +372,7 @@ namespace AdventureAuthor.Evaluation
 	    		OnChanged(new EventArgs()); 
 	    	};
 	    	
-	    	TitleLabel.Visibility = Visibility.Visible;
+	    	//TitleLabel.Visibility = Visibility.Visible;
 	    	DesignerNameLabel.Visibility = Visibility.Visible;
 	    	EvaluatorNameLabel.Visibility = Visibility.Visible;
 	    	DateLabel.Visibility = Visibility.Visible;
@@ -608,7 +608,7 @@ namespace AdventureAuthor.Evaluation
     		
     		Title = DEFAULT_TITLE;
     		
-    		TitleLabel.Visibility = Visibility.Hidden;
+    		//TitleLabel.Visibility = Visibility.Hidden;
 	    	DesignerNameLabel.Visibility = Visibility.Hidden;
 	    	EvaluatorNameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
