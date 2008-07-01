@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
 using AdventureAuthor.Evaluation;
@@ -124,7 +125,7 @@ namespace AdventureAuthor.Evaluation
     		switch (EvaluationMode) {
     				
     			case Mode.Designer:
-	    			TitleField.IsEnabled = true;
+	    			TitleField.IsReadOnly = false;
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
@@ -137,7 +138,7 @@ namespace AdventureAuthor.Evaluation
     				break;
     				
     			case Mode.User_Complete:
-	    			TitleField.IsEnabled = false;
+	    			TitleField.IsReadOnly = true;
 		    		DesignerNameField.IsEnabled = true;
 		    		EvaluatorNameField.IsEnabled = true;
 		    		DateField.IsEnabled = true;
@@ -152,7 +153,7 @@ namespace AdventureAuthor.Evaluation
 		    		break;
     				
     			case Mode.User_Discuss:
-	    			TitleField.IsEnabled = false;
+	    			TitleField.IsReadOnly = true;
 		    		DesignerNameField.IsEnabled = false;
 		    		EvaluatorNameField.IsEnabled = false;
 		    		DateField.IsEnabled = false;
@@ -277,15 +278,14 @@ namespace AdventureAuthor.Evaluation
 	    		}
     		}    		
     		
-    		if (EvaluationMode == Mode.Designer && !card.IsBlank()) {    			
-    			string message = "Someone has already written on this Comment Card - " +
-    				"once you're finished, save under a different filename, " + 
-    				"or they'll lose their work.";
-    			Say.Information(message);
+    		bool createdBlankCopyOfCard;
+    		if (EvaluationMode == Mode.Designer && !card.IsBlank()) {    
+    			createdBlankCopyOfCard = true;
     			card = card.GetBlankCopy();
     			Filename = null;  			
     		}
     		else {
+    			createdBlankCopyOfCard = false;
     			Filename = sourceFilename;
     		}
     		
@@ -382,16 +382,13 @@ namespace AdventureAuthor.Evaluation
 		    
 		    BorderClosingRectangle.Visibility = Visibility.Visible;
 		    
-		    switch (EvaluationMode) {
-		    	case Mode.Designer:
-		    		//addSectionButton.Visibility = Visibility.Visible; currently disabled cos it makes UI look crap
-		    		break;
-		    	case Mode.User_Complete:
-		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		break;
-		    	case Mode.User_Discuss:
-		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		break;
+		    if (EvaluationMode == Mode.Designer) {
+		    	DesignerModeControls.Visibility = Visibility.Visible;
+		    	UserModeControls.Visibility = Visibility.Collapsed;
+		    }
+		    else {
+		    	DesignerModeControls.Visibility = Visibility.Collapsed;
+		    	UserModeControls.Visibility = Visibility.Visible;
 		    }
 		  
 		    SaveMenuItem.IsEnabled = true;
@@ -415,6 +412,13 @@ namespace AdventureAuthor.Evaluation
 		    Scroller.ScrollToTop();
 		    
 		    ShowMainScreen();
+		    		
+		    if (createdBlankCopyOfCard) {
+    			string message = "Someone has already written on this Comment Card - " +
+    				"once you're finished, remember to save under a different filename, " + 
+    				"or they'll lose their work.";
+    			Say.Information(message);
+		    }
     	} 
     	
     	    	
@@ -604,27 +608,6 @@ namespace AdventureAuthor.Evaluation
     		DateField.Clear();
     		
     		Title = DEFAULT_TITLE;
-    		
-    		//TitleLabel.Visibility = Visibility.Hidden;
-	    	DesignerNameLabel.Visibility = Visibility.Hidden;
-	    	EvaluatorNameLabel.Visibility = Visibility.Hidden;
-	    	DateLabel.Visibility = Visibility.Hidden;
-	    	addSectionButton.Visibility = Visibility.Collapsed;
-	    	
-		    TitleField.Visibility = Visibility.Hidden;
-	    	DesignerNameField.Visibility = Visibility.Hidden;
-	    	EvaluatorNameField.Visibility = Visibility.Hidden;
-		    DateField.Visibility = Visibility.Hidden;
-		    
-		   	BorderClosingRectangle.Visibility = Visibility.Collapsed;
-		   	
-		    SaveMenuItem.IsEnabled = false;
-		    SaveAsMenuItem.IsEnabled = false;
-		    SaveBlankMenuItem.IsEnabled = false;
-		    CloseMenuItem.IsEnabled = false;
-		    ExportMenuItem.IsEnabled = false;
-		    EditMenu.IsEnabled = false;
-		    OptionsMenu.IsEnabled = false;
 		    
     		SectionsPanel.Children.Clear();
     		
@@ -814,6 +797,7 @@ namespace AdventureAuthor.Evaluation
     		this.SelectModePanel.IsEnabled = false;
     		this.MainCommentCardsPanel.Visibility = Visibility.Visible;
     		this.MainCommentCardsPanel.IsEnabled = true;
+    		this.Background = (Brush)Resources["linearOffWhiteBrush"];
     	}  	
     	
     	
@@ -823,12 +807,22 @@ namespace AdventureAuthor.Evaluation
     		this.SelectModePanel.IsEnabled = true;
     		this.MainCommentCardsPanel.Visibility = Visibility.Collapsed;
     		this.MainCommentCardsPanel.IsEnabled = false;
+    		this.Background = (Brush)Resources["radialBlueBrush"];
     	}
     	
     	
     	private void LaunchForDesigner()
     	{
     		EvaluationMode = Mode.Designer;
+    		
+    		// Enable/disable interface as appropriate:
+    		OptionsMenu.Visibility = Visibility.Collapsed;
+    		EditMenu.Visibility = Visibility.Visible;
+    		TitleField.IsReadOnly = false;
+    		EvaluatorNameField.IsEnabled = false;
+    		DesignerNameField.IsEnabled = false;
+    		DateField.IsEnabled = false;
+    		
     		OpenNewCard();
     		Dirty = false;
     		ShowMainScreen();
@@ -838,8 +832,17 @@ namespace AdventureAuthor.Evaluation
     	private void LaunchForUser()
     	{
     		EvaluationMode = Mode.User_Complete;
-    		OpenDialog(); 
-    		ShowMainScreen();
+    		
+    		OptionsMenu.Visibility = Visibility.Visible;
+    		EditMenu.Visibility = Visibility.Collapsed;
+    		TitleField.IsReadOnly = true; // IsReadOnly, so that it's uneditable but clearly visible
+    		EvaluatorNameField.IsEnabled = true;
+    		DesignerNameField.IsEnabled = true;
+    		DateField.IsEnabled = true;
+    		
+    		if (OpenDialog()) {
+    			ShowMainScreen();
+    		};    		
     	}
     	
     	#endregion
@@ -884,7 +887,12 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void OpenDialog()
+    	/// <summary>
+    	/// 
+    	/// </summary>
+    	/// <returns>False if the user cancelled the dialog; true otherwise. Note that returning true
+    	/// does not indicate that the Open operation was successful.</returns>
+    	private bool OpenDialog()
     	{    				
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
@@ -904,6 +912,7 @@ namespace AdventureAuthor.Evaluation
   			if (ok) {
   				Open(openFileDialog.FileName);
   			}
+  			return ok;
     	}
     	
     	
