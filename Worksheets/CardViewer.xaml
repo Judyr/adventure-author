@@ -66,10 +66,8 @@
 			</Button>
 		</StackPanel>
 		
-		<!--Initial Select Mode panel, which will be hidden whenever application is properly 'open'-->
 		
-		
-		<!--The usual interface-->
+		<!--The main interface-->
 	
 		<Grid Name="MainCommentCardsPanel">
 			<Grid.RowDefinitions>
@@ -117,9 +115,6 @@
 						<MenuItem Name="UseDefaultMenuItem" IsCheckable="true" Checked="OnChecked_UseDefault"  
 						          Header="Open pictures in default program" FontSize="14"
 								  />
-						<Separator/>
-						<MenuItem Name="SwitchModesMenuItem" Click="OnClick_SwitchBetweenCompleteAndDiscuss"
-						          FontSize="14"/>
 					</MenuItem>
 					<MenuItem Name="HelpMenu" Header="Help" FontSize="14">
 						<MenuItem Name="HelpMenuItem" 
@@ -149,8 +144,8 @@
 						
 						<Grid.Background>						
 							<LinearGradientBrush StartPoint="0,0" EndPoint="2,2">
-								<GradientStop Offset="0" Color="LightBlue"/>
-								<GradientStop Offset="0.8" Color="LimeGreen"/>
+								<GradientStop Offset="0" Color="LightGray"/>
+								<GradientStop Offset="1" Color="White"/>
 							</LinearGradientBrush>
 						</Grid.Background>
 						
@@ -194,11 +189,47 @@
 								</utils:ReportingTextBox>
 							</StackPanel>
 						</StackPanel>
-		    		
-			    		<Button Name="switchModeButton" Grid.Row="1" Grid.Column="1"
-						        HorizontalAlignment="Right" Margin="10"
-			    				Height="30" Width="170" FontSize="12" Click="OnClick_SwitchBetweenCompleteAndDiscuss"
-			    				Visibility="Collapsed"/>
+						
+						<Border Grid.Row="1" Grid.Column="1"
+								BorderThickness="1" Margin="4" BorderBrush="Black">
+							<Border BorderThickness="1" Margin="2" BorderBrush="Black">
+								<Border.Resources>
+									<Style TargetType="RadioButton">
+										<Setter Property="Margin" Value="3"/>
+										<Setter Property="Padding" Value="2"/>
+										<Setter Property="FontSize" Value="16"/>
+										<Setter Property="Foreground" Value="DarkBlue"/>
+									</Style>
+								</Border.Resources>
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition/>
+										<ColumnDefinition/>
+									</Grid.ColumnDefinitions>
+								
+									<TextBlock Name="textBlockModeExplanation" Grid.Row="0" Grid.Column="1"
+									           TextWrapping="Wrap" Width="300"
+											   FontSize="14" FontStyle="Italic"/>
+									
+									<StackPanel Grid.Row="0" Grid.Column="0" 
+												Orientation="Vertical" Margin="8">
+										<RadioButton 
+											Name="radioButtonChangingAnswers"
+											Content="I want to fill in my answers"
+											Checked="changingAnswers"/>
+										<RadioButton 
+											Name="radioButtonFinishedAnswers"
+											Content="I'm ready to discuss my answers"
+											Checked="finishedAnswers"/>
+									</StackPanel>
+								
+								</Grid>
+							</Border>
+						</Border>
+						
 			    		<Button Name="addSectionButton" Grid.Row="1" Grid.Column="1"
 						        HorizontalAlignment="Center" Margin="10"
 			    				Height="30" Width="120" FontSize="12" Content="Add section" Click="OnClick_AddSection"
