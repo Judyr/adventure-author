@@ -21,8 +21,6 @@ namespace AdventureAuthor.Evaluation
     	#region Constants
     	    	
     	private string DEFAULT_TITLE = "Comment Cards";
-    	private const string COMPLETE_MODE_DESCRIPTION = "Switch to Complete Mode";
-    	private const string DISCUSS_MODE_DESCRIPTION = "Switch to Discuss Mode";
     	
     	#endregion
     	    	
@@ -148,9 +146,9 @@ namespace AdventureAuthor.Evaluation
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
-	    			EditMenu.Visibility = Visibility.Collapsed;	    		
-    				SwitchModesMenuItem.Header = DISCUSS_MODE_DESCRIPTION;
-    				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
+	    			EditMenu.Visibility = Visibility.Collapsed;
+	    			
+	    			radioButtonChangingAnswers.IsChecked = true;
 		    		break;
     				
     			case Mode.User_Discuss:
@@ -163,9 +161,9 @@ namespace AdventureAuthor.Evaluation
 	    			NewMenuItem.Visibility = Visibility.Collapsed;
 	    			OptionsMenu.Visibility = Visibility.Visible;
 	    			
-	    			EditMenu.Visibility = Visibility.Collapsed; 		
-    				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
-    				switchModeButton.Content =COMPLETE_MODE_DESCRIPTION;
+	    			EditMenu.Visibility = Visibility.Collapsed;
+	    			
+	    			radioButtonFinishedAnswers.IsChecked = true;
 		    		break;
     		}    		
             
@@ -387,17 +385,12 @@ namespace AdventureAuthor.Evaluation
 		    switch (EvaluationMode) {
 		    	case Mode.Designer:
 		    		//addSectionButton.Visibility = Visibility.Visible; currently disabled cos it makes UI look crap
-		    		switchModeButton.Visibility = Visibility.Collapsed;
 		    		break;
 		    	case Mode.User_Complete:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
-		    		switchModeButton.Visibility = Visibility.Visible;
 		    		break;
 		    	case Mode.User_Discuss:
 		    		addSectionButton.Visibility = Visibility.Collapsed;
-		    		switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
-		    		switchModeButton.Visibility = Visibility.Visible;
 		    		break;
 		    }
 		  
@@ -617,7 +610,6 @@ namespace AdventureAuthor.Evaluation
 	    	EvaluatorNameLabel.Visibility = Visibility.Hidden;
 	    	DateLabel.Visibility = Visibility.Hidden;
 	    	addSectionButton.Visibility = Visibility.Collapsed;
-	    	switchModeButton.Visibility = Visibility.Collapsed;
 	    	
 		    TitleField.Visibility = Visibility.Hidden;
 	    	DesignerNameField.Visibility = Visibility.Hidden;
@@ -739,70 +731,80 @@ namespace AdventureAuthor.Evaluation
     	    
     	
     	private void SwitchTo(Mode mode)
-    	{
-    		switch (mode) {
-    			case Mode.User_Complete:
-    				DateField.IsEnabled = true;
-    				DesignerNameField.IsEnabled = true;
-    				EvaluatorNameField.IsEnabled = true;
-    				SwitchModesMenuItem.Header = DISCUSS_MODE_DESCRIPTION;
-    				switchModeButton.Content = DISCUSS_MODE_DESCRIPTION;
-    				break;
-    			case Mode.User_Discuss:
-    				DateField.IsEnabled = false;
-    				DesignerNameField.IsEnabled = false;
-    				EvaluatorNameField.IsEnabled = false;
-    				SwitchModesMenuItem.Header = COMPLETE_MODE_DESCRIPTION;
-    				switchModeButton.Content = COMPLETE_MODE_DESCRIPTION;
-    				break;
-    			case Mode.Designer:
-    				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
-    		}
-    		
-    		foreach (SectionControl sc in SectionsPanel.Children) {
-    			foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
-    				foreach (CardPartControl ac in qc.AnswersPanel.Children) {
-    					if (mode == Mode.User_Complete) {
-    						ac.Enable();    						
-    					}
-    					else if (mode == Mode.User_Discuss) {
-    						if (ac is EvidenceControl) {
-    							EvidenceControl ec = (EvidenceControl)ac;
-    							ec.ViewLink.IsEnabled = true;
-    							ec.SelectLink.IsEnabled = false;
-    							ec.ClearLink.IsEnabled = false;
-    						}
-    						else {
-    							// activating a control should usually make the Comment Card dirty,
-    							// but not in this case:
-    							bool isDirty = Dirty;
-	    						ac.Activate();    						
-	    						ac.HideActivationControls();
-	    						if (isDirty == false) {
-	    							Dirty = false;
+	    {
+    		try {
+	    		switch (mode) {
+	    			case Mode.User_Complete:
+	    				DateField.IsEnabled = true;
+	    				DesignerNameField.IsEnabled = true;
+	    				EvaluatorNameField.IsEnabled = true;
+	    				textBlockModeExplanation.Text = "Answer the questions as best you can. " +
+	    					"The white boxes give you a place to type in your answers. " + 
+	    					"The stars allow you to give a rating of between 1 star (least) and 5 stars (most). " +
+	    					"The Attach Evidence button allows you to attach screenshots to support your answer.";
+	    				break;
+	    			case Mode.User_Discuss:
+	    				DateField.IsEnabled = false;
+	    				DesignerNameField.IsEnabled = false;
+	    				EvaluatorNameField.IsEnabled = false;
+	    				textBlockModeExplanation.Text = "Now that you've finished filling out this Comment Card, " +
+	    					"your answers have been locked. Don't worry - you can just click 'I want to fill in my answers' " +
+	    					"again and you'll be able to change them. Clicking on the little speech bubble icons that " + 
+	    					"have appeared next to each question will give you, your peers, your teacher and anyone else " +
+	    					"a chance to discuss your answers constructively.";
+	    				break;
+	    			case Mode.Designer:
+	    				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
+	    		}
+	    		
+	    		foreach (SectionControl sc in SectionsPanel.Children) {
+	    			foreach (QuestionControl qc in sc.QuestionsPanel.Children) {
+	    				foreach (CardPartControl ac in qc.AnswersPanel.Children) {
+	    					if (mode == Mode.User_Complete) {
+	    						ac.Enable();    						
+	    					}
+	    					else if (mode == Mode.User_Discuss) {
+	    						if (ac is EvidenceControl) {
+	    							EvidenceControl ec = (EvidenceControl)ac;
+	    							ec.ViewLink.IsEnabled = true;
+	    							ec.SelectLink.IsEnabled = false;
+	    							ec.ClearLink.IsEnabled = false;
 	    						}
-    						}
-    					}
-    				}
-    				foreach (ReplyControl rc in qc.RepliesPanel.Children) {
-    					if (mode == Mode.User_Complete) {
-    						rc.HideEditControls();
-    					}
-    					else if (mode == Mode.User_Discuss) {
-    						rc.ShowEditControls();
-    					}
-    				}
-    				if (mode == Mode.User_Complete) {
-    					qc.AddReplyButton.Visibility = Visibility.Collapsed;
-    				}
-    				else if (mode == Mode.User_Discuss) {
-    					qc.AddReplyButton.Visibility = Visibility.Visible;
-    				}
-    			}
+	    						else {
+	    							// activating a control should usually make the Comment Card dirty,
+	    							// but not in this case:
+	    							bool isDirty = Dirty;
+		    						ac.Activate();    						
+		    						ac.HideActivationControls();
+		    						if (isDirty == false) {
+		    							Dirty = false;
+		    						}
+	    						}
+	    					}
+	    				}
+	    				foreach (ReplyControl rc in qc.RepliesPanel.Children) {
+	    					if (mode == Mode.User_Complete) {
+	    						rc.HideEditControls();
+	    					}
+	    					else if (mode == Mode.User_Discuss) {
+	    						rc.ShowEditControls();
+	    					}
+	    				}
+	    				if (mode == Mode.User_Complete) {
+	    					qc.AddReplyButton.Visibility = Visibility.Collapsed;
+	    				}
+	    				else if (mode == Mode.User_Discuss) {
+	    					qc.AddReplyButton.Visibility = Visibility.Visible;
+	    				}
+	    			}
+	    		}
+	    		
+	    		EvaluationMode = mode;
+	    		UpdateTitleBar();  
     		}
-    		
-    		EvaluationMode = mode;
-    		UpdateTitleBar();    		
+    		catch (Exception e) {
+    			Say.Error("Something went wrong.",e);
+    		}
     	}    	
     	
     	
@@ -1250,21 +1252,6 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void OnClick_SwitchBetweenCompleteAndDiscuss(object sender, EventArgs e)
-    	{
-    		switch (EvaluationMode) {
-    			case Mode.Designer:
-    				throw new InvalidOperationException("Cannot switch to another mode from design mode.");
-    			case Mode.User_Complete:
-    				SwitchTo(Mode.User_Discuss);
-    				break;
-    			case Mode.User_Discuss:
-    				SwitchTo(Mode.User_Complete);
-    				break;
-    		}
-    	}
-    	
-    	
     	private void OnChecked_OpenHelpFile(object sender, EventArgs e)
     	{
     		string filename = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"Readme.txt");
@@ -1284,6 +1271,18 @@ namespace AdventureAuthor.Evaluation
     		                "Heriot-Watt University\n\n" +
     		                "Email: adventure.author@googlemail.com\n" + 
     		                "Web: http://judyrobertson.typepad.com/adventure_author/about-adventure-author.html");
+    	}
+    	
+    	
+    	private void finishedAnswers(object sender, EventArgs e)
+    	{
+    		SwitchTo(Mode.User_Discuss);
+    	}
+    	
+    	
+    	private void changingAnswers(object sender, EventArgs e)
+    	{
+    		SwitchTo(Mode.User_Complete);
     	}
     	
     	#endregion
