@@ -3,7 +3,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:AdventureAuthor.Evaluation"
 	xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils">
+	
+	<local:CardPartControl.Resources>
+		
+		<LinearGradientBrush x:Key="linearBlueBrush">
+			<GradientStop Offset="-1" Color="LightSeaGreen"/>
+			<GradientStop Offset="0.75" Color="Turquoise"/>
+			<GradientStop Offset="2" Color="LightSeaGreen"/>
+		</LinearGradientBrush>
+	
+	</local:CardPartControl.Resources>
+	
     <Grid>
+		
     	<Grid.RowDefinitions>
     		<RowDefinition/>
     		<RowDefinition MinHeight="0"/>

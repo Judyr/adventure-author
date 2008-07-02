@@ -723,7 +723,6 @@ namespace AdventureAuthor.Evaluation
     		this.SelectModePanel.IsEnabled = false;
     		this.MainCommentCardsPanel.Visibility = Visibility.Visible;
     		this.MainCommentCardsPanel.IsEnabled = true;
-    		this.Background = (Brush)Resources["linearOffWhiteBrush"];
     	}  	
     	
     	
@@ -733,7 +732,6 @@ namespace AdventureAuthor.Evaluation
     		this.SelectModePanel.IsEnabled = true;
     		this.MainCommentCardsPanel.Visibility = Visibility.Collapsed;
     		this.MainCommentCardsPanel.IsEnabled = false;
-    		this.Background = (Brush)Resources["radialBlueBrush"];
     	}
     	
     	
@@ -812,7 +810,9 @@ namespace AdventureAuthor.Evaluation
     	{	
     		try {
     			Log.WriteAction(LogAction.added,"commentcard");
-    			Open(new Card(),null);
+    			Card card = new Card();
+    			card.Title = "New Comment Card";
+    			Open(card,null);
     			AddNewSection();
     		}
     		catch (Exception ex) {
@@ -1204,9 +1204,9 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnChecked_OpenHelpFile(object sender, EventArgs e)
     	{
-    		string filename = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"Readme.txt");
+    		string filename = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"Readme.rtf");    		
     		if (File.Exists(filename)) {
-    			Process p = Process.Start("notepad.exe",filename);
+    			Process.Start(filename);
     		}
     		else {
     			Say.Warning("Couldn't find help file (" + filename + ").");
