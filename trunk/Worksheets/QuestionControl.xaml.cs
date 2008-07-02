@@ -253,8 +253,9 @@ namespace AdventureAuthor.Evaluation
         			AddReplyField(reply);
         		};
         	}
+        	// Temporarily highlight the question in question (ha!):
         	Brush background = Background;
-        	Background = Brushes.LightSalmon;
+        	Background = (Brush)Resources["linearBlueBrush"];//System.Windows.Media.Colors.light
         	window.ShowDialog();
         	Background = background;
         }

@@ -12,24 +12,16 @@
 			<GradientStop Offset="3" Color="Blue"/>
 		</RadialGradientBrush>
 		
-		<!--For the Comment Card header background-->
-		<RadialGradientBrush x:Key="radialLightBlueBrush" Center="0.5,0.5">
-			<GradientStop Offset="0" Color="LightBlue"/>
-			<GradientStop Offset="7" Color="Blue"/>
-		</RadialGradientBrush>
-		
-		<!--For the main screen background-->
-		<LinearGradientBrush x:Key="linearOffWhiteBrush" StartPoint="0,0" EndPoint="1,1">
-			<GradientStop Offset="0" Color="White"/>
-			<GradientStop Offset="2" Color="LightBlue"/>
-		</LinearGradientBrush>
-		
 		<Style x:Key="centeredTextBlock" TargetType="TextBlock">
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
 		</Style>
 	
 	</Window.Resources>
+	
+	<Window.Background>
+		<StaticResource ResourceKey="radialBlueBrush"/>
+	</Window.Background>
 	
 	<Grid>
 		
@@ -103,7 +95,7 @@
 					  VerticalAlignment="Top" HorizontalAlignment="Left">
 					
 					<MenuItem Header="File" FontSize="14">
-						<MenuItem Name="NewMenuItem" Header="New" 
+						<MenuItem Name="NewMenuItem" Header="New"
 						          Click="OnClick_New" FontSize="14"/>
 						<MenuItem Name="OpenMenuItem" Header="Open" 
 						          Click="OnClick_Open" FontSize="14"/>
@@ -276,10 +268,17 @@
 						</Border>
 						
 						<Grid Name="DesignerModeControls" Grid.Row="1" Grid.Column="1">
-				    		<Button Name="addSectionButton"
-							        HorizontalAlignment="Center" Margin="10"
-				    				Height="30" Width="120" FontSize="12" Content="Add section" 
-				    				Click="OnClick_AddSection"/>					
+							
+							<Border 
+						        HorizontalAlignment="Left" VerticalAlignment="Bottom"
+								BorderThickness="1" Margin="15" BorderBrush="DarkGray">
+						    	<Button Name="addSectionButton"
+						    			Height="30" Width="120" 
+						    	        Margin="1"
+						    	        FontSize="12" 
+						    	        Content="Add section"
+						    			Click="OnClick_AddSection"/>	
+							</Border>				
 						</Grid>
 		    		</Grid>	    		
 		    		
