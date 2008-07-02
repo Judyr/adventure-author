@@ -93,13 +93,7 @@ namespace AdventureAuthor.Evaluation
     	    	    	    	
     	#region Constructors   
     	
-    	public CardViewer() : this(Mode.User_Complete)
-    	{
-    		
-    	}
-    	
-    	
-    	public CardViewer(Mode mode)
+    	public CardViewer()
     	{
     		InitializeComponent();    		    		
     		
@@ -118,55 +112,6 @@ namespace AdventureAuthor.Evaluation
             
     		EvaluationPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             updateImageViewerSelectionMenu();
-            
-    		EvaluationMode = mode;
-    		
-    		// Edit titles in design mode only; fill in name and date in complete/discuss mode only
-    		switch (EvaluationMode) {
-    				
-    			case Mode.Designer:
-	    			TitleField.IsReadOnly = false;
-		    		DesignerNameField.IsEnabled = false;
-		    		EvaluatorNameField.IsEnabled = false;
-		    		DateField.IsEnabled = false;
-		    				    		
-	    			SaveBlankMenuItem.Visibility = Visibility.Collapsed;
-	    			NewMenuItem.Visibility = Visibility.Visible;
-	    			OptionsMenu.Visibility = Visibility.Collapsed;
-	    			
-	    			EditMenu.Visibility = Visibility.Visible;
-    				break;
-    				
-    			case Mode.User_Complete:
-	    			TitleField.IsReadOnly = true;
-		    		DesignerNameField.IsEnabled = true;
-		    		EvaluatorNameField.IsEnabled = true;
-		    		DateField.IsEnabled = true;
-		    				    		
-	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
-	    			NewMenuItem.Visibility = Visibility.Collapsed;
-	    			OptionsMenu.Visibility = Visibility.Visible;
-	    			
-	    			EditMenu.Visibility = Visibility.Collapsed;
-	    			
-	    			radioButtonChangingAnswers.IsChecked = true;
-		    		break;
-    				
-    			case Mode.User_Discuss:
-	    			TitleField.IsReadOnly = true;
-		    		DesignerNameField.IsEnabled = false;
-		    		EvaluatorNameField.IsEnabled = false;
-		    		DateField.IsEnabled = false;
-		    		
-	    			SaveBlankMenuItem.Visibility = Visibility.Visible;
-	    			NewMenuItem.Visibility = Visibility.Collapsed;
-	    			OptionsMenu.Visibility = Visibility.Visible;
-	    			
-	    			EditMenu.Visibility = Visibility.Collapsed;
-	    			
-	    			radioButtonFinishedAnswers.IsChecked = true;
-		    		break;
-    		}    		
             
             try {       	
     			Tools.EnsureDirectoryExists(EvaluationPreferences.LocalAppDataDirectory);
@@ -369,19 +314,7 @@ namespace AdventureAuthor.Evaluation
 	    	TitleField.TextChanged += delegate { 
 	    		OnChanged(new EventArgs()); 
 	    	};
-	    	
-	    	//TitleLabel.Visibility = Visibility.Visible;
-	    	DesignerNameLabel.Visibility = Visibility.Visible;
-	    	EvaluatorNameLabel.Visibility = Visibility.Visible;
-	    	DateLabel.Visibility = Visibility.Visible;
-	    	
-	    	TitleField.Visibility = Visibility.Visible;
-		    DesignerNameField.Visibility = Visibility.Visible;
-		    EvaluatorNameField.Visibility = Visibility.Visible;
-		    DateField.Visibility = Visibility.Visible;
-		    
-		    BorderClosingRectangle.Visibility = Visibility.Visible;
-		    
+	    			    
 		    if (EvaluationMode == Mode.Designer) {
 		    	DesignerModeControls.Visibility = Visibility.Visible;
 		    	UserModeControls.Visibility = Visibility.Collapsed;
@@ -401,19 +334,12 @@ namespace AdventureAuthor.Evaluation
 		    
 		    Dirty = false; // never require user to save a file that has had no changes made, even a blank file
 		    
-//		    if (Filename == null || Filename == String.Empty) {
-//		    	Dirty = true;  // set Dirty to true if we don't have a filename to save to yet...
-//		    }
-//		    else {
-//		    	Dirty = false; // ...otherwise expressly set Dirty to false, so as to ignore the  
-//		    				   // meaningless TextChanged event when the Title, Name and Date fields are created
-//		    }    
-		    
 		    Scroller.ScrollToTop();
 		    
 		    ShowMainScreen();
 		    		
-		    if (createdBlankCopyOfCard) {
+		    // this comes at the end so you don't see the Select Mode screen in background:
+		    if (createdBlankCopyOfCard) { 
     			string message = "Someone has already written on this Comment Card - " +
     				"once you're finished, remember to save under a different filename, " + 
     				"or they'll lose their work.";
@@ -713,28 +639,28 @@ namespace AdventureAuthor.Evaluation
     	}
     	    
     	
-    	private void SwitchTo(Mode mode)
+    	private void SwitchBetweenUserModes(Mode mode)
 	    {
     		try {
 	    		switch (mode) {
 	    			case Mode.User_Complete:
-	    				DateField.IsEnabled = true;
-	    				DesignerNameField.IsEnabled = true;
-	    				EvaluatorNameField.IsEnabled = true;
-	    				textBlockModeExplanation.Text = "Answer the questions as best you can. " +
-	    					"The white boxes give you a place to type in your answers. " + 
-	    					"The stars allow you to give a rating of between 1 star (least) and 5 stars (most). " +
-	    					"The Attach Evidence button allows you to attach screenshots to support your answer.";
+	    				DateField.IsEditable = true;
+	    				DesignerNameField.IsEditable = true;
+	    				EvaluatorNameField.IsEditable = true;
+	    				textBlockModeExplanation.Text = "Answer each question you see. There are three ways to answer questions:\n" +
+	    					"* If you see stars, choose a rating of between 1 and 5 stars.\n" +    				
+	    					"* If you see a white box, click on it, and type in your answer.\n" +
+	    					"* If you see an Attach Evidence button, attach a screenshot that supports your answer.";	
 	    				break;
 	    			case Mode.User_Discuss:
-	    				DateField.IsEnabled = false;
-	    				DesignerNameField.IsEnabled = false;
-	    				EvaluatorNameField.IsEnabled = false;
-	    				textBlockModeExplanation.Text = "Now that you've finished filling out this Comment Card, " +
-	    					"your answers have been locked. Don't worry - you can just click 'I want to fill in my answers' " +
-	    					"again and you'll be able to change them. Clicking on the little speech bubble icons that " + 
-	    					"have appeared next to each question will give you, your peers, your teacher and anyone else " +
-	    					"a chance to discuss your answers constructively.";
+	    				DateField.IsEditable = false;
+	    				DesignerNameField.IsEditable = false;
+	    				EvaluatorNameField.IsEditable = false;
+	    				textBlockModeExplanation.Text = "Now that all of your answers have been filled in, " +
+	    					"your friends and teachers can add their own comments. Click on the speech bubble button " +
+	    					"next to a question to add your own.\n\n" + 
+	    					"While discussing this Comment Card, you won't be able to change your answers. If you want to change " +
+	    					"them again, just click 'I want to write my answers' again.";
 	    				break;
 	    			case Mode.Designer:
 	    				throw new InvalidOperationException("Cannot switch to another mode when in design mode.");
@@ -815,13 +741,18 @@ namespace AdventureAuthor.Evaluation
     	{
     		EvaluationMode = Mode.Designer;
     		
-    		// Enable/disable interface as appropriate:
+    		// Enable/disable menus:
+    		NewMenuItem.Visibility = Visibility.Visible;
     		OptionsMenu.Visibility = Visibility.Collapsed;
     		EditMenu.Visibility = Visibility.Visible;
-    		TitleField.IsReadOnly = false;
-    		EvaluatorNameField.IsEnabled = false;
-    		DesignerNameField.IsEnabled = false;
-    		DateField.IsEnabled = false;
+    		SaveBlankMenuItem.Visibility = Visibility.Collapsed;
+    		ExportMenuItem.Visibility = Visibility.Collapsed;
+    		
+    		// Enable/disable fields:
+    		TitleField.IsEditable = true;
+    		EvaluatorNameField.IsEditable = false;
+    		DesignerNameField.IsEditable = false;
+    		DateField.IsEditable = false;
     		
     		OpenNewCard();
     		Dirty = false;
@@ -833,12 +764,22 @@ namespace AdventureAuthor.Evaluation
     	{
     		EvaluationMode = Mode.User_Complete;
     		
+    		// Enable/disable menus:
+    		NewMenuItem.Visibility = Visibility.Collapsed;
     		OptionsMenu.Visibility = Visibility.Visible;
     		EditMenu.Visibility = Visibility.Collapsed;
-    		TitleField.IsReadOnly = true; // IsReadOnly, so that it's uneditable but clearly visible
-    		EvaluatorNameField.IsEnabled = true;
-    		DesignerNameField.IsEnabled = true;
-    		DateField.IsEnabled = true;
+    		SaveBlankMenuItem.Visibility = Visibility.Visible;
+    		ExportMenuItem.Visibility = Visibility.Visible;
+    		
+    		// Enable/disable fields: 	
+    		TitleField.IsEditable = false;
+    		EvaluatorNameField.IsEditable = true;
+    		DesignerNameField.IsEditable = true;
+    		DateField.IsEditable = true;
+    		
+    		// Shouldn't matter for Designer mode:
+    		radioButtonIWantToWriteMyAnswers.IsChecked = true;
+    		radioButtonIWantToDiscussMyAnswers.IsChecked = false;
     		
     		if (OpenDialog()) {
     			ShowMainScreen();
@@ -1275,7 +1216,7 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnClick_DisplayAboutWindow(object sender, EventArgs e)
     	{
-    		Say.Information("Comment Cards (version 0.1)\n\n" +
+    		Say.Information("Comment Cards (version 0.2)\n\n" +
     		                "by Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells\n" +
     		                "Heriot-Watt University\n\n" +
     		                "Email: adventure.author@googlemail.com\n" + 
@@ -1283,15 +1224,15 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void finishedAnswers(object sender, EventArgs e)
+    	private void startedDiscussingAnswers(object sender, EventArgs e)
     	{
-    		SwitchTo(Mode.User_Discuss);
+    		SwitchBetweenUserModes(Mode.User_Discuss);
     	}
     	
     	
-    	private void changingAnswers(object sender, EventArgs e)
+    	private void startedWritingAnswers(object sender, EventArgs e)
     	{
-    		SwitchTo(Mode.User_Complete);
+    		SwitchBetweenUserModes(Mode.User_Complete);
     	}
     	
     	#endregion
