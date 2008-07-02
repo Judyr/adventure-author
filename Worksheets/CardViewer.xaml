@@ -6,16 +6,19 @@
 	
 	<Window.Resources>
 		
+		<!--For the Select Mode screen background-->
 		<RadialGradientBrush x:Key="radialBlueBrush" Center="0.5,0.5">
 			<GradientStop Offset="0" Color="LightBlue"/>
 			<GradientStop Offset="3" Color="Blue"/>
 		</RadialGradientBrush>
 		
+		<!--For the Comment Card header background-->
 		<RadialGradientBrush x:Key="radialLightBlueBrush" Center="0.5,0.5">
 			<GradientStop Offset="0" Color="LightBlue"/>
 			<GradientStop Offset="7" Color="Blue"/>
 		</RadialGradientBrush>
 		
+		<!--For the main screen background-->
 		<LinearGradientBrush x:Key="linearOffWhiteBrush" StartPoint="0,0" EndPoint="1,1">
 			<GradientStop Offset="0" Color="White"/>
 			<GradientStop Offset="2" Color="LightBlue"/>
@@ -155,11 +158,9 @@
 			</StackPanel>
 		
 		
-		
-		
-		
 			<ScrollViewer Name="Scroller" DockPanel.Dock="Bottom"
-						  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Focusable="false">
+						  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" 
+			              Focusable="false">
 		    	<StackPanel Orientation="Vertical">	
 					<Grid>
 		    			<Grid.RowDefinitions>
@@ -171,54 +172,65 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 						
-						<Grid.Background>						
+						<!--<Grid.Background>						
 							<StaticResource ResourceKey="radialLightBlueBrush"/>
-						</Grid.Background>
+						</Grid.Background>		-->
+												
+    					<Border Name="HeaderBorder" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+						        BorderThickness="2,2,2,0" BorderBrush="Black">
+							
+			    			<StackPanel Name="HeaderPanel" 
+    						            Background="LightBlue"
+			    						Orientation="Vertical">
+			    				
+			    				<StackPanel.Resources>
+			    					<Style TargetType="Label">
+			    						<Setter Property="FontSize" Value="16"/>
+			    						<Setter Property="FontFamily" Value="Arial"/>
+			    					</Style>
+			    					<Style TargetType="utils:SwitchableTextBox">
+			    						<Setter Property="Height" Value="30"/>
+			    						<Setter Property="FontSize" Value="16"/>
+			    						<Setter Property="FontFamily" Value="Comic Sans MS"/>
+			    					</Style>
+			    				</StackPanel.Resources>		    				
+			    				
+								<utils:SwitchableTextBox x:Name="TitleField"
+														 Height="45" Width="600" 
+														 HorizontalAlignment="Center"
+									         			 FontFamily="Comic Sans MS" FontSize="26" Margin="8">
+									<utils:SwitchableTextBox.ToolTip>The title of this Comment Card</utils:SwitchableTextBox.ToolTip>
+								</utils:SwitchableTextBox>	
+			    				
+								<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
+			    					<Label Name="DesignerNameLabel" Content="Game designer: " Margin="5"/>
+									<utils:SwitchableTextBox x:Name="DesignerNameField" Width="250">
+										<utils:SwitchableTextBox.ToolTip>The designer of the game being evaluated</utils:SwitchableTextBox.ToolTip>
+									</utils:SwitchableTextBox>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
+				    				<Label Name="EvaluatorNameLabel" Content="Evaluator: " Margin="5"/>
+									<utils:SwitchableTextBox x:Name="EvaluatorNameField" Width="250">
+										<utils:SwitchableTextBox.ToolTip>The person filling out this Comment Card</utils:SwitchableTextBox.ToolTip>
+									</utils:SwitchableTextBox>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
+				    				<Label Name="DateLabel" Content="Date: " Margin="5"/>
+									<utils:SwitchableTextBox x:Name="DateField" Width="250">
+										<utils:SwitchableTextBox.ToolTip>The date the Comment Card was filled out</utils:SwitchableTextBox.ToolTip>
+									</utils:SwitchableTextBox>
+								</StackPanel>
+							
+							</StackPanel>
+    						
+    					</Border>
 						
-						<StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-							Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
-							<utils:ReportingTextBox x:Name="TitleField" Width="800" Visibility="Hidden" 
-							         FontFamily="Comic Sans MS" FontSize="26" Margin="8">
-								<utils:ReportingTextBox.ToolTip>The title of this Comment Card</utils:ReportingTextBox.ToolTip>
-							</utils:ReportingTextBox>
-						</StackPanel>
-						
-		    			<StackPanel Name="HeaderPanel" Grid.Row="1" Grid.Column="0"
-		    						Orientation="Vertical">
-		    				<StackPanel.Resources>
-		    					<Style TargetType="Label">
-		    						<Setter Property="FontSize" Value="14"/>
-		    						<Setter Property="FontFamily" Value="Times New Roman"/>
-		    					</Style>
-		    					<Style TargetType="utils:ReportingTextBox">
-		    						<Setter Property="Height" Value="30"/>
-		    						<Setter Property="FontSize" Value="14"/>
-		    						<Setter Property="FontFamily" Value="Comic Sans MS"/>
-		    					</Style>
-		    				</StackPanel.Resources>
-							<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
-		    					<Label Name="DesignerNameLabel" Content="Game designer: " Margin="5" Visibility="Hidden"/>
-								<utils:ReportingTextBox x:Name="DesignerNameField" Width="250" Visibility="Hidden">
-									<utils:ReportingTextBox.ToolTip>The designer of the game being evaluated</utils:ReportingTextBox.ToolTip>
-								</utils:ReportingTextBox>
-							</StackPanel>
-							<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
-			    				<Label Name="EvaluatorNameLabel" Content="Game evaluator: " Margin="5" Visibility="Hidden"/>
-								<utils:ReportingTextBox x:Name="EvaluatorNameField" Width="250" Visibility="Hidden">
-									<utils:ReportingTextBox.ToolTip>The person filling out this Comment Card</utils:ReportingTextBox.ToolTip>
-								</utils:ReportingTextBox>
-							</StackPanel>
-							<StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left">
-			    				<Label Name="DateLabel" Content="Date: " Margin="5" Visibility="Hidden"/>
-								<utils:ReportingTextBox x:Name="DateField" Width="250" Visibility="Hidden">
-									<utils:ReportingTextBox.ToolTip>The date the Comment Card was filled out</utils:ReportingTextBox.ToolTip>
-								</utils:ReportingTextBox>
-							</StackPanel>
-						</StackPanel>
+						<!--Controls-->
 						
 						<Border Name="UserModeControls" Grid.Row="1" Grid.Column="1"
-								BorderThickness="1" Margin="4" BorderBrush="Black">
-							<Border BorderThickness="1" Margin="2" BorderBrush="Black">
+						        HorizontalAlignment="Center" VerticalAlignment="Center"
+								BorderThickness="1" Margin="4" BorderBrush="DarkGray">
+							<Border BorderThickness="1" Margin="2" BorderBrush="DarkGray">
 								<Border.Resources>
 									<Style TargetType="RadioButton">
 										<Setter Property="Margin" Value="3"/>
@@ -227,29 +239,36 @@
 										<Setter Property="Foreground" Value="DarkBlue"/>
 									</Style>
 								</Border.Resources>
-								<Grid>
+								<Grid Background="#EBE5FF">
 									<Grid.RowDefinitions>
 										<RowDefinition/>
 									</Grid.RowDefinitions>
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition/>
-										<ColumnDefinition/>
+										<ColumnDefinition Width="180"/>
+										<ColumnDefinition Width="250"/>
 									</Grid.ColumnDefinitions>
 								
 									<TextBlock Name="textBlockModeExplanation" Grid.Row="0" Grid.Column="1"
-									           TextWrapping="Wrap" Width="300"
-											   FontSize="14" FontStyle="Italic"/>
+									           TextWrapping="Wrap" 
+											   FontSize="12"
+											   Padding="6"/>
 									
 									<StackPanel Grid.Row="0" Grid.Column="0" 
 												Orientation="Vertical" Margin="8">
 										<RadioButton 
-											Name="radioButtonChangingAnswers"
-											Content="I want to fill in my answers"
-											Checked="changingAnswers"/>
+											Name="radioButtonIWantToWriteMyAnswers"
+											Checked="startedWritingAnswers">
+											<RadioButton.Content>
+												<TextBlock TextWrapping="Wrap">I want to write my answers.</TextBlock>
+											</RadioButton.Content>
+										</RadioButton>
 										<RadioButton 
-											Name="radioButtonFinishedAnswers"
-											Content="I'm ready to discuss my answers"
-											Checked="finishedAnswers"/>
+											Name="radioButtonIWantToDiscussMyAnswers"
+											Checked="startedDiscussingAnswers">
+											<RadioButton.Content>
+												<TextBlock TextWrapping="Wrap">I want to discuss my finished answers.</TextBlock>
+											</RadioButton.Content>
+										</RadioButton>
 									</StackPanel>
 								
 								</Grid>
@@ -266,7 +285,7 @@
 		    		
 		    		<StackPanel Orientation="Vertical">
 		    			<StackPanel Name="SectionsPanel" Orientation="Vertical"/>
-		    			<Rectangle Name="BorderClosingRectangle" Fill="Black" Height="2" Visibility="Collapsed"/>
+		    			<Rectangle Name="BorderClosingRectangle" Fill="Black" Height="2"/>
 		    		</StackPanel>
 				</StackPanel>
 			</ScrollViewer>
