@@ -6,6 +6,7 @@
 	
 	<local:CardPartControl.Resources>
 		
+		<!--For highlighting Right To Reply lines-->
 		<LinearGradientBrush x:Key="linearBlueBrush">
 			<GradientStop Offset="-1" Color="LightSeaGreen"/>
 			<GradientStop Offset="0.75" Color="Turquoise"/>
