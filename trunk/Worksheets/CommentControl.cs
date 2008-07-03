@@ -63,7 +63,7 @@ namespace AdventureAuthor.Evaluation
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
-    		ActivateCheckBox.ToolTip = "Click to deactivate this answer field.\n(Won't appear to users filling out this Comment Card.)";
+    		ActivateCheckBox.ToolTip = "Click to hide this answer field.";
     	}
     	
         
@@ -76,7 +76,7 @@ namespace AdventureAuthor.Evaluation
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
-    		ActivateCheckBox.ToolTip = "Click to activate this answer field.\n(Will appear to users filling out this Comment Card.)";
+    		ActivateCheckBox.ToolTip = "Click to show this answer field.";
     	}
     	
 		public override void ShowActivationControls()

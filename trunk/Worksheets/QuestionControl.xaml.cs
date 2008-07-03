@@ -293,7 +293,7 @@ namespace AdventureAuthor.Evaluation
     		if ((bool)!ActivateCheckBox.IsChecked) {
     			ActivateCheckBox.IsChecked = true;
     		}
-    		ActivateCheckBox.ToolTip = "Click to deactivate this question.\n(Won't appear to users filling out this Comment Card.)";
+    		ActivateCheckBox.ToolTip = "Click to hide this question.";
     	}
     	
     	
@@ -322,7 +322,7 @@ namespace AdventureAuthor.Evaluation
     		if (parentIsDeactivated) {
     			ActivatableControl.DeactivateElement(ActivateCheckBox);
     		}
-    		ActivateCheckBox.ToolTip = "Click to activate this question.\n(Will appear to users filling out this Comment Card.)";
+    		ActivateCheckBox.ToolTip = "Click to show this question.";
     	}
     	
     	
