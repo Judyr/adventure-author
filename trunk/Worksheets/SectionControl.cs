@@ -193,7 +193,7 @@ namespace AdventureAuthor.Evaluation
         
         internal void AddNewQuestion()
         {        	
-        	Question question = new Question("New question");
+        	Question question = new Question(CardViewer.NEW_QUESTION_NAME);
         	question.Answers.Add(new Rating());
         	question.Answers.Add(new Comment());
         	question.Answers.Add(new Evidence());

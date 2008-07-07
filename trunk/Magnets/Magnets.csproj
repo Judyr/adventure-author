@@ -11,7 +11,7 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <ApplicationIcon>..\..\Program Files\Heriot-Watt University\Fridge Magnets\litbulb.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\Libraries\Icons\lightbulb_48.ico</ApplicationIcon>
     <SignAssembly>False</SignAssembly>
     <DelaySign>False</DelaySign>
     <RunCodeAnalysis>False</RunCodeAnalysis>
