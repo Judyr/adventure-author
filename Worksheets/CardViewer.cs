@@ -21,7 +21,10 @@ namespace AdventureAuthor.Evaluation
     {    	
     	#region Constants
     	    	
-    	private string DEFAULT_TITLE = "Comment Cards";
+    	public const string DEFAULT_TITLE = "Comment Cards";
+    	public const string NEW_SECTION_NAME = "New section";
+    	public const string NEW_QUESTION_NAME = "New question";
+    	public const string NEW_CARD_NAME = "New Comment Card";
     	
     	#endregion
     	    	
@@ -440,7 +443,7 @@ namespace AdventureAuthor.Evaluation
     	{
     		try {
     			Log.WriteAction(LogAction.added,"section");
-	    		SectionControl sectionControl = AddSection(new Section("New section"));
+	    		SectionControl sectionControl = AddSection(new Section(NEW_SECTION_NAME));
 	    		Log.WriteAction(LogAction.added,"question");
 	    		sectionControl.AddNewQuestion();
 	    		OnChanged(new EventArgs());
@@ -811,7 +814,7 @@ namespace AdventureAuthor.Evaluation
     		try {
     			Log.WriteAction(LogAction.added,"commentcard");
     			Card card = new Card();
-    			card.Title = "New Comment Card";
+    			card.Title = NEW_CARD_NAME;
     			Open(card,null);
     			AddNewSection();
     		}

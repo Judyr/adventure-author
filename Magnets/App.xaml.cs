@@ -16,31 +16,19 @@ namespace AdventureAuthor.Ideas
 	public partial class App : Application
 	{
 		private MagnetBoardViewer viewer = null;
-		
-	
+			
 		
 		public App()
 		{
-			this.Startup += delegate (object sender, StartupEventArgs e) {
-				Say.Information(e.Args.ToString());
-			};
+//			this.Startup += delegate (object sender, StartupEventArgs e) {
+//				Say.Information(e.Args.ToString());
+//			};
 			
-			// If another process with the same name is already running, bring it to the fore. If you have been
-			// passed a filename, attempt to open that file in the existing process window. Regardless, following
-			// this, Shutdown the new application.
 			Process[] fridgeMagnetApps = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);			
-			if (fridgeMagnetApps.Length > 0) {
-				fridgeMagnetApps[0].WaitForInputIdle();
-				//fridgeMagnetApps[0].MainWindowHandle.
-				Say.Information("Already running: " + fridgeMagnetApps[0].Container.ToString());
-				Say.Information("Already running: " + ((Window)fridgeMagnetApps[0].Container).Title);
-				
-				//Say.Information("Fridge Magnets is already running!");
+			if (fridgeMagnetApps.Length > 1) {
+				Say.Information("Fridge Magnets is already running!");
 				Application.Current.Shutdown();
-			}
-			
-			//StartupUri = new Uri("MagnetBoardViewer.xaml",UriKind.Relative);
-			
+			}						
 			
 			viewer = new MagnetBoardViewer();
 			viewer.Show();

@@ -123,7 +123,7 @@ namespace AdventureAuthor.Ideas
 				pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
 				pipeCommunicationThread.Start();	
 				LaunchInSystemTray();			
-				//Hide(); // must be hidden last, or other constructor stuff never seems to happen
+				Hide(); // must be hidden last, or other constructor stuff never seems to happen
 			};		
 			
 			// clean up after yourself, for god's sake, you're a mess:
