@@ -26,7 +26,9 @@ namespace AdventureAuthor.Ideas
 			
 			Process[] fridgeMagnetApps = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);			
 			if (fridgeMagnetApps.Length > 1) {
-				Say.Information("Fridge Magnets is already running!");
+				Say.Information("Fridge Magnets is already running.\n\n" +
+				                "Look for the lightbulb icon in your system tray, " +
+				                "and double-click it to bring up Fridge Magnets.");
 				Application.Current.Shutdown();
 			}						
 			

@@ -70,7 +70,7 @@ namespace AdventureAuthor.Ideas
 			options.CheckStateChanged += new EventHandler(DisplayOptionsScreen);
 			
 			ToolStripMenuItem displayAboutScreen = new ToolStripMenuItem("About");
-			displayAboutScreen.Click += new EventHandler(DisplayAboutScreen);
+			displayAboutScreen.Click += delegate { MagnetBoardViewer.DisplayAboutScreen(); };
 			
 			ToolStripMenuItem exit = new ToolStripMenuItem("Exit");
 			exit.Click += new EventHandler(ForceExit);	
@@ -236,13 +236,6 @@ namespace AdventureAuthor.Ideas
 			else {
 				// TODO: if the registry key is present in the Run registry, remove it
 			}
-    	}
-    	    	
-			
-    	private void DisplayAboutScreen(object sender, EventArgs e)
-    	{
-    		AboutWindow window = new AboutWindow();
-    		window.ShowDialog();
     	}
     	    	
     	

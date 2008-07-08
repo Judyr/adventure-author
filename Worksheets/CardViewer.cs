@@ -1219,11 +1219,12 @@ namespace AdventureAuthor.Evaluation
     	
     	private void OnClick_DisplayAboutWindow(object sender, EventArgs e)
     	{
-    		Say.Information("Comment Cards (version 0.2)\n\n" +
+    		string message = "Comment Cards (version 0.2)\n\n" +
     		                "by Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells\n" +
     		                "Heriot-Watt University\n\n" +
     		                "Email: adventure.author@googlemail.com\n" + 
-    		                "Web: http://judyrobertson.typepad.com/adventure_author/about-adventure-author.html");
+    		                "Web: http://judyrobertson.typepad.com/adventure_author/comment-cards.html";
+    		Tools.DisplayAboutWindow(message);
     	}
     	
     	
