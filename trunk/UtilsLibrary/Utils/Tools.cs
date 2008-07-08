@@ -42,6 +42,12 @@ namespace AdventureAuthor.Utils
 		
 		// TODO make the string methods into Automatic Methods on string
 		
+		public static void DisplayAboutWindow(string message)
+		{
+			Say.Information(message);
+		}		
+		
+		
 		/// <summary>
         /// Returns true if a given word begins with a vowel (ignoring case).
         /// </summary>

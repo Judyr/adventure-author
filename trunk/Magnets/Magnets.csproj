@@ -63,10 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
-    <Compile Include="AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
@@ -102,7 +98,6 @@
     <Compile Include="MagnetBoardViewer.xaml.cs" />
     <Compile Include="MessageReceivedEventArgs.cs" />
     <Compile Include="SystemTray.cs" />
-    <Page Include="AboutWindow.xaml" />
     <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />

@@ -22,6 +22,16 @@ namespace AdventureAuthor.Ideas
     /// </summary>
     public partial class MagnetBoardViewer : Window
     {    
+    	#region Constants
+        
+        public const string APPLICATIONNAME = "Fridge Magnets";
+        public const string VERSION = "0.2";
+        public const string FULLNAME = APPLICATIONNAME + " (" + VERSION + ")";
+        public const string CREATOR = "Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells";
+        public static readonly Image LOGO = null;
+    	
+    	#endregion
+    	
     	#region Fields 
    
     	private Thread pipeCommunicationThread;
@@ -929,8 +939,18 @@ namespace AdventureAuthor.Ideas
         
         private void OnClick_About(object sender, EventArgs e)
         {
-        	AboutWindow window = new AboutWindow("Fridge Magnets","Created by Keiron Nicholson",null);
-        	window.ShowDialog();
+        	DisplayAboutScreen();
+        }
+        
+        
+        public static void DisplayAboutScreen()
+        {
+    		string message = "Fridge Magnets (version 0.2)\n\n" +
+    		                "by Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells\n" +
+    		                "Heriot-Watt University\n\n" +
+    		                "Email: adventure.author@googlemail.com\n" + 
+    		                "Web: http://judyrobertson.typepad.com/adventure_author/fridge-magnets.html";
+        	Tools.DisplayAboutWindow(message);
         }
         
         
