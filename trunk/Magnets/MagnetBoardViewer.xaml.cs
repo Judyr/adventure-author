@@ -189,7 +189,6 @@ namespace AdventureAuthor.Ideas
            	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             
             Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
-            Closing += new CancelEventHandler(magnetBoardViewer_Closing);   
         }
             	
     	#endregion
@@ -954,25 +953,25 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void magnetBoardViewer_Closing(object sender, CancelEventArgs e)
-        {        	
-			if (!CloseDialog()) {
-				e.Cancel = true;
-			}
-        	else {
-    			try {
-	    			// Serialize the user's preferences:
-	    			Serialization.Serialize(FridgeMagnetPreferences.DefaultFridgeMagnetPreferencesPath,
-	    			                        FridgeMagnetPreferences.Instance);
-    			}
-    			catch (Exception ex) {
-    				Say.Error("Something went wrong when trying to save your preferences - the choices " +
-    				          "you have made may not have been saved.",ex);
-    			}
-    			
-    			Log.WriteAction(LogAction.exited,"magnets");
-    		}
-        }
+//        private void magnetBoardViewer_Closing(object sender, CancelEventArgs e)
+//        {        	
+//			if (!CloseDialog()) {
+//				e.Cancel = true;
+//			}
+//        	else {
+//    			try {
+//	    			// Serialize the user's preferences:
+//	    			Serialization.Serialize(FridgeMagnetPreferences.DefaultFridgeMagnetPreferencesPath,
+//	    			                        FridgeMagnetPreferences.Instance);
+//    			}
+//    			catch (Exception ex) {
+//    				Say.Error("Something went wrong when trying to save your preferences - the choices " +
+//    				          "you have made may not have been saved.",ex);
+//    			}
+//    			
+//    			Log.WriteAction(LogAction.exited,"magnets");
+//    		}
+//        }
         
         
         private void magnetControl_RequestRemove(object sender, EventArgs e)

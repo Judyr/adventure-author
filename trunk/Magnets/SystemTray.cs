@@ -65,9 +65,9 @@ namespace AdventureAuthor.Ideas
 			ToolStripMenuItem addNewIdea = new ToolStripMenuItem("Add a new idea");
 			addNewIdea.Click += new EventHandler(AddIdeaFromSystemTray);
 			
-			ToolStripMenuItem options = new ToolStripMenuItem("Options");
-			options.CheckOnClick = true;
-			options.CheckStateChanged += new EventHandler(DisplayOptionsScreen);
+//			ToolStripMenuItem options = new ToolStripMenuItem("Options");
+//			options.CheckOnClick = true;
+//			options.CheckStateChanged += new EventHandler(DisplayOptionsScreen);
 			
 			ToolStripMenuItem displayAboutScreen = new ToolStripMenuItem("About");
 			displayAboutScreen.Click += delegate { MagnetBoardViewer.DisplayAboutScreen(); };
@@ -79,7 +79,7 @@ namespace AdventureAuthor.Ideas
 			strip.Items.Add(openFridgeMagnets);				
 			strip.Items.Add(addNewIdea);			
 			strip.Items.Add(new ToolStripSeparator());
-			strip.Items.Add(options);
+//			strip.Items.Add(options);
 			strip.Items.Add(displayAboutScreen);
 			strip.Items.Add(new ToolStripSeparator());
 			strip.Items.Add(exit);			
@@ -173,16 +173,21 @@ namespace AdventureAuthor.Ideas
     		SwitchBulbOn();
     	}
     	
-    	
+    	    	
     	/// <summary>
     	/// Hide the main window when the user attempts to close it.
     	/// </summary>
     	private void HideWindowOnClosing(object sender, CancelEventArgs e)
     	{
-			e.Cancel = true;
+			e.Cancel = true; // don't actually close the window - if the user doesn't cancel, then hide it instead
+			
+    		if (!CloseDialog()) { // return if the user cancels
+    			return;
+    		}
+    		
 			System.Windows.Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
 			                                                          new HideWindowDelegate(HideWindow));
-    	}
+    	}	    	
     	
     	
     	/// <summary>
@@ -246,6 +251,11 @@ namespace AdventureAuthor.Ideas
     	/// the window hidden instead. This also tells the app to stop listening for connections.</remarks>
     	private void ForceExit(object sender, EventArgs e)
     	{
+    		if (!CloseDialog()) { // return if user has an unsaved board and cancels
+    			return;
+    		}
+    		
+    		
     		using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
     		{
     			try {
@@ -260,6 +270,19 @@ namespace AdventureAuthor.Ideas
     				Console.WriteLine("Couldn't connect to pipe");
     			}
     		}
+    		
+    		
+    		try {
+	    		// Serialize the user's preferences:
+	    		Serialization.Serialize(FridgeMagnetPreferences.DefaultFridgeMagnetPreferencesPath,
+	    		                        FridgeMagnetPreferences.Instance);
+    		}
+    		catch (Exception ex) {
+    			Say.Error("Something went wrong when trying to save your preferences - the choices " +
+    				      "you have made may not have been saved.",ex);
+    		}
+    			
+    		Log.WriteAction(LogAction.exited,"magnets");
     		
     		System.Windows.Application.Current.Shutdown();
     	}
