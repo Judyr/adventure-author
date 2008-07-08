@@ -891,7 +891,7 @@ namespace AdventureAuthor.Ideas
 		       	magnetList.Orientation = Orientation.Vertical;	        
 			    Grid.SetRowSpan(ActiveBoard,2);
 			    Grid.SetColumnSpan(ActiveBoard,1);
-			    Grid.SetRow(magnetList,1);
+			    Grid.SetRow(magnetList,0);
 			    Grid.SetRowSpan(magnetList,2);
 			    Grid.SetColumn(magnetList,1);
 			    Grid.SetColumnSpan(magnetList,1);
@@ -900,7 +900,7 @@ namespace AdventureAuthor.Ideas
 		        magnetList.Orientation = Orientation.Horizontal;	        
 			    Grid.SetRowSpan(ActiveBoard,1);
 			    Grid.SetColumnSpan(ActiveBoard,2);
-			    Grid.SetRow(magnetList,2);
+			    Grid.SetRow(magnetList,1);
 			    Grid.SetRowSpan(magnetList,1);
 			    Grid.SetColumn(magnetList,0);
 			    Grid.SetColumnSpan(magnetList,2);
