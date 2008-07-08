@@ -7,78 +7,88 @@
 	Title="Fridge Magnets"
 	WindowState="Maximized"
     >
+	<Window.Resources>
+		<Style TargetType="MenuItem">
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
+	</Window.Resources>
 		
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/> 
-			<ColumnDefinition Width="180"/> 
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="25"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="250"/>
-		</Grid.RowDefinitions>
+	<DockPanel>		
 		
-		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-		     	  VerticalAlignment="Top" HorizontalAlignment="Left" Width="5000">
-			<MenuItem Header="File" FontSize="14">
-				<MenuItem Name="NewMenuItem" Header="New" 
-				          Click="OnClick_New" FontSize="14"/>
-				<MenuItem Name="OpenMenuItem" Header="Open" 
-				          Click="OnClick_Open" FontSize="14"/>
-				<MenuItem Name="SaveMenuItem" Header="Save" 
-				          Click="OnClick_Save" FontSize="14"/>
-				<MenuItem Name="SaveAsMenuItem" Header="Save as" 
-				          Click="OnClick_SaveAs" FontSize="14"/>
-				<MenuItem Name="CloseMenuItem" Header="Close" 
-				          Click="OnClick_Close" FontSize="14"/>
-				<Separator/>
-				<MenuItem Name="ExitMenuItem" Header="Exit" 
-				          Click="OnClick_Exit" FontSize="14"/>
-			</MenuItem>
-	    	<MenuItem x:Name="boxMenu" Header="Box" FontSize="14">
-				<MenuItem Header="Create magnet" Click="OnClick_CreateMagnet"
-	    				  FontSize="14"/>
-				<MenuItem Header="Scatter magnets" Click="OnClick_Scatter"
-	    				  FontSize="14"/>
-	    		<Separator/>
-				<MenuItem Name="ShowHideCategoriesMenu" Header="Show/hide idea categories"
-	    				  FontSize="14"/>
-	    		<Separator/>
-				<MenuItem Name="wonkyMagnetsMenuItem" Header="Display wonky magnets"
-	    				  IsCheckable="true" 
-				          Checked="useWonkyMagnetsCheckedOrUnchecked"
-	    				  Unchecked="useWonkyMagnetsCheckedOrUnchecked"
-	    		          FontSize="14"/>
-				<MenuItem Name="appearsAtSideMenuItem" Header="Magnet box appears at side" 
-	    		          IsCheckable="true"
-	    		          Checked="appearsAtSideCheckedOrUnchecked" 
-				          Unchecked="appearsAtSideCheckedOrUnchecked"
-	    				  FontSize="14"/>
-			</MenuItem>
-	    	<MenuItem x:Name="boardMenu" Header="Board" FontSize="14">
-				<MenuItem Header="Clear board" Click="OnClick_ClearBoard" FontSize="14"/>
-				<Separator/>
-	    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour" FontSize="14"/>
-			</MenuItem>
-			<MenuItem x:Name="helpMenu" Header="Help">
-				<MenuItem Header="Help" Click="OnClick_Help"/>
-				<MenuItem Header="About" Click="OnClick_About"/>
-			</MenuItem>
-		</Menu>	
-			
-		<local:MagnetList x:Name="magnetList" 
-						  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
-		
-		<local:MagnetBoardControl x:Name="magneticSurface" 
-								  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-			<local:MagnetBoardControl.ContextMenu>
-				<ContextMenu>				
-			    	<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+		<StackPanel DockPanel.Dock="Top" Background="{Binding ElementName=MainMenu, Path=Background, Mode=OneWay}">
+			<Menu Name="MainMenu">
+				<MenuItem Header="File">
+					<MenuItem Name="NewMenuItem" Header="New" 
+					          Click="OnClick_New"/>
+					<MenuItem Name="OpenMenuItem" Header="Open" 
+					          Click="OnClick_Open"/>
+					<MenuItem Name="SaveMenuItem" Header="Save" 
+					          Click="OnClick_Save"/>
+					<MenuItem Name="SaveAsMenuItem" Header="Save as" 
+					          Click="OnClick_SaveAs"/>
+					<MenuItem Name="CloseMenuItem" Header="Close" 
+					          Click="OnClick_Close"/>
 					<Separator/>
-			    	<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
-				</ContextMenu>
-			</local:MagnetBoardControl.ContextMenu>
-		</local:MagnetBoardControl>
-	</Grid>
+					<MenuItem Name="ExitMenuItem" Header="Exit" 
+					          Click="OnClick_Exit"/>
+				</MenuItem>
+		    	<MenuItem x:Name="boxMenu" Header="Box">
+					<MenuItem Header="Create magnet" Click="OnClick_CreateMagnet"
+		    				 />
+					<MenuItem Header="Scatter magnets" Click="OnClick_Scatter"
+		    				 />
+		    		<Separator/>
+					<MenuItem Name="ShowHideCategoriesMenu" Header="Show/hide idea categories"
+		    				 />
+		    		<Separator/>
+					<MenuItem Name="wonkyMagnetsMenuItem" Header="Display wonky magnets"
+		    				  IsCheckable="true" 
+					          Checked="useWonkyMagnetsCheckedOrUnchecked"
+		    				  Unchecked="useWonkyMagnetsCheckedOrUnchecked"
+		    		         />
+					<MenuItem Name="appearsAtSideMenuItem" Header="Magnet box appears at side" 
+		    		          IsCheckable="true"
+		    		          Checked="appearsAtSideCheckedOrUnchecked" 
+					          Unchecked="appearsAtSideCheckedOrUnchecked"
+		    				 />
+				</MenuItem>
+		    	<MenuItem x:Name="boardMenu" Header="Board">
+					<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+					<Separator/>
+		    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
+				</MenuItem>
+				<MenuItem x:Name="helpMenu" Header="Help">
+					<MenuItem Header="Help" Click="OnClick_Help"/>
+					<MenuItem Header="About" Click="OnClick_About"/>
+				</MenuItem>
+			</Menu>	
+		</StackPanel>
+	
+		<Grid DockPanel.Dock="Bottom">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/> 
+				<ColumnDefinition Width="180"/> 
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="250"/>
+			</Grid.RowDefinitions>
+				
+			<local:MagnetList x:Name="magnetList" 
+							  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+			
+			<local:MagnetBoardControl x:Name="magneticSurface" 
+									  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+				<local:MagnetBoardControl.ContextMenu>
+					<ContextMenu>				
+				    	<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+						<Separator/>
+				    	<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
+					</ContextMenu>
+				</local:MagnetBoardControl.ContextMenu>
+			</local:MagnetBoardControl>
+		</Grid>
+	
+	</DockPanel>	
+
 </Window>
