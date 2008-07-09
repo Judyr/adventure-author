@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
@@ -927,13 +928,19 @@ namespace AdventureAuthor.Ideas
         		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
     			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
         	}
-        }
-        
-        
-        private void OnClick_Help(object sender, EventArgs e)
-        {
-        	Say.Information("No help for you! HA!");
-        }
+        }        
+            	
+    	
+    	private void OpenHelpFile(object sender, EventArgs e)
+    	{
+    		string filename = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"Readme.rtf");    		
+    		if (File.Exists(filename)) {
+    			Process.Start(filename);
+    		}
+    		else {
+    			Say.Warning("Couldn't find help file (" + filename + ").");
+    		}
+    	}
         
         
         private void OnClick_About(object sender, EventArgs e)
