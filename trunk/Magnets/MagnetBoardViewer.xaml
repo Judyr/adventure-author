@@ -7,16 +7,16 @@
 	Title="Fridge Magnets"
 	WindowState="Maximized"
     >
-	<Window.Resources>
-		<Style TargetType="MenuItem">
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
-	</Window.Resources>
 		
 	<DockPanel>		
 		
 		<StackPanel DockPanel.Dock="Top" Background="{Binding ElementName=MainMenu, Path=Background, Mode=OneWay}">
 			<Menu Name="MainMenu">
+				<Menu.Style>
+					<Style TargetType="Control">
+						<Setter Property="FontSize" Value="14"/>
+					</Style>
+				</Menu.Style>
 				<MenuItem Header="File">
 					<MenuItem Name="NewMenuItem" Header="New" 
 					          Click="OnClick_New"/>
@@ -58,7 +58,7 @@
 		    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
 				</MenuItem>
 				<MenuItem x:Name="helpMenu" Header="Help">
-					<MenuItem Header="Help" Click="OnClick_Help"/>
+					<MenuItem Header="Help" Click="OpenHelpFile"/>
 					<MenuItem Header="About" Click="OnClick_About"/>
 				</MenuItem>
 			</Menu>	
