@@ -87,8 +87,8 @@
     <Compile Include="Ideas\MagnetDragAdorner.cs" />
     <Compile Include="Ideas\MagnetEditedEventArgs.cs" />
     <Compile Include="Ideas\MagnetEventArgs.cs" />
-    <Compile Include="Ideas\MagnetList.xaml.cs" />
-    <Compile Include="Ideas\MagnetListInfo.cs" />
+    <Compile Include="Ideas\MagnetBox.cs" />
+    <Compile Include="Ideas\MagnetBoxInfo.cs" />
     <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
     <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
     <Compile Include="Ideas\SortCriterion.cs" />
@@ -101,7 +101,7 @@
     <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />
     <Page Include="Ideas\MagnetControl.xaml" />
-    <Page Include="Ideas\MagnetList.xaml" />
+    <Page Include="Ideas\MagnetBox.xaml" />
     <Page Include="MagnetBoardViewer.xaml" />
     <ProjectReference Include="..\..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
       <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>

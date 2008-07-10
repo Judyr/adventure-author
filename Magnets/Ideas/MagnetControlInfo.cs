@@ -20,7 +20,14 @@ namespace AdventureAuthor.Ideas
 	[XmlRoot("Magnet")]
 	//[XmlInclude(typeof(BlueprintMagnetControlInfo))]
 	public class MagnetControlInfo : ISerializableData
-	{
+	{	
+    	[XmlElement("ID")]
+    	private Guid id;
+		public Guid ID {
+			get { return id; }
+			set { id = value; }
+		}
+		
 		[XmlAttribute]
 		public double X;
     	
@@ -45,6 +52,7 @@ namespace AdventureAuthor.Ideas
 		
 		public MagnetControlInfo(MagnetControl magnetControl) : this()
 		{
+			id = magnetControl.ID;
 			X = magnetControl.X;
 			Y = magnetControl.Y;
 			Idea = magnetControl.Idea;

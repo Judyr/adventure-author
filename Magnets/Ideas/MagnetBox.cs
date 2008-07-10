@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +21,7 @@ namespace AdventureAuthor.Ideas
     /// Interaction logic for MagnetList.xaml
     /// </summary>
 
-    public partial class MagnetList : UnserializableControl
+    public partial class MagnetBox : UnserializableControl
     {
     	#region Constants
     	
@@ -65,7 +66,7 @@ namespace AdventureAuthor.Ideas
 		public bool SaveAutomatically {
 			get { return saveAutomatically; }
 			set { 
-				saveAutomatically = value; 
+				saveAutomatically = value;
 			}
 		}
     	
@@ -91,6 +92,26 @@ namespace AdventureAuthor.Ideas
         
         internal MenuItem appearsAtSideContextMenuItem = null; // since you can't easily name these (weird XAML thing)
         internal MenuItem wonkyMagnetsContextMenuItem = null;
+        
+        
+        /// <summary>
+    	/// The unique ID of this object.
+    	/// </summary>
+        private Guid id;
+		public Guid ID {
+			get { return id; }
+			set { id = value; }
+		}
+        
+        
+        /// <summary>
+    	/// The version of Fridge Magnets this object was created with.
+    	/// </summary>
+        private string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
         
     	#endregion
     	
@@ -169,7 +190,7 @@ namespace AdventureAuthor.Ideas
     	
     	#region Constructors
     	
-        public MagnetList()
+        public MagnetBox()
         {            
         	magnetControl_MouseDoubleClickHandler = new MouseButtonEventHandler(magnetControl_MouseDoubleClick);
         	magnetControl_DropHandler = new DragEventHandler(magnetControl_Drop);
@@ -200,10 +221,13 @@ namespace AdventureAuthor.Ideas
             };
             
            	UpdateUseWonkyMagnets();
+           	
+           	id = Guid.NewGuid();
+           	version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
         
         
-        public MagnetList(MagnetListInfo magnetListInfo) : this()
+        public MagnetBox(MagnetBoxInfo magnetListInfo) : this()
         {        	
         	Open(magnetListInfo);
         }
@@ -233,8 +257,8 @@ namespace AdventureAuthor.Ideas
 	        }
 	        else {
 	          	try { // try to open the Magnet Box, and if successful, save to it        		
-		    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetListInfo));
-			    	MagnetListInfo magnetListInfo = (MagnetListInfo)o;
+		    		object o = AdventureAuthor.Utils.Serialization.Deserialize(filename,typeof(MagnetBoxInfo));
+			    	MagnetBoxInfo magnetListInfo = (MagnetBoxInfo)o;
 			    	Open(magnetListInfo);
 			    	Filename = filename;
 			    	SaveAutomatically = true;
@@ -246,12 +270,12 @@ namespace AdventureAuthor.Ideas
         				}
 		           		MessageBoxResult result = 
 		           			MessageBox.Show( // this will appear before toolset has finished loading
-		           				  "There was a problem when setting up the Adventure Author fridge magnet application.\n\n" +
+		           				  "There was a problem when setting up Fridge Magnets.\n\n" +
 		           				  filename + " is not a valid Magnet Box file. It may " +
 		           	    	      "be corrupted, or the wrong type of file.\n\n" + 
 		           	    	      "This file must be replaced to continue. Do you want to back up the " +
 		           	    	      "corrupted file in case it can be fixed?",
-		           	    	      "Back up corrupted ideas file?",
+		           	    	      "Back up corrupted Magnet Box file?",
 		           	    	      MessageBoxButton.YesNoCancel);
 		           		switch (result) {
 		           			case MessageBoxResult.Cancel: // user didn't want to deal with corrupted file
@@ -322,7 +346,7 @@ namespace AdventureAuthor.Ideas
     	/// <param name="magnetListInfo">Serialized data to represent</param>
     	/// <remarks>Changes will not be saved unless you set SaveAutomatically to true following
     	/// this call, and provide a valid filename</remarks>
-    	private void Open(MagnetListInfo magnetListInfo)
+    	private void Open(MagnetBoxInfo magnetListInfo)
     	{
 	        Clear();
 	    	ShowAllCategories(); // set all categories to be shown before adding magnets (faster)
@@ -332,6 +356,8 @@ namespace AdventureAuthor.Ideas
 	    		AddMagnet(magnet,false);
 	        }
 	        SaveAutomatically = false;
+	        this.id = magnetListInfo.ID;
+	        this.version = magnetListInfo.Version;
 	        
 	        UpdateMagnetCount();
     	}
@@ -701,7 +727,7 @@ namespace AdventureAuthor.Ideas
     	/// (i.e. a magnet with identical field values) call HasEquivalentMagnet instead</remarks>
     	public bool HasMagnet(MagnetControl magnet)
     	{
-    		return MagnetList.HasMagnet(magnetsPanel.Children,magnet);
+    		return MagnetBox.HasMagnet(magnetsPanel.Children,magnet);
     	}
     	
     	
@@ -864,7 +890,7 @@ namespace AdventureAuthor.Ideas
 		
     	public override ISerializableData GetSerializable()
     	{
-    		return new MagnetListInfo(this);
+    		return new MagnetBoxInfo(this);
     	}	
                 
         #endregion
