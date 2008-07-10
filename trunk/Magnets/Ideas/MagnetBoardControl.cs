@@ -3,9 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using AdventureAuthor.Utils;
+using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Ideas
 {
@@ -79,7 +80,24 @@ namespace AdventureAuthor.Ideas
         private EventHandler magnetControl_ChangedOnBoardHandler;
         
         
-        private object padlock = new object();
+        private object padlock = new object(); 	
+                
+            
+    	private Guid id;
+		public Guid ID {
+			get { return id; }
+			set { id = value; }
+		}   
+    	
+        
+        /// <summary>
+    	/// The version of Fridge Magnets this object was created with.
+    	/// </summary>
+        private string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
     	
     	#endregion
     	
@@ -182,7 +200,10 @@ namespace AdventureAuthor.Ideas
     			Log.WriteAction(LogAction.closed,"magnetboard");
     		};
     		  		    		
-    		InitializeComponent();    		
+    		InitializeComponent();  
+    		
+    		this.id = Guid.NewGuid();
+    		this.version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
     	}
     	
     	
@@ -231,6 +252,9 @@ namespace AdventureAuthor.Ideas
 	    		MagnetControl magnet = (MagnetControl)magnetInfo.GetControl();
 	    		AddMagnet(magnet,false);
 	    	}
+	        version = boardInfo.Version;
+	        id = boardInfo.ID;
+	        Say.Information("ID: " + id);
 	        dirty = false; // cancel effect of adding magnets when opening (and don't raise Changed event)
         }
         
@@ -422,7 +446,7 @@ namespace AdventureAuthor.Ideas
     	/// (i.e. a magnet with identical field values) call HasEquivalentMagnet instead</remarks>
     	public bool HasMagnet(MagnetControl magnet)
     	{
-    		return MagnetList.HasMagnet(mainCanvas.Children,magnet);
+    		return MagnetBox.HasMagnet(mainCanvas.Children,magnet);
     	}
     	
     	    	
@@ -436,7 +460,7 @@ namespace AdventureAuthor.Ideas
     	/// to check whether the collection contains the actual object, call HasMagnet instead</remarks>
     	public bool HasEquivalentMagnet(MagnetControl magnet)
     	{
-    		return MagnetList.HasEquivalentMagnet(mainCanvas.Children,magnet);
+    		return MagnetBox.HasEquivalentMagnet(mainCanvas.Children,magnet);
     	}
     	
     	

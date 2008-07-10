@@ -20,8 +20,27 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	[Serializable]
 	[XmlRoot("MagnetBox")]
-	public class MagnetListInfo : ISerializableData
-	{    	
+	public class MagnetBoxInfo : ISerializableData
+	{    	   	
+    	[XmlElement("ID")]
+    	private Guid id;
+		public Guid ID {
+			get { return id; }
+			set { id = value; }
+		}   
+        
+        
+    	[XmlAttribute("Version")]
+        /// <summary>
+    	/// The version of Fridge Magnets this object was created with.
+    	/// </summary>
+        private string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
+    	    	
+    	
 		[XmlArray("Magnets")]
 		[XmlArrayItemAttribute("Magnet")]
     	private List<MagnetControlInfo> magnetInfos = new List<MagnetControlInfo>();       	
@@ -34,18 +53,20 @@ namespace AdventureAuthor.Ideas
     	/// <summary>
     	/// Constructor for serialization.
     	/// </summary>
-    	private MagnetListInfo()
+    	private MagnetBoxInfo()
     	{
     		
     	}
     	
     	
-		public MagnetListInfo(MagnetList magnetList)
+		public MagnetBoxInfo(MagnetBox magnetBox)
 		{
-			foreach (MagnetControl magnet in magnetList.GetMagnets(false)) {
+			foreach (MagnetControl magnet in magnetBox.GetMagnets(false)) {
 				MagnetControlInfo magnetInfo = (MagnetControlInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);
 			}
+			this.id = magnetBox.ID;
+           	this.version = magnetBox.Version;
 		}
 		
 		
@@ -56,7 +77,7 @@ namespace AdventureAuthor.Ideas
 		/// <remarks>Save automatically is set to false since there is no filename to save to</remarks>
 		public UnserializableControl GetControl()
 		{
-			MagnetList magnetList = new MagnetList(this);
+			MagnetBox magnetList = new MagnetBox(this);
 			return magnetList;
 		}
 	}

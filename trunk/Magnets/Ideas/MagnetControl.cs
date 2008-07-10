@@ -91,7 +91,17 @@ namespace AdventureAuthor.Ideas
     	    	    	
     	#endregion    	
     	
-    	#region Fields
+    	#region Fields        
+        
+    	/// <summary>
+    	/// The unique ID of this object.
+    	/// </summary>
+        private Guid id;
+		public Guid ID {
+			get { return id; }
+			internal set { id = value; }
+		}        
+      
     	
     	/// <summary>
     	/// The X co-ordinate of this magnet.
@@ -363,6 +373,8 @@ namespace AdventureAuthor.Ideas
     	    	
     	protected MagnetControl()
     	{
+    		id = Guid.NewGuid(); // generate a unique ID for this magnet
+    		
     		canChangeCategory = true;
     		bevel.EdgeProfile = EdgeProfile.Linear;
     		bevel.Relief = 0.3;
@@ -389,6 +401,7 @@ namespace AdventureAuthor.Ideas
     	
     	public MagnetControl(MagnetControlInfo magnetInfo) : this()
     	{
+    		id = magnetInfo.ID; // unique ID has already been saved
     		X = magnetInfo.X;
     		Y = magnetInfo.Y;
     		Angle = magnetInfo.Angle;
@@ -396,7 +409,7 @@ namespace AdventureAuthor.Ideas
     	}
     	
     	
-    	public MagnetControl(Idea idea) : this()
+    	public MagnetControl(Idea idea) : this() // parameterless constructor will take care of unique ID
     	{
             Idea = idea;
     	}

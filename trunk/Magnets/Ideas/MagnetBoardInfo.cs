@@ -22,7 +22,18 @@ namespace AdventureAuthor.Ideas
 	[Serializable]
 	[XmlRoot("MagnetBoard")]
 	public class MagnetBoardInfo : ISerializableData
-	{    	
+	{    	          
+    	[XmlAttribute("Version")]
+        /// <summary>
+    	/// The version of Fridge Magnets this object was created with.
+    	/// </summary>
+        private string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
+        
+        
 		[XmlAttribute("Colour")]
 		private Color surfaceColour;
 		public Color SurfaceColour {
@@ -38,6 +49,14 @@ namespace AdventureAuthor.Ideas
 			get { return magnetInfos; }
 			set { magnetInfos = value; }
 		}
+                
+
+    	[XmlElement("ID")]
+    	private Guid id;
+		public Guid ID {
+			get { return id; }
+			set { id = value; }
+		} 
     	
     	
     	/// <summary>
@@ -56,6 +75,8 @@ namespace AdventureAuthor.Ideas
 				MagnetControlInfo magnetInfo = (MagnetControlInfo)magnet.GetSerializable();
 				magnetInfos.Add(magnetInfo);
 			}
+			version = magnetBoardControl.Version;
+			id = magnetBoardControl.ID;
 		}
 		
 		

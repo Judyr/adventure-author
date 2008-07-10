@@ -74,7 +74,7 @@
 				<RowDefinition Height="250"/>
 			</Grid.RowDefinitions>
 				
-			<local:MagnetList x:Name="magnetList" 
+			<local:MagnetBox x:Name="magnetList" 
 							  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
 			
 			<local:MagnetBoardControl x:Name="magneticSurface" 
