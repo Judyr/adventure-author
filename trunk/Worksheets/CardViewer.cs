@@ -904,8 +904,7 @@ namespace AdventureAuthor.Evaluation
   				string exportFilename = saveFileDialog.FileName;
   				Log.WriteAction(LogAction.exported,"commentcard",Path.GetFileName(exportFilename));  			
   				try {
-  					ExportToTextFile(exportFilename);
-  					Process.Start(exportFilename);
+  					ExportToTextFile(exportFilename,true);
   				}
   				catch (IOException e) {
   					Say.Error("Failed to export Comment Card.",e);
@@ -914,71 +913,20 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-
-		public void ExportToTextFile(string filename)
-		{
-			FileInfo fi = new FileInfo(filename);
-			StreamWriter sw = fi.CreateText();
-			sw.AutoFlush = false;
-			
-			Card card = GetCard();
-			sw.WriteLine("Comment Card:\t" + card.Title);
-			sw.WriteLine("Game designer:\t" + card.DesignerName);
-			sw.WriteLine("Evaluator:\t" + card.EvaluatorName);
-			sw.WriteLine("Filled in on:\t" + card.Date);
-			sw.WriteLine();
-			sw.WriteLine();
-						
-			foreach (Section section in card.Sections) {
-				// Check that a section has not been excluded, either because it has been excluded explicitly
-				// or because it has no questions which are to be included:
-				if (!section.Include) {
-					continue;
-				}
-				else {
-					bool sectionHasQuestions = false;
-					foreach (Question question in section.Questions) {
-						if (question.Include) {
-							sectionHasQuestions = true;
-							break;
-						}
-					}
-					if (!sectionHasQuestions) {
-						continue;
-					}
-				}
-				
-				int questionCount = 0;
-				sw.WriteLine(">>>>> " + section.Title + " <<<<<");
-				sw.WriteLine();
-				foreach (Question question in section.Questions) {
-					if (question.Include) {
-						questionCount++;
-						sw.WriteLine("Q" + questionCount + ": " + question.Text);
-						sw.WriteLine();
-						sw.WriteLine("Answer(s):");
-						foreach (Answer answer in question.Answers) {
-							if (answer.Include) {
-								sw.WriteLine("- " + answer.ToString());
-							}
-						}
-						if (question.Replies.Count > 0) {
-							sw.WriteLine();
-							sw.WriteLine("Replies:");
-							foreach (Reply reply in question.Replies) {
-								sw.WriteLine("- " + reply.ToString());
-							}
-						}
-						sw.WriteLine();
-						sw.WriteLine();
-					}
-				}
-			}
-						
-			sw.Flush();
-			sw.Close();
-			sw.Dispose();
-		}		
+    	private void OnClick_ExportMultiple(object sender, EventArgs e)
+    	{
+    		CommentCardUtils.ConvertAllCommentCardsToPlainTextDialog();
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Export the currently open Comment Card to plain text.
+    	/// </summary>
+    	/// <param name="plainTextPath"></param>
+    	public void ExportToTextFile(string plainTextPath, bool openFile)
+    	{    		
+    		CommentCardUtils.ExportToTextFile(GetCard(),plainTextPath,openFile);
+    	}
   			   	    	    	
     	
     	private void sectionControl_Deleting(object sender, CardPartControlEventArgs e)

@@ -919,7 +919,7 @@ namespace AdventureAuthor.Ideas
         
         internal void OnClick_Scatter(object sender, RoutedEventArgs e)
         {
-        	MessageBoxResult result = MessageBox.Show("Tip all unused visible magnets onto the board?",
+        	MessageBoxResult result = MessageBox.Show("Scatter your Magnet Box across the board?",
 		        					                  "Scatter magnets?", 
 		        					                  MessageBoxButton.YesNo,
 		        					                  MessageBoxImage.Question,

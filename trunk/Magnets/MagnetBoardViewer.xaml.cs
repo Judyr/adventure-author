@@ -26,7 +26,7 @@ namespace AdventureAuthor.Ideas
     	#region Constants
         
         public const string APPLICATIONNAME = "Fridge Magnets";
-        public const string VERSION = "0.2";
+        public const string VERSION = "0.1";
         public const string FULLNAME = APPLICATIONNAME + " (" + VERSION + ")";
         public const string CREATOR = "Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells";
         public static readonly Image LOGO = null;
@@ -80,73 +80,78 @@ namespace AdventureAuthor.Ideas
     	
         public MagnetBoardViewer()
         {
-        	InitializeComponent();
-        	
-        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
-			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
-		                                  
-            // Set up 'Show/Hide idea category' menu:
-            RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
-            foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
-            	ShowHideCategoryMenuItem menuItem = new ShowHideCategoryMenuItem(ideaCategory);
-            	menuItem.IsChecked = true;
-            	menuItem.Checked += showHideChangedHandler;
-            	menuItem.Unchecked += showHideChangedHandler;
-            	ShowHideCategoriesMenu.Items.Add(menuItem);
-            	
-            	ShowHideCategoryCheckBox checkBox = new ShowHideCategoryCheckBox(ideaCategory);
-            	checkBox.IsChecked = true;
-            	checkBox.Checked += showHideChangedHandler;
-            	checkBox.Unchecked += showHideChangedHandler;
-            	magnetList.showHideCategoriesPanel.Children.Add(checkBox);
-            }     
-                		
-			try {
-    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.LocalAppDataForMagnetsDirectory);
-    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoardsDirectory);
-    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoxesDirectory);
-    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.UserFridgeMagnetsDirectory);
-			}
-			catch (Exception e) {
-    			Say.Debug("Failed to create magnet directory(s) for user:\n"+e);
-			}    		
-    		
-    		SetupEventHandlers();
-    		
-    		magnetList.Open(FridgeMagnetPreferences.Instance.ActiveMagnetBoxPath); // previously was outside constructor
-    		
-    		// Update user preferences:
-	    	UpdateMagnetBoxAppearsAtSide(); // wait till Magnet Box is actually open - handled here
-	    	// rather than in Magnet Box cos the layout of this window's grid also changes (would be 
-	    	// better to use a dockpanel but couldn't get this to work properly)
-	    	if (wonkyMagnetsMenuItem.IsChecked != FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
-        		wonkyMagnetsMenuItem.IsChecked = FridgeMagnetPreferences.Instance.UseWonkyMagnets;
-        	}
-	    	if (appearsAtSideMenuItem.IsChecked != FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
-        		appearsAtSideMenuItem.IsChecked = FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide;
-        	}
-			
-			ElementHost.EnableModelessKeyboardInterop(this);
-			
-			// listen for magnets being sent from the toolset or other applications:
-			Loaded += delegate { 
-				pipeCommunicationThread = new Thread(new ThreadStart(listenForConnection));
-				pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
-				pipeCommunicationThread.Start();	
-				LaunchInSystemTray();			
-				Hide(); // must be hidden last, or other constructor stuff never seems to happen
-			};		
-			
-			// clean up after yourself, for god's sake, you're a mess:
-			Closed += delegate { 
-				if (trayIcon != null) {
-					trayIcon.Visible = false;
-					trayIcon.Dispose();
+        	try {
+	        	InitializeComponent();
+	        	
+	        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
+				MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
+			                                  
+	            // Set up 'Show/Hide idea category' menu:
+	            RoutedEventHandler showHideChangedHandler = new RoutedEventHandler(CategoryElementIsCheckedChanged);
+	            foreach (IdeaCategory ideaCategory in Idea.IDEA_CATEGORIES) {
+	            	ShowHideCategoryMenuItem menuItem = new ShowHideCategoryMenuItem(ideaCategory);
+	            	menuItem.IsChecked = true;
+	            	menuItem.Checked += showHideChangedHandler;
+	            	menuItem.Unchecked += showHideChangedHandler;
+	            	ShowHideCategoriesMenu.Items.Add(menuItem);
+	            	
+	            	ShowHideCategoryCheckBox checkBox = new ShowHideCategoryCheckBox(ideaCategory);
+	            	checkBox.IsChecked = true;
+	            	checkBox.Checked += showHideChangedHandler;
+	            	checkBox.Unchecked += showHideChangedHandler;
+	            	magnetList.showHideCategoriesPanel.Children.Add(checkBox);
+	            }     
+	                		
+				try {
+	    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.LocalAppDataForMagnetsDirectory);
+	    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoardsDirectory);
+	    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.SavedMagnetBoxesDirectory);
+	    			Tools.EnsureDirectoryExists(FridgeMagnetPreferences.Instance.UserFridgeMagnetsDirectory);
 				}
-				if (pipeCommunicationThread != null) {
-					pipeCommunicationThread.Join();    	
-				}	    		
-			};
+				catch (Exception e) {
+	    			Say.Debug("Failed to create magnet directory(s) for user:\n"+e);
+				}    		
+	    		
+	    		SetupEventHandlers();
+	    		
+	    		magnetList.Open(FridgeMagnetPreferences.Instance.ActiveMagnetBoxPath); // previously was outside constructor
+	    		
+	    		// Update user preferences:
+		    	UpdateMagnetBoxAppearsAtSide(); // wait till Magnet Box is actually open - handled here
+		    	// rather than in Magnet Box cos the layout of this window's grid also changes (would be 
+		    	// better to use a dockpanel but couldn't get this to work properly)
+		    	if (wonkyMagnetsMenuItem.IsChecked != FridgeMagnetPreferences.Instance.UseWonkyMagnets) {
+	        		wonkyMagnetsMenuItem.IsChecked = FridgeMagnetPreferences.Instance.UseWonkyMagnets;
+	        	}
+		    	if (appearsAtSideMenuItem.IsChecked != FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide) {
+	        		appearsAtSideMenuItem.IsChecked = FridgeMagnetPreferences.Instance.MagnetBoxAppearsAtSide;
+	        	}
+				
+				ElementHost.EnableModelessKeyboardInterop(this);
+				
+				// listen for magnets being sent from the toolset or other applications:
+				Loaded += delegate { 
+					pipeCommunicationThread = new Thread(new ThreadStart(listenForConnection));
+					pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
+					pipeCommunicationThread.Start();	
+					LaunchInSystemTray();			
+					Hide(); // must be hidden last, or other constructor stuff never seems to happen
+				};		
+				
+				// clean up after yourself, for god's sake, you're a mess:
+				Closed += delegate { 
+					if (trayIcon != null) {
+						trayIcon.Visible = false;
+						trayIcon.Dispose();
+					}
+					if (pipeCommunicationThread != null) {
+						pipeCommunicationThread.Join();    	
+					}	    		
+				};
+        	}
+        	catch (Exception x) {
+        		Say.Error("Something went wrong when constructing MagnetBoardViewer.",x);
+        	}
         }
         
                 
@@ -579,6 +584,50 @@ namespace AdventureAuthor.Ideas
         	}    	
         }
         
+    	    	
+    	private void OnClick_Export(object sender, EventArgs ea)
+    	{    	
+    	    SaveFileDialog saveFileDialog = new SaveFileDialog();
+    		saveFileDialog.AddExtension = true;
+    		saveFileDialog.CheckPathExists = true;
+    		saveFileDialog.DefaultExt = Filters.TXT_ALL;
+    		saveFileDialog.Filter = Filters.TXT_ALL;
+  			saveFileDialog.ValidateNames = true;
+  			saveFileDialog.Title = "Select location to export Magnet Box to";  	  			
+  			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+			
+	  		// try to get the default filename from the filename:
+	  		string suggestedFileName;
+	  		try {
+	  			suggestedFileName = Path.GetFileNameWithoutExtension(magnetList.Filename) + ".txt";
+		  	}
+		  	catch (Exception e) {
+		  		Say.Debug("Failed to get a suggested filename for Comment Card - " + e);
+		  		suggestedFileName = "MyMagnetBox.txt";
+		  	}
+	  		saveFileDialog.FileName = Path.Combine(saveFileDialog.InitialDirectory,suggestedFileName);
+  			
+  			bool ok = (bool)saveFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string exportFilename = saveFileDialog.FileName;
+  				Log.WriteAction(LogAction.exported,"magnetbox",Path.GetFileName(exportFilename));  			
+  				try {
+  					FridgeMagnetUtils.MagnetBoxToPlainText((MagnetBoxInfo)magnetList.GetSerializable(),
+		        	                                       exportFilename,
+		        	                                       false);
+  				}
+  				catch (IOException e) {
+  					Say.Error("Failed to export MagnetBox.",e);
+  				}
+  			}
+    	}
+        
+        
+        private void OnClick_ExportMultiple(object sender, EventArgs e)
+        {
+        	FridgeMagnetUtils.ConvertAllMagnetBoxesToPlainTextDialog();
+        }
+        
         
         private void OnClick_ClearBoard(object sender, EventArgs e)
         {
@@ -951,7 +1000,7 @@ namespace AdventureAuthor.Ideas
         
         public static void DisplayAboutScreen()
         {
-    		string message = "Fridge Magnets (version 0.2)\n\n" +
+    		string message = "Fridge Magnets (version 0.1)\n\n" +
     		                "by Keiron Nicholson, Dr. Judy Robertson, Cathrin Howells\n" +
     		                "Heriot-Watt University\n\n" +
     		                "Email: adventure.author@googlemail.com\n" + 

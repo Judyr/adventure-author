@@ -8,19 +8,120 @@
  */
 
 using System;
+using System.Reflection;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
+using NWN2Toolset.NWN2.Data.TypedCollections;
+using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
+using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Views;
 using AdventureAuthor.Utils;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using OEIShared.IO;
+using OEIShared.Utils;
 
 namespace AdventureAuthor.Setup
 {
-	/// <summary>
-	/// Description of NWN2Utils.
-	/// </summary>
 	public static class NWN2Utils
-	{
+	{	
+		public static string GetNarrativeVehicleText(NWN2GameArea area)
+		{
+			if (area == null) {
+				throw new ArgumentNullException("Tried to get narrative vehicle text from a null area.");
+			}
+			
+			area.Demand();
+						
+			string header = "Area: " + area.Name + System.Environment.NewLine;
+			StringBuilder report = new StringBuilder();
+			
+			foreach (NWN2InstanceCollection collection in area.AllInstances) {				
+				foreach (INWN2Instance instance in collection) {
+					
+					if (instance.Template == null) {
+						report.Append("POSSIBLE: " + instance.Name.ToString() + 
+						              " (" + instance.ObjectType + "): " +
+						              ((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
+						report.Append("(" + instance.Name + " had a null template.)" + System.Environment.NewLine);
+						continue;
+					}
+									
+					// Get the blueprint that this instance was created from:	
+					INWN2Blueprint blueprint = NWN2GlobalBlueprintManager.FindBlueprint(instance.ObjectType,
+				                                                                    	instance.Template.ResRef);
+					if (blueprint == null) {
+						report.Append("POSSIBLE: " + instance.Name.ToString() + 
+						              " (" + instance.ObjectType + "): " +
+						              ((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
+						report.Append("(" + instance.Name + " blueprint could not be found.)" + System.Environment.NewLine);
+						continue;
+					}
+					
+					// Sometimes get a null reference exception here:
+					blueprint.OEIUnserialize(blueprint.Resource.GetStream(false)); // fetch from disk
+					
+					// Cast to INWN2Object to compare the LocalizedDescription field:
+					INWN2Object original = blueprint as INWN2Object;
+					INWN2Object copy = instance as INWN2Object;
+					string originalDescription = original.LocalizedDescription.ToString();
+					string copyDescription = copy.LocalizedDescription.ToString();
+					
+					if (copyDescription != originalDescription) {
+						report.Append("CONFIRMED: " + instance.Name.ToString() + 
+						              " (" + instance.ObjectType + "): " +
+						              copyDescription + System.Environment.NewLine);
+					}
+					
+					// If you're dealing with Items, also check the LocalizedDescriptionIdentified field:
+					if (collection == area.Items) {
+						NWN2ItemBlueprint originalItem = blueprint as NWN2ItemBlueprint;
+						NWN2ItemInstance copyOfItem = instance as NWN2ItemInstance;	
+						string originalIdentifiedDescription = originalItem.LocalizedDescriptionIdentified.ToString();
+						string copyIdentifiedDescription = copyOfItem.LocalizedDescriptionIdentified.ToString();					
+						if (copyIdentifiedDescription != originalIdentifiedDescription &&
+						    copyIdentifiedDescription != copyDescription) {
+							report.Append("CONFIRMED: " + instance.Name.ToString() + 
+							              " (" + instance.ObjectType + "): " +
+							              copyDescription + System.Environment.NewLine);
+						}
+					}	
+				}
+			}
+			
+			area.Release();
+			
+			if (report.ToString() != String.Empty) {
+				report.Insert(0,header,1);
+				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
+			}
+			else {
+				return String.Empty;
+			}
+		}
+		
+				
+		public static string GetNarrativeVehicleText(NWN2GameModule module)
+		{
+			string header = "Module: " + module.Name + System.Environment.NewLine;
+			StringBuilder report = new StringBuilder();
+			
+			foreach (NWN2GameArea area in module.Areas.Values) {
+				report.Append(GetNarrativeVehicleText(area));
+			}
+			
+			if (report.ToString() != String.Empty) {
+				report.Insert(0,header,1);
+				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
+			}
+			else {
+				return String.Empty;
+			}
+		}
+		
+		
 		public static void WritePropertyChangeToLog(NWN2PropertyValueChangedEventArgs e)
 		{
 			foreach (object o in e.ChangedObjects) {

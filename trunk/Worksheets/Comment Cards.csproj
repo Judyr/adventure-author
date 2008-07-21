@@ -11,7 +11,7 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <ApplicationIcon>write-document.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\Libraries\Icons\write-document.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Comment.cs" />
+    <Compile Include="CommentCardUtils.cs" />
     <Compile Include="CommentControl.cs" />
     <Compile Include="Evidence.cs" />
     <Compile Include="EvidenceControl.cs" />
