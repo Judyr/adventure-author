@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms.Integration;
 using AdventureAuthor.Analysis;
@@ -10,6 +11,7 @@ using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using TD.SandBar;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
+using System.Text;
 
 namespace AdventureAuthor.Setup
 {
@@ -76,26 +78,44 @@ namespace AdventureAuthor.Setup
 			exitAdventureAuthor.BeginGroup = true;
 			exitAdventureAuthor.Activate += delegate { form.App.Close(); };
 			
-			MenuButtonItem testingMessageQueue = new MenuButtonItem("Testing messages");
-			testingMessageQueue.Activate += delegate { 
-				System.Messaging.MessageQueue queue = null;
-				
-				string queueName = System.IO.Path.Combine(System.Environment.MachineName,"otheronefollows");
+//			MenuButtonItem extractText = new MenuButtonItem("Extract text");
+//			extractText.Activate += delegate {		
+//				FileInfo file = new FileInfo(@"C:\To burn\narrativevehicles.txt");
+//				using (StreamWriter writer = file.CreateText())
+//				{
+//					writer.AutoFlush = true;
+//					DirectoryInfo allKids = new DirectoryInfo(@"C:\To burn");								
+//					foreach (DirectoryInfo kid in allKids.GetDirectories()) {
+//						string path = Path.Combine(kid.FullName,"modules");	
+//						DirectoryInfo modulesDirectory = new DirectoryInfo(path);
+//						DirectoryInfo[] modules = modulesDirectory.GetDirectories();
+//						foreach (DirectoryInfo module in modules) {
+//							if (module.Name.StartsWith("temp")) {
+//								continue;
+//							}
+//							try {
+//								form.App.Module.OpenModuleDirectory(module.FullName);
+//								string narrativeVehicleText = NWN2Utils.GetNarrativeVehicleText(form.App.Module);
+//								if (narrativeVehicleText != String.Empty) {
+//									writer.WriteLine(narrativeVehicleText);
+//								}								
+//							}
+//							catch (Exception e) {
+//								writer.WriteLine("Error: " + e.ToString());
+//							}
+//						}
+//					}
+//					Say.Information("Finished.");
+//				}
+//			};
 			
-				if (System.Messaging.MessageQueue.Exists(queueName))
-				queue = new System.Messaging.MessageQueue(queueName);
-				else
-				queue = System.Messaging.MessageQueue.Create(queueName, false);
-				
-				
-				
-				System.Messaging.Message[] messages = queue.GetAllMessages();
-				
-				foreach (System.Messaging.Message message in messages)
-				{
-					Say.Information(message.Label + "\n\n" + message.Body.ToString());
-				}
-			};
+//			MenuButtonItem extractAllConversations = new MenuButtonItem("Extract conversations");
+//			extractAllConversations.Activate += delegate { 
+//				Conversations.Conversation.ExportAllConversationsInDirectoryToTextFile(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),"To burn"),
+//				                                                                       Conversations.ExportFormat.TreeFormat,
+//				                                                                       SearchOption.AllDirectories);
+//				Say.Information("done");
+//			};
 									
 			fileMenu.Items.AddRange( new MenuButtonItem[] {
 			                           	newModule,
@@ -108,7 +128,8 @@ namespace AdventureAuthor.Setup
 			                           	newArea,
 //			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
-			                           	testingMessageQueue
+//			                           	extractText,
+//			                           	extractAllConversations
 			                           });	
 			
 			return fileMenu;

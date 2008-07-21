@@ -132,7 +132,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	NWN2ConversationConnectorCollection children = Conversation.CurrentConversation.GetChildren(parentLine);
         	
         	if (!Say.BeQuiet) { 	
-        		Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(children);
+        		Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(children);
         		
         		StringBuilder warning = new StringBuilder();
         		

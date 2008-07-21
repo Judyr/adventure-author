@@ -985,15 +985,21 @@ namespace AdventureAuthor.Conversations
 		#endregion
 					
 		#region General methods
-		
-//		public static void ExportAllConversationsInDirectoryToTextFile(string directory, ExportFormat format, SearchOption searchOption)
-//		{
-//			DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-//			foreach (FileInfo dlgFile in directoryInfo.GetFiles("*.dlg",searchOption)) {
-//				WriterWindow.Instance.Open(Path.GetFileNameWithoutExtension(dlgFile.Name));
-//				ExportToTextFile(CurrentConversation,WriterWindow.Instance.OriginalFilename+".txt", ExportFormat.TreeFormat);
-//			}
-//		}
+				
+		public static void ExportAllConversationsInDirectoryToTextFile(string directory, ExportFormat format, SearchOption searchOption)
+		{
+			DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+			foreach (FileInfo dlgFile in directoryInfo.GetFiles("*.dlg",searchOption)) {
+				string originalDirectoryName = dlgFile.DirectoryName;
+				string originalLocation = dlgFile.FullName;
+				dlgFile.MoveTo(Path.Combine(Path.Combine(form.ModulesDirectory,"allconvmodule"),dlgFile.Name));
+				WriterWindow.Instance.Open(Path.GetFileNameWithoutExtension(dlgFile.Name));
+				ExportToTextFile(CurrentConversation,
+				                 Path.Combine(originalDirectoryName,WriterWindow.Instance.OriginalFilename+".txt"),				                 
+				                 ExportFormat.TreeFormat);
+				dlgFile.MoveTo(originalLocation);
+			}
+		}
 		
 		
 		public static void ExportToTextFile(Conversation conversation, string exportFilename, ExportFormat format)
@@ -1006,6 +1012,7 @@ namespace AdventureAuthor.Conversations
 			sw.AutoFlush = false;
 			
 			sw.WriteLine(Path.GetFileName(exportFilename));
+			sw.WriteLine("Created: " + fi.CreationTime);
 			sw.WriteLine();
 			
 			switch (format) {
@@ -1140,13 +1147,18 @@ namespace AdventureAuthor.Conversations
 		/// </summary>
 		/// <param name="parent">The line to start counting from - pass null to start from the root.</param>
 		/// <returns>The total word, line and page count of the conversation (or conversation segment).</returns>
-		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
+		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnector parent)
 		{			
+			if (parent == null) {
+				throw new ArgumentNullException("Cannot get children of a null line. To search from root, use " +
+				                                "GetWordLinePageCounts(NWN2ConversationConnectorCollection parents).");				                                
+			}
+			
 			// Get the counts from the parent line before continuing:
 			int words = 0;
 			int lines = 0;
 			int pages = 0;
-			NWN2ConversationConnectorCollection children = GetChildren(parent);
+			NWN2ConversationConnectorCollection children = parent.Line.Children;//GetChildren(parent);
 			
 			if (parent == null) {
 				pages += children.Count; // if we have reached a branch point, increment the number of pages
@@ -1330,7 +1342,7 @@ namespace AdventureAuthor.Conversations
         }
 		
 		
-		public DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
+		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
 		{			
 			int words = 0;
 			int lines = 0;

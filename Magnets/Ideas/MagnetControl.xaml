@@ -82,10 +82,10 @@
 			<Separator/>
 	    	<MenuItem Name="removeDeleteMagnetMenuItem" Header="Delete" 
 			          Click="OnClick_RemoveDelete"/>
-			<Separator/>
+			<!--<Separator/>
 	    	<MenuItem Name="addToTasksMenuItem" Header="Add to my to-do list" 
 			          Click="OnClick_AddToTasksDelete"
-					  IsEnabled="false"/>
+					  IsEnabled="false"/>-->
 			<Separator/>
 	    	<MenuItem Name="starMenuItem" Header="This is one of my favourite ideas" 
 			          Click="OnClick_StarIdea"

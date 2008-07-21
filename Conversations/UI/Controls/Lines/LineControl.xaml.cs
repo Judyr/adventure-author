@@ -329,7 +329,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	
         	if (this is BranchLine) {
 	       		if (!Say.BeQuiet) {   
-        			Conversation.DataFromConversation casualties = Conversation.CurrentConversation.GetWordLinePageCounts(nwn2Line);			
+        			Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(nwn2Line);			
         			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
         				Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
         				WriterWindow.Instance.PageScroll.ScrollToBottom();

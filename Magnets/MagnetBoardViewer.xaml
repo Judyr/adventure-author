@@ -51,6 +51,11 @@
 		    		          Checked="appearsAtSideCheckedOrUnchecked" 
 					          Unchecked="appearsAtSideCheckedOrUnchecked"
 		    				 />
+		    		<Separator/>
+					<MenuItem Name="ExportMenuItem" Header="Export Magnet Box to plain text" 
+					          Click="OnClick_Export"/>
+					<!--<MenuItem Name="ExportMultipleMenuItem" Header="Export a collection of Magnet Boxes to plain text" 
+					          Click="OnClick_ExportMultiple"/>-->
 				</MenuItem>
 		    	<MenuItem x:Name="boardMenu" Header="Board">
 					<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>

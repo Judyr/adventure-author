@@ -107,6 +107,8 @@
 						          Click="OnClick_MakeBlankCopy" FontSize="14" IsEnabled="false"/>
 						<MenuItem Name="ExportMenuItem" Header="Export" 
 						          Click="OnClick_Export" FontSize="14" IsEnabled="false"/>
+						<!--<MenuItem Name="ExportMultipleMenuItem" Header="Export multiple Comment Cards" 
+						          Click="OnClick_ExportMultiple" FontSize="14" IsEnabled="true"/>-->
 						<MenuItem Name="CloseMenuItem" Header="Close" 
 						          Click="OnClick_Close" FontSize="14" IsEnabled="false"/>
 						<Separator/>

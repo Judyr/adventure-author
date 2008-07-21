@@ -51,57 +51,62 @@ namespace AdventureAuthor.Ideas
     	/// the system tray.
     	/// </summary>
     	private void LaunchInSystemTray()
-    	{    		
-    		trayIcon = new System.Windows.Forms.NotifyIcon();
-    		SwitchBulbOff();
-    		trayIcon.Visible = true; 
-    		UpdateMagnetCountToolTip();	
-    		
-    		// Set up context menu:			
-			ToolStripMenuItem openFridgeMagnets = new ToolStripMenuItem("View Fridge Magnets");
-			openFridgeMagnets.Font = new System.Drawing.Font(openFridgeMagnets.Font,System.Drawing.FontStyle.Bold);
-			openFridgeMagnets.Click += new EventHandler(ShowFridgeMagnets);
-			
-			ToolStripMenuItem addNewIdea = new ToolStripMenuItem("Add a new idea");
-			addNewIdea.Click += new EventHandler(AddIdeaFromSystemTray);
-			
-//			ToolStripMenuItem options = new ToolStripMenuItem("Options");
-//			options.CheckOnClick = true;
-//			options.CheckStateChanged += new EventHandler(DisplayOptionsScreen);
-			
-			ToolStripMenuItem displayAboutScreen = new ToolStripMenuItem("About");
-			displayAboutScreen.Click += delegate { MagnetBoardViewer.DisplayAboutScreen(); };
-			
-			ToolStripMenuItem exit = new ToolStripMenuItem("Exit");
-			exit.Click += new EventHandler(ForceExit);	
-			
-			ContextMenuStrip strip = new ContextMenuStrip();	
-			strip.Items.Add(openFridgeMagnets);				
-			strip.Items.Add(addNewIdea);			
-			strip.Items.Add(new ToolStripSeparator());
-//			strip.Items.Add(options);
-			strip.Items.Add(displayAboutScreen);
-			strip.Items.Add(new ToolStripSeparator());
-			strip.Items.Add(exit);			
-			
-			trayIcon.ContextMenuStrip = strip;
-			
-			// If the user attempts to close the window, simply hide it instead, so that
-			// magnets can still be sent to it through the toolset and system tray:
-			Closing += new CancelEventHandler(HideWindowOnClosing);
-			
-			// If the user double-clicks the system tray icon, ensure that the 
-			// main window becomes visible (if it wasn't already):
-			trayIcon.MouseDoubleClick += new MouseEventHandler(ShowFridgeMagnets);
-			
-			// If the user hovers the mouse over the system tray icon, display
-			// a balloon tooltip informing them of their total magnet count:
-			trayIcon.MouseMove += delegate { UpdateMagnetCountToolTip(); };	
-    		trayIcon.BalloonTipClosed += delegate { SwitchBulbOff(); };
-    		trayIcon.BalloonTipClicked += delegate { SwitchBulbOff(); };
-    		trayIcon.BalloonTipShown += delegate { SwitchBulbOn(); };
-			
-			ShowBalloon("Double-click me to start working with Fridge Magnets!",12000);
+    	{
+    		try {
+	    		trayIcon = new System.Windows.Forms.NotifyIcon();
+	    		SwitchBulbOff();
+	    		trayIcon.Visible = true; 
+	    		UpdateMagnetCountToolTip();	
+	    		
+	    		// Set up context menu:			
+				ToolStripMenuItem openFridgeMagnets = new ToolStripMenuItem("View Fridge Magnets");
+				openFridgeMagnets.Font = new System.Drawing.Font(openFridgeMagnets.Font,System.Drawing.FontStyle.Bold);
+				openFridgeMagnets.Click += new EventHandler(ShowFridgeMagnets);
+				
+				ToolStripMenuItem addNewIdea = new ToolStripMenuItem("Create a new magnet");
+				addNewIdea.Click += new EventHandler(AddIdeaFromSystemTray);
+				
+	//			ToolStripMenuItem options = new ToolStripMenuItem("Options");
+	//			options.CheckOnClick = true;
+	//			options.CheckStateChanged += new EventHandler(DisplayOptionsScreen);
+				
+				ToolStripMenuItem displayAboutScreen = new ToolStripMenuItem("About");
+				displayAboutScreen.Click += delegate { MagnetBoardViewer.DisplayAboutScreen(); };
+				
+				ToolStripMenuItem exit = new ToolStripMenuItem("Exit");
+				exit.Click += new EventHandler(ForceExit);	
+				
+				ContextMenuStrip strip = new ContextMenuStrip();	
+				strip.Items.Add(openFridgeMagnets);				
+				strip.Items.Add(addNewIdea);			
+				strip.Items.Add(new ToolStripSeparator());
+	//			strip.Items.Add(options);
+				strip.Items.Add(displayAboutScreen);
+				strip.Items.Add(new ToolStripSeparator());
+				strip.Items.Add(exit);			
+				
+				trayIcon.ContextMenuStrip = strip;
+				
+				// If the user attempts to close the window, simply hide it instead, so that
+				// magnets can still be sent to it through the toolset and system tray:
+				Closing += new CancelEventHandler(HideWindowOnClosing);
+				
+				// If the user double-clicks the system tray icon, ensure that the 
+				// main window becomes visible (if it wasn't already):
+				trayIcon.MouseDoubleClick += new MouseEventHandler(ShowFridgeMagnets);
+				
+				// If the user hovers the mouse over the system tray icon, display
+				// a balloon tooltip informing them of their total magnet count:
+				trayIcon.MouseMove += delegate { UpdateMagnetCountToolTip(); };	
+	    		trayIcon.BalloonTipClosed += delegate { SwitchBulbOff(); };
+	    		trayIcon.BalloonTipClicked += delegate { SwitchBulbOff(); };
+	    		trayIcon.BalloonTipShown += delegate { SwitchBulbOn(); };
+				
+				ShowBalloon("Double-click me to start working with Fridge Magnets!",12000);
+    		}
+    		catch (Exception x) {
+    			Say.Error("Something went wrong when placing the icon in the system tray.",x);
+    		}
     	} 
 		
     	

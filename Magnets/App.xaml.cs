@@ -23,17 +23,21 @@ namespace AdventureAuthor.Ideas
 //			this.Startup += delegate (object sender, StartupEventArgs e) {
 //				Say.Information(e.Args.ToString());
 //			};
-			
-			Process[] fridgeMagnetApps = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);			
-			if (fridgeMagnetApps.Length > 1) {
-				Say.Information("Fridge Magnets is already running.\n\n" +
-				                "Look for the lightbulb icon in your system tray, " +
-				                "and double-click it to bring up Fridge Magnets.");
-				Application.Current.Shutdown();
-			}						
-			
-			viewer = new MagnetBoardViewer();
-			viewer.Show();
+			try {			
+				Process[] fridgeMagnetApps = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);			
+				if (fridgeMagnetApps.Length > 1) {
+					Say.Information("Fridge Magnets is already running.\n\n" +
+					                "Look for the lightbulb icon in your system tray, " +
+					                "and double-click it to bring up Fridge Magnets.");
+					Application.Current.Shutdown();
+				}						
+				
+				viewer = new MagnetBoardViewer();
+				viewer.Show();
+			}
+			catch (Exception x) {
+				Say.Error("Something went wrong while loading Fridge Magnets.",x);
+			}
 		}
 		
 		

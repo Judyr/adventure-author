@@ -254,7 +254,6 @@ namespace AdventureAuthor.Ideas
 	    	}
 	        version = boardInfo.Version;
 	        id = boardInfo.ID;
-	        Say.Information("ID: " + id);
 	        dirty = false; // cancel effect of adding magnets when opening (and don't raise Changed event)
         }
         
