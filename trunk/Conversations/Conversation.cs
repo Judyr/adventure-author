@@ -53,15 +53,15 @@ namespace AdventureAuthor.Conversations
 		
 		public struct DataFromConversation
 		{
-			public int words;
-			public int lines;
-			public int pages;
+			public int Words;
+			public int Lines;
+			public int Pages;
 			
 			public DataFromConversation(int words, int lines, int pages)
 			{
-				this.words = words;
-				this.lines = lines;
-				this.pages = pages;
+				this.Words = words;
+				this.Lines = lines;
+				this.Pages = pages;
 			}
 		}
 		
@@ -1013,6 +1013,7 @@ namespace AdventureAuthor.Conversations
 			
 			sw.WriteLine(Path.GetFileName(exportFilename));
 			sw.WriteLine("Created: " + fi.CreationTime);
+			sw.WriteLine("Word count: " + conversation.GetWordLinePageCounts().Words);
 			sw.WriteLine();
 			
 			switch (format) {
@@ -1138,7 +1139,19 @@ namespace AdventureAuthor.Conversations
 		/// <returns>The number of words in the sentence</returns>
 		public static int WordCount(string toCount)
 		{ 
-			return toCount.Split(' ').Length;
+			int count = 0;
+			foreach (string s in toCount.Split(new char[]{' '},StringSplitOptions.RemoveEmptyEntries)) {
+				if (s != String.Empty) {
+					count++;	
+				}
+			}
+			return count;
+		}
+		
+		
+		public DataFromConversation GetWordLinePageCounts()
+		{
+			return GetWordLinePageCounts(nwnConv.StartingList);
 		}
 		
 		
@@ -1175,9 +1188,35 @@ namespace AdventureAuthor.Conversations
 			}		
 			
 			DataFromConversation childrenCounts = GetWordLinePageCounts(children);
-			DataFromConversation totalCounts = new DataFromConversation(childrenCounts.words + words, childrenCounts.lines + lines, childrenCounts.pages + pages);
+			DataFromConversation totalCounts = new DataFromConversation(childrenCounts.Words + words, childrenCounts.Lines + lines, childrenCounts.Pages + pages);
 				
 			return totalCounts;
+		}
+		
+		
+		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
+		{			
+			int words = 0;
+			int lines = 0;
+			int pages = 0;
+			
+			foreach (NWN2ConversationConnector parent in parents) {
+				
+				string text = GetStringFromOEIString(parent.Line.Text);
+				if (text.Length > 0) {
+					words += WordCount(text);
+					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
+				}
+				if (parent.Line.Children != null && parent.Line.Children.Count > 1) {
+					pages += parent.Line.Children.Count; // if we have reached a branch point, increment the number of pages
+				}
+				DataFromConversation dataFromChildren = GetWordLinePageCounts(parent.Line.Children);
+				words += dataFromChildren.Words;
+				lines += dataFromChildren.Lines;
+				pages += dataFromChildren.Pages;
+			}
+			
+			return new DataFromConversation(words,lines,pages);
 		}
 			
 		
@@ -1340,31 +1379,6 @@ namespace AdventureAuthor.Conversations
 			}	
         	return false;
         }
-		
-		
-		public static DataFromConversation GetWordLinePageCounts(NWN2ConversationConnectorCollection parents)
-		{			
-			int words = 0;
-			int lines = 0;
-			int pages = 0;
-			
-			foreach (NWN2ConversationConnector parent in parents) {
-				string text = GetStringFromOEIString(parent.Line.Text);
-				if (text.Length > 0) {
-					words += WordCount(text);
-					lines++; // only count lines that have something written in them, not filler lines or blank new lines	
-				}
-				if (parent.Line.Children != null && parent.Line.Children.Count > 1) {
-					pages += parent.Line.Children.Count; // if we have reached a branch point, increment the number of pages
-				}
-				DataFromConversation dataFromChildren = GetWordLinePageCounts(parent.Line.Children);
-				words += dataFromChildren.words;
-				lines += dataFromChildren.lines;
-				pages += dataFromChildren.pages;
-			}
-			
-			return new DataFromConversation(words,lines,pages);
-		}
 		
 				
 		
