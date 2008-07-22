@@ -73,6 +73,12 @@ namespace AdventureAuthor.Setup
 			
 			};
 			programmerFunctions.Items.Add(selectTagWindow);	
+			
+			MenuButtonItem extractWordCount = new MenuButtonItem("Extract word count");
+			extractWordCount.Activate += delegate { 
+				NWN2Utils.WriteTotalWordCountForAllModulesToFile();
+				Say.Information("Finished.");
+			};
 						
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
@@ -95,7 +101,7 @@ namespace AdventureAuthor.Setup
 //							}
 //							try {
 //								form.App.Module.OpenModuleDirectory(module.FullName);
-//								string narrativeVehicleText = NWN2Utils.GetNarrativeVehicleText(form.App.Module);
+//								string narrativeVehicleText = NWN2Utils.GetNarrativeVehicleText(form.App.Module,false);
 //								if (narrativeVehicleText != String.Empty) {
 //									writer.WriteLine(narrativeVehicleText);
 //								}								
@@ -128,6 +134,7 @@ namespace AdventureAuthor.Setup
 			                           	newArea,
 //			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
+			                           	extractWordCount,
 //			                           	extractText,
 //			                           	extractAllConversations
 			                           });	

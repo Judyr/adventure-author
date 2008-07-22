@@ -143,8 +143,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
         			warning.Append("Are you sure you want to delete all " + children.Count + " branches of this choice");
         		}
         		
-        		if (casualties.words > 0) {
-        			warning.Append(", including " + casualties.words + " word(s) of dialogue?");
+        		if (casualties.Words > 0) {
+        			warning.Append(", including " + casualties.Words + " word(s) of dialogue?");
         		}
         		else {
         			warning.Append("?");

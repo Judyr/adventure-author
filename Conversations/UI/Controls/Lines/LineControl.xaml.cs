@@ -330,7 +330,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (this is BranchLine) {
 	       		if (!Say.BeQuiet) {   
         			Conversation.DataFromConversation casualties = Conversation.GetWordLinePageCounts(nwn2Line);			
-        			if (casualties.words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
+        			if (casualties.Words == 0 && nwn2Line.Actions.Count == 0) { // if there's no real effect, then just delete the line
         				Conversation.CurrentConversation.DeleteLineFromChoice(nwn2Line);
         				WriterWindow.Instance.PageScroll.ScrollToBottom();
         			}
@@ -339,12 +339,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         				if (Conversation.CurrentConversation.GetChildren(nwn2Line.Parent).Count == 2) {
         					warning += "Deleting this line will remove the whole choice, changing the shape of the conversation tree. ";
         				}  										
-        				if (casualties.pages > 1) {
-        					warning += "This will also delete " + casualties.pages + " page(s) and " + casualties.words + 
+        				if (casualties.Pages > 1) {
+        					warning += "This will also delete " + casualties.Pages + " page(s) and " + casualties.Words + 
         						" word(s) of conversation.\n\n";
         				}
-        				else if (casualties.pages == 1 && casualties.lines > 1) {
-        					warning += "This will also delete " + casualties.words + " word(s) of conversation on the next page.\n\n";
+        				else if (casualties.Pages == 1 && casualties.Lines > 1) {
+        					warning += "This will also delete " + casualties.Words + " word(s) of conversation on the next page.\n\n";
         				}        				
         				warning += "Are you sure?";
         				

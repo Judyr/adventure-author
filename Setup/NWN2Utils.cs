@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.IO;
 using System.Reflection;
 using NWN2Toolset.Data;
 using NWN2Toolset.NWN2.Data;
@@ -16,18 +17,20 @@ using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
 using NWN2Toolset.NWN2.Views;
+using AdventureAuthor.Conversations;
 using AdventureAuthor.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using OEIShared.IO;
 using OEIShared.Utils;
+using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Setup
 {
 	public static class NWN2Utils
 	{	
-		public static string GetNarrativeVehicleText(NWN2GameArea area)
+		public static string GetNarrativeVehicleText(NWN2GameArea area, bool onlyText)
 		{
 			if (area == null) {
 				throw new ArgumentNullException("Tried to get narrative vehicle text from a null area.");
@@ -42,10 +45,14 @@ namespace AdventureAuthor.Setup
 				foreach (INWN2Instance instance in collection) {
 					
 					if (instance.Template == null) {
-						report.Append("POSSIBLE: " + instance.Name.ToString() + 
-						              " (" + instance.ObjectType + "): " +
-						              ((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
-						report.Append("(" + instance.Name + " had a null template.)" + System.Environment.NewLine);
+						if (!onlyText) {
+							report.Append("(???) " + instance.Name.ToString() + 
+							              " (" + instance.ObjectType + "): ");
+						} 
+						report.Append(((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
+						if (!onlyText) {
+							report.Append("(" + instance.Name + " had a null template.)" + System.Environment.NewLine);
+						}
 						continue;
 					}
 									
@@ -53,14 +60,17 @@ namespace AdventureAuthor.Setup
 					INWN2Blueprint blueprint = NWN2GlobalBlueprintManager.FindBlueprint(instance.ObjectType,
 				                                                                    	instance.Template.ResRef);
 					if (blueprint == null) {
-						report.Append("POSSIBLE: " + instance.Name.ToString() + 
-						              " (" + instance.ObjectType + "): " +
-						              ((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
-						report.Append("(" + instance.Name + " blueprint could not be found.)" + System.Environment.NewLine);
+						if (!onlyText) {
+							report.Append("(???) " + instance.Name.ToString() + 
+							              " (" + instance.ObjectType + "): ");
+						} 
+						report.Append(((INWN2Object)instance).LocalizedDescription + System.Environment.NewLine);
+						if (!onlyText) {
+							report.Append("(" + instance.Name + " blueprint could not be found.)" + System.Environment.NewLine);
+						}
 						continue;
 					}
 					
-					// Sometimes get a null reference exception here:
 					blueprint.OEIUnserialize(blueprint.Resource.GetStream(false)); // fetch from disk
 					
 					// Cast to INWN2Object to compare the LocalizedDescription field:
@@ -70,9 +80,11 @@ namespace AdventureAuthor.Setup
 					string copyDescription = copy.LocalizedDescription.ToString();
 					
 					if (copyDescription != originalDescription) {
-						report.Append("CONFIRMED: " + instance.Name.ToString() + 
-						              " (" + instance.ObjectType + "): " +
-						              copyDescription + System.Environment.NewLine);
+						if (!onlyText) {
+							report.Append(instance.Name.ToString() + 
+							              " (" + instance.ObjectType + "): ");
+						} 
+						report.Append(copyDescription + System.Environment.NewLine);
 					}
 					
 					// If you're dealing with Items, also check the LocalizedDescriptionIdentified field:
@@ -83,41 +95,100 @@ namespace AdventureAuthor.Setup
 						string copyIdentifiedDescription = copyOfItem.LocalizedDescriptionIdentified.ToString();					
 						if (copyIdentifiedDescription != originalIdentifiedDescription &&
 						    copyIdentifiedDescription != copyDescription) {
-							report.Append("CONFIRMED: " + instance.Name.ToString() + 
-							              " (" + instance.ObjectType + "): " +
-							              copyDescription + System.Environment.NewLine);
+							if (!onlyText) {
+								report.Append(instance.Name.ToString() + 
+								              " (" + instance.ObjectType + "): ");
+							} 
+							report.Append(copyDescription + System.Environment.NewLine);
 						}
 					}	
 				}
 			}
 			
-			area.Release();
+			area.Release();			
 			
-			if (report.ToString() != String.Empty) {
-				report.Insert(0,header,1);
-				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
+			if (report.ToString() == String.Empty) {
+				return String.Empty;	
 			}
 			else {
-				return String.Empty;
+				if (!onlyText) {
+					report.Insert(0,header,1);
+				}
+				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
 			}
 		}
 		
 				
-		public static string GetNarrativeVehicleText(NWN2GameModule module)
+		public static string GetNarrativeVehicleText(NWN2GameModule module, bool onlyText)
 		{
 			string header = "Module: " + module.Name + System.Environment.NewLine;
 			StringBuilder report = new StringBuilder();
 			
 			foreach (NWN2GameArea area in module.Areas.Values) {
-				report.Append(GetNarrativeVehicleText(area));
+				report.Append(GetNarrativeVehicleText(area,onlyText));
 			}
 			
-			if (report.ToString() != String.Empty) {
-				report.Insert(0,header,1);
-				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
+			if (report.ToString() == String.Empty) {
+				return String.Empty;	
 			}
 			else {
-				return String.Empty;
+				if (!onlyText) {
+					report.Insert(0,header,1);
+				}
+				return report.ToString() + System.Environment.NewLine + System.Environment.NewLine;
+			}
+		}
+		
+		
+		public static int GetTotalWordCountOfConversations(NWN2GameModule module)
+		{
+			int totalWordCount = 0;
+			foreach (NWN2GameConversation conv in module.Conversations.Values) {
+				conv.Demand();
+				Conversation conversation = new Conversation(conv);
+				totalWordCount += conversation.GetWordLinePageCounts().Words;
+				conv.Release();
+			}
+			return totalWordCount;
+		}
+		
+		
+		public static int GetApproximateTotalWordCountOfNarrativeVehicles(NWN2GameModule module)
+		{
+			string narrativeVehicleText = GetNarrativeVehicleText(module,true);
+			Log.WriteMessage(narrativeVehicleText);
+			int count = 0;
+			foreach (string s in narrativeVehicleText.Split(new char[]{' ','\n','\r'},StringSplitOptions.RemoveEmptyEntries)) {
+				if (s != null && s != String.Empty && s != System.Environment.NewLine && s != "\n" && s != " ") {
+					Log.WriteMessage("__"+s+"__");
+					count++;	
+				}
+			}
+			return count;
+		}
+		
+		
+		public static void WriteTotalWordCountForAllModulesToFile()
+		{
+			FileInfo fi = new FileInfo(@"C:\To burn\totalwordcounts.txt");
+			using (StreamWriter sw = fi.CreateText())
+			{				
+				sw.AutoFlush = true;
+				DirectoryInfo modulesDirectory = new DirectoryInfo(form.ModulesDirectory);
+				foreach (DirectoryInfo module in modulesDirectory.GetDirectories()) {
+					if (module.Name.StartsWith("temp")) {
+						continue;
+					}
+					form.App.Module.OpenModuleDirectory(module.Name);
+					int conversations = GetTotalWordCountOfConversations(form.App.Module);
+					int narrativeVehicles = GetApproximateTotalWordCountOfNarrativeVehicles(form.App.Module);
+					int total = conversations + narrativeVehicles;
+					sw.WriteLine();
+					sw.WriteLine(" ** " + form.App.Module.Name + " ** ");
+					sw.WriteLine("Word count (conversations): " + conversations);
+					sw.WriteLine("Word count (descriptive text): " + narrativeVehicles);
+					sw.WriteLine("Total: " + total);
+				}
 			}
 		}
 		
