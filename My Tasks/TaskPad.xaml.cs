@@ -38,23 +38,6 @@ namespace AdventureAuthor.Tasks
 			random = new Random();
 				
 			InitializeComponent();
-			
-			ScaleTransform largerDogEar = new ScaleTransform(1.3,1.3,40,40);
-						
-			nextPageButton.MouseEnter += delegate 
-			{
-				nextPageButton.RenderTransform = largerDogEar;
-			};
-						
-			nextPageButton.MouseLeave += delegate 
-			{
-				nextPageButton.RenderTransform = null;
-			};
-			
-			nextPageButton.MouseDown += delegate 
-			{  
-				
-			};
 		}
 		
 		
