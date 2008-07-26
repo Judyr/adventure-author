@@ -1,0 +1,18 @@
+﻿<Window x:Class="AdventureAuthor.Tasks.Window1"
+	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
+	Title="My_Tasks" Height="700" Width="500"
+    >
+	<Window.Background>
+		<RadialGradientBrush>
+			<GradientStop Color="Brown" Offset="0"/>
+			<GradientStop Color="Burlywood" Offset="7"/>
+		</RadialGradientBrush>
+	</Window.Background>
+	<Grid>	
+		<tasks:TaskPad 
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"/>
+	</Grid>
+</Window>

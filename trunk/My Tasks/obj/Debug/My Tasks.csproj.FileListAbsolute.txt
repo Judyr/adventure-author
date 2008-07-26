@@ -1,0 +1,16 @@
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\bin\Debug\My Tasks.exe
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\bin\Debug\My Tasks.pdb
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\Window1.baml
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\Window1.g.cs
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\App.g.cs
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\My Tasks.g.resources
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\My Tasks.exe
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\My Tasks.pdb
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\DogEarControl.baml
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\DogEarControl.g.cs
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\TaskPad.g.cs
+C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\TaskPad.baml
