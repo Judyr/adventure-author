@@ -1,0 +1,35 @@
+<UserControl x:Class="AdventureAuthor.Tasks.DogEarControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   	xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+   	>
+			
+	<UserControl.Resources>		
+		<PointCollection x:Key="DogEarPoints">
+			<Point X="40" Y="0"/>
+			<Point X="0" Y="0"/>
+			<Point X="0" Y="40"/>
+		</PointCollection>
+	</UserControl.Resources>
+	
+	<UserControl.Template>
+		<ControlTemplate TargetType="{x:Type UserControl}">
+			<Grid>
+				<Rectangle Height="40" Width="40" Fill="Black" Opacity="0.1"/>
+				<Polygon Points="{StaticResource DogEarPoints}" Opacity="0.4">
+					<Polygon.Fill>
+						<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="LightGray" Offset="1.2"/>
+						</LinearGradientBrush>
+					</Polygon.Fill>
+				</Polygon>
+			</Grid>
+		</ControlTemplate>
+	</UserControl.Template>
+
+	<UserControl.BitmapEffect>
+		<DropShadowBitmapEffect Direction="320" Opacity="0.25"/>
+	</UserControl.BitmapEffect>
+
+</UserControl>
