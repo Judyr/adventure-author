@@ -30,6 +30,18 @@
 		<StackPanel Name="SelectModePanel"
 		            Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 			<StackPanel.Resources>
+				<Style x:Key="NoFocus">
+					<Setter Property="Control.Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type Control}">
+								<Grid>
+									<Polygon Points="23,0 25,29 4,41 2,3" Fill="Red"/>
+								</Grid>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+				
 				<Style TargetType="Button">
 					<Setter Property="Height" Value="200"/>
 					<Setter Property="Width" Value="200"/>
@@ -42,6 +54,7 @@
 							</BitmapEffectGroup>
 						</Setter.Value>
 					</Setter>
+					<Setter Property="FocusVisualStyle" Value="{StaticResource NoFocus}"/>
 				</Style>
 				<Style TargetType="FrameworkElement">
 					<Setter Property="HorizontalAlignment" Value="Center"/>

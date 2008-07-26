@@ -612,9 +612,8 @@ namespace AdventureAuthor.Ideas
   				string exportFilename = saveFileDialog.FileName;
   				Log.WriteAction(LogAction.exported,"magnetbox",Path.GetFileName(exportFilename));  			
   				try {
-  					FridgeMagnetUtils.MagnetBoxToPlainText((MagnetBoxInfo)magnetList.GetSerializable(),
-		        	                                       exportFilename,
-		        	                                       false);
+  					List<MagnetControlInfo> magnets = ((MagnetBoxInfo)magnetList.GetSerializable()).Magnets;
+  					FridgeMagnetUtils.MagnetsToPlainText(magnets,exportFilename,false);
   				}
   				catch (IOException e) {
   					Say.Error("Failed to export MagnetBox.",e);

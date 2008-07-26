@@ -84,36 +84,36 @@ namespace AdventureAuthor.Setup
 			exitAdventureAuthor.BeginGroup = true;
 			exitAdventureAuthor.Activate += delegate { form.App.Close(); };
 			
-//			MenuButtonItem extractText = new MenuButtonItem("Extract text");
-//			extractText.Activate += delegate {		
-//				FileInfo file = new FileInfo(@"C:\To burn\narrativevehicles.txt");
-//				using (StreamWriter writer = file.CreateText())
-//				{
-//					writer.AutoFlush = true;
-//					DirectoryInfo allKids = new DirectoryInfo(@"C:\To burn");								
-//					foreach (DirectoryInfo kid in allKids.GetDirectories()) {
-//						string path = Path.Combine(kid.FullName,"modules");	
-//						DirectoryInfo modulesDirectory = new DirectoryInfo(path);
-//						DirectoryInfo[] modules = modulesDirectory.GetDirectories();
-//						foreach (DirectoryInfo module in modules) {
-//							if (module.Name.StartsWith("temp")) {
-//								continue;
-//							}
-//							try {
-//								form.App.Module.OpenModuleDirectory(module.FullName);
-//								string narrativeVehicleText = NWN2Utils.GetNarrativeVehicleText(form.App.Module,false);
-//								if (narrativeVehicleText != String.Empty) {
-//									writer.WriteLine(narrativeVehicleText);
-//								}								
-//							}
-//							catch (Exception e) {
-//								writer.WriteLine("Error: " + e.ToString());
-//							}
-//						}
-//					}
-//					Say.Information("Finished.");
-//				}
-//			};
+			MenuButtonItem extractText = new MenuButtonItem("Extract text");
+			extractText.Activate += delegate {		
+				FileInfo file = new FileInfo(@"C:\To burn\narrativevehicles.txt");
+				using (StreamWriter writer = file.CreateText())
+				{
+					writer.AutoFlush = true;
+					DirectoryInfo allKids = new DirectoryInfo(@"C:\To burn");								
+					foreach (DirectoryInfo kid in allKids.GetDirectories()) {
+						string path = Path.Combine(kid.FullName,"modules");	
+						DirectoryInfo modulesDirectory = new DirectoryInfo(path);
+						DirectoryInfo[] modules = modulesDirectory.GetDirectories();
+						foreach (DirectoryInfo module in modules) {
+							if (module.Name.StartsWith("temp")) {
+								continue;
+							}
+							try {
+								form.App.Module.OpenModuleDirectory(module.FullName);
+								string narrativeVehicleText = NWN2Utils.GetNarrativeVehicleText(form.App.Module,false,true);
+								if (narrativeVehicleText != String.Empty) {
+									writer.WriteLine(narrativeVehicleText);
+								}								
+							}
+							catch (Exception e) {
+								writer.WriteLine("Error: " + e.ToString());
+							}
+						}
+					}
+					Say.Information("Finished.");
+				}
+			};
 			
 //			MenuButtonItem extractAllConversations = new MenuButtonItem("Extract conversations");
 //			extractAllConversations.Activate += delegate { 
@@ -135,7 +135,7 @@ namespace AdventureAuthor.Setup
 //			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
 			                           	extractWordCount,
-//			                           	extractText,
+			                           	extractText,
 //			                           	extractAllConversations
 			                           });	
 			
