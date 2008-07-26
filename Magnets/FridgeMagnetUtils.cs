@@ -12,6 +12,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 using AdventureAuthor.Ideas;
 using AdventureAuthor.Utils;
 
@@ -22,20 +23,34 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	public static class FridgeMagnetUtils
 	{
-		public static void MagnetBoxToPlainText(string magnetBoxPath, string plainTextPath, bool openFile)
+		public static void MagnetFileToPlainText(string magnetCollectionPath, string plainTextPath, bool openFile)
 		{
 			try {
-				if (!File.Exists(magnetBoxPath)) {
-					Say.Error("There is no file at location " + magnetBoxPath);
+				if (!File.Exists(magnetCollectionPath)) {
+					Say.Error("There is no file at location " + magnetCollectionPath);
 					return;
+				}				
+				
+				List<MagnetControlInfo> magnets = null;
+				
+				object box = Serialization.Deserialize(magnetCollectionPath,typeof(MagnetBoxInfo));
+				if (box != null) {
+					MagnetBoxInfo magnetBox = (MagnetBoxInfo)box;
+					magnets = magnetBox.Magnets;
 				}
-				object o = Serialization.Deserialize(magnetBoxPath,typeof(MagnetBoxInfo));
-				if (o == null || !(o is MagnetBoxInfo)) {
-					Say.Error(magnetBoxPath + " is not a valid Magnet Box file.");
-					return;
+				else {
+					object board = Serialization.Deserialize(magnetCollectionPath,typeof(MagnetBoardInfo));
+					if (board != null) {
+						MagnetBoardInfo magnetBoard = (MagnetBoardInfo)board;
+						magnets = magnetBoard.Magnets;
+					}
+					else {
+						Say.Error(magnetCollectionPath + " is not a valid Magnet Box file.");
+						return;
+					}
 				}
-				MagnetBoxInfo magnetBoxInfo = (MagnetBoxInfo)o;
-				MagnetBoxToPlainText(magnetBoxInfo,plainTextPath,openFile);
+								
+				MagnetsToPlainText(magnets,plainTextPath,openFile);
 			}
 			catch (Exception e) {
 				Say.Error("Something went wrong when trying to export a Magnet Box to a plain text file.",e);
@@ -43,20 +58,16 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-		public static void MagnetBoxToPlainText(MagnetBoxInfo magnetBoxInfo, string plainTextPath, bool openFile)
+		public static void MagnetsToPlainText(List<MagnetControlInfo> magnets, string plainTextPath, bool openFile)
 		{
-			if (magnetBoxInfo == null) {
-				throw new ArgumentNullException("You need to pass a MagnetBoxInfo argument.");
-			}
-			
 			try {				
 				FileInfo fileInfo = new FileInfo(plainTextPath);
 				
 				using (StreamWriter writer = fileInfo.CreateText())
 				{
 					writer.AutoFlush = false;
-					writer.WriteLine("--- Magnet Box contents ---");
-					foreach (MagnetControlInfo magnet in magnetBoxInfo.Magnets) {
+					writer.WriteLine("--- Magnets ---");
+					foreach (MagnetControlInfo magnet in magnets) {
 						Idea idea = magnet.Idea;
 						writer.WriteLine();
 						writer.WriteLine("    Idea: " + idea.Text);
@@ -77,39 +88,31 @@ namespace AdventureAuthor.Ideas
 		}
 		
 		
-		public static void ConvertAllMagnetBoxesToPlainText(string directory)
+		public static void ConvertAllMagnetCollectionsToPlainText(string directory)
 		{
 			if (!Directory.Exists(directory)) {
 				throw new ArgumentNullException("You passed a null directory.");
 			}
-			
-			int count = 0;
-			XmlSerializer xml = new XmlSerializer(typeof(MagnetBoxInfo));
-			
+						
 			DirectoryInfo dir = new DirectoryInfo(directory);
 			foreach (FileInfo file in dir.GetFiles("*.xml",SearchOption.AllDirectories)) {	
 				try {
-					object obj = xml.Deserialize(file.Open(FileMode.Open));
-					if (obj != null) {
-						MagnetBoxInfo magnetBox = (MagnetBoxInfo)obj;
-						string plainTextPath = file.FullName+".txt";
-						MagnetBoxToPlainText(magnetBox,plainTextPath,false);
-						count++;
-					}
+					string plainTextPath = file.FullName+".txt";
+					MagnetFileToPlainText(file.FullName,plainTextPath,false);
 				}
 				catch (Exception e) {
 					Say.Debug("Oops! " + e.ToString());
 				}
 			}
 			
-			Say.Information(count + " Magnet Box(es) converted to plain text.");
+			Say.Information("Finished.");
 		}
 		
 		
 		public static void ConvertAllMagnetBoxesToPlainTextDialog()
 		{
 			FolderBrowserDialog dialog = new FolderBrowserDialog();
-			dialog.Description = "Select the directory containing Magnet Boxes.";
+			dialog.Description = "Select the directory containing Magnet Boxes/Boards.";
 			dialog.ShowNewFolderButton = false;
 			DialogResult result = dialog.ShowDialog();
 			if (result != DialogResult.OK) {
@@ -117,7 +120,7 @@ namespace AdventureAuthor.Ideas
 			}
 			
 			try {
-				ConvertAllMagnetBoxesToPlainText(dialog.SelectedPath);
+				ConvertAllMagnetCollectionsToPlainText(dialog.SelectedPath);
 			}
 			catch (Exception e) {
 				Say.Error("Failed to convert contents of directory.",e);
