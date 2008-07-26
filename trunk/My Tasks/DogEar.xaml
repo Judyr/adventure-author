@@ -1,4 +1,4 @@
-<UserControl x:Class="AdventureAuthor.Tasks.DogEarControl"
+<UserControl x:Class="AdventureAuthor.Tasks.DogEar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
    	xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
