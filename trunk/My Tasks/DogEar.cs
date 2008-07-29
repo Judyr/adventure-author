@@ -131,7 +131,7 @@ namespace AdventureAuthor.Tasks
         public void Pull()
         {
 			if (!transformGroup.Children.Contains(scaleTransform)) {
-				transformGroup.Children.Add(scaleTransform);
+        		transformGroup.Children.Add(scaleTransform);
 			}			
         }
         

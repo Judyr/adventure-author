@@ -12,6 +12,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Tasks
 {
@@ -21,30 +22,9 @@ namespace AdventureAuthor.Tasks
 
     public partial class TaskPad : UserControl
     {
-		private Color[] allColors;
-		private Random random;
-		
-		
 		public TaskPad()
 		{
-			Type colorsType = typeof(Colors);
-			PropertyInfo[] properties = colorsType.GetProperties();
-			allColors = new Color[properties.Length];
-			for (int i = 0; i < properties.Length; i++) {
-				PropertyInfo property = properties[i];
-				Color color = (Color)property.GetValue(colorsType,null);
-				allColors[i] = color;
-			}
-			random = new Random();
-				
 			InitializeComponent();
-		}
-		
-		
-		private void SetBackgroundColourRandomly()
-		{
-			int randomNumber = random.Next(0,allColors.Length-1);
-			Background = new SolidColorBrush(allColors[randomNumber]);
 		}
     }
 }

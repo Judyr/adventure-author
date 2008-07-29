@@ -54,16 +54,22 @@
     <Compile Include="Corner.cs" />
     <Compile Include="CornerConverter.cs" />
     <Compile Include="Task.cs" />
+    <Compile Include="TaskCollection.cs" />
     <Compile Include="TaskPad.xaml.cs">
       <DependentUpon>TaskPad.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Window1.xaml.cs">
+    <Compile Include="TaskState.cs" />
+    <Compile Include="MyTasksWindow.cs">
       <SubType>Code</SubType>
-      <DependentUpon>Window1.xaml</DependentUpon>
+      <DependentUpon>MyTasksWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="DogEar.xaml" />
     <Page Include="TaskPad.xaml" />
-    <Page Include="Window1.xaml" />
+    <Page Include="MyTasksWindow.xaml" />
+    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
