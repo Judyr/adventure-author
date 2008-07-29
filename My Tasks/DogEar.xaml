@@ -2,6 +2,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
    	xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+  	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
+	MinWidth="40" MaxWidth="40"
+	MinHeight="40" MaxHeight="40"
    	>
 			
 	<UserControl.Resources>		
@@ -29,7 +32,7 @@
 	</UserControl.Template>
 
 	<UserControl.BitmapEffect>
-		<DropShadowBitmapEffect Direction="320" Opacity="0.25"/>
+		<DropShadowBitmapEffect Direction="320" Opacity="0.25" PresentationOptions:Freeze="true"/>
 	</UserControl.BitmapEffect>
 
 </UserControl>

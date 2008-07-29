@@ -33,24 +33,24 @@ namespace AdventureAuthor.Ideas
 				
 				List<MagnetControlInfo> magnets = null;
 				
-				object box = Serialization.Deserialize(magnetCollectionPath,typeof(MagnetBoxInfo));
-				if (box != null) {
-					MagnetBoxInfo magnetBox = (MagnetBoxInfo)box;
-					magnets = magnetBox.Magnets;
+				try {
+					object box = Serialization.Deserialize(magnetCollectionPath,typeof(MagnetBoxInfo));
+					if (box != null) {
+						MagnetBoxInfo magnetBox = (MagnetBoxInfo)box;
+						magnets = magnetBox.Magnets;
+						MagnetsToPlainText(magnets,plainTextPath,openFile);
+					}
 				}
-				else {
+				catch (Exception) {
 					object board = Serialization.Deserialize(magnetCollectionPath,typeof(MagnetBoardInfo));
 					if (board != null) {
 						MagnetBoardInfo magnetBoard = (MagnetBoardInfo)board;
 						magnets = magnetBoard.Magnets;
-					}
-					else {
-						Say.Error(magnetCollectionPath + " is not a valid Magnet Box file.");
-						return;
+						MagnetsToPlainText(magnets,plainTextPath,openFile);
 					}
 				}
 								
-				MagnetsToPlainText(magnets,plainTextPath,openFile);
+				
 			}
 			catch (Exception e) {
 				Say.Error("Something went wrong when trying to export a Magnet Box to a plain text file.",e);
@@ -95,7 +95,8 @@ namespace AdventureAuthor.Ideas
 			}
 						
 			DirectoryInfo dir = new DirectoryInfo(directory);
-			foreach (FileInfo file in dir.GetFiles("*.xml",SearchOption.AllDirectories)) {	
+			FileInfo[] xmlFiles = dir.GetFiles("*.xml",SearchOption.AllDirectories);
+			foreach (FileInfo file in xmlFiles) {	
 				try {
 					string plainTextPath = file.FullName+".txt";
 					MagnetFileToPlainText(file.FullName,plainTextPath,false);
@@ -105,7 +106,7 @@ namespace AdventureAuthor.Ideas
 				}
 			}
 			
-			Say.Information("Finished.");
+			Say.Information("Finished - checked " + xmlFiles.Length + " files.");
 		}
 		
 		

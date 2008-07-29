@@ -1,15 +1,89 @@
 <UserControl x:Class="AdventureAuthor.Tasks.TaskPad"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
-	Background="LemonChiffon"
 	Width="400" Height="500">
+	
+	<UserControl.Background>
+		<LinearGradientBrush StartPoint="1,0" EndPoint="0,1">
+			<GradientStop Color="LemonChiffon" Offset="0"/>
+			<GradientStop Color="Yellow" Offset="4"/>
+		</LinearGradientBrush>
+	</UserControl.Background>
+	
+	<UserControl.Resources>
+		<XmlDataProvider x:Key="tasksXmlFile" XPath="Tasks">
+			<x:XData>
+				<Tasks xmlns="">
+					<Task>
+						<Text>Fix all of my area transitions</Text>
+					</Task>
+					<Task>
+						<Text>Test the combat with the wizard</Text>
+					</Task>
+					<Task>
+						<Text>Put in a conversation for the dragon</Text>
+					</Task>
+				</Tasks>
+			</x:XData>
+		</XmlDataProvider>
+		<!--<XmlDataProvider x:Key="tasksXmlFile" XPath="Tasks">
+			<x:XData>
+				<Tasks xmlns="">
+					<Task>
+						<Text>Fix all of my area transitions</Text>
+					</Task>
+					<Task>
+						<Text>Test the combat with the wizard</Text>
+					</Task>
+					<Task>
+						<Text>Put in a conversation for the dragon</Text>
+					</Task>
+				</Tasks>
+			</x:XData>
+		</XmlDataProvider>-->
+	</UserControl.Resources>
 		
     <Border BorderThickness="2" BorderBrush="LightGray">
 		<Grid Name="MainGrid">
-			<tasks:DogEar Corner="BottomRight"/>
-			<tasks:DogEar Corner="BottomLeft"/>
+    		<Grid.RowDefinitions>
+				<RowDefinition Height="70"/>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			
+			<TextBlock Grid.Row="0"
+			           Grid.Column="0"
+					   Text="Things To Do" 
+			           VerticalAlignment="Center"
+			           HorizontalAlignment="Center"
+			           FontSize="32" 
+			           FontWeight="SemiBold" 
+			           FontFamily="Comic Sans MS"
+					   Foreground="Black"/>
+			
+			<ListBox Grid.Row="1"
+					 Grid.Column="0"
+					 ItemsSource="{Binding Source={StaticResource tasksXmlFile}, XPath=Task/Text}"/>
+			
+			<tasks:DogEar Grid.Row="2" Grid.Column="0"
+			              Corner="BottomRight"/>
+			<tasks:DogEar Grid.Row="2" Grid.Column="0"
+			              Corner="BottomLeft"/>
     	</Grid>
 	</Border>
+
+	<UserControl.RenderTransform>
+		<TransformGroup>
+			<RotateTransform Angle="353" />			
+		</TransformGroup>
+	</UserControl.RenderTransform>
+
+	<UserControl.BitmapEffect>
+		<BitmapEffectGroup>
+			<DropShadowBitmapEffect PresentationOptions:Freeze="true"/>
+		</BitmapEffectGroup>
+	</UserControl.BitmapEffect>
 
 </UserControl>
