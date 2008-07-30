@@ -5,45 +5,28 @@
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
 	Width="400" Height="500">
 	
+	<UserControl.Resources>
+		
+		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
+		
+		<DataTemplate x:Key="taskDataTemplate">
+			<StackPanel>
+				<TextBox Text="{Binding Path=Description}" 
+				           FontSize="16" Foreground="DarkBlue"/>
+				<TextBlock Text="{Binding Path=Creator}"/>
+				<CheckBox IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}"
+						  Height="30" Width="30"/>
+			</StackPanel>
+		</DataTemplate>
+	
+	</UserControl.Resources>
+	
 	<UserControl.Background>
 		<LinearGradientBrush StartPoint="1,0" EndPoint="0,1">
 			<GradientStop Color="LemonChiffon" Offset="0"/>
 			<GradientStop Color="Yellow" Offset="4"/>
 		</LinearGradientBrush>
 	</UserControl.Background>
-	
-	<UserControl.Resources>
-		<XmlDataProvider x:Key="tasksXmlFile" XPath="Tasks">
-			<x:XData>
-				<Tasks xmlns="">
-					<Task>
-						<Text>Fix all of my area transitions</Text>
-					</Task>
-					<Task>
-						<Text>Test the combat with the wizard</Text>
-					</Task>
-					<Task>
-						<Text>Put in a conversation for the dragon</Text>
-					</Task>
-				</Tasks>
-			</x:XData>
-		</XmlDataProvider>
-		<!--<XmlDataProvider x:Key="tasksXmlFile" XPath="Tasks">
-			<x:XData>
-				<Tasks xmlns="">
-					<Task>
-						<Text>Fix all of my area transitions</Text>
-					</Task>
-					<Task>
-						<Text>Test the combat with the wizard</Text>
-					</Task>
-					<Task>
-						<Text>Put in a conversation for the dragon</Text>
-					</Task>
-				</Tasks>
-			</x:XData>
-		</XmlDataProvider>-->
-	</UserControl.Resources>
 		
     <Border BorderThickness="2" BorderBrush="LightGray">
 		<Grid Name="MainGrid">
@@ -65,7 +48,9 @@
 			
 			<ListBox Grid.Row="1"
 					 Grid.Column="0"
-					 ItemsSource="{Binding Source={StaticResource tasksXmlFile}, XPath=Task/Text}"/>
+					 ItemsSource="{Binding Path=Tasks, Mode=TwoWay}"
+					 ItemTemplate="{StaticResource taskDataTemplate}"
+					/>
 			
 			<tasks:DogEar Grid.Row="2" Grid.Column="0"
 			              Corner="BottomRight"/>
@@ -73,12 +58,6 @@
 			              Corner="BottomLeft"/>
     	</Grid>
 	</Border>
-
-	<UserControl.RenderTransform>
-		<TransformGroup>
-			<RotateTransform Angle="353" />			
-		</TransformGroup>
-	</UserControl.RenderTransform>
 
 	<UserControl.BitmapEffect>
 		<BitmapEffectGroup>

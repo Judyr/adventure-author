@@ -2,8 +2,10 @@
 	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
+  	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
 	Title="My Tasks" WindowState="Maximized"
     >
+	
 	<Window.Background>
 		<RadialGradientBrush>
 			<GradientStop Color="Black" Offset="-15"/>
@@ -12,10 +14,15 @@
 			<GradientStop Color="Black" Offset="15"/>
 		</RadialGradientBrush>
 	</Window.Background>
+	
 	<Grid>	
 		<tasks:TaskPad 
 			x:Name="pad"
 			VerticalAlignment="Center"
-			HorizontalAlignment="Center"/>
+			HorizontalAlignment="Center">
+			<tasks:TaskPad.LayoutTransform>
+				<RotateTransform PresentationOptions:Freeze="true" Angle="353"/>
+			</tasks:TaskPad.LayoutTransform>
+		</tasks:TaskPad>
 	</Grid>
 </Window>
