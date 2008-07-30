@@ -42,6 +42,14 @@ namespace AdventureAuthor.Utils
 		
 		// TODO make the string methods into Automatic Methods on string
 		
+		public static string SplitCamelCase(string input)
+		{
+			return System.Text.RegularExpressions.Regex.Replace(input,
+															    "([A-Z])",
+															    " $1",
+															    System.Text.RegularExpressions.RegexOptions.Compiled).Trim();
+		}
+		
 		
 		public static void DisplayAboutWindow(string message)
 		{

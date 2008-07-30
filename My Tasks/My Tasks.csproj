@@ -55,6 +55,7 @@
     <Compile Include="CornerConverter.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="TaskCollection.cs" />
+    <Compile Include="TaskOrigin.cs" />
     <Compile Include="TaskPad.xaml.cs">
       <DependentUpon>TaskPad.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -64,6 +65,7 @@
       <SubType>Code</SubType>
       <DependentUpon>MyTasksWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TaskStateToBooleanConverter.cs" />
     <Page Include="DogEar.xaml" />
     <Page Include="TaskPad.xaml" />
     <Page Include="MyTasksWindow.xaml" />
