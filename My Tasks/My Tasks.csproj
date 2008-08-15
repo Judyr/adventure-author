@@ -50,6 +50,7 @@
       <DependentUpon>DogEar.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MyTasksPreferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Corner.cs" />
     <Compile Include="CornerConverter.cs" />

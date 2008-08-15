@@ -3,7 +3,8 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
   	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
-	Title="My Tasks" WindowState="Maximized"
+	Title="My Tasks" 
+	Width="700" Height="700"
     >
 	
 	<Window.Background>
@@ -18,6 +19,8 @@
 	<Grid>	
 		<tasks:TaskPad 
 			x:Name="pad"
+			Height="500"
+			Width="400"
 			VerticalAlignment="Center"
 			HorizontalAlignment="Center">
 			<tasks:TaskPad.LayoutTransform>
