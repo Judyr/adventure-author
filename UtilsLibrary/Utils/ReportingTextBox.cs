@@ -52,7 +52,7 @@ namespace AdventureAuthor.Utils
 				
 		#region Methods
 		
-		public void SetText(string text)
+		public void SetTextWithoutRaisingEvent(string text)
 		{
 			Text = text;
 			oldValue = Text;

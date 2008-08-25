@@ -22,7 +22,8 @@ namespace AdventureAuthor.Utils
     	public const string COMMENTCARDS = "Comment Cards (*.cmt)|*.cmt";    	  	
     	public const string MAGNETBOARDS = "Magnet board files (*.brd)|*.brd";    	  	
     	public const string MAGNETBOXES = "Magnet box files (*.box)|*.box";    	
-    	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";    	
+    	public const string COMPILEDSCRIPTS = "Compiled scripts (*.ncs)|*.ncs";     	  	
+    	public const string MYTASKSFILES = "My Tasks files (*.tsk)|*.tsk";    	  	
     	public const string ALL = "All files (*.*)|*.*";    
     	
     	public const string TXT_ALL = TXT + "|" + ALL;
@@ -32,5 +33,6 @@ namespace AdventureAuthor.Utils
     	public const string MAGNETBOARDS_ALL = MAGNETBOARDS + "|" + ALL;
     	public const string MAGNETBOXES_ALL = MAGNETBOXES + "|" + ALL;
     	public const string COMPILEDSCRIPTS_ALL = COMPILEDSCRIPTS + "|" + ALL;
+    	public const string MYTASKSFILES_ALL = MYTASKSFILES + "|" + ALL;
 	}
 }

@@ -67,6 +67,7 @@
       <DependentUpon>MyTasksWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TaskStateToBooleanConverter.cs" />
+    <Compile Include="TaskStateToTextDecorationConverter.cs" />
     <Page Include="DogEar.xaml" />
     <Page Include="TaskPad.xaml" />
     <Page Include="MyTasksWindow.xaml" />

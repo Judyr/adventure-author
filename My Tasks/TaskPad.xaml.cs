@@ -16,15 +16,15 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Tasks
 {
-    /// <summary>
-    /// Interaction logic for TaskPad.xaml
-    /// </summary>
-
     public partial class TaskPad : UserControl
     {
+    	#region Constructors
+    	
 		public TaskPad()
 		{
 			InitializeComponent();
 		}
+		
+		#endregion
     }
 }

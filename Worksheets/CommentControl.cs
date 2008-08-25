@@ -22,7 +22,7 @@ namespace AdventureAuthor.Evaluation
         	previousValue = comment.Value;
     		
             InitializeComponent();          
-            CommentTextBox.SetText(comment.Value);
+            CommentTextBox.SetTextWithoutRaisingEvent(comment.Value);
             SetInitialActiveStatus(comment);
             
             CommentTextBox.TextEdited += delegate(object sender, TextEditedEventArgs e) {
