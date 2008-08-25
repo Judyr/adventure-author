@@ -16,16 +16,48 @@
 		</RadialGradientBrush>
 	</Window.Background>
 	
-	<Grid>	
-		<tasks:TaskPad 
-			x:Name="pad"
-			Height="500"
-			Width="400"
-			VerticalAlignment="Center"
-			HorizontalAlignment="Center">
-			<tasks:TaskPad.LayoutTransform>
-				<RotateTransform PresentationOptions:Freeze="true" Angle="353"/>
-			</tasks:TaskPad.LayoutTransform>
-		</tasks:TaskPad>
-	</Grid>
+	<DockPanel>
+		
+		<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">				
+			<!--The main menu should appear to extend the full width of the screen-->
+			<StackPanel.Background>
+				<Binding ElementName="MainMenu" Path="Background" Mode="OneWay"/>
+			</StackPanel.Background>				
+			
+			<Menu Name="MainMenu" Height="26" 
+				  VerticalAlignment="Top" HorizontalAlignment="Left">	
+				<Menu.Style>
+					<Style TargetType="Control">
+						<Setter Property="FontSize" Value="14"/>
+					</Style>
+				</Menu.Style>
+				<MenuItem Header="File">
+					<MenuItem Name="NewMenuItem" Header="New"
+					          Click="OnClick_New"/>
+					<MenuItem Name="OpenMenuItem" Header="Open"
+					          Click="OnClick_Open"/>
+					<MenuItem Name="SaveMenuItem" Header="Save"
+					          Click="OnClick_Save"/>
+					<MenuItem Name="SaveAsMenuItem" Header="Save as"
+					          Click="OnClick_SaveAs"/>
+					<MenuItem Name="CloseMenuItem" Header="Close"
+					          Click="OnClick_Close"/>
+				</MenuItem>
+			</Menu>			
+		</StackPanel>
+	
+		<Grid DockPanel.Dock="Bottom">	
+			<tasks:TaskPad 
+				x:Name="pad"
+				Height="500"
+				Width="400"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				<tasks:TaskPad.LayoutTransform>
+					<RotateTransform PresentationOptions:Freeze="true" Angle="353"/>
+				</tasks:TaskPad.LayoutTransform>
+			</tasks:TaskPad>
+		</Grid>
+		
+	</DockPanel>
 </Window>

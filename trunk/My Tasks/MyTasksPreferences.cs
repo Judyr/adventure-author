@@ -104,7 +104,7 @@ namespace AdventureAuthor.Tasks
 			set { 
 				if (userFilesDirectory != value) {
 					userFilesDirectory = value;
-					NotifyPropertyChanged("UserMyTasksDirectory");
+					NotifyPropertyChanged("UserFilesDirectory");
 				}
 			}
 		}
@@ -117,7 +117,12 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public string ActiveFilePath {
 			get { return activeFilePath; }
-			set { activeFilePath = value; }
+			set { 
+				if (activeFilePath != value) {
+					activeFilePath = value;
+					NotifyPropertyChanged("ActiveFilePath");
+				}
+			}
 		}
 		
 		
@@ -128,7 +133,12 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public string PreviousFilePath {
 			get { return previousFilePath; }
-			set { previousFilePath = value; }
+			set { 
+				if (previousFilePath != value) {
+					previousFilePath = value;
+					NotifyPropertyChanged("PreviousFilePath");
+				}
+			}
 		}
 		
 		
@@ -150,23 +160,6 @@ namespace AdventureAuthor.Tasks
 		public static string DefaultPreferencesPath {
 			get { return defaultPreferencesPath; }
 		}
-		
-		
-//		/// <summary>
-//		/// Whether or not the Magnet Box will appear at the right-hand side of the screen, or at the
-//		/// bottom of the screen.
-//		/// </summary>
-//		private bool magnetBoxAppearsAtSide;
-//		[XmlElement]
-//		public bool MagnetBoxAppearsAtSide {
-//			get { return magnetBoxAppearsAtSide; }
-//			set { 
-//				if (magnetBoxAppearsAtSide != value) {
-//					magnetBoxAppearsAtSide = value;
-//					NotifyPropertyChanged("MagnetBoxAppearsAtSide");
-//				}
-//			}
-//		}
 		
 		#endregion
 

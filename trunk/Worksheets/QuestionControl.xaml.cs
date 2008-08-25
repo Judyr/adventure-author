@@ -54,7 +54,7 @@ namespace AdventureAuthor.Evaluation
         	previousValue = question.Text;
         	
             InitializeComponent(); 
-            this.QuestionTitle.SetText(question.Text);
+            this.QuestionTitle.SetTextWithoutRaisingEvent(question.Text);
             
             QuestionTitle.TextEdited += delegate(object sender, TextEditedEventArgs e) {
             	Log.WriteAction(LogAction.edited,"question",e.NewValue);

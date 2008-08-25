@@ -3,14 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
 	Width="420" Height="500">
 	
 	<UserControl.Resources>
 		
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
+		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		
+		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<Grid>
+			<Grid Focusable="false">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
@@ -20,29 +23,36 @@
 					<ColumnDefinition Width="55"/>
 				</Grid.ColumnDefinitions>
 			
-				<TextBox Grid.Row="0" Grid.Column="0"
-				           Width="300"
-						   Text="{Binding Path=Description}"
+				<!--UpdateSourceTrigger is set to PropertyChanged to ensure that you always get the latest value
+					for a TextBox that has currently got focus. By default, only upon losing focus does
+					the TextBox update its value, which is fine until you need to save and close. A much better
+					way to deal with this would be to call UpdateSource() on the binding, but I can't work out
+					how to get the binding object, since it's defined inside a data template.-->
+				<utils:ReportingTextBox
+						   Grid.Row="0" Grid.Column="0"
+				           Width="300"					
+						   Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
+						   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 				           TextWrapping="Wrap"
 				           VerticalAlignment="Center"
-				           HorizontalAlignment="Right"
+				           HorizontalAlignment="Right"						
 				           Padding="10"
 					       FontSize="16" 
 				           FontWeight="Thin"
-				           Foreground="Black">
-						<TextBox.TextDecorations>
-							<TextDecoration Location="Strikethrough"/>
-						</TextBox.TextDecorations>
-				</TextBox>
+				           Foreground="Black"/>
 				<ListBox Grid.Row="1" Grid.Column="0"
-							Margin="5"
-							ItemsSource="{Binding Path=Tags}"/>
+						 Margin="5"
+						 ItemsSource="{Binding Path=Tags}"/>
 				<CheckBox x:Name="completedCheckBox"
-				          Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-				          VerticalAlignment="Center" HorizontalAlignment="Center"
+				          Grid.Row="0" 
+				          Grid.RowSpan="2" 
+				          Grid.Column="1"
+				          HorizontalAlignment="Center"
+				          VerticalAlignment="Center"
 						  IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}">
 					<CheckBox.LayoutTransform>
-						<ScaleTransform ScaleX="2" ScaleY="2"
+						<ScaleTransform ScaleX="2" 
+						                ScaleY="2"
 										PresentationOptions:Freeze="true"/>
 					</CheckBox.LayoutTransform>
 				</CheckBox>		
@@ -81,7 +91,8 @@
 			           FontFamily="Comic Sans MS"
 					   Foreground="DarkBlue"/>
 			
-			<ListBox Grid.Row="1"
+			<ListBox x:Name="taskListBox" 
+			         Grid.Row="1"
 					 Grid.Column="0"
 			         Padding="15"
 					 ItemsSource="{Binding Path=Tasks, Mode=TwoWay}"

@@ -53,7 +53,7 @@ namespace AdventureAuthor.Evaluation
         	
             InitializeComponent();   
             
-            SectionTitleTextBox.SetText(section.Title);
+            SectionTitleTextBox.SetTextWithoutRaisingEvent(section.Title);
             
             SectionTitleTextBox.TextEdited += delegate(object sender, TextEditedEventArgs e) {
             	Log.WriteAction(LogAction.edited,"section",e.NewValue);

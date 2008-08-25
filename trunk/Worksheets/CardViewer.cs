@@ -240,10 +240,10 @@ namespace AdventureAuthor.Evaluation
     		Log.WriteAction(LogAction.opened,"commentcard",Path.GetFileName(filename));
     		
 	    	originalCard = card;
-	    	TitleField.SetText(card.Title);
-	    	DateField.SetText(card.Date);
-	    	DesignerNameField.SetText(card.DesignerName);
-	    	EvaluatorNameField.SetText(card.EvaluatorName);
+	    	TitleField.SetTextWithoutRaisingEvent(card.Title);
+	    	DateField.SetTextWithoutRaisingEvent(card.Date);
+	    	DesignerNameField.SetTextWithoutRaisingEvent(card.DesignerName);
+	    	EvaluatorNameField.SetTextWithoutRaisingEvent(card.EvaluatorName);
 	    	    		
 	    	foreach (Section section in card.Sections) {	    			
 	    		if (EvaluationMode == Mode.Designer || section.Include) {
@@ -389,10 +389,10 @@ namespace AdventureAuthor.Evaluation
     	private void SetTitle(CardPartControl control, string title)
     	{
     		if (control is SectionControl) {
-    			((SectionControl)control).SectionTitleTextBox.SetText(title);
+    			((SectionControl)control).SectionTitleTextBox.SetTextWithoutRaisingEvent(title);
     		}
     		else if (control is QuestionControl) {
-    			((QuestionControl)control).QuestionTitle.SetText(title);
+    			((QuestionControl)control).QuestionTitle.SetTextWithoutRaisingEvent(title);
     		}
     		else {
     			throw new ArgumentException("Can only set titles of sections and questions, not " +

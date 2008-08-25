@@ -191,7 +191,7 @@ namespace AdventureAuthor.Ideas
     			MakeDirty(); 
     		};
     		MagnetMoved += delegate (object sender, MagnetEventArgs e) {
-    			MakeDirty(); ;
+    			MakeDirty();
     		};
     		Cleared += delegate {
     			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing

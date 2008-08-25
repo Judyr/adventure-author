@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Windows.Data;
 using System.Xml.Serialization;
@@ -19,7 +20,7 @@ namespace AdventureAuthor.Tasks
 	/// A task for a task manager application.
 	/// </summary>
 	[Serializable]
-	public class Task
+	public class Task : INotifyPropertyChanged
 	{
 		#region Properties and fields
 		
@@ -30,7 +31,10 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public string Description {
 			get { return description; }
-			set { description = value; }
+			set { 
+				description = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+			}
 		}
 		
 		
@@ -57,7 +61,10 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public string Origin {
 			get { return origin; }
-			set { origin = value; }
+			set { 
+				origin = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+			}
 		}
 		
 				
@@ -69,7 +76,10 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public TaskState State {
 			get { return state; }
-			set { state = value; }
+			set { 
+				state = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("State"));
+			}
 		}
 		
 		
@@ -80,7 +90,10 @@ namespace AdventureAuthor.Tasks
 		[XmlAttribute("Creator")]
 		public string Creator {
 			get { return creator; }
-			set { creator = value; }
+			set { 
+				creator = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("Creator"));
+			}
 		}
 		
 		
@@ -91,8 +104,24 @@ namespace AdventureAuthor.Tasks
 		[XmlAttribute("Created")]
 		public DateTime Created {
 			get { return created; }
-			set { created = value; }
+			set { 
+				created = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("Created"));
+			}
 		}		
+		
+		#endregion
+	
+		#region Events
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
 		
 		#endregion
 		
