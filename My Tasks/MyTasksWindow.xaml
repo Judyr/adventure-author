@@ -43,6 +43,11 @@
 					<MenuItem Name="CloseMenuItem" Header="Close"
 					          Click="OnClick_Close"/>
 				</MenuItem>
+				<MenuItem Header="Edit">
+					<MenuItem Name="NewTaskMenuItem" Header="New task"
+					          Click="OnClick_NewTask"/>
+					<Separator/>
+				</MenuItem>
 			</Menu>			
 		</StackPanel>
 	

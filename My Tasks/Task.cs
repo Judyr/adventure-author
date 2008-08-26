@@ -130,7 +130,7 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// For serialization.
 		/// </summary>
-		private Task() {}
+		public Task() {}
 						
 		
 		/// <summary>

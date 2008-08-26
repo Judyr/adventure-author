@@ -13,7 +13,7 @@
 		
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<Grid Focusable="false">
+			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
