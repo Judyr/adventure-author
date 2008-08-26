@@ -19,7 +19,7 @@ namespace AdventureAuthor.Tasks
 	/// A collection of tasks for a task manager application. 
 	/// </summary>
 	[Serializable]
-	public class TaskCollection
+	public class TaskCollection : List<Task>
 	{	
 		/// <summary>
 		/// The user who created this task collection.
@@ -78,6 +78,6 @@ namespace AdventureAuthor.Tasks
 			this.tasks = tasks;
 			this.creator = creator;
 			this.created = created;
-		}
+		}		
 	}
 }

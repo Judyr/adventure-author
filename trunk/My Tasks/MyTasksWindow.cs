@@ -454,6 +454,15 @@ namespace AdventureAuthor.Tasks
     	{
     		CloseDialog();
     	}
+    	    	
+    	
+    	private void OnClick_NewTask(object sender, EventArgs e)
+    	{
+    		//NewTaskDialog();
+    		Task task = new Task();
+    		TaskCollection.Tasks.Add(task);
+    		
+    	}
 		
 		#endregion
 	}
