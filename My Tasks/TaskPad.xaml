@@ -11,12 +11,55 @@
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		
+		<!--Defining the appearance of a tag-->
+		<DataTemplate x:Key="tagDataTemplate">
+			<TextBox Text="{Binding Mode=TwoWay, Path=.}"
+					 Padding="3"
+					 Margin="2"/>
+		</DataTemplate>
+		
+		<!--Defining the appearance of the list of tags-->
+		<ItemsPanelTemplate x:Key="tagListTemplate">
+			<StackPanel Orientation="Horizontal" Background="LightGreen"/>
+		</ItemsPanelTemplate>
+		
+		<!--Defining the appearance of a button on a task control (Edit, Delete etc.)-->
+		<Style x:Key="taskControlButtonStyle" TargetType="Button">
+			<!--Set to true to not get any properties from the themes.-->
+			<Setter Property="OverridesDefaultStyle" Value="True"/>
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">						
+						<Grid>
+							<TextBlock x:Name="contentBlock"
+							           FontSize="11"
+							           Foreground="Blue" 
+							           FontWeight="SemiBold"
+							           TextDecorations="Underline">
+								<ContentPresenter HorizontalAlignment="Center"
+								                  VerticalAlignment="Center"/>
+							</TextBlock>                  
+						</Grid>					
+						<!--<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="contentBlock" Property="Background" Value="LightGray"/>
+							</Trigger>
+						</ControlTemplate.Triggers>	-->				
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>	
+		
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<Grid>
+			<Grid x:Name="taskGrid" 
+			      Margin="5"
+				  Background="Transparent">
 				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
+					<RowDefinition/> <!--Description-->
+					<RowDefinition/> <!--Tags-->
+					<RowDefinition/> <!--Controls (when selected)-->
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="0.67*"/>
@@ -27,22 +70,23 @@
 					for a TextBox that has currently got focus. By default, only upon losing focus does
 					the TextBox update its value, which is fine until you need to save and close. A much better
 					way to deal with this would be to call UpdateSource() on the binding, but I can't work out
-					how to get the binding object, since it's defined inside a data template.-->
-				<utils:ReportingTextBox
-						   Grid.Row="0" Grid.Column="0"
-				           Width="300"					
-						   Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
-						   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
-				           TextWrapping="Wrap"
-				           VerticalAlignment="Center"
-				           HorizontalAlignment="Right"						
-				           Padding="10"
-					       FontSize="16" 
-				           FontWeight="Thin"
-				           Foreground="Black"/>
-				<ListBox Grid.Row="1" Grid.Column="0"
-						 Margin="5"
-						 ItemsSource="{Binding Path=Tags}"/>
+					how to get the binding object, since it's defined inside a data template.
+					TODO: Bea Costa's weblog has an article on updating bindings within data templates.-->
+				<utils:EditableTextBox
+					x:Name="descriptionBox"
+					Grid.Row="0" Grid.Column="0"
+				    Width="300"					
+					Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
+					TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
+				    TextWrapping="Wrap"
+				    VerticalAlignment="Center"
+				    HorizontalAlignment="Right"	
+					utils:EditableTextBox.IsEditable="False"
+				    Padding="10"
+					FontSize="16" 
+				    FontWeight="Thin"
+				    Foreground="Black"/>
+				
 				<CheckBox x:Name="completedCheckBox"
 				          Grid.Row="0" 
 				          Grid.RowSpan="2" 
@@ -56,7 +100,47 @@
 										PresentationOptions:Freeze="true"/>
 					</CheckBox.LayoutTransform>
 				</CheckBox>		
-			</Grid>				
+				
+				<ListBox Grid.Row="1" Grid.Column="0"
+						 Margin="5"
+						 ItemsSource="{Binding Path=Tags}"
+						 ItemTemplate="{StaticResource tagDataTemplate}"
+						 ItemsPanel="{StaticResource tagListTemplate}"
+			        	 SelectionMode="Single"/>
+			
+				<StackPanel x:Name="taskControlPanel"
+							Grid.Row="2" Grid.Column="0"
+				            Visibility="Collapsed"
+							Orientation="Horizontal"
+							Width="300">
+					
+					<!--Doesn't work properly if you just set this style to apply to all buttons
+					by putting it in StackPanel.Resources - not sure why.-->
+					<Button Content="Delete" Style="{StaticResource taskControlButtonStyle}"
+							Click="OnClick_DeleteTask"/>
+					<Button Content="Edit" Style="{StaticResource taskControlButtonStyle}"
+							Click="OnClick_EditTask"/>
+					<Button Content="Change category" Style="{StaticResource taskControlButtonStyle}"
+							Click="OnClick_ChangeCategoryOfTask"/>
+					<Button Content="Move up" Style="{StaticResource taskControlButtonStyle}"
+							Click="OnClick_MoveUp"/>
+					<Button Content="Move down" Style="{StaticResource taskControlButtonStyle}"
+							Click="OnClick_MoveDown"/>
+				
+				</StackPanel>
+			
+			</Grid>			
+		
+			<DataTemplate.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter TargetName="taskGrid" Property="Background" Value="LightGray"/>
+				</Trigger>
+				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+				             Value="True">
+					<Setter TargetName="taskControlPanel" Property="Visibility" Value="Visible"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		
 		</DataTemplate>
 	
 	</UserControl.Resources>
@@ -95,8 +179,9 @@
 			         Grid.Row="1"
 					 Grid.Column="0"
 			         Padding="15"
-					 ItemsSource="{Binding Path=Tasks, Mode=TwoWay}"
+					 ItemsSource="{Binding Path=., Mode=TwoWay}"
 					 ItemTemplate="{StaticResource taskDataTemplate}"
+			         SelectionMode="Single"
 					 Background="Transparent"
 					 BorderBrush="Transparent"/>
 			

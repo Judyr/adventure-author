@@ -17,9 +17,10 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Utils
 {
 	/// <summary>
-	/// Description of SwitchableTextBox.
+	/// XAML-friendly version of SwitchableTextBox - made a new class so as not to disrupt the other applications.
+	/// Should switch them all over to use this at some point (never will).
 	/// </summary>
-	public class SwitchableTextBox : ReportingTextBox
+	public class EditableTextBox : ReportingTextBox
 	{
 		public event EventHandler EditableChanged;
 		protected virtual void OnEditableChanged(EventArgs e)
@@ -28,17 +29,22 @@ namespace AdventureAuthor.Utils
 			if (handler != null) {
 				handler(this, e);
 			}
-		}                                                          
+		}
+		
+		
+		public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register("IsEditable",
+		                                                                        typeof(bool),
+		                                                                        typeof(EditableTextBox));
+		                                                                        
 		
 			
-		private bool isEditable;
 		public bool IsEditable {
 			get { 
-				return isEditable;
+				return (bool)this.GetValue(IsEditableProperty);
 			}
 			set { 
-				isEditable = value;
-				if (isEditable) {
+				this.SetValue(IsEditableProperty,value);
+				if (value) {
 		        	Background = Brushes.White;
 		        	BorderBrush = Brushes.Black;
 		        	IsReadOnly = false;
@@ -55,14 +61,14 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		public SwitchableTextBox() : this(true)
+		public EditableTextBox() : this(true)
 		{			
 		}
 		
 		
-		public SwitchableTextBox(bool editable) : base()
+		public EditableTextBox(bool editable) : base()
 		{		
-			isEditable = editable;
+			IsEditable = editable;
 			AllowDrop = true;
 		}
 	}

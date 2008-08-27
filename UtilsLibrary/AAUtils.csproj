@@ -58,6 +58,7 @@
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
+    <Compile Include="Utils\EditableTextBox.cs" />
     <Compile Include="Utils\Filters.cs" />
     <Compile Include="Utils\FriendlyToolTip.xaml.cs">
       <SubType>Code</SubType>
