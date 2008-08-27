@@ -42,7 +42,7 @@ namespace AdventureAuthor.Tasks
 		/// Tags associated with this task, usually indicating the type(s) of work this task relates to. 
 		/// For example, 'Bugs' or 'World building', or both. 
 		/// </summary>
-		private List<string> tags;
+		private List<string> tags = new List<string>();
 		[XmlArray]
 		public List<string> Tags {
 			get { return tags; }

@@ -10,6 +10,7 @@
 using System;
 using System.Xml.Serialization;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using AdventureAuthor.Utils;
 
@@ -19,7 +20,7 @@ namespace AdventureAuthor.Tasks
 	/// A collection of tasks for a task manager application. 
 	/// </summary>
 	[Serializable]
-	public class TaskCollection : List<Task>
+	public class TaskCollection : ObservableCollection<Task>
 	{	
 		/// <summary>
 		/// The user who created this task collection.
@@ -44,20 +45,9 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// A list of every task in this collection. 
-		/// </summary>
-		private List<Task> tasks;
-		[XmlArray]
-		public List<Task> Tasks {
-			get { return tasks; }
-			set { tasks = value; } //to enable TwoWay data binding
-		}
-		
-		
-		/// <summary>
 		/// Create a new task collection.
 		/// </summary>
-		public TaskCollection() : this(new List<Task>())
+		public TaskCollection() : this(User.GetCurrentUserName(),DateTime.Now)
 		{
 		}
 		
@@ -65,17 +55,8 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// Create a new task collection.
 		/// </summary>
-		public TaskCollection(List<Task> tasks) : this(tasks,User.GetCurrentUserName(),DateTime.Now)
+		public TaskCollection(string creator, DateTime created) : base()
 		{
-		}
-		
-		
-		/// <summary>
-		/// Create a new task collection.
-		/// </summary>
-		public TaskCollection(List<Task> tasks, string creator, DateTime created)
-		{
-			this.tasks = tasks;
 			this.creator = creator;
 			this.created = created;
 		}		

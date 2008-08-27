@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -28,20 +29,6 @@ namespace AdventureAuthor.Tasks
 		#endregion
 		
 		#region Properties and fields
-		
-		public TaskCollection TaskCollection {
-			get { return (TaskCollection)DataContext; }
-			internal set { 
-				DataContext = value;
-				TaskCollection taskCollection = TaskCollection;
-				if (taskCollection != null) {
-					foreach (Task task in TaskCollection.Tasks) {
-						task.PropertyChanged += MakeDirty;
-					}
-				}
-			}
-		}
-		    	
     	
     	/// <summary>
     	/// True if the file has changed since the last save; false otherwise.
@@ -123,9 +110,40 @@ namespace AdventureAuthor.Tasks
 		/// <param name="tasks">The collection of tasks to open</param>
 		private void Open(TaskCollection tasks)
 		{
-			TaskCollection = tasks;
+			if (tasks == null) {
+				throw new ArgumentNullException();
+			}			
+			
+			// Track any changes to these tasks:
+			foreach (Task task in tasks) {
+				task.PropertyChanged += MakeDirty;			
+			}
+			tasks.CollectionChanged += MakeDirtyWhenTaskCollectionChanges;
+			
+			// Open the task collection in the TaskPad:
+			pad.Open(tasks);
+			
 			MyTasksPreferences.Instance.ActiveFilePath = null;
 			Dirty = false;
+		}
+
+		
+		private void MakeDirtyWhenTaskCollectionChanges(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action) {
+				case NotifyCollectionChangedAction.Add:
+					MakeDirty();
+					break;
+				case NotifyCollectionChangedAction.Move:
+					MakeDirty();
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					MakeDirty();
+					break;
+				default:
+					DebugLog.Write("Something unusual happened to the Tasks collection: (" + e.Action + ") " + e.ToString());
+					break;
+			}
 		}
 		
 		
@@ -166,7 +184,7 @@ namespace AdventureAuthor.Tasks
 		public void Save(string path)
 		{
 			try {				
-				Serialization.Serialize(path,TaskCollection);
+				Serialization.Serialize(path,pad.CurrentTaskCollection);
 				Dirty = false;
 				UpdateTitleBar();
 			}
@@ -178,7 +196,7 @@ namespace AdventureAuthor.Tasks
 		
 		public void CloseCurrentFile()
 		{
-			TaskCollection = null;
+			pad.Clear();
 			
 			// Remember the last open file:
 			if (MyTasksPreferences.Instance.ActiveFilePath != null) {
@@ -349,6 +367,9 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
+    	/// <summary>
+    	/// Update the window title to reflect the current filename and whether or not it has changed from disk.
+    	/// </summary>
     	private void UpdateTitleBar()
     	{	
     		string newTitle;
@@ -367,6 +388,29 @@ namespace AdventureAuthor.Tasks
     		
     		if (Title != newTitle) {
     			Title = newTitle;
+    		}
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Add a task to the current task collection. Using this method ensures that the necessary
+    	/// event handlers are added to the task - do not add directly to the collection.
+    	/// </summary>
+    	/// <param name="task"></param>
+    	public void AddTask(Task task)
+    	{
+    		task.PropertyChanged += MakeDirty;
+    		pad.Add(task);
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Indicate that the current task collection has been changed in some way.
+    	/// </summary>
+    	public void MakeDirty()
+    	{
+    		if (!Dirty) {
+    			Dirty = true;	
     		}
     	}
 		
@@ -460,8 +504,9 @@ namespace AdventureAuthor.Tasks
     	{
     		//NewTaskDialog();
     		Task task = new Task();
-    		TaskCollection.Tasks.Add(task);
-    		
+    		task.Tags.Add("Ramblo");
+    		task.Tags.Add("Shirple");
+    		AddTask(task);
     	}
 		
 		#endregion
