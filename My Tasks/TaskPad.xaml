@@ -8,6 +8,9 @@
 	Width="500" Height="600">
 	
 	<UserControl.Resources>
+		<CollectionViewSource x:Key="tasksCollectionViewSource"
+							  Source="{Binding Path=., Mode=TwoWay}"/>
+							  <!--Filter="TaskFilter"/>-->
 		
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
@@ -54,8 +57,8 @@
 		
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<Grid x:Name="taskGrid" 
-				  Background="Transparent">
+			<Border BorderBrush="Gray" BorderThickness="1">
+			<Grid x:Name="taskGrid" Background="Pink">
 				<Grid.RowDefinitions>
 					<RowDefinition/> <!--Description-->
 					<RowDefinition/> <!--Tags-->
@@ -65,6 +68,14 @@
 					<ColumnDefinition/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
+				
+				<!--<Grid.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+						<GradientStop Offset="-1" Color="Silver"/>
+						<GradientStop Offset="0.5" Color="Transparent"/>
+						<GradientStop Offset="2" Color="Silver"/>
+					</LinearGradientBrush>
+				</Grid.Background>-->
 			
 				<!--UpdateSourceTrigger is set to PropertyChanged to ensure that you always get the latest value
 					for a TextBox that has currently got focus. By default, only upon losing focus does
@@ -75,7 +86,7 @@
 				<utils:EditableTextBox
 					x:Name="descriptionBox"
 					Grid.Row="0" Grid.Column="0"
-					Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
+					Text="{Binding Path=State, UpdateSourceTrigger=PropertyChanged}"						
 					TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 				    TextWrapping="Wrap"
 				    VerticalAlignment="Center"
@@ -93,15 +104,16 @@
 				          Grid.RowSpan="2" 
 				          Grid.Column="1"
 				          Margin="20"
+				          IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}"
 				          HorizontalAlignment="Center"
 				          VerticalAlignment="Center"
-						  IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}">
+						  Checked="TaskCompleted">
 					<CheckBox.LayoutTransform>
 						<ScaleTransform ScaleX="2" 
 						                ScaleY="2"
 										PresentationOptions:Freeze="true"/>
 					</CheckBox.LayoutTransform>
-				</CheckBox>		
+				</CheckBox>						
 				
 				<ListBox Grid.Row="1" Grid.Column="0"
 						 Margin="5"
@@ -135,13 +147,14 @@
 				</StackPanel>
 			
 			</Grid>			
-		
-			<DataTemplate.Triggers>
+			</Border>
+			
+			<!--<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
 				             Value="True">
 					<Setter TargetName="taskControlPanel" Property="Visibility" Value="Visible"/>
 				</DataTrigger>
-			</DataTemplate.Triggers>
+			</DataTemplate.Triggers>-->
 		
 		</DataTemplate>
 	
@@ -164,10 +177,12 @@
     		<Grid.RowDefinitions>
 				<RowDefinition Height="70"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="100"/>
+				<RowDefinition Height="40"/>
+				<RowDefinition Height="60"/>
 			</Grid.RowDefinitions>
 						
-			<TextBlock Grid.Row="0"
+			<TextBlock x:Name="headingTextBlock"
+					   Grid.Row="0"
 			           Grid.Column="0"
 					   Text="Things To Do" 
 			           VerticalAlignment="Center"
@@ -181,17 +196,32 @@
 			         Grid.Row="1"
 					 Grid.Column="0"
 			         Padding="15"
-					 ItemsSource="{Binding Path=., Mode=TwoWay}"
-					 ItemTemplate="{StaticResource taskDataTemplate}"
+					 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}}"			         
 			         SelectionMode="Single"
 			         ScrollViewer.CanContentScroll="false"
 					 Background="Transparent"
-					 BorderBrush="Transparent"/>
+					 BorderBrush="Transparent"
+					 ItemTemplate="{StaticResource taskDataTemplate}">
+			</ListBox>
 			
-			<tasks:DogEar Grid.Row="2" Grid.Column="0"
+			<StackPanel Grid.Row="2" Grid.Column="0"
+						Orientation="Horizontal">
+				<!--TODO: Nothing will display if this starts off checked (until it's unchecked)-->
+				<CheckBox x:Name="hideCompletedTasksCheckbox"
+					      Margin="5"
+				          IsChecked="false"
+						  Checked="HideCompletedTasksChanged"
+						  Unchecked="HideCompletedTasksChanged">
+					<CheckBox.Content>
+						<TextBlock FontSize="14" Text="Hide completed tasks"/>
+					</CheckBox.Content>
+				</CheckBox>
+			</StackPanel>
+			
+			<tasks:DogEar Grid.Row="3" Grid.Column="0"
 			              Corner="BottomRight"
 						  MouseDown="ShowNextPage"/>
-			<tasks:DogEar Grid.Row="2" Grid.Column="0"
+			<tasks:DogEar Grid.Row="3" Grid.Column="0"
 			              Corner="BottomLeft"
 						  MouseDown="ShowPreviousPage"/>
     	</Grid>
