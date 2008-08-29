@@ -10,6 +10,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
@@ -42,9 +43,9 @@ namespace AdventureAuthor.Tasks
 		/// Tags associated with this task, usually indicating the type(s) of work this task relates to. 
 		/// For example, 'Bugs' or 'World building', or both. 
 		/// </summary>
-		private List<string> tags = new List<string>();
+		private ObservableCollection<string> tags = new ObservableCollection<string>();
 		[XmlArray]
-		public List<string> Tags {
+		public ObservableCollection<string> Tags {
 			get { return tags; }
 		}
 		
@@ -138,7 +139,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		/// <param name="description">A textual description of what this task involves</param>
 		public Task(string description) : this(description,
-		                                       new List<string>())
+		                                       new ObservableCollection<string>())
 		{
 		}
 		
@@ -162,7 +163,7 @@ namespace AdventureAuthor.Tasks
 		/// <param name="description">A textual description of what this task involves</param>
 		/// <param name="tags">Tags associated with this task, usually indicating the type(s) of work this 
 		/// task relates to.</param>
-		public Task(string description, List<string> tags) : this(description,
+		public Task(string description, ObservableCollection<string> tags) : this(description,
 		                                                          tags,
 		                                                          TaskOrigin.UserCreated.ToString())
 		{
@@ -193,7 +194,7 @@ namespace AdventureAuthor.Tasks
 		/// task relates to.</param>
 		/// <param name="origin">The origin of the task. Tasks will often be original to the user, but may also have
 		/// been suggested by the application or by someone else.</param>
-		public Task(string description, List<string> tags, string origin) : this(description,
+		public Task(string description, ObservableCollection<string> tags, string origin) : this(description,
 		                                                                         tags,
 		                                                                         origin,
 		                                                                         TaskState.NotCompleted)
@@ -231,7 +232,7 @@ namespace AdventureAuthor.Tasks
 		/// been suggested by the application or by someone else.</param>
 		/// <param name="state">The various states a task can be in - completed, not yet completed,
 		/// currently in progress, or deleted.</param>
-		public Task(string description, List<string> tags, string origin, TaskState state) : this(description,
+		public Task(string description, ObservableCollection<string> tags, string origin, TaskState state) : this(description,
 		                                                                                          tags,
 		                                                                                          origin,
 		                                                                                          state,
@@ -255,7 +256,7 @@ namespace AdventureAuthor.Tasks
 		/// <param name="created">The date and time this task was created.</param>
 		public Task(string description, string tag, string origin, 
 		            TaskState state, string creator, DateTime created) : this(description,
-		                                                          			  new List<string>(1),
+		                                                          			  new ObservableCollection<string>(),
 		                                                          			  origin,
 		                                                          			  state,
 		                                                          			  creator,
@@ -277,7 +278,7 @@ namespace AdventureAuthor.Tasks
 		/// currently in progress, or deleted.</param>
 		/// <param name="creator">The user who created this task.</param>
 		/// <param name="created">The date and time this task was created.</param>
-		public Task(string description, List<string> tags, string origin, TaskState state, string creator, DateTime created)
+		public Task(string description, ObservableCollection<string> tags, string origin, TaskState state, string creator, DateTime created)
 		{
 			this.description = description;
 			this.tags = tags;

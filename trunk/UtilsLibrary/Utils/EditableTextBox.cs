@@ -17,7 +17,8 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Utils
 {
 	/// <summary>
-	/// XAML-friendly version of SwitchableTextBox - made a new class so as not to disrupt the other applications.
+	/// XAML-friendly version of SwitchableTextBox - made a new class so as not to 
+	/// disrupt the other applications.
 	/// Should switch them all over to use this at some point (never will).
 	/// </summary>
 	public class EditableTextBox : ReportingTextBox
@@ -32,19 +33,23 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register("IsEditable",
-		                                                                        typeof(bool),
-		                                                                        typeof(EditableTextBox));
-		                                                                        
+//		public static readonly DependencyProperty IsEditableProperty = 
+//			DependencyProperty.Register("IsEditable",
+//		                                typeof(bool),
+//		                                typeof(EditableTextBox));
 		
-			
+		
+		private bool isEditable;
 		public bool IsEditable {
+			//TODO: Problem here is that DependencyProperties don't actually call the get and 
+			//set methods when changing the value, so the special logic below (changing IsReadOnly
+			//and visual appearance) is being ignored.
 			get { 
-				return (bool)this.GetValue(IsEditableProperty);
+				return isEditable;
 			}
 			set { 
-				this.SetValue(IsEditableProperty,value);
-				if (value) {
+				isEditable = value;
+				if (isEditable) {
 		        	Background = Brushes.White;
 		        	BorderBrush = Brushes.Black;
 		        	IsReadOnly = false;
@@ -61,7 +66,7 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		public EditableTextBox() : this(true)
+		public EditableTextBox() : this(false)
 		{			
 		}
 		

@@ -4,7 +4,8 @@
   	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
-	Width="420" Height="500">
+	Button.Click="HandleTaskButtonClicks"
+	Width="500" Height="600">
 	
 	<UserControl.Resources>
 		
@@ -13,7 +14,7 @@
 		
 		<!--Defining the appearance of a tag-->
 		<DataTemplate x:Key="tagDataTemplate">
-			<TextBox Text="{Binding Mode=TwoWay, Path=.}"
+			<TextBox Text="{Binding Mode=TwoWay, Path=., UpdateSourceTrigger=PropertyChanged}"
 					 Padding="3"
 					 Margin="2"/>
 		</DataTemplate>
@@ -41,11 +42,11 @@
 								                  VerticalAlignment="Center"/>
 							</TextBlock>                  
 						</Grid>					
-						<!--<ControlTemplate.Triggers>
+						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
 								<Setter TargetName="contentBlock" Property="Background" Value="LightGray"/>
 							</Trigger>
-						</ControlTemplate.Triggers>	-->				
+						</ControlTemplate.Triggers>					
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
@@ -54,16 +55,15 @@
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
 			<Grid x:Name="taskGrid" 
-			      Margin="5"
 				  Background="Transparent">
 				<Grid.RowDefinitions>
 					<RowDefinition/> <!--Description-->
 					<RowDefinition/> <!--Tags-->
-					<RowDefinition/> <!--Controls (when selected)-->
+					<RowDefinition/> <!--Controls (visible when selected)-->
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0.67*"/>
-					<ColumnDefinition Width="55"/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 			
 				<!--UpdateSourceTrigger is set to PropertyChanged to ensure that you always get the latest value
@@ -75,22 +75,24 @@
 				<utils:EditableTextBox
 					x:Name="descriptionBox"
 					Grid.Row="0" Grid.Column="0"
-				    Width="300"					
 					Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
 					TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 				    TextWrapping="Wrap"
 				    VerticalAlignment="Center"
 				    HorizontalAlignment="Right"	
-					utils:EditableTextBox.IsEditable="False"
+				    Width="300"
 				    Padding="10"
 					FontSize="16" 
 				    FontWeight="Thin"
-				    Foreground="Black"/>
+				    Foreground="Black"
+					GotFocus="MakeDescriptionBoxEditable"
+					LostFocus="MakeDescriptionBoxUneditable"/>
 				
 				<CheckBox x:Name="completedCheckBox"
 				          Grid.Row="0" 
 				          Grid.RowSpan="2" 
 				          Grid.Column="1"
+				          Margin="20"
 				          HorizontalAlignment="Center"
 				          VerticalAlignment="Center"
 						  IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}">
@@ -103,6 +105,8 @@
 				
 				<ListBox Grid.Row="1" Grid.Column="0"
 						 Margin="5"
+				         Width="300"
+				         BorderThickness="0"
 						 ItemsSource="{Binding Path=Tags}"
 						 ItemTemplate="{StaticResource tagDataTemplate}"
 						 ItemsPanel="{StaticResource tagListTemplate}"
@@ -111,30 +115,28 @@
 				<StackPanel x:Name="taskControlPanel"
 							Grid.Row="2" Grid.Column="0"
 				            Visibility="Collapsed"
-							Orientation="Horizontal"
-							Width="300">
+							Orientation="Horizontal">
 					
 					<!--Doesn't work properly if you just set this style to apply to all buttons
 					by putting it in StackPanel.Resources - not sure why.-->
-					<Button Content="Delete" Style="{StaticResource taskControlButtonStyle}"
-							Click="OnClick_DeleteTask"/>
-					<Button Content="Edit" Style="{StaticResource taskControlButtonStyle}"
-							Click="OnClick_EditTask"/>
-					<Button Content="Change category" Style="{StaticResource taskControlButtonStyle}"
-							Click="OnClick_ChangeCategoryOfTask"/>
-					<Button Content="Move up" Style="{StaticResource taskControlButtonStyle}"
-							Click="OnClick_MoveUp"/>
-					<Button Content="Move down" Style="{StaticResource taskControlButtonStyle}"
-							Click="OnClick_MoveDown"/>
+					<Button x:Name="DeleteTaskButton" 
+					        Content="Delete" 
+					        Style="{StaticResource taskControlButtonStyle}"/>
+					<Button x:Name="AddTagButton" 
+					        Content="Add tag"
+					        Style="{StaticResource taskControlButtonStyle}"/>
+					<Button x:Name="MoveTaskUpButton" 
+					        Content="Move up" 
+					        Style="{StaticResource taskControlButtonStyle}"/>
+					<Button x:Name="MoveTaskDownButton" 
+					        Content="Move down" 
+					        Style="{StaticResource taskControlButtonStyle}"/>
 				
 				</StackPanel>
 			
 			</Grid>			
 		
 			<DataTemplate.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter TargetName="taskGrid" Property="Background" Value="LightGray"/>
-				</Trigger>
 				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
 				             Value="True">
 					<Setter TargetName="taskControlPanel" Property="Visibility" Value="Visible"/>
@@ -164,7 +166,7 @@
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="100"/>
 			</Grid.RowDefinitions>
-			
+						
 			<TextBlock Grid.Row="0"
 			           Grid.Column="0"
 					   Text="Things To Do" 
@@ -182,13 +184,16 @@
 					 ItemsSource="{Binding Path=., Mode=TwoWay}"
 					 ItemTemplate="{StaticResource taskDataTemplate}"
 			         SelectionMode="Single"
+			         ScrollViewer.CanContentScroll="false"
 					 Background="Transparent"
 					 BorderBrush="Transparent"/>
 			
 			<tasks:DogEar Grid.Row="2" Grid.Column="0"
-			              Corner="BottomRight"/>
+			              Corner="BottomRight"
+						  MouseDown="ShowNextPage"/>
 			<tasks:DogEar Grid.Row="2" Grid.Column="0"
-			              Corner="BottomLeft"/>
+			              Corner="BottomLeft"
+						  MouseDown="ShowPreviousPage"/>
     	</Grid>
 	</Border>
 
