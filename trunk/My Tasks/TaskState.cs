@@ -32,8 +32,8 @@ namespace AdventureAuthor.Tasks
 	/// </summary>
 	public enum TaskState
 	{
-		Completed,
 		NotCompleted,
+		Completed,
 		InProgress, // currently not used
 		Deleted // currently not used
 	}
