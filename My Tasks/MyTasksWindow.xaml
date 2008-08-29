@@ -2,6 +2,7 @@
 	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
   	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     WindowState="Maximized"
 	Width="700" Height="700"
@@ -47,6 +48,8 @@
 					<MenuItem Name="NewTaskMenuItem" Header="New task"
 					          Click="OnClick_NewTask"/>
 					<Separator/>
+					<MenuItem Header="List tags"
+					          Click="OnClick_ListTags"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
@@ -54,8 +57,8 @@
 		<Grid DockPanel.Dock="Bottom">	
 			<tasks:TaskPad 
 				x:Name="pad"
-				Height="500"
-				Width="400"
+				Height="600"
+				Width="500"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center">
 				<tasks:TaskPad.LayoutTransform>

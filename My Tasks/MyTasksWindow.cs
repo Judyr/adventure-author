@@ -504,11 +504,21 @@ namespace AdventureAuthor.Tasks
     	{
     		//NewTaskDialog();
     		Task task = new Task();
-    		task.Tags.Add("Ramblo");
-    		task.Tags.Add("Shirple");
     		AddTask(task);
+    	}
+    	
+    	
+    	private void OnClick_ListTags(object sender, EventArgs e)
+    	{
+    		foreach (Task task in pad.CurrentTaskCollection) {
+    			foreach (string tag in task.Tags) {
+    				Title += " " + tag;
+    			}
+    		}
     	}
 		
 		#endregion
+	
+		
 	}
 }

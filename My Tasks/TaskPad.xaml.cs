@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 using AdventureAuthor.Utils;
@@ -10,7 +11,7 @@ namespace AdventureAuthor.Tasks
 	/// A control resembling a notepad, which is used to display a list of tasks ('Things to do').
 	/// </summary>
     public partial class TaskPad : UserControl
-    {
+    {    	
     	#region Properties and fields
     			
 		/// <summary>
@@ -80,17 +81,31 @@ namespace AdventureAuthor.Tasks
 		#endregion
 		
 		#region Event handlers
-		
-		/// <summary>
-		/// Delete a user-specified task after receiving confirmation.
-		/// </summary>
-		private void OnClick_DeleteTask(object sender, RoutedEventArgs e)
-		{
-			Task task = taskListBox.SelectedItem as Task;
-			if (task == null) {
-				throw new InvalidOperationException("No task is currently selected.");
-			}
 			
+		private void HandleTaskButtonClicks(object sender, RoutedEventArgs e)
+		{
+			if (e.OriginalSource is Button) {
+				Button button = (Button)e.OriginalSource;
+				Task task = (Task)button.DataContext;
+				
+				if (button.Name == "DeleteTaskButton") {					
+					DeleteTaskDialog(task);
+				}
+				else if (button.Name == "AddTagButton") {
+					AddTagDialog(task);
+				}
+				else if (button.Name == "MoveTaskUpButton") {
+					MoveTaskUp(task);
+				}
+				else if (button.Name == "MoveTaskDownButton") {
+					MoveTaskDown(task);
+				}
+			}			
+		}
+		
+		
+		private void DeleteTaskDialog(Task task)
+		{
 			MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this task?",
 										              "Delete task?",
 										              MessageBoxButton.OKCancel,
@@ -98,31 +113,18 @@ namespace AdventureAuthor.Tasks
 										              MessageBoxResult.OK);
 			if (result == MessageBoxResult.OK) {
 				Delete(task);
-			}			
+			}	
 		}
 		
 		
-		private void OnClick_EditTask(object sender, RoutedEventArgs e)
+		private void AddTagDialog(Task task)
 		{
+			task.Tags.Add(String.Empty);
 		}
 		
 		
-		private void OnClick_ChangeCategoryOfTask(object sender, RoutedEventArgs e)
+		private void MoveTaskUp(Task task)
 		{
-			Say.Information("Change category");
-		}
-		
-		
-		/// <summary>
-		/// Move a user-specified task up in the list.
-		/// </summary>
-		private void OnClick_MoveUp(object sender, RoutedEventArgs e)
-		{
-			Task task = taskListBox.SelectedItem as Task;
-			if (task == null) {
-				throw new InvalidOperationException("No task is currently selected.");
-			}
-			
 			int index = CurrentTaskCollection.IndexOf(task);
 			if (index == -1) {
 				throw new InvalidOperationException("The selected task was not found in the current task collection.");
@@ -130,20 +132,12 @@ namespace AdventureAuthor.Tasks
 			int newIndex = index - 1;
 			if (newIndex >= 0) {
 				CurrentTaskCollection.Move(index,newIndex);
-			}			
+			}	
 		}
 		
 		
-		/// <summary>
-		/// Move a user-specified task down in the list.
-		/// </summary>
-		private void OnClick_MoveDown(object sender, RoutedEventArgs e)
+		private void MoveTaskDown(Task task)
 		{
-			Task task = taskListBox.SelectedItem as Task;
-			if (task == null) {
-				throw new InvalidOperationException("No task is currently selected.");
-			}
-			
 			int index = CurrentTaskCollection.IndexOf(task);
 			if (index == -1) {
 				throw new InvalidOperationException("The selected task was not found in the current task collection.");
@@ -153,6 +147,30 @@ namespace AdventureAuthor.Tasks
 			if (newIndex <= maxIndex) {
 				CurrentTaskCollection.Move(index,newIndex);
 			}		
+		}
+		
+		
+		private void MakeDescriptionBoxEditable(object sender, RoutedEventArgs e)
+		{
+			EditableTextBox editableTextBox = (EditableTextBox)sender;
+			editableTextBox.IsEditable = true;
+		}
+		
+		
+		private void MakeDescriptionBoxUneditable(object sender, RoutedEventArgs e)
+		{
+			EditableTextBox editableTextBox = (EditableTextBox)sender;
+			editableTextBox.IsEditable = false;
+		}
+		
+				
+		private void ShowNextPage(object sender, MouseButtonEventArgs e)
+		{
+		}
+		
+		
+		private void ShowPreviousPage(object sender, MouseButtonEventArgs e)
+		{
 		}
 		
 		#endregion
