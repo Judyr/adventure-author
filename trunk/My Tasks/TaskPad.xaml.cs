@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
@@ -86,19 +87,20 @@ namespace AdventureAuthor.Tasks
 		{
 			if (e.OriginalSource is Button) {
 				Button button = (Button)e.OriginalSource;
-				Task task = (Task)button.DataContext;
-				
-				if (button.Name == "DeleteTaskButton") {					
-					DeleteTaskDialog(task);
-				}
-				else if (button.Name == "AddTagButton") {
-					AddTagDialog(task);
-				}
-				else if (button.Name == "MoveTaskUpButton") {
-					MoveTaskUp(task);
-				}
-				else if (button.Name == "MoveTaskDownButton") {
-					MoveTaskDown(task);
+				if (button.DataContext is Task) {
+					Task task = (Task)button.DataContext;				
+					if (button.Name == "DeleteTaskButton") {					
+						DeleteTaskDialog(task);
+					}
+					else if (button.Name == "AddTagButton") {
+						AddTagDialog(task);
+					}
+					else if (button.Name == "MoveTaskUpButton") {
+						MoveTaskUp(task);
+					}
+					else if (button.Name == "MoveTaskDownButton") {
+						MoveTaskDown(task);
+					}
 				}
 			}			
 		}
@@ -161,6 +163,50 @@ namespace AdventureAuthor.Tasks
 		{
 			EditableTextBox editableTextBox = (EditableTextBox)sender;
 			editableTextBox.IsEditable = false;
+		}
+		
+		
+		private void HideCompletedTasksChanged(object sender, RoutedEventArgs e)
+		{	
+			UpdateVisibleTasks();
+		}
+		
+		
+		/// <summary>
+		/// If completed tasks are to be hidden and a task has just been completed,
+		/// refresh the view of visible tasks.
+		/// </summary>
+		private void TaskCompleted(object sender, RoutedEventArgs e)
+		{
+			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
+				CheckBox checkBox = (CheckBox)sender;
+				if ((bool)checkBox.IsChecked) {
+					UpdateVisibleTasks();
+				}
+			}
+		}
+		
+		
+		private void UpdateVisibleTasks()
+		{
+			if (Resources.Contains("tasksCollectionViewSource")) {
+				CollectionViewSource cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
+				if (cvs != null && cvs.View != null) {	
+					if ((bool)hideCompletedTasksCheckbox.IsChecked) {
+						cvs.View.Filter = new Predicate<object>(HideCompletedTasksFilter); 
+					}
+					else {
+						cvs.View.Filter = null;
+					}
+				}	
+			}
+		}
+				
+  
+		private bool HideCompletedTasksFilter(object obj)
+		{			
+			Task task = (Task)obj;
+			return (task.State != TaskState.Completed);
 		}
 		
 				

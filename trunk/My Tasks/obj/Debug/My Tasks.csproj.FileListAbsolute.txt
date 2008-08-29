@@ -32,3 +32,23 @@ C:\Code\My Tasks\bin\Debug\AAUtils.dll
 C:\Code\My Tasks\bin\Debug\AAUtils.pdb
 C:\Code\My Tasks\obj\Debug\MyTasksWindow.g.cs
 C:\Code\My Tasks\obj\Debug\MyTasksWindow.baml
+C:\AdminCat\My Tasks\obj\Debug\ResolveAssemblyReference.cache
+C:\AdminCat\My Tasks\obj\Debug\DogEar.baml
+C:\AdminCat\My Tasks\obj\Debug\DogEar.g.cs
+C:\AdminCat\My Tasks\obj\Debug\MyTasksWindow.g.cs
+C:\AdminCat\My Tasks\obj\Debug\App.g.cs
+C:\AdminCat\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\AdminCat\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
+C:\AdminCat\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
+C:\AdminCat\My Tasks\obj\Debug\My Tasks.exe
+C:\AdminCat\My Tasks\obj\Debug\My Tasks.pdb
+C:\AdminCat\My Tasks\bin\Debug\My Tasks.exe
+C:\AdminCat\My Tasks\bin\Debug\My Tasks.pdb
+C:\AdminCat\My Tasks\bin\Debug\AAUtils.dll
+C:\AdminCat\My Tasks\bin\Debug\AAUtils.pdb
+C:\AdminCat\My Tasks\obj\Debug\TaskPad.g.cs
+C:\AdminCat\My Tasks\obj\Debug\TaskPad.baml
+C:\AdminCat\My Tasks\obj\Debug\MyTasksWindow.baml
+C:\AdminCat\My Tasks\obj\Debug\My Tasks.g.resources
+C:\My Tasks output\My Tasks.exe
+C:\My Tasks output\My Tasks.pdb
