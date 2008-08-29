@@ -86,7 +86,7 @@
 				<utils:EditableTextBox
 					x:Name="descriptionBox"
 					Grid.Row="0" Grid.Column="0"
-					Text="{Binding Path=State, UpdateSourceTrigger=PropertyChanged}"						
+					Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
 					TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 				    TextWrapping="Wrap"
 				    VerticalAlignment="Center"
