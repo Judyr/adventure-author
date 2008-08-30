@@ -289,5 +289,30 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		#endregion
+
+		#region Methods
+		
+		/// <summary>
+		/// Check whether a particular string occurs within the description or tags
+		/// of this task.
+		/// </summary>
+		/// <param name="searchString">The string to search for</param>
+		/// <returns>True if the string occurs; false otherwise</returns>
+		public bool ContainsString(string searchString)
+		{
+			if (Description.Contains(searchString) && Description != String.Empty) {
+				return true;
+			}
+			else {
+				foreach (string tag in Tags) {
+					if (tag.Contains(searchString) && tag != String.Empty) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		#endregion
 	}
 }

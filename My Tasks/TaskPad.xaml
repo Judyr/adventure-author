@@ -216,6 +216,12 @@
 						<TextBlock FontSize="14" Text="Hide completed tasks"/>
 					</CheckBox.Content>
 				</CheckBox>
+			
+				<TextBlock Margin="5" 
+				           Text="Search: "/>
+			
+				<TextBox x:Name="searchStringTextBox"
+				         Width="120"/>
 			</StackPanel>
 			
 			<tasks:DogEar Grid.Row="3" Grid.Column="0"
