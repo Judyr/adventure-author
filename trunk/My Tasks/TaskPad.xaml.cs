@@ -22,6 +22,12 @@ namespace AdventureAuthor.Tasks
 			get { return (TaskCollection)DataContext; }
 			set { DataContext = value; }
 		}   	
+		
+		
+		/// <summary>
+		/// The CollectionViewSource providing access to the task collection.
+		/// </summary>
+		private CollectionViewSource cvs;
     	
     	#endregion
     	
@@ -30,6 +36,7 @@ namespace AdventureAuthor.Tasks
 		public TaskPad()
 		{
 			InitializeComponent();
+			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
 		}
 		
 		#endregion
@@ -166,9 +173,49 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void HideCompletedTasksChanged(object sender, RoutedEventArgs e)
-		{	
-			UpdateVisibleTasks();
+		private void AddHideCompletedTasksFilter(object sender, RoutedEventArgs e)
+		{
+			cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+		}
+		
+		
+		private void RemoveHideCompletedTasksFilter(object sender, RoutedEventArgs e)
+		{
+			cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+		}
+		
+		
+		private void RefreshFilters()
+		{
+			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
+				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+			}
+			
+			cvs.Filter -= new FilterEventHandler(SearchFilter);
+			cvs.Filter += new FilterEventHandler(SearchFilter);
+		}
+		
+		
+		private void CompletedTasksFilter(object sender, FilterEventArgs e)
+		{
+			Task task = (Task)e.Item;
+			if (task.State == TaskState.Completed) {
+				e.Accepted = false;
+			}
+			// Never set e.Accepted to true, or you may override the results of another filter.
+		}
+		
+		
+		private void SearchFilter(object sender, FilterEventArgs e)
+		{
+			if (searchStringTextBox.Text.Length > 0) {
+				Task task = (Task)e.Item;
+				if (!task.ContainsString(searchStringTextBox.Text)) {
+					e.Accepted = false;
+				}
+			}
+			// Never set e.Accepted to true, or you may override the results of another filter.
 		}
 		
 		
@@ -180,33 +227,19 @@ namespace AdventureAuthor.Tasks
 		{
 			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
 				CheckBox checkBox = (CheckBox)sender;
-				if ((bool)checkBox.IsChecked) {
-					UpdateVisibleTasks();
+				if ((bool)checkBox.IsChecked) {					
+					RefreshFilters();
 				}
 			}
 		}
 		
 		
-		private void UpdateVisibleTasks()
+		/// <summary>
+		/// When the search text changes, update all the view filters.
+		/// </summary>
+		private void SearchTextChanged(object sender, RoutedEventArgs e)
 		{
-			if (Resources.Contains("tasksCollectionViewSource")) {
-				CollectionViewSource cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
-				if (cvs != null && cvs.View != null) {	
-					if ((bool)hideCompletedTasksCheckbox.IsChecked) {
-						cvs.View.Filter = new Predicate<object>(HideCompletedTasksFilter); 
-					}
-					else {
-						cvs.View.Filter = null;
-					}
-				}	
-			}
-		}
-				
-  
-		private bool HideCompletedTasksFilter(object obj)
-		{			
-			Task task = (Task)obj;
-			return (task.State != TaskState.Completed);
+			RefreshFilters();
 		}
 		
 				
