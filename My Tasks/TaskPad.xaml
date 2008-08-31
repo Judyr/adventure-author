@@ -8,6 +8,14 @@
 	Width="500" Height="600">
 	
 	<UserControl.Resources>
+		
+		<LinearGradientBrush x:Key="taskBackgroundBrush"
+							 StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Offset="-1" Color="Silver"/>
+			<GradientStop Offset="0.5" Color="Transparent"/>
+			<GradientStop Offset="2" Color="Silver"/>
+		</LinearGradientBrush>
+		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
 							  <!--Filter="TaskFilter"/>-->
@@ -58,7 +66,8 @@
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
 			<Border BorderBrush="Gray" BorderThickness="1">
-			<Grid x:Name="taskGrid" Background="Pink">
+			<Grid x:Name="taskGrid"
+				  Background="Pink">
 				<Grid.RowDefinitions>
 					<RowDefinition/> <!--Description-->
 					<RowDefinition/> <!--Tags-->
@@ -69,14 +78,6 @@
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 				
-				<!--<Grid.Background>
-					<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-						<GradientStop Offset="-1" Color="Silver"/>
-						<GradientStop Offset="0.5" Color="Transparent"/>
-						<GradientStop Offset="2" Color="Silver"/>
-					</LinearGradientBrush>
-				</Grid.Background>-->
-			
 				<!--UpdateSourceTrigger is set to PropertyChanged to ensure that you always get the latest value
 					for a TextBox that has currently got focus. By default, only upon losing focus does
 					the TextBox update its value, which is fine until you need to save and close. A much better
@@ -89,11 +90,12 @@
 					Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"						
 					TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 				    TextWrapping="Wrap"
+					FontFamily="Comic Sans MS"
+					FontSize="20"
 				    VerticalAlignment="Center"
 				    HorizontalAlignment="Right"	
 				    Width="300"
 				    Padding="10"
-					FontSize="16" 
 				    FontWeight="Thin"
 				    Foreground="Black"
 					GotFocus="MakeDescriptionBoxEditable"
@@ -149,12 +151,12 @@
 			</Grid>			
 			</Border>
 			
-			<!--<DataTemplate.Triggers>
+			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
 				             Value="True">
 					<Setter TargetName="taskControlPanel" Property="Visibility" Value="Visible"/>
 				</DataTrigger>
-			</DataTemplate.Triggers>-->
+			</DataTemplate.Triggers>
 		
 		</DataTemplate>
 	
@@ -210,8 +212,8 @@
 				<CheckBox x:Name="hideCompletedTasksCheckbox"
 					      Margin="5"
 				          IsChecked="false"
-						  Checked="HideCompletedTasksChanged"
-						  Unchecked="HideCompletedTasksChanged">
+						  Checked="AddHideCompletedTasksFilter"
+						  Unchecked="RemoveHideCompletedTasksFilter">
 					<CheckBox.Content>
 						<TextBlock FontSize="14" Text="Hide completed tasks"/>
 					</CheckBox.Content>
@@ -221,6 +223,7 @@
 				           Text="Search: "/>
 			
 				<TextBox x:Name="searchStringTextBox"
+				         TextChanged="SearchTextChanged"
 				         Width="120"/>
 			</StackPanel>
 			

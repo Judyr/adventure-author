@@ -299,13 +299,14 @@ namespace AdventureAuthor.Tasks
 		/// <param name="searchString">The string to search for</param>
 		/// <returns>True if the string occurs; false otherwise</returns>
 		public bool ContainsString(string searchString)
-		{
-			if (Description.Contains(searchString) && Description != String.Empty) {
+		{			
+			string str = searchString.ToLower();
+			if (Description != null && Description.ToLower().Contains(str) && Description != String.Empty) {
 				return true;
 			}
 			else {
 				foreach (string tag in Tags) {
-					if (tag.Contains(searchString) && tag != String.Empty) {
+					if (tag.ToLower().Contains(str) && tag != String.Empty) {
 						return true;
 					}
 				}
