@@ -57,15 +57,15 @@
 		<Grid DockPanel.Dock="Bottom">	
 			<tasks:TaskPad 
 				x:Name="pad"
-				Height="600"
-				Width="500"
+				Height="550"
+				Width="450"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center">
 				<tasks:TaskPad.LayoutTransform>
 					<RotateTransform PresentationOptions:Freeze="true" Angle="356"/>
 				</tasks:TaskPad.LayoutTransform>
 			</tasks:TaskPad>
-		</Grid>
+		</Grid>       
 		
 	</DockPanel>
 </Window>

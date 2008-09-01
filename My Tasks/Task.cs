@@ -44,7 +44,6 @@ namespace AdventureAuthor.Tasks
 		/// For example, 'Bugs' or 'World building', or both. 
 		/// </summary>
 		private ObservableCollection<string> tags = new ObservableCollection<string>();
-		[XmlArray]
 		public ObservableCollection<string> Tags {
 			get { return tags; }
 		}
