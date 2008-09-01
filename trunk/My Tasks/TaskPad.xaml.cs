@@ -37,6 +37,10 @@ namespace AdventureAuthor.Tasks
 		{
 			InitializeComponent();
 			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
+			// If 'Hide completed tasks' is ticked at launch, the Checked event fires
+			// before there is a CollectionViewSource reference to add search filters to.
+			// Deal with this possibility by explicitly refreshing the filters here:
+			RefreshFilters();
 		}
 		
 		#endregion
@@ -113,6 +117,21 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		private void HandleReturnKeyPressForTagEntry(object sender, KeyEventArgs e)
+		{
+			TextBox textBox = (TextBox)e.OriginalSource;
+			if (textBox.Name == "AddTagTextBox" && e.Key == Key.Return) {
+				if (textBox.Text.Length > 0) {					
+					Task task = (Task)textBox.DataContext;
+					if (!task.Tags.Contains(textBox.Text)) {
+						task.Tags.Add(textBox.Text);
+					}
+					textBox.Text = String.Empty;
+				}				
+			}
+		}
+		
+		
 		private void DeleteTaskDialog(Task task)
 		{
 			MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this task?",
@@ -175,13 +194,17 @@ namespace AdventureAuthor.Tasks
 		
 		private void AddHideCompletedTasksFilter(object sender, RoutedEventArgs e)
 		{
-			cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+			if (cvs != null) {
+				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+			}
 		}
 		
 		
 		private void RemoveHideCompletedTasksFilter(object sender, RoutedEventArgs e)
 		{
-			cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+			}
 		}
 		
 		

@@ -5,27 +5,20 @@
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
 	Button.Click="HandleTaskButtonClicks"
-	Width="500" Height="600">
+    TextBox.KeyDown="HandleReturnKeyPressForTagEntry"
+	Width="450" Height="550">
 	
 	<UserControl.Resources>
 		
-		<LinearGradientBrush x:Key="taskBackgroundBrush"
-							 StartPoint="0,0" EndPoint="1,1">
-			<GradientStop Offset="-1" Color="Silver"/>
-			<GradientStop Offset="0.5" Color="Transparent"/>
-			<GradientStop Offset="2" Color="Silver"/>
-		</LinearGradientBrush>
-		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
-							  <!--Filter="TaskFilter"/>-->
 		
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		
 		<!--Defining the appearance of a tag-->
 		<DataTemplate x:Key="tagDataTemplate">
-			<TextBox Text="{Binding Mode=TwoWay, Path=., UpdateSourceTrigger=PropertyChanged}"
+			<TextBox Text="{Binding Path=., UpdateSourceTrigger=PropertyChanged}"
 					 Padding="3"
 					 Margin="2"/>
 		</DataTemplate>
@@ -39,7 +32,7 @@
 		<Style x:Key="taskControlButtonStyle" TargetType="Button">
 			<!--Set to true to not get any properties from the themes.-->
 			<Setter Property="OverridesDefaultStyle" Value="True"/>
-			<Setter Property="Margin" Value="4"/>
+			<Setter Property="Margin" Value="7"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">						
@@ -65,9 +58,8 @@
 		
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<Border BorderBrush="Gray" BorderThickness="1">
-			<Grid x:Name="taskGrid"
-				  Background="Pink">
+			<!--<Border BorderBrush="Gray" BorderThickness="1">-->
+			<Grid x:Name="taskGrid">
 				<Grid.RowDefinitions>
 					<RowDefinition/> <!--Description-->
 					<RowDefinition/> <!--Tags-->
@@ -136,20 +128,24 @@
 					<Button x:Name="DeleteTaskButton" 
 					        Content="Delete" 
 					        Style="{StaticResource taskControlButtonStyle}"/>
-					<Button x:Name="AddTagButton" 
-					        Content="Add tag"
-					        Style="{StaticResource taskControlButtonStyle}"/>
 					<Button x:Name="MoveTaskUpButton" 
 					        Content="Move up" 
 					        Style="{StaticResource taskControlButtonStyle}"/>
 					<Button x:Name="MoveTaskDownButton" 
 					        Content="Move down" 
 					        Style="{StaticResource taskControlButtonStyle}"/>
+					<Button x:Name="AddTagButton" 
+					        Content="Add tag:"
+					        Style="{StaticResource taskControlButtonStyle}"/>
+					<TextBox x:Name="AddTagTextBox"
+					         Height="20"
+							 Width="70" 
+							 FontSize="11"/>
 				
 				</StackPanel>
 			
 			</Grid>			
-			</Border>
+			<!--</Border>-->
 			
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
@@ -179,7 +175,7 @@
     		<Grid.RowDefinitions>
 				<RowDefinition Height="70"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="40"/>
+				<RowDefinition Height="45"/>
 				<RowDefinition Height="60"/>
 			</Grid.RowDefinitions>
 						
@@ -206,26 +202,40 @@
 					 ItemTemplate="{StaticResource taskDataTemplate}">
 			</ListBox>
 			
-			<StackPanel Grid.Row="2" Grid.Column="0"
-						Orientation="Horizontal">
-				<!--TODO: Nothing will display if this starts off checked (until it's unchecked)-->
+			<Grid Grid.Row="2" Grid.Column="0"
+			      Background="AntiqueWhite">
+				
 				<CheckBox x:Name="hideCompletedTasksCheckbox"
-					      Margin="5"
-				          IsChecked="false"
+				          FontSize="14"
+						  HorizontalAlignment="Left"					         
+					      VerticalAlignment="Center"
+				          IsChecked="True"
 						  Checked="AddHideCompletedTasksFilter"
-						  Unchecked="RemoveHideCompletedTasksFilter">
+						  Unchecked="RemoveHideCompletedTasksFilter"
+			      		  Margin="10">
 					<CheckBox.Content>
-						<TextBlock FontSize="14" Text="Hide completed tasks"/>
+						<TextBlock Text="Hide completed tasks"/>
 					</CheckBox.Content>
 				</CheckBox>
 			
-				<TextBlock Margin="5" 
-				           Text="Search: "/>
+				<StackPanel Orientation="Horizontal"
+				            HorizontalAlignment="Right"					         
+					        VerticalAlignment="Center"
+			      			Margin="10">
+					
+					<TextBlock Text="Search:   "
+					           FontSize="14"					         
+					           VerticalAlignment="Center"/>
+				
+					<TextBox x:Name="searchStringTextBox"
+					         TextChanged="SearchTextChanged"					         
+					         VerticalAlignment="Center"
+					         FontSize="14"
+					         Width="200"/>
+				
+				</StackPanel>
 			
-				<TextBox x:Name="searchStringTextBox"
-				         TextChanged="SearchTextChanged"
-				         Width="120"/>
-			</StackPanel>
+			</Grid>
 			
 			<tasks:DogEar Grid.Row="3" Grid.Column="0"
 			              Corner="BottomRight"
