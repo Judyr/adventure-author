@@ -6,7 +6,9 @@
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
 	Button.Click="HandleTaskButtonClicks"
     TextBox.KeyDown="HandleReturnKeyPressForTagEntry"
+    utils:EditableTextBox.GotFocus="SelectTaskWhenEditingDescription"
 	Width="450" Height="550">
+    <!--tasks:TagControl.ClickedDelete="HandleDeleteTagClicks"-->
 	
 	<UserControl.Resources>
 		
@@ -14,15 +16,8 @@
 							  Source="{Binding Path=., Mode=TwoWay}"/>
 		
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
-		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
-		
-		<!--Defining the appearance of a tag-->
-		<DataTemplate x:Key="tagDataTemplate">
-			<TextBox Text="{Binding Path=., UpdateSourceTrigger=PropertyChanged}"
-					 Padding="3"
-					 Margin="2"/>
-		</DataTemplate>
-		
+		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>		
+				
 		<!--Defining the appearance of the list of tags-->
 		<ItemsPanelTemplate x:Key="tagListTemplate">
 			<StackPanel Orientation="Horizontal" Background="LightGreen"/>
@@ -58,8 +53,8 @@
 		
 		<!--Defining the appearance of a Task-->
 		<DataTemplate x:Key="taskDataTemplate">
-			<!--<Border BorderBrush="Gray" BorderThickness="1">-->
-			<Grid x:Name="taskGrid">
+			
+			<Grid x:Name="taskGrid" Margin="8">
 				<Grid.RowDefinitions>
 					<RowDefinition/> <!--Description-->
 					<RowDefinition/> <!--Tags-->
@@ -109,14 +104,22 @@
 					</CheckBox.LayoutTransform>
 				</CheckBox>						
 				
-				<ListBox Grid.Row="1" Grid.Column="0"
+				<ListView Grid.Row="1" Grid.Column="0"
 						 Margin="5"
 				         Width="300"
+				         IsEnabled="False"
 				         BorderThickness="0"
 						 ItemsSource="{Binding Path=Tags}"
-						 ItemTemplate="{StaticResource tagDataTemplate}"
 						 ItemsPanel="{StaticResource tagListTemplate}"
-			        	 SelectionMode="Single"/>
+			        	 SelectionMode="Single">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<tasks:TagControl/>
+							</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
 			
 				<StackPanel x:Name="taskControlPanel"
 							Grid.Row="2" Grid.Column="0"
@@ -136,7 +139,8 @@
 					        Style="{StaticResource taskControlButtonStyle}"/>
 					<Button x:Name="AddTagButton" 
 					        Content="Add tag:"
-					        Style="{StaticResource taskControlButtonStyle}"/>
+					        Style="{StaticResource taskControlButtonStyle}"
+							IsEnabled="false"/>
 					<TextBox x:Name="AddTagTextBox"
 					         Height="20"
 							 Width="70" 
@@ -145,7 +149,6 @@
 				</StackPanel>
 			
 			</Grid>			
-			<!--</Border>-->
 			
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
@@ -209,7 +212,7 @@
 				          FontSize="14"
 						  HorizontalAlignment="Left"					         
 					      VerticalAlignment="Center"
-				          IsChecked="True"
+				          IsChecked="False"
 						  Checked="AddHideCompletedTasksFilter"
 						  Unchecked="RemoveHideCompletedTasksFilter"
 			      		  Margin="10">

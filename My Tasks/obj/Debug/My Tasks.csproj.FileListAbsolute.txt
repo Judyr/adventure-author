@@ -52,3 +52,5 @@ C:\AdminCat\My Tasks\obj\Debug\MyTasksWindow.baml
 C:\AdminCat\My Tasks\obj\Debug\My Tasks.g.resources
 C:\My Tasks output\My Tasks.exe
 C:\My Tasks output\My Tasks.pdb
+C:\AdminCat\My Tasks\obj\Debug\TagControl.baml
+C:\AdminCat\My Tasks\obj\Debug\TagControl.g.cs

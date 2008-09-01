@@ -65,6 +65,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Corner.cs" />
     <Compile Include="CornerConverter.cs" />
+    <Compile Include="TagControl.xaml.cs">
+      <DependentUpon>TagControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Task.cs" />
     <Compile Include="TaskCollection.cs" />
     <Compile Include="TaskOrigin.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="TaskStateToBooleanConverter.cs" />
     <Compile Include="TaskStateToTextDecorationConverter.cs" />
     <Page Include="DogEar.xaml" />
+    <Page Include="TagControl.xaml" />
     <Page Include="TaskPad.xaml" />
     <Page Include="MyTasksWindow.xaml" />
     <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
