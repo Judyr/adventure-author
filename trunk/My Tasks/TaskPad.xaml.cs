@@ -103,9 +103,6 @@ namespace AdventureAuthor.Tasks
 					if (button.Name == "DeleteTaskButton") {					
 						DeleteTaskDialog(task);
 					}
-					else if (button.Name == "AddTagButton") {
-						AddTagDialog(task);
-					}
 					else if (button.Name == "MoveTaskUpButton") {
 						MoveTaskUp(task);
 					}
@@ -117,17 +114,41 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		private void HandleDeleteTagClicks(object sender, RoutedEventArgs e)
+		{
+			TagControl tagControl = (TagControl)e.OriginalSource;
+			Say.Information(tagControl.DataContext.GetType().ToString() + "\n\n" + tagControl.DataContext);
+		}
+		
+		
 		private void HandleReturnKeyPressForTagEntry(object sender, KeyEventArgs e)
 		{
-			TextBox textBox = (TextBox)e.OriginalSource;
-			if (textBox.Name == "AddTagTextBox" && e.Key == Key.Return) {
-				if (textBox.Text.Length > 0) {					
-					Task task = (Task)textBox.DataContext;
-					if (!task.Tags.Contains(textBox.Text)) {
-						task.Tags.Add(textBox.Text);
+			if (e.OriginalSource is TextBox) {
+				TextBox textBox = (TextBox)e.OriginalSource;
+				if (textBox.Name == "AddTagTextBox" && e.Key == Key.Return) {
+					if (textBox.Text.Length > 0) {					
+						Task task = (Task)textBox.DataContext;
+						if (!task.Tags.Contains(textBox.Text)) {
+							task.Tags.Add(textBox.Text);
+						}
+						textBox.Text = String.Empty;
+					}				
+				}
+			}			
+		}
+		
+		
+		private void SelectTaskWhenEditingDescription(object sender, RoutedEventArgs e)
+		{
+			if (e.OriginalSource is EditableTextBox) {
+				EditableTextBox editableTextBox = (EditableTextBox)e.OriginalSource;
+				if (editableTextBox.DataContext is Task) {
+					Task task = (Task)editableTextBox.DataContext;
+					if (editableTextBox.IsFocused) {
+						taskListBox.SelectedItem = task;
+						editableTextBox.SelectAll(); //ugly way to stop text being highlighted by mistake
 					}
-					textBox.Text = String.Empty;
-				}				
+				}
 			}
 		}
 		
@@ -142,12 +163,6 @@ namespace AdventureAuthor.Tasks
 			if (result == MessageBoxResult.OK) {
 				Delete(task);
 			}	
-		}
-		
-		
-		private void AddTagDialog(Task task)
-		{
-			task.Tags.Add(String.Empty);
 		}
 		
 		
@@ -268,6 +283,7 @@ namespace AdventureAuthor.Tasks
 				
 		private void ShowNextPage(object sender, MouseButtonEventArgs e)
 		{
+			
 		}
 		
 		

@@ -1,0 +1,28 @@
+<UserControl x:Class="AdventureAuthor.Tasks.TagControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		<StackPanel Orientation="Horizontal">
+			<Label Content="{Binding}"
+			   	   Padding="4"/>
+			<Button x:Name="DeleteTagButton"
+					Width="7" Height="7"
+					Padding="3"
+					Click="DeleteTagButtonClick">
+				<Button.Template>
+					<ControlTemplate>
+						<Grid>							
+							<Rectangle Fill="LightGray" 
+							         Width="{Binding ElementName=DeleteTagButton, Path=Width}"
+							         Height="{Binding ElementName=DeleteTagButton, Path=Height}"/>
+							<Line Stroke="Red" X1="0" X2="{Binding ElementName=DeleteTagButton, Path=Width}"
+											   Y1="0" Y2="{Binding ElementName=DeleteTagButton, Path=Height}"/>
+							<Line Stroke="Red" X1="{Binding ElementName=DeleteTagButton, Path=Width}" X2="0"
+											   Y1="0" Y2="{Binding ElementName=DeleteTagButton, Path=Height}"/>
+						</Grid>							
+					</ControlTemplate>
+				</Button.Template>
+			</Button>
+		</StackPanel>
+	</Grid>
+</UserControl>
