@@ -371,7 +371,7 @@ namespace AdventureAuthor.Tasks
     	/// Update the window title to reflect the current filename and whether or not it has changed from disk.
     	/// </summary>
     	private void UpdateTitleBar()
-    	{	
+    	{	    		
     		string newTitle;
     		if (MyTasksPreferences.Instance.ActiveFilePath == null || MyTasksPreferences.Instance.ActiveFilePath == String.Empty) {
     			newTitle = APPLICATION_NAME;
@@ -502,23 +502,37 @@ namespace AdventureAuthor.Tasks
     	
     	private void OnClick_NewTask(object sender, EventArgs e)
     	{
-    		//NewTaskDialog();
-    		Task task = new Task();
+    		Task task = new Task("Enter your task here...");
     		AddTask(task);
+    		pad.taskListBox.SelectedItem = task;
+    		taskDescriptionBox.Focus();
+    		taskDescriptionBox.SelectAll();
     	}
-    	
-    	
-    	private void OnClick_ListTags(object sender, EventArgs e)
-    	{
-    		foreach (Task task in pad.CurrentTaskCollection) {
-    			foreach (string tag in task.Tags) {
-    				Title += " " + tag;
-    			}
-    		}
-    	}
+		
+		
+		private void MakeEditable(object sender, RoutedEventArgs e)
+		{
+			EditableTextBox editableTextBox = (EditableTextBox)sender;
+			editableTextBox.IsEditable = true;
+		}
+		
+		
+		private void MakeUneditable(object sender, RoutedEventArgs e)
+		{
+			EditableTextBox editableTextBox = (EditableTextBox)sender;
+			editableTextBox.IsEditable = false;
+		}
+		
+		
+		private void FinishEditingWhenUserHitsReturn(object sender, KeyEventArgs e)
+		{
+			EditableTextBox etb = (EditableTextBox)sender;
+			if (e.Key == Key.Return) {
+				etb.IsEditable = false;
+				taskCompletedCheckBox.Focus();
+			}
+		}
 		
 		#endregion
-	
-		
 	}
 }
