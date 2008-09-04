@@ -4,9 +4,22 @@
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
   	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:diagnostics="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     WindowState="Maximized"
-	Width="700" Height="700"	
+	Width="700" Height="700"
     >
+	
+	<Window.Resources>	
+		
+		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
+		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
+		
+		<ItemsPanelTemplate x:Key="tagListTemplate">
+			<StackPanel Orientation="Horizontal" Background="LightGreen"/>
+		</ItemsPanelTemplate>	
+	
+	</Window.Resources>
 	
 	<Window.Background>
 		<RadialGradientBrush>
@@ -48,24 +61,122 @@
 					<MenuItem Name="NewTaskMenuItem" Header="New task"
 					          Click="OnClick_NewTask"/>
 					<Separator/>
-					<MenuItem Header="List tags"
-					          Click="OnClick_ListTags"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
 	
-		<Grid DockPanel.Dock="Bottom">	
-			<tasks:TaskPad 
-				x:Name="pad"
-				Height="550"
-				Width="450"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Center">
-				<tasks:TaskPad.LayoutTransform>
-					<RotateTransform PresentationOptions:Freeze="true" Angle="356"/>
-				</tasks:TaskPad.LayoutTransform>
-			</tasks:TaskPad>
-		</Grid>       
+		<tasks:TaskPad 
+			x:Name="pad"
+			DockPanel.Dock="Left"
+			Height="650"
+			Width="250"
+			Margin="20"
+			VerticalAlignment="Top"
+			HorizontalAlignment="Left">
+			<!--<tasks:TaskPad.LayoutTransform>
+				<RotateTransform PresentationOptions:Freeze="true" Angle="358"/>
+			</tasks:TaskPad.LayoutTransform>-->
+		</tasks:TaskPad>
+		
+		<Border DockPanel.Dock="Right">
+			
+			<Grid Height="500"
+				  Width="400"
+			      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"
+			      ShowGridLines="True"
+				  Background="AntiqueWhite">
+				
+				<Grid.Style>
+					<Style TargetType="FrameworkElement">
+						<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+						<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
+					</Style>
+				</Grid.Style>
+				
+				<Grid.RowDefinitions>
+					<RowDefinition MinHeight="200" Height="*"/>
+					<RowDefinition Height="80"/>
+					<RowDefinition Height="80"/>
+					<RowDefinition Height="80"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				
+				<utils:EditableTextBox x:Name="taskDescriptionBox"
+									   Grid.Row="0"
+									   Grid.Column="0"
+									   Text="{Binding Path=Description, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+									   IsEditable="false"
+									   GotFocus="MakeEditable"
+									   LostFocus="MakeUneditable"
+									   KeyDown="FinishEditingWhenUserHitsReturn"
+									   TextWrapping="Wrap"
+									   Width="350"
+									   Margin="25"
+									   Padding="8"
+									   FontSize="32"
+									   FontFamily="Comic Sans MS"
+									   VerticalAlignment="Top"
+									   HorizontalAlignment="Center"
+									   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}">
+					<utils:EditableTextBox.BitmapEffect>
+						<BlurBitmapEffect Radius="1" KernelType="Box"/>
+					</utils:EditableTextBox.BitmapEffect>
+				</utils:EditableTextBox>
+				
+				<StackPanel Grid.Row="1"
+							Grid.Column="0"
+							Orientation="Horizontal">
+					<ListView Margin="5"
+				          Height="30"
+				          Width="300"
+				          IsEnabled="False"
+				          BorderThickness="0"
+						  ItemsSource="{Binding Path=Tags}"
+						  ItemsPanel="{StaticResource tagListTemplate}"
+			        	  SelectionMode="Single">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<tasks:TagControl/>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>				
+				</StackPanel>
+				
+				<TextBlock Grid.Row="2"
+						   Grid.Column="0"
+						   FontSize="16"
+				           HorizontalAlignment="Center"
+				           VerticalAlignment="Center"
+						   Foreground="Blue">
+					<Run>Created by someone at some point</Run>
+					<!--<Run>Created by </Run>
+					<Run Text="{Binding Creator}"/>
+					<Run> on </Run>
+					<Run Text="{Binding Created}"/>-->
+				</TextBlock>
+				
+				<CheckBox x:Name="taskCompletedCheckBox"
+						  Grid.Row="3"
+						  Grid.Column="0"
+				          Content="I have completed this task"
+				          FontSize="12"
+				          Margin="20"
+				          IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}"
+				          HorizontalAlignment="Center"
+				          VerticalAlignment="Center">
+					<CheckBox.LayoutTransform>
+						<ScaleTransform ScaleX="2" 
+						                ScaleY="2"
+										PresentationOptions:Freeze="true"/>
+					</CheckBox.LayoutTransform>
+				</CheckBox>	
+								
+				
+			
+			</Grid>
+		</Border>	
 		
 	</DockPanel>
 </Window>

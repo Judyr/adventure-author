@@ -54,3 +54,5 @@ C:\My Tasks output\My Tasks.exe
 C:\My Tasks output\My Tasks.pdb
 C:\AdminCat\My Tasks\obj\Debug\TagControl.baml
 C:\AdminCat\My Tasks\obj\Debug\TagControl.g.cs
+C:\Code\My Tasks\obj\Debug\TagControl.baml
+C:\Code\My Tasks\obj\Debug\TagControl.g.cs

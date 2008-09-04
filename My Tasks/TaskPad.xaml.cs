@@ -33,6 +33,13 @@ namespace AdventureAuthor.Tasks
     	
     	#region Constructors
     	
+    	public ListBox TaskListBox {
+    		get {
+    			return taskListBox;
+    		}
+    	}
+    	
+    	
 		public TaskPad()
 		{
 			InitializeComponent();
@@ -40,7 +47,7 @@ namespace AdventureAuthor.Tasks
 			// If 'Hide completed tasks' is ticked at launch, the Checked event fires
 			// before there is a CollectionViewSource reference to add search filters to.
 			// Deal with this possibility by explicitly refreshing the filters here:
-			RefreshFilters();
+			//RefreshFilters();
 		}
 		
 		#endregion
@@ -207,78 +214,78 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void AddHideCompletedTasksFilter(object sender, RoutedEventArgs e)
-		{
-			if (cvs != null) {
-				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
-			}
-		}
-		
-		
-		private void RemoveHideCompletedTasksFilter(object sender, RoutedEventArgs e)
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
-			}
-		}
-		
-		
-		private void RefreshFilters()
-		{
-			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
-				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
-				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
-			}
-			
-			cvs.Filter -= new FilterEventHandler(SearchFilter);
-			cvs.Filter += new FilterEventHandler(SearchFilter);
-		}
-		
-		
-		private void CompletedTasksFilter(object sender, FilterEventArgs e)
-		{
-			Task task = (Task)e.Item;
-			if (task.State == TaskState.Completed) {
-				e.Accepted = false;
-			}
-			// Never set e.Accepted to true, or you may override the results of another filter.
-		}
-		
-		
-		private void SearchFilter(object sender, FilterEventArgs e)
-		{
-			if (searchStringTextBox.Text.Length > 0) {
-				Task task = (Task)e.Item;
-				if (!task.ContainsString(searchStringTextBox.Text)) {
-					e.Accepted = false;
-				}
-			}
-			// Never set e.Accepted to true, or you may override the results of another filter.
-		}
-		
-		
-		/// <summary>
-		/// If completed tasks are to be hidden and a task has just been completed,
-		/// refresh the view of visible tasks.
-		/// </summary>
-		private void TaskCompleted(object sender, RoutedEventArgs e)
-		{
-			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
-				CheckBox checkBox = (CheckBox)sender;
-				if ((bool)checkBox.IsChecked) {					
-					RefreshFilters();
-				}
-			}
-		}
-		
-		
-		/// <summary>
-		/// When the search text changes, update all the view filters.
-		/// </summary>
-		private void SearchTextChanged(object sender, RoutedEventArgs e)
-		{
-			RefreshFilters();
-		}
+//		private void AddHideCompletedTasksFilter(object sender, RoutedEventArgs e)
+//		{
+//			if (cvs != null) {
+//				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+//			}
+//		}
+//		
+//		
+//		private void RemoveHideCompletedTasksFilter(object sender, RoutedEventArgs e)
+//		{
+//			if (cvs != null) {
+//				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+//			}
+//		}
+//		
+//		
+//		private void RefreshFilters()
+//		{
+//			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
+//				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
+//				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
+//			}
+//			
+//			cvs.Filter -= new FilterEventHandler(SearchFilter);
+//			cvs.Filter += new FilterEventHandler(SearchFilter);
+//		}
+//		
+//		
+//		private void CompletedTasksFilter(object sender, FilterEventArgs e)
+//		{
+//			Task task = (Task)e.Item;
+//			if (task.State == TaskState.Completed) {
+//				e.Accepted = false;
+//			}
+//			// Never set e.Accepted to true, or you may override the results of another filter.
+//		}
+//		
+//		
+//		private void SearchFilter(object sender, FilterEventArgs e)
+//		{
+//			if (searchStringTextBox.Text.Length > 0) {
+//				Task task = (Task)e.Item;
+//				if (!task.ContainsString(searchStringTextBox.Text)) {
+//					e.Accepted = false;
+//				}
+//			}
+//			// Never set e.Accepted to true, or you may override the results of another filter.
+//		}
+//		
+//		
+//		/// <summary>
+//		/// If completed tasks are to be hidden and a task has just been completed,
+//		/// refresh the view of visible tasks.
+//		/// </summary>
+//		private void TaskCompleted(object sender, RoutedEventArgs e)
+//		{
+//			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
+//				CheckBox checkBox = (CheckBox)sender;
+//				if ((bool)checkBox.IsChecked) {					
+//					RefreshFilters();
+//				}
+//			}
+//		}
+//		
+//		
+//		/// <summary>
+//		/// When the search text changes, update all the view filters.
+//		/// </summary>
+//		private void SearchTextChanged(object sender, RoutedEventArgs e)
+//		{
+//			RefreshFilters();
+//		}
 		
 				
 		private void ShowNextPage(object sender, MouseButtonEventArgs e)
