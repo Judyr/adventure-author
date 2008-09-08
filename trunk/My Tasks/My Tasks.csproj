@@ -94,9 +94,5 @@
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>
     </ProjectReference>
-    <Folder Include="Resources" />
-    <Resource Include="Resources\JOURNAL.TTF" />
-    <Resource Include="Resources\kaileenw.ttf" />
-    <Resource Include="Resources\Aquiline.ttf" />
   </ItemGroup>
 </Project>
