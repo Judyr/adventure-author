@@ -5,11 +5,13 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
-	Button.Click="HandleTaskButtonClicks"
     TextBox.KeyDown="HandleReturnKeyPressForTagEntry"
-    utils:EditableTextBox.GotFocus="SelectTaskWhenEditingDescription"
     Background="CornSilk"
 	Width="250" Height="650">
+	
+	<!--<UserControl.BitmapEffect>
+		<BevelBitmapEffect Relief="0.3"/>
+	</UserControl.BitmapEffect>-->
 	
 	<UserControl.Resources>
 		
@@ -52,6 +54,18 @@
 									</Binding.ConverterParameter>
 								</Binding>
 							</Grid.Width>
+							
+							<Grid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Move down"
+											  Click="MoveSelectedTaskDown"/>
+									<MenuItem Header="Move up"
+											  Click="MoveSelectedTaskUp"/>
+									<Separator/>
+									<MenuItem Header="Delete"
+											  Click="DeleteSelectedTask"/>								
+								</ContextMenu>
+							</Grid.ContextMenu>
 							
 							<Grid.RowDefinitions>
 								<RowDefinition/>
@@ -125,8 +139,46 @@
 					 Background="Transparent"
 					 BorderBrush="Transparent"
 					 ItemTemplate="{StaticResource taskDataTemplateMinimal}"
-					 ItemContainerStyle="{StaticResource taskContainerStyle}">
-			</ListBox>
+					 ItemContainerStyle="{StaticResource taskContainerStyle}"/>
+			
+			<StackPanel Grid.Row="2"
+						Grid.Column="0"
+						Orientation="Horizontal"
+						FlowDirection="RightToLeft"
+						VerticalAlignment="Top"
+						Margin="3">
+				<StackPanel.Resources>
+					<Style TargetType="{x:Type Button}">
+						<Setter Property="Width" Value="20"/>
+						<Setter Property="Height" Value="{Binding RelativeSource={RelativeSource Self}, Path=Width}"/>
+						<Setter Property="Margin" Value="2"/>
+						<!--<Setter Property="BitmapEffect">
+							<Setter.Value>
+								<BevelBitmapEffect Relief="0.1"/>
+							</Setter.Value>
+						</Setter>-->
+					</Style>
+				</StackPanel.Resources>
+				
+				<Button x:Name="DeleteTaskButton"
+						Click="DeleteSelectedTask"
+						ToolTip="Delete the selected task"/>
+				<Button x:Name="MoveTaskUpButton"
+						Click="MoveSelectedTaskUp"
+						ToolTip="Move the selected task up"/>
+				<Button x:Name="MoveTaskDownButton"
+						Click="MoveSelectedTaskDown"
+						ToolTip="Move the selected task down"/>			
+            	<Line Stroke="Black"
+					  StrokeThickness="0.5"				      
+					  X1="0"
+					  X2="0"
+					  Y1="0"
+					  Y2="{Binding ElementName=DeleteTaskButton, Path=Height}"
+					  Margin="3"/>
+				<Button x:Name="AddTaskButton"
+						ToolTip="Add a new task"/>	
+			</StackPanel>
 			
 			<!--<Grid Grid.Row="2" Grid.Column="0"
 			      Background="AntiqueWhite">

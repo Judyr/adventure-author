@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -18,7 +19,7 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// The task collection that is currently open.
 		/// </summary>
-		public TaskCollection CurrentTaskCollection {
+		public TaskCollection Tasks {
 			get { return (TaskCollection)DataContext; }
 			set { DataContext = value; }
 		}   	
@@ -47,7 +48,17 @@ namespace AdventureAuthor.Tasks
 			// If 'Hide completed tasks' is ticked at launch, the Checked event fires
 			// before there is a CollectionViewSource reference to add search filters to.
 			// Deal with this possibility by explicitly refreshing the filters here:
-			//RefreshFilters();
+			//RefreshFilters();			
+			
+            string imagePath;
+            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"delete.png");
+            Tools.SetXAMLButtonImage(DeleteTaskButton,imagePath,"delete");
+            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"07.png");
+            Tools.SetXAMLButtonImage(MoveTaskDownButton,imagePath,"down");
+            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"08.png");
+            Tools.SetXAMLButtonImage(MoveTaskUpButton,imagePath,"up");
+            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"add.png");
+            Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add");
 		}
 		
 		#endregion
@@ -59,7 +70,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public void Open(TaskCollection tasks)
 		{
-			CurrentTaskCollection = tasks;
+			Tasks = tasks;
 		}
 		
 		
@@ -68,7 +79,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public void Clear()
 		{
-			CurrentTaskCollection = null;
+			Tasks = null;
 		}
 		
 		
@@ -78,10 +89,34 @@ namespace AdventureAuthor.Tasks
 		/// <param name="task">The task to add</param>
 		public void Add(Task task)
 		{
-			if (CurrentTaskCollection == null) {
+			if (Tasks == null) {
 				throw new InvalidOperationException("No task collection is currently open.");
 			}
-			CurrentTaskCollection.Add(task);
+			Tasks.Add(task);
+		}
+		
+		
+		/// <summary>
+		/// Add a task to the current collection, placed after the currently selected task.
+		/// </summary>
+		/// <param name="task">The task to add</param>
+		public void AddAfterSelectedTask(Task task)
+		{
+			if (Tasks == null) {
+				throw new InvalidOperationException("No task collection is currently open.");
+			}
+			if (taskListBox.SelectedItem == null) {
+				Tasks.Add(task);
+			}
+			else {
+				int index = Tasks.IndexOf((Task)taskListBox.SelectedItem) + 1;
+				if (index == Tasks.Count) {
+					Tasks.Add(task);
+				}
+				else {
+					Tasks.Insert(index,task);
+				}
+			}		
 		}
 		
 		
@@ -91,35 +126,15 @@ namespace AdventureAuthor.Tasks
 		/// <param name="task">The task to delete</param>
 		public void Delete(Task task)
 		{
-			if (CurrentTaskCollection == null) {
+			if (Tasks == null) {
 				throw new InvalidOperationException("No task collection is currently open.");
 			}
-			CurrentTaskCollection.Remove(task);
+			Tasks.Remove(task);
 		}
 		
 		#endregion
 		
-		#region Event handlers
-			
-		private void HandleTaskButtonClicks(object sender, RoutedEventArgs e)
-		{
-			if (e.OriginalSource is Button) {
-				Button button = (Button)e.OriginalSource;
-				if (button.DataContext is Task) {
-					Task task = (Task)button.DataContext;				
-					if (button.Name == "DeleteTaskButton") {					
-						DeleteTaskDialog(task);
-					}
-					else if (button.Name == "MoveTaskUpButton") {
-						MoveTaskUp(task);
-					}
-					else if (button.Name == "MoveTaskDownButton") {
-						MoveTaskDown(task);
-					}
-				}
-			}			
-		}
-		
+		#region Event handlers  
 		
 		private void HandleDeleteTagClicks(object sender, RoutedEventArgs e)
 		{
@@ -145,57 +160,63 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void SelectTaskWhenEditingDescription(object sender, RoutedEventArgs e)
+		private void DeleteSelectedTask(object sender, RoutedEventArgs e)
 		{
-			if (e.OriginalSource is EditableTextBox) {
-				EditableTextBox editableTextBox = (EditableTextBox)e.OriginalSource;
-				if (editableTextBox.DataContext is Task) {
-					Task task = (Task)editableTextBox.DataContext;
-					if (editableTextBox.IsFocused) {
-						taskListBox.SelectedItem = task;
-						editableTextBox.SelectAll(); //ugly way to stop text being highlighted by mistake
-					}
-				}
+			if (taskListBox.SelectedItem != null) {		
+				Task task = (Task)taskListBox.SelectedItem;
+				MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the selected task?",
+											              "Delete task?",
+											              MessageBoxButton.OKCancel,
+											              MessageBoxImage.Question,
+											              MessageBoxResult.OK);
+				if (result == MessageBoxResult.OK) {
+					Delete(task);
+				}	
 			}
 		}
 		
 		
-		private void DeleteTaskDialog(Task task)
+		private void MoveSelectedTaskUp(object sender, RoutedEventArgs e)
 		{
-			MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this task?",
-										              "Delete task?",
-										              MessageBoxButton.OKCancel,
-										              MessageBoxImage.Question,
-										              MessageBoxResult.OK);
-			if (result == MessageBoxResult.OK) {
-				Delete(task);
-			}	
+			if (taskListBox.SelectedItem != null) {
+				Task task = (Task)taskListBox.SelectedItem;
+				MoveTaskUp(task);
+			}
+		}
+		
+		
+		private void MoveSelectedTaskDown(object sender, RoutedEventArgs e)
+		{
+			if (taskListBox.SelectedItem != null) {
+				Task task = (Task)taskListBox.SelectedItem;
+				MoveTaskDown(task);
+			}
 		}
 		
 		
 		private void MoveTaskUp(Task task)
 		{
-			int index = CurrentTaskCollection.IndexOf(task);
+			int index = Tasks.IndexOf(task);
 			if (index == -1) {
 				throw new InvalidOperationException("The selected task was not found in the current task collection.");
 			}
 			int newIndex = index - 1;
 			if (newIndex >= 0) {
-				CurrentTaskCollection.Move(index,newIndex);
+				Tasks.Move(index,newIndex);
 			}	
 		}
 		
 		
 		private void MoveTaskDown(Task task)
 		{
-			int index = CurrentTaskCollection.IndexOf(task);
+			int index = Tasks.IndexOf(task);
 			if (index == -1) {
 				throw new InvalidOperationException("The selected task was not found in the current task collection.");
 			}
 			int newIndex = index + 1;
-			int maxIndex = CurrentTaskCollection.Count - 1;
+			int maxIndex = Tasks.Count - 1;
 			if (newIndex <= maxIndex) {
-				CurrentTaskCollection.Move(index,newIndex);
+				Tasks.Move(index,newIndex);
 			}		
 		}
 		
@@ -289,8 +310,7 @@ namespace AdventureAuthor.Tasks
 		
 				
 		private void ShowNextPage(object sender, MouseButtonEventArgs e)
-		{
-			
+		{			
 		}
 		
 		

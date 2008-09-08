@@ -64,6 +64,8 @@ namespace AdventureAuthor.Tasks
 		public MyTasksWindow()
 		{			
 			InitializeComponent();  
+			
+			pad.AddTaskButton.Click += AddAndSelectNewTask;
 	                		
 			try {
 				Tools.EnsureDirectoryExists(MyTasksPreferences.LocalAppDataDirectory);
@@ -76,7 +78,7 @@ namespace AdventureAuthor.Tasks
 			// Set up event handlers:
 			Closing += HandleApplicationClosing;
 			MyTasksPreferences.Instance.PropertyChanged += HandlePreferencesChanged;
-			this.Changed += UpdateTitleBar;
+			Changed += UpdateTitleBar;
 			
 			// If you can find the last file that was opened, attempt to open it. Otherwise, open a blank task list.
 			string previousFilePath = MyTasksPreferences.Instance.PreviousFilePath;
@@ -141,7 +143,7 @@ namespace AdventureAuthor.Tasks
 					MakeDirty();
 					break;
 				default:
-					DebugLog.Write("Something unusual happened to the Tasks collection: (" + e.Action + ") " + e.ToString());
+					Say.Debug("Something unusual happened to the Tasks collection: (" + e.Action + ") " + e.ToString());
 					break;
 			}
 		}
@@ -184,7 +186,7 @@ namespace AdventureAuthor.Tasks
 		public void Save(string path)
 		{
 			try {				
-				Serialization.Serialize(path,pad.CurrentTaskCollection);
+				Serialization.Serialize(path,pad.Tasks);
 				Dirty = false;
 				UpdateTitleBar();
 			}
@@ -393,18 +395,6 @@ namespace AdventureAuthor.Tasks
     	
     	
     	/// <summary>
-    	/// Add a task to the current task collection. Using this method ensures that the necessary
-    	/// event handlers are added to the task - do not add directly to the collection.
-    	/// </summary>
-    	/// <param name="task"></param>
-    	public void AddTask(Task task)
-    	{
-    		task.PropertyChanged += MakeDirty;
-    		pad.Add(task);
-    	}
-    	
-    	
-    	/// <summary>
     	/// Indicate that the current task collection has been changed in some way.
     	/// </summary>
     	public void MakeDirty()
@@ -498,16 +488,6 @@ namespace AdventureAuthor.Tasks
     	{
     		CloseDialog();
     	}
-    	    	
-    	
-    	private void OnClick_NewTask(object sender, EventArgs e)
-    	{
-    		Task task = new Task("Enter your task here...");
-    		AddTask(task);
-    		pad.taskListBox.SelectedItem = task;
-    		taskDescriptionBox.Focus();
-    		taskDescriptionBox.SelectAll();
-    	}
 		
 		
 		private void MakeEditable(object sender, RoutedEventArgs e)
@@ -531,7 +511,25 @@ namespace AdventureAuthor.Tasks
 				etb.IsEditable = false;
 				taskCompletedCheckBox.Focus();
 			}
-		}
+		}  	    	
+    	
+		
+    	private void AddAndSelectNewTask(object sender, EventArgs e)
+    	{
+    		Task task = new Task("Enter your task here...");
+    		pad.AddAfterSelectedTask(task);
+    		pad.taskListBox.SelectedItem = task;
+    		taskDescriptionBox.Focus();
+    		taskDescriptionBox.SelectAll();
+    	}
+    	
+    	
+    	private void rar(object sender, MouseButtonEventArgs e) 
+    	{
+    		
+    		Say.Information(sender.ToString() +"\n\noriginal source: " + 
+    		                e.OriginalSource + "\n\nsource: " + e.Source);
+    	}
 		
 		#endregion
 	}

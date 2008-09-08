@@ -56,3 +56,19 @@ C:\AdminCat\My Tasks\obj\Debug\TagControl.baml
 C:\AdminCat\My Tasks\obj\Debug\TagControl.g.cs
 C:\Code\My Tasks\obj\Debug\TagControl.baml
 C:\Code\My Tasks\obj\Debug\TagControl.g.cs
+C:\Armadillo\My Tasks\obj\Debug\ResolveAssemblyReference.cache
+C:\Armadillo\My Tasks\obj\Debug\DogEar.baml
+C:\Armadillo\My Tasks\obj\Debug\TagControl.baml
+C:\Armadillo\My Tasks\obj\Debug\DogEar.g.cs
+C:\Armadillo\My Tasks\obj\Debug\TagControl.g.cs
+C:\Armadillo\My Tasks\obj\Debug\TaskPad.g.cs
+C:\Armadillo\My Tasks\obj\Debug\MyTasksWindow.g.cs
+C:\Armadillo\My Tasks\obj\Debug\App.g.cs
+C:\Armadillo\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Armadillo\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
+C:\Armadillo\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
+C:\Armadillo\My Tasks\obj\Debug\TaskPad.baml
+C:\Armadillo\My Tasks\obj\Debug\MyTasksWindow.baml
+C:\Armadillo\My Tasks\obj\Debug\My Tasks.g.resources
+C:\Armadillo\My Tasks\obj\Debug\My Tasks.exe
+C:\Armadillo\My Tasks\obj\Debug\My Tasks.pdb
