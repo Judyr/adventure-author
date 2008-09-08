@@ -3,9 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Grid>
 		<StackPanel Orientation="Horizontal">
-			<Label Content="{Binding}"
+			<TextBlock Text="{Binding}"
+			       FontFamily="Resources/#JOURNAL"
+			       FontSize="30"
+			       FontWeight="SemiBold"
+			       Foreground="DarkBlue"
+			       TextDecorations="Underline"
 			   	   Padding="4"/>
-			<Button x:Name="DeleteTagButton"
+			<!--<Button x:Name="DeleteTagButton"
 					Width="7" Height="7"
 					Padding="3"
 					Click="DeleteTagButtonClick">
@@ -22,7 +27,7 @@
 						</Grid>							
 					</ControlTemplate>
 				</Button.Template>
-			</Button>
+			</Button>-->
 		</StackPanel>
 	</Grid>
 </UserControl>

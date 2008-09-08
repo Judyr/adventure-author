@@ -16,12 +16,11 @@ namespace AdventureAuthor.Tasks
     /// <summary>
     /// Interaction logic for TagControl.xaml
     /// </summary>
-
     public partial class TagControl : UserControl
     {
-    	public event EventHandler ClickedDelete;
-		protected virtual void OnClickedDelete(EventArgs e) {
-    		EventHandler handler = ClickedDelete;
+    	public event EventHandler Deleting;
+		protected virtual void OnDeleting(EventArgs e) {
+    		EventHandler handler = Deleting;
 			if (handler != null) {
 				handler(this, e);
 			}
@@ -36,7 +35,7 @@ namespace AdventureAuthor.Tasks
         
         private void DeleteTagButtonClick(object sender, RoutedEventArgs e)
         {
-        	OnClickedDelete(new EventArgs());
+        	OnDeleting(new EventArgs());
         }
     }
 }

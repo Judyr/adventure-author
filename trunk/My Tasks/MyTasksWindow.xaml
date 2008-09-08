@@ -14,9 +14,12 @@
 		
 		<tasks:TaskStateToBooleanConverter x:Key="taskCompletedConverter"/>	
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
+		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
+		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
-			<StackPanel Orientation="Horizontal" Background="LightGreen"/>
+			<StackPanel Orientation="Horizontal" 
+			            Background="Transparent"/>
 		</ItemsPanelTemplate>	
 	
 	</Window.Resources>
@@ -58,8 +61,9 @@
 					          Click="OnClick_Close"/>
 				</MenuItem>
 				<MenuItem Header="Edit">
-					<MenuItem Name="NewTaskMenuItem" Header="New task"
-					          Click="OnClick_NewTask"/>
+					<MenuItem Name="NewTaskMenuItem" 
+					          Header="New task"
+							  Click="AddAndSelectNewTask"/>
 					<Separator/>
 				</MenuItem>
 			</Menu>			
@@ -68,7 +72,7 @@
 		<tasks:TaskPad 
 			x:Name="pad"
 			DockPanel.Dock="Left"
-			Height="650"
+			Height="550"
 			Width="250"
 			Margin="20"
 			VerticalAlignment="Top"
@@ -95,7 +99,7 @@
 				
 				<Grid.RowDefinitions>
 					<RowDefinition MinHeight="200" Height="*"/>
-					<RowDefinition Height="80"/>
+					<RowDefinition Height="140"/>
 					<RowDefinition Height="80"/>
 					<RowDefinition Height="80"/>
 				</Grid.RowDefinitions>
@@ -115,30 +119,30 @@
 									   Width="350"
 									   Margin="25"
 									   Padding="8"
-									   FontSize="32"
+									   FontSize="26"
 									   FontFamily="Comic Sans MS"
 									   VerticalAlignment="Top"
 									   HorizontalAlignment="Center"
 									   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}">
-					<utils:EditableTextBox.BitmapEffect>
+					<!--<utils:EditableTextBox.BitmapEffect>
 						<BlurBitmapEffect Radius="1" KernelType="Box"/>
-					</utils:EditableTextBox.BitmapEffect>
+					</utils:EditableTextBox.BitmapEffect>-->
 				</utils:EditableTextBox>
 				
 				<StackPanel Grid.Row="1"
 							Grid.Column="0"
 							Orientation="Horizontal">
 					<ListView Margin="5"
-				          Height="30"
-				          Width="300"
-				          IsEnabled="False"
+				          Height="70"
+					      Background="Transparent"
 				          BorderThickness="0"
 						  ItemsSource="{Binding Path=Tags}"
 						  ItemsPanel="{StaticResource tagListTemplate}"
-			        	  SelectionMode="Single">
+			        	  SelectionMode="Single"
+						  tasks:TagControl.PreviewMouseDown="rar">
 						<ListView.ItemTemplate>
 							<DataTemplate>
-								<tasks:TagControl/>
+								<tasks:TagControl Padding="6"/>
 							</DataTemplate>
 						</ListView.ItemTemplate>
 					</ListView>				
@@ -146,15 +150,12 @@
 				
 				<TextBlock Grid.Row="2"
 						   Grid.Column="0"
-						   FontSize="16"
+						   FontSize="14"
 				           HorizontalAlignment="Center"
 				           VerticalAlignment="Center"
 						   Foreground="Blue">
-					<Run>Created by someone at some point</Run>
-					<!--<Run>Created by </Run>
-					<Run Text="{Binding Creator}"/>
-					<Run> on </Run>
-					<Run Text="{Binding Created}"/>-->
+					<TextBlock Text="{Binding Path=Creator, Converter={StaticResource creatorStringConverter}}"/>
+					<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
 				</TextBlock>
 				
 				<CheckBox x:Name="taskCompletedCheckBox"
@@ -172,11 +173,9 @@
 										PresentationOptions:Freeze="true"/>
 					</CheckBox.LayoutTransform>
 				</CheckBox>	
-								
-				
 			
 			</Grid>
-		</Border>	
+		</Border>
 		
 	</DockPanel>
 </Window>
