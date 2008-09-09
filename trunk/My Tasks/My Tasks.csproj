@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="TaskStateToBooleanConverter.cs" />
     <Compile Include="TaskStateToTextDecorationConverter.cs" />
+    <Compile Include="TruncateTextConverter.cs" />
     <Page Include="DogEar.xaml" />
     <Page Include="TagControl.xaml" />
     <Page Include="TaskPad.xaml" />

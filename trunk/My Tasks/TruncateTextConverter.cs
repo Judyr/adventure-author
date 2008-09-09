@@ -30,9 +30,9 @@ using System.Windows.Data;
 
 namespace AdventureAuthor.Tasks
 {
-	public class CreationDateToStringConverter : IValueConverter
+	public class TruncateTextConverter : IValueConverter
 	{
-		public CreationDateToStringConverter()
+		public TruncateTextConverter()
 		{
 		}
 		
@@ -43,8 +43,24 @@ namespace AdventureAuthor.Tasks
 				throw new ArgumentException("targetType must be string");
 			}
 			
-			DateTime created = (DateTime)value;
-			return "on " + created.ToLongDateString();
+			string text = (string)value;
+			Int32 maxCharacters = (Int32)parameter;
+			
+			if (text.Length > 0 && text.Length > maxCharacters) {
+				string truncatedText = text.Substring(0,maxCharacters-1);
+				int lastSpace = truncatedText.LastIndexOf(' ');
+				int cutOff;
+				if (lastSpace == -1) {
+					cutOff = truncatedText.Length-1;
+				}
+				else {
+					cutOff = lastSpace;
+				}
+				return truncatedText.Substring(0,cutOff) + "...";
+			}
+			else {
+				return text;
+			}
 		}
 		
 		
