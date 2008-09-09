@@ -17,6 +17,7 @@
 		
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		<tasks:DoubleToDoubleConverter x:Key="doubleToDoubleConverter"/>
+		<tasks:TruncateTextConverter x:Key="truncateText"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -26,13 +27,21 @@
 			<TextBlock x:Name="descriptionBox" 
 				       Grid.Row="0" 
 				       Grid.Column="0"
-					   Text="{Binding Path=Description}"
 					   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
 					   TextWrapping="Wrap"
 					   Width="235"
 					   FontFamily="Comic Sans MS"
 					   FontSize="13"	           
-					   Padding="8,4,0,4"/>
+					   Padding="8,4,0,4">
+				<TextBlock.Text>
+					<Binding Path="Description"
+							 Converter="{StaticResource truncateText}">
+						<Binding.ConverterParameter>
+							<sys:Int32>70</sys:Int32>
+						</Binding.ConverterParameter>
+					</Binding>
+				</TextBlock.Text>
+			</TextBlock>
 		</DataTemplate>
 	
 		<!--Defining the appearance of a Task in the list view in terms of its ListBoxItem container.
