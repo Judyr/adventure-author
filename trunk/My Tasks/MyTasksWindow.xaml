@@ -16,6 +16,7 @@
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
 		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
+		<tasks:HideIfNoTaskSelectedConverter x:Key="hideIfNoTaskSelected"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
 			<StackPanel Orientation="Horizontal" 
@@ -86,7 +87,8 @@
 			
 			<Grid Height="500"
 				  Width="400"
-			      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"
+			      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
+			      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
 			      ShowGridLines="True"
 				  Background="AntiqueWhite">
 				

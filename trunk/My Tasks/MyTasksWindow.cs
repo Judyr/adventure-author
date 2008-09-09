@@ -209,15 +209,6 @@ namespace AdventureAuthor.Tasks
 			Dirty = false;
 			UpdateTitleBar();
 		}
-		
-		
-		/// <summary>
-		/// Bring up a new file dialog.
-		/// </summary>
-		private void NewDialog()
-		{
-			New();
-		}
     	
     	
     	/// <summary>
@@ -462,7 +453,7 @@ namespace AdventureAuthor.Tasks
     	
     	private void OnClick_New(object sender, EventArgs e)
     	{
-    		NewDialog();
+    		New();
     	}
     	    	
     	
