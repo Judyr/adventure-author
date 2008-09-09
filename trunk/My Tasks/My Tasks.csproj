@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="CreationDateToStringConverter.cs" />
     <Compile Include="CreatorToStringConverter.cs" />
+    <Compile Include="DisableIfNoTaskSelectedConverter.cs" />
     <Compile Include="HideIfNoTaskSelectedConverter.cs" />
     <Compile Include="DogEar.cs">
       <DependentUpon>DogEar.xaml</DependentUpon>

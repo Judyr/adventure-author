@@ -18,6 +18,7 @@
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
 		<tasks:DoubleToDoubleConverter x:Key="doubleToDoubleConverter"/>
 		<tasks:TruncateTextConverter x:Key="truncateText"/>
+		<tasks:DisableIfNoTaskSelectedConverter x:Key="disableIfNoTaskSelected"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -160,24 +161,33 @@
 					<Style TargetType="{x:Type Button}">
 						<Setter Property="Width" Value="20"/>
 						<Setter Property="Height" Value="{Binding RelativeSource={RelativeSource Self}, Path=Width}"/>
-						<Setter Property="Margin" Value="2"/>
+						<Setter Property="Margin" Value="2"/>						
 						<!--<Setter Property="BitmapEffect">
 							<Setter.Value>
 								<BevelBitmapEffect Relief="0.1"/>
 							</Setter.Value>
 						</Setter>-->
+					
+						<Style.Triggers>
+							<Trigger Property="IsEnabled" Value="false">
+								<Setter Property="Opacity" Value="0.4"/>
+							</Trigger>
+						</Style.Triggers>
 					</Style>
 				</StackPanel.Resources>
 				
 				<Button x:Name="DeleteTaskButton"
 						Click="DeleteSelectedTask"
-						ToolTip="Delete the selected task"/>
+						ToolTip="Delete the selected task"
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>
 				<Button x:Name="MoveTaskUpButton"
 						Click="MoveSelectedTaskUp"
-						ToolTip="Move the selected task up"/>
+						ToolTip="Move the selected task up"
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>
 				<Button x:Name="MoveTaskDownButton"
 						Click="MoveSelectedTaskDown"
-						ToolTip="Move the selected task down"/>			
+						ToolTip="Move the selected task down"
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>		
             	<Line Stroke="Black"
 					  StrokeThickness="0.5"				      
 					  X1="0"
