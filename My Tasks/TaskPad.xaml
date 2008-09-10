@@ -5,9 +5,9 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
-    TextBox.KeyDown="HandleReturnKeyPressForTagEntry"
+    KeyDown="HandleKeyPresses"
     Background="CornSilk"
-	Width="250" Height="650">
+	Width="255" Height="550">
 	
 	<!--<UserControl.BitmapEffect>
 		<BevelBitmapEffect Relief="0.3"/>
@@ -140,16 +140,19 @@
 				</TextBlock.BitmapEffect>
 			</TextBlock>
 			
-			<ListBox x:Name="taskListBox"
-			         Grid.Row="1"
-					 Grid.Column="0"
-					 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}}"			         
-			         SelectionMode="Single"
-			         ScrollViewer.CanContentScroll="false"
-					 Background="Transparent"
-					 BorderBrush="Transparent"
-					 ItemTemplate="{StaticResource taskDataTemplateMinimal}"
-					 ItemContainerStyle="{StaticResource taskContainerStyle}"/>
+			<ScrollViewer Grid.Row="1"
+						  Grid.Column="0"
+						  VerticalScrollBarVisibility="Auto"
+						  HorizontalScrollBarVisibility="Hidden">			
+				<ListBox x:Name="taskListBox"
+						 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}}"			         
+				         SelectionMode="Single"
+				         ScrollViewer.CanContentScroll="false"
+						 Background="Transparent"
+						 BorderBrush="Transparent"
+						 ItemTemplate="{StaticResource taskDataTemplateMinimal}"
+						 ItemContainerStyle="{StaticResource taskContainerStyle}"/>
+			</ScrollViewer>
 			
 			<StackPanel Grid.Row="2"
 						Grid.Column="0"

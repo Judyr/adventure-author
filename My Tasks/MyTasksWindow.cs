@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Reflection;
 using System.IO;
@@ -41,6 +43,13 @@ namespace AdventureAuthor.Tasks
 				OnChanged(new EventArgs());
 			}
 		}
+    	
+    	
+    	private ObservableCollection<string> allTags = new ObservableCollection<string>();
+		public ObservableCollection<string> AllTags {
+			get { return allTags; }
+			set { allTags = value; }
+		}
 		
 		#endregion
 		
@@ -62,8 +71,8 @@ namespace AdventureAuthor.Tasks
 		/// Create the main user interface window for the My Tasks application.
 		/// </summary>
 		public MyTasksWindow()
-		{			
-			InitializeComponent();  
+		{	
+			InitializeComponent();
 			
 			pad.AddTaskButton.Click += AddAndSelectNewTask;
 	                		
@@ -87,7 +96,10 @@ namespace AdventureAuthor.Tasks
 			}
 			else {
 				New();
-			}
+			}		
+			
+			TEMPORARYtagsList.DataContext = allTags;
+			UpdateTagCollection();
 		}
 		
 		#endregion
@@ -118,7 +130,9 @@ namespace AdventureAuthor.Tasks
 			
 			// Track any changes to these tasks:
 			foreach (Task task in tasks) {
-				task.PropertyChanged += MakeDirty;			
+				task.PropertyChanged += MakeDirty;
+				task.Tags.CollectionChanged += UpdateTagCollection;
+				task.Tags.CollectionChanged += MakeDirty;
 			}
 			tasks.CollectionChanged += MakeDirtyWhenTaskCollectionChanges;
 			
@@ -127,6 +141,7 @@ namespace AdventureAuthor.Tasks
 			
 			MyTasksPreferences.Instance.ActiveFilePath = null;
 			Dirty = false;
+			UpdateTagCollection();
 		}
 
 		
@@ -157,7 +172,7 @@ namespace AdventureAuthor.Tasks
 		{
 			try {
 				object obj = Serialization.Deserialize(path,typeof(TaskCollection));
-				TaskCollection tasks = (TaskCollection)obj;
+				TaskCollection tasks = (TaskCollection)obj;			
 				
 				Open(tasks);
 				
@@ -208,6 +223,7 @@ namespace AdventureAuthor.Tasks
 			
 			Dirty = false;
 			UpdateTitleBar();
+			UpdateTagCollection();
 		}
     	
     	
@@ -382,6 +398,40 @@ namespace AdventureAuthor.Tasks
     		if (Title != newTitle) {
     			Title = newTitle;
     		}
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Collect the set of available tags from the pre-defined set saved in
+		/// preferences, and from any tags in the currently open task collection:
+    	/// </summary>
+    	private void UpdateTagCollection(object sender, NotifyCollectionChangedEventArgs e)
+    	{
+    		UpdateTagCollection();
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Collect the set of available tags from the pre-defined set saved in
+		/// preferences, and from any tags in the currently open task collection:
+    	/// </summary>
+    	private void UpdateTagCollection()
+    	{
+    		allTags.Clear();
+			foreach (string tag in MyTasksPreferences.Instance.PreDefinedTags) {
+				if (!allTags.Contains(tag)) {
+					allTags.Add(tag);
+				}
+			}
+			if (pad.Tasks != null) {
+				foreach (Task task in pad.Tasks) {
+					foreach (string tag in task.Tags) {
+						if (!allTags.Contains(tag)) {
+							allTags.Add(tag);
+						}
+					}
+				}
+			}
     	}
     	
     	
