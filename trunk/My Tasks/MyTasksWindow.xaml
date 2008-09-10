@@ -73,8 +73,6 @@
 		<tasks:TaskPad 
 			x:Name="pad"
 			DockPanel.Dock="Left"
-			Height="550"
-			Width="250"
 			Margin="20"
 			VerticalAlignment="Top"
 			HorizontalAlignment="Left">
@@ -178,6 +176,15 @@
 			
 			</Grid>
 		</Border>
+	
+		<StackPanel DockPanel.Dock="Bottom"
+		         Height="300" Width="300">
+			<TextBlock Background="LightGreen" FontSize="20"
+					   Text="{Binding ElementName=TEMPORARYtagsList, Path=Items.Count}"/>
+			<ListView Background="Pink"
+				 x:Name="TEMPORARYtagsList"
+				 ItemsSource="{Binding Mode=OneWay}"/>		
+		</StackPanel>
 		
 	</DockPanel>
 </Window>

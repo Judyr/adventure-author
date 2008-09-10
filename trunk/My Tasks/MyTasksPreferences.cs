@@ -25,6 +25,9 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -73,7 +76,12 @@ namespace AdventureAuthor.Tasks
 						MyTasksPreferences.Instance = (MyTasksPreferences)o;
 					}
 					else {
-						instance = new MyTasksPreferences();
+	            		ObservableCollection<string> tags = new ObservableCollection<string>{"Gameplay",
+	            																			 "Bugs",
+	            																			 "Area design",
+	            																			 "Story",
+	            																			 "Dialogue"};
+	            		instance = new MyTasksPreferences(tags);
 					}
 				}
 				return instance;
@@ -91,6 +99,12 @@ namespace AdventureAuthor.Tasks
 		[XmlElement]
 		public string InstallDirectory {
 			get { return installDirectory; }
+			set { 
+				if (installDirectory != value) {
+					installDirectory = value;
+					NotifyPropertyChanged("InstallDirectory");
+				}
+			}
 		}
 		
 		
@@ -161,6 +175,19 @@ namespace AdventureAuthor.Tasks
 			get { return defaultPreferencesPath; }
 		}
 		
+		
+		private ObservableCollection<string> preDefinedTags;
+		[XmlArray]
+		public ObservableCollection<string> PreDefinedTags {
+			get { return preDefinedTags; }
+			set { 
+				if (preDefinedTags != value) {
+					preDefinedTags = value;
+					NotifyPropertyChanged("PreDefinedTags");
+				}
+			}
+		}
+		
 		#endregion
 
 		#region Constructors			
@@ -171,11 +198,26 @@ namespace AdventureAuthor.Tasks
 			localAppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"My Tasks");
 			defaultPreferencesPath = Path.Combine(localAppDataDirectory,"MyTasksPreferences.xml");
 		}
- 
 		
-		public MyTasksPreferences()
+		
+		/// <summary>
+		/// For deserialisation only.
+		/// </summary>
+		private MyTasksPreferences()
 		{			
-			// default preferences - should only be used if there's no preferences file found:
+		}
+		
+		
+		/// <summary>
+		/// Construct a MyTaskPreferences object with mostly default values.
+		/// </summary>
+		/// <param name="tags">The pre-defined tags to offer the user</param>
+		/// <remarks>Caused problems when I used a single parameterless constructor
+		/// for both construction and deserialisation (tag collection kept getting
+		/// added to itself, not sure why) so I created this one - the tags
+		/// parameter is fairly arbitrary but it needed a different method signature, so.</remarks>
+		private MyTasksPreferences(ObservableCollection<string> tags)
+		{			
 			string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			this.userFilesDirectory = Path.Combine(myDocumentsPath,"My Tasks");
 			this.activeFilePath = null;
@@ -183,6 +225,8 @@ namespace AdventureAuthor.Tasks
 			
 			// TODO get the install directory from the registry:			
 			this.installDirectory = @"C:\Program Files\Heriot-Watt University\My Tasks";
+			
+			preDefinedTags = tags;
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

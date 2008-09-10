@@ -42,13 +42,13 @@ namespace AdventureAuthor.Tasks
     	
     	
 		public TaskPad()
-		{
+		{					
 			InitializeComponent();
 			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
 			// If 'Hide completed tasks' is ticked at launch, the Checked event fires
 			// before there is a CollectionViewSource reference to add search filters to.
 			// Deal with this possibility by explicitly refreshing the filters here:
-			//RefreshFilters();			
+			//RefreshFilters();		
 			
             string imagePath;
             imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"delete.png");
@@ -143,24 +143,21 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void HandleReturnKeyPressForTagEntry(object sender, KeyEventArgs e)
+		private void HandleKeyPresses(object sender, KeyEventArgs e)
 		{
-			if (e.OriginalSource is TextBox) {
-				TextBox textBox = (TextBox)e.OriginalSource;
-				if (textBox.Name == "AddTagTextBox" && e.Key == Key.Return) {
-					if (textBox.Text.Length > 0) {					
-						Task task = (Task)textBox.DataContext;
-						if (!task.Tags.Contains(textBox.Text)) {
-							task.Tags.Add(textBox.Text);
-						}
-						textBox.Text = String.Empty;
-					}				
-				}
-			}			
+			if (e.Key == Key.Delete && taskListBox.SelectedItem != null) {
+				DeleteSelectedTask();
+			}
 		}
 		
 		
 		private void DeleteSelectedTask(object sender, RoutedEventArgs e)
+		{
+			DeleteSelectedTask();
+		}
+		
+		
+		private void DeleteSelectedTask()
 		{
 			if (taskListBox.SelectedItem != null) {		
 				Task task = (Task)taskListBox.SelectedItem;
