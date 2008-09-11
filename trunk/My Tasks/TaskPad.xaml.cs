@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -137,13 +138,6 @@ namespace AdventureAuthor.Tasks
 		
 		#region Event handlers  
 		
-//		private void HandleDeleteTagClicks(object sender, RoutedEventArgs e)
-//		{
-//			TagControl tagControl = (TagControl)e.OriginalSource;
-//			Say.Information(tagControl.DataContext.GetType().ToString() + "\n\n" + tagControl.DataContext);
-//		}
-//		
-		
 		private void HandleKeyPresses(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Delete && taskListBox.SelectedItem != null) {
@@ -231,24 +225,30 @@ namespace AdventureAuthor.Tasks
 			EditableTextBox editableTextBox = (EditableTextBox)sender;
 			editableTextBox.IsEditable = false;
 		}
-//		
-//		
-		private void RefreshFilters()
+		
+		
+		private void ShowOnlyTasksContainingSearchString()
 		{
-//			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
-//				cvs.Filter -= new FilterEventHandler(CompletedTasksFilter);
-//				cvs.Filter += new FilterEventHandler(CompletedTasksFilter);
-//			}
-			
-			cvs.Filter -= new FilterEventHandler(SearchFilter);
-			cvs.Filter += new FilterEventHandler(SearchFilter);
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(SearchFilter);
+				cvs.Filter += new FilterEventHandler(SearchFilter);
+			}
+		}
+		
+		
+		private void ShowOnlyTasksWithGivenTag()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(ShowOnlySelectedTagFilter);
+				cvs.Filter += new FilterEventHandler(ShowOnlySelectedTagFilter);
+			}
 		}
 		
 		
 		/// <summary>
 		/// Apply filters to show both completed and uncompleted tasks.
 		/// </summary> 
-		private void ShowAllTasks(object sender, RoutedEventArgs e)
+		private void ShowBothCompletedAndUncompletedTasks(object sender, RoutedEventArgs e)
 		{
 			if (cvs != null) {
 				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
@@ -301,9 +301,9 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// When the search text changes, update all the view filters.
 		/// </summary>
-		private void OnlyShowTasksContainingSearchString(object sender, RoutedEventArgs e)
+		private void ShowOnlyTasksContainingSearchString(object sender, RoutedEventArgs e)
 		{
-			RefreshFilters();
+			ShowOnlyTasksContainingSearchString();
 		}
 		
 		
@@ -313,10 +313,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		private void OnlyShowTasksWithSelectedTag(object sender, SelectionChangedEventArgs e)
 		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(ShowOnlySelectedTagFilter);
-				cvs.Filter += new FilterEventHandler(ShowOnlySelectedTagFilter);				
-			}
+			ShowOnlyTasksWithGivenTag();
 		}
 		
 		
@@ -324,7 +321,7 @@ namespace AdventureAuthor.Tasks
 		/// If the task list is currently only displaying tasks 
 		/// with the selected tag, deselect that tag in order to stop filtering.
 		/// </summary>
-		private void StopFilteringByTag(object sender, RoutedEventArgs e)
+		private void ClearTagFilter(object sender, RoutedEventArgs e)
 		{
 			if (tagFilterListBox.SelectedItem != null) {
 				tagFilterListBox.SelectedItem = null;

@@ -76,11 +76,7 @@ namespace AdventureAuthor.Tasks
 						MyTasksPreferences.Instance = (MyTasksPreferences)o;
 					}
 					else {
-	            		ObservableCollection<string> tags = new ObservableCollection<string>{"Gameplay",
-	            																			 "Bugs",
-	            																			 "Area design",
-	            																			 "Story",
-	            																			 "Dialogue"};
+	            		List<string> tags = new List<string>{"Gameplay","Bugs","Area design","Story","Dialogue"};
 	            		instance = new MyTasksPreferences(tags);
 					}
 				}
@@ -176,9 +172,9 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private ObservableCollection<string> preDefinedTags;
+		private List<string> preDefinedTags;
 		[XmlArray]
-		public ObservableCollection<string> PreDefinedTags {
+		public List<string> PreDefinedTags {
 			get { return preDefinedTags; }
 			set { 
 				if (preDefinedTags != value) {
@@ -216,7 +212,7 @@ namespace AdventureAuthor.Tasks
 		/// for both construction and deserialisation (tag collection kept getting
 		/// added to itself, not sure why) so I created this one - the tags
 		/// parameter is fairly arbitrary but it needed a different method signature, so.</remarks>
-		private MyTasksPreferences(ObservableCollection<string> tags)
+		private MyTasksPreferences(List<string> tags)
 		{			
 			string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			this.userFilesDirectory = Path.Combine(myDocumentsPath,"My Tasks");
