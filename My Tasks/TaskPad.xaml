@@ -238,7 +238,7 @@
 						   Margin="10">
 					<RadioButton x:Name="showAllTasksRadioButton" 
 								 Content="Show all tasks"
-								 Checked="ShowAllTasks"
+								 Checked="ShowBothCompletedAndUncompletedTasks"
 								 IsChecked="true"/>
 					<RadioButton Content="Show only uncompleted tasks"
 								 Checked="ShowOnlyUncompletedTasks"/>			
@@ -253,7 +253,7 @@
 					<TextBlock Text="Search:   "			         
 					           VerticalAlignment="Center"/>				
 					<TextBox x:Name="searchStringTextBox"
-					         TextChanged="OnlyShowTasksContainingSearchString"					         
+					         TextChanged="ShowOnlyTasksContainingSearchString"		         
 					         VerticalAlignment="Center"
 					         Width="170"/>				
 				</StackPanel>
@@ -294,7 +294,7 @@
 				
 					<Button Content="Clear"
 							HorizontalAlignment="Right"
-							Click="StopFilteringByTag"/>
+							Click="ClearTagFilter"/>
 				
 					<Button Content="Clear all"
 							HorizontalAlignment="Right"

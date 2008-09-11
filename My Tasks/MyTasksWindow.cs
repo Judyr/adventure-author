@@ -586,11 +586,33 @@ namespace AdventureAuthor.Tasks
 			if (e.OriginalSource is Button) {
 				Button button = (Button)e.OriginalSource;
 				if (button.DataContext is string) {
-					string tag = (string)button.DataContext;
-					Task task = (Task)pad.taskListBox.SelectedItem;
-					if (task.Tags.Contains(tag)) {
-						task.Tags.Remove(tag);
+					// Keep track of the tag we are filtering by, if there is one:
+					string filteredTag = null;
+					if (pad.tagFilterListBox.SelectedItem != null) {
+						filteredTag = (string)pad.tagFilterListBox.SelectedItem;
 					}
+					
+					// Delete the relevant tag:
+					string deletingTag = (string)button.DataContext;
+					Task task = (Task)pad.taskListBox.SelectedItem;
+					if (task.Tags.Contains(deletingTag)) {
+						task.Tags.Remove(deletingTag);
+					}
+					
+					// Removing a tag will cause the AllTags list to refresh, which
+					// will refresh the filter - if we were filtering by a particular
+					// tag, try to select that tag again:
+					if (filteredTag != null) {
+						if (pad.tagFilterListBox.Items.Contains(filteredTag)) {
+							pad.tagFilterListBox.SelectedItem = filteredTag;
+						}
+						else {
+							// If the tag we removed was the last instance of the filtered tag,
+							// the list will no longer be filtered by that tag - but, confusingly,
+							// the previously selected task will still be selected. Clear it:
+							pad.taskListBox.SelectedItem = null;
+						}
+					}					
 				}
 			}
 		}
