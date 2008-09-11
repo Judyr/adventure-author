@@ -292,7 +292,7 @@ namespace AdventureAuthor.Tasks
 		#region Methods
 		
 		/// <summary>
-		/// Check whether a particular string occurs within the description or tags
+		/// Check whether a particular string occurs within the description
 		/// of this task.
 		/// </summary>
 		/// <param name="searchString">The string to search for</param>
@@ -303,13 +303,15 @@ namespace AdventureAuthor.Tasks
 			if (Description != null && Description.ToLower().Contains(str) && Description != String.Empty) {
 				return true;
 			}
-			else {
-				foreach (string tag in Tags) {
-					if (tag.ToLower().Contains(str) && tag != String.Empty) {
-						return true;
-					}
-				}
-			}
+			// No longer searching for tag text, as this seems confusing when the tags
+			// are not visible in the list view.
+//			else {
+//				foreach (string tag in Tags) {
+//					if (tag.ToLower().Contains(str) && tag != String.Empty) {
+//						return true;
+//					}
+//				}
+//			}
 			return false;
 		}
 		

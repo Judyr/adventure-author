@@ -156,6 +156,7 @@
 						      HorizontalAlignment="Center"
 						      VerticalAlignment="Top"
 							  ScrollViewer.CanContentScroll="false"
+							  Button.Click="RemoveTagWhenDeleteButtonIsClicked"
 				        	  SelectionMode="Single">
 							<ListView.ItemTemplate>
 								<DataTemplate>

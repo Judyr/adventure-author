@@ -569,6 +569,7 @@ namespace AdventureAuthor.Tasks
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
+    		pad.ClearAllFilters(); //TODO: This is a bit clumsy
     		Task task = new Task("Enter your task here...");
     		pad.AddAfterSelectedTask(task);
     		pad.taskListBox.SelectedItem = task;
@@ -576,6 +577,24 @@ namespace AdventureAuthor.Tasks
     		taskDescriptionBox.SelectAll();
     	}
     	
+		
+    	/// <summary>
+    	/// Remove a tag when its delete control is clicked.
+    	/// </summary>
+		private void RemoveTagWhenDeleteButtonIsClicked(object sender, RoutedEventArgs e)
+		{
+			if (e.OriginalSource is Button) {
+				Button button = (Button)e.OriginalSource;
+				if (button.DataContext is string) {
+					string tag = (string)button.DataContext;
+					Task task = (Task)pad.taskListBox.SelectedItem;
+					if (task.Tags.Contains(tag)) {
+						task.Tags.Remove(tag);
+					}
+				}
+			}
+		}
+		
 		#endregion
 	}
 }
