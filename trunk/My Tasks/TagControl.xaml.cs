@@ -31,11 +31,5 @@ namespace AdventureAuthor.Tasks
         {
             InitializeComponent();
         }
-
-        
-        private void DeleteTagButtonClick(object sender, RoutedEventArgs e)
-        {
-        	OnDeleting(new EventArgs());
-        }
     }
 }
