@@ -4,11 +4,9 @@
 	<Grid>
 		<StackPanel Orientation="Horizontal">
 			<TextBlock Text="{Binding}"
-			       FontFamily="Resources/#JOURNAL"
-			       FontSize="30"
+			       FontSize="18"
 			       FontWeight="SemiBold"
 			       Foreground="DarkBlue"
-			       TextDecorations="Underline"
 			   	   Padding="4"/>
 			<!--<Button x:Name="DeleteTagButton"
 					Width="7" Height="7"

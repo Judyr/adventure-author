@@ -17,10 +17,19 @@
 		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
 		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
 		<tasks:HideIfNoTaskSelectedConverter x:Key="hideIfNoTaskSelected"/>
+		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
-			<StackPanel Orientation="Horizontal" 
-			            Background="Transparent"/>
+			<WrapPanel Orientation="Horizontal" 
+			           Background="Transparent">
+				<WrapPanel.Width>
+					<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}" Path="ActualWidth" Converter="{StaticResource reduceWidthConverter}">
+						<Binding.ConverterParameter>
+							<sys:Double>-10</sys:Double>
+						</Binding.ConverterParameter>
+					</Binding>
+				</WrapPanel.Width>
+			</WrapPanel>
 		</ItemsPanelTemplate>	
 	
 	</Window.Resources>
@@ -130,22 +139,42 @@
 				</utils:EditableTextBox>
 				
 				<StackPanel Grid.Row="1"
-							Grid.Column="0"
-							Orientation="Horizontal">
-					<ListView Margin="5"
-				          Height="70"
-					      Background="Transparent"
-				          BorderThickness="0"
-						  ItemsSource="{Binding Path=Tags}"
-						  ItemsPanel="{StaticResource tagListTemplate}"
-			        	  SelectionMode="Single"
-						  tasks:TagControl.PreviewMouseDown="rar">
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<tasks:TagControl Padding="6"/>
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>				
+					  		Grid.Column="0"
+					  		Orientation="Vertical">
+					
+					<ScrollViewer
+						Width="400"
+						VerticalScrollBarVisibility="Auto"
+						HorizontalScrollBarVisibility="Hidden">
+						<ListView 
+					          Height="100"
+						      Width="380"
+						      Background="Transparent"
+					          BorderThickness="0"
+							  ItemsSource="{Binding Path=Tags}"
+							  ItemsPanel="{StaticResource tagListTemplate}"
+						      HorizontalAlignment="Center"
+						      VerticalAlignment="Top"
+							  ScrollViewer.CanContentScroll="false"
+				        	  SelectionMode="Single">
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<tasks:TagControl Padding="6"/>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+						</ListView>	
+					</ScrollViewer>
+				
+					<StackPanel Orientation="Horizontal">
+						<ComboBox x:Name="TagSelectionComboBox"
+								  Height="30"
+								  Width="100"
+						          FontSize="14"
+								  ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=AllTags}"/>	
+						<Button Content="Add tag"
+								Click="AddSelectedTagToCurrentTask"/>
+					</StackPanel>
+							  
 				</StackPanel>
 				
 				<TextBlock Grid.Row="2"
@@ -176,15 +205,6 @@
 			
 			</Grid>
 		</Border>
-	
-		<StackPanel DockPanel.Dock="Bottom"
-		         Height="300" Width="300">
-			<TextBlock Background="LightGreen" FontSize="20"
-					   Text="{Binding ElementName=TEMPORARYtagsList, Path=Items.Count}"/>
-			<ListView Background="Pink"
-				 x:Name="TEMPORARYtagsList"
-				 ItemsSource="{Binding Mode=OneWay}"/>		
-		</StackPanel>
 		
 	</DockPanel>
 </Window>
