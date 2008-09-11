@@ -72,9 +72,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public MyTasksWindow()
 		{	
-			InitializeComponent();
-			
-			pad.AddTaskButton.Click += AddAndSelectNewTask;
+			InitializeComponent();			
 	                		
 			try {
 				Tools.EnsureDirectoryExists(MyTasksPreferences.LocalAppDataDirectory);
@@ -85,6 +83,7 @@ namespace AdventureAuthor.Tasks
 			}  
 			
 			// Set up event handlers:
+			pad.AddTaskButton.Click += AddAndSelectNewTask;
 			Closing += HandleApplicationClosing;
 			MyTasksPreferences.Instance.PropertyChanged += HandlePreferencesChanged;
 			Changed += UpdateTitleBar;
@@ -96,10 +95,7 @@ namespace AdventureAuthor.Tasks
 			}
 			else {
 				New();
-			}		
-			
-			TEMPORARYtagsList.DataContext = allTags;
-			UpdateTagCollection();
+			}
 		}
 		
 		#endregion
@@ -552,7 +548,23 @@ namespace AdventureAuthor.Tasks
 				etb.IsEditable = false;
 				taskCompletedCheckBox.Focus();
 			}
-		}  	    	
+		}  	 
+		
+		
+		private void AddSelectedTagToCurrentTask(object sender, RoutedEventArgs e)
+		{
+			if (pad.taskListBox.SelectedItem == null) {
+				throw new InvalidOperationException("No task is currently selected.");
+			}
+			
+			if (TagSelectionComboBox.SelectedItem != null) {
+				Task task = (Task)pad.taskListBox.SelectedItem;
+				string tag = (string)TagSelectionComboBox.SelectedItem;
+				if (!task.Tags.Contains(tag)) {
+					task.Tags.Add(tag);
+				}
+			}
+		}
     	
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
@@ -564,14 +576,6 @@ namespace AdventureAuthor.Tasks
     		taskDescriptionBox.SelectAll();
     	}
     	
-    	
-    	private void rar(object sender, MouseButtonEventArgs e) 
-    	{
-    		
-    		Say.Information(sender.ToString() +"\n\noriginal source: " + 
-    		                e.OriginalSource + "\n\nsource: " + e.Source);
-    	}
-		
 		#endregion
 	}
 }

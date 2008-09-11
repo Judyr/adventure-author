@@ -19,6 +19,7 @@
 		<tasks:DoubleToDoubleConverter x:Key="doubleToDoubleConverter"/>
 		<tasks:TruncateTextConverter x:Key="truncateText"/>
 		<tasks:DisableIfNoTaskSelectedConverter x:Key="disableIfNoTaskSelected"/>
+		<tasks:DisableIfNoTaskCollectionOpenConverter x:Key="disableIfNoTaskCollectionOpen"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -57,7 +58,7 @@
 							slightly less than the width of the parent-->
 							<Grid.Width>
 								<Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBox}}"
-										 Path="ActualWidth"
+										 Path="Width"
 										 Converter="{StaticResource doubleToDoubleConverter}">
 									<Binding.ConverterParameter>
 										<sys:Double>-10</sys:Double>
@@ -199,7 +200,8 @@
 					  Y2="{Binding ElementName=DeleteTaskButton, Path=Height}"
 					  Margin="3"/>
 				<Button x:Name="AddTaskButton"
-						ToolTip="Add a new task"/>	
+						ToolTip="Add a new task"
+						IsEnabled="{Binding Converter={StaticResource disableIfNoTaskCollectionOpen}}"/>
 			</StackPanel>
 			
 			<!--<Grid Grid.Row="2" Grid.Column="0"
