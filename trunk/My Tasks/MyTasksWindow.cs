@@ -588,8 +588,8 @@ namespace AdventureAuthor.Tasks
 				if (button.DataContext is string) {
 					// Keep track of the tag we are filtering by, if there is one:
 					string filteredTag = null;
-					if (pad.tagFilterListBox.SelectedItem != null) {
-						filteredTag = (string)pad.tagFilterListBox.SelectedItem;
+					if (pad.tagFilterListView.SelectedItem != null) {
+						filteredTag = (string)pad.tagFilterListView.SelectedItem;
 					}
 					
 					// Delete the relevant tag:
@@ -603,8 +603,8 @@ namespace AdventureAuthor.Tasks
 					// will refresh the filter - if we were filtering by a particular
 					// tag, try to select that tag again:
 					if (filteredTag != null) {
-						if (pad.tagFilterListBox.Items.Contains(filteredTag)) {
-							pad.tagFilterListBox.SelectedItem = filteredTag;
+						if (pad.tagFilterListView.Items.Contains(filteredTag)) {
+							pad.tagFilterListView.SelectedItem = filteredTag;
 						}
 						else {
 							// If the tag we removed was the last instance of the filtered tag,
@@ -615,6 +615,16 @@ namespace AdventureAuthor.Tasks
 					}					
 				}
 			}
+		}
+		
+		
+		/// <summary>
+		/// When a task is completed/uncompleted, update the filters that
+		/// show/hide tasks based on their completion status.
+		/// </summary>
+		private void RefreshTaskCompletedFilter(object sender, RoutedEventArgs e)
+		{
+			pad.RefreshTaskCompletedFilter();
 		}
 		
 		#endregion
