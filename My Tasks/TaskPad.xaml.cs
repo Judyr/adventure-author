@@ -139,19 +139,25 @@ namespace AdventureAuthor.Tasks
 		#region Event handlers  
 		
 		private void HandleKeyPresses(object sender, KeyEventArgs e)
-		{
+		{			
 			if (e.Key == Key.Delete && taskListBox.SelectedItem != null) {
 				DeleteSelectedTask();
-			}
+			}			
 		}
 		
 		
+		/// <summary>
+		/// Delete the currently selected task.
+		/// </summary>
 		private void DeleteSelectedTask(object sender, RoutedEventArgs e)
 		{
 			DeleteSelectedTask();
 		}
 		
 		
+		/// <summary>
+		/// Delete the currently selected task.
+		/// </summary>
 		private void DeleteSelectedTask()
 		{
 			if (taskListBox.SelectedItem != null) {		
@@ -168,6 +174,9 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Move the currently selected task up one space in the list.
+		/// </summary>
 		private void MoveSelectedTaskUp(object sender, RoutedEventArgs e)
 		{
 			if (taskListBox.SelectedItem != null) {
@@ -177,6 +186,9 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Move the currently selected task down one space in the list.
+		/// </summary>
 		private void MoveSelectedTaskDown(object sender, RoutedEventArgs e)
 		{
 			if (taskListBox.SelectedItem != null) {
@@ -186,6 +198,10 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Move a given task up one space in the list.
+		/// </summary>
+		/// <param name="task">The task to move</param>
 		private void MoveTaskUp(Task task)
 		{
 			int index = Tasks.IndexOf(task);
@@ -199,6 +215,10 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Move a given task down one space in the list.
+		/// </summary>
+		/// <param name="task">The task to move</param>
 		private void MoveTaskDown(Task task)
 		{
 			int index = Tasks.IndexOf(task);
@@ -227,6 +247,10 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Apply a filter that will hide any tasks not containing 
+		/// a user-entered search string.
+		/// </summary>
 		private void ShowOnlyTasksContainingSearchString()
 		{
 			if (cvs != null) {
@@ -236,6 +260,10 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// Apply a filter that will hide any tasks not
+		/// tagged with a user-specified tag.
+		/// </summary>
 		private void ShowOnlyTasksWithGivenTag()
 		{
 			if (cvs != null) {
@@ -283,6 +311,24 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
+		/// <summary>
+		/// When a task is completed/uncompleted, update the filters that
+		/// show/hide tasks based on their completion status.
+		/// </summary>
+		internal void RefreshTaskCompletedFilter()
+		{
+			//TODO: This stops you from selecting completed tasks???
+			#region Horrible
+//			foreach (RadioButton button in taskCompletedFilterRadioButtonPanel.Children) {
+//				if ((bool)button.IsChecked) {
+//					button.IsChecked = false;
+//					button.IsChecked = true;
+//				}
+//			}
+			#endregion
+		}
+		
+		
 //		/// <summary>
 //		/// If completed tasks are to be hidden and a task has just been completed,
 //		/// refresh the view of visible tasks.
@@ -323,8 +369,8 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		private void ClearTagFilter(object sender, RoutedEventArgs e)
 		{
-			if (tagFilterListBox.SelectedItem != null) {
-				tagFilterListBox.SelectedItem = null;
+			if (tagFilterListView.SelectedItem != null) {
+				tagFilterListView.SelectedItem = null;
 			}
 		}
 		
@@ -340,8 +386,8 @@ namespace AdventureAuthor.Tasks
 		
 		public void ClearAllFilters()
 		{
-			if (tagFilterListBox.SelectedItem != null) {
-				tagFilterListBox.SelectedItem = null;
+			if (tagFilterListView.SelectedItem != null) {
+				tagFilterListView.SelectedItem = null;
 			}
 			if (searchStringTextBox.Text.Length > 0) {
 				searchStringTextBox.Text = String.Empty;	
@@ -410,8 +456,8 @@ namespace AdventureAuthor.Tasks
 		
 		private void ShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
 		{
-			if (tagFilterListBox.SelectedItem != null) {
-				string tag = (string)tagFilterListBox.SelectedItem;
+			if (tagFilterListView.SelectedItem != null) {
+				string tag = (string)tagFilterListView.SelectedItem;
 				Task task = (Task)e.Item;
 				if (!task.Tags.Contains(tag)) {
 					e.Accepted = false;

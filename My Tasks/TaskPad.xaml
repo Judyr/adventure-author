@@ -7,7 +7,8 @@
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
     KeyDown="HandleKeyPresses"
     Background="CornSilk"
-	Width="255" Height="650">
+	Width="255" Height="650"
+	Name="rarface">
 	
 	<!--<UserControl.BitmapEffect>
 		<BevelBitmapEffect Relief="0.3"/>
@@ -16,7 +17,7 @@
 	<UserControl.Resources>
 		
 		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
-		<tasks:DoubleToDoubleConverter x:Key="doubleToDoubleConverter"/>
+		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
 		<tasks:TruncateTextConverter x:Key="truncateText"/>
 		<tasks:DisableIfNoTaskSelectedConverter x:Key="disableIfNoTaskSelected"/>
 		<tasks:DisableIfNoTaskCollectionOpenConverter x:Key="disableIfNoTaskCollectionOpen"/>
@@ -57,9 +58,9 @@
 							<!--Use DoubleToDoubleConverter to bind the width of this control to 
 							slightly less than the width of the parent-->
 							<Grid.Width>
-								<Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBox}}"
+								<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}"
 										 Path="Width"
-										 Converter="{StaticResource doubleToDoubleConverter}">
+										 Converter="{StaticResource reduceWidthConverter}">
 									<Binding.ConverterParameter>
 										<sys:Double>-10</sys:Double>
 									</Binding.ConverterParameter>
@@ -259,20 +260,31 @@
 				</StackPanel>
 			
 				<StackPanel Orientation="Vertical"
-						   Margin="10">
+						    Margin="10">
 					
 					<Label Content="Only show tasks with tag..."/>
 					
-					<ListView x:Name="tagFilterListBox"
-							  SelectionChanged="OnlyShowTasksWithSelectedTag">
-						
+					<ListView x:Name="tagFilterListView"
+							  SelectionChanged="OnlyShowTasksWithSelectedTag"
+							  BorderThickness="0"
+							  Background="Transparent">
 						<ListView.Resources>
 							<Style TargetType="ListViewItem">
-								<Setter Property="Margin" Value="5"/>
-								<Setter Property="Background" Value="DarkGray"/>
-								<Setter Property="Foreground" Value="White"/>
+								<Setter Property="Padding" Value="3"/>
 							</Style>
 						</ListView.Resources>
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<Border CornerRadius="4" BorderThickness="2" BorderBrush="Red">
+									<TextBlock Text="{Binding}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"
+											   Padding="3"
+									           Foreground="White"
+											   Background="Maroon"/>
+								</Border>
+							</DataTemplate>
+						</ListView.ItemTemplate>
 						
 						<ListView.ItemsSource>
 							<Binding Path="AllTags" Mode="OneWay">
@@ -284,10 +296,16 @@
 						
 						<ListView.ItemsPanel>
 							<ItemsPanelTemplate>
-								<WrapPanel Orientation="Horizontal" 
-								           Background="Silver"
-										   Width="200"/>
-							</ItemsPanelTemplate>	  
+								<WrapPanel Orientation="Horizontal">
+									<WrapPanel.Width>
+										<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}" Path="ActualWidth" Converter="{StaticResource reduceWidthConverter}">
+											<Binding.ConverterParameter>
+												<sys:Double>-5</sys:Double>
+											</Binding.ConverterParameter>
+										</Binding>
+									</WrapPanel.Width>
+								</WrapPanel>
+							</ItemsPanelTemplate>
 						</ListView.ItemsPanel>         
 					
 					</ListView>
