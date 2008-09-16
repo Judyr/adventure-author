@@ -21,6 +21,7 @@
 		<tasks:TruncateTextConverter x:Key="truncateText"/>
 		<tasks:DisableIfNoTaskSelectedConverter x:Key="disableIfNoTaskSelected"/>
 		<tasks:DisableIfNoTaskCollectionOpenConverter x:Key="disableIfNoTaskCollectionOpen"/>
+		<tasks:InverseBooleanToVisibilityConverter x:Key="showIfTaskCollectionIsEmpty"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -155,6 +156,20 @@
 						 ItemTemplate="{StaticResource taskDataTemplateMinimal}"
 						 ItemContainerStyle="{StaticResource taskContainerStyle}"/>
 			</ScrollViewer>
+				
+			<!--Text that appears when no task is selected-->
+			<TextBlock Grid.Row="1"
+					   Grid.Column="0"
+					   FontSize="16"
+					   FontFamily="Helvetica"
+					   Foreground="DarkBlue"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"
+		      		   Visibility="{Binding ElementName=taskListBox, Path=HasItems, Converter={StaticResource showIfTaskCollectionIsEmpty}}"
+					   TextWrapping="Wrap"
+			           Width="{Binding ElementName=taskListBox, Path=ActualWidth}"
+			           Padding="10"
+			           Text="No tasks found which match your search criteria."/>
 			
 			<StackPanel Grid.Row="2"
 						Grid.Column="0"

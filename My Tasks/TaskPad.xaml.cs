@@ -211,7 +211,8 @@ namespace AdventureAuthor.Tasks
 			int newIndex = index - 1;
 			if (newIndex >= 0) {
 				Tasks.Move(index,newIndex);
-			}				
+			}		
+			taskListBox.ScrollIntoView(task);
 		}
 		
 		
@@ -230,6 +231,7 @@ namespace AdventureAuthor.Tasks
 			if (newIndex <= maxIndex) {
 				Tasks.Move(index,newIndex);
 			}		
+			taskListBox.ScrollIntoView(task);
 		}
 		
 		

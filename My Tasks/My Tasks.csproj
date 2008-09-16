@@ -67,10 +67,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DoubleToDoubleConverter.cs" />
+    <Compile Include="HideIfTaskIsSelectedConverter.cs" />
     <Compile Include="MyTasksPreferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Corner.cs" />
     <Compile Include="CornerConverter.cs" />
+    <Compile Include="InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="TagControl.xaml.cs">
       <DependentUpon>TagControl.xaml</DependentUpon>
       <SubType>Code</SubType>
