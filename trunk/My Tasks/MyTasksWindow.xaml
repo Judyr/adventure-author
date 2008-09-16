@@ -17,6 +17,7 @@
 		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
 		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
 		<tasks:HideIfNoTaskSelectedConverter x:Key="hideIfNoTaskSelected"/>
+		<tasks:HideIfTaskIsSelectedConverter x:Key="hideIfTaskIsSelected"/>
 		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
@@ -78,143 +79,167 @@
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
-	
-		<tasks:TaskPad 
-			x:Name="pad"
-			DockPanel.Dock="Left"
-			Margin="20"
-			VerticalAlignment="Top"
-			HorizontalAlignment="Left">
-			<!--<tasks:TaskPad.LayoutTransform>
-				<RotateTransform PresentationOptions:Freeze="true" Angle="358"/>
-			</tasks:TaskPad.LayoutTransform>-->
-		</tasks:TaskPad>
 		
-		<Border DockPanel.Dock="Right">
-			
-			<Grid Height="500"
-				  Width="400"
-			      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
-			      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
-			      ShowGridLines="True"
-				  Background="AntiqueWhite">
+		<Grid DockPanel.Dock="Bottom">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition MinWidth="300" Width="*"/>
+				<ColumnDefinition MinWidth="500" Width="2*"/>
+			</Grid.ColumnDefinitions>
+	
+			<tasks:TaskPad 
+				x:Name="pad"
+				Grid.Row="0"
+				Grid.Column="0"
+				Margin="20"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Center">
+				<!--<tasks:TaskPad.LayoutTransform>
+					<RotateTransform PresentationOptions:Freeze="true" Angle="358"/>
+				</tasks:TaskPad.LayoutTransform>-->
+			</tasks:TaskPad>
 				
-				<Grid.Style>
-					<Style TargetType="FrameworkElement">
-						<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
-						<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
-					</Style>
-				</Grid.Style>
-				
-				<Grid.RowDefinitions>
-					<RowDefinition MinHeight="200" Height="*"/>
-					<RowDefinition Height="140"/>
-					<RowDefinition Height="80"/>
-					<RowDefinition Height="80"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				
-				<utils:EditableTextBox x:Name="taskDescriptionBox"
-									   Grid.Row="0"
-									   Grid.Column="0"
-									   Text="{Binding Path=Description, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
-									   IsEditable="false"
-									   GotFocus="MakeEditable"
-									   LostFocus="MakeUneditable"
-									   KeyDown="FinishEditingWhenUserHitsReturn"
-									   TextWrapping="Wrap"
-									   Width="350"
-									   Margin="25"
-									   Padding="8"
-									   FontSize="26"
-									   FontFamily="Comic Sans MS"
-									   VerticalAlignment="Top"
-									   HorizontalAlignment="Center"
-									   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}">
-					<!--<utils:EditableTextBox.BitmapEffect>
-						<BlurBitmapEffect Radius="1" KernelType="Box"/>
-					</utils:EditableTextBox.BitmapEffect>-->
-				</utils:EditableTextBox>
-				
-				<StackPanel Grid.Row="1"
-					  		Grid.Column="0"
-					  		Orientation="Vertical">
+			<!--Text that displays when no task is selected-->
+			<TextBlock Grid.Row="0"
+					   Grid.Column="1"
+					   FontSize="32"
+					   FontFamily="Helvetica"
+					   Foreground="White"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"
+		      		   Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfTaskIsSelected}}"
+					   Text="No task selected."/>
+		
+			<!--'Sheet of paper' that displays the details of the currently selected task-->
+			<Border Grid.Row="0"
+					Grid.Column="1">
+				<Grid Height="500"
+					  Width="400"
+				      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
+				      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
+				      ShowGridLines="True"
+					  Background="AntiqueWhite">
 					
-					<ScrollViewer
-						Width="400"
-						VerticalScrollBarVisibility="Auto"
-						HorizontalScrollBarVisibility="Hidden">
-						<ListView 
-					          Height="100"
-						      Width="380"
-						      Background="Transparent"
-					          BorderThickness="0"
-							  ItemsSource="{Binding Path=Tags}"
-							  ItemsPanel="{StaticResource tagListTemplate}"
-						      HorizontalAlignment="Center"
-						      VerticalAlignment="Top"
-							  ScrollViewer.CanContentScroll="false"
-							  Button.Click="RemoveTagWhenDeleteButtonIsClicked"
-				        	  SelectionMode="Single"
-							  >
-							<ListView.ItemTemplate>
-								<DataTemplate>
-									<tasks:TagControl Padding="6"/>
-								</DataTemplate>
-							</ListView.ItemTemplate>
-						</ListView>	
-					</ScrollViewer>
-				
-					<StackPanel Orientation="Horizontal"
-					            HorizontalAlignment="Right"
-					            VerticalAlignment="Top"
-								Margin="10">
-						<ComboBox x:Name="TagSelectionComboBox"
-								  Height="24"
-								  Width="140"
-						          FontSize="14"
-						          Margin="5"
-								  ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=AllTags}"/>	
-						<Button Content="Add tag"
-						        Height="24"
-						        Width="70"
-								Click="AddSelectedTagToCurrentTask"/>
+					<Grid.Style>
+						<Style TargetType="FrameworkElement">
+							<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+							<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
+						</Style>
+					</Grid.Style>
+					
+					<Grid.RowDefinitions>
+						<RowDefinition MinHeight="200" Height="*"/>
+						<RowDefinition Height="140"/>
+						<RowDefinition Height="80"/>
+						<RowDefinition Height="80"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					
+					<utils:EditableTextBox x:Name="taskDescriptionBox"
+										   Grid.Row="0"
+										   Grid.Column="0"
+										   Text="{Binding Path=Description, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+										   IsEditable="false"
+										   GotFocus="MakeEditable"
+										   LostFocus="MakeUneditable"
+										   KeyDown="FinishEditingWhenUserHitsReturn"
+										   TextWrapping="Wrap"
+										   Width="350"
+										   Margin="25"
+										   Padding="8"
+										   FontSize="26"
+										   FontFamily="Comic Sans MS"
+										   VerticalAlignment="Top"
+										   HorizontalAlignment="Center"
+										   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}">
+						<!--<utils:EditableTextBox.BitmapEffect>
+							<BlurBitmapEffect Radius="1" KernelType="Box"/>
+						</utils:EditableTextBox.BitmapEffect>-->
+					</utils:EditableTextBox>
+					
+					<StackPanel Grid.Row="1"
+						  		Grid.Column="0"
+						  		Orientation="Vertical">
+						
+						<ScrollViewer
+							Width="400"
+							VerticalScrollBarVisibility="Auto"
+							HorizontalScrollBarVisibility="Hidden">
+							<ListView 
+						          Height="100"
+							      Width="380"
+							      Background="Transparent"
+						          BorderThickness="0"
+								  ItemsSource="{Binding Path=Tags}"
+								  ItemsPanel="{StaticResource tagListTemplate}"
+							      HorizontalAlignment="Center"
+							      VerticalAlignment="Top"
+								  ScrollViewer.CanContentScroll="false"
+								  Button.Click="RemoveTagWhenDeleteButtonIsClicked"
+					        	  SelectionMode="Single"
+								  >
+								<ListView.ItemTemplate>
+									<DataTemplate>
+										<tasks:TagControl Padding="6"/>
+									</DataTemplate>
+								</ListView.ItemTemplate>
+							</ListView>	
+						</ScrollViewer>
+					
+						<StackPanel Orientation="Horizontal"
+						            HorizontalAlignment="Right"
+						            VerticalAlignment="Top"
+									Margin="10">
+							<ComboBox x:Name="TagSelectionComboBox"
+									  Height="24"
+									  Width="140"
+							          FontSize="14"
+							          Margin="5"
+									  ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=AllTags}"/>	
+							<Button Content="Add tag"
+							        Height="24"
+							        Width="70"
+									Click="AddSelectedTagToCurrentTask"/>
+						</StackPanel>
+								  
 					</StackPanel>
-							  
-				</StackPanel>
+					
+					<TextBlock Grid.Row="2"
+							   Grid.Column="0"
+							   FontSize="14"
+					           HorizontalAlignment="Center"
+					           VerticalAlignment="Center"
+							   Foreground="Blue">
+						<TextBlock Text="{Binding Path=Creator, Converter={StaticResource creatorStringConverter}}"/>
+						<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
+					</TextBlock>
+					
+					<CheckBox x:Name="taskCompletedCheckBox"
+							  Grid.Row="3"
+							  Grid.Column="0"
+					          Content="I have completed this task"
+					          FontSize="12"
+					          Margin="20"
+					          IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}"
+					          Checked="RefreshTaskCompletedFilter"
+					          Unchecked="RefreshTaskCompletedFilter"
+					          HorizontalAlignment="Center"
+					          VerticalAlignment="Center">
+						<CheckBox.LayoutTransform>
+							<ScaleTransform ScaleX="2" 
+							                ScaleY="2"
+											PresentationOptions:Freeze="true"/>
+						</CheckBox.LayoutTransform>
+					</CheckBox>	
 				
-				<TextBlock Grid.Row="2"
-						   Grid.Column="0"
-						   FontSize="14"
-				           HorizontalAlignment="Center"
-				           VerticalAlignment="Center"
-						   Foreground="Blue">
-					<TextBlock Text="{Binding Path=Creator, Converter={StaticResource creatorStringConverter}}"/>
-					<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
-				</TextBlock>
-				
-				<CheckBox x:Name="taskCompletedCheckBox"
-						  Grid.Row="3"
-						  Grid.Column="0"
-				          Content="I have completed this task"
-				          FontSize="12"
-				          Margin="20"
-				          IsChecked="{Binding Path=State, Converter={StaticResource taskCompletedConverter}}"
-				          Checked="RefreshTaskCompletedFilter"
-				          Unchecked="RefreshTaskCompletedFilter"
-				          HorizontalAlignment="Center"
-				          VerticalAlignment="Center">
-					<CheckBox.LayoutTransform>
-						<ScaleTransform ScaleX="2" 
-						                ScaleY="2"
-										PresentationOptions:Freeze="true"/>
-					</CheckBox.LayoutTransform>
-				</CheckBox>	
+				</Grid>
+			</Border>
 			
-			</Grid>
-		</Border>
+		</Grid>
 		
 	</DockPanel>
 </Window>

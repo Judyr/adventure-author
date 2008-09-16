@@ -17,16 +17,7 @@ namespace AdventureAuthor.Tasks
     /// Interaction logic for TagControl.xaml
     /// </summary>
     public partial class TagControl : UserControl
-    {
-    	public event EventHandler Deleting;
-		protected virtual void OnDeleting(EventArgs e) {
-    		EventHandler handler = Deleting;
-			if (handler != null) {
-				handler(this, e);
-			}
-		}
-    	
-    	
+    {    	
         public TagControl()
         {
             InitializeComponent();
