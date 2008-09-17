@@ -60,6 +60,13 @@ namespace AdventureAuthor.Tasks
             Tools.SetXAMLButtonImage(MoveTaskUpButton,imagePath,"up");
             imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"add.png");
             Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add");
+            
+            try {
+            	 tagFilterComboBox.SelectedIndex = 0;
+            }
+            catch (Exception) {
+            	System.Diagnostics.Debug.WriteLine("Tried and failed to select the first tag.");
+            }
 		}
 		
 		#endregion
@@ -395,21 +402,9 @@ namespace AdventureAuthor.Tasks
 		/// When the user selects a particular tag, apply a filter to hide
 		/// any task which does not have that tag.
 		/// </summary>
-		private void OnlyShowTasksWithSelectedTag(object sender, SelectionChangedEventArgs e)
+		private void OnlyShowTasksWithSelectedTag(object sender, RoutedEventArgs e)
 		{
 			ShowOnlyTasksWithGivenTag();
-		}
-		
-		
-		/// <summary>
-		/// If the task list is currently only displaying tasks 
-		/// with the selected tag, deselect that tag in order to stop filtering.
-		/// </summary>
-		private void ClearTagFilter(object sender, RoutedEventArgs e)
-		{
-			if (tagFilterListView.SelectedItem != null) {
-				tagFilterListView.SelectedItem = null;
-			}
 		}
 		
 		
@@ -424,8 +419,8 @@ namespace AdventureAuthor.Tasks
 		
 		public void ClearAllFilters()
 		{
-			if (tagFilterListView.SelectedItem != null) {
-				tagFilterListView.SelectedItem = null;
+			if ((bool)activateTagFilterCheckBox.IsChecked) {
+				activateTagFilterCheckBox.IsChecked = false;
 			}
 			if (searchStringTextBox.Text.Length > 0) {
 				searchStringTextBox.Text = String.Empty;	
@@ -433,21 +428,6 @@ namespace AdventureAuthor.Tasks
 			if (!(bool)showAllTasksRadioButton.IsChecked) {
 				showAllTasksRadioButton.IsChecked = true;
 			}
-		}
-		
-		
-		private bool showFilterControls = true;
-		public bool ShowFilterControls
-		{
-			get { return showFilterControls; }
-			set { 
-				showFilterControls = value;
-			}
-		}
-		
-		private void ShowOrHideFilteringControls(object sender, RoutedEventArgs e)
-		{
-			ShowFilterControls = !ShowFilterControls;
 		}
 		
 		#endregion
@@ -494,13 +474,14 @@ namespace AdventureAuthor.Tasks
 		
 		private void ShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
 		{
-			if (tagFilterListView.SelectedItem != null) {
-				string tag = (string)tagFilterListView.SelectedItem;
+			if (((bool)activateTagFilterCheckBox.IsChecked) && tagFilterComboBox.SelectedItem != null) {
+				string tag = (string)tagFilterComboBox.SelectedItem;
 				Task task = (Task)e.Item;
 				if (!task.Tags.Contains(tag)) {
 					e.Accepted = false;
 				}
 			}
+			// Never set e.Accepted to true, or you may override the results of another filter.
 		}
 		
 		#endregion

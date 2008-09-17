@@ -124,7 +124,7 @@
 				<RowDefinition Height="70"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="45"/>
-				<RowDefinition Height="360"/>
+				<RowDefinition Height="180"/>
 			</Grid.RowDefinitions>
 						
 			<TextBlock x:Name="headingTextBlock"
@@ -225,47 +225,37 @@
 			            Orientation="Vertical"
 			     		Background="AntiqueWhite">
 				
-				<StackPanel.Style>
-					<Style>
-						<Style.Triggers>
-							<DataTrigger>
-								<DataTrigger.Binding>
-									<Binding>
-										<Binding.RelativeSource>
-											<RelativeSource Mode="FindAncestor" AncestorType="{x:Type tasks:TaskPad}"/>
-										</Binding.RelativeSource>
-										<Binding.Path>ShowFilterControls</Binding.Path>
-									</Binding>
-								</DataTrigger.Binding>
-								<DataTrigger.Value>false</DataTrigger.Value>
-								<Setter Property="ContentControl.Height" Value="30"/>
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</StackPanel.Style>
-				
 				<StackPanel.Resources>
 					<Style TargetType="RadioButton">
-						<Setter Property="GroupName" Value="ShowHideCompletedTasksButtonGroup"/>
+						<Setter Property="RadioButton.GroupName" Value="ShowHideCompletedTasksButtonGroup"/>
+					</Style>
+					<Style TargetType="{x:Type StackPanel}">
+						<Setter Property="StackPanel.Margin" Value="5"/>
 					</Style>
 				</StackPanel.Resources>
 				
-				<WrapPanel Orientation="Vertical"
-						   Margin="10">
-					<RadioButton x:Name="showAllTasksRadioButton" 
-								 Content="Show all tasks"
-								 Checked="ShowBothCompletedAndUncompletedTasks"
-								 IsChecked="true"/>
+				<Line Stroke="Black"
+					  StrokeThickness="1"				      
+					  X1="0"
+				      X2="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:TaskPad}}, Path=Width}"
+					  Y1="0"
+				      Y2="0"
+					  Margin="0,0,0,6"/>
+				
+				<StackPanel Orientation="Vertical">
 					<RadioButton Content="Show only uncompleted tasks"
 								 Checked="ShowOnlyUncompletedTasks"/>			
 					<RadioButton Content="Show only completed tasks"
 								 Checked="ShowOnlyCompletedTasks"/>
-				</WrapPanel>
+					<RadioButton x:Name="showAllTasksRadioButton" 
+								 Content="Show both"
+								 Checked="ShowBothCompletedAndUncompletedTasks"
+								 IsChecked="true"/>
+				</StackPanel>
 			
 				<StackPanel Orientation="Horizontal"
 				            HorizontalAlignment="Left"					         
-					        VerticalAlignment="Center"
-							Margin="10">
+					        VerticalAlignment="Center">
 					<TextBlock Text="Search:   "			         
 					           VerticalAlignment="Center"/>				
 					<TextBox x:Name="searchStringTextBox"
@@ -274,69 +264,35 @@
 					         Width="170"/>				
 				</StackPanel>
 			
-				<StackPanel Orientation="Vertical"
-						    Margin="10">
+				<StackPanel Orientation="Horizontal">
 					
-					<Label Content="Only show tasks with tag..."/>
+					<CheckBox x:Name="activateTagFilterCheckBox"
+					          Content="Show tasks with tag: "
+							  Checked="OnlyShowTasksWithSelectedTag"
+							  Unchecked="OnlyShowTasksWithSelectedTag"
+							  VerticalAlignment="Center"
+							  />
 					
-					<ListView x:Name="tagFilterListView"
+					<ComboBox x:Name="tagFilterComboBox"
 							  SelectionChanged="OnlyShowTasksWithSelectedTag"
-							  BorderThickness="0"
-							  Background="Transparent">
-						<ListView.Resources>
-							<Style TargetType="ListViewItem">
-								<Setter Property="Padding" Value="3"/>
-							</Style>
-						</ListView.Resources>
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<Border CornerRadius="4" BorderThickness="2" BorderBrush="Red">
-									<TextBlock Text="{Binding}"
-											   HorizontalAlignment="Center"
-											   VerticalAlignment="Center"
-											   Padding="3"
-									           Foreground="White"
-											   Background="Maroon"/>
-								</Border>
-							</DataTemplate>
-						</ListView.ItemTemplate>
-						
-						<ListView.ItemsSource>
+							  VerticalAlignment="Center"
+							  Width="100"
+							  Margin="4">
+						<ComboBox.ItemsSource>
 							<Binding Path="AllTags" Mode="OneWay">
 								<Binding.RelativeSource>
 									<RelativeSource Mode="FindAncestor" AncestorType="{x:Type tasks:MyTasksWindow}"/>
 								</Binding.RelativeSource>
 							</Binding>
-						</ListView.ItemsSource>
-						
-						<ListView.ItemsPanel>
-							<ItemsPanelTemplate>
-								<WrapPanel Orientation="Horizontal">
-									<WrapPanel.Width>
-										<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}" Path="ActualWidth" Converter="{StaticResource reduceWidthConverter}">
-											<Binding.ConverterParameter>
-												<sys:Double>-5</sys:Double>
-											</Binding.ConverterParameter>
-										</Binding>
-									</WrapPanel.Width>
-								</WrapPanel>
-							</ItemsPanelTemplate>
-						</ListView.ItemsPanel>         
-					
-					</ListView>
-				
-					<Button Content="Clear"
-							HorizontalAlignment="Right"
-							Click="ClearTagFilter"/>
-				
-					<Button Content="Clear all"
-							HorizontalAlignment="Right"
-							Click="ClearAllFilters"/>
-				
-					<Button Content="Show/Hide"
-							VerticalAlignment="Bottom"
-							Click="ShowOrHideFilteringControls"/>
-				</StackPanel>
+						</ComboBox.ItemsSource>
+					</ComboBox>		
+				</StackPanel>					  
+									
+				<Button Content="Clear all"
+				        Width="100"
+				        Margin="5"
+				        HorizontalAlignment="Center"
+						Click="ClearAllFilters"/>
 			
 			</StackPanel>
 			
