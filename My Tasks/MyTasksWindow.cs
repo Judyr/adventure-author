@@ -592,8 +592,8 @@ namespace AdventureAuthor.Tasks
 					if (result == MessageBoxResult.OK) {
 						// Keep track of the tag we are filtering by, if there is one:
 						string filteredTag = null;
-						if (pad.tagFilterListView.SelectedItem != null) {
-							filteredTag = (string)pad.tagFilterListView.SelectedItem;
+						if (((bool)pad.activateTagFilterCheckBox.IsChecked) && pad.tagFilterComboBox.SelectedItem != null) {
+							filteredTag = (string)pad.tagFilterComboBox.SelectedItem;
 						}
 						
 						// Delete the clicked tag:
@@ -603,11 +603,10 @@ namespace AdventureAuthor.Tasks
 						}
 						
 						// Removing a tag will cause the AllTags list to refresh, which
-						// will clear the filter - if we were filtering by a particular
-						// tag, try to select that tag again:
+						// will clear the filter - if a tag was selected, select it again:
 						if (filteredTag != null) {
-							if (pad.tagFilterListView.Items.Contains(filteredTag)) {
-								pad.tagFilterListView.SelectedItem = filteredTag;
+							if (pad.tagFilterComboBox.Items.Contains(filteredTag)) {
+								pad.tagFilterComboBox.SelectedItem = filteredTag;
 							}
 							else {
 								// If the tag we removed was the last instance of the filtered tag,
