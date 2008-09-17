@@ -148,7 +148,7 @@
 						  VerticalScrollBarVisibility="Auto"
 						  HorizontalScrollBarVisibility="Hidden">			
 				<ListBox x:Name="taskListBox"
-						 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}}"			         
+						 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"			         
 				         SelectionMode="Single"
 				         ScrollViewer.CanContentScroll="false"
 						 Background="Transparent"
@@ -169,7 +169,7 @@
 					   TextWrapping="Wrap"
 			           Width="{Binding ElementName=taskListBox, Path=ActualWidth}"
 			           Padding="10"
-			           Text="No tasks found which match your search criteria."/>
+			           Text="No tasks found."/>
 			
 			<StackPanel Grid.Row="2"
 						Grid.Column="0"
