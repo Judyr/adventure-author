@@ -189,10 +189,22 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// Move the currently selected task down one space in the list.
 		/// </summary>
-		private void MoveSelectedTaskDown(object sender, RoutedEventArgs e)
+		private void OldMoveSelectedTaskDown(object sender, RoutedEventArgs e)
 		{
 			if (taskListBox.SelectedItem != null) {
 				Task task = (Task)taskListBox.SelectedItem;
+				MoveTaskDown(task);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Move the currently selected task down one space in the list.
+		/// </summary>
+		private void MoveSelectedTaskDown(object sender, RoutedEventArgs e)
+		{
+			if (taskListBox.SelectedItem != null) {
+				Task task = (Task)taskListBox.SelectedItem;				
 				MoveTaskDown(task);
 			}
 		}
@@ -211,7 +223,18 @@ namespace AdventureAuthor.Tasks
 			int newIndex = index - 1;
 			if (newIndex >= 0) {
 				Tasks.Move(index,newIndex);
-			}		
+			}
+			
+			System.Diagnostics.Debug.AutoFlush = true;
+			foreach (Task t in taskListBox.ItemsSource) {
+				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
+			}
+			System.Diagnostics.Debug.WriteLine("");
+			
+			taskListBox.InvalidateVisual();
+//			taskListBox.UpdateLayout();
+//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
+//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
 			taskListBox.ScrollIntoView(task);
 		}
 		
@@ -228,10 +251,23 @@ namespace AdventureAuthor.Tasks
 			}
 			int newIndex = index + 1;
 			int maxIndex = Tasks.Count - 1;
+			
 			if (newIndex <= maxIndex) {
-				Tasks.Move(index,newIndex);
+				Tasks.Move(index,newIndex);	
 			}		
+			
+			System.Diagnostics.Debug.AutoFlush = true;
+			foreach (Task t in taskListBox.ItemsSource) {
+				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
+			}
+			System.Diagnostics.Debug.WriteLine("");
+			
+			taskListBox.InvalidateVisual();
+//			taskListBox.UpdateLayout();
+//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
+//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
 			taskListBox.ScrollIntoView(task);
+			
 		}
 		
 		
