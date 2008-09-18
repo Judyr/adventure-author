@@ -101,7 +101,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public void New()
 		{
-			CloseCurrentFile();
+			CloseFile();
 			TaskCollection tasks = new TaskCollection();
 			Open(tasks);
 			UpdateTitleBar();
@@ -199,9 +199,9 @@ namespace AdventureAuthor.Tasks
 				Say.Error("Failed to save tasks file.",e);
 			}
 		}
+				
 		
-		
-		public void CloseCurrentFile()
+		private void CloseFile()
 		{
 			pad.Clear();
 			
@@ -361,7 +361,7 @@ namespace AdventureAuthor.Tasks
     			}    			
     		}
     		
-    		CloseCurrentFile();
+    		New();
     		return true;
     	}
     	
@@ -540,7 +540,7 @@ namespace AdventureAuthor.Tasks
 			EditableTextBox etb = (EditableTextBox)sender;
 			if (e.Key == Key.Return) {
 				etb.IsEditable = false;
-				taskCompletedCheckBox.Focus();
+				TagSelectionComboBox.Focus();
 			}
 		}  	 
 		
@@ -582,7 +582,7 @@ namespace AdventureAuthor.Tasks
 				if (button.DataContext is string) {
 					// Check that the user wants to delete the tag:
 					string deletingTag = (string)button.DataContext;
-					MessageBoxResult result = MessageBox.Show("Remove tag '" + deletingTag + "' from " +
+					MessageBoxResult result = MessageBox.Show("Remove '" + deletingTag + "' tag from " +
 					                                           "this task?",
 					                                           "Remove tag?",
 					                                           MessageBoxButton.OKCancel,
@@ -622,12 +622,39 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// When a task is completed/uncompleted, update the filters that
-		/// show/hide tasks based on their completion status.
+		/// When the complete/uncomplete task button is clicked,
+		/// change the task's status and update the filters that
+		/// show/hide tasks based on that status.
 		/// </summary>
-		private void RefreshTaskCompletedFilter(object sender, RoutedEventArgs e)
+		private void ChangeCompletionStatusOfTask(object sender, RoutedEventArgs e)
 		{
-			pad.RefreshTaskCompletedFilter();
+			Task task = (Task)pad.taskListBox.SelectedItem;
+			
+			MessageBoxResult result;
+			if (task.State == TaskState.Completed) {
+				result = MessageBox.Show("Mark this task as 'uncompleted' so you can work on it some more?",
+				                                          "Uncomplete task?",
+				                                          MessageBoxButton.OKCancel);
+			}
+			else {
+				result = MessageBox.Show("Mark this task as 'completed' and cross it out?",
+				                                          "Complete task?",
+				                                          MessageBoxButton.OKCancel);
+			}
+			
+			if (result == MessageBoxResult.OK) {
+				if (task.State == TaskState.Completed) {
+					task.State = TaskState.NotCompleted;	
+				}
+				else {
+					if (task.State != TaskState.NotCompleted) {
+						System.Diagnostics.Debug.WriteLine("Task state was '" + task.State + "'? How'd that happen?");
+					}
+					task.State = TaskState.Completed;
+				}
+				
+				pad.RefreshTaskCompletedFilter();
+			}
 		}
 		
 		#endregion

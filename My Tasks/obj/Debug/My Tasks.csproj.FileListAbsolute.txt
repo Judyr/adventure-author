@@ -88,3 +88,19 @@ C:\Aardvark\My Tasks\obj\Debug\MyTasksWindow.baml
 C:\Aardvark\My Tasks\obj\Debug\My Tasks.g.resources
 C:\Aardvark\My Tasks\obj\Debug\My Tasks.exe
 C:\Aardvark\My Tasks\obj\Debug\My Tasks.pdb
+C:\Ando\My Tasks\obj\Debug\ResolveAssemblyReference.cache
+C:\Ando\My Tasks\obj\Debug\DogEar.baml
+C:\Ando\My Tasks\obj\Debug\TagControl.baml
+C:\Ando\My Tasks\obj\Debug\DogEar.g.cs
+C:\Ando\My Tasks\obj\Debug\TagControl.g.cs
+C:\Ando\My Tasks\obj\Debug\TaskPad.g.cs
+C:\Ando\My Tasks\obj\Debug\MyTasksWindow.g.cs
+C:\Ando\My Tasks\obj\Debug\App.g.cs
+C:\Ando\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Ando\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
+C:\Ando\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
+C:\Ando\My Tasks\obj\Debug\TaskPad.baml
+C:\Ando\My Tasks\obj\Debug\MyTasksWindow.baml
+C:\Ando\My Tasks\obj\Debug\My Tasks.g.resources
+C:\Ando\My Tasks\obj\Debug\My Tasks.exe
+C:\Ando\My Tasks\obj\Debug\My Tasks.pdb

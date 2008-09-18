@@ -59,8 +59,12 @@
     </Compile>
     <Compile Include="CreationDateToStringConverter.cs" />
     <Compile Include="CreatorToStringConverter.cs" />
-    <Compile Include="DisableIfNoTaskCollectionOpenConverter.cs" />
-    <Compile Include="DisableIfNoTaskSelectedConverter.cs" />
+    <Compile Include="DisableIfTaskCollectionIsEmpty.cs" />
+    <Compile Include="FalseIfNoTaskCollectionOpenConverter.cs" />
+    <Compile Include="FalseIfNoTaskSelectedConverter.cs" />
+    <Compile Include="GenerateMessageAboutFilters.cs" />
+    <Compile Include="GetContentForTaskCompletedButtonConverter.cs" />
+    <Compile Include="HideIfNoTaskCollectionOpen.cs" />
     <Compile Include="HideIfNoTaskSelectedConverter.cs" />
     <Compile Include="DogEar.cs">
       <DependentUpon>DogEar.xaml</DependentUpon>
@@ -73,6 +77,7 @@
     <Compile Include="Corner.cs" />
     <Compile Include="CornerConverter.cs" />
     <Compile Include="InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="SetBackgroundAccordingToTaskStateConverter.cs" />
     <Compile Include="TagControl.xaml.cs">
       <DependentUpon>TagControl.xaml</DependentUpon>
       <SubType>Code</SubType>

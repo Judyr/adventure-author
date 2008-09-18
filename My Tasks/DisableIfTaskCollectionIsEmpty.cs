@@ -26,29 +26,32 @@
 
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace AdventureAuthor.Tasks
 {
-	public class CreatorToStringConverter : IValueConverter
+	/// <summary>
+	/// </summary>
+	public class DisableIfTaskCollectionIsEmptyConverter : IValueConverter
 	{
-		public CreatorToStringConverter()
+		public DisableIfTaskCollectionIsEmptyConverter()
 		{
 		}
 		
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (targetType != typeof(string)) {
-				throw new ArgumentException("targetType must be string");
+			if (targetType != typeof(bool)) {
+				throw new ArgumentException("targetType must be bool");
 			}
 			
-			string creator = (string)value;
-			if (creator == null || creator == String.Empty) {
-				return "Added";	
+			TaskCollection tasks = (TaskCollection)value;
+			if (tasks == null || tasks.Count == 0) {
+				return false;	
 			}
 			else {
-				return "Added by " + creator;
+				return true;
 			}
 		}
 		

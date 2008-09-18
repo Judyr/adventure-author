@@ -26,29 +26,36 @@
 
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace AdventureAuthor.Tasks
 {
-	public class CreatorToStringConverter : IValueConverter
+	/// <summary>
+	/// </summary>
+	public class SetBackgroundAccordingToTaskStateConverter : IValueConverter
 	{
-		public CreatorToStringConverter()
+		public SetBackgroundAccordingToTaskStateConverter()
 		{
 		}
 		
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (targetType != typeof(string)) {
-				throw new ArgumentException("targetType must be string");
+			if (targetType != typeof(Brush)) {
+				throw new ArgumentException("targetType must be Brush");
 			}
 			
-			string creator = (string)value;
-			if (creator == null || creator == String.Empty) {
-				return "Added";	
+			TaskState state = (TaskState)value;
+			if (state == TaskState.Completed) {
+				return Brushes.LightSteelBlue;
+			}
+			else if (state == TaskState.NotCompleted) {
+				return Brushes.Moccasin;	
 			}
 			else {
-				return "Added by " + creator;
+				return Brushes.Moccasin;
 			}
 		}
 		
