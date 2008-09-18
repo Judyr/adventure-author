@@ -141,6 +141,25 @@ namespace AdventureAuthor.Tasks
 			Tasks.Remove(task);
 		}
 		
+		
+		/// <summary>
+		/// Check whether the task list is currently being filtered by any criteria.
+		/// </summary>
+		/// <returns>True if any filters are active; false otherwise</returns>
+		public bool IsFiltered()
+		{
+			if (!(bool)showAllTasksRadioButton.IsChecked) {
+				return true;
+			}
+			if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
+				return true;
+			}
+			if (searchStringTextBox.Text.Length > 0) {
+				return true;
+			}
+			return false;
+		}
+		
 		#endregion
 		
 		#region Event handlers  
@@ -403,7 +422,18 @@ namespace AdventureAuthor.Tasks
 		/// any task which does not have that tag.
 		/// </summary>
 		private void OnlyShowTasksWithSelectedTag(object sender, RoutedEventArgs e)
-		{
+		{			
+//			bool filtering = (bool)activateTagFilterCheckBox.IsChecked;
+//			string tag = (string)tagFilterComboBox.SelectedItem;
+//			bool tagIsSelected = (tag != null && tag != String.Empty);
+//			
+//			if (filtering && !tagIsSelected) {
+//				activateTagFilterCheckBox.IsChecked = false;
+//			}
+//			else if (!filtering && tagIsSelected) {
+//				activateTagFilterCheckBox.IsChecked = true;
+//			}
+			
 			ShowOnlyTasksWithGivenTag();
 		}
 		

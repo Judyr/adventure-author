@@ -16,12 +16,15 @@
 	
 	<UserControl.Resources>
 		
-		<tasks:TaskStateToTextDecorationConverter x:Key="taskCompletedStrikethroughConverter"/>	
+		<tasks:TaskStateToTextDecorationConverter x:Key="returnStrikethroughIfTaskCompleted"/>	
 		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
 		<tasks:TruncateTextConverter x:Key="truncateText"/>
 		<tasks:DisableIfNoTaskSelectedConverter x:Key="disableIfNoTaskSelected"/>
+		<tasks:HideIfNoTaskCollectionOpenConverter x:Key="hideIfNoTaskCollectionOpen"/>
 		<tasks:DisableIfNoTaskCollectionOpenConverter x:Key="disableIfNoTaskCollectionOpen"/>
 		<tasks:InverseBooleanToVisibilityConverter x:Key="showIfTaskCollectionIsEmpty"/>
+		<tasks:DisableIfTaskCollectionIsEmptyConverter x:Key="disableIfTaskCollectionIsEmpty"/>
+		<tasks:GenerateMessageAboutFilters x:Key="generateMessageAboutFilters"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -31,7 +34,7 @@
 			<TextBlock x:Name="descriptionBox" 
 				       Grid.Row="0" 
 				       Grid.Column="0"
-					   TextDecorations="{Binding Path=State, Converter={StaticResource taskCompletedStrikethroughConverter}}"
+					   TextDecorations="{Binding Path=State, Converter={StaticResource returnStrikethroughIfTaskCompleted}}"
 					   TextWrapping="Wrap"
 					   Width="235"
 					   FontFamily="Comic Sans MS"
@@ -121,7 +124,7 @@
     	
 		<Grid Name="MainGrid">
     		<Grid.RowDefinitions>
-				<RowDefinition Height="70"/>
+				<RowDefinition Height="75"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="45"/>
 				<RowDefinition Height="180"/>
@@ -157,7 +160,7 @@
 						 ItemContainerStyle="{StaticResource taskContainerStyle}"/>
 			</ScrollViewer>
 				
-			<!--Text that appears when no task is selected-->
+			<!--Text that appears when the list is empty-->
 			<TextBlock Grid.Row="1"
 					   Grid.Column="0"
 					   FontSize="16"
@@ -167,15 +170,25 @@
 					   HorizontalAlignment="Center"
 		      		   Visibility="{Binding ElementName=taskListBox, Path=HasItems, Converter={StaticResource showIfTaskCollectionIsEmpty}}"
 					   TextWrapping="Wrap"
-			           Width="{Binding ElementName=taskListBox, Path=ActualWidth}"
-			           Padding="10"
-			           Text="No tasks found."/>
+			           TextAlignment="Center"
+			           Padding="10">
+				<TextBlock.Text>
+					<MultiBinding Converter="{StaticResource generateMessageAboutFilters}">
+						<Binding ElementName="showAllTasksRadioButton" Path="IsChecked"/>
+						<Binding ElementName="searchStringTextBox" Path="Text"/>
+						<Binding ElementName="activateTagFilterCheckBox" Path="IsChecked"/>
+						<Binding ElementName="tagFilterComboBox" Path="SelectedItem"/>
+						<Binding/>
+					</MultiBinding>
+				</TextBlock.Text>
+			</TextBlock>
 			
 			<StackPanel Grid.Row="2"
 						Grid.Column="0"
 						Orientation="Horizontal"
 						FlowDirection="RightToLeft"
 						VerticalAlignment="Top"
+			            Visibility="{Binding Converter={StaticResource hideIfNoTaskCollectionOpen}}"
 						Margin="3">
 				<StackPanel.Resources>
 					<Style TargetType="{x:Type Button}">
@@ -223,7 +236,9 @@
 			<StackPanel x:Name="filterControlsPanel"
 						Grid.Row="3" Grid.Column="0"
 			            Orientation="Vertical"
-			     		Background="AntiqueWhite">
+			     		Background="AntiqueWhite"			
+			            Visibility="{Binding Converter={StaticResource hideIfNoTaskCollectionOpen}}"
+						IsEnabled="{Binding Converter={StaticResource disableIfTaskCollectionIsEmpty}}">
 				
 				<StackPanel.Resources>
 					<Style TargetType="RadioButton">
@@ -242,11 +257,11 @@
 				      Y2="0"
 					  Margin="0,0,0,6"/>
 				
-				<StackPanel Orientation="Vertical">
-					<RadioButton Content="Show only uncompleted tasks"
-								 Checked="ShowOnlyUncompletedTasks"/>			
-					<RadioButton Content="Show only completed tasks"
+				<StackPanel Orientation="Vertical">		
+					<RadioButton Content="Show completed tasks only"
 								 Checked="ShowOnlyCompletedTasks"/>
+					<RadioButton Content="Show uncompleted tasks only"
+								 Checked="ShowOnlyUncompletedTasks"/>	
 					<RadioButton x:Name="showAllTasksRadioButton" 
 								 Content="Show both"
 								 Checked="ShowBothCompletedAndUncompletedTasks"
@@ -257,7 +272,7 @@
 				            HorizontalAlignment="Left"					         
 					        VerticalAlignment="Center">
 					<TextBlock Text="Search:   "			         
-					           VerticalAlignment="Center"/>				
+					           VerticalAlignment="Center"/>
 					<TextBox x:Name="searchStringTextBox"
 					         TextChanged="ShowOnlyTasksContainingSearchString"		         
 					         VerticalAlignment="Center"

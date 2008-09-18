@@ -28,30 +28,27 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace AdventureAuthor.Tasks
 {
 	/// <summary>
-	/// Check if a task collection is open - if not, disable the control.
 	/// </summary>
-	public class DisableIfNoTaskCollectionOpenConverter : IValueConverter
+	public class GetContentForTaskCompletedButtonConverter : IValueConverter
 	{
-		public DisableIfNoTaskCollectionOpenConverter()
+		public GetContentForTaskCompletedButtonConverter()
 		{
 		}
 		
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (targetType != typeof(bool)) {
-				throw new ArgumentException("targetType must be bool");
-			}
-			
-			if (value == null || value.GetType() != typeof(TaskCollection)) {
-				return false;
+		{			
+			TaskState state = (TaskState)value;
+			if (state == TaskState.Completed) {
+				return "Oops... I hadn't quite finished this task";
 			}
 			else {
-				return true;
+				return "I've completed this task";
 			}
 		}
 		

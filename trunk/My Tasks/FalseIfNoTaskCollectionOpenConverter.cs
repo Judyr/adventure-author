@@ -26,29 +26,32 @@
 
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace AdventureAuthor.Tasks
 {
-	public class CreatorToStringConverter : IValueConverter
+	/// <summary>
+	/// Check if a task collection is open - if not, return false to disable or hide the control.
+	/// </summary>
+	public class DisableIfNoTaskCollectionOpenConverter : IValueConverter
 	{
-		public CreatorToStringConverter()
+		public DisableIfNoTaskCollectionOpenConverter()
 		{
 		}
 		
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (targetType != typeof(string)) {
-				throw new ArgumentException("targetType must be string");
+			if (targetType != typeof(bool)) {
+				throw new ArgumentException("targetType must be bool");
 			}
 			
-			string creator = (string)value;
-			if (creator == null || creator == String.Empty) {
-				return "Added";	
+			if (value == null || value.GetType() != typeof(TaskCollection)) {
+				return false;
 			}
 			else {
-				return "Added by " + creator;
+				return true;
 			}
 		}
 		
