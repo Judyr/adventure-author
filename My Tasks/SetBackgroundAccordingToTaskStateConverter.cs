@@ -26,9 +26,12 @@
 
 using System;
 using System.Globalization;
+using System.Reflection;
+using System.Resources;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace AdventureAuthor.Tasks
 {
@@ -36,8 +39,26 @@ namespace AdventureAuthor.Tasks
 	/// </summary>
 	public class SetBackgroundAccordingToTaskStateConverter : IValueConverter
 	{
+		private static ImageBrush linedPaperBrush;
+		
+		
 		public SetBackgroundAccordingToTaskStateConverter()
 		{
+			linedPaperBrush = new ImageBrush();
+			ResourceManager manager = new ResourceManager("AdventureAuthor.Tasks.Images",Assembly.GetExecutingAssembly());
+			
+			System.Drawing.Bitmap bitmap = (System.Drawing.Bitmap)manager.GetObject("linedpaper");
+			BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+																		 bitmap.GetHbitmap(),
+			                                                             IntPtr.Zero,
+			                                                             Int32Rect.Empty,
+			                                                             BitmapSizeOptions.FromEmptyOptions());			
+			linedPaperBrush.ImageSource = source;
+			linedPaperBrush.TileMode = TileMode.Tile;
+			linedPaperBrush.Stretch = Stretch.None;
+			linedPaperBrush.AlignmentX = AlignmentX.Left;
+			linedPaperBrush.Viewport = new Rect(0,0.5,1,0.04); //these values seem to work but don't really understand what they're doing
+			linedPaperBrush.ViewportUnits = BrushMappingMode.RelativeToBoundingBox;
 		}
 		
 		
@@ -47,18 +68,21 @@ namespace AdventureAuthor.Tasks
 				throw new ArgumentException("targetType must be Brush");
 			}
 			
-			TaskState state = (TaskState)value;
-			if (state == TaskState.Completed) {
-				return Brushes.LightSteelBlue;
-			}
-			else if (state == TaskState.NotCompleted) {
-				return Brushes.Moccasin;	
-			}
-			else {
-				return Brushes.Moccasin;
-			}
+			return linedPaperBrush;
+				
+//			TaskState state = (TaskState)value;
+//			if (state == TaskState.Completed) {
+//				return Brushes.LightSteelBlue;
+//			}
+//			else if (state == TaskState.NotCompleted) {
+//				return linedPaperBrush;
+//			}
+//			else {
+//				return linedPaperBrush;
+//			}
 		}
 		
+
 		
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{

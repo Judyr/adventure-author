@@ -104,3 +104,5 @@ C:\Ando\My Tasks\obj\Debug\MyTasksWindow.baml
 C:\Ando\My Tasks\obj\Debug\My Tasks.g.resources
 C:\Ando\My Tasks\obj\Debug\My Tasks.exe
 C:\Ando\My Tasks\obj\Debug\My Tasks.pdb
+C:\Ando\My Tasks\obj\Debug\My Tasks.csproj.GenerateResource.Cache
+C:\Ando\My Tasks\obj\Debug\AdventureAuthor.Tasks.Images.resources

@@ -20,7 +20,9 @@
 		<tasks:HideIfTaskIsSelectedConverter x:Key="hideIfTaskIsSelected"/>
 		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
 		<tasks:SetBackgroundAccordingToTaskStateConverter x:Key="setBackgroundAccordingToTaskState"/>
-		<tasks:GetContentForTaskCompletedButtonConverter x:Key="getContentForCompleteTaskButton"/>		
+		<tasks:GetContentForTaskCompletedButtonConverter x:Key="getContentForCompleteTaskButton"/>	
+		<tasks:TaskStateToVisibilityConverter x:Key="onlyShowIfTaskIsCompleted"/>
+		<tasks:GetGlowAccordingToTaskState x:Key="glowAccordingToState"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
 			<WrapPanel Orientation="Horizontal" 
@@ -117,11 +119,22 @@
 			<!--'Sheet of paper' that displays the details of the currently selected task-->
 			<Border Grid.Row="0"
 					Grid.Column="1">
+				
+				<Border.LayoutTransform>
+					<RotateTransform Angle="6"/>
+				</Border.LayoutTransform>
+				
+				<!--<Border.BitmapEffect>
+					<OuterGlowBitmapEffect PresentationOptions:Freeze="true"
+										   GlowColor="Blue"/>
+				</Border.BitmapEffect>-->
+				
+				
 				<Grid Height="500"
 					  Width="400"
 				      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
 				      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
-				      ShowGridLines="True"
+				      ShowGridLines="false"
 					  Background="{Binding Path=State, Converter={StaticResource setBackgroundAccordingToTaskState}}">
 					
 					<Grid.Style>
@@ -194,16 +207,15 @@
 						</ScrollViewer>
 					
 						<StackPanel Orientation="Horizontal"
-						            HorizontalAlignment="Right"
-						            VerticalAlignment="Top"
-									Margin="10">
+						            HorizontalAlignment="Center"
+						            VerticalAlignment="Top">
 							<ComboBox x:Name="TagSelectionComboBox"
 									  Height="24"
 									  Width="140"
 							          FontSize="14"
 							          Margin="5"
 									  ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=AllTags}"/>	
-							<Button Content="Add tag"
+							<Button Content="Attach label"
 							        Height="24"
 							        Width="70"
 									Click="AddSelectedTagToCurrentTask"/>
@@ -220,6 +232,7 @@
 						<TextBlock Grid.Row="2"
 								   Grid.Column="0"
 								   FontSize="14"
+						           FontWeight="SemiBold"
 						           HorizontalAlignment="Center"
 						           VerticalAlignment="Center"
 								   Foreground="Blue">
@@ -227,16 +240,15 @@
 							<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
 						</TextBlock>
 					
-						<!--<TextBlock Grid.Row="2"
+						<TextBlock Grid.Row="2"
 								   Grid.Column="0"
-								   FontSize="14"
-						           FontWeight="Bold"
+								   FontSize="18"
+						           FontWeight="SemiBold"
 						           HorizontalAlignment="Center"
 						           VerticalAlignment="Center"
-								   Foreground="Red">
-							<TextBlock Text="{Binding Path=Creator, Converter={StaticResource creatorStringConverter}}"/>
-							<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
-						</TextBlock>-->
+								   Foreground="Red"
+								   Text="Completed on 18th September 2008!"
+								   Visibility="{Binding Path=State, Converter={StaticResource onlyShowIfTaskIsCompleted}, ConverterParameter=Hidden}"/>
 					
 					</StackPanel>
 					
@@ -251,24 +263,6 @@
 						<TextBlock Padding="5"
 								   Text="{Binding Path=State, Converter={StaticResource getContentForCompleteTaskButton}}"/>
 					</Button>
-					
-					<!--<CheckBox x:Name="taskCompletedCheckBox"
-							  Grid.Row="3"
-							  Grid.Column="0"
-					          Content="I have completed this task"
-					          FontSize="12"
-					          Margin="20"
-					          IsChecked="{Binding Path=State, Converter={StaticResource returnTrueIfTaskCompleted}}"
-					          Checked="ChangeCompletionStatusOfTask"
-					          Unchecked="ChangeCompletionStatusOfTask"
-					          HorizontalAlignment="Center"
-					          VerticalAlignment="Center">
-						<CheckBox.LayoutTransform>
-							<ScaleTransform ScaleX="2" 
-							                ScaleY="2"
-											PresentationOptions:Freeze="true"/>
-						</CheckBox.LayoutTransform>
-					</CheckBox>	-->
 				
 				</Grid>
 			</Border>
