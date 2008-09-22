@@ -282,7 +282,7 @@
 				<StackPanel Orientation="Horizontal">
 					
 					<CheckBox x:Name="activateTagFilterCheckBox"
-					          Content="Show tasks with tag: "
+					          Content="Show tasks with label: "
 							  Checked="OnlyShowTasksWithSelectedTag"
 							  Unchecked="OnlyShowTasksWithSelectedTag"
 							  VerticalAlignment="Center"
@@ -291,7 +291,7 @@
 					<ComboBox x:Name="tagFilterComboBox"
 							  SelectionChanged="OnlyShowTasksWithSelectedTag"
 							  VerticalAlignment="Center"
-							  Width="100"
+							  Width="90"
 							  Margin="4">
 						<ComboBox.ItemsSource>
 							<Binding Path="AllTags" Mode="OneWay">
@@ -303,7 +303,7 @@
 					</ComboBox>		
 				</StackPanel>					  
 									
-				<Button Content="Clear all"
+				<Button Content="Show all"
 				        Width="100"
 				        Margin="5"
 				        HorizontalAlignment="Center"

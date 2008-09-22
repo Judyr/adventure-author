@@ -10,7 +10,7 @@
 			<Button x:Name="DeleteTagButton"
 					Width="8" 
 			        Height="{Binding ElementName=DeleteTagButton, Path=Width}"
-					Margin="4"
+			        Margin="4"
 			        VerticalAlignment="Center"
 			        HorizontalAlignment="Center">
 				<Button.Template>
@@ -22,9 +22,9 @@
 									<Setter Property="StrokeThickness" Value="2"/>
 								</Style>
 							</Grid.Resources>
-							<Rectangle Fill="Transparent" 
-							         Width="{Binding ElementName=DeleteTagButton, Path=Width}"
-							         Height="{Binding ElementName=DeleteTagButton, Path=Height}"/>
+							<Rectangle Fill="Transparent"
+							           Width="{Binding ElementName=DeleteTagButton, Path=Width}"
+							           Height="{Binding ElementName=DeleteTagButton, Path=Height}"/>
 							<Line X1="0" X2="{Binding ElementName=DeleteTagButton, Path=Width}"
 								  Y1="0" Y2="{Binding ElementName=DeleteTagButton, Path=Height}"/>
 							<Line X1="{Binding ElementName=DeleteTagButton, Path=Width}" X2="0"

@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -57,6 +58,7 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\GetGlowAccordingToTaskState.cs" />
     <Compile Include="CreationDateToStringConverter.cs" />
     <Compile Include="CreatorToStringConverter.cs" />
     <Compile Include="DisableIfTaskCollectionIsEmpty.cs" />
@@ -96,6 +98,7 @@
     </Compile>
     <Compile Include="TaskStateToBooleanConverter.cs" />
     <Compile Include="TaskStateToTextDecorationConverter.cs" />
+    <Compile Include="TaskStateToVisibilityConverter.cs" />
     <Compile Include="TruncateTextConverter.cs" />
     <Page Include="DogEar.xaml" />
     <Page Include="TagControl.xaml" />
@@ -105,5 +108,7 @@
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>
     </ProjectReference>
+    <EmbeddedResource Include="Images.resx" />
+    <Folder Include="Converters" />
   </ItemGroup>
 </Project>

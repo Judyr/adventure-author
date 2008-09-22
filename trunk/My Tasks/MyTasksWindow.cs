@@ -582,9 +582,9 @@ namespace AdventureAuthor.Tasks
 				if (button.DataContext is string) {
 					// Check that the user wants to delete the tag:
 					string deletingTag = (string)button.DataContext;
-					MessageBoxResult result = MessageBox.Show("Remove '" + deletingTag + "' tag from " +
+					MessageBoxResult result = MessageBox.Show("Remove '" + deletingTag + "' label from " +
 					                                           "this task?",
-					                                           "Remove tag?",
+					                                           "Remove label?",
 					                                           MessageBoxButton.OKCancel,
 					                                           MessageBoxImage.Question,
 					                                           MessageBoxResult.OK);

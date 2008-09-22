@@ -65,7 +65,7 @@ namespace AdventureAuthor.Tasks
 			// If the task collection is non-empty, tasks have been filtered out:
 			if (tasks != null && tasks.Count > 0) {// && (filteringByStatus || searchString.Length > 0 || (filteringByTag && selectedTag != null))) {
 				return "There are no tasks matching what you're looking for.\n\n" +
-					   "Click 'Clear all' to view your whole task list.";
+					   "Click 'Show all' to view your whole task list.";
 			}
 			else {
 				return "Your task list is currently empty.\n\n" +
