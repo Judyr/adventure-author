@@ -46,6 +46,7 @@ namespace AdventureAuthor.Tasks
 		
 		public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
 		{
+			System.Diagnostics.Debug.WriteLine("Converter called");
 			if (targetType != typeof(string)) {
 				throw new ArgumentException("targetType must be string");
 			}
@@ -67,9 +68,9 @@ namespace AdventureAuthor.Tasks
 				return "There are no tasks matching what you're looking for.\n\n" +
 					   "Click 'Show all' to view your whole task list.";
 			}
-			else {
-				return "Your task list is currently empty.\n\n" +
-					   "Click the button with the green plus sign to add your first task.";
+			else {				
+				return "Your task list is empty.\n\n" +
+					   "Click the button with the green plus sign to add a task.";
 			}
 		}
 		
