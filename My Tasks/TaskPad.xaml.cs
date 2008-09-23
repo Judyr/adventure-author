@@ -139,6 +139,7 @@ namespace AdventureAuthor.Tasks
 				throw new InvalidOperationException("No task collection is currently open.");
 			}
 			Tasks.Remove(task);
+			UpdateEmptyTaskListMessage();
 		}
 		
 		
@@ -505,6 +506,7 @@ namespace AdventureAuthor.Tasks
 			ConditionallyApplySearchFilter(null,null);
 			ConditionallyApplyTagFilter(null,null);
 			ConditionallyApplyStateFilters(null,null);
+			UpdateEmptyTaskListMessage();
 		}
 				
 		
@@ -531,6 +533,19 @@ namespace AdventureAuthor.Tasks
 		public void ClearAllFilters(object sender, RoutedEventArgs e)
 		{
 			ClearAllFilters();
+		}
+		
+		
+		private void UpdateEmptyTaskListMessage()
+		{
+			try {
+				MultiBindingExpression mbe = BindingOperations.GetMultiBindingExpression(emptyTaskListMessageTextBlock,
+				                                                                         TextBlock.TextProperty);
+				mbe.UpdateTarget();
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
 		}
 		
 		#endregion

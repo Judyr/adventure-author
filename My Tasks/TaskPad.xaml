@@ -160,7 +160,8 @@
 			</ScrollViewer>
 				
 			<!--Text that appears when the list is empty-->
-			<TextBlock Grid.Row="1"
+			<TextBlock x:Name="emptyTaskListMessageTextBlock"
+			           Grid.Row="1"
 					   Grid.Column="0"
 					   FontSize="16"
 					   FontFamily="Helvetica"
