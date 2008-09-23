@@ -106,3 +106,5 @@ C:\Ando\My Tasks\obj\Debug\My Tasks.exe
 C:\Ando\My Tasks\obj\Debug\My Tasks.pdb
 C:\Ando\My Tasks\obj\Debug\My Tasks.csproj.GenerateResource.Cache
 C:\Ando\My Tasks\obj\Debug\AdventureAuthor.Tasks.Images.resources
+C:\Code\My Tasks\obj\Debug\AdventureAuthor.Tasks.Images.resources
+C:\Code\My Tasks\obj\Debug\My Tasks.csproj.GenerateResource.Cache

@@ -644,13 +644,13 @@ namespace AdventureAuthor.Tasks
 			
 			if (result == MessageBoxResult.OK) {
 				if (task.State == TaskState.Completed) {
-					task.State = TaskState.NotCompleted;	
+					task.Uncomplete();
 				}
 				else {
 					if (task.State != TaskState.NotCompleted) {
 						System.Diagnostics.Debug.WriteLine("Task state was '" + task.State + "'? How'd that happen?");
 					}
-					task.State = TaskState.Completed;
+					task.Complete();
 				}
 				
 				pad.RefreshTaskCompletedFilter();
