@@ -11,6 +11,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.Windows.Data;
 using System.Xml.Serialization;
 using AdventureAuthor.Utils;
@@ -77,7 +78,7 @@ namespace AdventureAuthor.Tasks
 		public TaskState State {
 			get { return state; }
 			set { 
-				state = value; 
+				state = value;
 				OnPropertyChanged(new PropertyChangedEventArgs("State"));
 			}
 		}
@@ -109,6 +110,22 @@ namespace AdventureAuthor.Tasks
 				OnPropertyChanged(new PropertyChangedEventArgs("Created"));
 			}
 		}		
+		
+		
+		/// <summary>
+		/// The date and time this task was (most recently) completed, if it has been completed.
+		/// </summary>
+		/// <remarks>This property should be set to DateTime.MinValue for uncompleted tasks</remarks>
+		[OptionalFieldAttribute()]
+		private DateTime completed;
+		[XmlAttribute("Completed")]
+		public DateTime Completed {
+			get { return completed; }
+			set { 
+				completed = value; 
+				OnPropertyChanged(new PropertyChangedEventArgs("Completed"));
+			}
+		}	
 		
 		#endregion
 	
@@ -285,6 +302,7 @@ namespace AdventureAuthor.Tasks
 			this.state = state;
 			this.creator = creator;
 			this.created = created;
+			this.completed = DateTime.MinValue;
 		}
 		
 		#endregion
@@ -313,6 +331,27 @@ namespace AdventureAuthor.Tasks
 //				}
 //			}
 			return false;
+		}
+		
+		
+		/// <summary>
+		/// Mark this task as completed and set the completion date to DateTime.Now.
+		/// </summary>
+		public void Complete()
+		{
+			State = TaskState.Completed;
+			Completed = DateTime.Now;
+		}
+		
+		
+		/// <summary>
+		/// Mark this task as uncompleted and erase the completion date.
+		/// </summary>
+		/// <remarks>Sets Completed to DateTime.MinValue, as nullable values can't be serialised with XML.</remarks>
+		public void Uncomplete()
+		{
+			State = TaskState.NotCompleted;
+			Completed = DateTime.MinValue;
 		}
 		
 		#endregion

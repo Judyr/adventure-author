@@ -58,6 +58,7 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\CompletedDateToStringConverter.cs" />
     <Compile Include="Converters\GetGlowAccordingToTaskState.cs" />
     <Compile Include="CreationDateToStringConverter.cs" />
     <Compile Include="CreatorToStringConverter.cs" />

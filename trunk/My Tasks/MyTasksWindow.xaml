@@ -16,6 +16,7 @@
 		<tasks:TaskStateToTextDecorationConverter x:Key="returnStrikethroughIfTaskCompleted"/>	
 		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
 		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
+		<tasks:CompletionDateToStringConverter x:Key="completionDateStringConverter"/>
 		<tasks:HideIfNoTaskSelectedConverter x:Key="hideIfNoTaskSelected"/>
 		<tasks:HideIfTaskIsSelectedConverter x:Key="hideIfTaskIsSelected"/>
 		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
@@ -247,7 +248,7 @@
 						           HorizontalAlignment="Center"
 						           VerticalAlignment="Center"
 								   Foreground="Red"
-								   Text="Completed on 18th September 2008!"
+								   Text="{Binding Path=Completed, Converter={StaticResource completionDateStringConverter}}"
 								   Visibility="{Binding Path=State, Converter={StaticResource onlyShowIfTaskIsCompleted}, ConverterParameter=Hidden}"/>
 					
 					</StackPanel>
