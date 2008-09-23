@@ -215,18 +215,6 @@ namespace AdventureAuthor.Tasks
 		/// <summary>
 		/// Move the currently selected task down one space in the list.
 		/// </summary>
-		private void OldMoveSelectedTaskDown(object sender, RoutedEventArgs e)
-		{
-			if (taskListBox.SelectedItem != null) {
-				Task task = (Task)taskListBox.SelectedItem;
-				MoveTaskDown(task);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Move the currently selected task down one space in the list.
-		/// </summary>
 		private void MoveSelectedTaskDown(object sender, RoutedEventArgs e)
 		{
 			if (taskListBox.SelectedItem != null) {
@@ -308,157 +296,7 @@ namespace AdventureAuthor.Tasks
 		{
 			EditableTextBox editableTextBox = (EditableTextBox)sender;
 			editableTextBox.IsEditable = false;
-		}
-		
-		
-		/// <summary>
-		/// Apply a filter that will hide any tasks not containing 
-		/// a user-entered search string.
-		/// </summary>
-		private void ShowOnlyTasksContainingSearchString()
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(SearchFilter);
-				cvs.Filter += new FilterEventHandler(SearchFilter);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Apply a filter that will hide any tasks not
-		/// tagged with a user-specified tag.
-		/// </summary>
-		private void ShowOnlyTasksWithGivenTag()
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(ShowOnlySelectedTagFilter);
-				cvs.Filter += new FilterEventHandler(ShowOnlySelectedTagFilter);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Apply filters to show both completed and uncompleted tasks.
-		/// </summary> 
-		private void ShowBothCompletedAndUncompletedTasks(object sender, RoutedEventArgs e)
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
-				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Apply filters to hide completed tasks.
-		/// </summary>
-		private void ShowOnlyUncompletedTasks(object sender, RoutedEventArgs e)
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
-				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
-				cvs.Filter += new FilterEventHandler(HideCompletedTasksFilter);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Apply filters to show only completed tasks.
-		/// </summary>
-		private void ShowOnlyCompletedTasks(object sender, RoutedEventArgs e)
-		{
-			if (cvs != null) {
-				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
-				cvs.Filter += new FilterEventHandler(HideUncompletedTasksFilter);
-				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
-			}
-		}
-		
-		
-		/// <summary>
-		/// When a task is completed/uncompleted, update the filters that
-		/// show/hide tasks based on their completion status.
-		/// </summary>
-		internal void RefreshTaskCompletedFilter()
-		{
-			//TODO: This stops you from selecting completed tasks???
-			#region Horrible
-//			foreach (RadioButton button in taskCompletedFilterRadioButtonPanel.Children) {
-//				if ((bool)button.IsChecked) {
-//					button.IsChecked = false;
-//					button.IsChecked = true;
-//				}
-//			}
-			#endregion
-		}
-		
-		
-//		/// <summary>
-//		/// If completed tasks are to be hidden and a task has just been completed,
-//		/// refresh the view of visible tasks.
-//		/// </summary>
-//		private void TaskCompleted(object sender, RoutedEventArgs e)
-//		{
-//			if ((bool)hideCompletedTasksCheckbox.IsChecked) {
-//				CheckBox checkBox = (CheckBox)sender;
-//				if ((bool)checkBox.IsChecked) {					
-//					RefreshFilters();
-//				}
-//			}
-//		}
-		
-		
-		/// <summary>
-		/// When the search text changes, update all the view filters.
-		/// </summary>
-		private void ShowOnlyTasksContainingSearchString(object sender, RoutedEventArgs e)
-		{
-			ShowOnlyTasksContainingSearchString();
-		}
-		
-		
-		/// <summary>
-		/// When the user selects a particular tag, apply a filter to hide
-		/// any task which does not have that tag.
-		/// </summary>
-		private void OnlyShowTasksWithSelectedTag(object sender, RoutedEventArgs e)
-		{			
-//			bool filtering = (bool)activateTagFilterCheckBox.IsChecked;
-//			string tag = (string)tagFilterComboBox.SelectedItem;
-//			bool tagIsSelected = (tag != null && tag != String.Empty);
-//			
-//			if (filtering && !tagIsSelected) {
-//				activateTagFilterCheckBox.IsChecked = false;
-//			}
-//			else if (!filtering && tagIsSelected) {
-//				activateTagFilterCheckBox.IsChecked = true;
-//			}
-			
-			ShowOnlyTasksWithGivenTag();
-		}
-		
-		
-		/// <summary>
-		/// Stop filtering by tag, search string, state, or anything else.
-		/// </summary>
-		private void ClearAllFilters(object sender, RoutedEventArgs e)
-		{
-			ClearAllFilters();
-		}
-		
-		
-		public void ClearAllFilters()
-		{
-			if ((bool)activateTagFilterCheckBox.IsChecked) {
-				activateTagFilterCheckBox.IsChecked = false;
-			}
-			if (searchStringTextBox.Text.Length > 0) {
-				searchStringTextBox.Text = String.Empty;	
-			}
-			if (!(bool)showAllTasksRadioButton.IsChecked) {
-				showAllTasksRadioButton.IsChecked = true;
-			}
-		}
+		}		
 		
 		#endregion
 		
@@ -502,7 +340,7 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void ShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
+		private void OldShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
 		{
 			if (((bool)activateTagFilterCheckBox.IsChecked) && tagFilterComboBox.SelectedItem != null) {
 				string tag = (string)tagFilterComboBox.SelectedItem;
@@ -512,6 +350,187 @@ namespace AdventureAuthor.Tasks
 				}
 			}
 			// Never set e.Accepted to true, or you may override the results of another filter.
+		}
+		
+		
+		private void ShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
+		{
+			string tag = (string)tagFilterComboBox.SelectedItem;
+			Task task = (Task)e.Item;
+			if (!task.Tags.Contains(tag)) {
+				e.Accepted = false;
+			}
+			// Never set e.Accepted to true, or you may override the results of another filter.
+		}
+		
+		#endregion
+		
+		#region Applying and removing filters
+		
+		/// <summary>
+		/// Apply a filter that will hide any tasks not containing 
+		/// a user-entered search string.
+		/// </summary>
+		private void ApplySearchFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(SearchFilter);
+				cvs.Filter += new FilterEventHandler(SearchFilter);
+			}
+		}
+				
+		
+		/// <summary>
+		/// Stop filtering by search string.
+		/// </summary>
+		private void RemoveSearchFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(SearchFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Apply a filter that will hide any tasks not
+		/// tagged with a user-specified tag.
+		/// </summary>
+		private void ApplyTagFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(ShowOnlySelectedTagFilter);
+				cvs.Filter += new FilterEventHandler(ShowOnlySelectedTagFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Stop filtering by tag.
+		/// </summary>
+		private void RemoveTagFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(ShowOnlySelectedTagFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Apply filters to hide completed tasks.
+		/// </summary>
+		private void ApplyHideCompletedTasksFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
+				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
+				cvs.Filter += new FilterEventHandler(HideCompletedTasksFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Apply filters to show only completed tasks.
+		/// </summary>
+		private void ApplyHideUncompletedTasksFilter()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
+				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
+				cvs.Filter += new FilterEventHandler(HideUncompletedTasksFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Stop filtering by completion state (show both completed and uncompleted tasks).
+		/// </summary> 
+		private void RemoveCompletionStateFilters()
+		{
+			if (cvs != null) {
+				cvs.Filter -= new FilterEventHandler(HideUncompletedTasksFilter);
+				cvs.Filter -= new FilterEventHandler(HideCompletedTasksFilter);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Check whether it's appropriate to filter by search string,
+		/// and if so apply the relevant filter.
+		/// </summary>
+		private void ConditionallyApplySearchFilter(object sender, RoutedEventArgs e)
+		{
+			// No conditions are necessary in this case.
+			ApplySearchFilter();
+		}
+		
+		
+		/// <summary>
+		/// Check whether it's appropriate to filter by tag,
+		/// and if so apply the relevant filter.
+		/// </summary>
+		private void ConditionallyApplyTagFilter(object sender, RoutedEventArgs e)
+		{
+			if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
+				ApplyTagFilter();
+			}
+			else {
+				RemoveTagFilter();
+			}
+		}
+				
+		
+		/// <summary>
+		/// Check whether it's appropriate to filter by completion state,
+		/// and if so apply the relevant filter.
+		/// </summary>
+		private void ConditionallyApplyStateFilters(object sender, RoutedEventArgs e)
+		{
+			if ((bool)showAllTasksRadioButton.IsChecked) {
+				RemoveCompletionStateFilters();
+			}
+			else if ((bool)showCompletedTasksOnlyRadioButton.IsChecked) {
+				ApplyHideUncompletedTasksFilter();
+			}
+			else if ((bool)showUncompletedTasksOnlyRadioButton.IsChecked) {
+				ApplyHideCompletedTasksFilter();
+			}
+		}
+		
+		
+		/// <summary>
+		/// Remove and re-apply all active filters to force the filtered task list to refresh.
+		/// </summary>
+		public void RefreshAllFilters()
+		{
+			ConditionallyApplySearchFilter(null,null);
+			ConditionallyApplyTagFilter(null,null);
+			ConditionallyApplyStateFilters(null,null);
+		}
+				
+		
+		/// <summary>
+		/// Clears all active filters by deselecting them through the user interface.
+		/// </summary>
+		public void ClearAllFilters()
+		{
+			if ((bool)activateTagFilterCheckBox.IsChecked) {
+				activateTagFilterCheckBox.IsChecked = false;
+			}
+			if (searchStringTextBox.Text.Length > 0) {
+				searchStringTextBox.Text = String.Empty;	
+			}
+			if (!(bool)showAllTasksRadioButton.IsChecked) {
+				showAllTasksRadioButton.IsChecked = true;
+			}
+		}
+		
+		
+		/// <summary>
+		/// Clears all active filters by deselecting them through the user interface.
+		/// </summary>
+		public void ClearAllFilters(object sender, RoutedEventArgs e)
+		{
+			ClearAllFilters();
 		}
 		
 		#endregion

@@ -7,8 +7,7 @@
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
     KeyDown="HandleKeyPresses"
     Background="CornSilk"
-	Width="255" Height="650"
-	Name="rarface">
+	Width="255" Height="650">
 	
 	<!--<UserControl.BitmapEffect>
 		<BevelBitmapEffect Relief="0.3"/>
@@ -258,13 +257,17 @@
 					  Margin="0,0,0,6"/>
 				
 				<StackPanel Orientation="Vertical">		
-					<RadioButton Content="Show completed tasks only"
-								 Checked="ShowOnlyCompletedTasks"/>
-					<RadioButton Content="Show uncompleted tasks only"
-								 Checked="ShowOnlyUncompletedTasks"/>	
+					<StackPanel.Resources>
+						<Style TargetType="{x:Type RadioButton}">
+							<EventSetter Event="RadioButton.Checked" Handler="ConditionallyApplyStateFilters"/>
+						</Style>
+					</StackPanel.Resources>
+					<RadioButton x:Name="showCompletedTasksOnlyRadioButton" 
+								 Content="Show completed tasks only"/>
+					<RadioButton x:Name="showUncompletedTasksOnlyRadioButton" 
+								 Content="Show uncompleted tasks only"/>
 					<RadioButton x:Name="showAllTasksRadioButton" 
 								 Content="Show both"
-								 Checked="ShowBothCompletedAndUncompletedTasks"
 								 IsChecked="true"/>
 				</StackPanel>
 			
@@ -274,7 +277,7 @@
 					<TextBlock Text="Search:   "			         
 					           VerticalAlignment="Center"/>
 					<TextBox x:Name="searchStringTextBox"
-					         TextChanged="ShowOnlyTasksContainingSearchString"		         
+					         TextChanged="ConditionallyApplySearchFilter"		         
 					         VerticalAlignment="Center"
 					         Width="170"/>				
 				</StackPanel>
@@ -283,13 +286,13 @@
 					
 					<CheckBox x:Name="activateTagFilterCheckBox"
 					          Content="Show tasks with label: "
-							  Checked="OnlyShowTasksWithSelectedTag"
-							  Unchecked="OnlyShowTasksWithSelectedTag"
+							  Checked="ConditionallyApplyTagFilter"
+							  Unchecked="ConditionallyApplyTagFilter"
 							  VerticalAlignment="Center"
 							  />
 					
 					<ComboBox x:Name="tagFilterComboBox"
-							  SelectionChanged="OnlyShowTasksWithSelectedTag"
+							  SelectionChanged="ConditionallyApplyTagFilter"
 							  VerticalAlignment="Center"
 							  Width="90"
 							  Margin="4">

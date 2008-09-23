@@ -653,7 +653,7 @@ namespace AdventureAuthor.Tasks
 					task.Complete();
 				}
 				
-				pad.RefreshTaskCompletedFilter();
+				pad.RefreshAllFilters();
 			}
 		}
 		
