@@ -56,6 +56,7 @@ namespace AdventureAuthor.Ideas
 	    		trayIcon = new System.Windows.Forms.NotifyIcon();
 	    		SwitchBulbOff();
 	    		trayIcon.Visible = true; 
+	    		trayIcon.ToString();
 	    		UpdateMagnetCountToolTip();	
 	    		
 	    		// Set up context menu:			
