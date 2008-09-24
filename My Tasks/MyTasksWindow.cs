@@ -2,12 +2,15 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Resources;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-
+using winforms = System.Windows.Forms;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 
@@ -21,6 +24,7 @@ namespace AdventureAuthor.Tasks
 		#region Constants
 		
 		public const string APPLICATION_NAME = "My Tasks";
+		public const string DEFAULT_TASK_DESCRIPTION = "Enter your task here...";
 		
 		#endregion
 		
@@ -39,11 +43,22 @@ namespace AdventureAuthor.Tasks
 		}
     	
     	
+    	/// <summary>
+    	/// The list of all tags available to the user on the main interface.
+    	/// </summary>
+    	/// <remarks>Drawn from the preferences file (or from default values if no
+    	/// preferences file found) together with any tags found in the current tasks file.</remarks>
     	private ObservableCollection<string> allTags = new ObservableCollection<string>();
 		public ObservableCollection<string> AllTags {
 			get { return allTags; }
 			set { allTags = value; }
 		}
+    	
+    	
+    	/// <summary>
+    	/// The system tray icon for this application.
+    	/// </summary>
+    	private winforms.NotifyIcon trayIcon;
 		
 		#endregion
 		
@@ -89,7 +104,18 @@ namespace AdventureAuthor.Tasks
 			}
 			else {
 				New();
-			}
+			}	
+			
+			// Launch the application in the system tray:
+			Loaded += new RoutedEventHandler(LaunchInSystemTray);			
+				
+			// Dispose the system tray icon when you're done:
+			Closed += delegate { 
+				if (trayIcon != null) {
+					trayIcon.Visible = false;
+					trayIcon.Dispose();
+				} 		
+			};
 		}
 		
 		#endregion
@@ -131,6 +157,7 @@ namespace AdventureAuthor.Tasks
 			
 			MyTasksPreferences.Instance.ActiveFilePath = null;
 			Dirty = false;
+			pad.ClearAllFilters();
 			UpdateTagCollection();
 		}
 
@@ -162,7 +189,7 @@ namespace AdventureAuthor.Tasks
 		{
 			try {
 				object obj = Serialization.Deserialize(path,typeof(TaskCollection));
-				TaskCollection tasks = (TaskCollection)obj;			
+				TaskCollection tasks = (TaskCollection)obj;
 				
 				Open(tasks);
 				
@@ -213,6 +240,7 @@ namespace AdventureAuthor.Tasks
 			
 			Dirty = false;
 			UpdateTitleBar();
+			pad.ClearAllFilters();
 			UpdateTagCollection();
 		}
     	
@@ -435,6 +463,23 @@ namespace AdventureAuthor.Tasks
     		}
     	}
 		
+		
+    	/// <summary>
+    	/// Immediately displays a balloon tip over the system tray icon, avoiding the standard fade-in.
+    	/// </summary>
+    	/// <param name="timeout">The time period, in milliseconds, the balloon tip should display.</param>
+    	/// <param name="tipTitle">The title to display on the balloon tip.</param>
+    	/// <param name="tipText">The text to display on the balloon tip.</param>
+    	/// <param name="tipIcon">One of the System.Windows.Forms.ToolTipIcon values.</param>
+		private void ShowBalloonTipWithoutFadeIn(int timeout, string tipTitle, string tipText, winforms.ToolTipIcon tipIcon)
+		{
+			if (trayIcon != null) {
+				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
+				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
+				// Yes, I know.
+			}
+		}
+		
 		#endregion
 		
 		#region Event handlers
@@ -564,7 +609,7 @@ namespace AdventureAuthor.Tasks
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
     		pad.ClearAllFilters(); //TODO: This is a bit clumsy
-    		Task task = new Task("Enter your task here...");
+    		Task task = new Task(DEFAULT_TASK_DESCRIPTION);
     		pad.AddAfterSelectedTask(task);
     		pad.taskListBox.SelectedItem = task;
     		taskDescriptionBox.Focus();
@@ -655,6 +700,67 @@ namespace AdventureAuthor.Tasks
 				
 				pad.RefreshAllFilters();
 			}
+		}
+		
+		
+		/// <summary>
+		/// Place an icon representing this application in the system tray.
+		/// </summary>
+		private void LaunchInSystemTray(object sender, RoutedEventArgs e)
+		{
+			ResourceManager manager = new ResourceManager("AdventureAuthor.Tasks.Icons",Assembly.GetExecutingAssembly());
+			Icon icon = (Icon)manager.GetObject("textfile");		
+			
+			trayIcon = new winforms.NotifyIcon();
+			trayIcon.Icon = icon;
+			trayIcon.Visible = true;
+			
+			trayIcon.MouseMove += delegate { 
+				string text;
+				if (pad.Tasks == null || pad.Tasks.Count == 0) {
+					text = "You haven't added any tasks yet.";
+				}
+				else {
+					int completed = 0;
+					int uncompleted = 0;
+					foreach (Task task in pad.Tasks) {
+						if (task.State == TaskState.Completed) {
+							completed++;	
+						}
+						else if (task.State == TaskState.NotCompleted) {
+							uncompleted++;
+						}
+					}
+					text = "Tasks to do: " + uncompleted + "\n" +
+						   "Already done: " + completed;
+					if (uncompleted > 0) {
+						text += "\nClick to check your Top Task.";
+					}
+					else {
+						text += "\nAll tasks completed!";
+					}
+				}
+				trayIcon.Text = text;
+			};			
+			
+			trayIcon.MouseClick += delegate 
+			{ 		
+				if (pad.Tasks != null) {
+					foreach (Task task in pad.Tasks) {
+						if (task.State == TaskState.NotCompleted || task.State == TaskState.InProgress) {
+							ShowBalloonTipWithoutFadeIn(12000,"Top Task",task.Description,winforms.ToolTipIcon.None);
+							return;
+						}
+					}
+					
+					if (pad.Tasks.Count == 0) {
+						ShowBalloonTipWithoutFadeIn(12000,null,"You haven't added any tasks yet.",winforms.ToolTipIcon.None);
+					}
+					else {
+						ShowBalloonTipWithoutFadeIn(12000,null,"All tasks completed!",winforms.ToolTipIcon.None);
+					}					
+				}
+			};
 		}
 		
 		#endregion

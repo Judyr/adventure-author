@@ -102,5 +102,6 @@
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
       <Name>AAUtils</Name>
     </ProjectReference>
+    <Content Include="Comment Cards.cd" />
   </ItemGroup>
 </Project>

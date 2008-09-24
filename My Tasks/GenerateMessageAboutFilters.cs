@@ -46,7 +46,6 @@ namespace AdventureAuthor.Tasks
 		
 		public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
 		{
-			System.Diagnostics.Debug.WriteLine("Converter called");
 			if (targetType != typeof(string)) {
 				throw new ArgumentException("targetType must be string");
 			}
