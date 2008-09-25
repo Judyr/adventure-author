@@ -82,6 +82,7 @@
     <Compile Include="CornerConverter.cs" />
     <Compile Include="InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="SetBackgroundAccordingToTaskStateConverter.cs" />
+    <Compile Include="SystemTray.cs" />
     <Compile Include="TagControl.xaml.cs">
       <DependentUpon>TagControl.xaml</DependentUpon>
       <SubType>Code</SubType>

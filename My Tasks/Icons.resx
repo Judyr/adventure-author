@@ -118,30 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="heart" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAA
-        AAD///8B////Af///wH///8B////Af///wH///8BysrwgcrK8IH///8B////Af///wH///8B////Af//
-        /wH///8B////Af///wH///8B////Af///wH///8B8PD6QTMzzP8zM8z/8PD6Qf///wH///8B////Af//
-        /wH///8B////Af///wH///8B////Af///wH///8B+vr9ITU1zv+Zmf//mZn//zU1zv/6+v0h////Af//
-        /wH///8B////Af///wH///8B////Af///wH///8B////ATk50v+Dg/T/nJz//5yc//+Dg/T/OTnS////
-        /wH///8B////Af///wH///8B////Af///wH///8B////AZCQ5r+Hh/T/oKD//6Cg//+goP//oKD//4eH
-        9P+QkOa/////Af///wH///8B////Af///wH///8B////Ac3N9IFaWuP/paX//6Wl//+lpf//paX//6Wl
-        //+lpf//Wlrj/83N9IH///8B////Af///wH///8B////AfLy+0FFRd7/qqr//6qq//+qqv//qqr//6qq
-        //+qqv//qqr//6qq//9FRd7/8vL7Qf///wH///8B////Af///wGZme6/lpb4/7Cw//+wsP//sLD//7Cw
-        //+wsP//sLD//7Cw//+wsP//lpb4/5mZ7r////8B////Af///wHR0feBgoL0/7W1//+1tf//tbX//7W1
-        //+1tf//tbX//7W1//+1tf//tbX//7W1//+CgvT/0dH3gf///wH///8Bnp70v6Gh+v+7u///u7v//7u7
-        //+7u///u7v//7u7//+7u///u7v//7u7//+7u///oaH6/56e9L////8B////AVhY8f/AwP//zs7//87O
-        ///Ozv//x8f//8DA///AwP//x8f//87O///Ozv//zs7//8DA//9YWPH/////Af///wFdXfb/xcX//+Li
-        ///i4v//4uL//8XF//+Rkfv/kZH7/8XF///i4v//4uL//+Li///Fxf//XV32/////wH///8BYGD5/8nJ
-        ///c3P//7u7//9zc//+vr/3/1dX8gdXV/IGvr/3/3Nz//+7u///c3P//ycn//2Bg+f////8B////AdbW
-        /YGYmP7/zMz//8zM//+ysv7/ZGT9/////wH///8BZGT9/7Ky/v/MzP//zMz//5iY/v/W1v2B////Af//
-        /wH///8B19f+gWZm//9mZv//qKj+v////wH///8B////Af///wGoqP6/Zmb//2Zm///X1/6B////Af//
-        /wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af//
-        /wH///8BAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA
-        //8AAP//AAD//w==
-</value>
-  </data>
   <data name="textfile" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAgAMDAAAAEACACoDgAAhgAAACAgAAABAAgAqAgAAC4PAAAYGAAAAQAIAMgGAADWFwAAEBAAAAEA

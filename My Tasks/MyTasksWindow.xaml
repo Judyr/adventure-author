@@ -75,6 +75,9 @@
 					          Click="OnClick_SaveAs"/>
 					<MenuItem Name="CloseMenuItem" Header="Close"
 					          Click="OnClick_Close"/>
+					<Separator/>
+					<MenuItem Name="ExitMenuItem" Header="Exit"
+					          Click="OnClick_Exit"/>
 				</MenuItem>
 				<MenuItem Header="Edit">
 					<MenuItem Name="NewTaskMenuItem" 
