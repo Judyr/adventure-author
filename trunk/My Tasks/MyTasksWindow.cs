@@ -9,7 +9,7 @@ using System.Resources;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
+using System.Windows.Threading;
 using winforms = System.Windows.Forms;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -93,7 +93,8 @@ namespace AdventureAuthor.Tasks
 			
 			// Set up event handlers:
 			pad.AddTaskButton.Click += AddAndSelectNewTask;
-			Closing += HandleApplicationClosing;
+			Closing += SavePreferencesWhenClosing;
+			StateChanged += HideWhenMinimised;
 			MyTasksPreferences.Instance.PropertyChanged += HandlePreferencesChanged;
 			Changed += UpdateTitleBar;
 			
@@ -462,50 +463,22 @@ namespace AdventureAuthor.Tasks
     			Dirty = true;	
     		}
     	}
-		
-		
+    	    	
+    	    	
     	/// <summary>
-    	/// Immediately displays a balloon tip over the system tray icon, avoiding the standard fade-in.
+    	/// Hide the main window when the user minimises it.
     	/// </summary>
-    	/// <param name="timeout">The time period, in milliseconds, the balloon tip should display.</param>
-    	/// <param name="tipTitle">The title to display on the balloon tip.</param>
-    	/// <param name="tipText">The text to display on the balloon tip.</param>
-    	/// <param name="tipIcon">One of the System.Windows.Forms.ToolTipIcon values.</param>
-		private void ShowBalloonTipWithoutFadeIn(int timeout, string tipTitle, string tipText, winforms.ToolTipIcon tipIcon)
-		{
-			if (trayIcon != null) {
-				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
-				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
-				// Yes, I know.
-			}
-		}
+    	private void HideWhenMinimised(object sender, EventArgs e)
+    	{
+    		if (WindowState == WindowState.Minimized) {
+				System.Windows.Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+				                                                          new HideWindowDelegate(HideWindow));
+    		}
+    	}	
 		
 		#endregion
 		
-		#region Event handlers
-		
-		/// <summary>
-		/// Tidy up before the application closes.
-		/// </summary>
-		private void HandleApplicationClosing(object sender, CancelEventArgs e)
-		{
-			if (!CloseDialog()) { // give the user a chance to cancel
-				e.Cancel = true;
-				return;
-			}
-			
-			// Automatically save preferences on closing:
-    		try {
-	    		// Serialize the user's preferences:
-	    		Serialization.Serialize(MyTasksPreferences.DefaultPreferencesPath,
-	    		                        MyTasksPreferences.Instance);
-    		}
-    		catch (Exception ex) {
-    			Say.Error("Something went wrong when trying to save your preferences - the choices " +
-    				      "you have made may not have been saved.",ex);
-    		}
-		}
-		
+		#region Event handlers		
 
 		/// <summary>
 		/// Respond to changes in user preferences.
@@ -564,6 +537,12 @@ namespace AdventureAuthor.Tasks
     	{
     		CloseDialog();
     	}
+    	
+    	
+    	private void OnClick_Exit(object sender, EventArgs e)
+    	{
+    		Close();
+    	}
 		
 		
 		private void MakeEditable(object sender, RoutedEventArgs e)
@@ -580,10 +559,14 @@ namespace AdventureAuthor.Tasks
 		}
 		
 		
-		private void FinishEditingWhenUserHitsReturn(object sender, KeyEventArgs e)
+		/// <summary>
+		/// When the user hits return, take focus away from the task description
+		/// editable text box, making it appear uneditable again.
+		/// </summary>
+		private void FinishEditingWhenUserHitsReturn(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			EditableTextBox etb = (EditableTextBox)sender;
-			if (e.Key == Key.Return) {
+			if (e.Key == System.Windows.Input.Key.Return) {
 				etb.IsEditable = false;
 				TagSelectionComboBox.Focus();
 			}
@@ -702,67 +685,6 @@ namespace AdventureAuthor.Tasks
 			}
 		}
 		
-		
-		/// <summary>
-		/// Place an icon representing this application in the system tray.
-		/// </summary>
-		private void LaunchInSystemTray(object sender, RoutedEventArgs e)
-		{
-			ResourceManager manager = new ResourceManager("AdventureAuthor.Tasks.Icons",Assembly.GetExecutingAssembly());
-			Icon icon = (Icon)manager.GetObject("textfile");		
-			
-			trayIcon = new winforms.NotifyIcon();
-			trayIcon.Icon = icon;
-			trayIcon.Visible = true;
-			
-			trayIcon.MouseMove += delegate { 
-				string text;
-				if (pad.Tasks == null || pad.Tasks.Count == 0) {
-					text = "You haven't added any tasks yet.";
-				}
-				else {
-					int completed = 0;
-					int uncompleted = 0;
-					foreach (Task task in pad.Tasks) {
-						if (task.State == TaskState.Completed) {
-							completed++;	
-						}
-						else if (task.State == TaskState.NotCompleted) {
-							uncompleted++;
-						}
-					}
-					text = "Tasks to do: " + uncompleted + "\n" +
-						   "Already done: " + completed;
-					if (uncompleted > 0) {
-						text += "\nClick to check your Top Task.";
-					}
-					else {
-						text += "\nAll tasks completed!";
-					}
-				}
-				trayIcon.Text = text;
-			};			
-			
-			trayIcon.MouseClick += delegate 
-			{ 		
-				if (pad.Tasks != null) {
-					foreach (Task task in pad.Tasks) {
-						if (task.State == TaskState.NotCompleted || task.State == TaskState.InProgress) {
-							ShowBalloonTipWithoutFadeIn(12000,"Top Task",task.Description,winforms.ToolTipIcon.None);
-							return;
-						}
-					}
-					
-					if (pad.Tasks.Count == 0) {
-						ShowBalloonTipWithoutFadeIn(12000,null,"You haven't added any tasks yet.",winforms.ToolTipIcon.None);
-					}
-					else {
-						ShowBalloonTipWithoutFadeIn(12000,null,"All tasks completed!",winforms.ToolTipIcon.None);
-					}					
-				}
-			};
-		}
-		
-		#endregion
+		#endregion		
 	}
 }
