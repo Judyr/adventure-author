@@ -361,7 +361,7 @@ namespace AdventureAuthor.Tasks
 	  				suggestedFileName = Path.GetFileNameWithoutExtension(activeFilePath) + ".txt";
 		  		}
 		  		catch (Exception e) {
-		  			Say.Debug("Failed to get a suggested filename for Comment Card - " + e);
+		  			Say.Debug("Failed to get a suggested filename for My Tasks file - " + e);
 		  			suggestedFileName = "Untitled.txt";
 		  		};
 	  		}
@@ -445,6 +445,14 @@ namespace AdventureAuthor.Tasks
     	/// </summary>
     	private void UpdateTagCollection()
     	{
+    		string selectedTag;
+    		if (pad != null && pad.tagFilterComboBox != null && pad.tagFilterComboBox.SelectedItem != null) {
+    			selectedTag = (string)pad.tagFilterComboBox.SelectedItem;
+    		}
+    		else {
+    			selectedTag = null;
+    		}
+    		
     		allTags.Clear();
 			foreach (string tag in MyTasksPreferences.Instance.PreDefinedTags) {
 				if (!allTags.Contains(tag)) {
@@ -460,6 +468,10 @@ namespace AdventureAuthor.Tasks
 					}
 				}
 			}
+    		
+    		if (allTags.Contains(selectedTag)) {
+    			pad.tagFilterComboBox.SelectedItem = selectedTag;
+    		}
     	}
     	
     	
@@ -619,25 +631,6 @@ namespace AdventureAuthor.Tasks
     		taskDescriptionBox.SelectAll();
     	}
     	
-    	
-    	private void TEMPAddRandomTask(object sender, EventArgs e)
-    	{
-    		Task task;
-    		if (DateTime.Now.Second % 2 == 1) {
-    			task = new Task("Remember to do at least " + DateTime.Now.Second + " other things.",
-    		                     "Forestry",
-    		                     "Generated",
-    		                     TaskState.NotCompleted);
-    		}
-    		else {
-    			task = new Task("Complete all of my other " + pad.Tasks.Count + " tasks",
-    			                "Closure",
-    			                "Generated",
-    			                TaskState.NotCompleted);
-    		}
-    		AddAndSelectTask(task);
-    	}
-    	
 		
     	/// <summary>
     	/// Remove a tag when its delete control is clicked.
@@ -669,18 +662,11 @@ namespace AdventureAuthor.Tasks
 							task.Tags.Remove(deletingTag);
 						}
 						
-						// Removing a tag will cause the AllTags list to refresh, which
-						// will clear the filter - if a tag was selected, select it again:
-						if (filteredTag != null) {
-							if (pad.tagFilterComboBox.Items.Contains(filteredTag)) {
-								pad.tagFilterComboBox.SelectedItem = filteredTag;
-							}
-							else {
-								// If the tag we removed was the last instance of the filtered tag,
-								// the list will no longer be filtered by that tag - but, confusingly,
-								// the previously selected task will still be selected. Clear it:
-								pad.taskListBox.SelectedItem = null;
-							}
+						if (filteredTag != null && !pad.tagFilterComboBox.Items.Contains(filteredTag)) {
+							// If the tag we removed was the last instance of the filtered tag,
+							// the list will no longer be filtered by that tag - but, confusingly,
+							// the previously selected task will still be selected. Clear it:
+							pad.taskListBox.SelectedItem = null;
 						}					
 					}
 				}
@@ -724,6 +710,65 @@ namespace AdventureAuthor.Tasks
 			}
 		}
 		
-		#endregion		
+		#endregion	
+		
+		#region Temp stuff
+		
+    	private void TEMPAddRandomTask(object sender, EventArgs e)
+    	{
+    		Task task;
+    		if (DateTime.Now.Second % 2 == 1) {
+    			task = new Task("Remember to do at least " + DateTime.Now.Second + " other things.",
+    		                     "Forestry",
+    		                     "Generated",
+    		                     TaskState.NotCompleted);
+    		}
+    		else {
+    			task = new Task("Complete all of my other " + pad.Tasks.Count + " tasks",
+    			                "Closure",
+    			                "Generated",
+    			                TaskState.NotCompleted);
+    		}
+    		AddAndSelectTask(task);
+    	}
+    	
+    	
+    	private void TEMPUpdateTaskListBinding(object sender, EventArgs e)
+    	{
+    		BindingExpression be = BindingOperations.GetBindingExpression(pad.taskListBox,
+    		                                       						  ListBox.ItemsSourceProperty);
+    		if (be == null) {
+    			Say.Error("BindingExpression not found.");
+    		}
+    		else {
+    			if (be.HasError) {
+    				Say.Error("HasError: " + be.ValidationError);
+    			}
+    			be.UpdateTarget();
+    			if (be.HasError) {
+    				Say.Error("HasError: " + be.ValidationError);
+    			}
+    		}
+    	}		
+    	
+    	
+    	private void TEMPCheckVisibleAndControlExists(object sender, RoutedEventArgs e)
+    	{
+    		foreach (Task task in pad.Tasks) {
+    			ListBoxItem control = (ListBoxItem)pad.taskListBox.ItemContainerGenerator.ContainerFromItem(task);
+    			if (control == null) {
+    				System.Diagnostics.Debug.WriteLine("Task '" + task.Description.Substring(0,Math.Min(task.Description.Length,10)) + 
+    				                                   "' is null.");
+    			}
+    			else {
+    				System.Diagnostics.Debug.WriteLine("Task '" + task.Description.Substring(0,Math.Min(task.Description.Length,10)) + 
+    				                                   "' has visibility " + control.Visibility + " and IsVisible=" + control.IsVisible + ".");
+    			}
+    		}
+    		
+    		
+    	}
+		
+		#endregion
 	}
 }
