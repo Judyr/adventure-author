@@ -240,6 +240,11 @@ namespace AdventureAuthor.Setup
 				//analysisButton.Enabled = true;
 //				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
+				
+				// Temp test:
+//				foreach (AdventureAuthor.Tasks.Task task in new AdventureAuthor.Tasks.NWN2.CheckSpeakersAreNotHostile().GetTasks()) {
+//					Say.Information("..To do..\n\n" + task);
+//				}
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  

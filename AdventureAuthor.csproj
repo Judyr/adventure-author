@@ -325,6 +325,7 @@
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Tasks\NWN2\CheckSpeakersAreNotHostile.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -397,6 +398,8 @@
     <Folder Include="Journal\UI" />
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
+    <Folder Include="Tasks" />
+    <Folder Include="Tasks\NWN2" />
     <Folder Include="Variables" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\UI" />
@@ -405,6 +408,10 @@
     <ProjectReference Include="Magnets\Magnets.csproj">
       <Project>{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}</Project>
       <Name>Magnets</Name>
+    </ProjectReference>
+    <ProjectReference Include="My Tasks\My Tasks.csproj">
+      <Project>{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}</Project>
+      <Name>My Tasks</Name>
     </ProjectReference>
     <ProjectReference Include="UtilsLibrary\AAUtils.csproj">
       <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
