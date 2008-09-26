@@ -43,7 +43,7 @@ namespace AdventureAuthor.Tasks
 					};
 				}
 			}
-		}   	
+		}   
 		
 		
 		/// <summary>
@@ -192,8 +192,28 @@ namespace AdventureAuthor.Tasks
 		
 		#endregion
 		
-		#region Event handlers  
+		#region Event handlers  	
 		
+		/// <summary>
+		/// If the user is typing a description that requires an extra line to display
+		/// in the task list, scroll the (now larger) task into view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ScrollFullyIntoView(object sender, EventArgs e)
+		{
+			if (taskListBox.SelectedItem != null) {
+				taskListBox.ScrollIntoView(taskListBox.SelectedItem);
+			}
+		}
+		
+		
+		/// <summary>
+		/// If the user hits delete while a task is selected, offer
+		/// to delete that task.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void HandleKeyPresses(object sender, KeyEventArgs e)
 		{			
 			if (e.Key == Key.Delete && taskListBox.SelectedItem != null) {
