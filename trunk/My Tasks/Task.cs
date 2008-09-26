@@ -354,6 +354,12 @@ namespace AdventureAuthor.Tasks
 			Completed = DateTime.MinValue;
 		}
 		
+		
+		public override string ToString()
+		{
+			return Description;
+		}
+		
 		#endregion
 	}
 }
