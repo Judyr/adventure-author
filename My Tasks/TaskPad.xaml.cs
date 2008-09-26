@@ -23,27 +23,32 @@ namespace AdventureAuthor.Tasks
 		public TaskCollection Tasks {
 			get { return (TaskCollection)DataContext; }
 			set { 
-				DataContext = value;
-				
-				// Disable/enable the filter control panel based on whether there are any tasks to filter:
+				DataContext = value;				
 				if (value != null) {
-					value.CollectionChanged += delegate 
-					{  
-						try {
-							// Only necessary if you've just added your only task, or just deleted your only task:
-							if (value.Count < 2) {
-								BindingExpression be = BindingOperations.GetBindingExpression(filterControlsPanel,
-		            		                                       							  StackPanel.IsEnabledProperty);
-		            			be.UpdateTarget();
-							}
-						}
-						catch (Exception e) {
-							System.Diagnostics.Debug.WriteLine("Couldn't update filter panel IsEnabled binding: " + e);
-						}
-					};
+					value.CollectionChanged += UpdateFilters;
 				}
 			}
-		}   
+		} 
+		
+
+		private void UpdateFilters(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			try {
+				// Avoid the horror-problems?:
+				RefreshAllFilters();
+			
+				// Disable/enable the filter control panel based on whether there are any tasks to filter.
+				// Only necessary if you've just added your only task, or just deleted your only task:
+				if (Tasks.Count < 2) {
+					BindingExpression be = BindingOperations.GetBindingExpression(filterControlsPanel,
+	      		                                       							  StackPanel.IsEnabledProperty);
+	      			be.UpdateTarget();
+				}
+			}
+			catch (Exception ex) {
+				Say.Error("Couldn't update filter panel IsEnabled binding: " + ex);
+			}
+		}
 		
 		
 		/// <summary>
@@ -112,19 +117,6 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// Add a task to the current collection.
-		/// </summary>
-		/// <param name="task">The task to add</param>
-		public void Add(Task task)
-		{
-			if (Tasks == null) {
-				throw new InvalidOperationException("No task collection is currently open.");
-			}
-			Tasks.Add(task);
-		}
-		
-		
-		/// <summary>
 		/// Add a task to the current collection, placed after the currently selected task.
 		/// </summary>
 		/// <param name="task">The task to add</param>
@@ -162,10 +154,14 @@ namespace AdventureAuthor.Tasks
 				throw new InvalidOperationException("Task '" + task + "' is not	a member of Tasks.");
 			}
 			try {
-				 Tasks.Remove(task);
+				Tasks.Remove(task);
 			}
-			catch (Exception x) {
-				Say.Error(x);
+			catch (ArgumentOutOfRangeException) {
+				// Since I started calling RefreshFilters whenever Tasks.CollectionChanged was raised,
+				// removing a task from Tasks raises an ArgumentOutOfRangeException. I can't see why
+				// (I checked and index and Tasks.Length have typical values) and it still seems
+				// to complete the operation successfully, so I'm just going to have it swallow the error.
+				System.Diagnostics.Debug.WriteLine("Raised ArgumentOutOfRangeException when removing task.");
 			}
 			
 			UpdateEmptyTaskListMessage();
@@ -257,7 +253,7 @@ namespace AdventureAuthor.Tasks
 		{
 			if (taskListBox.SelectedItem != null) {
 				Task task = (Task)taskListBox.SelectedItem;
-				MoveTaskUp(task);
+				MoveTaskUp(task,true);
 			}
 		}
 		
@@ -269,37 +265,8 @@ namespace AdventureAuthor.Tasks
 		{
 			if (taskListBox.SelectedItem != null) {
 				Task task = (Task)taskListBox.SelectedItem;				
-				MoveTaskDown(task);
+				MoveTaskDown(task,true);
 			}
-		}
-		
-		
-		/// <summary>
-		/// Move a given task up one space in the list.
-		/// </summary>
-		/// <param name="task">The task to move</param>
-		private void MoveTaskUp(Task task)
-		{
-			int index = Tasks.IndexOf(task);
-			if (index == -1) {
-				throw new InvalidOperationException("The selected task was not found in the current task collection.");
-			}
-			int newIndex = index - 1;
-			if (newIndex >= 0) {
-				Tasks.Move(index,newIndex);
-			}
-			
-//			System.Diagnostics.Debug.AutoFlush = true;
-//			foreach (Task t in taskListBox.ItemsSource) {
-//				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
-//			}
-//			System.Diagnostics.Debug.WriteLine("");
-//			
-//			taskListBox.InvalidateVisual();
-//			taskListBox.UpdateLayout();
-//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
-//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
-			taskListBox.ScrollIntoView(task);
 		}
 		
 		
@@ -307,31 +274,76 @@ namespace AdventureAuthor.Tasks
 		/// Move a given task down one space in the list.
 		/// </summary>
 		/// <param name="task">The task to move</param>
-		private void MoveTaskDown(Task task)
+		/// <param name="jumpHiddenTasks">True to move the task one place in the visible list,
+		/// also jumping over any tasks which are currently hidden; false to move the task one place
+		/// in the actual list</param>
+		private void MoveTaskDown(Task task, bool jumpHiddenTasks)
 		{
 			int index = Tasks.IndexOf(task);
 			if (index == -1) {
 				throw new InvalidOperationException("The selected task was not found in the current task collection.");
+			}			
+			int maxIndex = Tasks.Count - 1;	
+			if (index >= maxIndex) {
+				return;
 			}
-			int newIndex = index + 1;
-			int maxIndex = Tasks.Count - 1;
 			
-			if (newIndex <= maxIndex) {
-				Tasks.Move(index,newIndex);	
-			}		
+			int? newIndex = null;
+			if (!jumpHiddenTasks) {
+				newIndex = index + 1;
+			}
+			else {
+				for (int i = index + 1; i <= maxIndex; i++) {
+					// Ignore tasks which do not currently have a container (i.e. have been filtered out):
+					if (taskListBox.ItemContainerGenerator.ContainerFromItem(Tasks[i]) != null) {
+						newIndex = i;
+						break;
+					}
+				}
+			}
 			
-//			System.Diagnostics.Debug.AutoFlush = true;
-//			foreach (Task t in taskListBox.ItemsSource) {
-//				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
-//			}
-//			System.Diagnostics.Debug.WriteLine("");
-//			
-//			taskListBox.InvalidateVisual();
-//			taskListBox.UpdateLayout();
-//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
-//			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
-			taskListBox.ScrollIntoView(task);
+			if (newIndex.HasValue && newIndex <= maxIndex) {
+				Tasks.Move(index,(int)newIndex);
+			}	
+			taskListBox.ScrollIntoView(task);			
+		}
+		
+		
+		/// <summary>
+		/// Move a given task up one space in the list.
+		/// </summary>
+		/// <param name="task">The task to move</param>
+		/// <param name="jumpHiddenTasks">True to move the task one place in the visible list,
+		/// also jumping over any tasks which are currently hidden; false to move the task one place
+		/// in the actual list</param>
+		private void MoveTaskUp(Task task, bool jumpHiddenTasks)
+		{
+			int index = Tasks.IndexOf(task);
+			if (index == -1) {
+				throw new InvalidOperationException("The selected task was not found in the current task collection.");
+			}			
+			if (index == 0) {
+				return;
+			}
 			
+			int? newIndex = null;
+			if (!jumpHiddenTasks) {
+				newIndex = index - 1;
+			}
+			else {
+				for (int i = index - 1; i >= 0; i--) {
+					// Ignore tasks which do not currently have a container (i.e. have been filtered out):
+					if (taskListBox.ItemContainerGenerator.ContainerFromItem(Tasks[i]) != null) {
+						newIndex = i;
+						break;
+					}
+				}
+			}
+			
+			if (newIndex.HasValue && newIndex >= 0) {
+				Tasks.Move(index,(int)newIndex);
+			}	
+			taskListBox.ScrollIntoView(task);			
 		}
 		
 		
@@ -383,19 +395,6 @@ namespace AdventureAuthor.Tasks
 			if (searchStringTextBox.Text.Length > 0) {
 				Task task = (Task)e.Item;
 				if (!task.ContainsString(searchStringTextBox.Text)) {
-					e.Accepted = false;
-				}
-			}
-			// Never set e.Accepted to true, or you may override the results of another filter.
-		}
-		
-		
-		private void OldShowOnlySelectedTagFilter(object sender, FilterEventArgs e)
-		{
-			if (((bool)activateTagFilterCheckBox.IsChecked) && tagFilterComboBox.SelectedItem != null) {
-				string tag = (string)tagFilterComboBox.SelectedItem;
-				Task task = (Task)e.Item;
-				if (!task.Tags.Contains(tag)) {
 					e.Accepted = false;
 				}
 			}

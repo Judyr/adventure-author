@@ -86,6 +86,10 @@
 					<Separator/>
 					<MenuItem Header="Add a random task"
 							  Click="TEMPAddRandomTask"/>
+					<MenuItem Header="Update the task list binding"
+							  Click="TEMPUpdateTaskListBinding"/>
+					<MenuItem Header="Check which are visible and which have controls"
+							  Click="TEMPCheckVisibleAndControlExists"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
