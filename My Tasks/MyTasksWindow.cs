@@ -231,18 +231,25 @@ namespace AdventureAuthor.Tasks
 		
 		private void CloseFile()
 		{
-			pad.Clear();
-			
-			// Remember the last open file:
-			if (MyTasksPreferences.Instance.ActiveFilePath != null) {
-				MyTasksPreferences.Instance.PreviousFilePath = MyTasksPreferences.Instance.ActiveFilePath;
-				MyTasksPreferences.Instance.ActiveFilePath = null;
+			try {
+				if (pad != null) {				
+					pad.Clear();
+					pad.ClearAllFilters();
+				}
+				
+				// Remember the last open file:
+				if (MyTasksPreferences.Instance.ActiveFilePath != null) {
+					MyTasksPreferences.Instance.PreviousFilePath = MyTasksPreferences.Instance.ActiveFilePath;
+					MyTasksPreferences.Instance.ActiveFilePath = null;
+				}
+				
+				Dirty = false;
+				UpdateTitleBar();
+				UpdateTagCollection();
 			}
-			
-			Dirty = false;
-			UpdateTitleBar();
-			pad.ClearAllFilters();
-			UpdateTagCollection();
+			catch (Exception e) {
+				Say.Error("Error on closing the current file.",e);
+			}
 		}
     	
     	
@@ -370,7 +377,7 @@ namespace AdventureAuthor.Tasks
     	/// <summary>
     	/// Bring up a close file dialog.
     	/// </summary>
-    	/// <returns></returns>
+    	/// <returns>False if the user cancels the process; true otherwise</returns>
     	private bool CloseDialog()
     	{
     		if (dirty) {
@@ -389,7 +396,7 @@ namespace AdventureAuthor.Tasks
     					break;
     			}    			
     		}
-    		
+    		    		
     		New();
     		return true;
     	}
@@ -442,7 +449,7 @@ namespace AdventureAuthor.Tasks
 					allTags.Add(tag);
 				}
 			}
-			if (pad.Tasks != null) {
+			if (pad != null && pad.Tasks != null) {
 				foreach (Task task in pad.Tasks) {
 					foreach (string tag in task.Tags) {
 						if (!allTags.Contains(tag)) {
@@ -591,7 +598,7 @@ namespace AdventureAuthor.Tasks
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
-    		pad.ClearAllFilters(); //TODO: This is a bit clumsy
+    		pad.ClearAllFilters(); // This is a bit clumsy
     		Task task = new Task(DEFAULT_TASK_DESCRIPTION);
     		pad.AddAfterSelectedTask(task);
     		pad.taskListBox.SelectedItem = task;

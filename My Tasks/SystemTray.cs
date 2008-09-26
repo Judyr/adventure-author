@@ -63,7 +63,7 @@ namespace AdventureAuthor.Tasks
 			openMyTasks.Click += ShowMainWindow;			
 			menu.Items.Add(openMyTasks);		
 			
-			ToolStripMenuItem showTopTask = new ToolStripMenuItem("Show my Top Task");
+			ToolStripMenuItem showTopTask = new ToolStripMenuItem("Show Top Task");
 			showTopTask.Click += delegate { ShowBalloonTip(); };
 			menu.Items.Add(showTopTask);
 			
