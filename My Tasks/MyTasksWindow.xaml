@@ -84,6 +84,8 @@
 					          Header="New task"
 							  Click="AddAndSelectNewTask"/>
 					<Separator/>
+					<MenuItem Header="Add a random task"
+							  Click="TEMPAddRandomTask"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>

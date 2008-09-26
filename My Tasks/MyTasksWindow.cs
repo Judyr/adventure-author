@@ -152,6 +152,8 @@ namespace AdventureAuthor.Tasks
 				task.Tags.CollectionChanged += MakeDirty;
 			}
 			tasks.CollectionChanged += MakeDirtyWhenTaskCollectionChanges;
+			// In case you add a generated task which is already labelled with a new label:
+			tasks.CollectionChanged += UpdateTagCollection;
 			
 			// Open the task collection in the TaskPad:
 			pad.Open(tasks);
@@ -598,12 +600,42 @@ namespace AdventureAuthor.Tasks
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
+    		AddAndSelectTask(new Task(DEFAULT_TASK_DESCRIPTION));
+    	}
+    	
+    	
+    	private void AddAndSelectTask(Task task)
+    	{
     		pad.ClearAllFilters(); // This is a bit clumsy
-    		Task task = new Task(DEFAULT_TASK_DESCRIPTION);
+    		
     		pad.AddAfterSelectedTask(task);
+    		
+    		// Select the task in the list and bring it into view:
     		pad.taskListBox.SelectedItem = task;
+    		pad.taskListBox.ScrollIntoView(task);
+    		
+    		// Allow the user to start typing the task description directly:
     		taskDescriptionBox.Focus();
     		taskDescriptionBox.SelectAll();
+    	}
+    	
+    	
+    	private void TEMPAddRandomTask(object sender, EventArgs e)
+    	{
+    		Task task;
+    		if (DateTime.Now.Second % 2 == 1) {
+    			task = new Task("Remember to do at least " + DateTime.Now.Second + " other things.",
+    		                     "Forestry",
+    		                     "Generated",
+    		                     TaskState.NotCompleted);
+    		}
+    		else {
+    			task = new Task("Complete all of my other " + pad.Tasks.Count + " tasks",
+    			                "Closure",
+    			                "Generated",
+    			                TaskState.NotCompleted);
+    		}
+    		AddAndSelectTask(task);
     	}
     	
 		

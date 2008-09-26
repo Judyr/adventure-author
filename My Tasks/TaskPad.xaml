@@ -36,6 +36,7 @@
 					   TextDecorations="{Binding Path=State, Converter={StaticResource returnStrikethroughIfTaskCompleted}}"
 					   TextWrapping="Wrap"
 					   Width="235"
+			           TextBlock.SizeChanged="ScrollFullyIntoView"
 					   FontFamily="Comic Sans MS"
 					   FontSize="13"	           
 					   Padding="8,4,0,4">
