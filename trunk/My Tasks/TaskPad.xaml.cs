@@ -22,7 +22,27 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public TaskCollection Tasks {
 			get { return (TaskCollection)DataContext; }
-			set { DataContext = value; }
+			set { 
+				DataContext = value;
+				
+				// Disable/enable the filter control panel based on whether there are any tasks to filter:
+				if (value != null) {
+					value.CollectionChanged += delegate 
+					{  
+						try {
+							// Only necessary if you've just added your only task, or just deleted your only task:
+							if (value.Count < 2) {
+								BindingExpression be = BindingOperations.GetBindingExpression(filterControlsPanel,
+		            		                                       							  StackPanel.IsEnabledProperty);
+		            			be.UpdateTarget();
+							}
+						}
+						catch (Exception e) {
+							System.Diagnostics.Debug.WriteLine("Couldn't update filter panel IsEnabled binding: " + e);
+						}
+					};
+				}
+			}
 		}   	
 		
 		
@@ -45,12 +65,11 @@ namespace AdventureAuthor.Tasks
 		public TaskPad()
 		{					
 			InitializeComponent();
-			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
-			// If 'Hide completed tasks' is ticked at launch, the Checked event fires
-			// before there is a CollectionViewSource reference to add search filters to.
-			// Deal with this possibility by explicitly refreshing the filters here:
-			//RefreshFilters();		
 			
+			// Access to the CollectionViewSource allows filters to be added/removed/refreshed:
+			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
+			
+			// Set up button images:
             string imagePath;
             imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"delete.png");
             Tools.SetXAMLButtonImage(DeleteTaskButton,imagePath,"delete");
@@ -59,8 +78,9 @@ namespace AdventureAuthor.Tasks
             imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"08.png");
             Tools.SetXAMLButtonImage(MoveTaskUpButton,imagePath,"up");
             imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"add.png");
-            Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add");
+            Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add"); 
             
+            // Select the first item in the tag filter combo box:
             try {
             	 tagFilterComboBox.SelectedIndex = 0;
             }
@@ -138,7 +158,16 @@ namespace AdventureAuthor.Tasks
 			if (Tasks == null) {
 				throw new InvalidOperationException("No task collection is currently open.");
 			}
-			Tasks.Remove(task);
+			if (!Tasks.Contains(task)) {
+				throw new InvalidOperationException("Task '" + task + "' is not	a member of Tasks.");
+			}
+			try {
+				 Tasks.Remove(task);
+			}
+			catch (Exception x) {
+				Say.Error(x);
+			}
+			
 			UpdateEmptyTaskListMessage();
 		}
 		
@@ -240,13 +269,13 @@ namespace AdventureAuthor.Tasks
 				Tasks.Move(index,newIndex);
 			}
 			
-			System.Diagnostics.Debug.AutoFlush = true;
-			foreach (Task t in taskListBox.ItemsSource) {
-				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
-			}
-			System.Diagnostics.Debug.WriteLine("");
-			
-			taskListBox.InvalidateVisual();
+//			System.Diagnostics.Debug.AutoFlush = true;
+//			foreach (Task t in taskListBox.ItemsSource) {
+//				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
+//			}
+//			System.Diagnostics.Debug.WriteLine("");
+//			
+//			taskListBox.InvalidateVisual();
 //			taskListBox.UpdateLayout();
 //			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
 //			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
@@ -271,13 +300,13 @@ namespace AdventureAuthor.Tasks
 				Tasks.Move(index,newIndex);	
 			}		
 			
-			System.Diagnostics.Debug.AutoFlush = true;
-			foreach (Task t in taskListBox.ItemsSource) {
-				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
-			}
-			System.Diagnostics.Debug.WriteLine("");
-			
-			taskListBox.InvalidateVisual();
+//			System.Diagnostics.Debug.AutoFlush = true;
+//			foreach (Task t in taskListBox.ItemsSource) {
+//				System.Diagnostics.Debug.WriteLine(t.Description.Substring(0,15));
+//			}
+//			System.Diagnostics.Debug.WriteLine("");
+//			
+//			taskListBox.InvalidateVisual();
 //			taskListBox.UpdateLayout();
 //			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).ToString());
 //			System.Diagnostics.Debug.WriteLine(BindingOperations.GetBindingExpressionBase(taskListBox,ListBox.ItemsSourceProperty).Status.ToString());
