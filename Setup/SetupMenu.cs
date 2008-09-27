@@ -242,9 +242,10 @@ namespace AdventureAuthor.Setup
 				//achievementsButton.Enabled = true;
 				
 				// Temp test:
-//				foreach (AdventureAuthor.Tasks.Task task in new AdventureAuthor.Tasks.NWN2.CheckSpeakersAreNotHostile().GetTasks()) {
-//					Say.Information("..To do..\n\n" + task);
-//				}
+				List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.CheckAllAreasAreReachableAndStartLocationIsPlaced()).GetTasks();
+				foreach (AdventureAuthor.Tasks.Task task in tasks) {
+					Say.Information("..To do..\n\n" + task);
+				}
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  
