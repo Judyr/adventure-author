@@ -343,23 +343,5 @@ namespace AdventureAuthor.Setup
 				return o.GetType().ToString();
 			}
 		}
-		
-		
-		/// <summary>
-		/// Check the given area for any instances of creatures which are hostile
-		/// but have conversations attached, and create a task about each one.
-		/// </summary>
-		/// <param name="area">The area to check for hostile speakers</param>
-		/// <returns>A list of hostile speakers in this area</returns>
-		public static List<NWN2CreatureInstance> GetHostileSpeakers(NWN2GameArea area)
-		{
-			List<NWN2CreatureInstance> creatures = new List<NWN2CreatureInstance>();
-			foreach (NWN2CreatureInstance creature in area.Creatures) {
-				if (creature.Conversation.ToString() != String.Empty && creature.FactionID == 1) {
-					creatures.Add(creature);
-				}
-			}
-			return creatures;
-		}
 	}
 }
