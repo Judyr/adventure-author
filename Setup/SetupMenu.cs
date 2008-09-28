@@ -232,6 +232,22 @@ namespace AdventureAuthor.Setup
 			achievementsButton.Visible = false;
 			achievementsButton.ToolTipText = "View your achievements";
 			aaToolbar.Items.Add(achievementsButton);
+														
+			ButtonItem checkTransitions = new ButtonItem();
+			SetSandbarButtonImage(checkTransitions,"clipboard.png","Check transitions");
+			checkTransitions.Enabled = true;
+			checkTransitions.Visible = true;
+			checkTransitions.ToolTipText = "Check transitions";
+			checkTransitions.Activate += delegate 
+			{ 
+				// Temp test:
+				List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator()).GetTasks();
+				foreach (AdventureAuthor.Tasks.Task task in tasks) {
+					Say.Information("..To do..\n\n" + task);
+				}			
+			};
+			aaToolbar.Items.Add(checkTransitions);
+			
 			
 			ModuleHelper.ModuleOpened += delegate {  
 				conversationButton.Enabled = true;
@@ -240,12 +256,6 @@ namespace AdventureAuthor.Setup
 				//analysisButton.Enabled = true;
 //				evaluationButton.Enabled = true;
 				//achievementsButton.Enabled = true;
-				
-				// Temp test:
-				List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.CheckAllAreasAreReachableAndStartLocationIsPlaced()).GetTasks();
-				foreach (AdventureAuthor.Tasks.Task task in tasks) {
-					Say.Information("..To do..\n\n" + task);
-				}
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  

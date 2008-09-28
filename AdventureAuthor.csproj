@@ -325,8 +325,8 @@
     <Compile Include="Setup\Toolset.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Tasks\NWN2\CheckSpeakersAreNotHostile.cs" />
-    <Compile Include="Tasks\NWN2\CheckAllAreasAreReachableAndStartLocationIsPlaced.cs" />
+    <Compile Include="Tasks\NWN2\CreatureTasksGenerator.cs" />
+    <Compile Include="Tasks\NWN2\AreaTasksGenerator.cs" />
     <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
       <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

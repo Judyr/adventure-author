@@ -42,9 +42,9 @@ namespace AdventureAuthor.Tasks.NWN2
 	/// Check the current module for any instances of creatures which are hostile
 	/// but have conversations attached, and create a task about each one.
 	/// </summary>
-	public class CheckSpeakersAreNotHostile : ITaskGenerator
+	public class CreatureTasksGenerator : ITaskGenerator
 	{
-		public CheckSpeakersAreNotHostile()
+		public CreatureTasksGenerator()
 		{
 		}
 		
