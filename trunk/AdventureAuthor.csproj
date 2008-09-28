@@ -395,8 +395,6 @@
     <Folder Include="Core" />
     <Folder Include="Conversations" />
     <Folder Include="Core\UI" />
-    <Folder Include="Journal" />
-    <Folder Include="Journal\UI" />
     <Folder Include="Analysis" />
     <Folder Include="Achievements" />
     <Folder Include="Tasks" />

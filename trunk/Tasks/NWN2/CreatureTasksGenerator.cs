@@ -34,6 +34,7 @@ using NWN2Toolset.NWN2;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
+using OEIShared.IO;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 
 namespace AdventureAuthor.Tasks.NWN2
@@ -44,8 +45,53 @@ namespace AdventureAuthor.Tasks.NWN2
 	/// </summary>
 	public class CreatureTasksGenerator : ITaskGenerator
 	{
-		public CreatureTasksGenerator()
+		/// <summary>
+		/// True to generate a task for each hostile creature
+		/// which has a conversation; false to ignore this factor.
+		/// </summary>
+		private bool checkForHostileSpeakers;
+		public bool CheckForHostileSpeakers {
+			get { return checkForHostileSpeakers; }
+			set { checkForHostileSpeakers = value; }
+		}
+		
+		
+		/// <summary>
+		/// True to generate a task for each creature who has a conversation
+		/// with an unrecognised name; false to ignore this factor.
+		/// </summary>
+		private bool checkForUnrecognisedConversations;
+		public bool CheckForUnrecognisedConversations {
+			get { return checkForUnrecognisedConversations; }
+			set { checkForUnrecognisedConversations = value; }
+		}
+		
+		
+		/// <summary>
+		/// Construct an CreatureTasksGenerator object which will generate tasks for the My Tasks
+		/// application based on perceived problems with the creatures in the current module.
+		/// </summary>
+		/// <param name="checkForHostileSpeakers">True to generate 
+		/// a task for each hostile creature which has a conversation; 
+		/// false to ignore this factor.</param>
+		/// <param name="checkForUnrecognisedConversations">True to generate 
+		/// a task for each creature who has a conversation
+		/// with an unrecognised name; false to ignore this factor.</param>
+		public CreatureTasksGenerator(bool checkForHostileSpeakers,
+		                              bool checkForUnrecognisedConversations)
 		{
+			this.checkForHostileSpeakers = checkForHostileSpeakers;
+			this.checkForUnrecognisedConversations = checkForUnrecognisedConversations;
+		}
+		
+		
+		/// <summary>
+		/// Construct an CreatureTasksGenerator object which will generate tasks for the My Tasks
+		/// application based on perceived problems with the creatures in the current module.
+		/// </summary>
+		public CreatureTasksGenerator() : this(true,true)
+		{
+			
 		}
 		
 		
@@ -59,14 +105,35 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
 				area.Demand();
-				List<NWN2CreatureInstance> hostileSpeakers = NWN2Utils.GetHostileSpeakers(area);
-				foreach (NWN2CreatureInstance creature in hostileSpeakers) {
-					Task task = new Task();
-					task.Origin = TaskOrigin.FixingError.ToString();
-					task.Description = creature.Name + " (in area '" + area.Name + "') has a " +
-						"conversation, but their faction is Hostile, so they'll attack instead of speaking.";
-					tasks.Add(task);
+				
+				foreach (NWN2CreatureInstance creature in area.Creatures) {
+										
+					if (CheckForUnrecognisedConversations) {
+						// If there's no conversation (or an invalid filename), Conversation is a 
+						// MissingResourceEntry, otherwise it's a DirectoryResourceEntry.
+						if (creature.Conversation.ToString() != String.Empty &&
+						    creature.Conversation.GetType() == typeof(MissingResourceEntry)) {
+							Task task = new Task(creature.Name + " (in area '" + area.Name + "') is supposed " +
+							                     "to have a conversation called '" + creature.Conversation.ToString() +
+							                     "', but there aren't any conversations with that name.",
+												 "Bugs",
+												 TaskOrigin.FixingError.ToString());
+							tasks.Add(task);
+						}
+					}
+					
+					if (CheckForHostileSpeakers) {
+						if (creature.Conversation.ToString() != String.Empty && creature.FactionID == 1) {
+							Task task = new Task(creature.Name + " (in area '" + area.Name + "') has a " +
+												 "conversation, but their faction is Hostile, so they'll " +
+												 "attack instead of speaking.",
+												 "Bugs",
+												 TaskOrigin.FixingError.ToString());
+							tasks.Add(task);
+						}
+					}
 				}
+				
 				area.Release();
 			}		
 			

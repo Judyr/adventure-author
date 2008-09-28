@@ -86,14 +86,18 @@ namespace AdventureAuthor.Tasks.NWN2
 		private int areasReached = 0;
 		
 		
+		/// <summary>		
+		/// Construct an AreaTasksGenerator object which will generate tasks for the My Tasks
+		/// application based on perceived problems with the areas in the current module.
+		/// </summary>
 		public AreaTasksGenerator() : this(true,true)
 		{			
 		}
 		
 		
-		/// <summary>
+		/// <summary>		
 		/// Construct an AreaTasksGenerator object which will generate tasks for the My Tasks
-		/// application based on perceived problems with the current module.
+		/// application based on perceived problems with the areas in the current module.
 		/// </summary>
 		/// <param name="checkForBrokenAreaTransitions">True to generate a task for each area transition which has been
 		/// improperly set up; false to ignore this factor.</param>
@@ -277,7 +281,7 @@ namespace AdventureAuthor.Tasks.NWN2
 						}
 					}
 					description.Remove(description.Length-2,2); // remove last comma and space
-					description.Append(" can't be reached from the start location. Add area transitions " +
+					description.Append(") can't be reached from the start location. Add area transitions " +
 					                  "to make sure the player can get to all the areas.");
 					Task task = new Task(description.ToString(),
 					                     "Bugs",
