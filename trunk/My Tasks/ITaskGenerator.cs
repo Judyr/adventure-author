@@ -34,6 +34,7 @@ namespace AdventureAuthor.Tasks
 	/// </summary>
 	public interface ITaskGenerator
 	{
-		List<Task> GetTasks();
+		//List<Check> GetAvailableChecks();
+		List<Task> GetTasks();//(List<Check> checks);
 	}
 }

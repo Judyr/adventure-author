@@ -241,13 +241,18 @@ namespace AdventureAuthor.Setup
 			checkTransitions.Activate += delegate 
 			{ 
 				// Temp test:
-				List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator()).GetTasks();
-				tasks.AddRange((new AdventureAuthor.Tasks.NWN2.CreatureTasksGenerator()).GetTasks());
-				StringBuilder message = new StringBuilder("..To do..\n\n");
-				foreach (AdventureAuthor.Tasks.Task task in tasks) {
-					message.Append(task.Description + "\n\n");
-				}			
-				Say.Information(message.ToString());
+				if (ModuleHelper.ModuleIsOpen()) {
+					List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator()).GetTasks();
+					tasks.AddRange((new AdventureAuthor.Tasks.NWN2.CreatureTasksGenerator()).GetTasks());
+					StringBuilder message = new StringBuilder("..To do..\n\n");
+					foreach (AdventureAuthor.Tasks.Task task in tasks) {
+						message.Append(task.Description + "\n\n");
+					}			
+					Say.Information(message.ToString());					
+				}
+				else {
+					Say.Information("No module is open.");
+				}
 			};
 			aaToolbar.Items.Add(checkTransitions);
 			

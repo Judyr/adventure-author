@@ -78,10 +78,10 @@ namespace AdventureAuthor.Tasks.NWN2
 		List<Task> tasks;
 		
 		Dictionary<string,Area> areas;		
-		Dictionary<string,NWN2DoorInstance> entranceDoors = new Dictionary<string,NWN2DoorInstance>();
-		Dictionary<string,NWN2TriggerInstance> entranceTriggers = new Dictionary<string,NWN2TriggerInstance>();
+		Dictionary<string,INWN2Instance> entrances = new Dictionary<string,INWN2Instance>();
 		Dictionary<string,NWN2DoorInstance> exitDoors = new Dictionary<string,NWN2DoorInstance>();
 		Dictionary<string,NWN2WaypointInstance> exitWaypoints = new Dictionary<string,NWN2WaypointInstance>();
+		List<string> exitTags = new List<string>();
 		
 		private int areasReached = 0;
 		
@@ -130,6 +130,7 @@ namespace AdventureAuthor.Tasks.NWN2
 				areas.Add(areaInfo.Name,areaInfo);
 			}
 			
+			
 			// Check whether the module has a start location. If it does, note the 
 			// start area - otherwise, add a 'place start location' task.
 			Area startingArea = null;
@@ -151,125 +152,75 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 			
 			// In the first pass, collect all of the entrance doors and triggers, 
-			// as well as collecting the *names* of the exit doors and waypoints.
-			List<string> doorsNamedAsExits = new List<string>();
-			List<string> waypointsNamedAsExits = new List<string>();
-			
+			// as well as collecting the *names* of the exit doors and waypoints.			
 			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
-				area.Demand();	
-				
-				foreach (NWN2DoorInstance door in area.Doors) {					
-					string namedExit = door.LinkedTo;
-					if (namedExit != null && namedExit != String.Empty) {						
-						entranceDoors.Add(door.Name,door);
-						
-						switch (door.LinkedToType) {								
-							case DoorTransitionType.LinkToDoor:
-								doorsNamedAsExits.Add(namedExit);
-								break;
-								
-							case DoorTransitionType.LinkToWaypoint:
-								waypointsNamedAsExits.Add(namedExit);
-								break;
-								
-							case DoorTransitionType.NoLink:
-								if (CheckForBrokenAreaTransitions) {
-									Task task = new Task("The door '" + door.Name + 
-									                     "' (in area '" + door.Area.Name + "') has an area transition, but " +
-									                     "it won't work unless the property 'Link Object Type' is set to " +
-									                     "either 'Transition to a waypoint' or 'Transition to a door'.",
-									                     "Bugs",
-									                     TaskOrigin.FixingError.ToString());
-									tasks.Add(task);							
-								}
-								break;
-						}
-					}
-				}
-				
-				foreach (NWN2TriggerInstance trigger in area.Triggers) {					
-					string namedExit = trigger.LinkedTo;
-					if (namedExit != null && namedExit != String.Empty) {						
-						entranceTriggers.Add(trigger.Name,trigger);
-						
-						switch (trigger.LinkedToType) {								
-							case DoorTransitionType.LinkToDoor:
-								doorsNamedAsExits.Add(namedExit);
-								break;
-								
-							case DoorTransitionType.LinkToWaypoint:
-								waypointsNamedAsExits.Add(namedExit);
-								break;
-								
-							case DoorTransitionType.NoLink:
-								if (CheckForBrokenAreaTransitions) {
-									Task task = new Task("The trigger '" + trigger.Name + 
-									                     "' (in area '" + trigger.Area.Name + "') has an area transition, but " +
-									                     "it won't work unless the property 'Link Object Type' is set to " +
-									                     "either 'Transition to a waypoint' or 'Transition to a door'.",
-									                     "Bugs",
-									                     TaskOrigin.FixingError.ToString());
-									tasks.Add(task);							
-								}
-								break;
-						}
-					}
-				}
-				
-				area.Release();
-			}
-			
-			
-			// In the second pass, collect the exit doors and waypoints:			
-			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
-				area.Demand();	
-				
+				area.Demand();					
 				foreach (NWN2DoorInstance door in area.Doors) {
-					if (doorsNamedAsExits.Contains(door.Name)) {
-						if (!exitDoors.ContainsValue(door)) {
-							exitDoors.Add(door.Name,door);
+					if (door.LinkedTo != null && door.LinkedTo != String.Empty) {
+						if (door.LinkedTo == door.Tag) {
+							Task task = new Task("The door '" + door.Tag + "' (in area '" +
+										         door.Area.Name + "') has an area transition " + 
+										         "which leads to itself!",
+										         "Bugs",
+										         TaskOrigin.FixingPossibleError.ToString());
+							tasks.Add(task);
 						}
-						doorsNamedAsExits.Remove(door.Name);
-						if (doorsNamedAsExits.Count == 0) {
-							break;
+						else {
+							entrances.Add(door.Tag,door);
+							if (!exitTags.Contains(door.LinkedTo)) {
+								exitTags.Add(door.LinkedTo);								
+							}
 						}
-					}					
-				}
-				
+					}
+				}				
+				foreach (NWN2TriggerInstance trigger in area.Triggers) {
+					if (trigger.LinkedTo != null && trigger.LinkedTo != String.Empty) {
+						if (trigger.LinkedTo == trigger.Tag) {
+							Task task = new Task("The trigger '" + trigger.Tag + "' (in area '" +
+										         trigger.Area.Name + "') has an area transition " + 
+										         "which leads to itself!",
+										         "Bugs",
+										         TaskOrigin.FixingPossibleError.ToString());
+							tasks.Add(task);
+						}
+						else {
+							entrances.Add(trigger.Tag,trigger);
+							if (!exitTags.Contains(trigger.LinkedTo)) {
+								exitTags.Add(trigger.LinkedTo);								
+							}
+						}
+					}
+				}				
+				area.Release();
+			}			
+			
+			
+			// In the second pass, collect the exit doors/waypoints, including
+			// any which were named but were not identified (i.e. user selected 'No transition'
+			// but typed in a LinkedTo tag anyway.)
+			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
+				area.Demand();					
+				foreach (NWN2DoorInstance door in area.Doors) {
+					if (exitTags.Contains(door.Tag) && !exitDoors.ContainsKey(door.Tag)) {
+						exitDoors.Add(door.Tag,door);
+					}
+				}							
 				foreach (NWN2WaypointInstance waypoint in area.Waypoints) {
-					if (waypointsNamedAsExits.Contains(waypoint.Name)) {
-						if (!exitWaypoints.ContainsValue(waypoint)) {
-							exitWaypoints.Add(waypoint.Name,waypoint);
-						}
-						waypointsNamedAsExits.Remove(waypoint.Name);
-						if (waypointsNamedAsExits.Count == 0) {
-							break;
-						}
-					}					
-				}
-				
+					if (exitTags.Contains(waypoint.Tag) && !exitWaypoints.ContainsKey(waypoint.Tag)) {
+						exitWaypoints.Add(waypoint.Tag,waypoint);
+					}
+				}				
 				area.Release();
 			}
 			
 			
 			// Then build a graph of areas linked to other areas:				
-			foreach (NWN2DoorInstance entrance in entranceDoors.Values) {	
-				LinkAreas(entrance.Name,
-				          "door",
-						  entrance.Area.Name.ToLower(),
-				          entrance.LinkedTo,
-				          entrance.LinkedToType);
-			}			
-			foreach (NWN2TriggerInstance entrance in entranceTriggers.Values) {		
-				LinkAreas(entrance.Name,
-				          "trigger",
-						  entrance.Area.Name.ToLower(),
-				          entrance.LinkedTo,
-				          entrance.LinkedToType);
-			}
+			foreach (INWN2Instance entrance in entrances.Values) {
+				LinkAreas(entrance);
+			}	
 			
 			
-			// Check whether all of the nodes in the graph are reachable:
+			// Navigate the graph via area transitions, and mark off every area that you reach:
 			if (CheckThatAllAreasCanBeReached && startingArea != null) {
 				TryToReachAllAreas(startingArea);
 			
@@ -282,7 +233,7 @@ namespace AdventureAuthor.Tasks.NWN2
 					}
 					description.Remove(description.Length-2,2); // remove last comma and space
 					description.Append(") can't be reached from the start location. Add area transitions " +
-					                  "to make sure the player can get to all the areas.");
+					                  "(or fix broken ones!) to make sure the player can get to all the areas.");
 					Task task = new Task(description.ToString(),
 					                     "Bugs",
 					                     TaskOrigin.FixingPossibleError.ToString());
@@ -306,63 +257,83 @@ namespace AdventureAuthor.Tasks.NWN2
 		}
 		
 		
-		private void LinkAreas(string entranceName, string entranceType, string entranceArea, string exitName, DoorTransitionType LinkedToType)
+		private void LinkAreas(INWN2Instance entrance)
 		{		
-			bool foundExitDoor = exitDoors.ContainsKey(exitName);
-			bool foundExitWaypoint = exitWaypoints.ContainsKey(exitName);
-				
-			switch (LinkedToType) {
-				case DoorTransitionType.LinkToDoor:
-					if (foundExitDoor) {
-						NWN2DoorInstance exit = exitDoors[exitName];
-						string exitAreaName = exit.Area.Name.ToLower();
-						areas[entranceArea].LeadsTo.Add(areas[exitAreaName]);
-					}
-					else if (CheckForBrokenAreaTransitions) {
-						if (foundExitWaypoint) {
-							Task task = new Task("The area transition on " + entranceType + " '" + entranceName + "' " +
-							                     "(in area '" + entranceArea + "') is linked to a waypoint - it won't work unless " +
-							                     "the property 'Link Object Type' is set to 'Transition to a waypoint'.",
-							                     "Bugs",
-							                     TaskOrigin.FixingError.ToString());
-							tasks.Add(task);
-						}
-						else {		
-							Task task = new Task("The " + entranceType + " '" + entranceName + "' (in area '" +
-							                     entranceArea + "') has an area transition which links to '" +
-							                     exitName + "' - but there is no door or waypoint with that tag.",
-							                     "Bugs",
-							                     TaskOrigin.FixingError.ToString());
-							tasks.Add(task);
-						}
-					}
-					break;
-					
-				case DoorTransitionType.LinkToWaypoint:
-					if (foundExitWaypoint) {
-						NWN2WaypointInstance exit = exitWaypoints[exitName];
-						string exitAreaName = exit.Area.Name.ToLower();
-						areas[entranceArea].LeadsTo.Add(areas[exitAreaName]);
-					}
-					else if (CheckForBrokenAreaTransitions) {
-						if (foundExitDoor) {	
-							Task task = new Task("The area transition on " + entranceType + " '" + entranceName + "' " +
-							                     "(in area '" + entranceArea + "') is linked to a door - it won't work unless " +
-							                     "the property 'Link Object Type' is set to 'Transition to a door'.",
-							                     "Bugs",
-							                     TaskOrigin.FixingError.ToString());
-							tasks.Add(task);
-						}
-						else {							
-							Task task = new Task("The " + entranceType + " '" + entranceName + "' (in area '" +
-							                     entranceArea + "') has an area transition which links to '" +
-							                     exitName + "' - but there is no door or waypoint with that tag.",
-							                     "Bugs",
-							                     TaskOrigin.FixingError.ToString());
-							tasks.Add(task);
-						}
-					}
-					break;
+			string LinkedTo;
+			DoorTransitionType LinkedToType;
+			string entranceType;
+			if (entrance is NWN2DoorInstance) {
+				NWN2DoorInstance door = (NWN2DoorInstance)entrance;
+				LinkedTo = door.LinkedTo;
+				LinkedToType = door.LinkedToType;
+				entranceType = "door";
+			}
+			else if (entrance is NWN2TriggerInstance) {
+				NWN2TriggerInstance trigger = (NWN2TriggerInstance)entrance;
+				LinkedTo = trigger.LinkedTo;
+				LinkedToType = trigger.LinkedToType;
+				entranceType = "trigger";
+			}
+			else {
+				throw new ArgumentException("entrance must be a NWN2DoorInstance or a NWN2TriggerInstance.","entrance");
+			}
+			
+			// If you can find the door or waypoint that the transition is 
+			// supposed to link to, add a link from the area that the 
+			// entrance is in to the area that the exit is in:
+			bool foundExitDoor = exitDoors.ContainsKey(LinkedTo);
+			bool foundExitWaypoint = exitWaypoints.ContainsKey(LinkedTo);
+						
+			INWN2Instance exit = null;
+			if (LinkedToType == DoorTransitionType.LinkToDoor && foundExitDoor) {
+				exit = exitDoors[LinkedTo];
+			}
+			else if (LinkedToType == DoorTransitionType.LinkToWaypoint && foundExitWaypoint) {
+				exit = exitWaypoints[LinkedTo];
+			}
+			
+			if (exit != null) {
+				areas[entrance.Area.Name].LeadsTo.Add(areas[exit.Area.Name]);
+			}
+			// Otherwise, if you're checking for broken area transitions, check whether
+			// there is a valid exit with the given tag but the user has failed to
+			// set LinkedToType properly. If there is, generate a task about it, and if
+			// there isn't, generate a task stating that there is no door or waypoint with that tag:
+			else if (CheckForBrokenAreaTransitions) {				
+				Task task;
+				if (LinkedToType != DoorTransitionType.LinkToWaypoint && foundExitWaypoint) {
+					// there is a WAYPOINT called that..
+					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
+							        entrance.Area.Name + "') has an area transition which links to " + 
+							        "waypoint '" + LinkedTo + "' - but its property 'Link Object Type' " + 
+							        " needs to be set to 'Transition to a waypoint', or it won't work."
+							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
+							        "foundexitwaypoint: " + foundExitWaypoint,
+							        "Bugs",
+							        TaskOrigin.FixingError.ToString());
+				}
+				else if (LinkedToType != DoorTransitionType.LinkToDoor && foundExitDoor) {
+					// there is a DOOR called that..
+					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
+							        entrance.Area.Name + "') has an area transition which links to " + 
+							        "door '" + LinkedTo + "' - but its property 'Link Object Type' " + 
+							        " needs to be set to 'Transition to a door', or it won't work."
+							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
+							        "foundexitwaypoint: " + foundExitWaypoint,
+							        "Bugs",
+							        TaskOrigin.FixingError.ToString());
+				}
+				else {
+					// there isn't anything called that..
+					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
+							        entrance.Area.Name + "') has an area transition which links to '" +
+							        LinkedTo + "' - but there is no door or waypoint with that tag."
+							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
+							        "foundexitwaypoint: " + foundExitWaypoint,
+							        "Bugs",
+							        TaskOrigin.FixingError.ToString());
+				}
+				tasks.Add(task);
 			}
 		}
 	}	
