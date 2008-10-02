@@ -45,14 +45,33 @@ namespace AdventureAuthor.Tasks.NWN2
 	/// </summary>
 	public class CreatureTasksGenerator : ITaskGenerator
 	{
+		#region Constants
+		
+		private const string HOSTILESPEAKERS = "Check for hostile speakers";
+		private const string MISSINGCONVERSATIONS = "Check for missing conversations";
+		private const string HOSTILESPEAKERSDESCRIPTION = "Check for creatures which have " +
+			"conversations attached, but which are hostile and will fight the player instead of speaking.";
+		private const string MISSINGCONVERSATIONSDESCRIPTION = "Check for creatures which have " +
+			"have conversations where the conversation file is missing, or the filename has been entered wrongly.";
+		
+		#endregion
+		
+		#region Properties and fields
+				
+		/// <summary>
+		/// All of the various criteria which can be applied to generate tasks.
+		/// </summary>
+		private Dictionary<string,Criterion> criteria;
+		
+		
 		/// <summary>
 		/// True to generate a task for each hostile creature
 		/// which has a conversation; false to ignore this factor.
 		/// </summary>
 		private bool checkForHostileSpeakers;
 		public bool CheckForHostileSpeakers {
-			get { return checkForHostileSpeakers; }
-			set { checkForHostileSpeakers = value; }
+			get { return criteria[HOSTILESPEAKERS].Include; }
+			set { criteria[HOSTILESPEAKERS].Include = value; }
 		}
 		
 		
@@ -62,10 +81,13 @@ namespace AdventureAuthor.Tasks.NWN2
 		/// </summary>
 		private bool checkForUnrecognisedConversations;
 		public bool CheckForUnrecognisedConversations {
-			get { return checkForUnrecognisedConversations; }
-			set { checkForUnrecognisedConversations = value; }
+			get { return criteria[MISSINGCONVERSATIONS].Include; }
+			set { criteria[MISSINGCONVERSATIONS].Include = value; }
 		}
 		
+		#endregion
+		
+		#region Constructors
 		
 		/// <summary>
 		/// Construct an CreatureTasksGenerator object which will generate tasks for the My Tasks
@@ -80,8 +102,17 @@ namespace AdventureAuthor.Tasks.NWN2
 		public CreatureTasksGenerator(bool checkForHostileSpeakers,
 		                              bool checkForUnrecognisedConversations)
 		{
-			this.checkForHostileSpeakers = checkForHostileSpeakers;
-			this.checkForUnrecognisedConversations = checkForUnrecognisedConversations;
+			Criterion hostileSpeakers = new Criterion(HOSTILESPEAKERS,
+					                                  HOSTILESPEAKERSDESCRIPTION,
+					                                  checkForHostileSpeakers,
+					                                  null);
+			Criterion missingConversations = new Criterion(MISSINGCONVERSATIONS,
+					                       		           MISSINGCONVERSATIONSDESCRIPTION,
+					                            	       checkForUnrecognisedConversations,
+					                                	   null);
+					
+			this.criteria = new Dictionary<string,Criterion>{{HOSTILESPEAKERS,hostileSpeakers},
+													   		 {MISSINGCONVERSATIONS,missingConversations}};
 		}
 		
 		
@@ -94,6 +125,9 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 		}
 		
+		#endregion
+		
+		#region Methods
 		
 		public List<Task> GetTasks()
 		{
@@ -139,5 +173,17 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 			return tasks;
 		}
+			
+			
+		public List<Criterion> GetCriteria()
+		{
+			List<Criterion> availableCriteria = new List<Criterion>(criteria.Keys.Count);
+			foreach (Criterion criterion in criteria.Values) {
+				availableCriteria.Add(criterion);
+			}
+			return availableCriteria;
+		}
+		
+		#endregion
 	}
 }

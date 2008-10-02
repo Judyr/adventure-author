@@ -52,14 +52,33 @@ namespace AdventureAuthor.Tasks.NWN2
 	/// </remarks>
 	public class AreaTasksGenerator : ITaskGenerator
 	{
+		#region Constants
+		
+		private const string BROKENTRANSITIONS = "Check for broken area transitions";
+		private const string ALLAREASREACHABLE = "Check that all areas can be reached";
+		private const string BROKENTRANSITIONSDESCRIPTION = "Check for any area transitions which lead to nowhere, " +
+			"lead to themselves, or have the wrong transition type selected.";
+		private const string ALLAREASREACHABLEDESCRIPTION = "Check that the module has a player start location, " +
+			"and that the player can reach all the areas in the module via working area transitions.";
+		
+		#endregion
+		
+		#region Fields
+		
+		/// <summary>
+		/// All of the various criteria which can be applied to generate tasks.
+		/// </summary>
+		private Dictionary<string,Criterion> criteria;
+		
+		
 		/// <summary>
 		/// True to generate a task for each area transition which has been
 		/// improperly set up; false to ignore this factor.
 		/// </summary>
 		private bool checkForBrokenAreaTransitions;
 		public bool CheckForBrokenAreaTransitions {
-			get { return checkForBrokenAreaTransitions; }
-			set { checkForBrokenAreaTransitions = value; }
+			get { return criteria[BROKENTRANSITIONS].Include; }
+			set { criteria[BROKENTRANSITIONS].Include = value; }
 		}
 		
 		
@@ -70,21 +89,17 @@ namespace AdventureAuthor.Tasks.NWN2
 		/// </summary>
 		private bool checkThatAllAreasCanBeReached;
 		public bool CheckThatAllAreasCanBeReached {
-			get { return checkThatAllAreasCanBeReached; }
-			set { checkThatAllAreasCanBeReached = value; }
+			get { return criteria[ALLAREASREACHABLE].Include; }
+			set { criteria[ALLAREASREACHABLE].Include = value; }
 		}
 		
-		
-		List<Task> tasks;
-		
 		Dictionary<string,Area> areas;		
-		Dictionary<string,INWN2Instance> entrances = new Dictionary<string,INWN2Instance>();
 		Dictionary<string,NWN2DoorInstance> exitDoors = new Dictionary<string,NWN2DoorInstance>();
 		Dictionary<string,NWN2WaypointInstance> exitWaypoints = new Dictionary<string,NWN2WaypointInstance>();
-		List<string> exitTags = new List<string>();
 		
-		private int areasReached = 0;
+		#endregion
 		
+		#region Constructors
 		
 		/// <summary>		
 		/// Construct an AreaTasksGenerator object which will generate tasks for the My Tasks
@@ -107,10 +122,22 @@ namespace AdventureAuthor.Tasks.NWN2
 		public AreaTasksGenerator(bool checkForBrokenAreaTransitions,
 		                          bool checkThatAllAreasCanBeReached)
 		{
-			this.checkForBrokenAreaTransitions = checkForBrokenAreaTransitions;
-			this.checkThatAllAreasCanBeReached = checkThatAllAreasCanBeReached;
+			Criterion brokenTransitions = new Criterion(BROKENTRANSITIONS,
+					                                    BROKENTRANSITIONSDESCRIPTION,
+					                                    checkForBrokenAreaTransitions,
+					                                    null);
+			Criterion allAreasReachable = new Criterion(ALLAREASREACHABLE,
+					                                    ALLAREASREACHABLEDESCRIPTION,
+					                                    checkThatAllAreasCanBeReached,
+					                                    null);
+			
+			this.criteria = new Dictionary<string,Criterion>{{BROKENTRANSITIONS,brokenTransitions},
+													   		 {ALLAREASREACHABLE,allAreasReachable}};
 		}
 		
+		#endregion
+		
+		#region Methods
 		
 		public List<Task> GetTasks()
 		{			
@@ -118,7 +145,7 @@ namespace AdventureAuthor.Tasks.NWN2
 				throw new InvalidOperationException("No module is open to generate tasks.");
 			}
 			
-			tasks = new List<Task>();
+			List<Task> tasks = new List<Task>();
 			
 			if (!CheckForBrokenAreaTransitions && !CheckThatAllAreasCanBeReached) {
 				return tasks;
@@ -152,12 +179,16 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 			
 			// In the first pass, collect all of the entrance doors and triggers, 
-			// as well as collecting the *names* of the exit doors and waypoints.			
+			// as well as collecting the *tags* of the exit doors and waypoints.
+			
+			Dictionary<string,INWN2Instance> entrances = new Dictionary<string,INWN2Instance>();
+			List<string> exitTags = new List<string>();
+			
 			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
 				area.Demand();					
 				foreach (NWN2DoorInstance door in area.Doors) {
 					if (door.LinkedTo != null && door.LinkedTo != String.Empty) {
-						if (door.LinkedTo == door.Tag) {
+						if (CheckForBrokenAreaTransitions && door.LinkedTo == door.Tag) {
 							Task task = new Task("The door '" + door.Tag + "' (in area '" +
 										         door.Area.Name + "') has an area transition " + 
 										         "which leads to itself!",
@@ -175,7 +206,7 @@ namespace AdventureAuthor.Tasks.NWN2
 				}				
 				foreach (NWN2TriggerInstance trigger in area.Triggers) {
 					if (trigger.LinkedTo != null && trigger.LinkedTo != String.Empty) {
-						if (trigger.LinkedTo == trigger.Tag) {
+						if (CheckForBrokenAreaTransitions && trigger.LinkedTo == trigger.Tag) {
 							Task task = new Task("The trigger '" + trigger.Tag + "' (in area '" +
 										         trigger.Area.Name + "') has an area transition " + 
 										         "which leads to itself!",
@@ -216,13 +247,16 @@ namespace AdventureAuthor.Tasks.NWN2
 			
 			// Then build a graph of areas linked to other areas:				
 			foreach (INWN2Instance entrance in entrances.Values) {
-				LinkAreas(entrance);
+				Task task = LinkAreas(entrance);
+				if (task != null) { // LinkAreas() returns a Task if it finds a broken area transition
+					tasks.Add(task);
+				}
 			}	
 			
 			
 			// Navigate the graph via area transitions, and mark off every area that you reach:
 			if (CheckThatAllAreasCanBeReached && startingArea != null) {
-				TryToReachAllAreas(startingArea);
+				int areasReached = TryToReachAllAreas(startingArea);
 			
 				if (areasReached < areas.Count) {
 					StringBuilder description = new StringBuilder("Some areas in this module (");
@@ -245,19 +279,20 @@ namespace AdventureAuthor.Tasks.NWN2
 		}
 		
 		
-		private void TryToReachAllAreas(Area area)
+		private int TryToReachAllAreas(Area area)
 		{
 			area.Reached = true;
-			areasReached++;
+			int reached = 1;
 			foreach (Area linkedArea in area.LeadsTo) {
 				if (!linkedArea.Reached) {
-					TryToReachAllAreas(linkedArea);
+					reached += TryToReachAllAreas(linkedArea);
 				}
 			}
+			return reached;
 		}
 		
 		
-		private void LinkAreas(INWN2Instance entrance)
+		private Task LinkAreas(INWN2Instance entrance)
 		{		
 			string LinkedTo;
 			DoorTransitionType LinkedToType;
@@ -300,15 +335,13 @@ namespace AdventureAuthor.Tasks.NWN2
 			// set LinkedToType properly. If there is, generate a task about it, and if
 			// there isn't, generate a task stating that there is no door or waypoint with that tag:
 			else if (CheckForBrokenAreaTransitions) {				
-				Task task;
+				Task task = null;
 				if (LinkedToType != DoorTransitionType.LinkToWaypoint && foundExitWaypoint) {
 					// there is a WAYPOINT called that..
 					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
 							        entrance.Area.Name + "') has an area transition which links to " + 
 							        "waypoint '" + LinkedTo + "' - but its property 'Link Object Type' " + 
-							        " needs to be set to 'Transition to a waypoint', or it won't work."
-							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
-							        "foundexitwaypoint: " + foundExitWaypoint,
+							        " needs to be set to 'Transition to a waypoint', or it won't work.",
 							        "Bugs",
 							        TaskOrigin.FixingError.ToString());
 				}
@@ -317,9 +350,7 @@ namespace AdventureAuthor.Tasks.NWN2
 					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
 							        entrance.Area.Name + "') has an area transition which links to " + 
 							        "door '" + LinkedTo + "' - but its property 'Link Object Type' " + 
-							        " needs to be set to 'Transition to a door', or it won't work."
-							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
-							        "foundexitwaypoint: " + foundExitWaypoint,
+							        " needs to be set to 'Transition to a door', or it won't work.",
 							        "Bugs",
 							        TaskOrigin.FixingError.ToString());
 				}
@@ -327,15 +358,26 @@ namespace AdventureAuthor.Tasks.NWN2
 					// there isn't anything called that..
 					task = new Task("The " + entranceType + " '" + entrance.Name + "' (in area '" +
 							        entrance.Area.Name + "') has an area transition which links to '" +
-							        LinkedTo + "' - but there is no door or waypoint with that tag."
-							        +"\n\n" + entrance.Name + "\n" + LinkedToType + " \n" + "foundexitdoor: " + foundExitDoor + "\n" +
-							        "foundexitwaypoint: " + foundExitWaypoint,
+							        LinkedTo + "' - but there is no door or waypoint with that tag.",
 							        "Bugs",
 							        TaskOrigin.FixingError.ToString());
 				}
-				tasks.Add(task);
+				return task;
 			}
+			return null; //only return a Task if something is broken!
 		}
+			
+			
+		public List<Criterion> GetCriteria()
+		{
+			List<Criterion> availableCriteria = new List<Criterion>(criteria.Keys.Count);
+			foreach (Criterion criterion in criteria.Values) {
+				availableCriteria.Add(criterion);
+			}
+			return availableCriteria;
+		}
+			
+		#endregion
 	}	
 	
 

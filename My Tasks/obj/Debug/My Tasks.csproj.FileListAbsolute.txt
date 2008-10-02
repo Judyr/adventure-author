@@ -16,22 +16,8 @@ C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\TaskPa
 C:\Users\Kirn\Documents\SharpDevelop Projects\My Tasks\My Tasks\obj\Debug\TaskPad.baml
 C:\Code\My Tasks\bin\Debug\My Tasks.exe
 C:\Code\My Tasks\bin\Debug\My Tasks.pdb
-C:\Code\My Tasks\obj\Debug\ResolveAssemblyReference.cache
-C:\Code\My Tasks\obj\Debug\DogEar.baml
-C:\Code\My Tasks\obj\Debug\DogEar.g.cs
-C:\Code\My Tasks\obj\Debug\TaskPad.g.cs
-C:\Code\My Tasks\obj\Debug\App.g.cs
-C:\Code\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
-C:\Code\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
-C:\Code\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
-C:\Code\My Tasks\obj\Debug\TaskPad.baml
-C:\Code\My Tasks\obj\Debug\My Tasks.g.resources
-C:\Code\My Tasks\obj\Debug\My Tasks.exe
-C:\Code\My Tasks\obj\Debug\My Tasks.pdb
 C:\Code\My Tasks\bin\Debug\AAUtils.dll
 C:\Code\My Tasks\bin\Debug\AAUtils.pdb
-C:\Code\My Tasks\obj\Debug\MyTasksWindow.g.cs
-C:\Code\My Tasks\obj\Debug\MyTasksWindow.baml
 C:\AdminCat\My Tasks\obj\Debug\ResolveAssemblyReference.cache
 C:\AdminCat\My Tasks\obj\Debug\DogEar.baml
 C:\AdminCat\My Tasks\obj\Debug\DogEar.g.cs
@@ -50,12 +36,8 @@ C:\AdminCat\My Tasks\obj\Debug\TaskPad.g.cs
 C:\AdminCat\My Tasks\obj\Debug\TaskPad.baml
 C:\AdminCat\My Tasks\obj\Debug\MyTasksWindow.baml
 C:\AdminCat\My Tasks\obj\Debug\My Tasks.g.resources
-C:\My Tasks output\My Tasks.exe
-C:\My Tasks output\My Tasks.pdb
 C:\AdminCat\My Tasks\obj\Debug\TagControl.baml
 C:\AdminCat\My Tasks\obj\Debug\TagControl.g.cs
-C:\Code\My Tasks\obj\Debug\TagControl.baml
-C:\Code\My Tasks\obj\Debug\TagControl.g.cs
 C:\Armadillo\My Tasks\obj\Debug\ResolveAssemblyReference.cache
 C:\Armadillo\My Tasks\obj\Debug\DogEar.baml
 C:\Armadillo\My Tasks\obj\Debug\TagControl.baml
@@ -106,6 +88,24 @@ C:\Ando\My Tasks\obj\Debug\My Tasks.exe
 C:\Ando\My Tasks\obj\Debug\My Tasks.pdb
 C:\Ando\My Tasks\obj\Debug\My Tasks.csproj.GenerateResource.Cache
 C:\Ando\My Tasks\obj\Debug\AdventureAuthor.Tasks.Images.resources
+C:\My Tasks output\My Tasks.exe
+C:\My Tasks output\My Tasks.pdb
+C:\Code\My Tasks\obj\Debug\ResolveAssemblyReference.cache
+C:\Code\My Tasks\obj\Debug\DogEar.baml
+C:\Code\My Tasks\obj\Debug\TagControl.baml
+C:\Code\My Tasks\obj\Debug\DogEar.g.cs
+C:\Code\My Tasks\obj\Debug\TagControl.g.cs
+C:\Code\My Tasks\obj\Debug\TaskPad.g.cs
+C:\Code\My Tasks\obj\Debug\MyTasksWindow.g.cs
+C:\Code\My Tasks\obj\Debug\App.g.cs
+C:\Code\My Tasks\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Code\My Tasks\obj\Debug\My Tasks_MarkupCompile.cache
+C:\Code\My Tasks\obj\Debug\My Tasks_MarkupCompile.lref
+C:\Code\My Tasks\obj\Debug\TaskPad.baml
+C:\Code\My Tasks\obj\Debug\MyTasksWindow.baml
+C:\Code\My Tasks\obj\Debug\My Tasks.g.resources
+C:\Code\My Tasks\obj\Debug\AdventureAuthor.Tasks.Icons.resources
 C:\Code\My Tasks\obj\Debug\AdventureAuthor.Tasks.Images.resources
 C:\Code\My Tasks\obj\Debug\My Tasks.csproj.GenerateResource.Cache
-C:\Code\My Tasks\obj\Debug\AdventureAuthor.Tasks.Icons.resources
+C:\Code\My Tasks\obj\Debug\My Tasks.exe
+C:\Code\My Tasks\obj\Debug\My Tasks.pdb
