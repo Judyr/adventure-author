@@ -97,7 +97,6 @@
     <Compile Include="FridgeMagnetPreferences.cs" />
     <Compile Include="CountdownTimer.cs" />
     <Compile Include="MagnetBoardViewer.xaml.cs" />
-    <Compile Include="MessageReceivedEventArgs.cs" />
     <Compile Include="SystemTray.cs" />
     <Page Include="Ideas\EditMagnetWindow.xaml" />
     <Page Include="Ideas\MagnetBoardControl.xaml" />

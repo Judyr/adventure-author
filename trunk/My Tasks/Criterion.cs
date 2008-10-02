@@ -29,12 +29,15 @@ using System;
 namespace AdventureAuthor.Tasks
 {
 	/// <summary>
-	/// Description of Check.
+	/// Create a criterion which represents some aspect of what an ITaskGenerator
+	/// is checking for when generating tasks.
 	/// </summary>
-	public class Check
+	public class Criterion
 	{
+		#region Properties and fields
+		
 		/// <summary>
-		/// The title of this check.
+		/// The title of this criterion.
 		/// </summary>
 		/// <remarks>An example would be 'Check for broken area transitions'.</remarks>
 		private string title;
@@ -45,7 +48,7 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// A description of this check.
+		/// A description of this criterion.
 		/// </summary>
 		/// <remarks>An example would be 'Check whether any area transitions have been set up
 		/// which lead nowhere or which have the wrong exit type.'</remarks>
@@ -57,42 +60,70 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// True if the ITaskGenerator which owns this object should consider
-		/// the factors represented by this Check when it is asked to generate tasks.
+		/// True to consider this criterion when generating tasks; false
+		/// if this criterion should be ignored when generating tasks.
 		/// </summary>
-		private bool shouldRun;
-		public bool ShouldRun {
-			get { return shouldRun; }
-			set { shouldRun = value; }
+		private bool include;
+		public bool Include {
+			get { return include; }
+			set { include = value; }
 		}
 		
 		
 		/// <summary>
-		/// Options which relate to the running of this Check.
+		/// Options which relate to the running of this criterion.
 		/// </summary>
-		/// <remarks>If you want to set options for a particular check, create a new class which
+		/// <remarks>If you want to set options for a particular criterion, create a new class which
 		/// has those options as properties - the field can then be represented as a PropertyGrid
 		/// to allow the user to set options.
 		/// An example of an option would be a list of game areas to ignore when running
-		/// this Check.</remarks>
+		/// this criterion.</remarks>
 		private object options;
 		public object Options {
 			get { return options; }
 			set { options = value; }
 		}
 		
+		#endregion
 		
-		private Check() : this(null,null)
+		#region Constructors
+		
+		/// <summary>
+		/// For serialization purposes only.
+		/// </summary>
+		private Criterion() : this(null,null)
 		{
 		}
 		
 		
-		public Check(string title, string description)
+		/// <summary>
+		/// Create a criterion which represents some aspect of what an ITaskGenerator
+		/// is checking for when generating tasks.
+		/// </summary>
+		/// <param name="title">The title of this criterion</param>
+		/// <param name="description">A description of this criterion</param>
+		public Criterion(string title, string description) : this(title,description,false,null)
+		{
+		}
+		
+		
+		/// <summary>
+		/// Create a criterion which represents some aspect of what an ITaskGenerator
+		/// is checking for when generating tasks.
+		/// </summary>
+		/// <param name="title">The title of this criterion</param>
+		/// <param name="description">A description of criterion check</param>
+		/// <param name="include">True to consider this criterion when generating tasks; false
+		/// if this criterion should be ignored when generating tasks.</param>
+		/// <param name="options">Options which relate to the running of this criterion.</param>
+		public Criterion(string title, string description, bool include, object options)
 		{
 			this.title = title;
 			this.description = description;
-			this.shouldRun = false;
-			this.options = null;
+			this.include = include;
+			this.options = options;
 		}
+		
+		#endregion
 	}
 }

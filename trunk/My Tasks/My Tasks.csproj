@@ -59,7 +59,7 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Check.cs" />
+    <Compile Include="Criterion.cs" />
     <Compile Include="Converters\CompletedDateToStringConverter.cs" />
     <Compile Include="Converters\CornerConverter.cs" />
     <Compile Include="Converters\CreationDateToStringConverter.cs" />

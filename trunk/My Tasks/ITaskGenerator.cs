@@ -30,11 +30,17 @@ using System.Collections.Generic;
 namespace AdventureAuthor.Tasks
 {
 	/// <summary>
-	/// Description of ITaskGenerator.
+	/// Generates Task objects based on some set of criteria.
 	/// </summary>
+	/// <remarks>Generally, a class implementing ITaskGenerator may feature several
+	/// different criteria to generate tasks for, all within the same general domain. 
+	/// Implementing classes can provide Checks to allow specific criteria to be
+	/// switched on and off - for example, a class AreaTasksGenerator may define
+	/// several Checks (such as 'Check for broken area transitions' and 'Check that 
+	/// all areas are accessible') all in the same subject domain.</remarks>
 	public interface ITaskGenerator
 	{
-		//List<Check> GetAvailableChecks();
-		List<Task> GetTasks();//(List<Check> checks);
+		List<Criterion> GetCriteria();
+		List<Task> GetTasks();
 	}
 }
