@@ -233,40 +233,50 @@ namespace AdventureAuthor.Setup
 			achievementsButton.ToolTipText = "View your achievements";
 			aaToolbar.Items.Add(achievementsButton);
 														
-			ButtonItem checkTransitions = new ButtonItem();
-			SetSandbarButtonImage(checkTransitions,"clipboard.png","Check transitions");
-			checkTransitions.Enabled = true;
-			checkTransitions.Visible = true;
-			checkTransitions.ToolTipText = "Check transitions";
-			checkTransitions.Activate += delegate 
-			{ 
-				// Temp test:
-				if (ModuleHelper.ModuleIsOpen()) {
-					bool checkBrokenAreaTransitions;
-					bool checkAllReachable;
-					checkBrokenAreaTransitions = System.Windows.Forms.MessageBox.Show("Check for broken area transitions?",
-					                                                                  String.Empty,
-					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
-						== System.Windows.Forms.DialogResult.Yes;
-					checkAllReachable = System.Windows.Forms.MessageBox.Show("Check that all areas are reachable?",
-					                                                                  String.Empty,
-					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
-						== System.Windows.Forms.DialogResult.Yes;
-					
-					List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator(checkBrokenAreaTransitions,
-					                                                                                           checkAllReachable)).GetTasks();
-					tasks.AddRange((new AdventureAuthor.Tasks.NWN2.CreatureTasksGenerator()).GetTasks());
-					StringBuilder message = new StringBuilder("..To do..\n\n");
-					foreach (AdventureAuthor.Tasks.Task task in tasks) {
-						message.Append(task.Description + "\n\n");
-					}			
-					Say.Information(message.ToString());					
-				}
-				else {
-					Say.Information("No module is open.");
-				}
-			};
-			aaToolbar.Items.Add(checkTransitions);
+//			ButtonItem checkTransitions = new ButtonItem();
+//			SetSandbarButtonImage(checkTransitions,"clipboard.png","Check transitions");
+//			checkTransitions.Enabled = true;
+//			checkTransitions.Visible = true;
+//			checkTransitions.ToolTipText = "Check transitions";
+//			checkTransitions.Activate += delegate 
+//			{ 
+//				// Temp test:
+//				if (ModuleHelper.ModuleIsOpen()) {
+//					bool checkBrokenAreaTransitions;
+//					bool checkAllReachable;
+//					checkBrokenAreaTransitions = System.Windows.Forms.MessageBox.Show("Check for broken area transitions?",
+//					                                                                  String.Empty,
+//					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
+//						== System.Windows.Forms.DialogResult.Yes;
+//					checkAllReachable = System.Windows.Forms.MessageBox.Show("Check that all areas are reachable?",
+//					                                                                  String.Empty,
+//					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
+//						== System.Windows.Forms.DialogResult.Yes;
+//					
+//					List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator(checkBrokenAreaTransitions,
+//					                                                                                           checkAllReachable)).GetTasks();
+//					tasks.AddRange((new AdventureAuthor.Tasks.NWN2.CreatureTasksGenerator()).GetTasks());
+//					StringBuilder message = new StringBuilder("..To do..\n\n");
+//					foreach (AdventureAuthor.Tasks.Task task in tasks) {
+//						message.Append(task.Description + "\n\n");
+//					}			
+//					Say.Information(message.ToString());					
+//				}
+//				else {
+//					Say.Information("No module is open.");
+//				}
+//			};
+//			aaToolbar.Items.Add(checkTransitions);
+			
+			
+														
+			ButtonItem sendMessage = new ButtonItem();
+			SetSandbarButtonImage(sendMessage,"clipboard.png","Send message");
+			sendMessage.Enabled = true;
+			sendMessage.Visible = true;
+			sendMessage.ToolTipText = "Send message";
+			sendMessage.Activate += SendRandomMessageToMyTasks;
+			aaToolbar.Items.Add(sendMessage);
 			
 			
 			ModuleHelper.ModuleOpened += delegate {  

@@ -34,10 +34,14 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Xml;
+using System.Xml.Serialization;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Core.UI;
+using AdventureAuthor.Tasks;
+using AdventureAuthor.Tasks.NWN2;
 using AdventureAuthor.Utils;
 using AdventureAuthor.Variables.UI;
 using AdventureAuthor.Ideas;
@@ -74,7 +78,7 @@ namespace AdventureAuthor.Setup
 {		
 	public static partial class Toolset
 	{
-		#region Global variables
+		#region Properties and fields
 		
 		/// <summary>
 		/// The Adventure Author plugin. 
@@ -138,7 +142,7 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static MouseMode? previousMouseMode = null;	
 		
-		#endregion Global variables	
+		#endregion
 			
 			
 		#region Events
@@ -617,6 +621,9 @@ namespace AdventureAuthor.Setup
 				SendMagnet(e.Magnet);
 			};
 			
+			// Listen for My Tasks requesting task suggestions:
+			StartListeningForMessages();
+			
 			// Set up the interface for initial use - update the title bar, and disable
 			// parts of the interface which require an open module to be useful.
 			UpdateTitleBar();		
@@ -628,6 +635,131 @@ namespace AdventureAuthor.Setup
 			SetInterfaceLock(Plugin.Options.LockInterface);
 			areaContentsView.BringToFront();
 			areaContentsView.Focus();
+		}
+				
+		
+		private const string NWN2TOMYTASKS = "mytasksinpipe";
+		private const string MYTASKSTONWN2 = "mytasksoutpipe";
+		private const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
+		private const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
+		private const string CRITERIAFOLLOW = "<<<Criteria follow>>>"; 
+		
+		
+    	private static void StartListeningForMessages()
+    	{   
+    		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromMyTasks);
+    		Thread thread = new Thread(threadStart);
+			thread.Priority = ThreadPriority.BelowNormal;
+    		thread.Start();
+    	}
+    	
+		
+		private static void ListenForMessagesFromMyTasks()
+    	{
+    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",MYTASKSTONWN2,PipeDirection.In))
+    		{
+    			try {
+    				client.Connect();
+    				
+	    			using (StreamReader reader = new StreamReader(client))
+	    			{
+	    				string message;
+	    				while ((message = reader.ReadToEnd()) != null) {
+	    					if (message.Length == 0) {	    						
+	    						break;
+	    					}
+	    					
+	    					if (message.StartsWith(REQUESTALLTASKS)) {
+	    						
+	    						List<Task> tasks = GetTasks();	    						
+	    						
+	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+	    						StringWriter stringWriter = new StringWriter();
+	    						xmlSerializer.Serialize(stringWriter,tasks);
+	    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
+	    						
+	    						SendMessageToMyTasks(serialisedTasks);
+	    						
+	    						
+//	    						Task task = new Task("I am the " + DateTime.Now.Second + "th President of the United States",
+//	    						                     "Gnawing fears",
+//	    						                     "Madness",
+//	    						                     TaskState.NotCompleted,
+//	    						                     "John McCain",
+//	    						                     new DateTime(2008,8,27));
+//	    						
+//	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(Task));
+//	    						StringWriter stringWriter = new StringWriter();
+//	    						xmlSerializer.Serialize(stringWriter,task);
+//	    						string serialisedTask = stringWriter.GetStringBuilder().ToString();
+//	    						
+//	    						SendMessageToMyTasks(serialisedTask);
+		    				}
+	    					else if (message.Length > 0) {
+	    						Say.Information("NWN2 received:\n" + message);
+//		    					Say.Information("NWN2 heard: " + message + "\n\nmessage was " + message.Length + " chars, " +
+//	    						               "we were looking for " + REQUESTAVAILABLECRITERIA.Length + " chars");
+		    				}	    						
+	    				}
+	    			}
+	    		}
+    			catch (Exception e) {
+    				Say.Error("Failed to connect.",e);
+    			}    			
+			}    		
+			ListenForMessagesFromMyTasks();
+    	}
+		
+		
+		private static void SendRandomMessageToMyTasks(object sender, EventArgs e)
+		{
+			ParameterizedThreadStart threadStart = new ParameterizedThreadStart(SendMessageToMyTasks);
+			Thread thread = new Thread(threadStart);
+			thread.Priority = ThreadPriority.BelowNormal;
+			thread.Start("Do that thing");
+		}
+		
+		
+		private static void SendMessageToMyTasks(object message)
+		{
+			try {
+				using (NamedPipeServerStream server = new NamedPipeServerStream(NWN2TOMYTASKS,PipeDirection.Out)) {
+					server.WaitForConnection();
+	    			using (StreamWriter writer = new StreamWriter(server))
+	    			{
+	    				writer.Write(message);
+	    				writer.Flush();
+	    			}
+	    		}
+			}
+			catch (Exception e) {
+				Say.Error(e);
+			}
+		}
+		
+		
+		private static List<Criterion> FetchAvailableCriteriaForTaskGeneration()
+		{
+			List<Criterion> criteria = new List<Criterion>();
+			criteria.AddRange(new AreaTasksGenerator().GetCriteria());
+			criteria.AddRange(new CreatureTasksGenerator().GetCriteria());
+			return criteria;
+		}
+		
+		
+		private static List<Task> GetTasks()
+		{
+			List<Task> tasks = new List<Task>();
+			
+			if (ModuleHelper.ModuleIsOpen()) {
+				AreaTasksGenerator areaGen = new AreaTasksGenerator(true,true);
+				tasks.AddRange(areaGen.GetTasks());
+				
+				CreatureTasksGenerator creatureGen = new CreatureTasksGenerator(true,true);
+				tasks.AddRange(creatureGen.GetTasks());				
+			}
+			
+			return tasks;
 		}
 		
 		

@@ -139,6 +139,17 @@ namespace AdventureAuthor.Tasks.NWN2
 		
 		#region Methods
 		
+//		public List<Task> GetTasks(List<Criteria> chosenCriteria)
+//		{
+//			foreach (Criterion chosenCriterion in chosenCriteria) {
+//				if (this.criteria.ContainsKey(chosenCriterion.Description)) {
+//					this.criteria[chosenCriterion.Description].Include = chosenCriterion.Include;
+//				}
+//			}
+//			GetTasks();
+//		}
+		
+		
 		public List<Task> GetTasks()
 		{			
 			if (!ModuleHelper.ModuleIsOpen()) {
