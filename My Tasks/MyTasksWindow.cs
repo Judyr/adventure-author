@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.IO.Pipes;
 using System.Reflection;
 using System.Resources;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 using winforms = System.Windows.Forms;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
@@ -107,8 +112,6 @@ namespace AdventureAuthor.Tasks
 				New();
 			}	
 			
-			// Launch the application in the system tray:
-			Loaded += new RoutedEventHandler(LaunchInSystemTray);			
 				
 			// Dispose the system tray icon when you're done:
 			Closed += delegate { 
@@ -117,7 +120,19 @@ namespace AdventureAuthor.Tasks
 					trayIcon.Dispose();
 				} 		
 			};
+			
+			// Launch the application in the system tray:
+			Loaded += new RoutedEventHandler(LaunchInSystemTray);
+			
+			// And listen for messages from the NWN2Toolset:
+			Loaded += new RoutedEventHandler(StartListeningForMessages);
+			
+			// TODO: Do this properly in XAML and with a SuggestedTasks property.
+			suggestedTasks = new TaskCollection();
+			suggestedTasksPanel.DataContext = suggestedTasks;
 		}
+		
+		private TaskCollection suggestedTasks;
 		
 		#endregion
 		
@@ -461,11 +476,13 @@ namespace AdventureAuthor.Tasks
 			}
 			if (pad != null && pad.Tasks != null) {
 				foreach (Task task in pad.Tasks) {
-					foreach (string tag in task.Tags) {
-						if (!allTags.Contains(tag)) {
-							allTags.Add(tag);
+    				if (task.Tags != null) {
+						foreach (string tag in task.Tags) {
+							if (!allTags.Contains(tag)) {
+								allTags.Add(tag);
+							}
 						}
-					}
+    				}
 				}
 			}
     		
@@ -765,10 +782,159 @@ namespace AdventureAuthor.Tasks
     				                                   "' has visibility " + control.Visibility + " and IsVisible=" + control.IsVisible + ".");
     			}
     		}
-    		
-    		
     	}
+    	
+    	
+    	
+    	
+		private const string NWN2TOMYTASKS = "mytasksinpipe";
+		private const string MYTASKSTONWN2 = "mytasksoutpipe";
+		private const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
+		private const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
+		private const string CRITERIAFOLLOWS = "<<<Criteria follow>>>"; 
 		
+		
+		
+    	private void StartListeningForMessages(object sender, RoutedEventArgs e)
+    	{   
+    		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromNWN2Toolset);
+    		Thread thread = new Thread(threadStart);
+			thread.Priority = ThreadPriority.BelowNormal;
+    		thread.Start();
+    	}
+    	
+    	
+    	public delegate void AddSuggestedTaskDelegate(Task task);
+    	public void AddSuggestedTask(Task task)
+    	{
+    		if (suggestedTasks != null) {
+    			suggestedTasks.Add(task);
+    		}
+    	}
+    	
+    	
+    	public delegate void AddSuggestedTasksDelegate(List<Task> tasks);
+    	public void AddSuggestedTasks(List<Task> tasks)
+    	{
+    		if (suggestedTasks != null) {
+    			foreach (Task task in tasks) {
+    				suggestedTasks.Add(task);    				
+    			}
+    		}
+    	}
+    	
+    	
+    	private void ListenForMessagesFromNWN2Toolset()
+    	{
+    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",NWN2TOMYTASKS,PipeDirection.In))
+    		{
+    			try {
+    				client.Connect();
+	    			using (StreamReader reader = new StreamReader(client))
+	    			{
+	    				string message;
+	    				while ((message = reader.ReadToEnd()) != null) {
+	    					if (message.Length == 0) {
+	    						break;	
+	    					}
+	    					
+	    					try {
+		    					//Say.Information("Received:\n" + message + "\n(" + message.Length + " chars.)");	    						
+		    					
+	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+		    					StringReader stringReader = new StringReader(message);
+		    					List<Task> tasks = (List<Task>)xmlSerializer.Deserialize(stringReader);
+		    					
+		    					Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+		    					                       new AddSuggestedTasksDelegate(AddSuggestedTasks),
+		    					                       tasks);
+	    					}
+	    					catch (Exception e) {
+	    						Say.Error(e);
+	    					}		  					
+	    				}
+	    			}
+    			}
+    			catch (Exception e) {
+    				Say.Error("Something went wrong when listening for messages from the NWN2 Toolset.",e);
+    			}    			
+			}    		
+			ListenForMessagesFromNWN2Toolset();
+    	}
+    		
+		
+		private void ThreadedSendMessage(string message)
+		{
+			ParameterizedThreadStart threadStart = new ParameterizedThreadStart(SendMessage);
+			Thread thread = new Thread(threadStart);
+			thread.Priority = ThreadPriority.Normal;
+			thread.Start(REQUESTALLTASKS);
+		}
+		
+    		
+    	private void SendMessage(object obj)
+    	{    		
+    		try {	    			 
+	    		string message = (string)obj;
+	    		using (NamedPipeServerStream server = new NamedPipeServerStream(MYTASKSTONWN2,PipeDirection.Out)) {
+	    			server.WaitForConnection();
+	    			using (StreamWriter writer = new StreamWriter(server))
+	    			{
+	    				writer.WriteLine(message);
+	    				writer.Flush();
+	    			}
+	    		}
+    		}
+    		catch (Exception e) {
+    			Say.Error(e);
+    		}
+    	}
+    	
+    	
+    	private void DismissSuggestedTask(object sender, RoutedEventArgs e)
+    	{
+    		Button button = (Button)sender;
+    		Task task = (Task)button.DataContext;
+    		if (suggestedTasks.Contains(task)) {
+    			suggestedTasks.Remove(task);
+    		}
+    	}
+    	
+    	
+    	private void AddSuggestedTask(object sender, RoutedEventArgs e)
+    	{
+    		Button button = (Button)sender;
+    		Task task = (Task)button.DataContext;
+    		if (suggestedTasks.Contains(task)) {
+    			suggestedTasks.Remove(task);
+    		}
+    		if (!pad.Tasks.Contains(task)) {
+    			pad.Tasks.Add(task);
+    		}
+    	}
+    	
+    	
+    	private void PopulateSuggestedTasksList(object sender, RoutedEventArgs e)
+    	{
+    		suggestedTasks.Clear();
+    		ThreadedSendMessage(REQUESTALLTASKS);
+    	}
+    	
+    	
+    	private void AddEntireSuggestedTasksList(object sender, RoutedEventArgs e)
+    	{
+    		foreach (Task task in suggestedTasks) {
+    			pad.Tasks.Add(task);
+    		}
+    		suggestedTasks.Clear();
+    	}
+    	
+    	
+    	private void DismissEntireSuggestedTasksList(object sender, RoutedEventArgs e)
+    	{
+    		suggestedTasks.Clear();
+    	}
+    	
 		#endregion
 	}
 }

@@ -38,6 +38,29 @@
 			</WrapPanel>
 		</ItemsPanelTemplate>	
 	
+		<DataTemplate x:Key="suggestedTaskTemplate">
+			<StackPanel Orientation="Vertical"
+						Margin="2">
+				<TextBlock Text="{Binding Description}"
+						   TextWrapping="Wrap"
+						   Width="140"/>
+				<WrapPanel Orientation="Horizontal"
+						   Margin="1">
+					<WrapPanel.Resources>
+						<Style TargetType="{x:Type Button}">
+							<Setter Property="Button.Margin" Value="3"/>
+							<Setter Property="Button.Background" Value="Blue"/>
+							<Setter Property="Button.Foreground" Value="White"/>
+						</Style>
+					</WrapPanel.Resources>
+					<Button Content="Add"
+					        Click="AddSuggestedTask"/>
+					<Button Content="Dismiss"
+					        Click="DismissSuggestedTask"/>
+				</WrapPanel>
+			</StackPanel>			
+		</DataTemplate>
+	
 	</Window.Resources>
 	
 	<Window.Background>
@@ -85,22 +108,24 @@
 							  Click="AddAndSelectNewTask"/>
 					<Separator/>
 					<MenuItem Header="Add a random task"
-							  Click="TEMPAddRandomTask"/>
+							  Click="TEMPAddRandomTask" IsEnabled="False"/>
 					<MenuItem Header="Update the task list binding"
-							  Click="TEMPUpdateTaskListBinding"/>
+							  Click="TEMPUpdateTaskListBinding" IsEnabled="False"/>
 					<MenuItem Header="Check which are visible and which have controls"
-							  Click="TEMPCheckVisibleAndControlExists"/>
+							  Click="TEMPCheckVisibleAndControlExists" IsEnabled="False"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
 		
-		<Grid DockPanel.Dock="Bottom">
+		<Grid x:Name="mainGrid"
+		      DockPanel.Dock="Bottom">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition MinWidth="300" Width="*"/>
 				<ColumnDefinition MinWidth="500" Width="2*"/>
+				<ColumnDefinition Width="150"/>
 			</Grid.ColumnDefinitions>
 	
 			<tasks:TaskPad 
@@ -276,7 +301,51 @@
 				
 				</Grid>
 			</Border>
+		
+			<Grid Grid.Row="0"
+				  Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="100"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				
+				<ListBox
+					x:Name="suggestedTasksPanel"
+					Grid.Row="0"
+					Grid.Column="0"
+					SelectionMode="Single"
+					ItemsSource="{Binding}"
+					ItemTemplate="{StaticResource suggestedTaskTemplate}"
+					Background="DarkBlue"
+					Foreground="White">									
+					<ListBox.Width>
+						<Binding ElementName="mainGrid" Path="ActualWidth"/>
+					</ListBox.Width>
+				</ListBox>
+				
+				<WrapPanel 
+					Grid.Row="1"
+					Grid.Column="0"
+					Orientation="Horizontal"
+					Background="Blue">	
+					<WrapPanel.Resources>
+						<Style TargetType="{x:Type Button}">
+							<Setter Property="Button.Margin" Value="5"/>
+						</Style>
+					</WrapPanel.Resources>
+					<Button Click="PopulateSuggestedTasksList"
+							Content="Populate"/>
+					<Button Click="AddEntireSuggestedTasksList"
+							Content="Add all"/>
+					<Button Click="DismissEntireSuggestedTasksList"
+							Content="Dismiss all"/>
+				</WrapPanel>
 			
+			</Grid>
+				
 		</Grid>
 		
 	</DockPanel>

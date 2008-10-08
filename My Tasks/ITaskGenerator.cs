@@ -42,5 +42,6 @@ namespace AdventureAuthor.Tasks
 	{
 		List<Criterion> GetCriteria();
 		List<Task> GetTasks();
+//		List<Task> GetTasks(List<Criterion>);
 	}
 }
