@@ -304,11 +304,10 @@ namespace AdventureAuthor.Core
 			string modulePath = Path.Combine(ModulesDirectory,name);
 	        if (!Directory.Exists(modulePath)) {
 	        	throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
-	        }
-			string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
-	        if (!File.Exists(moduleIFOPath)) {
-	        	throw new FileNotFoundException(modulePath + " is not a valid NWN2 module. (Missing module.IFO)");
-	        }
+	        }			
+			if (!IsValidModule(modulePath)) {
+				throw new FileNotFoundException(modulePath + " is missing one or more key module resources.");
+			}
 					
 			DeserializeModule(name);	
 			
@@ -325,6 +324,28 @@ namespace AdventureAuthor.Core
 							
 			Log.WriteAction(LogAction.opened,"module",name);	
 			OnModuleOpened(new EventArgs());
+		}
+		
+		
+		/// <summary>
+		/// Check whether a folder contains two essential module files, in order
+		/// to determine whether it is a (valid) module.
+		/// </summary>
+		/// <param name="modulePath">The full path of the module</param>
+		/// <returns>True if the module contains both MODULE.IFO and repute.fac, false otherwise.</returns>
+		/// <remarks>Throws a DirectoryNotFoundException if a folder does not exist at the given path.</remarks>
+		public static bool IsValidModule(string modulePath)
+		{
+	        if (!Directory.Exists(modulePath)) {
+	        	throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
+	        }
+			
+			// MODULE.IFO and repute.fac must be present (module.jrl will be recreated if it is missing).
+			
+			string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
+			string reputeFACPath = Path.Combine(modulePath,"repute.fac");
+			
+			return File.Exists(moduleIFOPath) && File.Exists(reputeFACPath);
 		}
 		
 		

@@ -195,31 +195,13 @@ namespace AdventureAuthor.Setup
 			return fileMenu;
 		}
 		
-		
-		private static void PrintRecentModulesList(string message)
-		{
-			StringBuilder sb = new StringBuilder(message + "\n\nRecent modules list:\n");
-			foreach (string filename in recentModulesList) {
-				sb.AppendLine(filename);
-			}
-			sb.AppendLine("\nOpen recent module menu:");
-			foreach (MenuButtonItem mbi in openRecentModule.Items) {
-				sb.AppendLine(mbi.Text);
-			}
-			Say.Information(sb.ToString());
-		}
-		
 				
 		public static void UpdateRecentModulesMenu()
 		{
 			if (openRecentModule != null && recentModulesList != null) {
 				
-				//PrintRecentModulesList("UpdateRecentModulesMenu() was called.");
-				
 				// Only store and display a certain number of recent modules (currently 4):
 				if (recentModulesList.Count > NUMBER_OF_RECENT_MODULES) {
-					//Say.Information("Too many modules in list. Remove between index [" + 
-					//                NUMBER_OF_RECENT_MODULES + "] and [" + (recentModulesList.Count-1) + "].");
 					for (int i = NUMBER_OF_RECENT_MODULES; i < recentModulesList.Count; i++) {
 						recentModulesList.RemoveAt(i);
 					}
@@ -232,7 +214,8 @@ namespace AdventureAuthor.Setup
 					openRecentModule.Items.Add(moduleMenuItem);					
 				}
 				
-				//PrintRecentModulesList("Finished UpdateRecentModulesMenu().");
+				// Only enable the menu if there are recent modules to choose from:
+				openRecentModule.Enabled = openRecentModule.Items.Count > 0;
 			}
 			else {
 				System.Diagnostics.Debug.WriteLine("Tried to update the 'Open recent module' " + 
