@@ -72,6 +72,7 @@ namespace AdventureAuthor.Core
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
 			string localApplicationDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			modulesDirectory = Path.Combine(myDocumentsFolder,@"Neverwinter Nights 2\modules");
 			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
 			
 			// TODO: get this value from the registry
@@ -232,7 +233,7 @@ namespace AdventureAuthor.Core
 		}
 		
 				
-		public static NWN2GameModule CreateAndOpenModule(string moduleName)
+		public static void CreateAndOpenModule(string moduleName)
 		{			
 			// Create the module object:
 			NWN2GameModule mod = new NWN2GameModule();
@@ -252,16 +253,20 @@ namespace AdventureAuthor.Core
 			// Write the module to disk:
 			Serialize(mod);
 			
-			// Open the module:
-			Open(moduleName);
+			try {
+				ModuleHelper.Open(moduleName,false); // don't open the Scratchpad till it's been created 
+			}
+			catch (Exception x) {			
+				Say.Error("The module '" + moduleName + "' could not be created/opened.",x);
+				ModuleHelper.CloseModule();
+				Toolset.UpdateTitleBar();
+				return;
+			}		
 			
 			// Create a scratchpad area:
-			NWN2GameArea scratchpad = AreaHelper.CreateArea(form.App.Module,NAME_OF_SCRATCHPAD_AREA,true,DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
-// TODO do this properly - it doesn't display at first, and doesn't persist if you don't save the module
-// the first time you open it.
-//			if (scratchpad != null) {
-//				AreaHelper.PlaceStartLocationAtCentre(scratchpad);
-//			}
+			NWN2GameArea scratchpad = AreaHelper.CreateArea(form.App.Module,NAME_OF_SCRATCHPAD_AREA,
+			                                                true,
+			                                                DEFAULT_AREA_LENGTH,DEFAULT_AREA_LENGTH);
 			
 			// Open the scratchpad area:
 			if (Toolset.Plugin.Options.OpenScratchpadByDefault && form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA] != null) {
@@ -274,9 +279,7 @@ namespace AdventureAuthor.Core
 				}
 			}
 			
-			Log.WriteAction(LogAction.added,"module",moduleName);			
-
-			return mod;
+			Log.WriteAction(LogAction.added,"module",moduleName);
 		}	
 		
 		
@@ -290,28 +293,39 @@ namespace AdventureAuthor.Core
 		/// Open a module in the toolset.
 		/// </summary>
 		/// <param name="name">Name of the module to open.</param>
-		public static bool Open(string name)
+		/// <param name="openScratchpadIfExists">True to open the Scratchpad area
+		/// once the module has loaded, if such an area exists - false to do nothing.</param>
+		public static void Open(string name, bool openScratchpadIfExists)
 		{
-			if (ModuleIsOpen()) {
+			if (ModuleIsOpen()) {				
 				CloseModule();
 			}
 			
-			try {
-				Deserialize(name);				
-				foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
-					AreaHelper.ApplyLogging(area);
+			string modulePath = Path.Combine(ModulesDirectory,name);
+	        if (!Directory.Exists(modulePath)) {
+	        	throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
+	        }
+			string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
+	        if (!File.Exists(moduleIFOPath)) {
+	        	throw new FileNotFoundException(modulePath + " is not a valid NWN2 module. (Missing module.IFO)");
+	        }
+					
+			DeserializeModule(name);	
+			
+			foreach (NWN2GameArea area in form.App.Module.Areas.Values) {
+				AreaHelper.ApplyLogging(area);
+			}
+			
+			if (openScratchpadIfExists) {
+				NWN2GameArea scratchpad = form.App.Module.Areas[NAME_OF_SCRATCHPAD_AREA];
+				if (scratchpad != null) {
+					AreaHelper.Open(NAME_OF_SCRATCHPAD_AREA);
 				}
-				
-				Log.WriteAction(LogAction.opened,"module",name);	
-				OnModuleOpened(new EventArgs());					
-				return true;
 			}
-			catch (DirectoryNotFoundException e) {
-				Say.Error("Failed to open module.",e);
-				CloseModule();
-				return false;
-			}
-		}			
+							
+			Log.WriteAction(LogAction.opened,"module",name);	
+			OnModuleOpened(new EventArgs());
+		}
 		
 		
 		public static void Save()
@@ -446,7 +460,7 @@ namespace AdventureAuthor.Core
 		/// <summary>
 		/// Used to retrieve a module from disk.
 		/// </summary>
-		private static void Deserialize(string name)
+		private static void DeserializeModule(string name)
 		{									
 			// Deserialize the module data and open the module in the toolset:
 			ThreadedOpenHelper toh = null;
@@ -483,7 +497,7 @@ namespace AdventureAuthor.Core
 		/// <summary>
 		/// Close the currently open module.
 		/// </summary>
-		private static void CloseModule()
+		internal static void CloseModule()
 		{
 			if (NWN2ToolsetMainForm.VersionControlManager.OnModuleClosing()) {	
 				Toolset.Plugin.CloseModuleWindows();
@@ -749,8 +763,9 @@ namespace AdventureAuthor.Core
 						return false;
 					case ModuleLocationType.File:
 						throw new InvalidDataException("Module is stored as a file.");
+					default:
+						throw new InvalidDataException("Unrecognised module location type.");
 				}
-				return true;
 			}
 			else {
 				return false;

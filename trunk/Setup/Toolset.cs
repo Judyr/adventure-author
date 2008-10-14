@@ -552,9 +552,11 @@ namespace AdventureAuthor.Setup
 					
 					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
 										
-					if (menuBarItem.Text == "&File") {	
+					// Finds another MenuBarItem with Text "%File" before it
+					// finds the actual one, for some reason:
+					if (menuBarItem.Text == "&File") {
 						fileMenu = menuBarItem;
-						SaveModuleAsDialog(menuBarItem);
+						SetupFileMenu(menuBarItem);
 					}
 //					else if (menuBarItem.Text == "&Edit") {
 //						
@@ -1003,7 +1005,7 @@ namespace AdventureAuthor.Setup
 //		}
 					
 		
-		private static void UpdateTitleBar()
+		internal static void UpdateTitleBar()
 		{
 			form.App.Text = "Adventure Author";
 			if (form.App.Module != null && form.App.Module.LocationType == ModuleLocationType.Directory) {
@@ -1123,42 +1125,15 @@ namespace AdventureAuthor.Setup
 			
 			openFolder.ShowNewFolderButton = false;
 			DialogResult result = openFolder.ShowDialog(form.App);
-			if (result == DialogResult.OK) {
+			if (result == DialogResult.OK) {	
+				string filename = Path.GetFileNameWithoutExtension(openFolder.SelectedPath);
 				try {
-					string modulePath = openFolder.SelectedPath;
-					string moduleName = Path.GetFileNameWithoutExtension(modulePath);
-					string moduleIFOPath = Path.Combine(modulePath,"MODULE.IFO");
-	        		if (!Directory.Exists(modulePath)) {
-	        			throw new DirectoryNotFoundException("Could not find directory " + modulePath + ".");
-	        		}
-	        		else if (!File.Exists(moduleIFOPath)) {
-	        			throw new FileNotFoundException(modulePath + " is not a valid NWN2 module. (Missing module.IFO)");
-	        		}
-					else {
-						bool opened = ModuleHelper.Open(moduleName);	
-						if (!opened || !ModuleHelper.ModuleIsOpen()) {
-							Say.Error("Something went wrong - the module was not opened.");
-						}
-						else {							
-							if (Toolset.Plugin.Options.OpenScratchpadByDefault && 
-							    form.App.Module.Areas[ModuleHelper.NAME_OF_SCRATCHPAD_AREA] != null) 
-							{
-								try {
-									AreaHelper.Open(ModuleHelper.NAME_OF_SCRATCHPAD_AREA);
-								}
-								catch (FileNotFoundException) { 
-									Say.Debug("Tried to open " + ModuleHelper.NAME_OF_SCRATCHPAD_AREA  + 
-									          " in module '" + moduleName + "', but there was no such area.");
-								}
-							}
-						}
-					}
+					ModuleHelper.Open(filename,AdventureAuthorPluginPreferences.Instance.OpenScratchpadByDefault); 
 				}
-				catch (DirectoryNotFoundException e) {
-					Say.Error(e);
-				}
-				catch (FileNotFoundException e) {
-					Say.Error(e);
+				catch (Exception e) {			
+					Say.Error("The module '" + filename + "' could not be opened.",e);
+					ModuleHelper.CloseModule();
+					Toolset.UpdateTitleBar();
 				}
 			}			
 		}
