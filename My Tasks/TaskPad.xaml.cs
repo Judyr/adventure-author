@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -44,6 +45,7 @@ namespace AdventureAuthor.Tasks
 	      		                                       							  StackPanel.IsEnabledProperty);
 	      			be.UpdateTarget();
 				}
+				Debug.WriteLine("Updated filters.");
 			}
 			catch (Exception ex) {
 				Say.Error("Couldn't update filter panel IsEnabled binding: " + ex);
