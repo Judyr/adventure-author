@@ -178,7 +178,7 @@ namespace AdventureAuthor.Tasks.NWN2
 				{				
 					Task task = new Task("The module needs to have a player start location added.",
 					                     "Bugs",
-					                     TaskOrigin.FixingPossibleError.ToString());
+					                     TaskOrigin.SoftwareSuggestion);
 					tasks.Add(task);
 				}
 				else {
@@ -204,7 +204,7 @@ namespace AdventureAuthor.Tasks.NWN2
 										         door.Area.Name + "') has an area transition " + 
 										         "which leads to itself!",
 										         "Bugs",
-										         TaskOrigin.FixingPossibleError.ToString());
+										         TaskOrigin.SoftwareSuggestion);
 							tasks.Add(task);
 						}
 						else {
@@ -222,7 +222,7 @@ namespace AdventureAuthor.Tasks.NWN2
 										         trigger.Area.Name + "') has an area transition " + 
 										         "which leads to itself!",
 										         "Bugs",
-										         TaskOrigin.FixingPossibleError.ToString());
+										         TaskOrigin.SoftwareSuggestion);
 							tasks.Add(task);
 						}
 						else {
@@ -281,7 +281,7 @@ namespace AdventureAuthor.Tasks.NWN2
 					                  "(or fix broken ones!) to make sure the player can get to all the areas.");
 					Task task = new Task(description.ToString(),
 					                     "Bugs",
-					                     TaskOrigin.FixingPossibleError.ToString());
+					                     TaskOrigin.SoftwareSuggestion);
 					tasks.Add(task);
 				}
 			}
@@ -354,7 +354,7 @@ namespace AdventureAuthor.Tasks.NWN2
 							        "waypoint '" + LinkedTo + "' - but its property 'Link Object Type' " + 
 							        " needs to be set to 'Transition to a waypoint', or it won't work.",
 							        "Bugs",
-							        TaskOrigin.FixingError.ToString());
+							        TaskOrigin.SoftwareSuggestion);
 				}
 				else if (LinkedToType != DoorTransitionType.LinkToDoor && foundExitDoor) {
 					// there is a DOOR called that..
@@ -363,7 +363,7 @@ namespace AdventureAuthor.Tasks.NWN2
 							        "door '" + LinkedTo + "' - but its property 'Link Object Type' " + 
 							        " needs to be set to 'Transition to a door', or it won't work.",
 							        "Bugs",
-							        TaskOrigin.FixingError.ToString());
+							        TaskOrigin.SoftwareSuggestion);
 				}
 				else {
 					// there isn't anything called that..
@@ -371,7 +371,7 @@ namespace AdventureAuthor.Tasks.NWN2
 							        entrance.Area.Name + "') has an area transition which links to '" +
 							        LinkedTo + "' - but there is no door or waypoint with that tag.",
 							        "Bugs",
-							        TaskOrigin.FixingError.ToString());
+							        TaskOrigin.SoftwareSuggestion);
 				}
 				return task;
 			}

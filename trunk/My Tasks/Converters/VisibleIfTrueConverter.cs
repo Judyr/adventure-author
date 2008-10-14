@@ -24,23 +24,43 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Windows;
+using System.Windows.Data;
+using System.Globalization;
+
 namespace AdventureAuthor.Tasks
-{	
+{
 	/// <summary>
-	/// The origin of the task. Tasks will often be original to the user, but may also have
-	/// been suggested by the application or by someone else. 
+	/// Converts the boolean value 'true' into Visibility 'Visible', and 'false'
+	/// into 'Collapsed'. 
 	/// </summary>
-	/// <remarks>For Adventure Author, this property can be used to track whether a task
-	/// was sent from the Fridge Magnets application, was suggested after the application
-	/// checked for errors/warnings in a module, or came from a pre-defined set of useful 
-	/// tasks relating to game design. It is expected that these enum values will generally be
-	/// parsed as strings, allowing different origins to be specified.</remarks>
-	public enum TaskOrigin
+	public class VisibleIfTrueConverter : IValueConverter
 	{
-		User,
-		PeerSuggestion,
-		TeacherSuggestion,
-		SoftwareSuggestion,
-		Other
+		public VisibleIfTrueConverter()
+		{
+		}
+		
+		
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (targetType != typeof(Visibility)) {
+				throw new ArgumentException("targetType must be Visibility");
+			}
+			
+			bool hide = (bool)value;
+			if (!hide) {
+				return Visibility.Collapsed;
+			}
+			else {
+				return Visibility.Visible;
+			}
+		}
+		
+		
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

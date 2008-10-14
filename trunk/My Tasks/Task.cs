@@ -58,9 +58,9 @@ namespace AdventureAuthor.Tasks
 		/// was sent from the Fridge Magnets application, was suggested after the application
 		/// checked for errors/warnings in a module, or came from a pre-defined set of useful 
 		/// tasks relating to game design.</remarks>
-		private string origin;
+		private TaskOrigin origin;
 		[XmlElement]
-		public string Origin {
+		public TaskOrigin Origin {
 			get { return origin; }
 			set { 
 				origin = value; 
@@ -168,7 +168,7 @@ namespace AdventureAuthor.Tasks
 		/// task relates to.</param>
 		public Task(string description, string tag) : this(description,
 		                                                   tag,
-		                                                   TaskOrigin.UserCreated.ToString())
+		                                                   TaskOrigin.User)
 		{
 		}
 		
@@ -180,8 +180,8 @@ namespace AdventureAuthor.Tasks
 		/// <param name="tags">Tags associated with this task, usually indicating the type(s) of work this 
 		/// task relates to.</param>
 		public Task(string description, ObservableCollection<string> tags) : this(description,
-		                                                          tags,
-		                                                          TaskOrigin.UserCreated.ToString())
+						                                                          tags,
+						                                                          TaskOrigin.User)
 		{
 		}
 		
@@ -194,10 +194,10 @@ namespace AdventureAuthor.Tasks
 		/// task relates to.</param>
 		/// <param name="origin">The origin of the task. Tasks will often be original to the user, but may also have
 		/// been suggested by the application or by someone else.</param>
-		public Task(string description, string tag, string origin) : this(description,
-		                                                                  tag,
-		                                                                  origin,
-		                                                                  TaskState.NotCompleted)
+		public Task(string description, string tag, TaskOrigin origin) : this(description,
+			                                                                  tag,
+			                                                                  origin,
+			                                                                  TaskState.NotCompleted)
 		{
 		}
 		
@@ -210,10 +210,10 @@ namespace AdventureAuthor.Tasks
 		/// task relates to.</param>
 		/// <param name="origin">The origin of the task. Tasks will often be original to the user, but may also have
 		/// been suggested by the application or by someone else.</param>
-		public Task(string description, ObservableCollection<string> tags, string origin) : this(description,
-		                                                                         tags,
-		                                                                         origin,
-		                                                                         TaskState.NotCompleted)
+		public Task(string description, ObservableCollection<string> tags, TaskOrigin origin) : this(description,
+							                                                                         tags,
+							                                                                         origin,
+							                                                                         TaskState.NotCompleted)
 		{
 		}
 		
@@ -228,12 +228,12 @@ namespace AdventureAuthor.Tasks
 		/// been suggested by the application or by someone else.</param>
 		/// <param name="state">The various states a task can be in - completed, not yet completed,
 		/// currently in progress, or deleted.</param>
-		public Task(string description, string tag, string origin, TaskState state) : this(description,
-		                                                                                   tag,
-		                                                                                   origin,
-		                                                                                   state,
-		                                                                                   User.GetCurrentUserName(),
-		                                                                                   DateTime.Now)
+		public Task(string description, string tag, TaskOrigin origin, TaskState state) : this(description,
+			                                                                                   tag,
+			                                                                                   origin,
+			                                                                                   state,
+			                                                                                   User.GetCurrentUserName(),
+			                                                                                   DateTime.Now)
 		{
 		}
 		
@@ -248,12 +248,12 @@ namespace AdventureAuthor.Tasks
 		/// been suggested by the application or by someone else.</param>
 		/// <param name="state">The various states a task can be in - completed, not yet completed,
 		/// currently in progress, or deleted.</param>
-		public Task(string description, ObservableCollection<string> tags, string origin, TaskState state) : this(description,
-		                                                                                          tags,
-		                                                                                          origin,
-		                                                                                          state,
-		                                                                                          User.GetCurrentUserName(),
-		                                                                                          DateTime.Now)
+		public Task(string description, ObservableCollection<string> tags, TaskOrigin origin, TaskState state) : this(description,
+							                                                                                          tags,
+							                                                                                          origin,
+							                                                                                          state,
+							                                                                                          User.GetCurrentUserName(),
+							                                                                                          DateTime.Now)
 		{
 		}
 		
@@ -270,7 +270,7 @@ namespace AdventureAuthor.Tasks
 		/// currently in progress, or deleted.</param>
 		/// <param name="creator">The user who created this task.</param>
 		/// <param name="created">The date and time this task was created.</param>
-		public Task(string description, string tag, string origin, 
+		public Task(string description, string tag, TaskOrigin origin, 
 		            TaskState state, string creator, DateTime created) : this(description,
 		                                                          			  new ObservableCollection<string>(),
 		                                                          			  origin,
@@ -294,7 +294,7 @@ namespace AdventureAuthor.Tasks
 		/// currently in progress, or deleted.</param>
 		/// <param name="creator">The user who created this task.</param>
 		/// <param name="created">The date and time this task was created.</param>
-		public Task(string description, ObservableCollection<string> tags, string origin, TaskState state, string creator, DateTime created)
+		public Task(string description, ObservableCollection<string> tags, TaskOrigin origin, TaskState state, string creator, DateTime created)
 		{
 			this.description = description;
 			this.tags = tags;

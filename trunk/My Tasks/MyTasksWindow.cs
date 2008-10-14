@@ -118,7 +118,7 @@ namespace AdventureAuthor.Tasks
 				if (trayIcon != null) {
 					trayIcon.Visible = false;
 					trayIcon.Dispose();
-				} 		
+				}
 			};
 			
 			// Launch the application in the system tray:
@@ -737,13 +737,13 @@ namespace AdventureAuthor.Tasks
     		if (DateTime.Now.Second % 2 == 1) {
     			task = new Task("Remember to do at least " + DateTime.Now.Second + " other things.",
     		                     "Forestry",
-    		                     "Generated",
+    		                     TaskOrigin.SoftwareSuggestion,
     		                     TaskState.NotCompleted);
     		}
     		else {
     			task = new Task("Complete all of my other " + pad.Tasks.Count + " tasks",
     			                "Closure",
-    			                "Generated",
+    		                     TaskOrigin.SoftwareSuggestion,
     			                TaskState.NotCompleted);
     		}
     		AddAndSelectTask(task);
@@ -791,16 +791,16 @@ namespace AdventureAuthor.Tasks
 		private const string MYTASKSTONWN2 = "mytasksoutpipe";
 		private const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
 		private const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
-		private const string CRITERIAFOLLOWS = "<<<Criteria follow>>>"; 
 		
 		
 		
     	private void StartListeningForMessages(object sender, RoutedEventArgs e)
     	{   
     		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromNWN2Toolset);
-    		Thread thread = new Thread(threadStart);
-			thread.Priority = ThreadPriority.BelowNormal;
-    		thread.Start();
+    		Thread nwn2CommunicationThread = new Thread(threadStart);
+    		nwn2CommunicationThread.IsBackground = true; // will not prevent the application from closing down
+			nwn2CommunicationThread.Priority = ThreadPriority.BelowNormal;
+    		nwn2CommunicationThread.Start();
     	}
     	
     	
@@ -921,7 +921,7 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
-    	private void AddEntireSuggestedTasksList(object sender, RoutedEventArgs e)
+    	private void AddAllSuggestedTasks(object sender, RoutedEventArgs e)
     	{
     		foreach (Task task in suggestedTasks) {
     			pad.Tasks.Add(task);
@@ -930,10 +930,30 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
-    	private void DismissEntireSuggestedTasksList(object sender, RoutedEventArgs e)
+    	private void DismissAllSuggestedTasks(object sender, RoutedEventArgs e)
     	{
     		suggestedTasks.Clear();
     	}
+    	
+    	
+    	private void ChangeWhetherSuggestedTasksPanelIsVisible(object sender, RoutedEventArgs e)
+    	{
+    		SuggestedTasksVisible = !SuggestedTasksVisible;
+    	}
+    	
+    	
+    	public bool SuggestedTasksVisible {
+    		get { return (bool)this.GetValue(SuggestedTasksVisibleProperty); }
+    		set { this.SetValue(SuggestedTasksVisibleProperty,value); }
+    	}
+    	
+    	
+    	public static readonly DependencyProperty SuggestedTasksVisibleProperty
+    		= DependencyProperty.Register("SuggestedTasksVisible",
+    		                              typeof(bool),
+    		                              typeof(MyTasksWindow),
+    		                              new PropertyMetadata(false));
+    		                              
     	
 		#endregion
 	}
