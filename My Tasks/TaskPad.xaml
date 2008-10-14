@@ -24,6 +24,7 @@
 		<tasks:InverseBooleanToVisibilityConverter x:Key="showIfTaskCollectionIsEmpty"/>
 		<tasks:DisableIfTaskCollectionIsEmptyConverter x:Key="disableIfTaskCollectionIsEmpty"/>
 		<tasks:GenerateMessageAboutFilters x:Key="generateMessageAboutFilters"/>
+		<tasks:TaskOriginToTextBrushConverter x:Key="taskOriginToTextBrush"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -33,6 +34,7 @@
 			<TextBlock x:Name="descriptionBox" 
 				       Grid.Row="0" 
 				       Grid.Column="0"
+			           Foreground="{Binding Path=Origin, Converter={StaticResource taskOriginToTextBrush}}"
 					   TextDecorations="{Binding Path=State, Converter={StaticResource returnStrikethroughIfTaskCompleted}}"
 					   TextWrapping="Wrap"
 					   Width="235"

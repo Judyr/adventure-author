@@ -151,7 +151,7 @@ namespace AdventureAuthor.Tasks.NWN2
 							                     "to have a conversation called '" + creature.Conversation.ToString() +
 							                     "', but there aren't any conversations with that name.",
 												 "Bugs",
-												 TaskOrigin.FixingError.ToString());
+												 TaskOrigin.SoftwareSuggestion);
 							tasks.Add(task);
 						}
 					}
@@ -162,7 +162,7 @@ namespace AdventureAuthor.Tasks.NWN2
 												 "conversation, but their faction is Hostile, so they'll " +
 												 "attack instead of speaking.",
 												 "Bugs",
-												 TaskOrigin.FixingError.ToString());
+												 TaskOrigin.SoftwareSuggestion);
 							tasks.Add(task);
 						}
 					}

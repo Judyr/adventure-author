@@ -24,6 +24,7 @@
 		<tasks:GetContentForTaskCompletedButtonConverter x:Key="getContentForCompleteTaskButton"/>	
 		<tasks:TaskStateToVisibilityConverter x:Key="onlyShowIfTaskIsCompleted"/>
 		<tasks:GetGlowAccordingToTaskState x:Key="glowAccordingToState"/>
+		<tasks:ZeroIfFalseConverter x:Key="zeroWidthIfFalse"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
 			<WrapPanel Orientation="Horizontal" 
@@ -123,9 +124,10 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition MinWidth="300" Width="*"/>
+				<ColumnDefinition Width="300"/>
 				<ColumnDefinition MinWidth="500" Width="2*"/>
-				<ColumnDefinition Width="150"/>
+				<ColumnDefinition Width="10"/>
+				<ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=SuggestedTasksVisible, Converter={StaticResource zeroWidthIfFalse}}"/>
 			</Grid.ColumnDefinitions>
 	
 			<tasks:TaskPad 
@@ -300,34 +302,55 @@
 					</Button>
 				
 				</Grid>
-			</Border>
+			</Border>	
+				
+			<StackPanel Grid.Row="0"
+						Grid.Column="2"
+						Background="LightGray">
+				<Button Click="ChangeWhetherSuggestedTasksPanelIsVisible"
+						Content="ChangeWhetherSuggestedTasksPanelIsVisible"/>
+			</StackPanel>		
 		
 			<Grid Grid.Row="0"
-				  Grid.Column="2">
+				  Grid.Column="3"
+				  Background="DarkBlue">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="40"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="100"/>
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
+					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 				
+				<TextBlock Grid.Row="0"
+					       Grid.Column="0"
+					       Text="My Suggestions"
+						   Foreground="White"
+						   Background="DarkBlue"
+						   FontFamily="Times New Roman"
+						   FontSize="20"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Center"
+				           />			
+							
 				<ListBox
 					x:Name="suggestedTasksPanel"
-					Grid.Row="0"
+					Grid.Row="1"
 					Grid.Column="0"
 					SelectionMode="Single"
 					ItemsSource="{Binding}"
 					ItemTemplate="{StaticResource suggestedTaskTemplate}"
+					BorderThickness="0"
 					Background="DarkBlue"
-					Foreground="White">									
+					Foreground="White">
 					<ListBox.Width>
 						<Binding ElementName="mainGrid" Path="ActualWidth"/>
 					</ListBox.Width>
 				</ListBox>
 				
 				<WrapPanel 
-					Grid.Row="1"
+					Grid.Row="2"
 					Grid.Column="0"
 					Orientation="Horizontal"
 					Background="Blue">	
@@ -338,9 +361,9 @@
 					</WrapPanel.Resources>
 					<Button Click="PopulateSuggestedTasksList"
 							Content="Populate"/>
-					<Button Click="AddEntireSuggestedTasksList"
+					<Button Click="AddAllSuggestedTasks"
 							Content="Add all"/>
-					<Button Click="DismissEntireSuggestedTasksList"
+					<Button Click="DismissAllSuggestedTasks"
 							Content="Dismiss all"/>
 				</WrapPanel>
 			

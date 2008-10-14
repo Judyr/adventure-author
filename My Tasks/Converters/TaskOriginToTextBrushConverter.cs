@@ -24,23 +24,52 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Globalization;
+using System.Reflection;
+using System.Resources;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
 namespace AdventureAuthor.Tasks
-{	
+{
 	/// <summary>
-	/// The origin of the task. Tasks will often be original to the user, but may also have
-	/// been suggested by the application or by someone else. 
 	/// </summary>
-	/// <remarks>For Adventure Author, this property can be used to track whether a task
-	/// was sent from the Fridge Magnets application, was suggested after the application
-	/// checked for errors/warnings in a module, or came from a pre-defined set of useful 
-	/// tasks relating to game design. It is expected that these enum values will generally be
-	/// parsed as strings, allowing different origins to be specified.</remarks>
-	public enum TaskOrigin
+	public class TaskOriginToTextBrushConverter : IValueConverter
 	{
-		User,
-		PeerSuggestion,
-		TeacherSuggestion,
-		SoftwareSuggestion,
-		Other
+		public TaskOriginToTextBrushConverter()
+		{
+		}
+		
+		
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (targetType != typeof(Brush)) {
+				throw new ArgumentException("targetType must be Brush");
+			}
+			
+			switch ((TaskOrigin)value) {
+				case TaskOrigin.TeacherSuggestion:
+					return Brushes.DarkBlue;
+					
+				case TaskOrigin.PeerSuggestion:
+					return Brushes.DarkBlue;
+					
+				case TaskOrigin.SoftwareSuggestion:
+					return Brushes.DarkBlue;
+					
+				default:
+					return Brushes.Black;
+			}
+		}
+		
+
+		
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

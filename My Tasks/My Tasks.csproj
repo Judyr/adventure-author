@@ -62,6 +62,9 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\TaskOriginToTextBrushConverter.cs" />
+    <Compile Include="Converters\VisibleIfTrueConverter.cs" />
+    <Compile Include="Converters\ZeroIfFalseConverter.cs" />
     <Compile Include="Criterion.cs" />
     <Compile Include="Converters\CompletedDateToStringConverter.cs" />
     <Compile Include="Converters\CornerConverter.cs" />

@@ -649,6 +649,7 @@ namespace AdventureAuthor.Setup
     	{   
     		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromMyTasks);
     		Thread thread = new Thread(threadStart);
+    		thread.IsBackground = true; // will not prevent the application from closing down
 			thread.Priority = ThreadPriority.BelowNormal;
     		thread.Start();
     	}
@@ -679,26 +680,9 @@ namespace AdventureAuthor.Setup
 	    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
 	    						
 	    						SendMessageToMyTasks(serialisedTasks);
-	    						
-	    						
-//	    						Task task = new Task("I am the " + DateTime.Now.Second + "th President of the United States",
-//	    						                     "Gnawing fears",
-//	    						                     "Madness",
-//	    						                     TaskState.NotCompleted,
-//	    						                     "John McCain",
-//	    						                     new DateTime(2008,8,27));
-//	    						
-//	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(Task));
-//	    						StringWriter stringWriter = new StringWriter();
-//	    						xmlSerializer.Serialize(stringWriter,task);
-//	    						string serialisedTask = stringWriter.GetStringBuilder().ToString();
-//	    						
-//	    						SendMessageToMyTasks(serialisedTask);
 		    				}
 	    					else if (message.Length > 0) {
 	    						Say.Information("NWN2 received:\n" + message);
-//		    					Say.Information("NWN2 heard: " + message + "\n\nmessage was " + message.Length + " chars, " +
-//	    						               "we were looking for " + REQUESTAVAILABLECRITERIA.Length + " chars");
 		    				}	    						
 	    				}
 	    			}
