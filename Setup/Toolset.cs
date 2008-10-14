@@ -553,10 +553,13 @@ namespace AdventureAuthor.Setup
 					MenuBarItem menuBarItem = (MenuBarItem)fi.GetValue(form.App);
 										
 					// Finds another MenuBarItem with Text "%File" before it
-					// finds the actual one, for some reason:
+					// finds the actual one, for some reason. Ignore it unless
+					// it has children:
 					if (menuBarItem.Text == "&File") {
-						fileMenu = menuBarItem;
-						SetupFileMenu(menuBarItem);
+						if (menuBarItem.Items.Count > 0) {
+							fileMenu = menuBarItem;
+							SetupFileMenu(menuBarItem);
+						}
 					}
 //					else if (menuBarItem.Text == "&Edit") {
 //						

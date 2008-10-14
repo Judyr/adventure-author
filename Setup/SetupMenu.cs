@@ -56,6 +56,7 @@ namespace AdventureAuthor.Setup
 			
 			openRecentModule = new MenuButtonItem("Recently opened modules");
 			openRecentModule.BeginGroup = true;
+			SetUpRecentlyOpenedModulesMenu();
 							
 			MenuButtonItem newArea = new MenuButtonItem("Create new area");
 			newArea.BeginGroup = true;
@@ -146,19 +147,19 @@ namespace AdventureAuthor.Setup
 			                           	saveModule,
 			                           	saveModuleAs,
 			                           	bakeModule,
-//			                           	runModule,
 			                           	closeModule,
 			                           	openRecentModule,
 			                           	newArea,
-//			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
-//			                           	extractWordCount,
-//			                           	extractText,
-//			                           	extractAllConversations
 			                           });	
 			
-						
-			// Check whether a list of recent modules has been saved - if not, create a new one:
+			return fileMenu;
+		}
+				
+				
+		private static void SetUpRecentlyOpenedModulesMenu()
+		{	
+			// Check whether a list of recent modules has already been saved - if not, create a new one:
 			string recentModulesListPath = AdventureAuthorPluginPreferences.RecentlyOpenedModulesPath;
 			if (File.Exists(recentModulesListPath)) {
 				try {
@@ -166,7 +167,7 @@ namespace AdventureAuthor.Setup
 					recentModulesList = (List<string>)obj;					
 				}
 				catch (Exception e) {
-					Say.Error("The file at location " + recentModulesListPath +
+					System.Diagnostics.Debug.WriteLine("The file at location " + recentModulesListPath +
 					          " is not a valid 'recent modules list' file.");
 					recentModulesList = new List<string>();
 				}
@@ -174,6 +175,16 @@ namespace AdventureAuthor.Setup
 			else {
 				recentModulesList = new List<string>();
 			}
+			
+			
+			// Serialise the list of recently opened modules on closing:
+			form.App.Closing += delegate 
+			{  
+				if (recentModulesList != null) {
+					Serialization.Serialize(AdventureAuthorPluginPreferences.RecentlyOpenedModulesPath,recentModulesList);
+				}
+			};
+			
 			
 			// Whenever a module is successfully opened, add that module's name to the top of the list:
 			ModuleHelper.ModuleOpened += delegate 
@@ -189,10 +200,9 @@ namespace AdventureAuthor.Setup
 				UpdateRecentModulesMenu();
 			};
 			
-			// Finally, set up the 'Open recent module' menu for the first time:
-			UpdateRecentModulesMenu();
 			
-			return fileMenu;
+			// Finally, set up the 'Recently opened modules' menu for the first time:
+			UpdateRecentModulesMenu();
 		}
 		
 				
@@ -202,9 +212,10 @@ namespace AdventureAuthor.Setup
 				
 				// Only store and display a certain number of recent modules (currently 4):
 				if (recentModulesList.Count > NUMBER_OF_RECENT_MODULES) {
-					for (int i = NUMBER_OF_RECENT_MODULES; i < recentModulesList.Count; i++) {
-						recentModulesList.RemoveAt(i);
-					}
+					recentModulesList.RemoveRange(NUMBER_OF_RECENT_MODULES,recentModulesList.Count-NUMBER_OF_RECENT_MODULES);
+//					for (int i = NUMBER_OF_RECENT_MODULES; i < recentModulesList.Count; i++) {
+//						recentModulesList.RemoveAt(i);
+//					}
 				}
 				
 				openRecentModule.Items.Clear();
