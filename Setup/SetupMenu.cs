@@ -1,5 +1,7 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Windows.Forms.Integration;
 using AdventureAuthor.Analysis;
@@ -23,9 +25,17 @@ namespace AdventureAuthor.Setup
 		private static MenuBarItem mainFileMenu;
 		private static ToolBar aaToolbar;
 		private static ToolBar addIdeaToolbar;
+		private static MenuButtonItem openRecentModule = null;
+		private static List<string> recentModulesList = null;
 		
 		
-		private static MenuBarItem SaveModuleAsDialog(MenuBarItem fileMenu)
+		/// <summary>
+		/// The number of filenames to remember and display in the 'Open recent modules' menu.
+		/// </summary>
+		public const int NUMBER_OF_RECENT_MODULES = 4;	
+		
+		
+		private static MenuBarItem SetupFileMenu(MenuBarItem fileMenu)
 		{
 			mainFileMenu = fileMenu;
 			fileMenu.Items.Clear();							
@@ -43,11 +53,15 @@ namespace AdventureAuthor.Setup
 //			runModule.Activate += delegate { RunModuleDialog(); };
 			MenuButtonItem closeModule = new MenuButtonItem("Close module");
 			closeModule.Activate += delegate { CloseModuleDialog(); };
+			
+			openRecentModule = new MenuButtonItem("Recently opened modules");
+			openRecentModule.BeginGroup = true;
 							
 			MenuButtonItem newArea = new MenuButtonItem("Create new area");
 			newArea.BeginGroup = true;
 			newArea.Activate += delegate { NewAreaDialog(); };
 			
+			/*
 			MenuButtonItem programmerFunctions = new MenuButtonItem("Programmer functions");
 			programmerFunctions.BeginGroup = true;
 			
@@ -79,11 +93,13 @@ namespace AdventureAuthor.Setup
 				NWN2Utils.WriteTotalWordCountForAllModulesToFile();
 				Say.Information("Finished.");
 			};
-						
+			*/	
+			
 			MenuButtonItem exitAdventureAuthor = new MenuButtonItem("Exit");
 			exitAdventureAuthor.BeginGroup = true;
 			exitAdventureAuthor.Activate += delegate { form.App.Close(); };
 			
+			/*
 			MenuButtonItem extractText = new MenuButtonItem("Extract text");
 			extractText.Activate += delegate {		
 				FileInfo file = new FileInfo(@"C:\To burn\narrativevehicles.txt");
@@ -114,6 +130,7 @@ namespace AdventureAuthor.Setup
 					Say.Information("Finished.");
 				}
 			};
+			*/
 			
 //			MenuButtonItem extractAllConversations = new MenuButtonItem("Extract conversations");
 //			extractAllConversations.Activate += delegate { 
@@ -131,15 +148,128 @@ namespace AdventureAuthor.Setup
 			                           	bakeModule,
 //			                           	runModule,
 			                           	closeModule,
+			                           	openRecentModule,
 			                           	newArea,
 //			                           	programmerFunctions,
 			                           	exitAdventureAuthor,
-			                           	extractWordCount,
-			                           	extractText,
+//			                           	extractWordCount,
+//			                           	extractText,
 //			                           	extractAllConversations
 			                           });	
 			
+						
+			// Check whether a list of recent modules has been saved - if not, create a new one:
+			string recentModulesListPath = AdventureAuthorPluginPreferences.RecentlyOpenedModulesPath;
+			if (File.Exists(recentModulesListPath)) {
+				try {
+					object obj = Serialization.Deserialize(recentModulesListPath,typeof(List<string>));
+					recentModulesList = (List<string>)obj;					
+				}
+				catch (Exception e) {
+					Say.Error("The file at location " + recentModulesListPath +
+					          " is not a valid 'recent modules list' file.");
+					recentModulesList = new List<string>();
+				}
+			}
+			else {
+				recentModulesList = new List<string>();
+			}
+			
+			// Whenever a module is successfully opened, add that module's name to the top of the list:
+			ModuleHelper.ModuleOpened += delegate 
+			{
+				if (recentModulesList.Contains(form.App.Module.Name)) {
+					if (recentModulesList.IndexOf(form.App.Module.Name) == 0) {
+						return; // module was already at the top of the list, so don't do anything
+					}
+					recentModulesList.Remove(form.App.Module.Name);
+				}				
+				recentModulesList.Insert(0,form.App.Module.Name);
+				
+				UpdateRecentModulesMenu();
+			};
+			
+			// Finally, set up the 'Open recent module' menu for the first time:
+			UpdateRecentModulesMenu();
+			
 			return fileMenu;
+		}
+		
+		
+		private static void PrintRecentModulesList(string message)
+		{
+			StringBuilder sb = new StringBuilder(message + "\n\nRecent modules list:\n");
+			foreach (string filename in recentModulesList) {
+				sb.AppendLine(filename);
+			}
+			sb.AppendLine("\nOpen recent module menu:");
+			foreach (MenuButtonItem mbi in openRecentModule.Items) {
+				sb.AppendLine(mbi.Text);
+			}
+			Say.Information(sb.ToString());
+		}
+		
+				
+		public static void UpdateRecentModulesMenu()
+		{
+			if (openRecentModule != null && recentModulesList != null) {
+				
+				//PrintRecentModulesList("UpdateRecentModulesMenu() was called.");
+				
+				// Only store and display a certain number of recent modules (currently 4):
+				if (recentModulesList.Count > NUMBER_OF_RECENT_MODULES) {
+					//Say.Information("Too many modules in list. Remove between index [" + 
+					//                NUMBER_OF_RECENT_MODULES + "] and [" + (recentModulesList.Count-1) + "].");
+					for (int i = NUMBER_OF_RECENT_MODULES; i < recentModulesList.Count; i++) {
+						recentModulesList.RemoveAt(i);
+					}
+				}
+				
+				openRecentModule.Items.Clear();
+				foreach (string filename in recentModulesList) {
+					MenuButtonItem moduleMenuItem = new MenuButtonItem(filename);
+					moduleMenuItem.Activate += new EventHandler(AttemptToOpenRecentModule);
+					openRecentModule.Items.Add(moduleMenuItem);					
+				}
+				
+				//PrintRecentModulesList("Finished UpdateRecentModulesMenu().");
+			}
+			else {
+				System.Diagnostics.Debug.WriteLine("Tried to update the 'Open recent module' " + 
+				                                   "menu when either the menu item or the " +
+				                                   "list had not been constructed/deserialised yet.");
+			}
+		}
+
+		
+		private static void AttemptToOpenRecentModule(object sender, EventArgs e)
+		{
+			MenuButtonItem moduleMenuItem = (MenuButtonItem)sender;
+			string filename = moduleMenuItem.Text;
+			string modulePath = Path.Combine(ModuleHelper.ModulesDirectory,filename);
+			
+			// Check that the module exists before you try to open it:
+			if (!Directory.Exists(modulePath)) {				
+				Say.Warning("The module '" + filename + "' could not be found.");
+				if (recentModulesList.Contains(filename)) {
+					recentModulesList.Remove(filename);
+					UpdateRecentModulesMenu();
+				}
+			}
+			else {
+				try {
+					ModuleHelper.Open(filename,AdventureAuthorPluginPreferences.Instance.OpenScratchpadByDefault); 
+				}
+				catch (Exception ex) {			
+					Say.Error("The module '" + filename + "' could not be opened.",ex);
+					if (recentModulesList.Contains(filename)) {
+						recentModulesList.Remove(filename);
+						UpdateRecentModulesMenu();
+					}
+					ModuleHelper.CloseModule();
+					UpdateTitleBar();
+				}
+			}			
 		}
 		
 		

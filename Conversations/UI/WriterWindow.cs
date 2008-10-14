@@ -649,7 +649,7 @@ namespace AdventureAuthor.Conversations.UI
 		public void Open(string filename)
 		{
 			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
-				Say.Error("Open an Adventure first.");
+				Say.Error("Open a module first.");
 				return;
 			}
 			
@@ -676,7 +676,7 @@ namespace AdventureAuthor.Conversations.UI
 		public void CreateOpen(string filename)
 		{
 			if (form.App.Module == null || form.App.Module.LocationType != ModuleLocationType.Directory) {
-				Say.Error("Open an Adventure first.");
+				Say.Error("Open a module first.");
 				return;
 			}
 			else if (!ModuleHelper.IsValidName(filename)) {

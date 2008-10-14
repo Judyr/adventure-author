@@ -190,7 +190,7 @@ namespace AdventureAuthor.Tasks
 		
 		static MyTasksPreferences()
 		{
-			instance = null;				
+			instance = null;
 			localAppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"My Tasks");
 			defaultPreferencesPath = Path.Combine(localAppDataDirectory,"MyTasksPreferences.xml");
 		}

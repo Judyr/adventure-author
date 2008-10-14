@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.ComponentModel;
 using System.Reflection;
@@ -49,7 +50,7 @@ namespace AdventureAuthor.Setup
 		public static AdventureAuthorPluginPreferences Instance {
 			get {
 				if (instance == null) {
-					instance = new AdventureAuthorPluginPreferences();
+					instance = new AdventureAuthorPluginPreferences(true,true);
 				}
 				return instance;
 			}
@@ -95,9 +96,7 @@ namespace AdventureAuthor.Setup
 					NotifyPropertyChanged("LockInterface");
 				}
 			}
-		}
-		
-			
+		}		
 		
 		
 		// Conversations:
@@ -120,6 +119,29 @@ namespace AdventureAuthor.Setup
 //		}
 		
 		
+		/// <summary>
+		/// The folder where local application data is kept for this application.
+		/// </summary>
+		private static string localAppDataDirectory;
+		[XmlElement]
+		[Description("The folder where local application data is kept for this application."), 
+		 Category("General"), Browsable(false)]
+		public static string LocalAppDataDirectory {
+			get { return localAppDataDirectory; }
+		}
+		
+		
+		/// <summary>
+		/// The folder where the serialised list of recently opened module filenames is kept.
+		/// </summary>
+		private static string recentlyOpenedModulesPath;
+		[XmlElement]
+		[Description("The folder where the serialised list of recently opened module filenames is kept."), 
+		 Category("General"), Browsable(false)]
+		public static string RecentlyOpenedModulesPath {
+			get { return recentlyOpenedModulesPath; }
+		}
+		
 		#endregion
 		
 		#region Constructors			
@@ -127,14 +149,29 @@ namespace AdventureAuthor.Setup
 		static AdventureAuthorPluginPreferences()
 		{
 			instance = null;
+			
+			localAppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Adventure Author");
+			recentlyOpenedModulesPath = Path.Combine(localAppDataDirectory,"RecentlyOpenedModules.xml");
 		}
  
 		
-		public AdventureAuthorPluginPreferences()
+		/// <summary>
+		/// For deserialisation.
+		/// </summary>
+		/// <remarks>Don't use for anything other than deserialisation, as it
+		/// seems to cause problems when you have List properties (if you construct a list
+		/// here it seems to get 'added to itself' when called for deserialisation.)</remarks>
+		private AdventureAuthorPluginPreferences()
+		{
+			
+		}
+		
+		
+		public AdventureAuthorPluginPreferences(bool lockInterface, bool openScratchpadByDefault)
 		{			
 			// default preferences - will only be used if there's no preferences file found:
-			this.LockInterface = true;
-			this.OpenScratchpadByDefault = true;
+			this.LockInterface = lockInterface;
+			this.OpenScratchpadByDefault = openScratchpadByDefault;
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}
