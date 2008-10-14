@@ -635,17 +635,28 @@ namespace AdventureAuthor.Tasks
     	
     	private void AddAndSelectTask(Task task)
     	{
-    		pad.ClearAllFilters(); // This is a bit clumsy
+    		// (Clumsily) ensure that the task will be visible:
+    		pad.ClearAllFilters(); 
     		
     		pad.AddAfterSelectedTask(task);
     		
-    		// Select the task in the list and bring it into view:
+    		// Select the task in the list:
     		pad.taskListBox.SelectedItem = task;
-    		pad.taskListBox.ScrollIntoView(task);
     		
     		// Allow the user to start typing the task description directly:
     		taskDescriptionBox.Focus();
     		taskDescriptionBox.SelectAll();
+    		
+    		// This runs automatically whenever the task collection changes (to
+    		// avoid the weird visual/binding bugs that seem to occur when filters
+    		// are applied) but in this case it doesn't stop two copies of the
+    		// new task *appearing* to be added until the filters are refreshed,
+    		// so just do it explicitly:
+    		pad.RefreshAllFilters();
+    		// Doing this also causes two bindings that I don't recognise at all
+    		// to fail, complaining that they can't find a source of type ItemsControl.
+    		// Similarly, deleting a task causes an ArgumentOutOfRangeException,
+    		// but if you ignore/handle these failures/exceptions everything is fine. Confused.
     	}
     	
 		
