@@ -113,7 +113,7 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="300"/>
 				<ColumnDefinition MinWidth="500" Width="2*"/>
-				<ColumnDefinition Width="10"/>
+				<ColumnDefinition Width="0"/>
 				<ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=SuggestedTasksVisible, Converter={StaticResource zeroWidthIfFalse}}"/>
 			</Grid.ColumnDefinitions>
 	
@@ -291,6 +291,7 @@
 				</Grid>
 			</Border>	
 				
+			<!--The bar which the user can click to show or hide the My Suggestions panel. Currently disabled.-->
 			<StackPanel Grid.Row="0"
 						Grid.Column="2"
 						Background="LightGray">
@@ -350,10 +351,10 @@
 					</ListBox>
 				</ScrollViewer>
 					
-				<TextBlock x:Name="noSuggestedTasksMessageDisplay"
+				<TextBlock x:Name="mySuggestionsInformationTextBlock"
 				           Grid.Row="1"
 					       Grid.Column="0"
-				           MouseDown="PopulateSuggestedTasksList"
+				           MouseDown="UserClickedOnMySuggestionsMessage"
 				           TextWrapping="Wrap"
 						   Foreground="White"
 						   Background="DarkBlue"
@@ -364,12 +365,7 @@
 						   HorizontalAlignment="Center"
 						   Padding="6"
 				           Visibility="{Binding ElementName=suggestedTasksListBox, Path=HasItems, Converter={StaticResource showIfTaskCollectionIsEmpty}}"
-				>
-					Click here to get Adventure Author to suggest tasks based on your module.
-					<LineBreak/>
-					<LineBreak/>
-					You can only do this when you have the toolset running and your module open.
-				</TextBlock>
+				/>
 				
 				<WrapPanel 
 					Grid.Row="2"

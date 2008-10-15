@@ -393,14 +393,6 @@ namespace AdventureAuthor.Setup
 //			aaToolbar.Items.Add(checkTransitions);
 			
 			
-														
-			ButtonItem sendMessage = new ButtonItem();
-			SetSandbarButtonImage(sendMessage,"clipboard.png","Send message");
-			sendMessage.Enabled = true;
-			sendMessage.Visible = true;
-			sendMessage.ToolTipText = "Send message";
-			sendMessage.Activate += SendRandomMessageToMyTasks;
-			aaToolbar.Items.Add(sendMessage);
 			
 			
 			ModuleHelper.ModuleOpened += delegate {  

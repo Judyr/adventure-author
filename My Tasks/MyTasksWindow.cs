@@ -30,6 +30,20 @@ namespace AdventureAuthor.Tasks
 		
 		public const string APPLICATION_NAME = "My Tasks";
 		public const string DEFAULT_TASK_DESCRIPTION = "Enter your task here...";
+		public const string MYSUGGESTIONSINFO_GENERAL = "Click here to ask Adventure Author to suggest tasks " +
+														"based on your module.\n\n" +
+														"You can only do this when you have the toolset running " +
+														"and your module open.";
+		public const string MYSUGGESTIONSINFO_NOMODULEOPEN = "You need to open a module in the toolset before you " +
+															 "can get suggestions about how to improve it.\n\n" +
+															 "Once you've opened your module, click here again " +
+															 "to get Adventure Author to suggest tasks for you.";
+		public const string MYSUGGESTIONSINFO_NOSUGGESTIONS = "your module didn't seem to have any obvious bugs, so " +
+															  "Adventure Author has no suggestions for you at the moment.\n\n" +
+															  "As you continue to work on your module, Adventure Author may " +
+															  "come up with some suggestions about how to improve it. You can " +
+															  "click here every so often to find out what it has to say.";
+		public const string MYSUGGESTIONSINFO_WAITING = "Waiting for toolset...";
 		
 		#endregion
 		
@@ -98,6 +112,7 @@ namespace AdventureAuthor.Tasks
 			InitializeComponent();		
 			
 			SuggestedTasks = new TaskCollection();
+			mySuggestionsInformationTextBlock.Text = MYSUGGESTIONSINFO_GENERAL;
 	                		
 			try {
 				Tools.EnsureDirectoryExists(MyTasksPreferences.LocalAppDataDirectory);
@@ -736,29 +751,23 @@ namespace AdventureAuthor.Tasks
 		
 		#endregion	
 		
-		#region Communication
-    	
-		private const string NWN2TOMYTASKS = "mytasksinpipe";
-		private const string MYTASKSTONWN2 = "mytasksoutpipe";
-		private const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
-		private const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
-		
-		
+		#region Communication    	
 		
     	private void StartListeningForMessages(object sender, RoutedEventArgs e)
     	{   
     		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromNWN2Toolset);
-    		Thread nwn2CommunicationThread = new Thread(threadStart);
-    		nwn2CommunicationThread.IsBackground = true; // will not prevent the application from closing down
-			nwn2CommunicationThread.Priority = ThreadPriority.BelowNormal;
-    		nwn2CommunicationThread.Start();
+    		Thread listenForToolsetThread = new Thread(threadStart);
+    		listenForToolsetThread.Name = "Listen for messages thread";
+    		listenForToolsetThread.IsBackground = true; // will not prevent the application from closing down
+			listenForToolsetThread.Priority = ThreadPriority.BelowNormal;
+    		listenForToolsetThread.Start();
     	}
     	
     	
     	public delegate void AddSuggestedTaskDelegate(Task task);
     	public void AddSuggestedTask(Task task)
     	{
-    		if (SuggestedTasks != null) {
+    		if (SuggestedTasks != null && !SuggestedTasks.Contains(task)) {
     			SuggestedTasks.Add(task);
     		}
     	}
@@ -767,17 +776,24 @@ namespace AdventureAuthor.Tasks
     	public delegate void AddSuggestedTasksDelegate(List<Task> tasks);
     	public void AddSuggestedTasks(List<Task> tasks)
     	{
-    		if (SuggestedTasks != null) {
-    			foreach (Task task in tasks) {
-    				SuggestedTasks.Add(task);    				
-    			}
+    		foreach (Task task in tasks) {
+    			AddSuggestedTask(task);
     		}
+    	}
+    	
+    	
+    	public delegate void SetSuggestionsPanelMessageDelegate(string message);    	
+    	public void SetSuggestionsPanelMessage(string message)
+    	{
+    		mySuggestionsInformationTextBlock.Text = message;
     	}
     	
     	
     	private void ListenForMessagesFromNWN2Toolset()
     	{
-    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",NWN2TOMYTASKS,PipeDirection.In))
+    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",
+    		                                                                PipeNames.NWN2TOMYTASKS,
+    		                                                                PipeDirection.In))
     		{
     			try {
     				client.Connect();
@@ -788,21 +804,41 @@ namespace AdventureAuthor.Tasks
 	    					if (message.Length == 0) {
 	    						break;	
 	    					}
-	    					
-	    					try {
-		    					//Say.Information("Received:\n" + message + "\n(" + message.Length + " chars.)");	    						
-		    					
-	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
-		    					StringReader stringReader = new StringReader(message);
-		    					List<Task> tasks = (List<Task>)xmlSerializer.Deserialize(stringReader);
-		    					
-		    					Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-		    					                       new AddSuggestedTasksDelegate(AddSuggestedTasks),
-		    					                       tasks);
+	    					else if (message == Messages.NOMODULEOPEN) {
+	    						Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+	    						                       new SetSuggestionsPanelMessageDelegate(SetSuggestionsPanelMessage),
+	    						                       MYSUGGESTIONSINFO_NOMODULEOPEN);
 	    					}
-	    					catch (Exception e) {
-	    						Say.Error(e);
-	    					}		  					
+	    					else {
+		    					try {
+			    					//Say.Information("Received:\n" + message + "\n(" + message.Length + " chars.)");	    						
+			    					
+		    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+			    					StringReader stringReader = new StringReader(message);
+			    					List<Task> tasks = (List<Task>)xmlSerializer.Deserialize(stringReader);
+			    					
+			    					if (tasks.Count == 0) {
+			    						string noSuggestionsMsg = "When checked at " + DateTime.Now.ToShortTimeString() + ", "
+			    							+ MYSUGGESTIONSINFO_NOSUGGESTIONS;
+			    						Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+			    						                       new SetSuggestionsPanelMessageDelegate(SetSuggestionsPanelMessage),
+			    						                       noSuggestionsMsg);
+			    					}
+			    					else {
+				    					Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+				    					                       new AddSuggestedTasksDelegate(AddSuggestedTasks),
+				    					                       tasks);
+			    						// This won't be visible immediately, but should be reset to the 'normal'
+			    						// message whenever the 'no module/suggestions' messages don't apply:
+			    						Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+			    						                       new SetSuggestionsPanelMessageDelegate(SetSuggestionsPanelMessage),
+			    						                       MYSUGGESTIONSINFO_GENERAL);
+			    					}
+		    					}
+		    					catch (Exception e) {
+		    						Say.Error(e);
+		    					}	
+	    					}
 	    				}
 	    			}
     			}
@@ -813,28 +849,37 @@ namespace AdventureAuthor.Tasks
 			ListenForMessagesFromNWN2Toolset();
     	}
     		
-		
+    	    	
 		private void ThreadedSendMessage(string message)
-		{
+		{			
 			ParameterizedThreadStart threadStart = new ParameterizedThreadStart(SendMessage);
-			Thread thread = new Thread(threadStart);
-			thread.Priority = ThreadPriority.Normal;
-			thread.Start(REQUESTALLTASKS);
+			Thread sendMsgThread = new Thread(threadStart);
+			sendMsgThread.Name = "Send message thread";
+			sendMsgThread.IsBackground = true;
+			sendMsgThread.Priority = ThreadPriority.BelowNormal;
+			mySuggestionsInformationTextBlock.Text = MYSUGGESTIONSINFO_WAITING;
+			sendMsgThread.Start(Messages.REQUESTALLTASKS);
 		}
 		
-    		
+		
     	private void SendMessage(object obj)
     	{    		
     		try {	    			 
-	    		string message = (string)obj;
-	    		using (NamedPipeServerStream server = new NamedPipeServerStream(MYTASKSTONWN2,PipeDirection.Out)) {
-	    			server.WaitForConnection();
-	    			using (StreamWriter writer = new StreamWriter(server))
-	    			{
-	    				writer.WriteLine(message);
-	    				writer.Flush();
-	    			}
-	    		}
+    			string message = (string)obj;
+		    	using (NamedPipeServerStream server = new NamedPipeServerStream(PipeNames.MYTASKSTONWN2,
+    			                                          PipeDirection.Out,
+    			                                          1))
+		    	{	    			
+		    		server.WaitForConnection();
+		    		using (StreamWriter writer = new StreamWriter(server))
+		    		{
+		    			writer.WriteLine(message);
+		    			writer.Flush();
+		    		}
+		    	}
+    		}
+    		catch (IOException) {
+    			System.Diagnostics.Debug.WriteLine("Tried to send a message to the toolset, but the pipe was busy.");
     		}
     		catch (Exception e) {
     			Say.Error(e);
@@ -865,10 +910,10 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
-    	private void PopulateSuggestedTasksList(object sender, RoutedEventArgs e)
+    	private void UserClickedOnMySuggestionsMessage(object sender, RoutedEventArgs e)
     	{
     		SuggestedTasks.Clear();
-    		ThreadedSendMessage(REQUESTALLTASKS);
+	    	ThreadedSendMessage(Messages.REQUESTALLTASKS);
     	}
     	
     	

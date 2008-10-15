@@ -186,7 +186,7 @@ namespace AdventureAuthor.Tasks
 			if (trayIcon != null) {
 				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
 				trayIcon.ShowBalloonTip(timeout,tipTitle,tipText,tipIcon);
-				// Yes, I know.
+				// Horrible, but avoids the fade-in.
 			}
 		}
 	}
