@@ -640,14 +640,7 @@ namespace AdventureAuthor.Setup
 			SetInterfaceLock(Plugin.Options.LockInterface);
 			areaContentsView.BringToFront();
 			areaContentsView.Focus();
-		}
-				
-		
-		private const string NWN2TOMYTASKS = "mytasksinpipe";
-		private const string MYTASKSTONWN2 = "mytasksoutpipe";
-		private const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
-		private const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
-		private const string CRITERIAFOLLOW = "<<<Criteria follow>>>"; 
+		}				
 		
 		
     	private static void StartListeningForMessages()
@@ -662,7 +655,9 @@ namespace AdventureAuthor.Setup
 		
 		private static void ListenForMessagesFromMyTasks()
     	{
-    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",MYTASKSTONWN2,PipeDirection.In))
+    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",
+			                                                                PipeNames.MYTASKSTONWN2,
+			                                                                PipeDirection.In))
     		{
     			try {
     				client.Connect();
@@ -675,16 +670,21 @@ namespace AdventureAuthor.Setup
 	    						break;
 	    					}
 	    					
-	    					if (message.StartsWith(REQUESTALLTASKS)) {
+	    					if (message.StartsWith(Messages.REQUESTALLTASKS)) {
 	    						
-	    						List<Task> tasks = GetTasks();	    						
-	    						
-	    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
-	    						StringWriter stringWriter = new StringWriter();
-	    						xmlSerializer.Serialize(stringWriter,tasks);
-	    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
-	    						
-	    						SendMessageToMyTasks(serialisedTasks);
+	    						if (!ModuleHelper.ModuleIsOpen()) {
+	    							ThreadedSendMessage(Messages.NOMODULEOPEN);
+	    						}
+	    						else {	    						
+		    						List<Task> tasks = GetTasks();
+		    						
+		    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+		    						StringWriter stringWriter = new StringWriter();
+		    						xmlSerializer.Serialize(stringWriter,tasks);
+		    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
+		    						
+		    						ThreadedSendMessage(serialisedTasks);//SendMessageToMyTasks(serialisedTasks);
+	    						}
 		    				}
 	    					else if (message.Length > 0) {
 	    						Say.Information("NWN2 received:\n" + message);
@@ -700,19 +700,21 @@ namespace AdventureAuthor.Setup
     	}
 		
 		
-		private static void SendRandomMessageToMyTasks(object sender, EventArgs e)
+		private static void ThreadedSendMessage(string message)
 		{
 			ParameterizedThreadStart threadStart = new ParameterizedThreadStart(SendMessageToMyTasks);
 			Thread thread = new Thread(threadStart);
+			thread.IsBackground = true;
 			thread.Priority = ThreadPriority.BelowNormal;
-			thread.Start("Do that thing");
+			thread.Start(message);
 		}
 		
 		
 		private static void SendMessageToMyTasks(object message)
 		{
 			try {
-				using (NamedPipeServerStream server = new NamedPipeServerStream(NWN2TOMYTASKS,PipeDirection.Out)) {
+				using (NamedPipeServerStream server = new NamedPipeServerStream(PipeNames.NWN2TOMYTASKS,
+				                                                                PipeDirection.Out)) {
 					server.WaitForConnection();
 	    			using (StreamWriter writer = new StreamWriter(server))
 	    			{

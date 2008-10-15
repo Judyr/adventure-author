@@ -73,6 +73,8 @@
     </Compile>
     <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Utils\Measurement.cs" />
+    <Compile Include="Utils\Messages.cs" />
+    <Compile Include="Utils\PipeNames.cs" />
     <Compile Include="Utils\ReportingTextBox.cs" />
     <Compile Include="Utils\ResourceHelper.cs" />
     <Compile Include="Utils\RGBPicker.xaml.cs">

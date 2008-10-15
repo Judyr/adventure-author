@@ -299,7 +299,7 @@ namespace AdventureAuthor.Scripts
 				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",repository);
 				//creature.FactionID = 2;
 				// So that when a creature has a conversation, it was definitely added by the user:
-				creature.Conversation = new OEIShared.IO.MissingResourceEntry();
+				//creature.Conversation = null;//new OEIShared.IO.MissingResourceEntry();
 			}
 			else if (instance is NWN2DoorInstance) {
 				NWN2DoorInstance door = (NWN2DoorInstance)instance; 

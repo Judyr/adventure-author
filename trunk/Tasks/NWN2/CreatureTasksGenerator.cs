@@ -145,8 +145,9 @@ namespace AdventureAuthor.Tasks.NWN2
 					if (CheckForUnrecognisedConversations) {
 						// If there's no conversation (or an invalid filename), Conversation is a 
 						// MissingResourceEntry, otherwise it's a DirectoryResourceEntry.
-						if (creature.Conversation.ToString() != String.Empty &&
-						    creature.Conversation.GetType() == typeof(MissingResourceEntry)) {
+						if (creature.Conversation == null || 
+						    (creature.Conversation.ToString() != String.Empty &&
+						     creature.Conversation.GetType() == typeof(MissingResourceEntry))) {
 							Task task = new Task(creature.Name + " (in area '" + area.Name + "') is supposed " +
 							                     "to have a conversation called '" + creature.Conversation.ToString() +
 							                     "', but there aren't any conversations with that name.",
