@@ -64,6 +64,15 @@ namespace AdventureAuthor.Tasks
     	/// The system tray icon for this application.
     	/// </summary>
     	private winforms.NotifyIcon trayIcon;
+    	
+    			
+		/// <summary>
+		/// The collection of suggested tasks.
+		/// </summary>
+		public TaskCollection SuggestedTasks {
+			get { return (TaskCollection)mySuggestionsGrid.DataContext; }
+			set { mySuggestionsGrid.DataContext = value; }
+		} 
 		
 		#endregion
 		
@@ -86,7 +95,9 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public MyTasksWindow()
 		{	
-			InitializeComponent();			
+			InitializeComponent();		
+			
+			SuggestedTasks = new TaskCollection();
 	                		
 			try {
 				Tools.EnsureDirectoryExists(MyTasksPreferences.LocalAppDataDirectory);
@@ -96,12 +107,14 @@ namespace AdventureAuthor.Tasks
 	    		Say.Debug("Failed to create directory for user:\n"+e);
 			}  
 			
+			
 			// Set up event handlers:
 			pad.AddTaskButton.Click += AddAndSelectNewTask;
 			Closing += SavePreferencesWhenClosing;
 			StateChanged += HideWhenMinimised;
 			MyTasksPreferences.Instance.PropertyChanged += HandlePreferencesChanged;
 			Changed += UpdateTitleBar;
+			
 			
 			// If you can find the last file that was opened, attempt to open it. Otherwise, open a blank task list.
 			string previousFilePath = MyTasksPreferences.Instance.PreviousFilePath;
@@ -111,8 +124,7 @@ namespace AdventureAuthor.Tasks
 			else {
 				New();
 			}	
-			
-				
+							
 			// Dispose the system tray icon when you're done:
 			Closed += delegate { 
 				if (trayIcon != null) {
@@ -125,14 +137,8 @@ namespace AdventureAuthor.Tasks
 			Loaded += new RoutedEventHandler(LaunchInSystemTray);
 			
 			// And listen for messages from the NWN2Toolset:
-			Loaded += new RoutedEventHandler(StartListeningForMessages);
-			
-			// TODO: Do this properly in XAML and with a SuggestedTasks property.
-			suggestedTasks = new TaskCollection();
-			suggestedTasksPanel.DataContext = suggestedTasks;
+			Loaded += new RoutedEventHandler(StartListeningForMessages);			
 		}
-		
-		private TaskCollection suggestedTasks;
 		
 		#endregion
 		
@@ -629,34 +635,24 @@ namespace AdventureAuthor.Tasks
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
-    		AddAndSelectTask(new Task(DEFAULT_TASK_DESCRIPTION));
+    		AddTask(new Task(DEFAULT_TASK_DESCRIPTION),true,true);
     	}
     	
     	
-    	private void AddAndSelectTask(Task task)
+    	private void AddTask(Task task, bool afterSelectedTask, bool highlightDescription)
     	{
-    		// (Clumsily) ensure that the task will be visible:
-    		pad.ClearAllFilters(); 
+    		pad.Add(task,afterSelectedTask);
     		
-    		pad.AddAfterSelectedTask(task);
+	    	// Select the task in the list:
+	    	pad.taskListBox.SelectedItem = task;
+	    	
+    		if (highlightDescription) {	    		
+	    		// Allow the user to start typing the task description directly:
+	    		taskDescriptionBox.Focus();
+	    		taskDescriptionBox.SelectAll();
+    		}
     		
-    		// Select the task in the list:
-    		pad.taskListBox.SelectedItem = task;
-    		
-    		// Allow the user to start typing the task description directly:
-    		taskDescriptionBox.Focus();
-    		taskDescriptionBox.SelectAll();
-    		
-    		// This runs automatically whenever the task collection changes (to
-    		// avoid the weird visual/binding bugs that seem to occur when filters
-    		// are applied) but in this case it doesn't stop two copies of the
-    		// new task *appearing* to be added until the filters are refreshed,
-    		// so just do it explicitly:
-    		pad.RefreshAllFilters();
-    		// Doing this also causes two bindings that I don't recognise at all
-    		// to fail, complaining that they can't find a source of type ItemsControl.
-    		// Similarly, deleting a task causes an ArgumentOutOfRangeException,
-    		// but if you ignore/handle these failures/exceptions everything is fine. Confused.
+    		pad.taskListBox.ScrollIntoView(task);
     	}
     	
 		
@@ -740,63 +736,7 @@ namespace AdventureAuthor.Tasks
 		
 		#endregion	
 		
-		#region Temp stuff
-		
-    	private void TEMPAddRandomTask(object sender, EventArgs e)
-    	{
-    		Task task;
-    		if (DateTime.Now.Second % 2 == 1) {
-    			task = new Task("Remember to do at least " + DateTime.Now.Second + " other things.",
-    		                     "Forestry",
-    		                     TaskOrigin.SoftwareSuggestion,
-    		                     TaskState.NotCompleted);
-    		}
-    		else {
-    			task = new Task("Complete all of my other " + pad.Tasks.Count + " tasks",
-    			                "Closure",
-    		                     TaskOrigin.SoftwareSuggestion,
-    			                TaskState.NotCompleted);
-    		}
-    		AddAndSelectTask(task);
-    	}
-    	
-    	
-    	private void TEMPUpdateTaskListBinding(object sender, EventArgs e)
-    	{
-    		BindingExpression be = BindingOperations.GetBindingExpression(pad.taskListBox,
-    		                                       						  ListBox.ItemsSourceProperty);
-    		if (be == null) {
-    			Say.Error("BindingExpression not found.");
-    		}
-    		else {
-    			if (be.HasError) {
-    				Say.Error("HasError: " + be.ValidationError);
-    			}
-    			be.UpdateTarget();
-    			if (be.HasError) {
-    				Say.Error("HasError: " + be.ValidationError);
-    			}
-    		}
-    	}		
-    	
-    	
-    	private void TEMPCheckVisibleAndControlExists(object sender, RoutedEventArgs e)
-    	{
-    		foreach (Task task in pad.Tasks) {
-    			ListBoxItem control = (ListBoxItem)pad.taskListBox.ItemContainerGenerator.ContainerFromItem(task);
-    			if (control == null) {
-    				System.Diagnostics.Debug.WriteLine("Task '" + task.Description.Substring(0,Math.Min(task.Description.Length,10)) + 
-    				                                   "' is null.");
-    			}
-    			else {
-    				System.Diagnostics.Debug.WriteLine("Task '" + task.Description.Substring(0,Math.Min(task.Description.Length,10)) + 
-    				                                   "' has visibility " + control.Visibility + " and IsVisible=" + control.IsVisible + ".");
-    			}
-    		}
-    	}
-    	
-    	
-    	
+		#region Communication
     	
 		private const string NWN2TOMYTASKS = "mytasksinpipe";
 		private const string MYTASKSTONWN2 = "mytasksoutpipe";
@@ -818,8 +758,8 @@ namespace AdventureAuthor.Tasks
     	public delegate void AddSuggestedTaskDelegate(Task task);
     	public void AddSuggestedTask(Task task)
     	{
-    		if (suggestedTasks != null) {
-    			suggestedTasks.Add(task);
+    		if (SuggestedTasks != null) {
+    			SuggestedTasks.Add(task);
     		}
     	}
     	
@@ -827,9 +767,9 @@ namespace AdventureAuthor.Tasks
     	public delegate void AddSuggestedTasksDelegate(List<Task> tasks);
     	public void AddSuggestedTasks(List<Task> tasks)
     	{
-    		if (suggestedTasks != null) {
+    		if (SuggestedTasks != null) {
     			foreach (Task task in tasks) {
-    				suggestedTasks.Add(task);    				
+    				SuggestedTasks.Add(task);    				
     			}
     		}
     	}
@@ -906,8 +846,8 @@ namespace AdventureAuthor.Tasks
     	{
     		Button button = (Button)sender;
     		Task task = (Task)button.DataContext;
-    		if (suggestedTasks.Contains(task)) {
-    			suggestedTasks.Remove(task);
+    		if (SuggestedTasks.Contains(task)) {
+    			SuggestedTasks.Remove(task);
     		}
     	}
     	
@@ -916,38 +856,50 @@ namespace AdventureAuthor.Tasks
     	{
     		Button button = (Button)sender;
     		Task task = (Task)button.DataContext;
-    		if (suggestedTasks.Contains(task)) {
-    			suggestedTasks.Remove(task);
+    		if (SuggestedTasks.Contains(task)) {
+    			SuggestedTasks.Remove(task);
     		}
     		if (!pad.Tasks.Contains(task)) {
-    			pad.Tasks.Add(task);
+    			AddTask(task,false,false);
     		}
     	}
     	
     	
     	private void PopulateSuggestedTasksList(object sender, RoutedEventArgs e)
     	{
-    		suggestedTasks.Clear();
+    		SuggestedTasks.Clear();
     		ThreadedSendMessage(REQUESTALLTASKS);
     	}
     	
     	
     	private void AddAllSuggestedTasks(object sender, RoutedEventArgs e)
     	{
-    		foreach (Task task in suggestedTasks) {
-    			pad.Tasks.Add(task);
+    		if (SuggestedTasks.Count > 1) {
+    			MessageBoxResult result = MessageBox.Show("Add all " + SuggestedTasks.Count + " suggested tasks to your task list?",
+    			                                          "Add all?",
+    			                                          MessageBoxButton.OKCancel,
+    			                                          MessageBoxImage.Question,
+    			                                          MessageBoxResult.Cancel,
+    			                                          MessageBoxOptions.None);
+    			if (result == MessageBoxResult.Cancel) {
+    				return;	
+    			}
     		}
-    		suggestedTasks.Clear();
+    		
+    		foreach (Task task in SuggestedTasks) {
+    			AddTask(task,false,false);
+    		}
+    		SuggestedTasks.Clear();
     	}
     	
     	
     	private void DismissAllSuggestedTasks(object sender, RoutedEventArgs e)
     	{
-    		suggestedTasks.Clear();
+    		SuggestedTasks.Clear();
     	}
     	
     	
-    	private void ChangeWhetherSuggestedTasksPanelIsVisible(object sender, RoutedEventArgs e)
+    	private void ChangeWhethersuggestedTasksListBoxIsVisible(object sender, RoutedEventArgs e)
     	{
     		SuggestedTasksVisible = !SuggestedTasksVisible;
     	}
@@ -963,9 +915,8 @@ namespace AdventureAuthor.Tasks
     		= DependencyProperty.Register("SuggestedTasksVisible",
     		                              typeof(bool),
     		                              typeof(MyTasksWindow),
-    		                              new PropertyMetadata(false));
+    		                              new PropertyMetadata(true));
     		                              
-    	
 		#endregion
 	}
 }

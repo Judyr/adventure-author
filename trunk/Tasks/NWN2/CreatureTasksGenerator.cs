@@ -150,8 +150,10 @@ namespace AdventureAuthor.Tasks.NWN2
 							Task task = new Task(creature.Name + " (in area '" + area.Name + "') is supposed " +
 							                     "to have a conversation called '" + creature.Conversation.ToString() +
 							                     "', but there aren't any conversations with that name.",
-												 "Bugs",
+							                     "Bugs",
 												 TaskOrigin.SoftwareSuggestion);
+							task.Tags.Add("Conversations");
+							task.Tags.Add("Characters");
 							tasks.Add(task);
 						}
 					}
@@ -163,6 +165,8 @@ namespace AdventureAuthor.Tasks.NWN2
 												 "attack instead of speaking.",
 												 "Bugs",
 												 TaskOrigin.SoftwareSuggestion);
+							task.Tags.Add("Conversations");
+							task.Tags.Add("Characters");
 							tasks.Add(task);
 						}
 					}

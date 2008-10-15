@@ -25,6 +25,7 @@
 		<tasks:TaskStateToVisibilityConverter x:Key="onlyShowIfTaskIsCompleted"/>
 		<tasks:GetGlowAccordingToTaskState x:Key="glowAccordingToState"/>
 		<tasks:ZeroIfFalseConverter x:Key="zeroWidthIfFalse"/>
+		<tasks:InverseBooleanToVisibilityConverter x:Key="showIfTaskCollectionIsEmpty"/>
 		
 		<ItemsPanelTemplate x:Key="tagListTemplate">
 			<WrapPanel Orientation="Horizontal" 
@@ -47,13 +48,6 @@
 						   Width="140"/>
 				<WrapPanel Orientation="Horizontal"
 						   Margin="1">
-					<WrapPanel.Resources>
-						<Style TargetType="{x:Type Button}">
-							<Setter Property="Button.Margin" Value="3"/>
-							<Setter Property="Button.Background" Value="Blue"/>
-							<Setter Property="Button.Foreground" Value="White"/>
-						</Style>
-					</WrapPanel.Resources>
 					<Button Content="Add"
 					        Click="AddSuggestedTask"/>
 					<Button Content="Dismiss"
@@ -107,13 +101,6 @@
 					<MenuItem Name="NewTaskMenuItem" 
 					          Header="New task"
 							  Click="AddAndSelectNewTask"/>
-					<Separator/>
-					<MenuItem Header="Add a random task"
-							  Click="TEMPAddRandomTask" IsEnabled="False"/>
-					<MenuItem Header="Update the task list binding"
-							  Click="TEMPUpdateTaskListBinding" IsEnabled="False"/>
-					<MenuItem Header="Check which are visible and which have controls"
-							  Click="TEMPCheckVisibleAndControlExists" IsEnabled="False"/>
 				</MenuItem>
 			</Menu>			
 		</StackPanel>
@@ -307,21 +294,30 @@
 			<StackPanel Grid.Row="0"
 						Grid.Column="2"
 						Background="LightGray">
-				<Button Click="ChangeWhetherSuggestedTasksPanelIsVisible"
-						Content="ChangeWhetherSuggestedTasksPanelIsVisible"/>
+				<Button Click="ChangeWhethersuggestedTasksListBoxIsVisible"
+						Content="ChangeWhethersuggestedTasksListBoxIsVisible"/>
 			</StackPanel>		
 		
-			<Grid Grid.Row="0"
+			<Grid x:Name="mySuggestionsGrid"
+			      Grid.Row="0"
 				  Grid.Column="3"
 				  Background="DarkBlue">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="40"/>
 					<RowDefinition Height="*"/>
-					<RowDefinition Height="100"/>
+					<RowDefinition Height="40"/>
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
+				
+				<Grid.Resources>
+					<Style TargetType="{x:Type Button}">
+						<Setter Property="Button.Margin" Value="3"/>
+						<Setter Property="Button.Background" Value="Blue"/>
+						<Setter Property="Button.Foreground" Value="White"/>
+					</Style>
+				</Grid.Resources>
 				
 				<TextBlock Grid.Row="0"
 					       Grid.Column="0"
@@ -333,34 +329,55 @@
 						   VerticalAlignment="Center"
 						   HorizontalAlignment="Center"
 				           />			
-							
-				<ListBox
-					x:Name="suggestedTasksPanel"
-					Grid.Row="1"
-					Grid.Column="0"
-					SelectionMode="Single"
-					ItemsSource="{Binding}"
-					ItemTemplate="{StaticResource suggestedTaskTemplate}"
-					BorderThickness="0"
-					Background="DarkBlue"
-					Foreground="White">
-					<ListBox.Width>
-						<Binding ElementName="mainGrid" Path="ActualWidth"/>
-					</ListBox.Width>
-				</ListBox>
+					
+				<ScrollViewer Grid.Row="1"
+							  Grid.Column="0"
+							  VerticalScrollBarVisibility="Auto"
+							  HorizontalScrollBarVisibility="Hidden">		
+					<ListBox
+						x:Name="suggestedTasksListBox"
+						Grid.Row="1"
+						Grid.Column="0"
+						SelectionMode="Single"
+						ItemsSource="{Binding}"
+						ItemTemplate="{StaticResource suggestedTaskTemplate}"
+						BorderThickness="0"
+						Background="DarkBlue"
+						Foreground="White">
+						<ListBox.Width>
+							<Binding ElementName="mainGrid" Path="ActualWidth"/>
+						</ListBox.Width>
+					</ListBox>
+				</ScrollViewer>
+					
+				<TextBlock x:Name="noSuggestedTasksMessageDisplay"
+				           Grid.Row="1"
+					       Grid.Column="0"
+				           MouseDown="PopulateSuggestedTasksList"
+				           TextWrapping="Wrap"
+						   Foreground="White"
+						   Background="DarkBlue"
+						   FontFamily="Helvetica"
+						   FontSize="16"
+				           TextAlignment="Center"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Center"
+						   Padding="6"
+				           Visibility="{Binding ElementName=suggestedTasksListBox, Path=HasItems, Converter={StaticResource showIfTaskCollectionIsEmpty}}"
+				>
+					Click here to get Adventure Author to suggest tasks based on your module.
+					<LineBreak/>
+					<LineBreak/>
+					You can only do this when you have the toolset running and your module open.
+				</TextBlock>
 				
 				<WrapPanel 
 					Grid.Row="2"
 					Grid.Column="0"
 					Orientation="Horizontal"
-					Background="Blue">	
-					<WrapPanel.Resources>
-						<Style TargetType="{x:Type Button}">
-							<Setter Property="Button.Margin" Value="5"/>
-						</Style>
-					</WrapPanel.Resources>
-					<Button Click="PopulateSuggestedTasksList"
-							Content="Populate"/>
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+				>
 					<Button Click="AddAllSuggestedTasks"
 							Content="Add all"/>
 					<Button Click="DismissAllSuggestedTasks"
