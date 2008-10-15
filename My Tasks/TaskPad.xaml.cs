@@ -119,15 +119,18 @@ namespace AdventureAuthor.Tasks
 		
 		
 		/// <summary>
-		/// Add a task to the current collection, placed after the currently selected task.
+		/// Add a task to the current collection.
 		/// </summary>
 		/// <param name="task">The task to add</param>
-		public void AddAfterSelectedTask(Task task)
+		/// <param name="afterSelectedTask">True to add this task after the selected task, if there
+		/// is a task selected; false to add this task to the end of the list</param>
+		public void Add(Task task, bool addAfterSelectedTask)
 		{
 			if (Tasks == null) {
 				throw new InvalidOperationException("No task collection is currently open.");
 			}
-			if (taskListBox.SelectedItem == null) {
+			
+			if (!addAfterSelectedTask || taskListBox.SelectedItem == null) {
 				Tasks.Add(task);
 			}
 			else {
@@ -139,9 +142,24 @@ namespace AdventureAuthor.Tasks
 					Tasks.Insert(index,task);
 				}
 			}
+			
+			// Ensure the task is visible:
+			ClearAllFilters();
+						    		
+    		// This runs automatically whenever the task collection changes (to
+    		// avoid the weird visual/binding bugs that seem to occur when filters
+    		// are applied) but in this case it doesn't stop two copies of the
+    		// new task *appearing* to be added until the filters are refreshed,
+    		// so just do it explicitly:
+    		RefreshAllFilters();
+    		// Doing this also causes two bindings that I don't recognise at all
+    		// to fail, complaining that they can't find a source of type ItemsControl.
+    		// Similarly, deleting a task causes an ArgumentOutOfRangeException,
+    		// but if you ignore/handle these failures/exceptions everything is fine. Confused.
+    		
 			taskListBox.ScrollIntoView(task);
-		}
-		
+		}		
+
 		
 		/// <summary>
 		/// Delete a task from the current collection.

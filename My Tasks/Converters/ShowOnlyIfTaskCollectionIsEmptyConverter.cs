@@ -25,34 +25,33 @@
  */
 
 using System;
+using System.Collections;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Globalization;
 
 namespace AdventureAuthor.Tasks
 {
-	/// <summary>
-	/// Converts boolean values into gridlengths.
-	/// </summary>
-	public class ZeroIfFalseConverter : IValueConverter
+	public class ShowOnlyIfTaskCollectionIsEmptyConverter : IValueConverter
 	{
-		public ZeroIfFalseConverter()
+		public ShowOnlyIfTaskCollectionIsEmptyConverter()
 		{
 		}
 		
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (targetType != typeof(GridLength)) {
-				throw new ArgumentException("targetType must be GridLength.");
+			if (targetType != typeof(Visibility)) {
+				throw new ArgumentException("targetType must be Visibility");
 			}
 			
-			if ((bool)value) {
-				return new GridLength(180);
+			int count = ((TaskCollection)value).Count;
+			if (count == 0) {
+				return Visibility.Visible;
 			}
 			else {
-				return new GridLength(0);
+				return Visibility.Hidden;
 			}
 		}
 		

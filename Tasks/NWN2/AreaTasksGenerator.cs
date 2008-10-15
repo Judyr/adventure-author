@@ -179,6 +179,7 @@ namespace AdventureAuthor.Tasks.NWN2
 					Task task = new Task("The module needs to have a player start location added.",
 					                     "Bugs",
 					                     TaskOrigin.SoftwareSuggestion);
+					task.Tags.Add("Area design");
 					tasks.Add(task);
 				}
 				else {
@@ -205,6 +206,7 @@ namespace AdventureAuthor.Tasks.NWN2
 										         "which leads to itself!",
 										         "Bugs",
 										         TaskOrigin.SoftwareSuggestion);
+							task.Tags.Add("Area design");
 							tasks.Add(task);
 						}
 						else {
@@ -223,6 +225,7 @@ namespace AdventureAuthor.Tasks.NWN2
 										         "which leads to itself!",
 										         "Bugs",
 										         TaskOrigin.SoftwareSuggestion);
+							task.Tags.Add("Area design");
 							tasks.Add(task);
 						}
 						else {
@@ -373,6 +376,7 @@ namespace AdventureAuthor.Tasks.NWN2
 							        "Bugs",
 							        TaskOrigin.SoftwareSuggestion);
 				}
+				task.Tags.Add("Area design");
 				return task;
 			}
 			return null; //only return a Task if something is broken!

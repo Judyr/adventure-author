@@ -76,7 +76,12 @@ namespace AdventureAuthor.Tasks
 						MyTasksPreferences.Instance = (MyTasksPreferences)o;
 					}
 					else {
-	            		List<string> tags = new List<string>{"Gameplay","Bugs","Area design","Story","Dialogue"};
+	            		List<string> tags = new List<string>{"Area design",
+															 "Bugs",
+															 "Characters",
+															 "Conversations",
+															 "Gameplay",
+															 "Story"};
 	            		instance = new MyTasksPreferences(tags);
 					}
 				}
