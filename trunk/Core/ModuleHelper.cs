@@ -115,13 +115,6 @@ namespace AdventureAuthor.Core
 		}	
 		
 		
-		public static string UserLogDirectory {			
-			get {
-				return Path.Combine(PublicUserDirectory,"User logs");
-			}
-		}	
-		
-		
 		public static string ImagesDir {			
 			get {
 				return Path.Combine(AdventureAuthorInstallDirectory,"images");

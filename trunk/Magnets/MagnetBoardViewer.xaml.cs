@@ -83,6 +83,8 @@ namespace AdventureAuthor.Ideas
         	try {
 	        	InitializeComponent();
 	        	
+	        	LogWriter.StartRecording("magnets");
+	        	
 	        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 				MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
 			                                  
@@ -146,7 +148,7 @@ namespace AdventureAuthor.Ideas
 					}
 					if (pipeCommunicationThread != null) {
 						pipeCommunicationThread.Join();    	
-					}	    		
+					}
 				};
         	}
         	catch (Exception x) {
@@ -363,6 +365,7 @@ namespace AdventureAuthor.Ideas
     			}    			
     		}
     		ActiveBoard.CloseBoard();
+    		Log.WriteAction(LogAction.closed,"magnetboard");
     		return true;
     	}
     	

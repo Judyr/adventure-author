@@ -258,10 +258,9 @@ namespace AdventureAuthor.Ideas
     	private void ForceExit(object sender, EventArgs e)
     	{
     		if (!CloseDialog()) { // return if user has an unsaved board and cancels
-    			return;
-    		}
-    		
-    		
+	    		return;
+	    	}
+    		    		
     		using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
     		{
     			try {
@@ -289,6 +288,7 @@ namespace AdventureAuthor.Ideas
     		}
     			
     		Log.WriteAction(LogAction.exited,"magnets");
+    		LogWriter.StopRecording();
     		
     		System.Windows.Application.Current.Shutdown();
     	}

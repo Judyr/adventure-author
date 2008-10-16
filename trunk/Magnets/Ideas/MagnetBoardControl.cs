@@ -196,9 +196,6 @@ namespace AdventureAuthor.Ideas
     		Cleared += delegate {
     			MakeDirty(); // technically unnecessary as removing magnets will have done the same thing
     		};
-    		Closed += delegate { 
-    			Log.WriteAction(LogAction.closed,"magnetboard");
-    		};
     		  		    		
     		InitializeComponent();  
     		
