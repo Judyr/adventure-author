@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Utils
@@ -28,12 +29,31 @@ namespace AdventureAuthor.Utils
 		}
 		
 		
-		public static void StartRecording()
+		static LogWriter()
+		{
+			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			string publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
+			logDirectory = Path.Combine(publicUserDirectory,"User logs");
+		}
+		
+			
+		/// <summary>
+		/// Start writing log messages to file. 
+		/// </summary>
+		/// <param name="identifier">An optional identifier string to place on the end of a
+		/// filename, after the username and date/time. For example, passing a value of
+		/// "toolset" gives a log file called 'Kirn 16.10.2008 1253 toolset.log'.</param>
+		public static void StartRecording(string identifier)
 		{			
 			try {
 				System.Diagnostics.Debug.WriteLine("LogWriter started recording.");
-				string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true) + " toolset";
-				string path = GetUnusedPath(logDirectory,preferredFilename,"log");						
+				Tools.EnsureDirectoryExists(LogDirectory);
+				StringBuilder preferredFilename = new StringBuilder(User.GetCurrentUserName() + 
+				                         " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true));
+				if (identifier != null && identifier.Length > 0) {
+					preferredFilename.Append(" " + identifier);
+				}
+				string path = GetUnusedPath(logDirectory,preferredFilename.ToString(),"log");
 				FileInfo f = new FileInfo(path);				
 				Stream s = f.Open(FileMode.Create);
 				writer = new StreamWriter(s);
@@ -48,21 +68,29 @@ namespace AdventureAuthor.Utils
 		
 		public static void StopRecording()
 		{
-			if (writer != null) {
-				writer.Flush();
-				writer.Close();
+			try {
+				if (writer != null) {
+					writer.Flush();
+					writer.Close();
+				}
+			}
+			catch (ObjectDisposedException) {
+				//Say.Error("The log writer was already disposed by the time it was told to stop recording.");
 			}
 		}
 		
 		
 		private static void LogMessage(object sender, LogEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("LogMessage() called.");
-			if (writer != null) {
-				writer.WriteLine(e.Message);
-				writer.Flush();
+			try {
+				if (writer != null) {
+					writer.WriteLine(e.Message);
+					writer.Flush();
+				}
 			}
-			System.Diagnostics.Debug.WriteLine("Message logged.");
+			catch (ObjectDisposedException) {
+				//Say.Error("The log writer was already disposed by the time it was told to log message '" + e.Message + "'.\n\n"+Environment.StackTrace);
+			}
 		}
 		
 		

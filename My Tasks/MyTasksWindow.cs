@@ -123,15 +123,9 @@ namespace AdventureAuthor.Tasks
 			}  
 			
 			
-			
-			
-			
-//			
-//			LogWriter.LogDirectory = ModuleHelper.UserLogDirectory;
-//			LogWriter.StartRecording();
-//			
-//			Closed += delegate { LogWriter.StopRecording(); };
-			
+			// Logging:
+			LogWriter.StartRecording("mytasks");					
+			Loaded += delegate { Log.WriteAction(LogAction.launched,"mytasks"); };
 			
 			
 			// Set up event handlers:
@@ -160,9 +154,8 @@ namespace AdventureAuthor.Tasks
 					trayIcon.Dispose();
 				}
 				Log.WriteAction(LogAction.exited,"mytasks");
+				LogWriter.StopRecording();
 			};
-			
-			Loaded += delegate { Log.WriteAction(LogAction.launched,"mytasks"); };
 			
 			// Launch the application in the system tray:
 			Loaded += new RoutedEventHandler(LaunchInSystemTray);

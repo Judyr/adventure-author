@@ -98,7 +98,9 @@ namespace AdventureAuthor.Evaluation
     	
     	public CardViewer()
     	{
-    		InitializeComponent();    		    		
+    		InitializeComponent();
+    		
+    		LogWriter.StartRecording("evaluation");
     		
     		CardViewer.Instance = this;
     			
@@ -150,6 +152,7 @@ namespace AdventureAuthor.Evaluation
     			}
     			
     			Log.WriteAction(LogAction.exited,"evaluation");
+    			LogWriter.StopRecording();
     		}
     	}
 

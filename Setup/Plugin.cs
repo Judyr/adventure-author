@@ -133,12 +133,9 @@ namespace AdventureAuthor.Setup
 					          "If this is the case, try reinstalling Adventure Author.");
 				}
 				try {
-					LogWriter.LogDirectory = ModuleHelper.UserLogDirectory;
-					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;
-					
+					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;					
 					Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
 					Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
-					Tools.EnsureDirectoryExists(ModuleHelper.UserLogDirectory);
 				} 
 				catch (Exception e) {
 					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
@@ -153,7 +150,7 @@ namespace AdventureAuthor.Setup
 				
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
-				LogWriter.StartRecording();
+				LogWriter.StartRecording("toolset");
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();
