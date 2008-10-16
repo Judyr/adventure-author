@@ -46,7 +46,6 @@ namespace AdventureAuthor.Utils
 		public static void StartRecording(string identifier)
 		{			
 			try {
-				System.Diagnostics.Debug.WriteLine("LogWriter started recording.");
 				Tools.EnsureDirectoryExists(LogDirectory);
 				StringBuilder preferredFilename = new StringBuilder(User.GetCurrentUserName() + 
 				                         " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true));
@@ -84,8 +83,9 @@ namespace AdventureAuthor.Utils
 		{
 			try {
 				if (writer != null) {
-					writer.WriteLine(e.Message);
+					writer.WriteLine(e.Message);					
 					writer.Flush();
+					//System.Diagnostics.Debug.WriteLine(e.Message);
 				}
 			}
 			catch (ObjectDisposedException) {

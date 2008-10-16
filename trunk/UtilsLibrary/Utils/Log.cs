@@ -38,7 +38,6 @@ namespace AdventureAuthor.Utils
 		
 		private static void OnMessage(LogEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("OnMessage() called.");
 			EventHandler<LogEventArgs> handler = Message;
 			if (handler != null) {
 				handler(null,e);
