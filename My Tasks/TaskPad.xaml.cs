@@ -45,7 +45,6 @@ namespace AdventureAuthor.Tasks
 	      		                                       							  StackPanel.IsEnabledProperty);
 	      			be.UpdateTarget();
 				}
-				Debug.WriteLine("Updated filters.");
 			}
 			catch (Exception ex) {
 				Say.Error("Couldn't update filter panel IsEnabled binding: " + ex);
@@ -96,8 +95,23 @@ namespace AdventureAuthor.Tasks
             }
             
             // Log some actions:
-            activateTagFilterCheckBox.Click += LogWhetherUserFilteredByTag;
-            tagFilterComboBox.SelectionChanged += LogWhetherUserFilteredByTag;
+            activateTagFilterCheckBox.Checked += delegate 
+            {
+            	if (tagFilterComboBox.SelectedItem != null) {
+            		Log.WriteAction(LogAction.mode,"mytasks_FilterByTag","'" + tagFilterComboBox.SelectedItem + "'");
+            	}
+            };
+            activateTagFilterCheckBox.Unchecked += delegate 
+            {  
+            	Log.WriteAction(LogAction.mode,"mytasks_DoNotFilterByTag");
+            };            
+            tagFilterComboBox.SelectionChanged += delegate 
+            {  
+            	if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
+            		Log.WriteAction(LogAction.mode,"mytasks_FilterByTag","'" + tagFilterComboBox.SelectedItem + "'");            		
+            	}
+            };
+            
             searchStringTextBox.TextChanged += LogWhetherUserFilteredByText;
 		}
 		
@@ -401,26 +415,15 @@ namespace AdventureAuthor.Tasks
 				Log.WriteAction(LogAction.mode,"mytasks_ShowUncompletedTasksOnly");
 			}
 		}
-
 		
-		private void LogWhetherUserFilteredByTag(object sender, RoutedEventArgs e)
-		{
-            if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
-            	Log.WriteAction(LogAction.mode,"mytasks_FilterByTag","Filtering by tag: '" + tagFilterComboBox.SelectedItem + "'");
-            }
-            else {
-            	Log.WriteAction(LogAction.mode,"mytasks_DoNotFilterByTag");
-            }
-		}
-
-		
+				
 		private void LogWhetherUserFilteredByText(object sender, RoutedEventArgs e)
 		{
 			if (searchStringTextBox.Text.Length == 0) {
 				Log.WriteAction(LogAction.mode,"mytasks_DoNotFilterBySearchString");
 			}
 			else {
-				Log.WriteAction(LogAction.mode,"mytasks_FilterBySearchString","Search string: " + searchStringTextBox.Text);
+				Log.WriteAction(LogAction.mode,"mytasks_FilterBySearchString","Search string: '" + searchStringTextBox.Text + "'");
 			}
 		}
 		

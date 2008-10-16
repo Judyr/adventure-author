@@ -140,11 +140,11 @@ namespace AdventureAuthor.Tasks
 			string previousFilePath = MyTasksPreferences.Instance.PreviousFilePath;
 			if (previousFilePath != null && File.Exists(previousFilePath)) {
 				Open(previousFilePath);
-				Log.WriteAction(LogAction.opened,"taskcollection","'"+previousFilePath+"'. Opened most recent file automatically upon loading.");
+				Log.WriteAction(LogAction.opened,"taskcollection","'"+Path.GetFileName(previousFilePath)+"'. Opened most recent file automatically upon loading.");
 			}
 			else {
 				New();
-				Log.WriteAction(LogAction.added,"taskcollection","Created automatically upon launching application.");
+				//Log.WriteAction(LogAction.added,"taskcollection","Created automatically upon launching application.");
 			}	
 							
 			// Dispose the system tray icon when you're done:
@@ -324,7 +324,8 @@ namespace AdventureAuthor.Tasks
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
   				Open(openFileDialog.FileName);
-  				Log.WriteAction(LogAction.opened,"taskcollection","'"+openFileDialog.FileName+"'. Opened via File->Open.");
+  				Log.WriteAction(LogAction.opened,"taskcollection","'"+Path.GetFileName(openFileDialog.FileName)+
+  				                "'. Opened via File->Open.");
   			}
   			return ok;
     	}
@@ -340,7 +341,7 @@ namespace AdventureAuthor.Tasks
 	    		}
 	    		else {
 		    		Save(filename);
-		  			Log.WriteAction(LogAction.saved,"taskcollection","'" + MyTasksPreferences.Instance.ActiveFilePath + "'");
+		    		Log.WriteAction(LogAction.saved,"taskcollection","'" + Path.GetFileName(MyTasksPreferences.Instance.ActiveFilePath) + "'");
 		    		return true;
 	    		}
     		}
@@ -369,7 +370,7 @@ namespace AdventureAuthor.Tasks
   				MyTasksPreferences.Instance.ActiveFilePath = saveFileDialog.FileName;
   				try {
 		  			Save();
-		  			Log.WriteAction(LogAction.saved,"taskcollection","Saved as '" + MyTasksPreferences.Instance.ActiveFilePath + "'");
+		  			Log.WriteAction(LogAction.saved,"taskcollection","Saved as '" + Path.GetFileName(MyTasksPreferences.Instance.ActiveFilePath) + "'");
 		  			return true;
   				}
   				catch (Exception e) {
@@ -449,7 +450,7 @@ namespace AdventureAuthor.Tasks
     		    		
 			Log.WriteAction(LogAction.closed,"taskcollection",MyTasksPreferences.Instance.ActiveFilePath);
     		New();
-			Log.WriteAction(LogAction.added,"taskcollection","Created automatically when previous file was closed.");
+			//Log.WriteAction(LogAction.added,"taskcollection","Created automatically when previous file was closed.");
     		return true;
     	}
     	
@@ -585,7 +586,7 @@ namespace AdventureAuthor.Tasks
     	private void OnClick_New(object sender, EventArgs e)
     	{
     		New();
-			Log.WriteAction(LogAction.added,"taskcollection","Created via File->New.");
+			Log.WriteAction(LogAction.added,"taskcollection");
     	}
     	    	
     	
@@ -658,7 +659,7 @@ namespace AdventureAuthor.Tasks
 				string tag = (string)TagSelectionComboBox.SelectedItem;
 				if (!task.Tags.Contains(tag)) {
 					task.Tags.Add(tag);
-					Log.WriteAction(LogAction.added,"label","Added label '" + tag + "' to " + task);
+					Log.WriteAction(LogAction.added,"label","'" + tag + "' to " + task);
 				}
 			}
 		}
@@ -719,7 +720,7 @@ namespace AdventureAuthor.Tasks
 							task.Tags.Remove(deletingTag);
 						}
 						
-						Log.WriteAction(LogAction.deleted,"label","Deleted label '" + deletingTag + "' from " + task);
+						Log.WriteAction(LogAction.deleted,"label","'" + deletingTag + "' from " + task);
 						
 						if (filteredTag != null && !pad.tagFilterComboBox.Items.Contains(filteredTag)) {
 							// If the tag we removed was the last instance of the filtered tag,
@@ -774,7 +775,11 @@ namespace AdventureAuthor.Tasks
 		
 		private void LogThatTextHasChanged(object sender, TextEditedEventArgs e)
 		{
-			Log.WriteAction(LogAction.edited,"task",((Task)((EditableTextBox)sender).DataContext).ToString());
+			EditableTextBox etb = (EditableTextBox)sender;
+			Task task = etb.DataContext as Task;
+			if (task != null) {
+				Log.WriteAction(LogAction.edited,"task",((Task)((EditableTextBox)sender).DataContext).ToString());
+			}			
 		}
 		
 		#endregion	
@@ -922,7 +927,7 @@ namespace AdventureAuthor.Tasks
     		if (SuggestedTasks.Contains(task)) {
     			SuggestedTasks.Remove(task);
     		}
-    		Log.WriteAction(LogAction.ignored,"task","Ignored suggested task " + task);
+    		Log.WriteAction(LogAction.ignored,"task",task.ToString());
     	}
     	
     	
