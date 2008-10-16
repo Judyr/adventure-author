@@ -48,6 +48,11 @@ namespace AdventureAuthor.Utils
 		activated,
 		deactivated,
 		
+		// relating to My Tasks:
+		completed,
+		uncompleted,
+		ignored,
+		
 		// relating to magnets:
 		placed,
 		removed,

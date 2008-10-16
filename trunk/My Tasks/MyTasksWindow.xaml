@@ -50,8 +50,8 @@
 						   Margin="1">
 					<Button Content="Add"
 					        Click="AddSuggestedTask"/>
-					<Button Content="Dismiss"
-					        Click="DismissSuggestedTask"/>
+					<Button Content="Ignore"
+					        Click="IgnoreSuggestedTask"/>
 				</WrapPanel>
 			</StackPanel>			
 		</DataTemplate>
@@ -185,6 +185,7 @@
 										   IsEditable="false"
 										   GotFocus="MakeEditable"
 										   LostFocus="MakeUneditable"
+										   TextEdited="LogThatTextHasChanged"
 										   KeyDown="FinishEditingWhenUserHitsReturn"
 										   TextWrapping="Wrap"
 										   ToolTip="This is the task's description. To edit it, simply click on it."
@@ -295,7 +296,7 @@
 			<StackPanel Grid.Row="0"
 						Grid.Column="2"
 						Background="LightGray">
-				<Button Click="ChangeWhethersuggestedTasksListBoxIsVisible"
+				<Button Click="ChangeWhetherSuggestedTasksListBoxIsVisible"
 						Content="ChangeWhethersuggestedTasksListBoxIsVisible"/>
 			</StackPanel>		
 		
@@ -376,8 +377,8 @@
 				>
 					<Button Click="AddAllSuggestedTasks"
 							Content="Add all"/>
-					<Button Click="DismissAllSuggestedTasks"
-							Content="Dismiss all"/>
+					<Button Click="IgnoreAllSuggestedTasks"
+							Content="Ignore all"/>
 				</WrapPanel>
 			
 			</Grid>

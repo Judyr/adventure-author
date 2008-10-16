@@ -357,7 +357,27 @@ namespace AdventureAuthor.Tasks
 		
 		public override string ToString()
 		{
-			return Description;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder("'" + Description + " (Tags: ");
+			if (Tags.Count > 0) {
+				foreach (string tag in Tags) {
+					sb.Append("'" + tag + "', ");
+				}
+				sb.Remove(sb.Length-2,2); //remove the last comma and space
+			}
+			else {
+				sb.Append("None");
+			}
+			sb.Append("; ");
+			
+			sb.Append("Created: " + Created + "; Origin: " + Origin + "; Status: " + State);
+			
+			if (Completed != DateTime.MinValue) {
+				sb.Append("; Completed: " + Completed);
+			}
+			
+			sb.Append(")'");
+			
+			return sb.ToString();
 		}
 		
 		#endregion

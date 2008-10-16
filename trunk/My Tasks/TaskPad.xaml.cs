@@ -94,6 +94,11 @@ namespace AdventureAuthor.Tasks
             catch (Exception) {
             	System.Diagnostics.Debug.WriteLine("Tried and failed to select the first tag.");
             }
+            
+            // Log some actions:
+            activateTagFilterCheckBox.Click += LogWhetherUserFilteredByTag;
+            tagFilterComboBox.SelectionChanged += LogWhetherUserFilteredByTag;
+            searchStringTextBox.TextChanged += LogWhetherUserFilteredByText;
 		}
 		
 		#endregion
@@ -261,6 +266,7 @@ namespace AdventureAuthor.Tasks
 											              MessageBoxResult.OK);
 				if (result == MessageBoxResult.OK) {
 					Delete(task);
+					Log.WriteAction(LogAction.deleted,"task",task.ToString());
 				}	
 			}
 		}
@@ -274,6 +280,7 @@ namespace AdventureAuthor.Tasks
 			if (taskListBox.SelectedItem != null) {
 				Task task = (Task)taskListBox.SelectedItem;
 				MoveTaskUp(task,true);
+				Log.WriteAction(LogAction.moved,"task","Moved task up. " + task.ToString());
 			}
 		}
 		
@@ -286,6 +293,7 @@ namespace AdventureAuthor.Tasks
 			if (taskListBox.SelectedItem != null) {
 				Task task = (Task)taskListBox.SelectedItem;				
 				MoveTaskDown(task,true);
+				Log.WriteAction(LogAction.moved,"task","Moved task down. " + task.ToString());
 			}
 		}
 		
@@ -379,6 +387,42 @@ namespace AdventureAuthor.Tasks
 			EditableTextBox editableTextBox = (EditableTextBox)sender;
 			editableTextBox.IsEditable = false;
 		}		
+		
+		
+		private void LogThatCompletedTaskFilterWasChecked(object sender, RoutedEventArgs e)
+		{
+			if (sender == this.showAllTasksRadioButton) {
+				Log.WriteAction(LogAction.mode,"mytasks_ShowBothCompletedAndUncompletedTasks");
+			}
+			else if (sender == this.showCompletedTasksOnlyRadioButton) {
+				Log.WriteAction(LogAction.mode,"mytasks_ShowCompletedTasksOnly");
+			}
+			else if (sender == this.showUncompletedTasksOnlyRadioButton) {
+				Log.WriteAction(LogAction.mode,"mytasks_ShowUncompletedTasksOnly");
+			}
+		}
+
+		
+		private void LogWhetherUserFilteredByTag(object sender, RoutedEventArgs e)
+		{
+            if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
+            	Log.WriteAction(LogAction.mode,"mytasks_FilterByTag","Filtering by tag: '" + tagFilterComboBox.SelectedItem + "'");
+            }
+            else {
+            	Log.WriteAction(LogAction.mode,"mytasks_DoNotFilterByTag");
+            }
+		}
+
+		
+		private void LogWhetherUserFilteredByText(object sender, RoutedEventArgs e)
+		{
+			if (searchStringTextBox.Text.Length == 0) {
+				Log.WriteAction(LogAction.mode,"mytasks_DoNotFilterBySearchString");
+			}
+			else {
+				Log.WriteAction(LogAction.mode,"mytasks_FilterBySearchString","Search string: " + searchStringTextBox.Text);
+			}
+		}
 		
 		#endregion
 		
@@ -601,6 +645,7 @@ namespace AdventureAuthor.Tasks
 		public void ClearAllFilters(object sender, RoutedEventArgs e)
 		{
 			ClearAllFilters();
+			Log.WriteMessage("User clicked 'Show all' to clear all filters.");
 		}
 		
 		

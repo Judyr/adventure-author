@@ -30,13 +30,19 @@ namespace AdventureAuthor.Utils
 		
 		public static void StartRecording()
 		{			
-			string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true) + " toolset";
-			string path = GetUnusedPath(logDirectory,preferredFilename,"log");						
-			FileInfo f = new FileInfo(path);				
-			Stream s = f.Open(FileMode.Create);
-			writer = new StreamWriter(s);
-			writer.AutoFlush = true;
-			Log.Message += new EventHandler<LogEventArgs>(LogMessage);
+			try {
+				System.Diagnostics.Debug.WriteLine("LogWriter started recording.");
+				string preferredFilename = User.GetCurrentUserName() + " " + Tools.GetDateStamp(false) + " " + Tools.GetTimeStamp(true) + " toolset";
+				string path = GetUnusedPath(logDirectory,preferredFilename,"log");						
+				FileInfo f = new FileInfo(path);				
+				Stream s = f.Open(FileMode.Create);
+				writer = new StreamWriter(s);
+				writer.AutoFlush = true;
+				Log.Message += new EventHandler<LogEventArgs>(LogMessage);
+			}
+			catch (Exception e) {
+				Say.Error(e.ToString());
+			}
 		}
 		
 		
@@ -51,10 +57,12 @@ namespace AdventureAuthor.Utils
 		
 		private static void LogMessage(object sender, LogEventArgs e)
 		{
+			System.Diagnostics.Debug.WriteLine("LogMessage() called.");
 			if (writer != null) {
 				writer.WriteLine(e.Message);
 				writer.Flush();
 			}
+			System.Diagnostics.Debug.WriteLine("Message logged.");
 		}
 		
 		

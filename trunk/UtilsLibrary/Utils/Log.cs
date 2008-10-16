@@ -38,14 +38,12 @@ namespace AdventureAuthor.Utils
 		
 		private static void OnMessage(LogEventArgs e)
 		{
+			System.Diagnostics.Debug.WriteLine("OnMessage() called.");
 			EventHandler<LogEventArgs> handler = Message;
 			if (handler != null) {
 				handler(null,e);
 			}
 		}
-		
-		
-		// TODO refactor all the redundant code below
 		
 		
 		/// <summary>
@@ -58,43 +56,6 @@ namespace AdventureAuthor.Utils
 			string message = Tools.GetTimeStamp(false) + " >" + logMessage;
 			OnMessage(new LogEventArgs(message));
 		}			
-		
-
-//		
-//		/// <summary>
-//		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard'
-//		/// </summary>
-//		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
-//		/// <param name="action">The user's action involving a wizard/dialog, i.e. Starting, Completing or Aborting it</param>
-//		/// <param name="dialog">The wizard/dialog in question, e.g. NewConversationWizard, AddSpeakerWizard, DeleteActionDialog</param>
-//		public static void WriteDialogAction(DialogAction action, string wizard)
-//		{
-//			WriteDialogAction(action,wizard,null);
-//		}		
-//		
-//		
-//		/// <summary>
-//		/// Writes a log message in the form: '16:24:15:StartedWizard NewCharacterWizard -8th character created'
-//		/// </summary>
-//		/// <remarks>Timestamp:WizardAction wizard -optionalextrainfo</remarks>
-//		/// <param name="action">The user's action involving a wizard/dialog, i.e. Starting, Completing or Aborting it</param>
-//		/// <param name="dialog">The wizard/dialog in question, e.g. NewConversationWizard, AddSpeakerWizard, DeleteActionDialog</param>
-//		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
-//		public static void WriteDialogAction(DialogAction action, string dialog, string extraInfo)
-//		{
-//			string message;
-//			string subjectmsg = dialog == null ? "<Subject not logged>" : dialog;			
-//			
-//			if (extraInfo != null) {
-//				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
-//			}
-//			else {
-//				message = UsefulTools.GetTimeStamp(false) + ": " + action.ToString() + " " + subjectmsg;
-//			}
-//				
-//			writer.WriteLine(message);
-//			writer.Flush();
-//		}
 		
 		
 
