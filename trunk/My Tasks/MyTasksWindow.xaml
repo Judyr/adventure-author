@@ -54,17 +54,25 @@
 					        Click="IgnoreSuggestedTask"/>
 				</WrapPanel>
 			</StackPanel>			
-		</DataTemplate>
+		</DataTemplate>	
 	
-	</Window.Resources>
-	
-	<Window.Background>
-		<RadialGradientBrush>
+		<RadialGradientBrush x:Key="MyTasksBackground">
 			<GradientStop Color="Black" Offset="-15"/>
 			<GradientStop Color="Brown" Offset="0"/>
 			<GradientStop Color="Maroon" Offset="0.8"/>
 			<GradientStop Color="Black" Offset="15"/>
 		</RadialGradientBrush>
+		
+		<LinearGradientBrush x:Key="MySuggestionsBackground">
+			<GradientStop Color="#00008B" Offset="0"/>
+			<GradientStop Color="#0000D0" Offset="0.7"/>
+			<GradientStop Color="#00008B" Offset="1"/>
+		</LinearGradientBrush>
+	
+	</Window.Resources>
+	
+	<Window.Background>
+		<StaticResource ResourceKey="MyTasksBackground"/>
 	</Window.Background>
 	
 	<DockPanel>
@@ -154,8 +162,8 @@
 				</Border.BitmapEffect>-->
 				
 				
-				<Grid Height="500"
-					  Width="400"
+				<Grid Height="600"
+					  Width="450"
 				      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
 				      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
 				      ShowGridLines="false"
@@ -169,7 +177,7 @@
 					</Grid.Style>
 					
 					<Grid.RowDefinitions>
-						<RowDefinition MinHeight="200" Height="*"/>
+						<RowDefinition Height="300"/>
 						<RowDefinition Height="140"/>
 						<RowDefinition Height="80"/>
 						<RowDefinition Height="80"/>
@@ -190,6 +198,7 @@
 										   TextWrapping="Wrap"
 										   ToolTip="This is the task's description. To edit it, simply click on it."
 										   Width="350"
+										   Height="230"
 										   Margin="25"
 										   Padding="8"
 										   FontSize="26"
@@ -303,7 +312,7 @@
 			<Grid x:Name="mySuggestionsGrid"
 			      Grid.Row="0"
 				  Grid.Column="3"
-				  Background="DarkBlue">
+				  Background="{StaticResource MySuggestionsBackground}">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="40"/>
 					<RowDefinition Height="*"/>
@@ -325,7 +334,7 @@
 					       Grid.Column="0"
 					       Text="My Suggestions"
 						   Foreground="White"
-						   Background="DarkBlue"
+						   Background="Transparent"
 						   FontFamily="Times New Roman"
 						   FontSize="20"
 						   VerticalAlignment="Center"
@@ -344,7 +353,7 @@
 						ItemsSource="{Binding}"
 						ItemTemplate="{StaticResource suggestedTaskTemplate}"
 						BorderThickness="0"
-						Background="DarkBlue"
+						Background="Transparent"
 						Foreground="White">
 						<ListBox.Width>
 							<Binding ElementName="mainGrid" Path="ActualWidth"/>
@@ -358,7 +367,7 @@
 				           MouseDown="UserClickedOnMySuggestionsMessage"
 				           TextWrapping="Wrap"
 						   Foreground="White"
-						   Background="DarkBlue"
+						   Background="Transparent"
 						   FontFamily="Helvetica"
 						   FontSize="16"
 				           TextAlignment="Center"

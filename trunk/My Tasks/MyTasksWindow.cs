@@ -31,19 +31,20 @@ namespace AdventureAuthor.Tasks
 		public const string APPLICATION_NAME = "My Tasks";
 		public const string DEFAULT_TASK_DESCRIPTION = "Enter your task here...";
 		public const string MYSUGGESTIONSINFO_GENERAL = "Click here to ask Adventure Author to suggest tasks " +
-														"based on your module.\n\n" +
-														"You can only do this when you have the toolset running " +
-														"and your module open.";
+				"based on your module.\n\nYou can only do this when you have the toolset running " +
+				"and your module open.";
 		public const string MYSUGGESTIONSINFO_NOMODULEOPEN = "You need to open a module in the toolset before you " +
-															 "can get suggestions about how to improve it.\n\n" +
-															 "Once you've opened your module, click here again " +
-															 "to get Adventure Author to suggest tasks for you.";
+				"can get suggestions about how to improve it.\n\nOnce you've opened your module, click here again " +
+				"to get Adventure Author to suggest tasks for you.";
 		public const string MYSUGGESTIONSINFO_NOSUGGESTIONS = "your module didn't seem to have any obvious bugs, so " +
-															  "Adventure Author has no suggestions for you at the moment.\n\n" +
-															  "As you continue to work on your module, Adventure Author may " +
-															  "come up with some suggestions about how to improve it. You can " +
-															  "click here every so often to find out what it has to say.";
+				"Adventure Author has no suggestions for you at the moment.\n\nAs you continue to work on your module, " +
+				"Adventure Author may come up with some suggestions about how to improve it. You can click here every so " +
+				"often to find out what it has to say.";
 		public const string MYSUGGESTIONSINFO_WAITING = "Waiting for toolset...";
+		public const string MYSUGGESTIONSINFO_SOMETHINGWENTWRONG = "Something went wrong while Adventure Author " +
+				"was trying to come up with suggested tasks for your module. This is due to a bug in " +
+				"the software... sorry!\n\nThis means that Adventure Author probably won't be able to give you " +
+				"any suggestions for this module until the bug is fixed, but you can always try again by clicking here.";
 		
 		#endregion
 		
@@ -841,6 +842,11 @@ namespace AdventureAuthor.Tasks
 	    						Dispatcher.BeginInvoke(DispatcherPriority.Normal,
 	    						                       new SetSuggestionsPanelMessageDelegate(SetSuggestionsPanelMessage),
 	    						                       MYSUGGESTIONSINFO_NOMODULEOPEN);
+	    					}
+	    					else if (message == Messages.SOMETHINGWENTWRONG) {
+	    						Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+	    						                       new SetSuggestionsPanelMessageDelegate(SetSuggestionsPanelMessage),
+	    						                       MYSUGGESTIONSINFO_SOMETHINGWENTWRONG);
 	    					}
 	    					else {
 		    					try {

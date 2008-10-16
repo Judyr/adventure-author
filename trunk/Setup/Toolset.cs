@@ -675,15 +675,26 @@ namespace AdventureAuthor.Setup
 	    						if (!ModuleHelper.ModuleIsOpen()) {
 	    							ThreadedSendMessage(Messages.NOMODULEOPEN);
 	    						}
-	    						else {	    						
-		    						List<Task> tasks = GetTasks();
+	    						else {	    		
+	    							List<Task> tasks = null;
+	    							try {
+	    								tasks = GetTasks();
+	    							}
+	    							catch (Exception e) {
+	    								Say.Error("There was an error when generating suggested tasks.",e);
+	    							}
 		    						
-		    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
-		    						StringWriter stringWriter = new StringWriter();
-		    						xmlSerializer.Serialize(stringWriter,tasks);
-		    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
-		    						
-		    						ThreadedSendMessage(serialisedTasks);//SendMessageToMyTasks(serialisedTasks);
+	    							if (tasks != null) {
+			    						XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+			    						StringWriter stringWriter = new StringWriter();
+			    						xmlSerializer.Serialize(stringWriter,tasks);
+			    						string serialisedTasks = stringWriter.GetStringBuilder().ToString();
+			    						
+			    						ThreadedSendMessage(serialisedTasks);//SendMessageToMyTasks(serialisedTasks);
+	    							}
+	    							else {
+	    								ThreadedSendMessage(Messages.SOMETHINGWENTWRONG);
+	    							}
 	    						}
 		    				}
 	    					else if (message.Length > 0) {
