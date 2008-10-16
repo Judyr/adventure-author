@@ -162,14 +162,11 @@ namespace AdventureAuthor.Tasks.NWN2
 				return tasks;
 			}
 								
-			//string allareas = "All areas:";
 			areas = new Dictionary<string, Area>(form.App.Module.Areas.Count);
 			foreach (NWN2GameArea nwn2area in form.App.Module.Areas.Values) {
 				Area areaInfo = new Area(nwn2area.Name.ToLower());
 				areas.Add(areaInfo.Name,areaInfo);
-				//allareas += "\n" + areaInfo.Name;
 			}
-			//Say.Information(allareas);
 			
 			
 			// Check whether the module has a start location. If it does, note the 
@@ -191,7 +188,6 @@ namespace AdventureAuthor.Tasks.NWN2
 					startingArea = areas[filename.Substring(0,filename.Length-4).ToLower()];
 				}		
 			}
-			
 			
 			// In the first pass, collect all of the entrance doors and triggers, 
 			// as well as collecting the *tags* of the exit doors and waypoints.
@@ -347,17 +343,7 @@ namespace AdventureAuthor.Tasks.NWN2
 			if (exit != null) {
 				string entranceAreaName = entrance.Area.Name.ToLower();
 				string exitAreaName = exit.Area.Name.ToLower();
-				if (!areas.ContainsKey(entranceAreaName)) {
-					Say.Error("'" + entranceAreaName + "' was not found in the collected areas, " +
-					          "so a link could not be made.");
-				}
-				else if (!areas.ContainsKey(exitAreaName)) {
-					Say.Error("'" + exitAreaName + "' was not found in the collected areas, " +
-					          "so a link could not be made.");
-				}
-				else {
-					areas[entranceAreaName].LeadsTo.Add(areas[exitAreaName]);
-				}				
+				areas[entranceAreaName].LeadsTo.Add(areas[exitAreaName]);
 			}
 			// Otherwise, if you're checking for broken area transitions, check whether
 			// there is a valid exit with the given tag but the user has failed to

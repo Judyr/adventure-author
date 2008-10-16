@@ -36,5 +36,6 @@ namespace AdventureAuthor.Utils
 		public const string REQUESTAVAILABLECRITERIA = "Send available criteria for task generation.";	
 		public const string REQUESTALLTASKS = "Send all tasks, without filtering by criteria.";	
 		public const string NOMODULEOPEN = "No module is open.";
+		public const string SOMETHINGWENTWRONG = "Something went wrong when generating suggestions.";
 	}
 }
