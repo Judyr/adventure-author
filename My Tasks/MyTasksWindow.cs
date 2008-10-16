@@ -109,7 +109,7 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public MyTasksWindow()
 		{	
-			InitializeComponent();		
+			InitializeComponent();
 			
 			SuggestedTasks = new TaskCollection();
 			mySuggestionsInformationTextBlock.Text = MYSUGGESTIONSINFO_GENERAL;
@@ -121,6 +121,17 @@ namespace AdventureAuthor.Tasks
 			catch (Exception e) {
 	    		Say.Debug("Failed to create directory for user:\n"+e);
 			}  
+			
+			
+			
+			
+			
+//			
+//			LogWriter.LogDirectory = ModuleHelper.UserLogDirectory;
+//			LogWriter.StartRecording();
+//			
+//			Closed += delegate { LogWriter.StopRecording(); };
+			
 			
 			
 			// Set up event handlers:
@@ -135,9 +146,11 @@ namespace AdventureAuthor.Tasks
 			string previousFilePath = MyTasksPreferences.Instance.PreviousFilePath;
 			if (previousFilePath != null && File.Exists(previousFilePath)) {
 				Open(previousFilePath);
+				Log.WriteAction(LogAction.opened,"taskcollection","'"+previousFilePath+"'. Opened most recent file automatically upon loading.");
 			}
 			else {
 				New();
+				Log.WriteAction(LogAction.added,"taskcollection","Created automatically upon launching application.");
 			}	
 							
 			// Dispose the system tray icon when you're done:
@@ -146,7 +159,10 @@ namespace AdventureAuthor.Tasks
 					trayIcon.Visible = false;
 					trayIcon.Dispose();
 				}
+				Log.WriteAction(LogAction.exited,"mytasks");
 			};
+			
+			Loaded += delegate { Log.WriteAction(LogAction.launched,"mytasks"); };
 			
 			// Launch the application in the system tray:
 			Loaded += new RoutedEventHandler(LaunchInSystemTray);
@@ -315,6 +331,7 @@ namespace AdventureAuthor.Tasks
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
   				Open(openFileDialog.FileName);
+  				Log.WriteAction(LogAction.opened,"taskcollection","'"+openFileDialog.FileName+"'. Opened via File->Open.");
   			}
   			return ok;
     	}
@@ -330,6 +347,7 @@ namespace AdventureAuthor.Tasks
 	    		}
 	    		else {
 		    		Save(filename);
+		  			Log.WriteAction(LogAction.saved,"taskcollection","'" + MyTasksPreferences.Instance.ActiveFilePath + "'");
 		    		return true;
 	    		}
     		}
@@ -358,6 +376,7 @@ namespace AdventureAuthor.Tasks
   				MyTasksPreferences.Instance.ActiveFilePath = saveFileDialog.FileName;
   				try {
 		  			Save();
+		  			Log.WriteAction(LogAction.saved,"taskcollection","Saved as '" + MyTasksPreferences.Instance.ActiveFilePath + "'");
 		  			return true;
   				}
   				catch (Exception e) {
@@ -435,7 +454,9 @@ namespace AdventureAuthor.Tasks
     			}    			
     		}
     		    		
+			Log.WriteAction(LogAction.closed,"taskcollection",MyTasksPreferences.Instance.ActiveFilePath);
     		New();
+			Log.WriteAction(LogAction.added,"taskcollection","Created automatically when previous file was closed.");
     		return true;
     	}
     	
@@ -571,6 +592,7 @@ namespace AdventureAuthor.Tasks
     	private void OnClick_New(object sender, EventArgs e)
     	{
     		New();
+			Log.WriteAction(LogAction.added,"taskcollection","Created via File->New.");
     	}
     	    	
     	
@@ -643,6 +665,7 @@ namespace AdventureAuthor.Tasks
 				string tag = (string)TagSelectionComboBox.SelectedItem;
 				if (!task.Tags.Contains(tag)) {
 					task.Tags.Add(tag);
+					Log.WriteAction(LogAction.added,"label","Added label '" + tag + "' to " + task);
 				}
 			}
 		}
@@ -650,7 +673,9 @@ namespace AdventureAuthor.Tasks
 		
     	private void AddAndSelectNewTask(object sender, EventArgs e)
     	{
-    		AddTask(new Task(DEFAULT_TASK_DESCRIPTION),true,true);
+    		Task task = new Task(DEFAULT_TASK_DESCRIPTION);
+    		AddTask(task,true,true);
+    		Log.WriteAction(LogAction.added,"task",task.ToString());
     	}
     	
     	
@@ -701,6 +726,8 @@ namespace AdventureAuthor.Tasks
 							task.Tags.Remove(deletingTag);
 						}
 						
+						Log.WriteAction(LogAction.deleted,"label","Deleted label '" + deletingTag + "' from " + task);
+						
 						if (filteredTag != null && !pad.tagFilterComboBox.Items.Contains(filteredTag)) {
 							// If the tag we removed was the last instance of the filtered tag,
 							// the list will no longer be filtered by that tag - but, confusingly,
@@ -737,16 +764,24 @@ namespace AdventureAuthor.Tasks
 			if (result == MessageBoxResult.OK) {
 				if (task.State == TaskState.Completed) {
 					task.Uncomplete();
+					Log.WriteAction(LogAction.uncompleted,"task",task.ToString());
 				}
 				else {
 					if (task.State != TaskState.NotCompleted) {
 						System.Diagnostics.Debug.WriteLine("Task state was '" + task.State + "'? How'd that happen?");
 					}
 					task.Complete();
+					Log.WriteAction(LogAction.completed,"task",task.ToString());
 				}
 				
 				pad.RefreshAllFilters();
 			}
+		}
+		
+		
+		private void LogThatTextHasChanged(object sender, TextEditedEventArgs e)
+		{
+			Log.WriteAction(LogAction.edited,"task",((Task)((EditableTextBox)sender).DataContext).ToString());
 		}
 		
 		#endregion	
@@ -887,13 +922,14 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
-    	private void DismissSuggestedTask(object sender, RoutedEventArgs e)
+    	private void IgnoreSuggestedTask(object sender, RoutedEventArgs e)
     	{
     		Button button = (Button)sender;
     		Task task = (Task)button.DataContext;
     		if (SuggestedTasks.Contains(task)) {
     			SuggestedTasks.Remove(task);
     		}
+    		Log.WriteAction(LogAction.ignored,"task","Ignored suggested task " + task);
     	}
     	
     	
@@ -906,6 +942,7 @@ namespace AdventureAuthor.Tasks
     		}
     		if (!pad.Tasks.Contains(task)) {
     			AddTask(task,false,false);
+    			Log.WriteAction(LogAction.added,"task",task.ToString());
     		}
     	}
     	
@@ -914,6 +951,7 @@ namespace AdventureAuthor.Tasks
     	{
     		SuggestedTasks.Clear();
 	    	ThreadedSendMessage(Messages.REQUESTALLTASKS);
+	    	Log.WriteMessage("User clicked to request suggested tasks from the toolset.");
     	}
     	
     	
@@ -931,22 +969,31 @@ namespace AdventureAuthor.Tasks
     			}
     		}
     		
+    		Log.WriteMessage("User clicked 'Add all' to add all suggested tasks.");
     		foreach (Task task in SuggestedTasks) {
     			AddTask(task,false,false);
+    			Log.WriteAction(LogAction.added,"task",task.ToString());
     		}
     		SuggestedTasks.Clear();
     	}
     	
     	
-    	private void DismissAllSuggestedTasks(object sender, RoutedEventArgs e)
+    	private void IgnoreAllSuggestedTasks(object sender, RoutedEventArgs e)
     	{
     		SuggestedTasks.Clear();
+    		Log.WriteMessage("User clicked 'Ignore all' to ignore all suggested tasks.");
     	}
     	
     	
-    	private void ChangeWhethersuggestedTasksListBoxIsVisible(object sender, RoutedEventArgs e)
+    	private void ChangeWhetherSuggestedTasksListBoxIsVisible(object sender, RoutedEventArgs e)
     	{
     		SuggestedTasksVisible = !SuggestedTasksVisible;
+    		if (SuggestedTasksVisible) {
+    			Log.WriteMessage("Showed My Suggestions panel.");
+    		}
+    		else {
+    			Log.WriteMessage("Hid My Suggestions panel.");
+    		}
     	}
     	
     	

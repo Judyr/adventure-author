@@ -264,6 +264,7 @@
 					<StackPanel.Resources>
 						<Style TargetType="{x:Type RadioButton}">
 							<EventSetter Event="RadioButton.Checked" Handler="ConditionallyApplyStateFilters"/>
+							<EventSetter Event="RadioButton.Checked" Handler="LogThatCompletedTaskFilterWasChecked"/>
 						</Style>
 					</StackPanel.Resources>
 					<RadioButton x:Name="showCompletedTasksOnlyRadioButton" 

@@ -62,10 +62,11 @@ namespace AdventureAuthor.Setup
 			newArea.BeginGroup = true;
 			newArea.Activate += delegate { NewAreaDialog(); };
 			
-			/*
+			
 			MenuButtonItem programmerFunctions = new MenuButtonItem("Programmer functions");
 			programmerFunctions.BeginGroup = true;
 			
+			/*
 			MenuButtonItem colourPicker = new MenuButtonItem("Colour picker");
 			colourPicker.Activate += delegate { 
 				RGBPicker picker = new RGBPicker();
@@ -73,11 +74,17 @@ namespace AdventureAuthor.Setup
 				picker.ShowDialog();
 			};
 			programmerFunctions.Items.Add(colourPicker);
+			*/
 			
 			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
-			logWindow.Activate += delegate { LogWindow window = new LogWindow(); window.Show(); };
+			logWindow.Activate += delegate 
+			{ 
+				LogWindow window = new LogWindow(); 
+				window.Show(); 
+			};
 			programmerFunctions.Items.Add(logWindow);	
 			
+			/*
 			MenuButtonItem selectTagWindow = new MenuButtonItem("Select tag window");
 			selectTagWindow.Activate += delegate { 
 				AdventureAuthor.Scripts.UI.SelectTagQuestionPanel panel =
@@ -151,6 +158,7 @@ namespace AdventureAuthor.Setup
 			                           	openRecentModule,
 			                           	newArea,
 			                           	exitAdventureAuthor,
+			                           	programmerFunctions
 			                           });	
 			
 			return fileMenu;
