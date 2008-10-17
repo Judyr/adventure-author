@@ -798,22 +798,25 @@ namespace AdventureAuthor.Tasks
     	}
     	
     	
-    	public delegate void AddSuggestedTaskDelegate(Task task);
-    	public void AddSuggestedTask(Task task)
+    	public delegate void PopulateSuggestedTasksDelegate(List<Task> tasks);
+    	public void PopulateSuggestedTasks(List<Task> tasks)
     	{
-    		if (SuggestedTasks != null && !SuggestedTasks.Contains(task)) {
-    			SuggestedTasks.Add(task);
+    		lock (padlock) {
+	    		if (SuggestedTasks != null) {
+    				SuggestedTasks.Clear();
+		    		foreach (Task task in tasks) {
+	//    				if (pad.Tasks != null && pad.Tasks.Contains(task)) {
+	//    					continue;
+	//    				}
+	    				if (!SuggestedTasks.Contains(task)) {
+		    				SuggestedTasks.Add(task);
+		    			}
+		    		}
+	    		}
     		}
     	}
     	
-    	
-    	public delegate void AddSuggestedTasksDelegate(List<Task> tasks);
-    	public void AddSuggestedTasks(List<Task> tasks)
-    	{
-    		foreach (Task task in tasks) {
-    			AddSuggestedTask(task);
-    		}
-    	}
+    	private object padlock = new object();
     	
     	
     	public delegate void SetSuggestionsPanelMessageDelegate(string message);    	
@@ -865,7 +868,7 @@ namespace AdventureAuthor.Tasks
 			    					}
 			    					else {
 				    					Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-				    					                       new AddSuggestedTasksDelegate(AddSuggestedTasks),
+				    					                       new PopulateSuggestedTasksDelegate(PopulateSuggestedTasks),
 				    					                       tasks);
 			    						// This won't be visible immediately, but should be reset to the 'normal'
 			    						// message whenever the 'no module/suggestions' messages don't apply:
@@ -953,7 +956,6 @@ namespace AdventureAuthor.Tasks
     	
     	private void UserClickedOnMySuggestionsMessage(object sender, RoutedEventArgs e)
     	{
-    		SuggestedTasks.Clear();
 	    	ThreadedSendMessage(Messages.REQUESTALLTASKS);
 	    	Log.WriteMessage("User clicked to request suggested tasks from the toolset.");
     	}
