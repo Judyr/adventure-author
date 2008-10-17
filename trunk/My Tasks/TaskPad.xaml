@@ -6,8 +6,7 @@
     xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
     KeyDown="HandleKeyPresses"
-    Background="CornSilk"
-	Width="255" Height="650">
+    Background="CornSilk">
 	
 	<!--<UserControl.BitmapEffect>
 		<BevelBitmapEffect Relief="0.3"/>
@@ -25,6 +24,7 @@
 		<tasks:DisableIfTaskCollectionIsEmptyConverter x:Key="disableIfTaskCollectionIsEmpty"/>
 		<tasks:GenerateMessageAboutFilters x:Key="generateMessageAboutFilters"/>
 		<tasks:TaskOriginToTextBrushConverter x:Key="taskOriginToTextBrush"/>
+		<tasks:GridLengthToDoubleConverter x:Key="gridLengthToDouble"/>
 		
 		<CollectionViewSource x:Key="tasksCollectionViewSource"
 							  Source="{Binding Path=., Mode=TwoWay}"/>
@@ -150,7 +150,7 @@
 			
 			<ScrollViewer Grid.Row="1"
 						  Grid.Column="0"
-						  VerticalScrollBarVisibility="Auto"
+			              VerticalScrollBarVisibility="Auto"
 						  HorizontalScrollBarVisibility="Hidden">			
 				<ListBox x:Name="taskListBox"
 						 ItemsSource="{Binding Source={StaticResource tasksCollectionViewSource}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"			         

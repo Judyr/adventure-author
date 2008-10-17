@@ -110,8 +110,7 @@ namespace AdventureAuthor.Tasks
             	if ((bool)activateTagFilterCheckBox.IsChecked && tagFilterComboBox.SelectedItem != null) {
             		Log.WriteAction(LogAction.mode,"mytasks_FilterByTag","'" + tagFilterComboBox.SelectedItem + "'");            		
             	}
-            };
-            
+            };            
             searchStringTextBox.TextChanged += LogWhetherUserFilteredByText;
 		}
 		
