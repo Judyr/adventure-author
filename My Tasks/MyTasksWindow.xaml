@@ -8,6 +8,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     WindowState="Maximized"
 	Width="700" Height="700"
+	MinWidth="800" MinHeight="600"
     >
 	
 	<Window.Resources>	
@@ -69,6 +70,8 @@
 			<GradientStop Color="#00008B" Offset="1"/>
 		</LinearGradientBrush>
 	
+		<sys:Double x:Key="taskPadMargin">-120</sys:Double>
+	
 	</Window.Resources>
 	
 	<Window.Background>
@@ -113,7 +116,7 @@
 			</Menu>			
 		</StackPanel>
 		
-		<Grid x:Name="mainGrid"
+		<Grid x:Name="mainGrid" 
 		      DockPanel.Dock="Bottom">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
@@ -128,14 +131,11 @@
 			<tasks:TaskPad 
 				x:Name="pad"
 				Grid.Row="0"
+			    Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=ActualHeight, Converter={StaticResource reduceWidthConverter}, ConverterParameter={StaticResource taskPadMargin}}"
 				Grid.Column="0"
 				Margin="20"
 				VerticalAlignment="Top"
-				HorizontalAlignment="Center">
-				<!--<tasks:TaskPad.LayoutTransform>
-					<RotateTransform PresentationOptions:Freeze="true" Angle="358"/>
-				</tasks:TaskPad.LayoutTransform>-->
-			</tasks:TaskPad>
+				HorizontalAlignment="Center"/>
 				
 			<!--Text that displays when no task is selected-->
 			<TextBlock Grid.Row="0"
@@ -150,7 +150,9 @@
 		
 			<!--'Sheet of paper' that displays the details of the currently selected task-->
 			<Border Grid.Row="0"
-					Grid.Column="1">
+					Grid.Column="1"
+			        Margin="10"
+					MinHeight="470">
 				
 				<Border.LayoutTransform>
 					<RotateTransform Angle="6"/>
@@ -162,9 +164,7 @@
 				</Border.BitmapEffect>-->
 				
 				
-				<Grid Height="600"
-					  Width="450"
-				      DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
+				<Grid DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
 				      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
 				      ShowGridLines="false"
 					  Background="{Binding Path=State, Converter={StaticResource setBackgroundAccordingToTaskState}}">
@@ -177,9 +177,9 @@
 					</Grid.Style>
 					
 					<Grid.RowDefinitions>
-						<RowDefinition Height="300"/>
+						<RowDefinition Height="220"/>
 						<RowDefinition Height="140"/>
-						<RowDefinition Height="80"/>
+						<RowDefinition Height="40"/>
 						<RowDefinition Height="80"/>
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
@@ -198,7 +198,6 @@
 										   TextWrapping="Wrap"
 										   ToolTip="This is the task's description. To edit it, simply click on it."
 										   Width="350"
-										   Height="230"
 										   Margin="25"
 										   Padding="8"
 										   FontSize="26"

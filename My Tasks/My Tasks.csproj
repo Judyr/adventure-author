@@ -62,6 +62,7 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\GridLengthToDoubleConverter.cs" />
     <Compile Include="Converters\ShowOnlyIfTaskCollectionIsEmptyConverter.cs" />
     <Compile Include="Converters\TaskOriginToTextBrushConverter.cs" />
     <Compile Include="Converters\VisibleIfTrueConverter.cs" />
