@@ -74,8 +74,6 @@ namespace AdventureAuthor.Evaluation
             }            
             Open(reply);
             
-            string imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"delete.png");
-            Tools.SetXAMLButtonImage(DeleteButton,imagePath,"delete");
             DeleteButton.ToolTip = "Delete this reply\n(teachers only)";
             EditButton.ToolTip = "Edit this reply\n(teachers only)";
         }

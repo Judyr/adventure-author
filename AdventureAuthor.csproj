@@ -59,9 +59,6 @@
     <Reference Include="Netron.Diagramming.Win">
       <HintPath>..\Libraries\Netron.Diagramming.Win.dll</HintPath>
     </Reference>
-    <Reference Include="NWN2PluginToolsLibrary">
-      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\NWN2PluginToolsLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="NWN2Toolset">
       <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -349,8 +346,11 @@
     <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx" />
+    <Resource Include="Conversations\UI\Controls\Lines\delete.png" />
     <None Include="EULA.txt" />
     <None Include="gpl.txt" />
+    <Resource Include="Variables\UI\delete.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Analysis\UI\AreaMapControl.xaml" />

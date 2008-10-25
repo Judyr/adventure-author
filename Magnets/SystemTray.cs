@@ -9,9 +9,12 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
+using System.Reflection;
+using System.Resources;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using AdventureAuthor.Ideas;
@@ -36,11 +39,9 @@ namespace AdventureAuthor.Ideas
 		
 		#region Fields
 		
-		private static string litbulbPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"litbulb.ico");
-		private static string unlitbulbPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"unlitbulb.ico");
-		private static System.Drawing.Icon litIcon = new System.Drawing.Icon(litbulbPath);
-		private static System.Drawing.Icon unlitIcon = new System.Drawing.Icon(unlitbulbPath);
-		private System.Windows.Forms.NotifyIcon trayIcon;	
+		private static Icon litIcon;
+		private static Icon unlitIcon;
+		private NotifyIcon trayIcon;	
 		
 		#endregion
 		
@@ -52,7 +53,11 @@ namespace AdventureAuthor.Ideas
     	/// </summary>
     	private void LaunchInSystemTray()
     	{
-    		try {
+    		try {	        	
+	    		ResourceManager manager = new ResourceManager("AdventureAuthor.Ideas.Icons",System.Reflection.Assembly.GetExecutingAssembly());
+	    		litIcon = (Icon)manager.GetObject("litbulb");
+	    		unlitIcon = (Icon)manager.GetObject("unlitbulb");
+	    		
 	    		trayIcon = new System.Windows.Forms.NotifyIcon();
 	    		SwitchBulbOff();
 	    		trayIcon.Visible = true; 
@@ -103,10 +108,10 @@ namespace AdventureAuthor.Ideas
 	    		trayIcon.BalloonTipClicked += delegate { SwitchBulbOff(); };
 	    		trayIcon.BalloonTipShown += delegate { SwitchBulbOn(); };
 				
-				ShowBalloon("Double-click me to start working with Fridge Magnets!",12000);
+				ShowBalloon("Double-click the lightbulb to start working with Fridge Magnets!",12000);
     		}
     		catch (Exception x) {
-    			Say.Error("Something went wrong when placing the icon in the system tray.",x);
+    			Say.Error("Something went wrong when placing the Fridge Magnets icon in the system tray.",x);
     		}
     	} 
 		

@@ -33,17 +33,26 @@
     	<StackPanel x:Name="QuestionAndControls" Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
     		<StackPanel x:Name="ControlPanel" Orientation="Horizontal" 
     		            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-				<Button Name="MoveUpButton" Content="up" Click="OnClick_MoveUp"
+				<Button Name="MoveUpButton" Click="OnClick_MoveUp"
 						Height="20" Margin="2" FontSize="12" HorizontalAlignment="Center">
     				<Button.ToolTip>Move this question up</Button.ToolTip>
+    				<Button.Content>
+						<Image Source="up.png"/>
+					</Button.Content>
     			</Button>
-				<Button Name="MoveDownButton" Content="down" Click="OnClick_MoveDown"
+				<Button Name="MoveDownButton" Click="OnClick_MoveDown"
 						Height="20" Margin="2" FontSize="12" HorizontalAlignment="Center">
     				<Button.ToolTip>Move this question down</Button.ToolTip>
+    				<Button.Content>
+						<Image Source="down.png"/>
+					</Button.Content>
     			</Button>
-				<Button Name="DeleteQuestionButton" Content="del" Click="OnClick_DeleteQuestion"
+				<Button Name="DeleteQuestionButton" Click="OnClick_DeleteQuestion"
 						Height="20" Margin="2" FontSize="12" HorizontalAlignment="Center">
     				<Button.ToolTip>Delete this question permanently</Button.ToolTip>
+    				<Button.Content>
+						<Image Source="delete.png"/>
+					</Button.Content>
     			</Button>
     		</StackPanel>
     		<utils:SwitchableTextBox x:Name="QuestionTitle"
@@ -63,9 +72,12 @@
 	
 		<StackPanel Grid.Row="0" Grid.Column="2" 
     	            Orientation="Horizontal" FlowDirection="RightToLeft">
-    		<Button Name="AddReplyButton" Content="Add reply" Click="OnClick_AddReply"
+    		<Button Name="AddReplyButton" Click="OnClick_AddReply"
 					Height="30" Width="70" Margin="8">
     			<Button.ToolTip>Right to Reply</Button.ToolTip>
+    			<Button.Content>
+					<Image Source="speechbubblespink.png"/>
+				</Button.Content>
     		</Button>
     	</StackPanel>
 	

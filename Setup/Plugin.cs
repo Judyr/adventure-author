@@ -125,15 +125,17 @@ namespace AdventureAuthor.Setup
 		public void Load(INWN2PluginHost cHost)
 		{
 			try {
-				// Check directories:				
-				if (!Directory.Exists(ModuleHelper.AdventureAuthorInstallDirectory)) {					
-					Say.Error("Adventure Author files were not found at the expected location " + 
-					          "(" + ModuleHelper.AdventureAuthorInstallDirectory + ").\n\n" +
-					          "You may find that the software no longer runs correctly. " +
-					          "If this is the case, try reinstalling Adventure Author.");
-				}
+				// Check directories:		
+				// No longer used:
+//				if (!Directory.Exists(ModuleHelper.AdventureAuthorInstallDirectory)) {					
+//					Say.Error("Adventure Author files were not found at the expected location " + 
+//					          "(" + ModuleHelper.AdventureAuthorInstallDirectory + ").\n\n" +
+//					          "You may find that the software no longer runs correctly. " +
+//					          "If this is the case, try reinstalling Adventure Author.");
+//				}
 				try {
-					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;					
+					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;		
+					Tools.EnsureDirectoryExists(AdventureAuthorPluginPreferences.LocalAppDataDirectory);
 					Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
 					Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
 				} 

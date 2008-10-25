@@ -83,7 +83,7 @@ namespace AdventureAuthor.Ideas
         	try {
 	        	InitializeComponent();
 	        	
-	        	LogWriter.StartRecording("magnets");
+	        	LogWriter.StartRecording("magnets"); 		
 	        	
 	        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 				MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;

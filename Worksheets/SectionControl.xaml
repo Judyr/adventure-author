@@ -28,18 +28,30 @@
 						<Button Name="MoveSectionUpButton" Click="OnClick_MoveUp"
 								Height="24" Visibility="Collapsed" Margin="2" FontSize="12">
 		    				<Button.ToolTip>Move this section up</Button.ToolTip>
+		    				<Button.Content>
+								<Image Source="up.png"/>
+							</Button.Content>
 		    			</Button>
 						<Button Name="MoveSectionDownButton" Click="OnClick_MoveDown"
 								Height="24" Visibility="Collapsed" Margin="2" FontSize="12">
 		    				<Button.ToolTip>Move this section down</Button.ToolTip>
+		    				<Button.Content>
+								<Image Source="down.png"/>
+							</Button.Content>
 		    			</Button>
 						<Button Name="DeleteSectionButton" Click="OnClick_DeleteSection"
 								Height="24" Visibility="Collapsed" Margin="2" FontSize="12">
 		    				<Button.ToolTip>Delete this section permanently</Button.ToolTip>
+		    				<Button.Content>
+								<Image Source="delete.png"/>
+							</Button.Content>
 		    			</Button>
-						<Button Name="AddQuestionButton" Content="Add question" Click="OnClick_AddQuestion"
+						<Button Name="AddQuestionButton" Click="OnClick_AddQuestion"
 								Height="24" Visibility="Collapsed" Margin="8" FontSize="12">
 		    				<Button.ToolTip>Add a new question to this section</Button.ToolTip>
+		    				<Button.Content>
+								<Image Source="add.png"/>
+							</Button.Content>
 		    			</Button>
 					</StackPanel>					
 		    		<utils:SwitchableTextBox x:Name="SectionTitleTextBox" Grid.Row="0" Grid.Column="0"

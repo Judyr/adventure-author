@@ -13,7 +13,6 @@ using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.TypedCollections;
 using NWN2Toolset.NWN2.Data.Instances;
 using NWN2Toolset.NWN2.Data.Templates;
-using NWN2PluginToolsLibrary;
 using AdventureAuthor.Analysis;
 
 namespace AdventureAuthor.Analysis
@@ -34,7 +33,7 @@ namespace AdventureAuthor.Analysis
 		/// Calculates the challenge rating of a creature object/blueprint.
 		/// </summary>
 		/// <remarks>From GrinningFool's NWN2PluginToolsLibrary</remarks>
-		private static CreatureCRCalculator challengeRatingCalculator = new CreatureCRCalculator();		
+		//private static CreatureCRCalculator challengeRatingCalculator = new CreatureCRCalculator();		
 				
 		
 		/// <summary>
@@ -42,8 +41,9 @@ namespace AdventureAuthor.Analysis
 		/// </summary>
 		/// <remarks>Can pass either an object or a blueprint</remarks>
 		public static float GetChallengeRating(NWN2CreatureTemplate creature)
-		{			
-			return challengeRatingCalculator.calculateChallengeRating(creature,100);
+		{	
+			throw new NotImplementedException("Latest version of GrinningFool's NWN2PluginToolsLibrary.dll required.");
+			//return challengeRatingCalculator.calculateChallengeRating(creature,100);
 		}
 		
 		

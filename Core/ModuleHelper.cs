@@ -114,21 +114,6 @@ namespace AdventureAuthor.Core
 			}
 		}	
 		
-		
-		public static string ImagesDir {			
-			get {
-				return Path.Combine(AdventureAuthorInstallDirectory,"images");
-			}
-		}	
-				
-		
-		public static string SoundsDir {			
-			get {
-				return Path.Combine(AdventureAuthorInstallDirectory,"sounds");
-			}
-		}
-				
-		
 		#endregion Global variables
 					
 		#region Events

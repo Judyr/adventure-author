@@ -2,6 +2,8 @@
 using System.IO;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Reflection;
+using System.Resources;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -75,16 +77,16 @@ namespace AdventureAuthor.Tasks
 			// Access to the CollectionViewSource allows filters to be added/removed/refreshed:
 			cvs = (CollectionViewSource)Resources["tasksCollectionViewSource"];
 			
-			// Set up button images:
-            string imagePath;
-            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"delete.png");
-            Tools.SetXAMLButtonImage(DeleteTaskButton,imagePath,"delete");
-            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"07.png");
-            Tools.SetXAMLButtonImage(MoveTaskDownButton,imagePath,"down");
-            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"08.png");
-            Tools.SetXAMLButtonImage(MoveTaskUpButton,imagePath,"up");
-            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"add.png");
-            Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add"); 
+	        
+//            string imagePath;
+//            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"delete.png");
+//            Tools.SetXAMLButtonImage(DeleteTaskButton,imagePath,"delete");
+//            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"07.png");
+//            Tools.SetXAMLButtonImage(MoveTaskDownButton,imagePath,"down");
+//            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"08.png");
+//            Tools.SetXAMLButtonImage(MoveTaskUpButton,imagePath,"up");
+//            imagePath = Path.Combine(MyTasksPreferences.Instance.InstallDirectory,"add.png");
+//            Tools.SetXAMLButtonImage(AddTaskButton,imagePath,"add"); 
             
             // Select the first item in the tag filter combo box:
             try {

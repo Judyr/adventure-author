@@ -76,13 +76,6 @@ namespace AdventureAuthor.Evaluation
             	MoveSectionDownButton.Visibility = Visibility.Visible;
             	MoveSectionUpButton.Visibility = Visibility.Visible;
             }
-            
-            string imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"delete.png");
-            Tools.SetXAMLButtonImage(DeleteSectionButton,imagePath,"delete");
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"07.png");
-            Tools.SetXAMLButtonImage(MoveSectionDownButton,imagePath,"down");
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"08.png");
-            Tools.SetXAMLButtonImage(MoveSectionUpButton,imagePath,"up");
         }  
 			        
 			
