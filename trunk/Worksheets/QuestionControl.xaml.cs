@@ -98,16 +98,6 @@ namespace AdventureAuthor.Evaluation
             else {
             	AddReplyButton.Visibility = Visibility.Collapsed;
             }
-            
-            string imagePath;
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"delete.png");
-            Tools.SetXAMLButtonImage(DeleteQuestionButton,imagePath,"delete");
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"07.png");
-            Tools.SetXAMLButtonImage(MoveDownButton,imagePath,"down");
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"08.png");
-            Tools.SetXAMLButtonImage(MoveUpButton,imagePath,"up");
-            imagePath = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"29.png");
-            Tools.SetXAMLButtonImage(AddReplyButton,imagePath,"reply");
         }
 
         

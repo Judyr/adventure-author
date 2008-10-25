@@ -215,15 +215,27 @@
 				<Button x:Name="DeleteTaskButton"
 						Click="DeleteSelectedTask"
 						ToolTip="Delete the selected task"
-						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}">
+					<Button.Content>
+						<Image Source="delete.png"/>
+					</Button.Content>
+				</Button>
 				<Button x:Name="MoveTaskUpButton"
 						Click="MoveSelectedTaskUp"
 						ToolTip="Move the selected task up"
-						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}">
+					<Button.Content>
+						<Image Source="up.png"/>
+					</Button.Content>
+				</Button>
 				<Button x:Name="MoveTaskDownButton"
 						Click="MoveSelectedTaskDown"
 						ToolTip="Move the selected task down"
-						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}"/>		
+						IsEnabled="{Binding ElementName=taskListBox, Path=SelectedItem, Converter={StaticResource disableIfNoTaskSelected}}">
+					<Button.Content>
+						<Image Source="down.png"/>
+					</Button.Content>
+				</Button>	
             	<Line Stroke="Black"
 					  StrokeThickness="0.5"				      
 					  X1="0"
@@ -233,7 +245,11 @@
 					  Margin="3"/>
 				<Button x:Name="AddTaskButton"
 						ToolTip="Add a new task"
-						IsEnabled="{Binding Converter={StaticResource disableIfNoTaskCollectionOpen}}"/>
+						IsEnabled="{Binding Converter={StaticResource disableIfNoTaskCollectionOpen}}">
+					<Button.Content>
+						<Image Source="add.png"/>
+					</Button.Content>
+				</Button>
 			</StackPanel>
 			
 			<StackPanel x:Name="filterControlsPanel"

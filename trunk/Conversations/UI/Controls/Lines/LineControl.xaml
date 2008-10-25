@@ -175,6 +175,9 @@
     			<Button.ToolTip>
     				<ToolTip>Delete this line</ToolTip>
     			</Button.ToolTip>
+    			<Button.Content>
+    				<Image Source="delete.png"/>
+    			</Button.Content>
 	    	</Button>   	
     	</StackPanel>
     	

@@ -11,7 +11,7 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <ApplicationIcon>..\..\Libraries\Icons\lightbulb_48.ico</ApplicationIcon>
+    <ApplicationIcon>lightbulb_48.ico</ApplicationIcon>
     <SignAssembly>False</SignAssembly>
     <DelaySign>False</DelaySign>
     <RunCodeAnalysis>False</RunCodeAnalysis>
@@ -112,5 +112,6 @@
       <Name>AAUtils</Name>
     </ProjectReference>
     <Folder Include="Ideas" />
+    <EmbeddedResource Include="Icons.resx" />
   </ItemGroup>
 </Project>

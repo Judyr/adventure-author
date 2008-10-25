@@ -647,6 +647,7 @@ namespace AdventureAuthor.Setup
     	{   
     		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromMyTasks);
     		Thread thread = new Thread(threadStart);
+    		thread.Name = "Listen for messages from My Tasks";
     		thread.IsBackground = true; // will not prevent the application from closing down
 			thread.Priority = ThreadPriority.BelowNormal;
     		thread.Start();
@@ -676,8 +677,17 @@ namespace AdventureAuthor.Setup
 	    							ThreadedSendMessage(Messages.NOMODULEOPEN);
 	    						}
 	    						else {	    		
+	    							ThreadStart ts = new ThreadStart(GenerateAndSendSuggestedTasks);
+	    							Thread thread = new Thread(ts);
+	    							thread.Name = "Generate tasks thread";
+	    							thread.Priority = ThreadPriority.Normal;
+	    							thread.IsBackground = true;
+	    							thread.Start();
+	    							
+	    							/*
 	    							List<Task> tasks = null;
 	    							try {
+	    								// TODO: Launch this as another background thread.
 	    								tasks = GetTasks();
 	    							}
 	    							catch (Exception e) {
@@ -694,7 +704,7 @@ namespace AdventureAuthor.Setup
 	    							}
 	    							else {
 	    								ThreadedSendMessage(Messages.SOMETHINGWENTWRONG);
-	    							}
+	    							}*/
 	    						}
 		    				}
 	    					else if (message.Length > 0) {
@@ -709,6 +719,30 @@ namespace AdventureAuthor.Setup
 			}    		
 			ListenForMessagesFromMyTasks();
     	}
+		
+		
+		private static void GenerateAndSendSuggestedTasks()
+		{
+			List<Task> tasks = null;
+	    	try {
+	    		tasks = GetTasks();
+	    	}
+	    	catch (Exception e) {
+	    		Say.Error("There was an error when generating suggested tasks.",e);
+	    	}
+		    			
+	    	if (tasks != null) {
+				XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Task>));
+				StringWriter stringWriter = new StringWriter();
+				xmlSerializer.Serialize(stringWriter,tasks);
+				string serialisedTasks = stringWriter.GetStringBuilder().ToString();
+			    						
+				ThreadedSendMessage(serialisedTasks);
+	    	}
+	    	else {
+	    		ThreadedSendMessage(Messages.SOMETHINGWENTWRONG);
+	    	}
+		}
 		
 		
 		private static void ThreadedSendMessage(string message)

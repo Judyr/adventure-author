@@ -234,18 +234,6 @@ namespace AdventureAuthor.Utils
 					throw new ArgumentException("Not valid month number");
 			}
 		}
-		
-			
-		public static void SetXAMLButtonImage(System.Windows.Controls.Button button, string path, string alternateText)
-		{
-	       	try {
-				button.Content = ResourceHelper.GetImage(path);
-	       	}
-	       	catch (Exception e) {
-	       		Say.Debug("Couldn't assign image for interface button: " + e);
-	       		button.Content = alternateText;
-	       	}
-		}
 						
 		
 		/// <summary>

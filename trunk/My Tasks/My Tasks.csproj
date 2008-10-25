@@ -12,6 +12,7 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ApplicationIcon>textfile.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>C:\My Tasks output</OutputPath>
@@ -124,5 +125,10 @@
     <EmbeddedResource Include="Icons.resx" />
     <EmbeddedResource Include="Images.resx" />
     <Folder Include="Converters" />
+    <Resource Include="add.png" />
+    <Resource Include="delete.png" />
+    <Resource Include="down.png" />
+    <Resource Include="up.png" />
+    <Resource Include="textfile.ico" />
   </ItemGroup>
 </Project>

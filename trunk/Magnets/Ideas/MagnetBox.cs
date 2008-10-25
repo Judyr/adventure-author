@@ -948,24 +948,25 @@ namespace AdventureAuthor.Ideas
     	
         internal void OnClick_LuckyDip(object sender, RoutedEventArgs e)
         {        	
-        	Window window = new Window();
-        	window.SizeToContent = SizeToContent.WidthAndHeight;
-        	window.Background = Brushes.DarkBlue;
-        	StackPanel sp = new StackPanel();
-        	sp.Orientation = Orientation.Horizontal;
-        	string einsteinPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"einstein.png");
-        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage(einsteinPath);
-        	einstein.Height = 200;
-        	einstein.Width = 180;
-        	TextBlock tb = new TextBlock();
-        	tb.Text = "Einstein says: \"Why not try making your own cheese? It is cheap and effective!";
-        	tb.Background = Brushes.Transparent;
-        	tb.Foreground = Brushes.White;
-        	tb.FontSize = 18.0f;
-        	sp.Children.Add(einstein);
-        	sp.Children.Add(tb);
-        	window.Content = sp;
-        	window.ShowDialog();
+        	MessageBox.Show("Method commented out due to programmer laziness.");
+//        	Window window = new Window();
+//        	window.SizeToContent = SizeToContent.WidthAndHeight;
+//        	window.Background = Brushes.DarkBlue;
+//        	StackPanel sp = new StackPanel();
+//        	sp.Orientation = Orientation.Horizontal;
+//        	string einsteinPath = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"einstein.png");
+//        	Image einstein = AdventureAuthor.Utils.ResourceHelper.GetImage(einsteinPath);
+//        	einstein.Height = 200;
+//        	einstein.Width = 180;
+//        	TextBlock tb = new TextBlock();
+//        	tb.Text = "Einstein says: \"Why not try making your own cheese? It is cheap and effective!";
+//        	tb.Background = Brushes.Transparent;
+//        	tb.Foreground = Brushes.White;
+//        	tb.FontSize = 18.0f;
+//        	sp.Children.Add(einstein);
+//        	sp.Children.Add(tb);
+//        	window.Content = sp;
+//        	window.ShowDialog();
         }
         
         

@@ -38,10 +38,13 @@
 			        Grid.Row="0" Grid.Column="3"
 			        Margin="5" Width="25" Height="25"
 	    	        HorizontalAlignment="Center" VerticalAlignment="Center"
-	    	        Content="Delete" Click="OnClick_Delete">
+	    	        Click="OnClick_Delete">
 		    	<Button.ToolTip>
 		    		<ToolTip>Delete this variable</ToolTip>
 		    	</Button.ToolTip>
+				<Button.Content>
+					<Image Source="delete.png"/>
+				</Button.Content>
 			</Button>  			
 	    	<Button Grid.Row="0" Grid.Column="4"
 	    			Margin="5" Width="40" Height="25"

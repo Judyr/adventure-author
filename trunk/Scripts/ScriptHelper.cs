@@ -313,6 +313,10 @@ namespace AdventureAuthor.Scripts
 				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
 				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
 			}
+			else if (instance is NWN2ItemInstance) {
+				NWN2ItemInstance item = (NWN2ItemInstance)instance;
+				item.Identified = true;
+			}
 			else if (instance is NWN2EncounterInstance) {
 				NWN2EncounterInstance encounter = (NWN2EncounterInstance)instance;
 				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",repository);

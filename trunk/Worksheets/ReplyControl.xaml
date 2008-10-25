@@ -14,8 +14,12 @@
 		
 		<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" 
 		            Margin="10" VerticalAlignment="Top">
-			<Button Name="DeleteButton" Content="del" Click="OnClick_Delete" 
-			        Margin="4" Height="25" VerticalAlignment="Top"/>
+			<Button Name="DeleteButton" Click="OnClick_Delete" 
+			        Margin="4" Height="25" VerticalAlignment="Top">
+				<Button.Content>
+					<Image Source="delete.png"/>
+				</Button.Content>
+			</Button>
 			<Button Name="EditButton" Content="Edit" Click="OnClick_Edit" 
 			        Margin="4" Height="25" VerticalAlignment="Top"/>
 		</StackPanel>
