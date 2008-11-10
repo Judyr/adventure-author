@@ -1,0 +1,397 @@
+﻿<Window x:Class="AdventureAuthor.Tasks.MyTasksWindow"
+	xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tasks="clr-namespace:AdventureAuthor.Tasks"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
+  	xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:diagnostics="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    WindowState="Maximized"
+	Width="700" Height="700"
+	MinWidth="800" MinHeight="600"
+    >
+	
+	<Window.Resources>	
+		
+		<tasks:TaskStateToBooleanConverter x:Key="returnTrueIfTaskCompleted"/>	
+		<tasks:TaskStateToTextDecorationConverter x:Key="returnStrikethroughIfTaskCompleted"/>	
+		<tasks:CreatorToStringConverter x:Key="creatorStringConverter"/>
+		<tasks:CreationDateToStringConverter x:Key="creationDateStringConverter"/>
+		<tasks:CompletionDateToStringConverter x:Key="completionDateStringConverter"/>
+		<tasks:HideIfNoTaskSelectedConverter x:Key="hideIfNoTaskSelected"/>
+		<tasks:HideIfTaskIsSelectedConverter x:Key="hideIfTaskIsSelected"/>
+		<tasks:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
+		<tasks:SetBackgroundAccordingToTaskStateConverter x:Key="setBackgroundAccordingToTaskState"/>
+		<tasks:GetContentForTaskCompletedButtonConverter x:Key="getContentForCompleteTaskButton"/>	
+		<tasks:TaskStateToVisibilityConverter x:Key="onlyShowIfTaskIsCompleted"/>
+		<tasks:GetGlowAccordingToTaskState x:Key="glowAccordingToState"/>
+		<tasks:ZeroIfFalseConverter x:Key="zeroWidthIfFalse"/>
+		<tasks:InverseBooleanToVisibilityConverter x:Key="showIfTaskCollectionIsEmpty"/>
+		
+		<ItemsPanelTemplate x:Key="tagListTemplate">
+			<WrapPanel Orientation="Horizontal" 
+			           Background="Transparent">
+				<WrapPanel.Width>
+					<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}" Path="ActualWidth" Converter="{StaticResource reduceWidthConverter}">
+						<Binding.ConverterParameter>
+							<sys:Double>-10</sys:Double>
+						</Binding.ConverterParameter>
+					</Binding>
+				</WrapPanel.Width>
+			</WrapPanel>
+		</ItemsPanelTemplate>	
+	
+		<DataTemplate x:Key="suggestedTaskTemplate">
+			<StackPanel Orientation="Vertical"
+						Margin="2">
+				<TextBlock Text="{Binding Description}"
+						   TextWrapping="Wrap"
+						   Width="140"/>
+				<WrapPanel Orientation="Horizontal"
+						   Margin="1">
+					<Button Content="Add"
+					        Click="AddSuggestedTask"/>
+					<Button Content="Ignore"
+					        Click="IgnoreSuggestedTask"/>
+				</WrapPanel>
+			</StackPanel>			
+		</DataTemplate>	
+	
+		<RadialGradientBrush x:Key="MyTasksBackground">
+			<GradientStop Color="Black" Offset="-15"/>
+			<GradientStop Color="Brown" Offset="0"/>
+			<GradientStop Color="Maroon" Offset="0.8"/>
+			<GradientStop Color="Black" Offset="15"/>
+		</RadialGradientBrush>
+		
+		<LinearGradientBrush x:Key="MySuggestionsBackground">
+			<GradientStop Color="#00008B" Offset="0"/>
+			<GradientStop Color="#0000D0" Offset="0.7"/>
+			<GradientStop Color="#00008B" Offset="1"/>
+		</LinearGradientBrush>
+	
+		<sys:Double x:Key="taskPadMargin">-120</sys:Double>
+	
+	</Window.Resources>
+	
+	<Window.Background>
+		<StaticResource ResourceKey="MyTasksBackground"/>
+	</Window.Background>
+	
+	<DockPanel>
+		
+		<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">				
+			<!--The main menu should appear to extend the full width of the screen-->
+			<StackPanel.Background>
+				<Binding ElementName="MainMenu" Path="Background" Mode="OneWay"/>
+			</StackPanel.Background>				
+			
+			<Menu Name="MainMenu" Height="26" 
+				  VerticalAlignment="Top" HorizontalAlignment="Left">	
+				<Menu.Style>
+					<Style TargetType="Control">
+						<Setter Property="FontSize" Value="14"/>
+					</Style>
+				</Menu.Style>
+				<MenuItem Header="File">
+					<MenuItem Name="NewMenuItem" Header="New"
+					          Click="OnClick_New"/>
+					<MenuItem Name="OpenMenuItem" Header="Open"
+					          Click="OnClick_Open"/>
+					<MenuItem Name="SaveMenuItem" Header="Save"
+					          Click="OnClick_Save"/>
+					<MenuItem Name="SaveAsMenuItem" Header="Save as"
+					          Click="OnClick_SaveAs"/>
+					<MenuItem Name="CloseMenuItem" Header="Close"
+					          Click="OnClick_Close"/>
+					<Separator/>
+					<MenuItem Name="ExitMenuItem" Header="Exit"
+					          Click="OnClick_Exit"/>
+				</MenuItem>
+				<MenuItem Header="Edit">
+					<MenuItem Name="NewTaskMenuItem" 
+					          Header="New task"
+							  Click="AddAndSelectNewTask"/>
+				</MenuItem>
+			</Menu>			
+		</StackPanel>
+		
+		<Grid x:Name="mainGrid" 
+		      DockPanel.Dock="Bottom">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="300"/>
+				<ColumnDefinition MinWidth="500" Width="2*"/>
+				<ColumnDefinition Width="0"/>
+				<ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=SuggestedTasksVisible, Converter={StaticResource zeroWidthIfFalse}}"/>
+			</Grid.ColumnDefinitions>
+	
+			<tasks:TaskPad 
+				x:Name="pad"
+				Grid.Row="0"
+			    Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=ActualHeight, Converter={StaticResource reduceWidthConverter}, ConverterParameter={StaticResource taskPadMargin}}"
+				Grid.Column="0"
+				Margin="20"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Center"/>
+				
+			<!--Text that displays when no task is selected-->
+			<TextBlock Grid.Row="0"
+					   Grid.Column="1"
+					   FontSize="32"
+					   FontFamily="Helvetica"
+					   Foreground="White"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"
+		      		   Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfTaskIsSelected}}"
+					   Text="No task selected."/>
+		
+			<!--'Sheet of paper' that displays the details of the currently selected task-->
+			<Border Grid.Row="0"
+					Grid.Column="1"
+			        Margin="10"
+					MinHeight="470">
+				
+				<Border.LayoutTransform>
+					<RotateTransform Angle="6"/>
+				</Border.LayoutTransform>
+				
+				<!--<Border.BitmapEffect>
+					<OuterGlowBitmapEffect PresentationOptions:Freeze="true"
+										   GlowColor="Blue"/>
+				</Border.BitmapEffect>-->
+				
+				
+				<Grid DataContext="{Binding ElementName=pad, Path=TaskListBox.SelectedItem}"			      
+				      Visibility="{Binding ElementName=pad, Path=TaskListBox.SelectedItem, Converter={StaticResource hideIfNoTaskSelected}}"
+				      ShowGridLines="false"
+					  Background="{Binding Path=State, Converter={StaticResource setBackgroundAccordingToTaskState}}">
+					
+					<Grid.Style>
+						<Style TargetType="FrameworkElement">
+							<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+							<Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
+						</Style>
+					</Grid.Style>
+					
+					<Grid.RowDefinitions>
+						<RowDefinition Height="220"/>
+						<RowDefinition Height="140"/>
+						<RowDefinition Height="40"/>
+						<RowDefinition Height="80"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					
+					<utils:EditableTextBox x:Name="taskDescriptionBox"
+										   Grid.Row="0"
+										   Grid.Column="0"
+										   Text="{Binding Path=Description, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+										   IsEditable="false"
+										   GotFocus="MakeEditable"
+										   LostFocus="MakeUneditable"
+										   TextEdited="LogThatTextHasChanged"
+										   KeyDown="FinishEditingWhenUserHitsReturn"
+										   TextWrapping="Wrap"
+										   ToolTip="This is the task's description. To edit it, simply click on it."
+										   Width="350"
+										   Margin="25"
+										   Padding="8"
+										   FontSize="26"
+										   FontFamily="Comic Sans MS"
+										   VerticalAlignment="Top"
+										   HorizontalAlignment="Center"
+										   TextDecorations="{Binding Path=State, Converter={StaticResource returnStrikethroughIfTaskCompleted}}">
+						<!--<utils:EditableTextBox.BitmapEffect>
+							<BlurBitmapEffect Radius="1" KernelType="Box"/>
+						</utils:EditableTextBox.BitmapEffect>-->
+					</utils:EditableTextBox>
+					
+					<StackPanel Grid.Row="1"
+						  		Grid.Column="0"
+						  		Orientation="Vertical">
+						
+						<ScrollViewer
+							Width="400"
+							VerticalScrollBarVisibility="Auto"
+							HorizontalScrollBarVisibility="Hidden">
+							<ListView 
+						          Height="100"
+							      Width="380"
+							      Background="Transparent"
+						          BorderThickness="0"
+								  ItemsSource="{Binding Path=Tags}"
+								  ItemsPanel="{StaticResource tagListTemplate}"
+							      HorizontalAlignment="Center"
+							      VerticalAlignment="Top"
+								  ScrollViewer.CanContentScroll="false"
+								  Button.Click="RemoveTagWhenDeleteButtonIsClicked"
+					        	  SelectionMode="Single"
+								  >
+								<ListView.ItemTemplate>
+									<DataTemplate>
+										<tasks:TagControl Padding="6"/>
+									</DataTemplate>
+								</ListView.ItemTemplate>
+							</ListView>	
+						</ScrollViewer>
+					
+						<StackPanel Orientation="Horizontal"
+						            HorizontalAlignment="Center"
+						            VerticalAlignment="Top">
+							<ComboBox x:Name="TagSelectionComboBox"
+									  Height="24"
+									  Width="140"
+							          FontSize="14"
+							          Margin="5"
+									  ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tasks:MyTasksWindow}}, Path=AllTags}"/>	
+							<Button Content="Attach label"
+							        Height="24"
+							        Width="70"
+									Click="AddSelectedTagToCurrentTask"/>
+						</StackPanel>
+								  
+					</StackPanel>
+					
+					<StackPanel Grid.Row="2"
+								Grid.Column="0"
+								Orientation="Vertical"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center">
+					
+						<TextBlock Grid.Row="2"
+								   Grid.Column="0"
+								   FontSize="14"
+						           FontWeight="SemiBold"
+						           HorizontalAlignment="Center"
+						           VerticalAlignment="Center"
+								   Foreground="Blue">
+							<TextBlock Text="{Binding Path=Creator, Converter={StaticResource creatorStringConverter}}"/>
+							<TextBlock Text="{Binding Path=Created, Converter={StaticResource creationDateStringConverter}}"/>
+						</TextBlock>
+					
+						<TextBlock Grid.Row="2"
+								   Grid.Column="0"
+								   FontSize="18"
+						           FontWeight="SemiBold"
+						           HorizontalAlignment="Center"
+						           VerticalAlignment="Center"
+								   Foreground="Red"
+								   Text="{Binding Path=Completed, Converter={StaticResource completionDateStringConverter}}"
+								   Visibility="{Binding Path=State, Converter={StaticResource onlyShowIfTaskIsCompleted}, ConverterParameter=Hidden}"/>
+					
+					</StackPanel>
+					
+					<Button x:Name="completedTaskButton"
+							Grid.Row="3"
+							Grid.Column="0"
+							FontSize="16"
+							Margin="10"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Click="ChangeCompletionStatusOfTask">
+						<TextBlock Padding="5"
+								   Text="{Binding Path=State, Converter={StaticResource getContentForCompleteTaskButton}}"/>
+					</Button>
+				
+				</Grid>
+			</Border>	
+				
+			<!--The bar which the user can click to show or hide the My Suggestions panel. Currently disabled.-->
+			<StackPanel Grid.Row="0"
+						Grid.Column="2"
+						Background="LightGray">
+				<Button Click="ChangeWhetherSuggestedTasksListBoxIsVisible"
+						Content="ChangeWhethersuggestedTasksListBoxIsVisible"/>
+			</StackPanel>		
+		
+			<Grid x:Name="mySuggestionsGrid"
+			      Grid.Row="0"
+				  Grid.Column="3"
+				  Background="{StaticResource MySuggestionsBackground}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="40"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="40"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				
+				<Grid.Resources>
+					<Style TargetType="{x:Type Button}">
+						<Setter Property="Button.Margin" Value="3"/>
+						<Setter Property="Button.Background" Value="Blue"/>
+						<Setter Property="Button.Foreground" Value="White"/>
+					</Style>
+				</Grid.Resources>
+				
+				<TextBlock Grid.Row="0"
+					       Grid.Column="0"
+					       Text="My Suggestions"
+						   Foreground="White"
+						   Background="Transparent"
+						   FontFamily="Times New Roman"
+						   FontSize="20"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Center"
+				           />			
+					
+				<ScrollViewer Grid.Row="1"
+							  Grid.Column="0"
+							  VerticalScrollBarVisibility="Auto"
+							  HorizontalScrollBarVisibility="Hidden">		
+					<ListBox
+						x:Name="suggestedTasksListBox"
+						Grid.Row="1"
+						Grid.Column="0"
+						SelectionMode="Single"
+						ItemsSource="{Binding}"
+						ItemTemplate="{StaticResource suggestedTaskTemplate}"
+						BorderThickness="0"
+						Background="Transparent"
+						Foreground="White">
+						<ListBox.Width>
+							<Binding ElementName="mainGrid" Path="ActualWidth"/>
+						</ListBox.Width>
+					</ListBox>
+				</ScrollViewer>
+					
+				<TextBlock x:Name="mySuggestionsInformationTextBlock"
+				           Grid.Row="1"
+					       Grid.Column="0"
+				           MouseDown="UserClickedOnMySuggestionsMessage"
+				           TextWrapping="Wrap"
+						   Foreground="White"
+						   Background="Transparent"
+						   FontFamily="Helvetica"
+						   FontSize="16"
+				           TextAlignment="Center"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Center"
+						   Padding="6"
+				           Visibility="{Binding ElementName=suggestedTasksListBox, Path=HasItems, Converter={StaticResource showIfTaskCollectionIsEmpty}}"
+				/>
+				
+				<WrapPanel 
+					Grid.Row="2"
+					Grid.Column="0"
+					Orientation="Horizontal"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+				>
+					<Button Click="AddAllSuggestedTasks"
+							Content="Add all"/>
+					<Button Click="IgnoreAllSuggestedTasks"
+							Content="Ignore all"/>
+				</WrapPanel>
+			
+			</Grid>
+				
+		</Grid>
+		
+	</DockPanel>
+</Window>

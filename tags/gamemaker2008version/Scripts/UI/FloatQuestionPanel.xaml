@@ -1,0 +1,10 @@
+﻿<local:ParameterPanel x:Class="AdventureAuthor.Scripts.UI.FloatQuestionPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AdventureAuthor.Scripts.UI"
+    Height="120" Width="500" Background="LightGreen">
+    <Canvas>
+		<TextBlock Name="QuestionLabel" FontSize="16" Foreground="Red" Canvas.Top="15" Canvas.Left="15" Height="40" Width="450"/>
+		<TextBox Name="AnswerBox" Canvas.Top="60" Canvas.Left="15" Height="30" Width="200"/>
+	</Canvas>
+</local:ParameterPanel>

@@ -1,0 +1,15 @@
+<local:Board x:Class="AdventureAuthor.Ideas.MagnetBoardControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AdventureAuthor.Ideas"
+    Canvas.ZIndex="-1"
+	AllowDrop="true">
+    <local:Board.Resources>
+		<Color x:Key="defaultSurfaceColour">#FFC3E6FD</Color>
+		<LinearGradientBrush x:Key="fridgeBrush" StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Offset="0" Color="{StaticResource defaultSurfaceColour}"/>
+			<GradientStop Offset="1.5" Color="White"/>
+		</LinearGradientBrush>
+	</local:Board.Resources>
+	<Canvas Name="mainCanvas" Background="{StaticResource fridgeBrush}"/>
+</local:Board>

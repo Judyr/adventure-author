@@ -1,0 +1,134 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AdventureAuthor.Tasks</RootNamespace>
+    <AssemblyName>My Tasks</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ApplicationIcon>textfile.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>C:\My Tasks output</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="App.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\GridLengthToDoubleConverter.cs" />
+    <Compile Include="Converters\ShowOnlyIfTaskCollectionIsEmptyConverter.cs" />
+    <Compile Include="Converters\TaskOriginToTextBrushConverter.cs" />
+    <Compile Include="Converters\VisibleIfTrueConverter.cs" />
+    <Compile Include="Converters\ZeroIfFalseConverter.cs" />
+    <Compile Include="Criterion.cs" />
+    <Compile Include="Converters\CompletedDateToStringConverter.cs" />
+    <Compile Include="Converters\CornerConverter.cs" />
+    <Compile Include="Converters\CreationDateToStringConverter.cs" />
+    <Compile Include="Converters\CreatorToStringConverter.cs" />
+    <Compile Include="Converters\DisableIfTaskCollectionIsEmptyConverter.cs" />
+    <Compile Include="Converters\DoubleToDoubleConverter.cs" />
+    <Compile Include="Converters\FalseIfNoTaskCollectionOpenConverter.cs" />
+    <Compile Include="Converters\FalseIfNoTaskSelectedConverter.cs" />
+    <Compile Include="Converters\GenerateMessageAboutFilters.cs" />
+    <Compile Include="Converters\GetContentForTaskCompletedButtonConverter.cs" />
+    <Compile Include="Converters\GetGlowAccordingToTaskState.cs" />
+    <Compile Include="Converters\HideIfNoTaskCollectionOpen.cs" />
+    <Compile Include="Converters\HideIfNoTaskSelectedConverter.cs" />
+    <Compile Include="Converters\HideIfTaskIsSelectedConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\SetBackgroundAccordingToTaskStateConverter.cs" />
+    <Compile Include="Converters\TaskStateToBooleanConverter.cs" />
+    <Compile Include="Converters\TaskStateToTextDecorationConverter.cs" />
+    <Compile Include="Converters\TaskStateToVisibilityConverter.cs" />
+    <Compile Include="Converters\TruncateTextConverter.cs" />
+    <Compile Include="DogEar.cs">
+      <DependentUpon>DogEar.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ITaskGenerator.cs" />
+    <Compile Include="MyTasksPreferences.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Corner.cs" />
+    <Compile Include="SystemTray.cs" />
+    <Compile Include="TagControl.xaml.cs">
+      <DependentUpon>TagControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Task.cs" />
+    <Compile Include="TaskCollection.cs" />
+    <Compile Include="TaskOrigin.cs" />
+    <Compile Include="TaskPad.xaml.cs">
+      <DependentUpon>TaskPad.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TaskState.cs" />
+    <Compile Include="MyTasksWindow.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MyTasksWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="DogEar.xaml" />
+    <Page Include="TagControl.xaml" />
+    <Page Include="TaskPad.xaml" />
+    <Page Include="MyTasksWindow.xaml" />
+    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
+    <EmbeddedResource Include="Icons.resx" />
+    <EmbeddedResource Include="Images.resx" />
+    <Folder Include="Converters" />
+    <Resource Include="add.png" />
+    <Resource Include="delete.png" />
+    <Resource Include="down.png" />
+    <Resource Include="up.png" />
+    <Resource Include="textfile.ico" />
+  </ItemGroup>
+</Project>

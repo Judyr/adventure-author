@@ -1,0 +1,424 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectGuid>{6C3192D1-C3CC-499B-B443-24AE5FC16914}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AdventureAuthor</RootNamespace>
+    <AssemblyName>AdventureAuthor</AssemblyName>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>0</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <DocumentationFile>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\AdventureAuthor.xml</DocumentationFile>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="DotNetMagic2005">
+      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\DotNetMagic2005.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GlacialTreeList">
+      <HintPath>..\..\..\..\Program Files\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedElectron">
+      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\ManagedElectron.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX" />
+    <Reference Include="Netron.Diagramming.Core">
+      <HintPath>..\Libraries\Netron.Diagramming.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Netron.Diagramming.Win">
+      <HintPath>..\Libraries\Netron.Diagramming.Win.dll</HintPath>
+    </Reference>
+    <Reference Include="NWN2Toolset">
+      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="OEILocalization">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\OEILocalization.dll</HintPath>
+    </Reference>
+    <Reference Include="OEIShared">
+      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\OEIShared.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="QWhale.Syntax">
+      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\QWhale.Syntax.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ReachFramework">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SandBar">
+      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Design">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.IdentityModel">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Printing">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UIAutomationProvider">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsFormsIntegration">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Achievements\AchievedEventArgs.cs" />
+    <Compile Include="Achievements\ArchitectAchievement.cs" />
+    <Compile Include="Achievements\IAchievement.cs" />
+    <Compile Include="Achievements\WordCountAchievement.cs" />
+    <Compile Include="Analysis\Combat.cs" />
+    <Compile Include="Analysis\CreatureInfo.cs" />
+    <Compile Include="Analysis\DangerLevel.cs" />
+    <Compile Include="Analysis\HostileGroup.cs" />
+    <Compile Include="Analysis\UI\AreaMapControl.xaml.cs">
+      <DependentUpon>AreaMapControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\UI\CombatMap.xaml.cs">
+      <DependentUpon>CombatMap.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\UI\CreatureMarker.xaml.cs">
+      <DependentUpon>CreatureMarker.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\UI\KeyControl.xaml.cs">
+      <DependentUpon>KeyControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\UI\TriggerMarker.xaml.cs">
+      <DependentUpon>TriggerMarker.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\Conversation.cs" />
+    <Compile Include="Conversations\ConversationChangedEventArgs.cs" />
+    <Compile Include="Conversations\ExportFormat.cs" />
+    <Compile Include="Conversations\Page.cs" />
+    <Compile Include="Conversations\Speaker.cs" />
+    <Compile Include="Conversations\SpeakersChangedEventArgs.cs" />
+    <Compile Include="Conversations\UI\AddSpeakerWindow.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>AddSpeakerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\ChooseSpeaker.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ChooseSpeaker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ActionControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ActionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ChoiceControl.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\ChoiceType.cs" />
+    <Compile Include="Conversations\UI\Controls\ConditionControl.xaml.cs">
+      <DependentUpon>ConditionControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\DialogueTextBox.cs" />
+    <Compile Include="Conversations\UI\Controls\EndConversationControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EndConversationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\Lines\BranchLine.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\ContextMenu_Actions.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\ContextMenu_Conditions.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\LeadingLine.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\Line.cs" />
+    <Compile Include="Conversations\UI\Controls\Lines\LineControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Controls\SoundControl.xaml.cs">
+      <DependentUpon>SoundControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\LineControlDragAdorner.cs" />
+    <Compile Include="Conversations\UI\NewOpenConversationWindow.xaml.cs">
+      <DependentUpon>NewOpenConversationWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\ReplaceSpeakerWindow.xaml.cs">
+      <DependentUpon>ReplaceSpeakerWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Conversations\UI\SpeakerButton.cs" />
+    <Compile Include="Conversations\UI\WriterWindow.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>WriterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Graph\GraphForm.cs" />
+    <Compile Include="Conversations\UI\Graph\GraphForm.Designer.cs">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\Graph\GraphTool.cs" />
+    <Compile Include="Conversations\UI\Graph\Node.cs" />
+    <Compile Include="Conversations\UI\NewConversation.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>NewConversation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversations\UI\SoundWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>SoundWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\ModuleHelper.cs" />
+    <Compile Include="Core\AreaHelper.cs" />
+    <Compile Include="Core\UI\CreateChapter_Form.cs" />
+    <Compile Include="Core\UI\CreateChapter_Form.Designer.cs">
+      <DependentUpon>CreateChapter_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\UI\NewModule.xaml.cs">
+      <DependentUpon>NewModule.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\UI\RunAdventure_Form.cs" />
+    <Compile Include="Core\UI\RunAdventure_Form.Designer.cs">
+      <DependentUpon>RunAdventure_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Scripts\Actions.cs" />
+    <Compile Include="Scripts\Animation.cs" />
+    <Compile Include="Scripts\Conditions.cs" />
+    <Compile Include="Scripts\Feat.cs" />
+    <Compile Include="Scripts\Movie.cs" />
+    <Compile Include="Scripts\NWN2Colour.cs" />
+    <Compile Include="Scripts\ScriptHelper.cs" />
+    <Compile Include="Scripts\Tag.cs" />
+    <Compile Include="Scripts\TaggedType.cs" />
+    <Compile Include="Scripts\UI\BooleanQuestionPanel.xaml.cs">
+      <DependentUpon>BooleanQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\EnumQuestionPanel.xaml.cs">
+      <DependentUpon>EnumQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\FloatQuestionPanel.xaml.cs">
+      <DependentUpon>FloatQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\IntegerAsStringQuestionPanel.xaml.cs">
+      <DependentUpon>IntegerAsStringQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\IntegerQuestionPanel.xaml.cs">
+      <DependentUpon>IntegerQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\ParameterPanel.cs" />
+    <Compile Include="Scripts\UI\ResRefQuestionPanel.xaml.cs">
+      <DependentUpon>ResRefQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\ScriptParametersWindow.cs">
+      <DependentUpon>ScriptParametersWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\SelectTagQuestionPanel.xaml.cs">
+      <DependentUpon>SelectTagQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\StringQuestionPanel.xaml.cs">
+      <DependentUpon>StringQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\TagQuestionPanel.xaml.cs">
+      <DependentUpon>TagQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripts\UI\VariableQuestionPanel.xaml.cs">
+      <DependentUpon>VariableQuestionPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
+    <Compile Include="Setup\BlueprintMagnetControl.cs" />
+    <Compile Include="Setup\BlueprintMagnetControlInfo.cs" />
+    <Compile Include="Setup\NWN2Utils.cs" />
+    <Compile Include="Setup\Plugin.cs" />
+    <Compile Include="Setup\SetupMenu.cs" />
+    <Compile Include="Setup\TextBoxItem.cs" />
+    <Compile Include="Setup\Toolset.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Tasks\NWN2\CreatureTasksGenerator.cs" />
+    <Compile Include="Tasks\NWN2\AreaTasksGenerator.cs" />
+    <Compile Include="Variables\UI\CreateEditVariableWindow.xaml.cs">
+      <DependentUpon>CreateEditVariableWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Variables\UI\VariableControl.cs">
+      <DependentUpon>VariableControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Variables\UI\VariablesWindow.xaml.cs">
+      <DependentUpon>VariablesWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Variables\VariableManager.cs" />
+    <EmbeddedResource Include="Conversations\UI\Graph\GraphForm.resx">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\UI\CreateChapter_Form.resx">
+      <DependentUpon>CreateChapter_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\UI\RunAdventure_Form.resx">
+      <DependentUpon>RunAdventure_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx" />
+    <Resource Include="Conversations\UI\Controls\Lines\delete.png" />
+    <None Include="EULA.txt" />
+    <None Include="gpl.txt" />
+    <Resource Include="Variables\UI\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Analysis\UI\AreaMapControl.xaml" />
+    <Page Include="Analysis\UI\CombatMap.xaml" />
+    <Page Include="Analysis\UI\CreatureMarker.xaml" />
+    <Page Include="Analysis\UI\KeyControl.xaml" />
+    <Page Include="Analysis\UI\TriggerMarker.xaml" />
+    <Page Include="Conversations\UI\AddSpeakerWindow.xaml" />
+    <Page Include="Conversations\UI\ChooseSpeaker.xaml" />
+    <Page Include="Conversations\UI\Controls\ActionControl.xaml" />
+    <Page Include="Conversations\UI\Controls\ChoiceControl.xaml" />
+    <Page Include="Conversations\UI\Controls\ConditionControl.xaml" />
+    <Page Include="Conversations\UI\Controls\EndConversationControl.xaml" />
+    <Page Include="Conversations\UI\Controls\Lines\LineControl.xaml" />
+    <Page Include="Conversations\UI\Controls\SoundControl.xaml" />
+    <Page Include="Conversations\UI\NewOpenConversationWindow.xaml" />
+    <Page Include="Conversations\UI\ReplaceSpeakerWindow.xaml" />
+    <Page Include="Conversations\UI\WriterWindow.xaml" />
+    <Page Include="Conversations\UI\NewConversation.xaml" />
+    <Page Include="Conversations\UI\SoundWindow.xaml" />
+    <Page Include="Core\UI\NewModule.xaml" />
+    <Page Include="Scripts\UI\BooleanQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\EnumQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\FloatQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\IntegerAsStringQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\IntegerQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\ResRefQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\ScriptParametersWindow.xaml" />
+    <Page Include="Scripts\UI\SelectTagQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
+    <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
+    <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
+    <Page Include="Variables\UI\VariableControl.xaml" />
+    <Page Include="Variables\UI\VariablesWindow.xaml" />
+    <Folder Include="Achievements\UI" />
+    <Folder Include="Analysis\UI" />
+    <Folder Include="Conversations\UI" />
+    <Folder Include="Conversations\UI\Controls\Lines" />
+    <Folder Include="Conversations\UI\Graph" />
+    <Folder Include="Conversations\UI\Controls" />
+    <Folder Include="Core" />
+    <Folder Include="Conversations" />
+    <Folder Include="Core\UI" />
+    <Folder Include="Analysis" />
+    <Folder Include="Achievements" />
+    <Folder Include="Tasks" />
+    <Folder Include="Tasks\NWN2" />
+    <Folder Include="Variables" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\UI" />
+    <Folder Include="Setup" />
+    <Folder Include="Variables\UI" />
+    <ProjectReference Include="Magnets\Magnets.csproj">
+      <Project>{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}</Project>
+      <Name>Magnets</Name>
+    </ProjectReference>
+    <ProjectReference Include="My Tasks\My Tasks.csproj">
+      <Project>{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}</Project>
+      <Name>My Tasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="Worksheets\Comment Cards.csproj">
+      <Project>{FE28833C-EDC9-48FC-80E4-4CE168E828DD}</Project>
+      <Name>Comment Cards</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
