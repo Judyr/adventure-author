@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Drawing;
 using AdventureAuthor.Achievements;
 
 namespace AdventureAuthor.Achievements
@@ -18,9 +19,12 @@ namespace AdventureAuthor.Achievements
 	public interface IAchievement
 	{
 		event EventHandler<AchievedEventArgs> Achieved;
+		
 		string GetName();
 		string GetDescription();	
 		void OnCriterionChanged(EventArgs e);	
 		bool CriteriaMet();	
+		//bool AlreadyAchieved();
+		//Bitmap GetAwardVisual();
 	}
 }

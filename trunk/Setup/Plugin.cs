@@ -125,25 +125,10 @@ namespace AdventureAuthor.Setup
 		public void Load(INWN2PluginHost cHost)
 		{
 			try {
-				// Check directories:		
-				// No longer used:
-//				if (!Directory.Exists(ModuleHelper.AdventureAuthorInstallDirectory)) {					
-//					Say.Error("Adventure Author files were not found at the expected location " + 
-//					          "(" + ModuleHelper.AdventureAuthorInstallDirectory + ").\n\n" +
-//					          "You may find that the software no longer runs correctly. " +
-//					          "If this is the case, try reinstalling Adventure Author.");
-//				}
-				try {
-					DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;		
-					Tools.EnsureDirectoryExists(AdventureAuthorPluginPreferences.LocalAppDataDirectory);
-					Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
-					Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
-				} 
-				catch (Exception e) {
-					Say.Error("Was unable to create an Adventure Author app data directory for this user. " +
-					          "You may find that the software no longer runs correctly. " +
-					          "If this is the case, try reinstalling Adventure Author.");
-				}
+				DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;		
+				Tools.EnsureDirectoryExists(AdventureAuthorPluginPreferences.LocalAppDataDirectory);
+				Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
+				Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
 								
 				Toolset.Plugin = this;
 				
@@ -156,6 +141,13 @@ namespace AdventureAuthor.Setup
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();
+//				
+//				// Temp: Log word count from conversation writer:
+//				Conversations.UI.WriterWindow.Instance.WordTyped += delegate 
+//				{  
+//					words++;
+//					form.App.Text = words.ToString() + " words.";
+//				};
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}

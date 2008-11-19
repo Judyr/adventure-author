@@ -165,11 +165,20 @@ namespace AdventureAuthor.Conversations.UI
 		#region Events
 		
 		public event EventHandler ViewedPage;
-		
 		private void OnViewedPage(EventArgs e)
 		{
 			Say.Debug("Conversation.ViewedPage event raised.");
 			EventHandler handler = ViewedPage;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+		
+		
+        public event EventHandler WordTyped;
+		protected void OnWordTyped(EventArgs e)
+		{
+			EventHandler handler = WordTyped;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -269,6 +278,7 @@ namespace AdventureAuthor.Conversations.UI
 					Line lineControl = ShowLine(currentLine);
 					AddHandlersForDragging(lineControl);
 					AddHandlersForDropping(lineControl);
+					lineControl.WordTyped += UpdateWordCount;
 				}
 				possibleNextLines = currentLine.Line.Children;
 			}
@@ -282,9 +292,20 @@ namespace AdventureAuthor.Conversations.UI
 				foreach (LineControl lineControl in choiceControl.LineControls) {					
 					AddHandlersForDragging(lineControl);
 					AddHandlersForDropping(lineControl);
+					lineControl.WordTyped += UpdateWordCount; 
 				}
 			}
-		}		
+		}	
+
+		
+		/// <summary>
+		/// Keep track of the total number of words typed into the Conversation Writer,
+		/// for My Achievements purposes. 
+		/// </summary>
+		private void UpdateWordCount(object sender, EventArgs e)
+		{
+			OnWordTyped(new EventArgs());
+		}
 		
 		
 		/// <summary>
@@ -727,7 +748,7 @@ namespace AdventureAuthor.Conversations.UI
 				Conversation.CurrentConversation.Changed += 
 					new EventHandler<ConversationChangedEventArgs>(WriterWindow_OnChanged);
 				Conversation.CurrentConversation.Saved += 
-					new EventHandler<EventArgs>(WriterWindow_OnSaved);
+					new EventHandler(WriterWindow_OnSaved);
 				Conversation.CurrentConversation.SpeakerAdded += 
 					new EventHandler<SpeakerAddedEventArgs>(WriterWindow_OnSpeakerAdded);
 			}
