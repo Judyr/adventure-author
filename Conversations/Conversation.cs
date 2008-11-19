@@ -89,8 +89,19 @@ namespace AdventureAuthor.Conversations
 		#region Events	
 		
 		public event EventHandler<ConversationChangedEventArgs> Changed;
-		public event EventHandler<EventArgs> Saved;
+		public event EventHandler Saved;
 		public event EventHandler<SpeakerAddedEventArgs> SpeakerAdded;
+		public event EventHandler WordAdded;		
+		
+		
+		protected virtual void OnWordAdded(EventArgs e)
+		{
+			EventHandler handler = WordAdded;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}	
+				
 		
 		protected virtual void OnChanged(ConversationChangedEventArgs e)
 		{
@@ -100,13 +111,15 @@ namespace AdventureAuthor.Conversations
 			}
 		}		
 		
+		
 		protected virtual void OnSaved(EventArgs e)
 		{
-			EventHandler<EventArgs> handler = Saved;
+			EventHandler handler = Saved;
 			if (handler != null) {
 				handler(this,e);
 			}
 		}		
+		
 		
 		protected virtual void OnSpeakerAdded(SpeakerAddedEventArgs e)
 		{
@@ -116,6 +129,7 @@ namespace AdventureAuthor.Conversations
 			}
 		}		
 				
+		
 		/// <summary>
 		/// Save the working copy to disk when a change is made. Must fire before any other event handlers.
 		/// </summary>

@@ -109,9 +109,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		Grid.SetColumnSpan(conditionalControl,4);
         		LineControlGrid.Children.Add(conditionalControl);
         	}   
-            
-        	// Set the image on the delete button:
-        	//DeleteLineButton.Content = ResourceHelper.GetImage(Path.Combine(ModuleHelper.ImagesDir,"delete.png"));
         	
         	// Set the appearance of the control based on who is speaking:
 			Speaker speaker = Conversation.CurrentConversation.GetSpeaker(nwn2Line.Speaker);
@@ -157,7 +154,57 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	
         	Dialogue.LostFocus += new RoutedEventHandler(Dialogue_LostFocus);
         	Dialogue.GotFocus += new RoutedEventHandler(Dialogue_GotFocus);
+        	
+        	// My Achievements stuff:
+        	Dialogue.TextChanged += new TextChangedEventHandler(Dialogue_TextChanged);
         }
+
+        
+        
+        public event EventHandler WordTyped;
+		protected virtual void OnWordTyped(EventArgs e)
+		{
+			EventHandler handler = WordTyped;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+        
+		object padlock = new object();
+        bool lastCharacterWasLetter = false;
+        static int words = 0;
+        
+        private void Dialogue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+        	TextBox textBox = (TextBox)sender;
+        	bool currentCharacterIsPartOfWord;
+        	
+        	foreach (TextChange change in e.Changes) {        		
+        		// If the user typed a single character:
+        		if (change.AddedLength == 1 && change.RemovedLength == 0) {
+        			// ..and it ended a word:
+        			char current = textBox.Text[change.Offset];
+        			bool currentCharacterIsLetter = IsLetter(current);
+        			if (lastCharacterWasLetter && !currentCharacterIsLetter) {
+        				OnWordTyped(new EventArgs());
+        			}
+        			lastCharacterWasLetter = currentCharacterIsLetter;
+        		}
+        		else {
+        			lastCharacterWasLetter = false;
+        		}
+        	}
+        }        
+        
+        private bool IsLetter(char c)
+        {
+        	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '\'');
+        }       
+        
+        
+        
+        
+        
 
         void Dialogue_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -166,6 +213,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	e.Handled = true;
         	Say.Debug("END Dialogue_GotFocus (" + Dialogue.Text + ")");
         }
+        
 
         void Dialogue_LostFocus(object sender, RoutedEventArgs e)
         {

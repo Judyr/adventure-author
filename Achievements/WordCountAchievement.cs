@@ -25,6 +25,7 @@ namespace AdventureAuthor.Achievements
 			get { return requiredWords; }
 		}
 		
+		
 		/// <summary>
 		/// Raised when the requirements for this achievement have been fulfilled. 
 		/// </summary>
@@ -78,7 +79,7 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		public string GetName()
 		{
-			return "Writer";
+			return "Wordsmith (Bronze)";
 		}
 
 		
@@ -87,7 +88,7 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		public string GetDescription()
 		{
-			return "Designer has written more than " + requiredWords + " words of dialogue and description."; 
+			return "Designer has written at least " + requiredWords + " words of dialogue and description."; 
 		}
 						
 		
