@@ -156,6 +156,16 @@ namespace AdventureAuthor.Setup
 			}
 		}
 		
+        
+        public static event EventHandler<WordCountEventArgs> WordsTyped;
+		private static void OnWordsTyped(WordCountEventArgs e)
+		{
+			EventHandler<WordCountEventArgs> handler = WordsTyped;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		
 		#endregion
 		
 		
@@ -1066,6 +1076,7 @@ namespace AdventureAuthor.Setup
 			
 		/// <summary>
 		/// If a Verify window or the original conversation editor is displayed, hide it again.
+		/// Log any changes to an opened Property Grid.
 		/// </summary>
 		private static void OnContentShown(Content c, EventArgs ea)
 		{
@@ -1086,12 +1097,71 @@ namespace AdventureAuthor.Setup
 			grid.ValueChanged += delegate(object sender, NWN2PropertyValueChangedEventArgs e) 
 			{ 
 				NWN2Utils.WritePropertyChangeToLog(e);
+				GetNarrativeWordsTyped(e);
 			};
 			grid.PreviewStateChanged += delegate 
 			{ 
 				Log.WriteMessage("Preview state changed on property grid (??)"); 
 			};
 		}							
+		
+		
+		/// <summary>
+		/// Checks whether the First Name, Last Name, Localized Description or Localized
+		/// Description (when identified) fields have changed, and if so raises an event
+		/// indicating that a number of 'narrative' words have been typed.
+		/// </summary>
+		private static void GetNarrativeWordsTyped(NWN2PropertyValueChangedEventArgs e)
+		{
+			int words = 0;
+			
+			foreach (object o in e.ChangedObjects) {
+				if (e.PropertyName == "First Name" ||
+				    e.PropertyName == "Last Name" || 
+				    e.PropertyName == "Localized Description" ||
+				    e.PropertyName == "Localized Description (when identified)") 
+				{
+					string newValue;
+					string oldValue;
+					if (e.NewValue == null) {
+						continue;
+					}
+					else {
+						newValue = ((OEIExoLocString)e.NewValue).GetSafeString(BWLanguages.CurrentLanguage).Value.ToLower();
+					}
+					// OldValue is always null for 'First Name' and 'Last Name', inexplicably. As a result,
+					// we have to assume that anything they type into these fields is new. Most kids will
+					// not change these fields very often, so this shouldn't be too big an issue.
+					if (e.OldValue == null) { 
+						oldValue = String.Empty;
+					}
+					else {
+						oldValue = ((OEIExoLocString)e.OldValue).GetSafeString(BWLanguages.CurrentLanguage).Value.ToLower();
+					}
+					
+					if (oldValue != newValue) { 
+						string[] oldWordsArray = oldValue.Split(new char[]{' '},StringSplitOptions.RemoveEmptyEntries);
+						string[] newWordsArray = newValue.Split(new char[]{' '},StringSplitOptions.RemoveEmptyEntries);
+						List<string> oldWords = new List<string>(oldWordsArray);
+						List<string> newWords = new List<string>(newWordsArray);
+						
+						if (oldWords.Count == 0) { // if there was no previous value, count everything
+							words += newWords.Count;
+						}
+						else {
+							foreach (string newWord in newWords) {
+								if (!oldWords.Contains(newWord)) {
+									words++;
+								}
+							}
+						}
+					}
+				}				
+			}
+			if (words > 0) {
+				OnWordsTyped(new WordCountEventArgs(words));
+			}
+		}
 		
 				
 		/// <summary>
@@ -1333,6 +1403,11 @@ namespace AdventureAuthor.Setup
 					WriterWindow.Instance = new WriterWindow(withDialog);
 					Plugin.ModuleWindows.Add(WriterWindow.Instance);
 				}
+				WriterWindow.Instance.WordsTyped += delegate(object sender, WordCountEventArgs e) 
+				{ 
+					OnWordsTyped(e); 
+				};
+				
 				ElementHost.EnableModelessKeyboardInterop(WriterWindow.Instance);
 				WriterWindow.Instance.Show();
 			}

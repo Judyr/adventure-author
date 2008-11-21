@@ -33,6 +33,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
+using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
@@ -47,8 +48,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
     {    	
     	#region Fields
     	
-    	public double myfontsize = 40;
-    	
     	/// <summary>
     	/// The line of conversation this control represents.
     	/// </summary>
@@ -57,15 +56,18 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			get { return nwn2Line; }
 		}
     	
+    	
     	/// <summary>
     	/// A control representing all the conditions on the line (conditions are co-dependent, so they share a control). May be null.
     	/// </summary>
     	protected ConditionControl conditionalControl = null;
     	
+    	
     	/// <summary>
     	/// A control representing a sound file that will be played on this line. May be null.
     	/// </summary>
     	protected SoundControl soundControl = null;
+    	
     	
     	/// <summary>
     	/// A list of controls, each representing a single action on the line (actions are independent, so they don't share). May be null.
@@ -75,9 +77,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	#endregion Fields
     	
     	#region Events
-    	
-    	
-    	
+    	        
+        public event EventHandler<WordCountEventArgs> WordsTyped;
+		protected virtual void OnWordsTyped(WordCountEventArgs e)
+		{
+			EventHandler<WordCountEventArgs> handler = WordsTyped;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}
+		
     	#endregion
     	
     	#region Constructor
@@ -156,57 +165,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Dialogue.GotFocus += new RoutedEventHandler(Dialogue_GotFocus);
         	
         	// My Achievements stuff:
-        	Dialogue.TextChanged += new TextChangedEventHandler(Dialogue_TextChanged);
+        	Dialogue.TextChanged += new TextChangedEventHandler(GetNarrativeWordsTyped);
         }
 
         
+             
         
-        public event EventHandler WordTyped;
-		protected virtual void OnWordTyped(EventArgs e)
-		{
-			EventHandler handler = WordTyped;
-			if (handler != null) {
-				handler(this,e);
-			}
-		}
-        
-		object padlock = new object();
-        bool lastCharacterWasLetter = false;
-        static int words = 0;
-        
-        private void Dialogue_TextChanged(object sender, TextChangedEventArgs e)
-        {
-        	TextBox textBox = (TextBox)sender;
-        	bool currentCharacterIsPartOfWord;
-        	
-        	foreach (TextChange change in e.Changes) {        		
-        		// If the user typed a single character:
-        		if (change.AddedLength == 1 && change.RemovedLength == 0) {
-        			// ..and it ended a word:
-        			char current = textBox.Text[change.Offset];
-        			bool currentCharacterIsLetter = IsLetter(current);
-        			if (lastCharacterWasLetter && !currentCharacterIsLetter) {
-        				OnWordTyped(new EventArgs());
-        			}
-        			lastCharacterWasLetter = currentCharacterIsLetter;
-        		}
-        		else {
-        			lastCharacterWasLetter = false;
-        		}
-        	}
-        }        
-        
-        private bool IsLetter(char c)
-        {
-        	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '\'');
-        }       
-        
-        
-        
-        
+           
         
 
-        void Dialogue_GotFocus(object sender, RoutedEventArgs e)
+        private void Dialogue_GotFocus(object sender, RoutedEventArgs e)
         {
         	Say.Debug("BEGIN Dialogue_GotFocus (" + Dialogue.Text + ")");
         	SelectLine();
@@ -215,7 +183,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
 
-        void Dialogue_LostFocus(object sender, RoutedEventArgs e)
+        private void Dialogue_LostFocus(object sender, RoutedEventArgs e)
         {
         	Say.Debug("BEGIN Dialogue_LostFocus (" + Dialogue.Text + ")");
         	Dialogue.SelectionLength = 0; // otherwise when you come back to it text is already highlighted
@@ -285,12 +253,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		}
         	}
         }
-        
-        
-        
-        #endregion Constructor
                 
-                
+        #endregion Constructor             
         
         #region Event handlers
         
@@ -303,6 +267,38 @@ namespace AdventureAuthor.Conversations.UI.Controls
 //        	FlushChangesToText();
 //        	Say.Debug("END OnDialogueLostFocus2 (" + Dialogue.Text + ")");
 //        }
+
+
+
+
+        bool lastCharacterWasLetter = false;
+        
+		/// <summary>
+		/// Each time the text is changed, check whether the user has just
+		/// entered a keystroke which indicates the end of a word - if so,
+		/// raise an event indicating that the user just typed a 'narrative' word.
+		/// </summary>
+        private void GetNarrativeWordsTyped(object sender, TextChangedEventArgs e)
+        {
+        	TextBox textBox = (TextBox)sender;
+        	bool currentCharacterIsPartOfWord;
+        	
+        	foreach (TextChange change in e.Changes) {        		
+        		// If the user typed a single character...
+        		if (change.AddedLength == 1 && change.RemovedLength == 0) {
+        			char current = textBox.Text[change.Offset];
+        			bool currentCharacterIsLetter = Tools.IsLetter(current);
+        			// ...and it ended a word, then raise a OnWordsTyped event:
+        			if (lastCharacterWasLetter && !currentCharacterIsLetter) {
+        				OnWordsTyped(new WordCountEventArgs(1));
+        			}
+        			lastCharacterWasLetter = currentCharacterIsLetter;
+        		}
+        		else {
+        			lastCharacterWasLetter = false;
+        		}
+        	}
+        }   
         
         
         /// <summary>
@@ -445,13 +441,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         
         
         #endregion
-             
-        
-        
-        
-        
-        
-   
         
         #region Selecting lines
         
