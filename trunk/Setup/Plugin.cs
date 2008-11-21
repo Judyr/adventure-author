@@ -141,13 +141,13 @@ namespace AdventureAuthor.Setup
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();
-//				
-//				// Temp: Log word count from conversation writer:
-//				Conversations.UI.WriterWindow.Instance.WordTyped += delegate 
-//				{  
-//					words++;
-//					form.App.Text = words.ToString() + " words.";
-//				};
+				
+				// Temp: Log word count from conversation writer and name/description fields on objects:
+				Toolset.WordsTyped += delegate(object sender, WordCountEventArgs e) 
+				{  
+					words += e.Words;
+					form.App.Text = words.ToString() + " words.";
+				};
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
@@ -156,6 +156,7 @@ namespace AdventureAuthor.Setup
 				          "You may experience problems which require you to reinstall Adventure Author.",e);
 			}
 		}	
+		int words = 0;
 		
 		
 		/// <summary>

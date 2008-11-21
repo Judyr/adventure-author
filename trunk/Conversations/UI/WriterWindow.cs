@@ -38,6 +38,7 @@ using AdventureAuthor.Conversations.UI.Controls;
 using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
 using AdventureAuthor.Scripts;
+using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
@@ -167,18 +168,17 @@ namespace AdventureAuthor.Conversations.UI
 		public event EventHandler ViewedPage;
 		private void OnViewedPage(EventArgs e)
 		{
-			Say.Debug("Conversation.ViewedPage event raised.");
 			EventHandler handler = ViewedPage;
 			if (handler != null) {
 				handler(this,e);
 			}
 		}
 		
-		
-        public event EventHandler WordTyped;
-		protected void OnWordTyped(EventArgs e)
+        
+        public event EventHandler<WordCountEventArgs> WordsTyped;
+		protected void OnWordsTyped(WordCountEventArgs e)
 		{
-			EventHandler handler = WordTyped;
+			EventHandler<WordCountEventArgs> handler = WordsTyped;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -278,7 +278,7 @@ namespace AdventureAuthor.Conversations.UI
 					Line lineControl = ShowLine(currentLine);
 					AddHandlersForDragging(lineControl);
 					AddHandlersForDropping(lineControl);
-					lineControl.WordTyped += UpdateWordCount;
+					lineControl.WordsTyped += UpdateWordCount;
 				}
 				possibleNextLines = currentLine.Line.Children;
 			}
@@ -292,7 +292,7 @@ namespace AdventureAuthor.Conversations.UI
 				foreach (LineControl lineControl in choiceControl.LineControls) {					
 					AddHandlersForDragging(lineControl);
 					AddHandlersForDropping(lineControl);
-					lineControl.WordTyped += UpdateWordCount; 
+					lineControl.WordsTyped += UpdateWordCount; 
 				}
 			}
 		}	
@@ -302,9 +302,9 @@ namespace AdventureAuthor.Conversations.UI
 		/// Keep track of the total number of words typed into the Conversation Writer,
 		/// for My Achievements purposes. 
 		/// </summary>
-		private void UpdateWordCount(object sender, EventArgs e)
+		private void UpdateWordCount(object sender, WordCountEventArgs e)
 		{
-			OnWordTyped(new EventArgs());
+			OnWordsTyped(e);
 		}
 		
 		

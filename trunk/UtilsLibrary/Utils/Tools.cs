@@ -40,7 +40,18 @@ namespace AdventureAuthor.Utils
 		public const double MINIMUMWINDOWWIDTH = 640;
 		public const double MINIMUMWINDOWHEIGHT = 480;
 		
-		// TODO make the string methods into Automatic Methods on string
+		
+		  
+		/// <summary>
+		/// Check whether a character can form part of an English language word.
+		/// </summary>
+		/// <param name="c">The character to check</param>
+		/// <returns>True if this character can form part of a word, false otherwise.</returns>
+        public static bool IsLetter(char c)
+        {
+        	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '\'');
+        }  
+		
 		
 		public static string SplitCamelCase(string input)
 		{
