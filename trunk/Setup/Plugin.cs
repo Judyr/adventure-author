@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using AdventureAuthor.Achievements;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
 using AdventureAuthor.Variables.UI;
@@ -142,11 +143,18 @@ namespace AdventureAuthor.Setup
 				// Modify the main user interface:
 				Toolset.SetupUI();
 				
-				// Temp: Log word count from conversation writer and name/description fields on objects:
-				Toolset.WordsTyped += delegate(object sender, WordCountEventArgs e) 
+				// TODO: Temp: Start tracking user activity for the Wordsmith awards,
+				// at Bronze, Silver and Gold level:
+				WordCountMonitor wordCountMonitor = new WordCountMonitor();
+				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",25));
+				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",50));
+				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Gold)",100));
+				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Platinum)",200));
+				wordCountMonitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e) 
 				{  
-					words += e.Words;
-					form.App.Text = words.ToString() + " words.";
+					Say.Information("Congratulations! You've just won the " + e.Award.Name + 
+					                " award!\n\n" + e.Award.Description +
+					                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
 				};
 				
 				Log.WriteAction(LogAction.launched,"toolset");
@@ -156,7 +164,6 @@ namespace AdventureAuthor.Setup
 				          "You may experience problems which require you to reinstall Adventure Author.",e);
 			}
 		}	
-		int words = 0;
 		
 		
 		/// <summary>

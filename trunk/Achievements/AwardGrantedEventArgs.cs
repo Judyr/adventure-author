@@ -26,30 +26,30 @@
 
 using System;
 
-namespace AdventureAuthor.Setup
+namespace AdventureAuthor.Achievements
 {
 	/// <summary>
-	/// Arguments to accompany the event of the user typing a word or words in
-	/// a narrative or dialogue context.
+	/// Arguments accompanying the event of an award being granted to the designer.
 	/// </summary>
-	public class WordCountEventArgs : EventArgs
+	public class AwardGrantedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// The number of words the user typed.
+		/// The award granted to the user.
 		/// </summary>
-		private uint words;
-		public uint Words {
-			get { return words; }
+		private Award award;
+		public Award Award {
+			get { return award; }
 		}
 		
 		
 		/// <summary>
-		/// Create a new WordCountEventArgs.
+		/// Create a set of arguments to accompany the event of an award being
+		/// granted to the designer.
 		/// </summary>
-		/// <param name="words">The number of words the user typed.</param>
-		public WordCountEventArgs(uint words)
+		/// <param name="award">The award granted to the user.</param>
+		public AwardGrantedEventArgs(Award award)
 		{
-			this.words = words;
+			this.award = award;
 		}
 	}
 }

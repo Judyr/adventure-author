@@ -142,10 +142,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Achievements\AchievedEventArgs.cs" />
-    <Compile Include="Achievements\ArchitectAchievement.cs" />
-    <Compile Include="Achievements\IAchievement.cs" />
-    <Compile Include="Achievements\WordCountAchievement.cs" />
+    <Compile Include="Achievements\AchievementMonitor.cs" />
+    <Compile Include="Achievements\Award.cs" />
+    <Compile Include="Achievements\AwardGrantedEventArgs.cs" />
+    <Compile Include="Achievements\WordCountMonitor.cs" />
+    <Compile Include="Achievements\WordsmithAward.cs" />
     <Compile Include="Analysis\Combat.cs" />
     <Compile Include="Analysis\CreatureInfo.cs" />
     <Compile Include="Analysis\DangerLevel.cs" />
@@ -316,6 +317,7 @@
     <Compile Include="Setup\BlueprintMagnetControl.cs" />
     <Compile Include="Setup\BlueprintMagnetControlInfo.cs" />
     <Compile Include="Setup\NWN2Utils.cs" />
+    <Compile Include="Setup\PipeCommunication.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\TextBoxItem.cs" />
