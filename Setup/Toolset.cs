@@ -637,7 +637,7 @@ namespace AdventureAuthor.Setup
 			};
 			
 			// Listen for My Tasks requesting task suggestions:
-			StartListeningForMessages();
+			StartListeningForMessagesFromMyTasks();
 			
 			// Set up the interface for initial use - update the title bar, and disable
 			// parts of the interface which require an open module to be useful.
@@ -653,7 +653,7 @@ namespace AdventureAuthor.Setup
 		}				
 		
 		
-    	private static void StartListeningForMessages()
+    	private static void StartListeningForMessagesFromMyTasks()
     	{   
     		ThreadStart threadStart = new ThreadStart(ListenForMessagesFromMyTasks);
     		Thread thread = new Thread(threadStart);
@@ -1113,7 +1113,7 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static void GetNarrativeWordsTyped(NWN2PropertyValueChangedEventArgs e)
 		{
-			int words = 0;
+			uint words = 0;
 			
 			foreach (object o in e.ChangedObjects) {
 				if (e.PropertyName == "First Name" ||
@@ -1146,7 +1146,7 @@ namespace AdventureAuthor.Setup
 						List<string> newWords = new List<string>(newWordsArray);
 						
 						if (oldWords.Count == 0) { // if there was no previous value, count everything
-							words += newWords.Count;
+							words += (uint)newWords.Count;
 						}
 						else {
 							foreach (string newWord in newWords) {

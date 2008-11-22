@@ -25,31 +25,24 @@
  */
 
 using System;
+using System.Threading;
+using System.IO.Pipes;
 
 namespace AdventureAuthor.Setup
 {
 	/// <summary>
-	/// Arguments to accompany the event of the user typing a word or words in
-	/// a narrative or dialogue context.
+	/// Description of PipeCommunication.
 	/// </summary>
-	public class WordCountEventArgs : EventArgs
-	{
-		/// <summary>
-		/// The number of words the user typed.
-		/// </summary>
-		private uint words;
-		public uint Words {
-			get { return words; }
-		}
-		
-		
-		/// <summary>
-		/// Create a new WordCountEventArgs.
-		/// </summary>
-		/// <param name="words">The number of words the user typed.</param>
-		public WordCountEventArgs(uint words)
-		{
-			this.words = words;
-		}
+	public static class PipeCommunication
+	{			
+//    	private static void Listen(object obj, IntPtr method)
+//    	{   
+//    		ThreadStart threadStart = new ThreadStart(method);
+//    		Thread thread = new Thread(threadStart);
+//    		thread.Name = "Listen for messages from My Tasks";
+//    		thread.IsBackground = true; // will not prevent the application from closing down
+//			thread.Priority = ThreadPriority.BelowNormal;
+//    		thread.Start();
+//    	}
 	}
 }
