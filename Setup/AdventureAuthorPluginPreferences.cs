@@ -60,8 +60,6 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		// General:
-		
 		/// <summary>
 		/// Whether or not the scratchpad area should automatically load when you open a module.
 		/// </summary>
@@ -97,27 +95,7 @@ namespace AdventureAuthor.Setup
 				}
 			}
 		}		
-		
-		
-		// Conversations:
-						
-//		/// <summary>
-//		/// The font size of conversation dialogue and speaker names. 
-//		/// </summary>
-//		private double dialogueFontSize;
-//		[XmlElement]
-//		[Description("The font size of conversation dialogue and speaker names."), 
-//		 Category("Conversations"), Browsable(true)]
-//		public double DialogueFontSize {
-//			get { return dialogueFontSize; }
-//			set { 
-//				if (dialogueFontSize != value) {
-//					dialogueFontSize = value;
-//					NotifyPropertyChanged("DialogueFontSize");
-//				}
-//			}
-//		}
-		
+				
 		
 		/// <summary>
 		/// The folder where local application data is kept for this application.
@@ -132,14 +110,26 @@ namespace AdventureAuthor.Setup
 		
 		
 		/// <summary>
-		/// The folder where the serialised list of recently opened module filenames is kept.
+		/// The path of the serialised list of recently opened module filenames.
 		/// </summary>
 		private static string recentlyOpenedModulesPath;
 		[XmlElement]
-		[Description("The folder where the serialised list of recently opened module filenames is kept."), 
+		[Description("The path of the serialised list of recently opened module filenames."), 
 		 Category("General"), Browsable(false)]
 		public static string RecentlyOpenedModulesPath {
 			get { return recentlyOpenedModulesPath; }
+		}
+		
+		
+		/// <summary>
+		/// The path of the serialised user profile.
+		/// </summary>
+		private static string userProfilePath;
+		[XmlElement]
+		[Description("The path of the serialised user profile."), 
+		 Category("General"), Browsable(false)]
+		public static string UserProfilePath {
+			get { return userProfilePath; }
 		}
 		
 		#endregion
@@ -152,6 +142,7 @@ namespace AdventureAuthor.Setup
 			
 			localAppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Adventure Author");
 			recentlyOpenedModulesPath = Path.Combine(localAppDataDirectory,"RecentlyOpenedModules.xml");
+			userProfilePath = Path.Combine(localAppDataDirectory,"UserProfile.xml");
 		}
  
 		

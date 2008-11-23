@@ -26,12 +26,16 @@
 
 using System;
 using System.Windows.Controls;
+using System.Xml.Serialization;
+using AdventureAuthor.Achievements;
 
 namespace AdventureAuthor.Achievements
 {
 	/// <summary>
 	/// An award granted to the user based on some aspect of their activity.
 	/// </summary>
+	[Serializable]
+	[XmlInclude(typeof(WordsmithAward))]
 	public abstract class Award
 	{
 		#region Constants
@@ -52,8 +56,10 @@ namespace AdventureAuthor.Achievements
 		/// The name of this award.
 		/// </summary>
 		protected string name;
+		[XmlElement]
 		public string Name {
 			get { return name; }
+			set { name = value; }
 		}
 		
 		
@@ -62,8 +68,10 @@ namespace AdventureAuthor.Achievements
 		/// why it is granted.
 		/// </summary>
 		protected string description;
+		[XmlElement]
 		public string Description {
 			get { return description; }
+			set { description = value; }
 		}
 		
 				
@@ -71,8 +79,10 @@ namespace AdventureAuthor.Achievements
 		/// An image which can be used to represent this award.
 		/// </summary>
 		protected Image image;
+		[XmlIgnore]
 		public Image Image {
 			get { return image; }
+			set { image = value; }
 		}
 		
 		
@@ -91,8 +101,10 @@ namespace AdventureAuthor.Achievements
 		/// be changed in future.
 		/// </remarks>
 		protected uint designerPoints;
+		[XmlElement]
 		public uint DesignerPoints {
 			get { return designerPoints; }
+			set { designerPoints = value; }
 		}		
 		
 		#endregion
@@ -121,6 +133,22 @@ namespace AdventureAuthor.Achievements
 		/// <remarks>Any AchievementMonitor which this award is added to must return a value
 		/// for GetTrackedInformationType() which is identical to the value returned by this method.</remarks>
 		public abstract Type GetCriteriaType();
+		
+		
+		/// <summary>
+		/// Get a string value which should be unique to this award for serialisation purposes.
+		/// </summary>
+		/// <returns>A string value describing this award.</returns>
+		public string GetID()
+		{
+			return name + " (" + description + ")";
+		}
+		
+		
+		public override string ToString()
+		{
+			return GetID();
+		}
 		
 		#endregion
 	}

@@ -162,7 +162,9 @@ namespace AdventureAuthor.Achievements
 		/// Add to the list of awards being considered.
 		/// </summary>
 		/// <param name="award">The award to add.</param>
-		public void AddAward(Award award)
+		/// <param name="checkUserDoesNotHave">True to only add if the user does
+		/// not have this award already.</param>
+		public void AddAward(Award award, bool checkUserDoesNotHave)
 		{
 			if (award == null) {
 				throw new ArgumentNullException("award","'award' cannot be null.");
@@ -176,6 +178,10 @@ namespace AdventureAuthor.Achievements
 				                            "returned type " + criteriaType + ").");
 			}
 			
+			if (checkUserDoesNotHave && Toolset.Plugin.Profile.HasAward(award)) {
+				return;
+			}
+			
 			lock (padlock) {
 				if (Awards.Contains(award)) {
 					throw new InvalidOperationException("award was already added to this AchievementMonitor.");
@@ -184,6 +190,16 @@ namespace AdventureAuthor.Achievements
 					awards.Add(award);
 				}
 			}
+		}
+		
+		
+		/// <summary>
+		/// Add to the list of awards being considered.
+		/// </summary>
+		/// <param name="award">The award to add.</param>
+		public void AddAward(Award award)
+		{	
+			AddAward(award,true);
 		}
 		
 		#endregion

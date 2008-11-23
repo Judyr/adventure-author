@@ -115,6 +115,21 @@ namespace AdventureAuthor.Setup
 			get { return sessionWindows; }
 		}
 		
+		
+		/// <summary>
+		/// An information profile about the current user.
+		/// </summary>
+		private UserProfile profile;
+		public UserProfile Profile {
+			get { return profile; }
+		}
+		
+		
+		private List<AchievementMonitor> achievementMonitors = new List<AchievementMonitor>(3);
+		public List<AchievementMonitor> AchievementMonitors {
+			get { return achievementMonitors; }
+		}
+		
 		#endregion
 		
 		#region Methods
@@ -143,19 +158,8 @@ namespace AdventureAuthor.Setup
 				// Modify the main user interface:
 				Toolset.SetupUI();
 				
-				// TODO: Temp: Start tracking user activity for the Wordsmith awards,
-				// at Bronze, Silver and Gold level:
-				WordCountMonitor wordCountMonitor = new WordCountMonitor();
-				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",25));
-				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",50));
-				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Gold)",100));
-				wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Platinum)",200));
-				wordCountMonitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e) 
-				{  
-					Say.Information("Congratulations! You've just won the " + e.Award.Name + 
-					                " award!\n\n" + e.Award.Description +
-					                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
-				};
+				SetupUserProfile();
+				SetupMyAchievements();
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
@@ -195,6 +199,16 @@ namespace AdventureAuthor.Setup
 			lock (padlock) {
 				CloseSessionWindows();
 				CloseModuleWindows();
+			}
+			
+			// Automatically serialise the user profile upon closing:
+			if (profile != null) {
+				try {
+					Serialization.Serialize(AdventureAuthorPluginPreferences.UserProfilePath,profile);
+				}
+				catch (Exception e) {
+					Say.Error("Failed to save the user profile.",e);
+				}				
 			}
 			
 			Log.WriteAction(LogAction.exited,"toolset");
@@ -253,6 +267,59 @@ namespace AdventureAuthor.Setup
 					window.Close();
 				}
 			}
+		}
+		
+		
+		/// <summary>
+		/// Check whether a user profile already exists, and if not, create a new one.
+		/// </summary>
+		private void SetupUserProfile()
+		{
+			if (File.Exists(AdventureAuthorPluginPreferences.UserProfilePath)) {
+				try {
+					object obj = Serialization.Deserialize(AdventureAuthorPluginPreferences.UserProfilePath,
+					                                       typeof(UserProfile));
+					profile = (UserProfile)obj;					
+				}
+				catch (Exception e) {
+					System.Diagnostics.Debug.WriteLine("The file at location " + 
+					                                   AdventureAuthorPluginPreferences.UserProfilePath +
+					          						   " is not a valid user profile file.");
+					profile = new UserProfile(new List<Award>());
+				}
+			}
+			else {
+				profile = new UserProfile(new List<Award>());
+			}
+		}
+		
+		
+		/// <summary>
+		/// Set up the My Achievements system, monitoring user activity and granting
+		/// awards when their criteria are met.
+		/// </summary>
+		private void SetupMyAchievements()
+		{
+			WordCountMonitor wordCountMonitor = new WordCountMonitor();
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",WordsmithAward.BRONZEWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",WordsmithAward.SILVERWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Gold)",WordsmithAward.GOLDWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Emerald)",WordsmithAward.EMERALDWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Sapphire)",WordsmithAward.SAPPHIREWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Ruby)",WordsmithAward.RUBYWORDCOUNT));
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT));
+			achievementMonitors.Add(wordCountMonitor);
+			
+			wordCountMonitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e)
+			{  
+				if (!profile.Awards.Contains(e.Award)) {
+					profile.Awards.Add(e.Award);
+				}
+				
+				Say.Information("Congratulations! You've just won the " + e.Award.Name + 
+				                " award!\n\n" + e.Award.Description +
+				                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
+			};
 		}
 		
 		#endregion
