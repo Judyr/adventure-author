@@ -26,6 +26,7 @@
 
 using System;
 using System.Windows.Controls;
+using System.Xml.Serialization;
 
 namespace AdventureAuthor.Achievements
 {
@@ -39,8 +40,21 @@ namespace AdventureAuthor.Achievements
 	/// and into the First Name, Last Name, Localized Description and
 	/// Localized Description (when identified) fields of an object.
 	/// </remarks>
+	[Serializable]
 	public class WordsmithAward : Award
 	{		
+		#region Constants
+		
+		public const uint BRONZEWORDCOUNT = 2;//50;
+		public const uint SILVERWORDCOUNT = 5;//00;
+		public const uint GOLDWORDCOUNT = 10;//00;
+		public const uint EMERALDWORDCOUNT = 1500;
+		public const uint SAPPHIREWORDCOUNT = 2000;
+		public const uint RUBYWORDCOUNT = 2500;
+		public const uint DIAMONDWORDCOUNT = 3000;
+		
+		#endregion
+		
 		#region Properties and fields
 		
 		/// <summary>
@@ -48,13 +62,23 @@ namespace AdventureAuthor.Achievements
 		/// to receive this award.
 		/// </summary>
 		private uint requiredWordCount;
+		[XmlElement]
 		public uint RequiredWordCount {
 			get { return requiredWordCount; }
+			set { requiredWordCount = value; }
 		}
 		
 		#endregion
 				
 		#region Constructors
+		
+		/// <summary>
+		/// For deserialisation.
+		/// </summary>
+		protected WordsmithAward()
+		{			
+		}
+		
 		
 		/// <summary>
 		/// An award granted to the user based on their total 'narrative'
