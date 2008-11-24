@@ -26,23 +26,104 @@
 
 using System;
 using System.Threading;
+using System.IO;
 using System.IO.Pipes;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Setup
 {
 	/// <summary>
-	/// Description of PipeCommunication.
+	/// Listens for communication across inter-process named pipes
+	/// and generates events when a message is received.
 	/// </summary>
 	public static class PipeCommunication
-	{			
-//    	private static void Listen(object obj, IntPtr method)
-//    	{   
-//    		ThreadStart threadStart = new ThreadStart(method);
-//    		Thread thread = new Thread(threadStart);
-//    		thread.Name = "Listen for messages from My Tasks";
-//    		thread.IsBackground = true; // will not prevent the application from closing down
-//			thread.Priority = ThreadPriority.BelowNormal;
-//    		thread.Start();
-//    	}
+	{		
+		#region Events
+		
+		/// <summary>
+		/// Raised when a message is received across a pipe.
+		/// </summary>
+		public static event EventHandler<MessageReceivedEventArgs> MessageReceived;
+		private static void OnMessageReceived(MessageReceivedEventArgs e)
+		{
+			EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		
+		#endregion
+		
+		#region Methods
+		
+		/// <summary>
+		/// Start a separate thread to listen for messages on all 
+		/// Adventure Author-related named pipes.
+		/// </summary>
+		public static void StartListeningOnAllPipes()
+		{
+			
+		}
+		
+		
+    	/// <summary>
+    	/// Start a thread to listen for messages on a particular pipe.
+    	/// </summary>
+    	/// <param name="pipename">The name of the pipe to listen to.</param>
+    	public static void StartListening(string pipename)
+    	{   
+    		ParameterizedThreadStart start = new ParameterizedThreadStart(Listen);
+    		Thread thread = new Thread(start);
+    		thread.Name = "Listen to pipe '" + pipename + "'";
+    		thread.IsBackground = true; // will not prevent the application from closing down
+			thread.Priority = ThreadPriority.BelowNormal;
+			thread.Start(pipename);
+    	}
+    	
+    	
+    	/// <summary>
+    	/// Start listening for messages on a particular pipe.
+    	/// </summary>
+    	/// <param name="pipename">The name of the pipe to listen to.</param>
+    	private static void Listen(object pipename)
+    	{
+    		if (!(pipename is string)) {
+    			throw new ArgumentException("pipename must be a string.","pipename");
+    		}
+    		Listen((string)pipename);
+    	}
+    	
+		
+    	/// <summary>
+    	/// Start listening for messages on a particular pipe.
+    	/// </summary>
+    	/// <param name="pipename">The name of the pipe to listen to.</param>
+		private static void Listen(string pipename)
+    	{
+    		using (NamedPipeClientStream client = new NamedPipeClientStream(".",
+			                                                                pipename,
+			                                                                PipeDirection.In))
+    		{
+    			try {
+    				client.Connect();
+    				
+	    			using (StreamReader reader = new StreamReader(client))
+	    			{
+	    				string message;
+	    				while ((message = reader.ReadToEnd()) != null) {
+	    					if (message.Length > 0) {	    	
+	    						OnMessageReceived(new MessageReceivedEventArgs(message,pipename,DateTime.Now));
+	    					}
+	    				}
+	    			}
+	    		}
+    			catch (Exception e) {
+    				Say.Error("Failed to connect to pipe '" + pipename + "'.",e);
+    			}    			
+			}    		
+			Listen(pipename);
+    	}
+		
+		#endregion
 	}
 }
