@@ -38,6 +38,10 @@ namespace AdventureAuthor.Setup
 	/// </summary>
 	public static class PipeCommunication
 	{		
+		#region Constants
+				
+		#endregion
+		
 		#region Events
 		
 		/// <summary>
@@ -55,16 +59,6 @@ namespace AdventureAuthor.Setup
 		#endregion
 		
 		#region Methods
-		
-		/// <summary>
-		/// Start a separate thread to listen for messages on all 
-		/// Adventure Author-related named pipes.
-		/// </summary>
-		public static void StartListeningOnAllPipes()
-		{
-			
-		}
-		
 		
     	/// <summary>
     	/// Start a thread to listen for messages on a particular pipe.
@@ -122,6 +116,58 @@ namespace AdventureAuthor.Setup
     			}    			
 			}    		
 			Listen(pipename);
+    	}
+		   		
+    	    	
+		private static void ThreadedSendMessage(string pipename, string message)
+		{			
+			ParameterizedThreadStart start = new ParameterizedThreadStart(SendMessage);
+			Thread thread = new Thread(start);
+			string truncatedMessage = message;
+			if (truncatedMessage.Length > 10) {
+				truncatedMessage = truncatedMessage.Substring(0,10) + "...";
+			}
+    		thread.Name = "Send message '" + truncatedMessage + "' across pipe '" + pipename + "'";
+			thread.IsBackground = true;
+			thread.Priority = ThreadPriority.BelowNormal;
+			thread.Start(new string[]{pipename,message});
+		}
+		
+		
+		private static void SendMessage(object parameters)
+		{
+			try {
+				string[] parameterArray = (string[])parameters;
+				string pipename = parameterArray[0];
+				string message = parameterArray[1];
+				SendMessage(pipename,message);
+			}
+			catch (Exception) {
+				throw new ArgumentException("parameters must be an object[] containing a string pipename " +
+				                            "and a string message in that order.","parameters");
+			}
+		}
+		
+		
+    	private static void SendMessage(string pipename, string message)
+    	{    		
+    		try {	    			 
+		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
+					    			                                            PipeDirection.Out,
+					    			                                            1))
+		    	{	    			
+		    		server.WaitForConnection();
+		    		using (StreamWriter writer = new StreamWriter(server))
+		    		{
+		    			writer.WriteLine(message);
+		    			writer.Flush();
+		    		}
+		    	}
+    		}
+    		catch (IOException) {
+    			Say.Error("Tried to send message '" + message + "' across pipe '" + pipename + 
+    			          "', but the pipe was busy.");
+    		}
     	}
 		
 		#endregion

@@ -161,6 +161,7 @@ namespace AdventureAuthor.Setup
 				SetupUserProfile();
 				SetupMyAchievements();
 				
+				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
 			catch (Exception e) {
