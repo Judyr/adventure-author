@@ -33,7 +33,7 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Setup
 {
 	/// <summary>
-	/// Listens for communication across inter-process named pipes
+	/// Deals with communication across inter-process named pipes
 	/// and generates events when a message is received.
 	/// </summary>
 	public static class PipeCommunication
@@ -64,7 +64,7 @@ namespace AdventureAuthor.Setup
     	/// Start a thread to listen for messages on a particular pipe.
     	/// </summary>
     	/// <param name="pipename">The name of the pipe to listen to.</param>
-    	public static void StartListening(string pipename)
+    	public static void ThreadedListen(string pipename)
     	{   
     		ParameterizedThreadStart start = new ParameterizedThreadStart(Listen);
     		Thread thread = new Thread(start);
@@ -92,7 +92,7 @@ namespace AdventureAuthor.Setup
     	/// Start listening for messages on a particular pipe.
     	/// </summary>
     	/// <param name="pipename">The name of the pipe to listen to.</param>
-		private static void Listen(string pipename)
+		public static void Listen(string pipename)
     	{
     		using (NamedPipeClientStream client = new NamedPipeClientStream(".",
 			                                                                pipename,
@@ -119,7 +119,12 @@ namespace AdventureAuthor.Setup
     	}
 		   		
     	    	
-		private static void ThreadedSendMessage(string pipename, string message)
+		/// <summary>
+		/// Start a thread to send a message on a particular pipe.
+		/// </summary>
+		/// <param name="pipename">The name of the pipe to send across.</param>
+		/// <param name="message">The message to send.</param>
+		public static void ThreadedSendMessage(string pipename, string message)
 		{			
 			ParameterizedThreadStart start = new ParameterizedThreadStart(SendMessage);
 			Thread thread = new Thread(start);
@@ -134,6 +139,12 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		/// <summary>
+		/// Send a message on a particular pipe.
+		/// </summary>
+		/// <param name="parameters">A string[] containing the name of the pipe
+		/// to send across and the message to send. Use 'SendMessage(string pipename,
+		/// string message)' instead.</param>
 		private static void SendMessage(object parameters)
 		{
 			try {
@@ -149,7 +160,12 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-    	private static void SendMessage(string pipename, string message)
+		/// <summary>
+		/// Send a message on a particular pipe.
+		/// </summary>
+		/// <param name="pipename">The name of the pipe to send across.</param>
+		/// <param name="message">The message to send.</param>
+    	public static void SendMessage(string pipename, string message)
     	{    		
     		try {	    			 
 		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
