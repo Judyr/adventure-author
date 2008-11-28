@@ -41,15 +41,21 @@ namespace AdventureAuthor.Achievements
 	/// </summary>
 	public class WordCountMonitor : AchievementMonitor
 	{
+		#region Constants
+		
+		public const string WORDCOUNTNAME = "Word count";
+		
+		#endregion
+		
 		#region Properties and fields
-			
+				
+		protected uint wordCount;	
 		/// <summary>
 		/// The total 'narrative' word count of the user - a rough total
 		/// of all the words they have typed into the Conversation Writer,
 		/// and into the First Name, Last Name, Localized Description and
 		/// Localized Description (when identified) fields of an object.
 		/// </summary>
-		protected uint wordCount;
 		public uint WordCount {
 			get { 
 				lock (padlock) {
@@ -73,9 +79,8 @@ namespace AdventureAuthor.Achievements
 		/// count of the user and grants awards when the total reaches 
 		/// certain levels.
 		/// </summary>
-		public WordCountMonitor() : base()
+		public WordCountMonitor() : this(0)
 		{
-			Toolset.WordsTyped += UpdateWordCount;
 		}
 		
 		
@@ -84,36 +89,24 @@ namespace AdventureAuthor.Achievements
 		/// count of the user and grants awards when the total reaches 
 		/// certain levels.
 		/// </summary>
-		/// <param name="award">An award to be given out based on word count.</param>
-		public WordCountMonitor(Award award) : this(new List<Award>{award})
+		/// <param name="wordCount">The initial word count.</param>
+		public WordCountMonitor(uint wordCount) : base()
 		{			
-		}
-		
-		
-		/// <summary>
-		/// Construct an object which tracks the total 'narrative' word 
-		/// count of the user and grants awards when the total reaches 
-		/// certain levels.
-		/// </summary>
-		/// <param name="awards">Awards to be given out based on word count.</param>
-		public WordCountMonitor(List<Award> awards) : this()
-		{
-			foreach (Award award in awards) {
-				AddAward(award);
-			}
+			this.wordCount = wordCount;
+			Toolset.WordsTyped += UpdateWordCount;
 		}
 		
 		#endregion
 		
 		#region Methods
-				
+		
 		/// <summary>
-		/// Get the current recorded information on the monitored subject.
+		/// Gets the name of the monitored subject.
 		/// </summary>
-		/// <returns>The information being tracked about the monitored subject.</returns>
-		public override object GetCurrentInformationOnSubject()
+		/// <returns>The name of the monitored subject e.g. 'Word count'.</returns>
+		public override string GetSubjectName()
 		{
-			return WordCount;
+			return WORDCOUNTNAME;
 		}
 		
 		
@@ -123,11 +116,21 @@ namespace AdventureAuthor.Achievements
 		/// <returns>The Type of information being recorded about the monitored subject.</returns>
 		/// <remarks>Any award being added to this AchievementMonitor must return a value
 		/// for GetCriteriaType() which is identical to the value returned by this method.</remarks>
-		public override Type GetTrackedInformationType()
+		public override Type GetSubjectType()
 		{
 			return typeof(uint);
 		}
+				
 		
+		/// <summary>
+		/// Get the current recorded information on the monitored subject.
+		/// </summary>
+		/// <returns>The information being tracked about the monitored subject.</returns>
+		public override object GetSubjectValue()
+		{
+			return WordCount;
+		}
+				
 		
 		/// <summary>
 		/// Update the total word count for this user.

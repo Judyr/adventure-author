@@ -44,7 +44,7 @@ namespace AdventureAuthor.Achievements
 		/// <summary>
 		/// The awards which this class is responsible for awarding to the user.
 		/// </summary>
-		protected List<Award> awards = new List<Award>(4);
+		protected List<Award> awards = new List<Award>(7);
 		public List<Award> Awards {
 			get { return awards; }
 		}
@@ -100,13 +100,13 @@ namespace AdventureAuthor.Achievements
 		
 		#endregion
 		
-		#region Methods	
+		#region Methods				
 		
 		/// <summary>
-		/// Get the current recorded information on the monitored subject.
+		/// Gets the name of the monitored subject.
 		/// </summary>
-		/// <returns>The information being tracked about the monitored subject.</returns>
-		public abstract object GetCurrentInformationOnSubject();	
+		/// <returns>The name of the monitored subject e.g. 'Word count'.</returns>
+		public abstract string GetSubjectName();	
 		
 		
 		/// <summary>
@@ -115,7 +115,14 @@ namespace AdventureAuthor.Achievements
 		/// <returns>The Type of information being recorded about the monitored subject.</returns>
 		/// <remarks>Any award being added to this AchievementMonitor must return a value
 		/// for GetCriteriaType() which is identical to the value returned by this method.</remarks>
-		public abstract Type GetTrackedInformationType();
+		public abstract Type GetSubjectType();
+		
+		
+		/// <summary>
+		/// Get the current recorded information on the monitored subject.
+		/// </summary>
+		/// <returns>The information being tracked about the monitored subject.</returns>
+		public abstract object GetSubjectValue();
 
 		
 		/// <summary>
@@ -125,7 +132,7 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		protected void CheckAgainstAwardsCriteria(object sender, PropertyChangedEventArgs e)
 		{
-			object information = GetCurrentInformationOnSubject();
+			object information = GetSubjectValue();
 			List<Award> awardsToGrant = new List<Award>();
 			List<Award> awardsToRemove = new List<Award>();				
 				
@@ -171,7 +178,7 @@ namespace AdventureAuthor.Achievements
 			}
 			
 			Type criteriaType = award.GetCriteriaType();
-			Type subjectType = GetTrackedInformationType();
+			Type subjectType = GetSubjectType();
 			if (criteriaType != subjectType) {
 				throw new ArgumentException("Only awards which return a value of " + subjectType + " from " + 
 				                            "method GetCriteriaType() can be added to this AchievementMonitor (" +

@@ -317,9 +317,7 @@
     <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
     <Compile Include="Setup\BlueprintMagnetControl.cs" />
     <Compile Include="Setup\BlueprintMagnetControlInfo.cs" />
-    <Compile Include="Setup\MessageReceivedEventArgs.cs" />
     <Compile Include="Setup\NWN2Utils.cs" />
-    <Compile Include="Setup\PipeCommunication.cs" />
     <Compile Include="Setup\Plugin.cs" />
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\TextBoxItem.cs" />

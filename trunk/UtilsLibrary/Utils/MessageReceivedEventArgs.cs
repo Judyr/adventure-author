@@ -26,7 +26,7 @@
 
 using System;
 
-namespace AdventureAuthor.Setup
+namespace AdventureAuthor.Utils
 {
 	/// <summary>
 	/// Arguments to accompany the event of a message being sent to the

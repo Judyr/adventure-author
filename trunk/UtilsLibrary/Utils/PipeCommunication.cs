@@ -28,9 +28,8 @@ using System;
 using System.Threading;
 using System.IO;
 using System.IO.Pipes;
-using AdventureAuthor.Utils;
 
-namespace AdventureAuthor.Setup
+namespace AdventureAuthor.Utils
 {
 	/// <summary>
 	/// Deals with communication across inter-process named pipes
@@ -171,7 +170,7 @@ namespace AdventureAuthor.Setup
 		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
 					    			                                            PipeDirection.Out,
 					    			                                            1))
-		    	{	    			
+		    	{	    		
 		    		server.WaitForConnection();
 		    		using (StreamWriter writer = new StreamWriter(server))
 		    		{
@@ -180,9 +179,9 @@ namespace AdventureAuthor.Setup
 		    		}
 		    	}
     		}
-    		catch (IOException) {
+    		catch (IOException e) {
     			Say.Error("Tried to send message '" + message + "' across pipe '" + pipename + 
-    			          "', but the pipe was busy.");
+    			          "', but the pipe was busy.",e);
     		}
     	}
 		

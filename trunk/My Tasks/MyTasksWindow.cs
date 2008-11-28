@@ -162,7 +162,20 @@ namespace AdventureAuthor.Tasks
 			Loaded += new RoutedEventHandler(LaunchInSystemTray);
 			
 			// And listen for messages from the NWN2Toolset:
-			Loaded += new RoutedEventHandler(StartListeningForMessages);			
+			Loaded += new RoutedEventHandler(StartListeningForMessages);	
+			
+			Loaded += delegate 
+			{  
+				PipeCommunication.MessageReceived += delegate(object sender, MessageReceivedEventArgs e) 
+				{  
+					Say.Information("My Tasks received message: " + e.Message + "\n\nReplying...");
+				};
+				PipeCommunication.ThreadedListen("fromnwn2tomytasks");	
+				
+				SizeChanged += delegate { 
+				PipeCommunication.ThreadedSendMessage("frommytaskstonwn2","This is My Tasks speaking.");
+				 };
+			};
 		}
 		
 		#endregion
