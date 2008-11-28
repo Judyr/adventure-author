@@ -101,6 +101,11 @@ namespace AdventureAuthor.Evaluation
     		InitializeComponent();
     		
     		LogWriter.StartRecording("evaluation");
+    		Log.Message += SendLogMessagesToNWN2Toolset;
+    		Loaded += delegate 
+    		{      			
+    			Log.WriteAction(LogAction.launched,"evaluation");   
+    		};
     		
     		CardViewer.Instance = this;
     			
@@ -109,11 +114,10 @@ namespace AdventureAuthor.Evaluation
     		
     		MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 			MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
-				
-    		Log.WriteAction(LogAction.launched,"evaluation");   
     		
     		Closing += new CancelEventHandler(viewerClosing);
-    		Changed += new EventHandler(changeMade);
+    		Changed += new EventHandler(changeMade);            
+            Closed += delegate { LogWriter.StopRecording(); };
             
     		EvaluationPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
             updateImageViewerSelectionMenu();
@@ -126,6 +130,16 @@ namespace AdventureAuthor.Evaluation
             	Say.Error("A problem was encountered when trying to create a folder for saved Comment Cards.",e);
             }   
     	}
+    	    	
+        
+        /// <summary>
+        /// Send messages to be logged to the NWN2 toolset.
+        /// </summary>
+        private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
+        {
+        	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
+        	                                      e.Message);        	                                      
+        }
 
     	
     	private void userPreferencesPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -150,9 +164,8 @@ namespace AdventureAuthor.Evaluation
     				Say.Error("Something went wrong when trying to save your preferences - the choices " +
     				          "you have made may not have been saved.",e);
     			}
-    			
+    			    			
     			Log.WriteAction(LogAction.exited,"evaluation");
-    			LogWriter.StopRecording();
     		}
     	}
 

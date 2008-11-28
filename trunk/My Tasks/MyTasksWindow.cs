@@ -110,7 +110,14 @@ namespace AdventureAuthor.Tasks
 		/// </summary>
 		public MyTasksWindow()
 		{	
-			InitializeComponent();
+			InitializeComponent();		
+			
+			LogWriter.StartRecording("mytasks");
+			Log.Message += SendLogMessagesToNWN2Toolset;
+			Loaded += delegate 
+			{ 
+				Log.WriteAction(LogAction.launched,"mytasks"); 
+			};
 			
 			SuggestedTasks = new TaskCollection();
 			mySuggestionsInformationTextBlock.Text = MYSUGGESTIONSINFO_GENERAL;
@@ -121,14 +128,8 @@ namespace AdventureAuthor.Tasks
 			}
 			catch (Exception e) {
 	    		Say.Debug("Failed to create directory for user:\n"+e);
-			}  
-			
-			
-			// Logging:
-			LogWriter.StartRecording("mytasks");					
-			Loaded += delegate { Log.WriteAction(LogAction.launched,"mytasks"); };
-			
-			
+			}  	
+						
 			// Set up event handlers:
 			pad.AddTaskButton.Click += AddAndSelectNewTask;
 			Closing += SavePreferencesWhenClosing;
@@ -168,6 +169,16 @@ namespace AdventureAuthor.Tasks
 		#endregion
 		
 		#region Methods
+		
+        /// <summary>
+        /// Send messages to be logged to the NWN2 toolset.
+        /// </summary>
+        private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
+        {
+        	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
+        	                                      e.Message);        	                                      
+        }
+        
 		
 		/// <summary>
 		/// Open a new task collection.
