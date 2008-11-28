@@ -39,18 +39,43 @@ namespace AdventureAuthor.Achievements
 	/// </summary>
 	[Serializable]
 	public class UserProfile
-	{
+	{		
 		#region Properties and fields
 		
 		/// <summary>
 		/// The awards that this user has received as a result
 		/// of their toolset activity.
 		/// </summary>
-		[XmlArray]
 		private List<Award> awards;
+		[XmlArray]
 		public List<Award> Awards {
 			get { return awards; }
 			set { awards = value; }
+		}
+		
+		
+		/// <summary>
+		/// Information that is being tracked for this user in order
+		/// to grant them awards.
+		/// </summary>
+		private SerializableDictionary<string,object> trackedInfo;
+		public SerializableDictionary<string,object> TrackedInfo {
+			get { return trackedInfo; }
+			set { trackedInfo = value; }
+		}
+		
+		
+		/// <summary>
+		/// The total 'narrative' word count of the user.
+		/// </summary>
+		[XmlIgnore]
+		public uint WordCount {
+			get { 
+				return (uint)GetValue(WordCountMonitor.WORDCOUNTNAME);
+			}
+			set {
+				SetValue(WordCountMonitor.WORDCOUNTNAME,value);
+			}
 		}
 		
 		#endregion
@@ -63,6 +88,7 @@ namespace AdventureAuthor.Achievements
 		private UserProfile()
 		{
 			awards = new List<Award>();
+			trackedInfo = new SerializableDictionary<string,object>();
 		}
 		
 		
@@ -74,11 +100,22 @@ namespace AdventureAuthor.Achievements
 		public UserProfile(List<Award> awards)
 		{
 			this.awards = awards;
+			trackedInfo = new SerializableDictionary<string,object>();
+			SetupDefaultValues();
 		}
 		
 		#endregion
 	
 		#region Methods
+		
+		/// <summary>
+		/// Set up default values for tracked information.
+		/// </summary>
+		private void SetupDefaultValues()
+		{
+			WordCount = 0;
+		}
+		
 		
 		/// <summary>
 		/// Check whether this user has already received a given award.
@@ -93,6 +130,42 @@ namespace AdventureAuthor.Achievements
 				}
 			}
 			return false;
+		}
+		
+		
+		/// <summary>
+		/// Retrieve the value of a piece of tracked information.
+		/// </summary>
+		/// <param name="infoName">The name that the information
+		/// has been stored under, e.g. 'Word Count'.</param>
+		/// <returns>The value of the tracked information, or null
+		/// if no information with that name has been tracked.</returns>
+		public object GetValue(string infoName)
+		{
+			if (!trackedInfo.ContainsKey(infoName)) {
+				return null;
+			}
+			else {
+				return trackedInfo[infoName];
+			}
+		}
+		
+		
+		/// <summary>
+		/// Set the value of a piece of tracked information.
+		/// </summary>
+		/// <param name="infoName">The name that the information
+		/// is being stored under, e.g. 'Word Count'.</param>
+		public void SetValue(string infoName, object val)
+		{
+			if (!trackedInfo.ContainsKey(infoName)) {
+				trackedInfo.Add(infoName,val);
+			}
+			else {
+				Say.Information(infoName + ": was " + trackedInfo[infoName] + ", setting to " + val + "\n\n" +
+				               System.Environment.StackTrace);
+				trackedInfo[infoName] = val;
+			}
 		}
 		
 		#endregion

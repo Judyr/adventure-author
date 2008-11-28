@@ -162,6 +162,20 @@ namespace AdventureAuthor.Setup
 				SetupMyAchievements();
 				
 				
+				
+			
+				
+				PipeCommunication.MessageReceived += delegate(object sender, MessageReceivedEventArgs e) 
+				{  
+					Say.Information("NWN2 received message: " + e.Message);
+				};
+				PipeCommunication.ThreadedListen("frommytaskstonwn2");
+				
+				form.App.Resize += delegate { PipeCommunication.ThreadedSendMessage("fromnwn2tomytasks","This is NWN2 speaking."); };
+				
+				
+				
+				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
 			catch (Exception e) {
@@ -204,6 +218,11 @@ namespace AdventureAuthor.Setup
 			
 			// Automatically serialise the user profile upon closing:
 			if (profile != null) {
+				// Update the user profile with the latest values for all tracked information:
+				foreach (AchievementMonitor monitor in achievementMonitors) {
+					profile.SetValue(monitor.GetSubjectName(),monitor.GetSubjectValue());
+				}
+				
 				try {
 					Serialization.Serialize(AdventureAuthorPluginPreferences.UserProfilePath,profile);
 				}
@@ -301,14 +320,14 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private void SetupMyAchievements()
 		{
-			WordCountMonitor wordCountMonitor = new WordCountMonitor();
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",WordsmithAward.BRONZEWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",WordsmithAward.SILVERWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Gold)",WordsmithAward.GOLDWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Emerald)",WordsmithAward.EMERALDWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Sapphire)",WordsmithAward.SAPPHIREWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Ruby)",WordsmithAward.RUBYWORDCOUNT));
-			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT));
+			WordCountMonitor wordCountMonitor = new WordCountMonitor(Profile.WordCount);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",WordsmithAward.BRONZEWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",WordsmithAward.SILVERWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Gold)",WordsmithAward.GOLDWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Emerald)",WordsmithAward.EMERALDWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Sapphire)",WordsmithAward.SAPPHIREWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Ruby)",WordsmithAward.RUBYWORDCOUNT),true);
+			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT),true);
 			achievementMonitors.Add(wordCountMonitor);
 			
 			wordCountMonitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e)
