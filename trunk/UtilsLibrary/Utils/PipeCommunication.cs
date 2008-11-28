@@ -38,6 +38,9 @@ namespace AdventureAuthor.Utils
 	public static class PipeCommunication
 	{		
 		#region Constants
+		
+		public const string MYTASKSPIPE = "My Tasks to NWN2 pipe";
+		public const string FRIDGEMAGNETSPIPE = "Fridge Magnets to NWN2 pipe";
 				
 		#endregion
 		
@@ -95,7 +98,7 @@ namespace AdventureAuthor.Utils
     	{
     		using (NamedPipeClientStream client = new NamedPipeClientStream(".",
 			                                                                pipename,
-			                                                                PipeDirection.In))
+			                                                                PipeDirection.InOut))
     		{
     			try {
     				System.Diagnostics.Debug.WriteLine("Try to connect to server.");
@@ -125,61 +128,56 @@ namespace AdventureAuthor.Utils
 		   		
     	    	
 		/// <summary>
-		/// Start a thread to send a message on a particular pipe.
+		/// Start a thread to send a message or object across a particular pipe.
 		/// </summary>
 		/// <param name="pipename">The name of the pipe to send across.</param>
-		/// <param name="message">The message to send.</param>
-		public static void ThreadedSendMessage(string pipename, string message)
+		/// <param name="message">The message or object to send.</param>
+		public static void ThreadedSendMessage(string pipename, object message)
 		{			
 			ParameterizedThreadStart start = new ParameterizedThreadStart(SendMessage);
 			Thread thread = new Thread(start);
-			string truncatedMessage = message;
-			if (truncatedMessage.Length > 10) {
-				truncatedMessage = truncatedMessage.Substring(0,10) + "...";
-			}
-    		thread.Name = "Send message '" + truncatedMessage + "' across pipe '" + pipename + "'";
+    		thread.Name = "Send message/object across pipe '" + pipename + "'";
 			thread.IsBackground = true;
 			thread.Priority = ThreadPriority.Normal;
-			thread.Start(new string[]{pipename,message});
+			thread.Start(new object[]{pipename,message});
 		}
 		
 		
 		/// <summary>
-		/// Send a message on a particular pipe.
+		/// Send a message or object across a particular pipe.
 		/// </summary>
-		/// <param name="parameters">A string[] containing the name of the pipe
+		/// <param name="parameters">An object[] containing the name of the pipe
 		/// to send across and the message to send. Use 'SendMessage(string pipename,
-		/// string message)' instead.</param>
+		/// object message)' instead.</param>
 		private static void SendMessage(object parameters)
 		{
-			System.Diagnostics.Debug.WriteLine("SendMessage(" + parameters.GetType() + ")");
 			try {
-				string[] parameterArray = (string[])parameters;
-				string pipename = parameterArray[0];
-				string message = parameterArray[1];
+				object[] parameterArray = (object[])parameters;
+				string pipename = (string)parameterArray[0];
+				object message = parameterArray[1];
 				SendMessage(pipename,message);
 			}
 			catch (IndexOutOfRangeException) {
-				throw new ArgumentException("parameters must be an string[] containing a string pipename " +
-				                            "and a string message in that order.","parameters");
+				throw new ArgumentException("parameters must be an object[] containing a string pipename " +
+				                            "and an object message in that order.","parameters");
 			}
 			catch (InvalidCastException) {
-				throw new ArgumentException("parameters must be an string[] containing a string pipename " +
-				                            "and a string message in that order.","parameters");
+				throw new ArgumentException("parameters must be an object[] containing a string pipename " +
+				                            "and an object message in that order.","parameters");
 			}
 		}
 		
 		
 		/// <summary>
-		/// Send a message on a particular pipe.
+		/// Start a thread to send a message or object across a particular pipe.
 		/// </summary>
 		/// <param name="pipename">The name of the pipe to send across.</param>
-		/// <param name="message">The message to send.</param>
-    	public static void SendMessage(string pipename, string message)
+		/// <param name="message">The message or object to send.</param>
+    	public static void SendMessage(string pipename, object message)
     	{    		    		
     		try {	    			 
 		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
-					    			                                            PipeDirection.Out,
+					    			                                            PipeDirection.InOut,
 					    			                                            1))
 		    	{	
 					System.Diagnostics.Debug.WriteLine("Waiting for connection.");
@@ -193,8 +191,8 @@ namespace AdventureAuthor.Utils
 		    	}
     		}
     		catch (IOException e) {
-    			System.Diagnostics.Debug.WriteLine("Tried to send message '" + message + "' across pipe '" + pipename + 
-    			          						   "', but the pipe was busy.",e);
+    			System.Diagnostics.Debug.WriteLine("Tried to send '" + message + "' across pipe '" + pipename + 
+    			                                   "', but the pipe was busy: " + e);
     		}
     	}
     	
