@@ -81,7 +81,7 @@ namespace AdventureAuthor.Ideas
         	try {
 	        	InitializeComponent();
 	        	
-	        	LogWriter.StartRecording("magnets"); 		
+	        	Log.Message += SendLogMessagesToNWN2Toolset;
 	        	
 	        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 				MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
@@ -149,6 +149,13 @@ namespace AdventureAuthor.Ideas
         		Say.Error("Something went wrong when constructing MagnetBoardViewer.",x);
         	}
         }
+
+        
+        private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
+        {
+        	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
+        	                                      e.Message);        	                                      
+        }
         
                 
         private void SetupEventHandlers()
@@ -202,20 +209,7 @@ namespace AdventureAuthor.Ideas
 			// Currently any message sent to Fridge Magnets can be assumed to be
 			// the text of an idea to be added to the magnet box:
 			if (e.Source == PipeCommunication.FRIDGEMAGNETSPIPE) {				
-				string message = e.Message;
-				try {	
-					if (message.EndsWith(System.Environment.NewLine)) {
-						message = message.Substring(0,message.Length-Environment.NewLine.Length);
-					}
-				}
-				catch (IndexOutOfRangeException ex) {
-					Debug.WriteLine("Failed to strip newline character from message: " + ex);
-				}
-				catch (ArgumentOutOfRangeException ex) {
-					Say.Error("Failed to strip newline character from message: " + ex);					
-					message = e.Message;
-				}
-				
+				string message = Tools.StripNewLineFromEnd(e.Message);				
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
 				                            new AddToolsetMagnetDelegate(AddToolsetMagnet),
 				                            message);

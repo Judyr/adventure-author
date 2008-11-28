@@ -154,6 +154,16 @@ namespace AdventureAuthor.Setup
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording("toolset");
+				
+				// Listen for log messages from other applications:
+				PipeCommunication.MessageReceived += delegate(object sender, MessageReceivedEventArgs e) 
+				{  
+					if (e.Source == PipeCommunication.LOGMESSAGESPIPE) {
+						string logMessage = Tools.StripNewLineFromEnd(e.Message);						
+						Log.WriteMessage(logMessage,false);
+					}					
+				};
+				PipeCommunication.ThreadedListen(PipeCommunication.LOGMESSAGESPIPE);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();

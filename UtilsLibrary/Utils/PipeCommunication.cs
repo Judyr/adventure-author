@@ -41,6 +41,7 @@ namespace AdventureAuthor.Utils
 		
 		public const string MYTASKSPIPE = "My Tasks to NWN2 pipe";
 		public const string FRIDGEMAGNETSPIPE = "Fridge Magnets to NWN2 pipe";
+		public const string LOGMESSAGESPIPE = "Logged messages to NWN2 pipe";
 				
 		#endregion
 		
@@ -177,8 +178,7 @@ namespace AdventureAuthor.Utils
     	{    		    		
     		try {	    			 
 		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
-					    			                                            PipeDirection.InOut,
-					    			                                            1))
+					    			                                            PipeDirection.InOut))
 		    	{	
 					System.Diagnostics.Debug.WriteLine("Waiting for connection.");
 		    		server.WaitForConnection();		    		

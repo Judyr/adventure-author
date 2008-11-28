@@ -34,8 +34,7 @@ namespace AdventureAuthor.Utils
 {
 	public static class Log
 	{	
-		public static event EventHandler<LogEventArgs> Message;
-		
+		public static event EventHandler<LogEventArgs> Message;		
 		private static void OnMessage(LogEventArgs e)
 		{
 			EventHandler<LogEventArgs> handler = Message;
@@ -50,12 +49,25 @@ namespace AdventureAuthor.Utils
 		/// </summary>
 		/// <remarks>'>' character indicates this message does not follow the usual format</remarks>
 		/// <param name="logMessage">The message to log. For unique user actions.</param>
-		public static void WriteMessage(string logMessage)
+		/// <param name="includeTimeStamp">True to add a time stamp to the start of this message, false otherwise.</param>
+		public static void WriteMessage(string logMessage, bool includeTimeStamp)
 		{
-			string message = Tools.GetTimeStamp(false) + " >" + logMessage;
-			OnMessage(new LogEventArgs(message));
+			if (includeTimeStamp) {
+				logMessage = Tools.GetTimeStamp(false) + " >" + logMessage;
+			}			
+			OnMessage(new LogEventArgs(logMessage));
 		}			
 		
+		
+		/// <summary>
+		/// Writes a log message in the form: '16:24:15:message'
+		/// </summary>
+		/// <remarks>'>' character indicates this message does not follow the usual format</remarks>
+		/// <param name="logMessage">The message to log. For unique user actions.</param>
+		public static void WriteMessage(string logMessage)
+		{
+			WriteMessage(logMessage,true);
+		}				
 		
 
 		/// <summary>
@@ -67,7 +79,7 @@ namespace AdventureAuthor.Utils
 		public static void WriteAction(LogAction action, string subject)
 		{
 			WriteAction(action,subject,null);
-		}		
+		}	
 		
 		
 		/// <summary>
@@ -79,14 +91,31 @@ namespace AdventureAuthor.Utils
 		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
 		public static void WriteAction(LogAction action, string subject, string extraInfo)
 		{
+			WriteAction(action,subject,extraInfo,true);
+		}
+		
+		
+		/// <summary>
+		/// Writes a log message in the form: '16:24:15:Added Choice -PLAYER'
+		/// </summary>
+		/// <remarks>Timestamp:EffectiveAction subject -optionalextrainfo</remarks>
+		/// <param name="action">The user's effective action, e.g. Opened, Added, Edited, Deleted</param>
+		/// <param name="subject">The subject of the effective action, e.g. Line, BranchLine, Choice, Speaker, Sound</param>
+		/// <param name="extraInfo">A string containing any extra applicable information in a non-standard format</param>
+		/// <param name="includeTimeStamp">True to add a time stamp to the start of this message, false otherwise.</param>
+		public static void WriteAction(LogAction action, string subject, string extraInfo, bool includeTimeStamp)
+		{
 			string message;
-			string subjectmsg = subject == null ? "<Subject not logged>" : subject;			
+			string subjectmsg = subject == null ? "<Subject not logged>" : subject;	
 			
 			if (extraInfo != null && extraInfo != String.Empty) {
-				message = Tools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg + " -" + extraInfo;
+				message = action.ToString() + " " + subjectmsg + " -" + extraInfo;
 			}
 			else {
-				message = Tools.GetTimeStamp(false) + " " + action.ToString() + " " + subjectmsg;
+				message = action.ToString() + " " + subjectmsg;
+			}
+			if (includeTimeStamp) {
+				message = Tools.GetTimeStamp(false) + " " + message;
 			}
 				
 			OnMessage(new LogEventArgs(message));
