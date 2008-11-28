@@ -162,8 +162,6 @@ namespace AdventureAuthor.Achievements
 				trackedInfo.Add(infoName,val);
 			}
 			else {
-				Say.Information(infoName + ": was " + trackedInfo[infoName] + ", setting to " + val + "\n\n" +
-				               System.Environment.StackTrace);
 				trackedInfo[infoName] = val;
 			}
 		}

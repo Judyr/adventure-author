@@ -69,7 +69,7 @@ namespace AdventureAuthor.Utils
     		Thread thread = new Thread(start);
     		thread.Name = "Listen to pipe '" + pipename + "'";
     		thread.IsBackground = true; // will not prevent the application from closing down
-			thread.Priority = ThreadPriority.BelowNormal;
+			thread.Priority = ThreadPriority.Normal;
 			thread.Start(pipename);
     	}
     	
@@ -98,22 +98,28 @@ namespace AdventureAuthor.Utils
 			                                                                PipeDirection.In))
     		{
     			try {
-    				client.Connect();
+    				System.Diagnostics.Debug.WriteLine("Try to connect to server.");
+    				client.Connect();    				
+    				System.Diagnostics.Debug.WriteLine("Connected.");
     				
 	    			using (StreamReader reader = new StreamReader(client))
-	    			{
+	    			{	    				
 	    				string message;
-	    				while ((message = reader.ReadToEnd()) != null) {
+	    				
+    					System.Diagnostics.Debug.WriteLine("Start listening for messages.");
+	    				while ((message = reader.ReadToEnd()) != String.Empty) {
 	    					if (message.Length > 0) {	    	
 	    						OnMessageReceived(new MessageReceivedEventArgs(message,pipename,DateTime.Now));
 	    					}
 	    				}
+    					System.Diagnostics.Debug.WriteLine("Stopped listening for messages.");
 	    			}
 	    		}
     			catch (Exception e) {
     				Say.Error("Failed to connect to pipe '" + pipename + "'.",e);
     			}    			
-			}    		
+			} 
+    		
 			Listen(pipename);
     	}
 		   		
@@ -133,7 +139,7 @@ namespace AdventureAuthor.Utils
 			}
     		thread.Name = "Send message '" + truncatedMessage + "' across pipe '" + pipename + "'";
 			thread.IsBackground = true;
-			thread.Priority = ThreadPriority.BelowNormal;
+			thread.Priority = ThreadPriority.Normal;
 			thread.Start(new string[]{pipename,message});
 		}
 		
@@ -146,14 +152,19 @@ namespace AdventureAuthor.Utils
 		/// string message)' instead.</param>
 		private static void SendMessage(object parameters)
 		{
+			System.Diagnostics.Debug.WriteLine("SendMessage(" + parameters.GetType() + ")");
 			try {
 				string[] parameterArray = (string[])parameters;
 				string pipename = parameterArray[0];
 				string message = parameterArray[1];
 				SendMessage(pipename,message);
 			}
-			catch (Exception) {
-				throw new ArgumentException("parameters must be an object[] containing a string pipename " +
+			catch (IndexOutOfRangeException) {
+				throw new ArgumentException("parameters must be an string[] containing a string pipename " +
+				                            "and a string message in that order.","parameters");
+			}
+			catch (InvalidCastException) {
+				throw new ArgumentException("parameters must be an string[] containing a string pipename " +
 				                            "and a string message in that order.","parameters");
 			}
 		}
@@ -165,26 +176,28 @@ namespace AdventureAuthor.Utils
 		/// <param name="pipename">The name of the pipe to send across.</param>
 		/// <param name="message">The message to send.</param>
     	public static void SendMessage(string pipename, string message)
-    	{    		
+    	{    		    		
     		try {	    			 
 		    	using (NamedPipeServerStream server = new NamedPipeServerStream(pipename,
 					    			                                            PipeDirection.Out,
 					    			                                            1))
-		    	{	    		
-		    		server.WaitForConnection();
+		    	{	
+					System.Diagnostics.Debug.WriteLine("Waiting for connection.");
+		    		server.WaitForConnection();		    		
+					System.Diagnostics.Debug.WriteLine("Connected.");
 		    		using (StreamWriter writer = new StreamWriter(server))
-		    		{
+		    		{		    			
 		    			writer.WriteLine(message);
 		    			writer.Flush();
 		    		}
 		    	}
     		}
     		catch (IOException e) {
-    			Say.Error("Tried to send message '" + message + "' across pipe '" + pipename + 
-    			          "', but the pipe was busy.",e);
+    			System.Diagnostics.Debug.WriteLine("Tried to send message '" + message + "' across pipe '" + pipename + 
+    			          						   "', but the pipe was busy.",e);
     		}
     	}
-		
+    	
 		#endregion
 	}
 }
