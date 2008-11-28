@@ -161,21 +161,6 @@ namespace AdventureAuthor.Setup
 				SetupUserProfile();
 				SetupMyAchievements();
 				
-				
-				
-			
-				
-				PipeCommunication.MessageReceived += delegate(object sender, MessageReceivedEventArgs e) 
-				{  
-					Say.Information("NWN2 received message: " + e.Message);
-				};
-				PipeCommunication.ThreadedListen("frommytaskstonwn2");
-				
-				form.App.Resize += delegate { PipeCommunication.ThreadedSendMessage("fromnwn2tomytasks","This is NWN2 speaking."); };
-				
-				
-				
-				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
 			catch (Exception e) {

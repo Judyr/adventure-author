@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +11,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Threading;
 using AdventureAuthor.Utils;
 using Microsoft.Samples.CustomControls;
 using Microsoft.Win32;
@@ -34,8 +34,6 @@ namespace AdventureAuthor.Ideas
     	#endregion
     	
     	#region Fields 
-   
-    	private Thread pipeCommunicationThread;
     	
     	/// <summary>
     	/// The magnet board. This is currently always the same regardless of which magnet board configuration
@@ -131,23 +129,19 @@ namespace AdventureAuthor.Ideas
 				
 				ElementHost.EnableModelessKeyboardInterop(this);
 				
-				// listen for magnets being sent from the toolset or other applications:
-				Loaded += delegate { 
-					pipeCommunicationThread = new Thread(new ThreadStart(listenForConnection));
-					pipeCommunicationThread.Priority = ThreadPriority.BelowNormal;
-					pipeCommunicationThread.Start();	
+				// Listen for magnets being sent from the toolset or other applications:
+				Loaded += delegate {
+					PipeCommunication.MessageReceived += AddMagnetFromToolsetBlueprint; 
+					PipeCommunication.ThreadedListen(PipeCommunication.FRIDGEMAGNETSPIPE);						
 					LaunchInSystemTray();			
 					Hide(); // must be hidden last, or other constructor stuff never seems to happen
 				};		
 				
-				// clean up after yourself, for god's sake, you're a mess:
+				// Clean up after yourself, for god's sake, you're a mess:
 				Closed += delegate { 
 					if (trayIcon != null) {
 						trayIcon.Visible = false;
 						trayIcon.Dispose();
-					}
-					if (pipeCommunicationThread != null) {
-						pipeCommunicationThread.Join();    	
 					}
 				};
         	}
@@ -202,72 +196,46 @@ namespace AdventureAuthor.Ideas
     	#endregion
     	
     	#region Methods
-    	
-    	#region Pipes   
-    	
-		private static string pipeName = "magnets";
+				
+		private void AddMagnetFromToolsetBlueprint(object sender, MessageReceivedEventArgs e)
+		{  							
+			// Currently any message sent to Fridge Magnets can be assumed to be
+			// the text of an idea to be added to the magnet box:
+			if (e.Source == PipeCommunication.FRIDGEMAGNETSPIPE) {				
+				string message = e.Message;
+				try {	
+					if (message.EndsWith(System.Environment.NewLine)) {
+						message = message.Substring(0,message.Length-Environment.NewLine.Length);
+					}
+				}
+				catch (IndexOutOfRangeException ex) {
+					Debug.WriteLine("Failed to strip newline character from message: " + ex);
+				}
+				catch (ArgumentOutOfRangeException ex) {
+					Say.Error("Failed to strip newline character from message: " + ex);					
+					message = e.Message;
+				}
+				
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+				                            new AddToolsetMagnetDelegate(AddToolsetMagnet),
+				                            message);
+			}
+		}
 		
 		
-		
-		public delegate void AddToolsetMagnetDelegate(string message);
-		
+		public delegate void AddToolsetMagnetDelegate(string message);		
 		private void AddToolsetMagnet(string message)
 		{
 			Idea idea = new Idea(message,
 			                     IdeaCategory.Toolset,
 			                     User.GetCurrentUserName(),
 			                     DateTime.Now);
-			MagnetControl magnet = new MagnetControl(idea);
-				
+			MagnetControl magnet = new MagnetControl(idea);				
 			magnetList.AddMagnet(magnet,true);
 			
 			ShowBalloon("Your idea was saved.",10000);
 		}
-		
-		
-		
-		private void listenForConnection()
-		{
-			using (NamedPipeServerStream server = new NamedPipeServerStream(pipeName,PipeDirection.In))
-			{
-				server.WaitForConnection();			
-				
-				
-//				XmlSerializer serializer = new XmlSerializer(typeof(MagnetControlInfo));
-				try {
-//					object obj = serializer.Deserialize(server);
-					
-					using (StreamReader reader = new StreamReader(server))
-					{						
-						string message;						
-						
-						while ((message = reader.ReadLine()) != null) {		
-							
-							if (message == ABORTMESSAGE) { // received instruction to stop listening
-								return;
-							}
-							
-							this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-							                            new AddToolsetMagnetDelegate(AddToolsetMagnet),
-							                            message);
-						}						
-					}					
-				}
-				catch (Exception e) {
-					Say.Error("Could not deserialize the object.",e);
-				}
-				if (server.IsConnected) {
-					server.Disconnect();
-				}	
-			}
-			
-			listenForConnection();
-		}
-		
-    	#endregion
-    	
-    	
-    	
+		    	
     	
     	public void New()
     	{

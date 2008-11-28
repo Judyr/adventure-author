@@ -27,16 +27,6 @@ namespace AdventureAuthor.Ideas
 	/// </summary>
 	public partial class MagnetBoardViewer : System.Windows.Window
 	{				
-		#region Constants
-				
-    	/// <summary>
-    	/// A string constant that, when sent as a message to the magnets pipe, will close the thread
-    	/// that listens for connections.
-    	/// </summary>
-    	private const string ABORTMESSAGE = "!_Application exiting: ABORT LISTENING THREAD ..._!";
-		
-		#endregion
-		
 		#region Fields
 		
 		private static Icon litIcon;
@@ -264,23 +254,7 @@ namespace AdventureAuthor.Ideas
     	{
     		if (!CloseDialog()) { // return if user has an unsaved board and cancels
 	    		return;
-	    	}
-    		    		
-    		using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
-    		{
-    			try {
-    				client.Connect(100);
-	    			using (StreamWriter writer = new StreamWriter(client))
-	    			{
-	    				writer.WriteLine(ABORTMESSAGE);
-	    				writer.Flush();
-	    			}
-    			}
-    			catch (TimeoutException) {
-    				Console.WriteLine("Couldn't connect to pipe");
-    			}
-    		}
-    		
+	    	}    		
     		
     		try {
 	    		// Serialize the user's preferences:

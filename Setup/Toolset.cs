@@ -147,16 +147,6 @@ namespace AdventureAuthor.Setup
 			
 		#region Events
 		
-		public static event EventHandler<MagnetEventArgs> MagnetSubmitted;		
-		private static void OnMagnetSubmitted(MagnetEventArgs e)
-		{
-			EventHandler<MagnetEventArgs> handler = MagnetSubmitted;
-			if (handler != null) {
-				handler(null,e);
-			}
-		}
-		
-        
         public static event EventHandler<WordCountEventArgs> WordsTyped;
 		private static void OnWordsTyped(WordCountEventArgs e)
 		{
@@ -629,13 +619,6 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleOpened += new EventHandler(ModuleHelper_ModuleOpened);
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
-			// If a MagnetSubmitted event is raised, that magnet should now be
-			// sent to the Magnets application (if it can be found):
-			MagnetSubmitted += delegate(object sender, MagnetEventArgs e) 
-			{  
-				SendMagnet(e.Magnet);
-			};
-			
 			// Listen for My Tasks requesting task suggestions:
 			StartListeningForMessagesFromMyTasks();
 			
@@ -811,27 +794,7 @@ namespace AdventureAuthor.Setup
 		
 		private static void SendMagnet(object obj)
 		{
-			using (NamedPipeClientStream client = new NamedPipeClientStream(".","magnets",PipeDirection.Out))
-			{
-				try { // doesn't seem to require longer than this
-					client.Connect(50);
-				}
-				catch (TimeoutException) {
-					try { // but have a second attempt in case the computer is going slow?
-						client.Connect(500);
-					}
-					catch (TimeoutException) {
-						Say.Warning("You need to run Fridge Magnets before you can do this.");
-						return;
-					}
-				}
-				
-				using (StreamWriter writer = new StreamWriter(client))
-				{
-					writer.AutoFlush = true;
-					writer.WriteLine(obj);
-				}				
-			}
+			PipeCommunication.ThreadedSendMessage(PipeCommunication.FRIDGEMAGNETSPIPE,obj);
 		}
 		
 		
@@ -864,7 +827,7 @@ namespace AdventureAuthor.Setup
 					//OnMagnetSubmitted(new MagnetEventArgs(magnet));
 					
 					blueprint.OEIUnserialize(blueprint.Resource.GetStream(false)); // fetch from disk
-					string text = BlueprintMagnetControl.GetTextForBlueprintMagnet(blueprint);					
+					string text = BlueprintMagnetControl.GetTextForBlueprintMagnet(blueprint);
 					SendMagnet(text);
 					blueprint.Resource.Release();
 					
