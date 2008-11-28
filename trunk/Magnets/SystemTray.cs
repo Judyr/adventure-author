@@ -267,7 +267,6 @@ namespace AdventureAuthor.Ideas
     		}
     			
     		Log.WriteAction(LogAction.exited,"magnets");
-    		LogWriter.StopRecording();
     		
     		System.Windows.Application.Current.Shutdown();
     	}

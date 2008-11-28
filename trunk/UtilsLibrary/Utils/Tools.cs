@@ -41,6 +41,19 @@ namespace AdventureAuthor.Utils
 		public const double MINIMUMWINDOWHEIGHT = 480;
 		
 		
+		/// <summary>
+		/// Strip the new line character from the end of a string if it appears.
+		/// </summary>
+		/// <param name="str">The string to strip the new line from.</param>
+		/// <returns>A version of the string without a new line character at the end.</returns>
+		public static string StripNewLineFromEnd(string str)
+		{
+			if (str.EndsWith(System.Environment.NewLine)) {
+				str = str.Substring(0,str.Length-Environment.NewLine.Length);
+			}
+			return str;
+		}
+		
 		  
 		/// <summary>
 		/// Check whether a character can form part of an English language word.

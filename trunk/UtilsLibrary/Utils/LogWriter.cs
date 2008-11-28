@@ -85,11 +85,11 @@ namespace AdventureAuthor.Utils
 				if (writer != null) {
 					writer.WriteLine(e.Message);					
 					writer.Flush();
-					//System.Diagnostics.Debug.WriteLine(e.Message);
 				}
 			}
 			catch (ObjectDisposedException) {
-				//Say.Error("The log writer was already disposed by the time it was told to log message '" + e.Message + "'.\n\n"+Environment.StackTrace);
+				System.Diagnostics.Debug.WriteLine("The log writer was already disposed by the time it was told " +
+				                                   "to log message '" + e.Message + "'.");
 			}
 		}
 		
