@@ -160,7 +160,7 @@ namespace AdventureAuthor.Setup
 				{  
 					if (e.Source == PipeCommunication.LOGMESSAGESPIPE) {
 						string logMessage = Tools.StripNewLineFromEnd(e.Message);						
-						Log.WriteMessage(logMessage,false);
+						//Log.WriteMessage(logMessage,false);
 					}					
 				};
 				PipeCommunication.ThreadedListen(PipeCommunication.LOGMESSAGESPIPE);

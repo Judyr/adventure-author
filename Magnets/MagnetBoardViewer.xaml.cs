@@ -81,7 +81,12 @@ namespace AdventureAuthor.Ideas
         	try {
 	        	InitializeComponent();
 	        	
+	        	LogWriter.StartRecording("magnets");
 	        	Log.Message += SendLogMessagesToNWN2Toolset;
+	    		Loaded += delegate 
+	    		{      			
+	    			Log.WriteAction(LogAction.launched,"magnets");   
+	    		};
 	        	
 	        	MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
 				MinHeight = AdventureAuthor.Utils.Tools.MINIMUMWINDOWHEIGHT;
@@ -151,6 +156,9 @@ namespace AdventureAuthor.Ideas
         }
 
         
+        /// <summary>
+        /// Send messages to be logged to the NWN2 toolset.
+        /// </summary>
         private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
         {
         	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
@@ -196,8 +204,6 @@ namespace AdventureAuthor.Ideas
             // previously had to keep a static bool variable to check that this was only added on the first constructor call
             // and not on any subsequent constructor calls, but it's not using Singleton anymore so this is no longer necessary:
            	FridgeMagnetPreferences.Instance.PropertyChanged += new PropertyChangedEventHandler(userPreferencesPropertyChanged);
-            
-            Loaded += delegate { Log.WriteAction(LogAction.launched,"magnets"); };
         }
             	
     	#endregion

@@ -36,6 +36,15 @@ namespace AdventureAuthor.Utils
 			logDirectory = Path.Combine(publicUserDirectory,"User logs");
 		}
 		
+		
+		/// <summary>
+		/// Start writing log messages to file. 
+		/// </summary>
+		public static void StartRecording()
+		{
+			StartRecording(String.Empty);
+		}
+		
 			
 		/// <summary>
 		/// Start writing log messages to file. 
