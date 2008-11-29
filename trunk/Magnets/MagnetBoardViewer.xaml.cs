@@ -137,7 +137,7 @@ namespace AdventureAuthor.Ideas
 				// Listen for magnets being sent from the toolset or other applications:
 				Loaded += delegate {
 					PipeCommunication.MessageReceived += AddMagnetFromToolsetBlueprint; 
-					PipeCommunication.ThreadedListen(PipeCommunication.FRIDGEMAGNETSPIPE);						
+					PipeCommunication.ThreadedListen(PipeCommunication.FRIDGEMAGNETS);						
 					LaunchInSystemTray();			
 					Hide(); // must be hidden last, or other constructor stuff never seems to happen
 				};		
@@ -161,7 +161,7 @@ namespace AdventureAuthor.Ideas
         /// </summary>
         private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
         {
-        	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
+        	PipeCommunication.ThreadedSendMessage(PipeCommunication.FRIDGEMAGNETSLOG,
         	                                      e.Message);        	                                      
         }
         
@@ -214,7 +214,7 @@ namespace AdventureAuthor.Ideas
 		{  							
 			// Currently any message sent to Fridge Magnets can be assumed to be
 			// the text of an idea to be added to the magnet box:
-			if (e.Source == PipeCommunication.FRIDGEMAGNETSPIPE) {				
+			if (e.Source == PipeCommunication.FRIDGEMAGNETS) {				
 				string message = Tools.StripNewLineFromEnd(e.Message);				
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
 				                            new AddToolsetMagnetDelegate(AddToolsetMagnet),

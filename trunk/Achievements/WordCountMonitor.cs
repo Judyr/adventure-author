@@ -43,7 +43,10 @@ namespace AdventureAuthor.Achievements
 	{
 		#region Constants
 		
-		public const string WORDCOUNTNAME = "Word count";
+		/// <summary>
+		/// The subject being monitored.
+		/// </summary>
+		public const string SUBJECT = "Word count";
 		
 		#endregion
 		
@@ -106,7 +109,7 @@ namespace AdventureAuthor.Achievements
 		/// <returns>The name of the monitored subject e.g. 'Word count'.</returns>
 		public override string GetSubjectName()
 		{
-			return WORDCOUNTNAME;
+			return SUBJECT;
 		}
 		
 		
@@ -137,11 +140,11 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		protected void UpdateWordCount(object sender, WordCountEventArgs e)
 		{
-			try {
-				WordCount += e.Words;
-			}
-			catch (OverflowException) {
+			if (WordCount < uint.MaxValue && WordCount + e.Words > uint.MaxValue) {
 				WordCount = uint.MaxValue;
+			}
+			else {
+				WordCount += e.Words;
 			}
 		}
 		

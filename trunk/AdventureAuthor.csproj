@@ -145,6 +145,8 @@
     <Compile Include="Achievements\AchievementMonitor.cs" />
     <Compile Include="Achievements\Award.cs" />
     <Compile Include="Achievements\AwardGrantedEventArgs.cs" />
+    <Compile Include="Achievements\ManagerAward.cs" />
+    <Compile Include="Achievements\MyTasksMonitor.cs" />
     <Compile Include="Achievements\UserProfile.cs" />
     <Compile Include="Achievements\WordCountMonitor.cs" />
     <Compile Include="Achievements\WordsmithAward.cs" />

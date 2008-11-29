@@ -154,16 +154,6 @@ namespace AdventureAuthor.Setup
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording("toolset");
-				
-				// Listen for log messages from other applications:
-				PipeCommunication.MessageReceived += delegate(object sender, MessageReceivedEventArgs e) 
-				{  
-					if (e.Source == PipeCommunication.LOGMESSAGESPIPE) {
-						string logMessage = Tools.StripNewLineFromEnd(e.Message);						
-						//Log.WriteMessage(logMessage,false);
-					}					
-				};
-				PipeCommunication.ThreadedListen(PipeCommunication.LOGMESSAGESPIPE);
 							
 				// Modify the main user interface:
 				Toolset.SetupUI();
@@ -278,7 +268,6 @@ namespace AdventureAuthor.Setup
 		{
 			foreach (Window window in windows) {
 				if (window != null) {
-					Say.Debug("closing window: " + window.Title + " (" + window.GetType() + ")");
 					window.Close();
 				}
 			}
@@ -314,7 +303,12 @@ namespace AdventureAuthor.Setup
 		/// awards when their criteria are met.
 		/// </summary>
 		private void SetupMyAchievements()
-		{
+		{			
+			// Listen for logged messages from other applications:
+			PipeCommunication.ThreadedListen(PipeCommunication.MYTASKSLOG);
+			PipeCommunication.ThreadedListen(PipeCommunication.FRIDGEMAGNETSLOG);
+			PipeCommunication.ThreadedListen(PipeCommunication.COMMENTCARDSLOG);
+			
 			WordCountMonitor wordCountMonitor = new WordCountMonitor(Profile.WordCount);
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Bronze)",WordsmithAward.BRONZEWORDCOUNT),true);
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Silver)",WordsmithAward.SILVERWORDCOUNT),true);
@@ -325,16 +319,28 @@ namespace AdventureAuthor.Setup
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT),true);
 			achievementMonitors.Add(wordCountMonitor);
 			
-			wordCountMonitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e)
-			{  
-				if (!profile.Awards.Contains(e.Award)) {
-					profile.Awards.Add(e.Award);
-				}
-				
-				Say.Information("Congratulations! You've just won the " + e.Award.Name + 
-				                " award!\n\n" + e.Award.Description +
-				                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
-			};
+			MyTasksMonitor myTasksMonitor = new MyTasksMonitor();
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Bronze)",ManagerAward.BRONZEUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Silver)",ManagerAward.SILVERUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Gold)",ManagerAward.GOLDUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Emerald)",ManagerAward.EMERALDUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Sapphire)",ManagerAward.SAPPHIREUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Ruby)",ManagerAward.RUBYUSAGE),true);
+			myTasksMonitor.AddAward(new ManagerAward("Manager (Diamond)",ManagerAward.DIAMONDUSAGE),true);
+			achievementMonitors.Add(myTasksMonitor);
+			
+			foreach (AchievementMonitor monitor in achievementMonitors) {
+				monitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e)
+				{  
+					if (!profile.Awards.Contains(e.Award)) {
+						profile.Awards.Add(e.Award);
+					}
+					
+					Say.Information("Congratulations! You've just won the " + e.Award.Name + 
+					                " award!\n\n" + e.Award.Description +
+					                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
+				};
+			}
 		}
 		
 		#endregion

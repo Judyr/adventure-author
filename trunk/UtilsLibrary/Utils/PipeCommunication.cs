@@ -39,9 +39,12 @@ namespace AdventureAuthor.Utils
 	{		
 		#region Constants
 		
-		public const string MYTASKSPIPE = "My Tasks to NWN2 pipe";
-		public const string FRIDGEMAGNETSPIPE = "Fridge Magnets to NWN2 pipe";
-		public const string LOGMESSAGESPIPE = "Logged messages to NWN2 pipe";
+		public const string MYTASKS = "My Tasks talks to NWN2";
+		public const string FRIDGEMAGNETS = "Fridge Magnets talks to NWN2";
+		
+		public const string MYTASKSLOG = "Logged messages from My Tasks";
+		public const string FRIDGEMAGNETSLOG = "Logged messages from Fridge Magnets";
+		public const string COMMENTCARDSLOG = "Logged messages from Comment Cards";
 				
 		#endregion
 		
