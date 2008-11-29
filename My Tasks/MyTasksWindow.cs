@@ -175,7 +175,7 @@ namespace AdventureAuthor.Tasks
         /// </summary>
         private void SendLogMessagesToNWN2Toolset(object sender, LogEventArgs e)
         {
-        	PipeCommunication.ThreadedSendMessage(PipeCommunication.LOGMESSAGESPIPE,
+        	PipeCommunication.ThreadedSendMessage(PipeCommunication.MYTASKSLOG,
         	                                      e.Message);        	                                      
         }
         

@@ -794,7 +794,7 @@ namespace AdventureAuthor.Setup
 		
 		private static void SendMagnet(object obj)
 		{
-			PipeCommunication.ThreadedSendMessage(PipeCommunication.FRIDGEMAGNETSPIPE,obj);
+			PipeCommunication.ThreadedSendMessage(PipeCommunication.FRIDGEMAGNETS,obj);
 		}
 		
 		

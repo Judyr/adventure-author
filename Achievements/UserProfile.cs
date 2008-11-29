@@ -71,10 +71,24 @@ namespace AdventureAuthor.Achievements
 		[XmlIgnore]
 		public uint WordCount {
 			get { 
-				return (uint)GetValue(WordCountMonitor.WORDCOUNTNAME);
+				return (uint)GetValue(WordCountMonitor.SUBJECT);
 			}
 			set {
-				SetValue(WordCountMonitor.WORDCOUNTNAME,value);
+				SetValue(WordCountMonitor.SUBJECT,value);
+			}
+		}
+		
+		
+		/// <summary>
+		/// The total activity of the user with the My Tasks application.
+		/// </summary>
+		[XmlIgnore]
+		public uint MyTasksUserActivity {
+			get { 
+				return (uint)GetValue(MyTasksMonitor.SUBJECT);
+			}
+			set {
+				SetValue(MyTasksMonitor.SUBJECT,value);
 			}
 		}
 		
@@ -114,6 +128,7 @@ namespace AdventureAuthor.Achievements
 		private void SetupDefaultValues()
 		{
 			WordCount = 0;
+			MyTasksUserActivity = 0;
 		}
 		
 		
