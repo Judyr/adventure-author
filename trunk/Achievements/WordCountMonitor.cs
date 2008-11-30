@@ -140,11 +140,21 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		protected void UpdateWordCount(object sender, WordCountEventArgs e)
 		{
-			if (WordCount < uint.MaxValue && WordCount + e.Words > uint.MaxValue) {
+			AddToWordCount(e.Words);
+		}
+		
+		
+		/// <summary>
+		/// Add to the word count total. 
+		/// </summary>
+		/// <param name="userActivity">The number of words to add to the total.</param>
+		public void AddToWordCount(uint words)
+		{
+			if (WordCount < uint.MaxValue && WordCount + words > uint.MaxValue) {
 				WordCount = uint.MaxValue;
 			}
 			else {
-				WordCount += e.Words;
+				WordCount += words;
 			}
 		}
 		

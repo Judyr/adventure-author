@@ -27,92 +27,80 @@
 using System;
 using System.Windows.Controls;
 using System.Xml.Serialization;
-using AdventureAuthor.Achievements;
 
 namespace AdventureAuthor.Achievements
 {
 	/// <summary>
-	/// An award granted to the user based on some aspect of their activity.
+	/// An award granted to the user based on the extent
+	/// to which they have used Fridge Magnets.
 	/// </summary>
 	[Serializable]
-	[XmlInclude(typeof(WordsmithAward))]
-	[XmlInclude(typeof(ManagerAward))]
-	[XmlInclude(typeof(ImagineerAward))]
-	public abstract class Award
-	{
+	public class ImagineerAward : Award
+	{		
 		#region Constants
+	
+//		public const uint BRONZEUSAGE = 250;
+//		public const uint SILVERUSAGE = 500;
+//		public const uint GOLDUSAGE = 1000;
+//		public const uint EMERALDUSAGE = 1500;
+//		public const uint SAPPHIREUSAGE = 2000;
+//		public const uint RUBYUSAGE = 2500;
+//		public const uint DIAMONDUSAGE = 3000;
 		
-		/// <summary>
-		/// A typical default amount of Designer Points for an award to carry.
-		/// </summary>
-		/// <remarks>This is intended for 'real' awards - 'tutorial' awards (granted
-		/// when the user carries out basic toolset activities for the first time)
-		/// are expected to carry 0 points.</remarks>
-		public const uint DEFAULTDESIGNERPOINTSVALUE = 1000;
+		public const uint BRONZEUSAGE = 2;//50;
+		public const uint SILVERUSAGE = 5;//00;
+		public const uint GOLDUSAGE = 10;//00;
+		public const uint EMERALDUSAGE = 15;//00;
+		public const uint SAPPHIREUSAGE = 20;//00;
+		public const uint RUBYUSAGE = 25;//00;
+		public const uint DIAMONDUSAGE = 30;//00;
 		
 		#endregion
 		
 		#region Properties and fields
 		
 		/// <summary>
-		/// The name of this award.
+		/// The level of user activity (represented by an abstract
+		/// number of 'points') that must have been reached in 
+		/// order for the user to gain this award.
 		/// </summary>
-		protected string name;
+		private uint requiredUserActivity;
 		[XmlElement]
-		public string Name {
-			get { return name; }
-			set { name = value; }
+		public uint RequiredUserActivity {
+			get { return requiredUserActivity; }
+			set { requiredUserActivity = value; }
 		}
 		
-		
-		/// <summary>
-		/// A brief description of this award and the reasons
-		/// why it is granted.
-		/// </summary>
-		protected string description;
-		[XmlElement]
-		public string Description {
-			get { return description; }
-			set { description = value; }
-		}
-		
+		#endregion
 				
+		#region Constructors
+		
 		/// <summary>
-		/// An image which can be used to represent this award.
+		/// For deserialisation.
 		/// </summary>
-		protected Image image;
-		[XmlIgnore]
-		public Image Image {
-			get { return image; }
-			set { image = value; }
+		protected ImagineerAward()
+		{			
 		}
 		
 		
 		/// <summary>
-		/// The number of Designer Points to allocate to the user
-		/// on receiving this award. The user will be given a rank
-		/// based on the total number of Designer Points they have
-		/// accumulated.
+		/// An award granted to the user based on their level of activity
+		/// with the Fridge Magnets application to date.
 		/// </summary>
-		/// <remarks>A greater number indicates that the award was
-		/// more difficult to achieve - a typical number of DP to award
-		/// can be taken from DEFAULTDESIGNERPOINTSVALUE. 
-		/// Currently it is expected that 'tutorial' awards will
-		/// carry 0 points and all other awards will carry 
-		/// DEFAULTDESIGNERPOINTSVALUE points, but this could
-		/// be changed in future.
-		/// </remarks>
-		protected uint designerPoints;
-		[XmlElement]
-		public uint DesignerPoints {
-			get { return designerPoints; }
-			set { designerPoints = value; }
-		}		
+		public ImagineerAward(string name, uint requiredUserActivityLevel)
+		{
+			this.name = name;
+			this.requiredUserActivity = requiredUserActivityLevel;
+			this.description = "Awarded when the user has spent a period " +
+				"of time working productively with Fridge Magnets.";
+			this.image = null;
+			this.designerPoints = DEFAULTDESIGNERPOINTSVALUE;
+		}
 		
 		#endregion
 		
 		#region Methods
-		
+				
 		/// <summary>
 		/// Check whether the value passed (representing tracked information about
 		/// some aspect of user activity) matches or exceeds the minimum criteria 
@@ -123,9 +111,32 @@ namespace AdventureAuthor.Achievements
 		/// should match the value of GetCriteriaType().</param>
 		/// <returns>True if the criteria for granting this award have
 		/// been met; false otherwise.</returns>
-		public abstract bool CriteriaMet(object dataToCheckAgainstCriteria);
+		public override bool CriteriaMet(object dataToCheckAgainstCriteria)
+		{
+			if (dataToCheckAgainstCriteria is uint) {
+				return CriteriaMet((uint)dataToCheckAgainstCriteria);
+			}
+			else {
+				throw new ArgumentException("Must pass a uint value to check criteria for this award.");
+			}
+		}
 		
 		
+		/// <summary>
+		/// Check whether the value passed (representing tracked information about
+		/// some aspect of user activity) matches or exceeds the minimum criteria 
+		/// for the award to be granted.
+		/// </summary>
+		/// <param name="userActivity">The total user activity level of the user 
+		/// with My Tasks to date.</param>
+		/// <returns>True if the criteria for granting this award have
+		/// been met; false otherwise.</returns>
+		public bool CriteriaMet(uint userActivity)
+		{
+			return userActivity >= requiredUserActivity;
+		}
+		
+				
 		/// <summary>
 		/// Get the type of information which is used to judge whether the criteria
 		/// of this award have been met.
@@ -134,22 +145,9 @@ namespace AdventureAuthor.Achievements
 		/// this award have been met.</returns>
 		/// <remarks>Any AchievementMonitor which this award is added to must return a value
 		/// for GetTrackedInformationType() which is identical to the value returned by this method.</remarks>
-		public abstract Type GetCriteriaType();
-		
-		
-		/// <summary>
-		/// Get a string value which should be unique to this award for serialisation purposes.
-		/// </summary>
-		/// <returns>A string value describing this award.</returns>
-		public string GetID()
+		public override Type GetCriteriaType()
 		{
-			return name + " (" + description + ")";
-		}
-		
-		
-		public override string ToString()
-		{
-			return GetID();
+			return typeof(uint);
 		}
 		
 		#endregion

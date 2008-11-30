@@ -145,6 +145,8 @@
     <Compile Include="Achievements\AchievementMonitor.cs" />
     <Compile Include="Achievements\Award.cs" />
     <Compile Include="Achievements\AwardGrantedEventArgs.cs" />
+    <Compile Include="Achievements\FridgeMagnetsMonitor.cs" />
+    <Compile Include="Achievements\ImagineerAward.cs" />
     <Compile Include="Achievements\ManagerAward.cs" />
     <Compile Include="Achievements\MyTasksMonitor.cs" />
     <Compile Include="Achievements\UI\ProfileWindow.xaml.cs">

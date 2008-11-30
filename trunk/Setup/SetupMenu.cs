@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms.Integration;
+using AdventureAuthor.Achievements.UI;
 using AdventureAuthor.Analysis;
 using AdventureAuthor.Core;
 using AdventureAuthor.Conversations.UI;
@@ -307,7 +308,7 @@ namespace AdventureAuthor.Setup
 			variableButton.ToolTipText = "Manage game variables";
 			variableButton.Enabled = false;
 			SetSandbarButtonImage(variableButton,"gear","Variables");
-			aaToolbar.Items.Add(variableButton);
+			aaToolbar.Items.Add(variableButton);	
 							
 //			ButtonItem ideasButton = new ButtonItem();
 //			ideasButton.Activate += delegate { 
@@ -363,13 +364,16 @@ namespace AdventureAuthor.Setup
 //			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 //			aaToolbar.Items.Add(evaluationButton);
 														
-//			ButtonItem achievementsButton = new ButtonItem();
-//			achievementsButton.Activate += delegate { };
-//			SetSandbarButtonImage(achievementsButton,"crown.png","Achievements");
-//			achievementsButton.Enabled = false;
-//			achievementsButton.Visible = false;
-//			achievementsButton.ToolTipText = "View your achievements";
-//			aaToolbar.Items.Add(achievementsButton);
+			ButtonItem achievementsButton = new ButtonItem();
+			achievementsButton.Activate += delegate 
+			{ 
+				new ProfileWindow().Show();
+			};
+			SetSandbarButtonImage(achievementsButton,"crown.png","My Achievements");
+			achievementsButton.Enabled = true;
+			achievementsButton.Visible = true;
+			achievementsButton.ToolTipText = "View your achievements and user profile";
+			aaToolbar.Items.Add(achievementsButton);
 														
 //			ButtonItem checkTransitions = new ButtonItem();
 //			SetSandbarButtonImage(checkTransitions,"clipboard.png","Check transitions");
@@ -415,7 +419,6 @@ namespace AdventureAuthor.Setup
 				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = true;
 //				evaluationButton.Enabled = true;
-				//achievementsButton.Enabled = true;
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  
@@ -424,7 +427,6 @@ namespace AdventureAuthor.Setup
 				//ideasButton.Enabled = true;
 				//analysisButton.Enabled = false;
 //				evaluationButton.Enabled = true;
-				//achievementsButton.Enabled = true;
 			};
         	
 			aaToolbar.AddRemoveButtonsVisible = false;
@@ -434,7 +436,8 @@ namespace AdventureAuthor.Setup
 		
 		private static void SetSandbarButtonImage(ButtonItem button, string name, string buttonText)
 		{		
-			button.Image = (System.Drawing.Bitmap)new ResourceManager("AdventureAuthor.Images",Assembly.GetExecutingAssembly()).GetObject(name);
+			button.Image = (System.Drawing.Bitmap)new ResourceManager("AdventureAuthor.Images",
+			                                                          Assembly.GetExecutingAssembly()).GetObject(name);
 	        button.Text = buttonText;
 	        button.BeginGroup = true;
 		}

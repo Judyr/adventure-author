@@ -31,19 +31,19 @@ using AdventureAuthor.Utils;
 namespace AdventureAuthor.Achievements
 {
 	/// <summary>
-	/// Tracks the user's level of activity with the My Tasks
+	/// Tracks the user's level of activity with the Fridge Magnets
 	/// application (represented by an abstract
-	/// number which increases with My Tasks usage) and grants 
+	/// number which increases with Fridge Magnets usage) and grants 
 	/// awards when the total reaches certain levels.
 	/// </summary>
-	public class MyTasksMonitor : AchievementMonitor
+	public class FridgeMagnetsMonitor : AchievementMonitor
 	{
 		#region Constants
 				
 		/// <summary>
 		/// The subject being monitored.
 		/// </summary>
-		public const string SUBJECT = "My Tasks activity";
+		public const string SUBJECT = "Fridge Magnets activity";
 		
 		#endregion
 		
@@ -52,12 +52,12 @@ namespace AdventureAuthor.Achievements
 		protected uint userActivity;	
 		/// <summary>
 		/// A number which roughly represents the extent to which the user
-		/// has used the My Tasks application - a higher number indicates
+		/// has used the Fridge Magnets application - a higher number indicates
 		/// a greater amount of time/engagement with the application.
 		/// </summary>
-		/// <remarks>Each action taken by the user in My Tasks adds some
+		/// <remarks>Each action taken by the user in Fridge Magnets adds some
 		/// points to this total, with some actions counting more than others
-		/// (e.g. editing a task counts for more than deleting one.)</remarks>
+		/// (e.g. adding a magnet counts for more than deleting one.)</remarks>
 		public uint UserActivity {
 			get { 
 				lock (padlock) {
@@ -71,24 +71,24 @@ namespace AdventureAuthor.Achievements
 				}
 			}
 		}
-				
+		
 		#endregion
 		
 		#region Constructors
 				
 		/// Construct an object which tracks the user's use
-		/// of the My Tasks application and grants awards when it
+		/// of the Fridge Magnets application and grants awards when it
 		/// has reached certain levels.
-		public MyTasksMonitor() : this(0)
+		public FridgeMagnetsMonitor() : this(0)
 		{
 		}
 		
 		
 		/// Construct an object which tracks the user's use
-		/// of the My Tasks application and grants awards when it
+		/// of the Fridge Magnets application and grants awards when it
 		/// has reached certain levels.
 		/// <param name="userActivityToDate">The initial user activity level.</param>
-		public MyTasksMonitor(uint userActivityToDate) : base()
+		public FridgeMagnetsMonitor(uint userActivityToDate) : base()
 		{
 			this.userActivity = userActivityToDate;
 			PipeCommunication.MessageReceived += TallyUserActivity;
@@ -99,14 +99,14 @@ namespace AdventureAuthor.Achievements
 		#region Methods
 		
 		/// <summary>
-		/// For every logged message from My Tasks, analyse the message to
+		/// For every logged message from Fridge Magnets, analyse the message to
 		/// determine which user action it represents and increase the
 		/// tally of 'user activity points' accordingly.
 		/// </summary>
 		private void TallyUserActivity(object sender, MessageReceivedEventArgs e)
 		{
-			if (e.Source == PipeCommunication.MYTASKSLOG) {				
-				uint points = GetActivityPoints(e.Message);
+			if (e.Source == PipeCommunication.FRIDGEMAGNETSLOG) {				
+				ushort points = GetActivityPoints(e.Message);			
 				AddToUserActivity(points);
 			}
 		}		
@@ -127,42 +127,25 @@ namespace AdventureAuthor.Achievements
 		private ushort GetActivityPoints(string message)
 		{
 			// Assign points based on how 'valuable' the action is:
-			ushort points;
-			
-			// Only give points once they've actually written a task,
-			// not simply for adding a blank one:
-			if (message.Contains("edited task")) {	
+			ushort points;			
+						
+			// Don't give the big points to ideas which are simply blueprints sent from the toolset:
+			if ((message.Contains("added idea") && !message.Contains("added from blueprints")) || 
+			     message.Contains("edited idea")) {
 				points = 7;
-			}
-			else if (message.Contains("completed task")) {
-				points = 3;
-			}
+			}	
 			// Exclude anything that racks up points too quickly or which
 			// could be repeatedly performed without conscious thought
 			// (e.g. mindlessly clicking Show/Hide):
-			else if (message.Contains("mytasks_")) { // i.e. ignore all changes to filter mode
-				points = 0;
+			else if (message.Contains("hid ideacategory") || message.Contains("show ideacategory") ||
+			         message.Contains("set magnetboardcolour")) {
+				points = 0; 
 			}
 			else {
 				points = 1;
 			}
 			
 			return points;
-		}
-		
-		
-		/// <summary>
-		/// Add to the user activity level total. 
-		/// </summary>
-		/// <param name="userActivity">The number of 'points' to add to the user activity level total.</param>
-		public void AddToUserActivity(uint userActivity)
-		{
-			if (UserActivity < uint.MaxValue && UserActivity + userActivity > uint.MaxValue) {
-				UserActivity = uint.MaxValue;
-			}
-			else {
-				UserActivity += userActivity;
-			}
 		}
 		
 		
@@ -195,6 +178,21 @@ namespace AdventureAuthor.Achievements
 		public override object GetSubjectValue()
 		{
 			return UserActivity;
+		}
+		
+		
+		/// <summary>
+		/// Add to the user activity level total. 
+		/// </summary>
+		/// <param name="userActivity">The number of 'points' to add to the user activity level total.</param>
+		public void AddToUserActivity(uint userActivity)
+		{
+			if (UserActivity < uint.MaxValue && UserActivity + userActivity > uint.MaxValue) {
+				UserActivity = uint.MaxValue;
+			}
+			else {
+				UserActivity += userActivity;
+			}
 		}
 		
 		#endregion
