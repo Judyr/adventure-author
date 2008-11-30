@@ -153,6 +153,7 @@
       <DependentUpon>ProfileWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Achievements\UserActivityMonitor.cs" />
     <Compile Include="Achievements\UserProfile.cs" />
     <Compile Include="Achievements\WordCountMonitor.cs" />
     <Compile Include="Achievements\WordsmithAward.cs" />

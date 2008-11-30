@@ -36,6 +36,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Xml;
 using System.Xml.Serialization;
+using AdventureAuthor.Achievements.UI;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Conversations.UI;
 using AdventureAuthor.Core;
@@ -1402,9 +1403,26 @@ namespace AdventureAuthor.Setup
 				Say.Error("Could not open variable manager.",e);
 			}
 		}	
+						
 		
-		
-	
+		/// <summary>
+		/// Bring up the My Achievements window.
+		/// </summary>
+		public static void LaunchMyAchievements()
+		{
+			try {
+				if (ProfileWindow.Instance == null || !ProfileWindow.Instance.IsLoaded) {
+					ProfileWindow.Instance = new ProfileWindow();
+					Plugin.SessionWindows.Add(ProfileWindow.Instance);
+				}
+				
+				ElementHost.EnableModelessKeyboardInterop(ProfileWindow.Instance);
+				ProfileWindow.Instance.Show();
+			}
+			catch (Exception e) {
+				Say.Error("Could not open My Achievements.",e);
+			}
+		}	
 		
 		
 		/// <summary>

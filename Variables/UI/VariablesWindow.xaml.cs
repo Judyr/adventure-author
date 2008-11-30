@@ -11,7 +11,6 @@ namespace AdventureAuthor.Variables.UI
     {    	
     	/// <summary>
     	/// The single instance of the Variable Manager window.
-    	/// <remarks>Pseudo-Singleton pattern, but I haven't really implemented this.</remarks>
     	/// </summary>
     	private static VariablesWindow instance;    	
 		public static VariablesWindow Instance {
