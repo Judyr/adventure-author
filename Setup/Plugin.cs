@@ -302,7 +302,7 @@ namespace AdventureAuthor.Setup
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT),true);
 			profile.AddMonitor(wordCountMonitor);
 			
-			MyTasksMonitor myTasksMonitor = new MyTasksMonitor();
+			MyTasksMonitor myTasksMonitor = new MyTasksMonitor(Profile.MyTasksActivity);
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Bronze)",ManagerAward.BRONZEUSAGE),true);
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Silver)",ManagerAward.SILVERUSAGE),true);
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Gold)",ManagerAward.GOLDUSAGE),true);
@@ -312,8 +312,15 @@ namespace AdventureAuthor.Setup
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Diamond)",ManagerAward.DIAMONDUSAGE),true);
 			profile.AddMonitor(myTasksMonitor);
 			
-			AdventureAuthor.Achievements.UI.ProfileWindow window = new AdventureAuthor.Achievements.UI.ProfileWindow();
-			window.Show();
+			FridgeMagnetsMonitor fridgeMagnetsMonitor = new FridgeMagnetsMonitor(Profile.FridgeMagnetsActivity);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Bronze)",ImagineerAward.BRONZEUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Silver)",ImagineerAward.SILVERUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Gold)",ImagineerAward.GOLDUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Emerald)",ImagineerAward.EMERALDUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Sapphire)",ImagineerAward.SAPPHIREUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Ruby)",ImagineerAward.RUBYUSAGE),true);
+			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Diamond)",ImagineerAward.DIAMONDUSAGE),true);
+			profile.AddMonitor(fridgeMagnetsMonitor);
 		}
 		
 		#endregion

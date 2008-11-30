@@ -101,12 +101,26 @@ namespace AdventureAuthor.Achievements
 		/// The total activity of the user with the My Tasks application.
 		/// </summary>
 		[XmlIgnore]
-		public uint MyTasksUserActivity {
+		public uint MyTasksActivity {
 			get { 
 				return (uint)GetValue(MyTasksMonitor.SUBJECT);
 			}
 			set {
 				SetValue(MyTasksMonitor.SUBJECT,value);
+			}
+		}
+		
+		
+		/// <summary>
+		/// The total activity of the user with the Fridge Magnets application.
+		/// </summary>
+		[XmlIgnore]
+		public uint FridgeMagnetsActivity {
+			get { 
+				return (uint)GetValue(FridgeMagnetsMonitor.SUBJECT);
+			}
+			set {
+				SetValue(FridgeMagnetsMonitor.SUBJECT,value);
 			}
 		}
 		
@@ -129,6 +143,7 @@ namespace AdventureAuthor.Achievements
 			awards = new ObservableCollection<Award>();
 			trackedInfo = new SerializableDictionary<string,object>();
 			monitors = new ObservableCollection<AchievementMonitor>();
+			SetupDefaultValues();
 		}
 		
 		
@@ -159,7 +174,8 @@ namespace AdventureAuthor.Achievements
 		protected void SetupDefaultValues()
 		{
 			WordCount = 0;
-			MyTasksUserActivity = 0;
+			MyTasksActivity = 0;
+			FridgeMagnetsActivity = 0;
 		}
 		
 		
