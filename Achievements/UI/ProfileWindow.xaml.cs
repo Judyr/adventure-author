@@ -9,8 +9,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Reflection;
+using System.Resources;
 using AdventureAuthor.Achievements;
 using AdventureAuthor.Setup;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Achievements.UI
 {
@@ -38,6 +41,18 @@ namespace AdventureAuthor.Achievements.UI
         {
             InitializeComponent();
             awardsCase.DataContext = Toolset.Plugin.Profile.Awards;
+            
+            // Put a placeholder picture in the user rank image box:
+            ResourceManager manager = new ResourceManager("AdventureAuthor.Utils.images",
+                                                          Assembly.GetAssembly(typeof(EditableTextBox)));
+           
+            System.Drawing.Bitmap bitmap = (System.Drawing.Bitmap)manager.GetObject("nwn2_beholder");
+           	BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+																		 bitmap.GetHbitmap(),
+					                                                     IntPtr.Zero,
+			                                                             Int32Rect.Empty,
+			                                                             BitmapSizeOptions.FromEmptyOptions());	
+            rankImage.Source = source;
         }
         
         #endregion

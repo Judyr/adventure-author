@@ -17,14 +17,15 @@
  *   GNU General Public License for more details.
  * 
  *   Adventure Author is a plugin for Atari's Neverwinter Nights 2, a COMMERCIAL
- *   product. Permission is given to link this GPL-covered plug-in with the 
- *   non-free main program. 
+ *   product. Permission is given to link this GPL-covered plug-in with the
+ *   non-free main program.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System;
+using System.Drawing;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 using AdventureAuthor.Achievements;
@@ -76,15 +77,15 @@ namespace AdventureAuthor.Achievements
 			set { description = value; }
 		}
 		
-				
+		
 		/// <summary>
-		/// An image which can be used to represent this award.
+		/// A picture which can be used to represent this award.
 		/// </summary>
-		protected Image image;
+		protected Bitmap picture;
 		[XmlIgnore]
-		public Image Image {
-			get { return image; }
-			set { image = value; }
+		public Bitmap Picture {
+			get { return picture; }
+			set { picture = value; }
 		}
 		
 		
@@ -96,9 +97,9 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		/// <remarks>A greater number indicates that the award was
 		/// more difficult to achieve - a typical number of DP to award
-		/// can be taken from DEFAULTDESIGNERPOINTSVALUE. 
+		/// can be taken from DEFAULTDESIGNERPOINTSVALUE.
 		/// Currently it is expected that 'tutorial' awards will
-		/// carry 0 points and all other awards will carry 
+		/// carry 0 points and all other awards will carry
 		/// DEFAULTDESIGNERPOINTSVALUE points, but this could
 		/// be changed in future.
 		/// </remarks>
@@ -107,7 +108,7 @@ namespace AdventureAuthor.Achievements
 		public uint DesignerPoints {
 			get { return designerPoints; }
 			set { designerPoints = value; }
-		}		
+		}
 		
 		#endregion
 		
@@ -115,7 +116,7 @@ namespace AdventureAuthor.Achievements
 		
 		/// <summary>
 		/// Check whether the value passed (representing tracked information about
-		/// some aspect of user activity) matches or exceeds the minimum criteria 
+		/// some aspect of user activity) matches or exceeds the minimum criteria
 		/// for the award to be granted.
 		/// </summary>
 		/// <param name="dataToCheckAgainstCriteria">The data to check against

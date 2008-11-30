@@ -25,7 +25,13 @@
  */
 
 using System;
+using System.Resources;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Windows.Interop;
 using System.Xml.Serialization;
 
 namespace AdventureAuthor.Achievements
@@ -84,7 +90,10 @@ namespace AdventureAuthor.Achievements
 		/// For deserialisation.
 		/// </summary>
 		protected WordsmithAward()
-		{			
+		{					
+			ResourceManager manager = new ResourceManager("AdventureAuthor.Achievements.UI.awardimages",
+			                                              Assembly.GetExecutingAssembly());
+			this.picture = (System.Drawing.Bitmap)manager.GetObject("edit");	
 		}
 		
 		
@@ -98,13 +107,12 @@ namespace AdventureAuthor.Achievements
 		/// and into the First Name, Last Name, Localized Description and
 		/// Localized Description (when identified) fields of an object.
 		/// </remarks>
-		public WordsmithAward(string name, uint requiredWordCount)
+		public WordsmithAward(string name, uint requiredWordCount) : this()
 		{
 			this.name = name;
 			this.requiredWordCount = requiredWordCount;
 			this.description = "Awarded when the user has written at least " +
 				requiredWordCount + " words of narrative text.";
-			this.image = null;
 			this.designerPoints = DEFAULTDESIGNERPOINTSVALUE;
 		}
 		

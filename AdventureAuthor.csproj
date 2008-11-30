@@ -349,6 +349,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Variables\VariableManager.cs" />
+    <EmbeddedResource Include="Achievements\UI\awardimages.resx" />
     <EmbeddedResource Include="Conversations\UI\Graph\GraphForm.resx">
       <DependentUpon>GraphForm.cs</DependentUpon>
     </EmbeddedResource>
