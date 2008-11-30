@@ -57,6 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Converters\BitmapToBitmapSourceConverter.cs" />
+    <Compile Include="Converters\DoubleToDoubleConverter.cs" />
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
@@ -95,12 +97,14 @@
     <Compile Include="Utils\TextEditedEventArgs.cs" />
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Utils\User.cs" />
+    <EmbeddedResource Include="images.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Utils\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Utils\RGBPicker.xaml" />
     <Page Include="Utils\TeacherPasswordDialog.xaml" />
+    <Folder Include="Converters" />
     <Folder Include="Utils" />
   </ItemGroup>
 </Project>

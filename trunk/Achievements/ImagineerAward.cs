@@ -25,7 +25,13 @@
  */
 
 using System;
+using System.Resources;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Windows.Interop;
 using System.Xml.Serialization;
 
 namespace AdventureAuthor.Achievements
@@ -79,7 +85,10 @@ namespace AdventureAuthor.Achievements
 		/// For deserialisation.
 		/// </summary>
 		protected ImagineerAward()
-		{			
+		{		
+			ResourceManager manager = new ResourceManager("AdventureAuthor.Achievements.UI.awardimages",
+			                                              Assembly.GetExecutingAssembly());
+			this.picture = (System.Drawing.Bitmap)manager.GetObject("wizard");		
 		}
 		
 		
@@ -87,14 +96,13 @@ namespace AdventureAuthor.Achievements
 		/// An award granted to the user based on their level of activity
 		/// with the Fridge Magnets application to date.
 		/// </summary>
-		public ImagineerAward(string name, uint requiredUserActivityLevel)
+		public ImagineerAward(string name, uint requiredUserActivityLevel) : this()
 		{
 			this.name = name;
 			this.requiredUserActivity = requiredUserActivityLevel;
 			this.description = "Awarded when the user has spent a period " +
 				"of time working productively with Fridge Magnets.";
-			this.image = null;
-			this.designerPoints = DEFAULTDESIGNERPOINTSVALUE;
+			this.designerPoints = DEFAULTDESIGNERPOINTSVALUE;	
 		}
 		
 		#endregion

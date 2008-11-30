@@ -1,10 +1,127 @@
 <Window x:Class="AdventureAuthor.Achievements.UI.ProfileWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="AdventureAuthor.Achievements.UI" Height="300" Width="300"
+    xmlns:converters="clr-namespace:AdventureAuthor.Utils.Converters;assembly=AAUtils"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    Title="My Achievements"
+    x:Name="mainWindow"
+    Width="800" Height="600"
+	MinWidth="800" MinHeight="600"
     >
-    <Grid>
-        <ListBox x:Name="awardsCase"
-    			 ItemsSource="{Binding}"/>
-    </Grid>
+	
+	<Window.Resources>
+		
+		<converters:BitmapToBitmapSourceConverter x:Key="bitmapToBitmapSourceConverter"/>
+		<converters:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>	
+		
+		<sys:Double x:Key="reduceWidthValue">-10</sys:Double>
+		
+		<DataTemplate x:Key="awardDataTemplate">			
+			<StackPanel
+				Orientation="Vertical"
+				Background="Transparent"
+				Height="100" Width="80"
+				Margin="5">
+				<StackPanel.Resources>
+					<Style TargetType="{x:Type TextBlock}">
+						<Setter Property="TextBlock.FontSize" Value="12"/>
+						<Setter Property="TextBlock.Foreground" Value="White"/>
+					</Style>
+				</StackPanel.Resources>
+				<Image Source="{Binding Path=Picture, Converter={StaticResource bitmapToBitmapSourceConverter}}"
+				       Height="60"
+				       Width="70"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding Name}"
+				           TextWrapping="Wrap"
+				           TextAlignment="Center"
+				           Height="30"
+						   HorizontalAlignment="Center"
+						   VerticalAlignment="Top"/>
+			</StackPanel>
+		</DataTemplate>
+	
+		<ItemsPanelTemplate x:Key="awardCaseItemsPanelTemplate">
+			<WrapPanel Background="DarkRed"
+			           Width="{Binding ElementName=selectedAwardInfoGrid, Path=ActualWidth, Converter={StaticResource reduceWidthConverter}, ConverterParameter={StaticResource reduceWidthValue}}"/>
+		</ItemsPanelTemplate>
+	
+	</Window.Resources>
+	
+	<DockPanel>
+		
+		<Grid DockPanel.Dock="Right"
+			  Width="300"
+			  Background="LightBlue">
+			
+			<StackPanel Orientation="Vertical">
+				
+				<Image x:Name="rankImage"
+				       Height="240"
+				       Width="240"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Top"
+					   Margin="30"/>
+			
+				<TextBlock Margin="5" FontSize="14">Profile information lives here.</TextBlock>
+				<TextBlock Margin="5" FontSize="14">Username: Kirn</TextBlock>
+				<TextBlock Margin="5" FontSize="14">Favourite game: Pacman</TextBlock>
+			
+			</StackPanel>
+		
+		</Grid>		
+	        
+	    <ListBox x:Name="awardsCase"
+		         DockPanel.Dock="Top"
+	    		 ItemsSource="{Binding}"
+	    		 ItemTemplate="{StaticResource awardDataTemplate}"
+	    		 ItemsPanel="{StaticResource awardCaseItemsPanelTemplate}"/>
+		
+		<Grid x:Name="selectedAwardInfoGrid"
+			  DockPanel.Dock="Bottom"
+		      VerticalAlignment="Bottom"
+			  Height="75"
+		      DataContext="{Binding ElementName=awardsCase, Path=SelectedItem}">
+			<Grid.RowDefinitions>
+		   		<RowDefinition Height="25"/>
+		   		<RowDefinition/>
+		   	</Grid.RowDefinitions>
+		   	<Grid.ColumnDefinitions>
+		   		<ColumnDefinition Width="75"/>
+		   		<ColumnDefinition Width="*"/>
+		   	</Grid.ColumnDefinitions>
+			
+			<Grid.Resources>
+				<Style TargetType="{x:Type TextBlock}">
+					<Setter Property="FontSize" Value="16"/>
+					<Setter Property="Padding" Value="3"/>
+				</Style>
+			</Grid.Resources>
+	    
+	    	<Image x:Name="awardPicLabel"
+	    		   Grid.Row="0"
+	    		   Grid.RowSpan="2"
+	    		   Grid.Column="0"
+				   Source="{Binding Path=Picture, Converter={StaticResource bitmapToBitmapSourceConverter}}"
+			/>
+	    
+	    	<TextBlock x:Name="awardNameTextBlock"
+	    			   Grid.Row="0"
+	    			   Grid.Column="1"
+					   FontWeight="Bold"
+				   	   Text="{Binding Name}"
+					   TextWrapping="Wrap"
+			/>
+	    
+	    	<TextBlock x:Name="awardDescriptionTextBlock"
+	    			   Grid.Row="1"
+	    			   Grid.Column="1"
+				       Text="{Binding Description}"
+					   TextWrapping="Wrap"
+			/>
+	    </Grid>
+	
+	</DockPanel>
+
 </Window>
