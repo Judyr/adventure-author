@@ -45,13 +45,21 @@ namespace AdventureAuthor.Achievements
 	{		
 		#region Constants
 		
-		public const uint BRONZEWORDCOUNT = 250;
-		public const uint SILVERWORDCOUNT = 500;
-		public const uint GOLDWORDCOUNT = 1000;
-		public const uint EMERALDWORDCOUNT = 1500;
-		public const uint SAPPHIREWORDCOUNT = 2000;
-		public const uint RUBYWORDCOUNT = 2500;
-		public const uint DIAMONDWORDCOUNT = 3000;
+//		public const uint BRONZEWORDCOUNT = 250;
+//		public const uint SILVERWORDCOUNT = 500;
+//		public const uint GOLDWORDCOUNT = 1000;
+//		public const uint EMERALDWORDCOUNT = 1500;
+//		public const uint SAPPHIREWORDCOUNT = 2000;
+//		public const uint RUBYWORDCOUNT = 2500;
+//		public const uint DIAMONDWORDCOUNT = 3000;
+		
+		public const uint BRONZEWORDCOUNT = 2;//50;
+		public const uint SILVERWORDCOUNT = 5;//00;
+		public const uint GOLDWORDCOUNT = 10;//00;
+		public const uint EMERALDWORDCOUNT = 15;//00;
+		public const uint SAPPHIREWORDCOUNT = 20;//00;
+		public const uint RUBYWORDCOUNT = 25;//00;
+		public const uint DIAMONDWORDCOUNT = 30;//00;
 		
 		#endregion
 		
