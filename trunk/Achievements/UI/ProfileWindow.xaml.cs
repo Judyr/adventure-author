@@ -21,6 +21,15 @@ namespace AdventureAuthor.Achievements.UI
     {
     	#region Properties and fields
     	
+    	/// <summary>
+    	/// The single instance of the My Achievements window.
+    	/// </summary>
+    	private static ProfileWindow instance;    	
+		public static ProfileWindow Instance {
+			get { return instance; }
+			set { instance = value; }
+		}   
+    	
     	#endregion
 
     	#region Constructors

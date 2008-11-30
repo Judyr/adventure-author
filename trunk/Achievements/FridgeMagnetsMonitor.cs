@@ -36,7 +36,7 @@ namespace AdventureAuthor.Achievements
 	/// number which increases with Fridge Magnets usage) and grants 
 	/// awards when the total reaches certain levels.
 	/// </summary>
-	public class FridgeMagnetsMonitor : AchievementMonitor
+	public class FridgeMagnetsMonitor : UserActivityMonitor
 	{
 		#region Constants
 				
@@ -47,39 +47,12 @@ namespace AdventureAuthor.Achievements
 		
 		#endregion
 		
-		#region Properties and fields
-				
-		protected uint userActivity;	
-		/// <summary>
-		/// A number which roughly represents the extent to which the user
-		/// has used the Fridge Magnets application - a higher number indicates
-		/// a greater amount of time/engagement with the application.
-		/// </summary>
-		/// <remarks>Each action taken by the user in Fridge Magnets adds some
-		/// points to this total, with some actions counting more than others
-		/// (e.g. adding a magnet counts for more than deleting one.)</remarks>
-		public uint UserActivity {
-			get { 
-				lock (padlock) {
-					return userActivity;
-				}
-			}
-			set { 
-				lock (padlock) {
-					userActivity = value;
-					OnSubjectChanged(new PropertyChangedEventArgs("UserActivity"));
-				}
-			}
-		}
-		
-		#endregion
-		
 		#region Constructors
 				
 		/// Construct an object which tracks the user's use
 		/// of the Fridge Magnets application and grants awards when it
 		/// has reached certain levels.
-		public FridgeMagnetsMonitor() : this(0)
+		public FridgeMagnetsMonitor() : base()
 		{
 		}
 		
@@ -88,28 +61,23 @@ namespace AdventureAuthor.Achievements
 		/// of the Fridge Magnets application and grants awards when it
 		/// has reached certain levels.
 		/// <param name="userActivityToDate">The initial user activity level.</param>
-		public FridgeMagnetsMonitor(uint userActivityToDate) : base()
+		public FridgeMagnetsMonitor(uint userActivityToDate) : base(userActivityToDate)
 		{
-			this.userActivity = userActivityToDate;
-			PipeCommunication.MessageReceived += TallyUserActivity;
 		}
 
 		#endregion
 		
 		#region Methods
-		
+				
 		/// <summary>
-		/// For every logged message from Fridge Magnets, analyse the message to
-		/// determine which user action it represents and increase the
-		/// tally of 'user activity points' accordingly.
+		/// Get the name of the pipe to listen to in order to receive
+		/// messages about user activity in the monitored application.
 		/// </summary>
-		private void TallyUserActivity(object sender, MessageReceivedEventArgs e)
+		/// <returns>A string with the name of the pipe to listen to.</returns>
+		protected override string GetPipeName()
 		{
-			if (e.Source == PipeCommunication.FRIDGEMAGNETSLOG) {				
-				ushort points = GetActivityPoints(e.Message);			
-				AddToUserActivity(points);
-			}
-		}		
+			return PipeCommunication.FRIDGEMAGNETSLOG;
+		}
 		
 		
 		/// <summary>
@@ -124,7 +92,7 @@ namespace AdventureAuthor.Achievements
 		/// of points - if it can't be identified as representing
 		/// a specific user action it will be taken as a 
 		/// miscellaneous action and awarded accordingly.</remarks>
-		private ushort GetActivityPoints(string message)
+		protected override ushort GetActivityPoints(string message)
 		{
 			// Assign points based on how 'valuable' the action is:
 			ushort points;			
@@ -156,43 +124,6 @@ namespace AdventureAuthor.Achievements
 		public override string GetSubjectName()
 		{
 			return SUBJECT;
-		}
-		
-		
-		/// <summary>
-		/// Get the type of information being recorded about the monitored subject.
-		/// </summary>
-		/// <returns>The Type of information being recorded about the monitored subject.</returns>
-		/// <remarks>Any award being added to this AchievementMonitor must return a value
-		/// for GetCriteriaType() which is identical to the value returned by this method.</remarks>
-		public override Type GetSubjectType()
-		{
-			return typeof(uint);
-		}
-				
-		
-		/// <summary>
-		/// Get the current recorded information on the monitored subject.
-		/// </summary>
-		/// <returns>The information being tracked about the monitored subject.</returns>
-		public override object GetSubjectValue()
-		{
-			return UserActivity;
-		}
-		
-		
-		/// <summary>
-		/// Add to the user activity level total. 
-		/// </summary>
-		/// <param name="userActivity">The number of 'points' to add to the user activity level total.</param>
-		public void AddToUserActivity(uint userActivity)
-		{
-			if (UserActivity < uint.MaxValue && UserActivity + userActivity > uint.MaxValue) {
-				UserActivity = uint.MaxValue;
-			}
-			else {
-				UserActivity += userActivity;
-			}
 		}
 		
 		#endregion

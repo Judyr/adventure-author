@@ -367,7 +367,8 @@ namespace AdventureAuthor.Setup
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate 
 			{ 
-				new ProfileWindow().Show();
+				LaunchMyAchievements();
+				BringToFront(ProfileWindow.Instance);
 			};
 			SetSandbarButtonImage(achievementsButton,"crown.png","My Achievements");
 			achievementsButton.Enabled = true;
