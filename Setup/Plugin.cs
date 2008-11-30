@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -124,12 +125,6 @@ namespace AdventureAuthor.Setup
 			get { return profile; }
 		}
 		
-		
-		private List<AchievementMonitor> achievementMonitors = new List<AchievementMonitor>(3);
-		public List<AchievementMonitor> AchievementMonitors {
-			get { return achievementMonitors; }
-		}
-		
 		#endregion
 		
 		#region Methods
@@ -193,7 +188,6 @@ namespace AdventureAuthor.Setup
 		/// Called when the toolset closes - ensure that every window Adventure Author has
 		/// opened is closed again, otherwise the toolset crashes.
 		/// </summary>
-		/// <param name="cHost"></param>
 		public void Unload(INWN2PluginHost cHost)
 		{			
 			lock (padlock) {
@@ -201,19 +195,8 @@ namespace AdventureAuthor.Setup
 				CloseModuleWindows();
 			}
 			
-			// Automatically serialise the user profile upon closing:
 			if (profile != null) {
-				// Update the user profile with the latest values for all tracked information:
-				foreach (AchievementMonitor monitor in achievementMonitors) {
-					profile.SetValue(monitor.GetSubjectName(),monitor.GetSubjectValue());
-				}
-				
-				try {
-					Serialization.Serialize(AdventureAuthorPluginPreferences.UserProfilePath,profile);
-				}
-				catch (Exception e) {
-					Say.Error("Failed to save the user profile.",e);
-				}				
+				profile.Serialize(AdventureAuthorPluginPreferences.UserProfilePath);
 			}
 			
 			Log.WriteAction(LogAction.exited,"toolset");
@@ -289,11 +272,11 @@ namespace AdventureAuthor.Setup
 					System.Diagnostics.Debug.WriteLine("The file at location " + 
 					                                   AdventureAuthorPluginPreferences.UserProfilePath +
 					          						   " is not a valid user profile file.");
-					profile = new UserProfile(new List<Award>());
+					profile = new UserProfile(new ObservableCollection<Award>());
 				}
 			}
 			else {
-				profile = new UserProfile(new List<Award>());
+				profile = new UserProfile(new ObservableCollection<Award>());
 			}
 		}
 		
@@ -317,7 +300,7 @@ namespace AdventureAuthor.Setup
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Sapphire)",WordsmithAward.SAPPHIREWORDCOUNT),true);
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Ruby)",WordsmithAward.RUBYWORDCOUNT),true);
 			wordCountMonitor.AddAward(new WordsmithAward("Wordsmith (Diamond)",WordsmithAward.DIAMONDWORDCOUNT),true);
-			achievementMonitors.Add(wordCountMonitor);
+			profile.AddMonitor(wordCountMonitor);
 			
 			MyTasksMonitor myTasksMonitor = new MyTasksMonitor();
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Bronze)",ManagerAward.BRONZEUSAGE),true);
@@ -327,20 +310,10 @@ namespace AdventureAuthor.Setup
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Sapphire)",ManagerAward.SAPPHIREUSAGE),true);
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Ruby)",ManagerAward.RUBYUSAGE),true);
 			myTasksMonitor.AddAward(new ManagerAward("Manager (Diamond)",ManagerAward.DIAMONDUSAGE),true);
-			achievementMonitors.Add(myTasksMonitor);
+			profile.AddMonitor(myTasksMonitor);
 			
-			foreach (AchievementMonitor monitor in achievementMonitors) {
-				monitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e)
-				{  
-					if (!profile.Awards.Contains(e.Award)) {
-						profile.Awards.Add(e.Award);
-					}
-					
-					Say.Information("Congratulations! You've just won the " + e.Award.Name + 
-					                " award!\n\n" + e.Award.Description +
-					                "\n\nThis award carries " + e.Award.DesignerPoints + " Designer Points.");
-				};
-			}
+			AdventureAuthor.Achievements.UI.ProfileWindow window = new AdventureAuthor.Achievements.UI.ProfileWindow();
+			window.Show();
 		}
 		
 		#endregion

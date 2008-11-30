@@ -26,8 +26,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Windows.Threading;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
 
@@ -43,12 +48,25 @@ namespace AdventureAuthor.Achievements
 		#region Properties and fields
 		
 		/// <summary>
+		/// Monitors which track certain aspects of user activity
+		/// and give awards based on them.
+		/// </summary>
+		/// <remarks>These are not serialized, and should be
+		/// set up when the user profile is read from disk.</remarks>
+		protected ObservableCollection<AchievementMonitor> monitors;
+		[XmlIgnore]
+		public ObservableCollection<AchievementMonitor> Monitors {
+			get { return monitors; }
+		}
+		
+		
+		/// <summary>
 		/// The awards that this user has received as a result
 		/// of their toolset activity.
 		/// </summary>
-		private List<Award> awards;
+		protected ObservableCollection<Award> awards;
 		[XmlArray]
-		public List<Award> Awards {
+		public ObservableCollection<Award> Awards {
 			get { return awards; }
 			set { awards = value; }
 		}
@@ -58,7 +76,7 @@ namespace AdventureAuthor.Achievements
 		/// Information that is being tracked for this user in order
 		/// to grant them awards.
 		/// </summary>
-		private SerializableDictionary<string,object> trackedInfo;
+		protected SerializableDictionary<string,object> trackedInfo;
 		public SerializableDictionary<string,object> TrackedInfo {
 			get { return trackedInfo; }
 			set { trackedInfo = value; }
@@ -92,6 +110,13 @@ namespace AdventureAuthor.Achievements
 			}
 		}
 		
+		
+		/// <summary>
+		/// A loose UI element used to get a reference to the UI thread dispatcher.
+		/// </summary>
+		[XmlIgnore]
+		private System.Windows.Controls.Label UIControl = new System.Windows.Controls.Label();
+		
 		#endregion
 		
 		#region Constructors
@@ -99,10 +124,11 @@ namespace AdventureAuthor.Achievements
 		/// <summary>
 		/// For deserialisation.
 		/// </summary>
-		private UserProfile()
+		protected UserProfile()
 		{
-			awards = new List<Award>();
+			awards = new ObservableCollection<Award>();
 			trackedInfo = new SerializableDictionary<string,object>();
+			monitors = new ObservableCollection<AchievementMonitor>();
 		}
 		
 		
@@ -111,10 +137,15 @@ namespace AdventureAuthor.Achievements
 		/// relating to their use of Adventure Author.
 		/// </summary>
 		/// <param name="awards">The awards given to this user.</param>
-		public UserProfile(List<Award> awards)
+		public UserProfile(ObservableCollection<Award> awards)
 		{
-			this.awards = awards;
+			if (awards == null) {
+				throw new ArgumentNullException("awards","Parameter 'awards' cannot be null.");
+			}
+			
+			Awards = awards;
 			trackedInfo = new SerializableDictionary<string,object>();
+			monitors = new ObservableCollection<AchievementMonitor>();
 			SetupDefaultValues();
 		}
 		
@@ -125,7 +156,7 @@ namespace AdventureAuthor.Achievements
 		/// <summary>
 		/// Set up default values for tracked information.
 		/// </summary>
-		private void SetupDefaultValues()
+		protected void SetupDefaultValues()
 		{
 			WordCount = 0;
 			MyTasksUserActivity = 0;
@@ -145,6 +176,46 @@ namespace AdventureAuthor.Achievements
 				}
 			}
 			return false;
+		}
+		
+		
+		/// <summary>
+		/// When a monitor indicates that an award should be granted,
+		/// add that award to the user's award collection. 
+		/// </summary>
+		/// <param name="award">The award to give.</param>
+		public void GiveAward(Award award)
+		{
+			if (!HasAward(award)) {
+				Awards.Add(award);	
+			}
+		}				
+		
+		
+		/// <summary>
+		/// When a monitor indicates that an award should be granted,
+		/// add that award to the user's award collection. 
+		/// </summary>
+		/// <param name="award">The award to give.</param>
+		public delegate void GiveAwardDelegate(Award award);	
+		
+		
+		/// <summary>
+		/// Add a monitoring class to track user activity
+		/// and grant awards.
+		/// </summary>
+		/// <param name="monitor">The monitor to add.</param>
+		public void AddMonitor(AchievementMonitor monitor)
+		{
+			Monitors.Add(monitor);
+			monitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e) 
+			{
+				// ObservableCollection<T> must have its contents changed via
+				// the UI thread, so use a control to get the UI thread's Dispatcher:
+				UIControl.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+						                         new GiveAwardDelegate(GiveAward),
+						                         e.Award);
+			};
 		}
 		
 		
@@ -178,6 +249,35 @@ namespace AdventureAuthor.Achievements
 			}
 			else {
 				trackedInfo[infoName] = val;
+			}
+		}
+		
+		
+		/// <summary>
+		/// Serialize the user profile to disk.
+		/// </summary>
+		/// <param name="path">The path to serialize this object to.</param>
+		public void Serialize(string path)
+		{
+			UpdateRecords();
+			
+			try {
+				Serialization.Serialize(path,this);
+			}
+			catch (Exception e) {
+				Say.Error("Failed to save the user profile.",e);
+			}	
+		}
+		
+		
+		/// <summary>
+		/// Record the current values of all information being
+		/// tracked by monitor classes.
+		/// </summary>
+		public void UpdateRecords()
+		{			
+			foreach (AchievementMonitor monitor in monitors) {
+				SetValue(monitor.GetSubjectName(),monitor.GetSubjectValue());
 			}
 		}
 		

@@ -38,14 +38,22 @@ namespace AdventureAuthor.Achievements
 	public class ManagerAward : Award
 	{		
 		#region Constants
+	
+//		public const uint BRONZEUSAGE = 250;
+//		public const uint SILVERUSAGE = 500;
+//		public const uint GOLDUSAGE = 1000;
+//		public const uint EMERALDUSAGE = 1500;
+//		public const uint SAPPHIREUSAGE = 2000;
+//		public const uint RUBYUSAGE = 2500;
+//		public const uint DIAMONDUSAGE = 3000;
 		
 		public const uint BRONZEUSAGE = 2;//50;
 		public const uint SILVERUSAGE = 5;//00;
 		public const uint GOLDUSAGE = 10;//00;
 		public const uint EMERALDUSAGE = 15;//00;
-		public const uint SAPPHIREUSAGE = 2000;
-		public const uint RUBYUSAGE = 2500;
-		public const uint DIAMONDUSAGE = 3000;
+		public const uint SAPPHIREUSAGE = 20;//00;
+		public const uint RUBYUSAGE = 25;//00;
+		public const uint DIAMONDUSAGE = 30;//00;
 		
 		#endregion
 		
