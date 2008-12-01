@@ -315,7 +315,7 @@ namespace AdventureAuthor.Setup
 				// Process.Run(etc.) - not Instance.Show() anymore
 //			};
 //			ideasButton.ToolTipText = "Record and review your ideas";
-//			SetSandbarButtonImage(ideasButton,"litbulb.png","Ideas");
+//			SetSandbarButtonImage(ideasButton,"litbulb","Ideas");
 //			aaToolbar.Items.Add(ideasButton);
 							
 //			ButtonItem addIdeaButton = new ButtonItem();
@@ -343,7 +343,7 @@ namespace AdventureAuthor.Setup
 //					Say.Information("There are no areas to display in map view.");
 //				}
 //			};
-//			SetSandbarButtonImage(analysisButton,"verticalbarchart.png","Analysis");
+//			SetSandbarButtonImage(analysisButton,"verticalbarchart","Analysis");
 //			analysisButton.ToolTipText = "Read a useful analysis of your game";
 //			analysisButton.Enabled = false;
 //			analysisButton.Visible = false;
@@ -360,7 +360,7 @@ namespace AdventureAuthor.Setup
 //				}
 //				BringToFront(CardViewer.Instance);
 //			};
-//			SetSandbarButtonImage(evaluationButton,"clipboard.png","Comment Cards");
+//			SetSandbarButtonImage(evaluationButton,"clipboard","Comment Cards");
 //			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 //			aaToolbar.Items.Add(evaluationButton);
 														
@@ -370,14 +370,14 @@ namespace AdventureAuthor.Setup
 				LaunchMyAchievements();
 				BringToFront(ProfileWindow.Instance);
 			};
-			SetSandbarButtonImage(achievementsButton,"crown.png","My Achievements");
+			SetSandbarButtonImage(achievementsButton,"crown","My Achievements");
 			achievementsButton.Enabled = true;
 			achievementsButton.Visible = true;
 			achievementsButton.ToolTipText = "View your achievements and user profile";
 			aaToolbar.Items.Add(achievementsButton);
 														
 //			ButtonItem checkTransitions = new ButtonItem();
-//			SetSandbarButtonImage(checkTransitions,"clipboard.png","Check transitions");
+//			SetSandbarButtonImage(checkTransitions,"clipboard","Check transitions");
 //			checkTransitions.Enabled = true;
 //			checkTransitions.Visible = true;
 //			checkTransitions.ToolTipText = "Check transitions";
