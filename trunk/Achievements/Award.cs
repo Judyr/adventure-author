@@ -39,6 +39,7 @@ namespace AdventureAuthor.Achievements
 	[XmlInclude(typeof(WordsmithAward))]
 	[XmlInclude(typeof(ManagerAward))]
 	[XmlInclude(typeof(ImagineerAward))]
+	[XmlInclude(typeof(CustomAward))]
 	public abstract class Award
 	{
 		#region Constants

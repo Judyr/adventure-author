@@ -5,10 +5,10 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="My Achievements"
     x:Name="mainWindow"
+	MinWidth="800" MinHeight="600"
     Width="800" Height="600"
     >
 	
-	<!--MinWidth="800" MinHeight="600"-->
 	<Window.Resources>
 		
 		<converters:BitmapToBitmapSourceConverter x:Key="bitmapToBitmapSourceConverter"/>
@@ -66,6 +66,13 @@
 				<TextBlock Margin="5" FontSize="14">Profile information lives here.</TextBlock>
 				<TextBlock Margin="5" FontSize="14">Username: Kirn</TextBlock>
 				<TextBlock Margin="5" FontSize="14">Favourite game: Pacman</TextBlock>
+			
+				<Button Content="Give a Custom Award"
+						Click="AddCustomAward"
+						Height="30"
+						Width="150"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Bottom"/>
 			
 			</StackPanel>
 		

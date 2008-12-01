@@ -37,6 +37,9 @@ namespace AdventureAuthor.Achievements.UI
 
     	#region Constructors
     	
+    	/// <summary>
+    	/// A screen which displays the user's profile information and awards.
+    	/// </summary>
         public ProfileWindow()
         {
             InitializeComponent();
@@ -58,9 +61,18 @@ namespace AdventureAuthor.Achievements.UI
         
         #endregion
         
-        #region Methods
+        #region Event handlers
         
-        
+        /// <summary>
+        /// Open a dialog window that allows the user to create
+        /// their own custom award and add it to the awards case.
+        /// </summary>
+        private void AddCustomAward(object sender, RoutedEventArgs e)
+        {
+        	if (User.IdentifyTeacherOrDemandPassword()) {
+        		new CreateCustomAwardDialog().ShowDialog();
+        	}
+        }
         
         #endregion
     }
