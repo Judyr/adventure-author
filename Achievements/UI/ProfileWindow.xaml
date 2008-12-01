@@ -6,15 +6,14 @@
     Title="My Achievements"
     x:Name="mainWindow"
     Width="800" Height="600"
-	MinWidth="800" MinHeight="600"
     >
 	
+	<!--MinWidth="800" MinHeight="600"-->
 	<Window.Resources>
 		
 		<converters:BitmapToBitmapSourceConverter x:Key="bitmapToBitmapSourceConverter"/>
-		<converters:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>	
-		
-		<sys:Double x:Key="reduceWidthValue">-10</sys:Double>
+		<converters:DoubleToDoubleConverter x:Key="reduceWidthConverter"/>
+		<SolidColorBrush x:Key="awardsCaseBrush" Color="DarkRed" Opacity="1.0"/>
 		
 		<DataTemplate x:Key="awardDataTemplate">			
 			<StackPanel
@@ -43,15 +42,15 @@
 		</DataTemplate>
 	
 		<ItemsPanelTemplate x:Key="awardCaseItemsPanelTemplate">
-			<WrapPanel Background="DarkRed"
-			           Width="{Binding ElementName=selectedAwardInfoGrid, Path=ActualWidth, Converter={StaticResource reduceWidthConverter}, ConverterParameter={StaticResource reduceWidthValue}}"/>
+			<WrapPanel Background="{StaticResource awardsCaseBrush}"
+			           Width="{Binding ElementName=selectedAwardInfoGrid, Path=ActualWidth}"/>
 		</ItemsPanelTemplate>
-	
 	</Window.Resources>
 	
 	<DockPanel>
 		
-		<Grid DockPanel.Dock="Right"
+		<Grid x:Name="profileGrid"
+		      DockPanel.Dock="Right"
 			  Width="300"
 			  Background="LightBlue">
 			
@@ -70,57 +69,78 @@
 			
 			</StackPanel>
 		
-		</Grid>		
-	        
-	    <ListBox x:Name="awardsCase"
-		         DockPanel.Dock="Top"
-	    		 ItemsSource="{Binding}"
-	    		 ItemTemplate="{StaticResource awardDataTemplate}"
-	    		 ItemsPanel="{StaticResource awardCaseItemsPanelTemplate}"/>
+		</Grid>				
 		
-		<Grid x:Name="selectedAwardInfoGrid"
-			  DockPanel.Dock="Bottom"
-		      VerticalAlignment="Bottom"
-			  Height="75"
-		      DataContext="{Binding ElementName=awardsCase, Path=SelectedItem}">
+		<Grid DockPanel.Dock="Left"
+			  ShowGridLines="false">
 			<Grid.RowDefinitions>
-		   		<RowDefinition Height="25"/>
-		   		<RowDefinition/>
+		   		<RowDefinition Height="*"/>
+		   		<RowDefinition Height="75"/>
 		   	</Grid.RowDefinitions>
 		   	<Grid.ColumnDefinitions>
-		   		<ColumnDefinition Width="75"/>
 		   		<ColumnDefinition Width="*"/>
-		   	</Grid.ColumnDefinitions>
+		   	</Grid.ColumnDefinitions>	
 			
-			<Grid.Resources>
-				<Style TargetType="{x:Type TextBlock}">
-					<Setter Property="FontSize" Value="16"/>
-					<Setter Property="Padding" Value="3"/>
-				</Style>
-			</Grid.Resources>
-	    
-	    	<Image x:Name="awardPicLabel"
-	    		   Grid.Row="0"
-	    		   Grid.RowSpan="2"
-	    		   Grid.Column="0"
-				   Source="{Binding Path=Picture, Converter={StaticResource bitmapToBitmapSourceConverter}}"
-			/>
-	    
-	    	<TextBlock x:Name="awardNameTextBlock"
-	    			   Grid.Row="0"
-	    			   Grid.Column="1"
-					   FontWeight="Bold"
-				   	   Text="{Binding Name}"
-					   TextWrapping="Wrap"
-			/>
-	    
-	    	<TextBlock x:Name="awardDescriptionTextBlock"
-	    			   Grid.Row="1"
-	    			   Grid.Column="1"
-				       Text="{Binding Description}"
-					   TextWrapping="Wrap"
-			/>
-	    </Grid>
+			<ScrollViewer 
+				Grid.Row="0"
+				Grid.Column="0"
+				VerticalScrollBarVisibility="Auto"
+				HorizontalScrollBarVisibility="Hidden">
+				<ListBox x:Name="awardsCase"
+			    		 ItemsSource="{Binding}"
+			    		 ItemTemplate="{StaticResource awardDataTemplate}"
+			    		 ItemsPanel="{StaticResource awardCaseItemsPanelTemplate}"					 		
+						 BorderThickness="0"
+						 BorderBrush="{StaticResource awardsCaseBrush}"
+				/>
+			</ScrollViewer>
+			
+			<Grid x:Name="selectedAwardInfoGrid"
+				  Grid.Row="1"
+		          Grid.Column="0"
+			      VerticalAlignment="Bottom"
+			      Height="75"
+			      DataContext="{Binding ElementName=awardsCase, Path=SelectedItem}">
+				<Grid.RowDefinitions>
+			   		<RowDefinition Height="25"/>
+			   		<RowDefinition/>
+			   	</Grid.RowDefinitions>
+			   	<Grid.ColumnDefinitions>
+			   		<ColumnDefinition Width="75"/>
+			   		<ColumnDefinition Width="*"/>
+			   	</Grid.ColumnDefinitions>
+				
+				<Grid.Resources>
+					<Style TargetType="{x:Type TextBlock}">
+						<Setter Property="FontSize" Value="16"/>
+						<Setter Property="Padding" Value="3"/>
+					</Style>
+				</Grid.Resources>
+		    
+		    	<Image x:Name="awardPicLabel"
+		    		   Grid.Row="0"
+		    		   Grid.RowSpan="2"
+		    		   Grid.Column="0"
+					   Source="{Binding Path=Picture, Converter={StaticResource bitmapToBitmapSourceConverter}}"
+				/>
+		    
+		    	<TextBlock x:Name="awardNameTextBlock"
+		    			   Grid.Row="0"
+		    			   Grid.Column="1"
+						   FontWeight="Bold"
+					   	   Text="{Binding Name}"
+						   TextWrapping="Wrap"
+				/>
+		    
+		    	<TextBlock x:Name="awardDescriptionTextBlock"
+		    			   Grid.Row="1"
+		    			   Grid.Column="1"
+					       Text="{Binding Description}"
+						   TextWrapping="Wrap"
+				/>
+		    </Grid>
+	
+		</Grid>
 	
 	</DockPanel>
 
