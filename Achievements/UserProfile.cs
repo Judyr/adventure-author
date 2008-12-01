@@ -144,6 +144,10 @@ namespace AdventureAuthor.Achievements
 			trackedInfo = new SerializableDictionary<string,object>();
 			monitors = new ObservableCollection<AchievementMonitor>();
 			SetupDefaultValues();
+			
+			// Watch for custom awards which are granted without being
+			// sent by a particular AchievementMonitor:
+			AchievementMonitor.AwardGrantedDirectly += GiveAward;
 		}
 		
 		
@@ -162,6 +166,10 @@ namespace AdventureAuthor.Achievements
 			trackedInfo = new SerializableDictionary<string,object>();
 			monitors = new ObservableCollection<AchievementMonitor>();
 			SetupDefaultValues();
+			
+			// Watch for custom awards which are granted without being
+			// sent by a particular AchievementMonitor:
+			AchievementMonitor.AwardGrantedDirectly += GiveAward;
 		}
 		
 		#endregion
@@ -224,14 +232,21 @@ namespace AdventureAuthor.Achievements
 		public void AddMonitor(AchievementMonitor monitor)
 		{
 			Monitors.Add(monitor);
-			monitor.AwardGranted += delegate(object sender, AwardGrantedEventArgs e) 
-			{
-				// ObservableCollection<T> must have its contents changed via
-				// the UI thread, so use a control to get the UI thread's Dispatcher:
-				UIControl.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-						                         new GiveAwardDelegate(GiveAward),
-						                         e.Award);
-			};
+			monitor.AwardGranted += GiveAward;
+		}
+
+		
+		/// <summary>
+		/// When a monitor indicates that an award should be granted,
+		/// add that award to the user's award collection. 
+		/// </summary>
+		private void GiveAward(object sender, AwardGrantedEventArgs e)
+		{
+			// ObservableCollection<T> must have its contents changed via
+			// the UI thread, so use a control to get the UI thread's Dispatcher:
+			UIControl.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+					                         new GiveAwardDelegate(GiveAward),
+					                         e.Award);			
 		}
 		
 		
@@ -293,7 +308,11 @@ namespace AdventureAuthor.Achievements
 		public void UpdateRecords()
 		{			
 			foreach (AchievementMonitor monitor in monitors) {
-				SetValue(monitor.GetSubjectName(),monitor.GetSubjectValue());
+				string name = monitor.GetSubjectName();
+				object val = monitor.GetSubjectValue();
+				if (name != null && name != String.Empty) {
+					SetValue(name,val);
+				}				
 			}
 		}
 		

@@ -84,6 +84,20 @@ namespace AdventureAuthor.Achievements
 			}
 		}
 		
+		
+		/// <summary>
+		/// Raised when an award is granted to the user without determining 
+		/// whether a set of criteria have been met. 
+		/// </summary>
+		public static event EventHandler<AwardGrantedEventArgs> AwardGrantedDirectly;
+		public static void OnAwardGrantedDirectly(AwardGrantedEventArgs e)
+		{
+			EventHandler<AwardGrantedEventArgs> handler = AwardGrantedDirectly;
+			if (handler != null) {
+				handler(null,e);
+			}
+		}
+		
 		#endregion
 		
 		#region Constructors
@@ -207,6 +221,17 @@ namespace AdventureAuthor.Achievements
 		public void AddAward(Award award)
 		{	
 			AddAward(award,true);
+		}
+		
+		
+		/// <summary>
+		/// Grant the a user an award without requiring a set of
+		/// criteria to be met.
+		/// </summary>
+		/// <param name="award">The award to give the user.</param>
+		public static void GiveAward(Award award)
+		{
+			OnAwardGrantedDirectly(new AwardGrantedEventArgs(award));
 		}
 		
 		#endregion

@@ -145,10 +145,15 @@
     <Compile Include="Achievements\AchievementMonitor.cs" />
     <Compile Include="Achievements\Award.cs" />
     <Compile Include="Achievements\AwardGrantedEventArgs.cs" />
+    <Compile Include="Achievements\CustomAward.cs" />
     <Compile Include="Achievements\FridgeMagnetsMonitor.cs" />
     <Compile Include="Achievements\ImagineerAward.cs" />
     <Compile Include="Achievements\ManagerAward.cs" />
     <Compile Include="Achievements\MyTasksMonitor.cs" />
+    <Compile Include="Achievements\UI\CreateCustomAwardDialog.xaml.cs">
+      <DependentUpon>CreateCustomAwardDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Achievements\UI\ProfileWindow.xaml.cs">
       <DependentUpon>ProfileWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -365,6 +370,7 @@
     <EmbeddedResource Include="Variables\UI\delete.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Achievements\UI\CreateCustomAwardDialog.xaml" />
     <Page Include="Achievements\UI\ProfileWindow.xaml" />
     <Page Include="Analysis\UI\AreaMapControl.xaml" />
     <Page Include="Analysis\UI\CombatMap.xaml" />
