@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Drawing;
+using System.Resources;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Achievements.UI
 {
@@ -31,6 +36,17 @@ namespace AdventureAuthor.Achievements.UI
         
     	#endregion
 
+    	#region Methods
+    	
+    	public List<Bitmap> GetAllAwardImages()
+    	{
+//    		ResourceManager manager = new ResourceManager("AdventureAuthor.Achievements.UI.awardimages",
+//    		                                              Assembly.GetExecutingAssembly());
+    		throw new NotImplementedException();
+    	}
+    	
+    	#endregion
+    	
         #region Event handlers
         
         /// <summary>
@@ -38,12 +54,20 @@ namespace AdventureAuthor.Achievements.UI
         /// </summary>
         private void GiveUserCustomAward(object sender, RoutedEventArgs e)
         {
-        	CustomAward award = new CustomAward(awardNameTextBox.Text,
-        	                                    awardDescriptionTextBox.Text,
-        	                                    Award.DEFAULTDESIGNERPOINTSVALUE,
-        	                                    imageLocationTextBox.Text);
-        	AchievementMonitor.GiveAward(award);
-        	Close();
+        	try {
+	        	CustomAward award = new CustomAward(awardNameTextBox.Text,
+	        	                                    awardDescriptionTextBox.Text,
+	        	                                    Award.DEFAULTDESIGNERPOINTSVALUE,
+	        	                                    imageLocationTextBox.Text);
+        		AchievementMonitor.GiveAward(award);
+        		Close();
+        	}
+        	catch (FileNotFoundException) {
+        		Say.Error("No file was found at location '" + imageLocationTextBox.Text + "'.");
+        	}
+        	catch (IOException) {
+        		Say.Error("The file at location '" + imageLocationTextBox.Text + "' is not a valid image file.");
+        	}
         }
         
         

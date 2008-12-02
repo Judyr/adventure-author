@@ -266,7 +266,7 @@ namespace AdventureAuthor.Setup
 				try {
 					object obj = Serialization.Deserialize(AdventureAuthorPluginPreferences.UserProfilePath,
 					                                       typeof(UserProfile));
-					profile = (UserProfile)obj;					
+					profile = (UserProfile)obj;
 				}
 				catch (Exception e) {
 					System.Diagnostics.Debug.WriteLine("The file at location " + 
