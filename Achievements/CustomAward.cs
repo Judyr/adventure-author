@@ -36,6 +36,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using System.Xml.Serialization;
+using AdventureAuthor.Setup;
 
 namespace AdventureAuthor.Achievements
 {
@@ -57,15 +58,7 @@ namespace AdventureAuthor.Achievements
 		public string ImagePath {
 			get { return imagePath; }
 			set { 
-				imagePath = value; 			
-				try {
-					if (File.Exists(imagePath)) {
-						this.picture = new Bitmap(imagePath);
-					}
-				}
-				catch (Exception) {
-					this.picture = null;
-				}
+				SetPicture(value,true);
 			}
 		}
 		
@@ -78,8 +71,6 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		protected CustomAward()
 		{
-			// TODO: Do I need to explicitly replicate the ImagePath setter code here,
-			// or will the constructor call it itself? 
 		}
 		
 		
@@ -89,13 +80,18 @@ namespace AdventureAuthor.Achievements
 		/// </summary>
 		/// <remarks>This award does not have requirements to fulfill -
 		/// it should be awarded to the user upon creation.</remarks>
+		/// <param name="name">The name of this award.</param>
+		/// <param name="description">The description of this award.</param>
+		/// <param name="designerPoints">The number of designer points to 
+		/// give the user when they are granted this award.</param>
+		/// <param name="imagePath">The path to the image associated
+		/// with this award in the GUI.</param>
 		public CustomAward(string name, string description, uint designerPoints, string imagePath) : this()
 		{
 			this.name = name;
 			this.description = description;
 			this.designerPoints = designerPoints;
-			
-			ImagePath = imagePath; // sets the picture as well, if it can find it at imagePath.
+			ImagePath = imagePath; // also sets the picture
 		}
 		
 		#endregion
@@ -129,6 +125,78 @@ namespace AdventureAuthor.Achievements
 		public override Type GetCriteriaType()
 		{
 			throw new NotImplementedException();
+		}
+		
+				
+		/// <summary>
+		/// Set this award's picture to be the bitmap file found at 
+		/// a given location.
+		/// </summary>
+		/// <param name="imagePath">The full path to the bitmap file.</param>
+		/// <exception cref="IOException">Thrown if the file at the
+		/// given path was not a valid bitmap file.</exception>
+		/// <exception cref="FileNotFoundException">Thrown if there was no
+		/// file found at the given path.</exception>
+		public void SetPicture(string imagePath)
+		{
+			SetPicture(imagePath,true);
+		}
+		
+		
+		/// <summary>
+		/// Set this award's picture to be the bitmap file found at 
+		/// a given location.
+		/// </summary>
+		/// <param name="imagePath">The full path to the bitmap file.</param>
+		/// <param name="createLocalCopy">True to create a local copy
+		/// of this file in the user profile and refer to it from
+		/// now on; false to use the given copy of the file.</param>
+		/// <exception cref="IOException">Thrown if the file at the
+		/// given path was not a valid bitmap file.</exception>
+		/// <exception cref="FileNotFoundException">Thrown if there was no
+		/// file found at the given path.</exception>
+		public void SetPicture(string imagePath, bool createLocalCopy)
+		{
+			this.imagePath = imagePath;
+			
+			if (File.Exists(imagePath)) {
+				
+				string localAppData = AdventureAuthorPluginPreferences.LocalAppDataDirectory;
+				
+				// Create a local copy and use that as the source for the picture:
+				if (createLocalCopy && !imagePath.StartsWith(localAppData)) {
+					
+					string localPath = Path.Combine(localAppData,Path.GetFileName(imagePath));
+							
+					// Ensure that when creating the local copy you don't overwrite an existing file:
+					if (File.Exists(localPath)) {
+						string filenameWithoutExtension = Path.GetFileNameWithoutExtension(imagePath);
+						string extension = Path.GetExtension(imagePath);
+						int copyNumber = 1;
+						while (File.Exists(localPath)) {
+							copyNumber++;
+							string filename = filenameWithoutExtension + " (" + copyNumber + ")" + extension;
+							localPath = Path.Combine(localAppData,filename);
+						}
+					}
+					
+					File.Copy(imagePath,localPath,true);
+					
+					this.imagePath = localPath;
+				}
+				
+				try {
+					picture = new Bitmap(imagePath);
+				}
+				catch (Exception e) {
+					picture = null;
+					throw new IOException("The file at '" + imagePath + "' was not a valid bitmap file.");
+				}				
+			}
+			else {
+				picture = null;
+				throw new FileNotFoundException("No file found at '" + imagePath + "'.");
+			}
 		}
 		
 		#endregion
