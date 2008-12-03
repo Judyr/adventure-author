@@ -2,11 +2,12 @@
 	x:Class="AdventureAuthor.Achievements.UI.CreateCustomAwardDialog" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sys="clr-namespace:System;assembly=mscorlib"
 	Title="Create a custom Teacher Award"
 	Background="LightBlue"
 	ResizeMode="NoResize"
 	SizeToContent="WidthAndHeight">
-	<Grid>
+	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="35" />
 			<RowDefinition Height="45" />
@@ -21,12 +22,19 @@
 		</Grid.ColumnDefinitions>
 		
 		<Grid.Resources>
+			
+			<sys:Double x:Key="fontSize">14</sys:Double>
+			
 			<Style TargetType="{x:Type TextBox}">
-				<Setter Property="FontSize" Value="12"/>
+				<Setter Property="FontSize" Value="{StaticResource fontSize}"/>
 			</Style>
 			<Style TargetType="{x:Type TextBlock}">
-				<Setter Property="FontSize" Value="12"/>
+				<Setter Property="FontSize" Value="{StaticResource fontSize}"/>
 			</Style>
+			<Style TargetType="{x:Type Button}">
+				<Setter Property="FontSize" Value="{StaticResource fontSize}"/>
+			</Style>
+		
 		</Grid.Resources>
 		
 		<TextBlock
@@ -62,14 +70,23 @@
 			Grid.Column="0"
 			Text="Image location:"
 			Margin="8"/>
-		<TextBox
-			Name="imageLocationTextBox"
+		<StackPanel
 			Grid.Row="5"
 			Grid.Column="0"
-			Margin="8"
-			TextWrapping="Wrap"
-			Width="200"
-			HorizontalAlignment="Left"/>
+			Orientation="Horizontal">
+			<TextBox
+				Name="imageLocationTextBox"
+				Margin="8"
+				Width="200"
+				HorizontalAlignment="Left"/>
+			<Button
+				Content="Browse"
+				Click="LaunchOpenFileDialog"
+				FontSize="12"
+				Margin="8"
+				Height="25"
+				Width="100"/>
+		</StackPanel>
 		<StackPanel
 			Grid.Row="6"
 			Grid.Column="0"
