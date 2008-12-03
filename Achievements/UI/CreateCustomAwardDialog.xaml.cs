@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using AdventureAuthor.Utils;
+using Microsoft.Win32;
 
 namespace AdventureAuthor.Achievements.UI
 {
@@ -37,14 +38,7 @@ namespace AdventureAuthor.Achievements.UI
     	#endregion
 
     	#region Methods
-    	
-    	public List<Bitmap> GetAllAwardImages()
-    	{
-//    		ResourceManager manager = new ResourceManager("AdventureAuthor.Achievements.UI.awardimages",
-//    		                                              Assembly.GetExecutingAssembly());
-    		throw new NotImplementedException();
-    	}
-    	
+    	    	
     	#endregion
     	
         #region Event handlers
@@ -78,6 +72,40 @@ namespace AdventureAuthor.Achievements.UI
         {
         	Close();
         }
+        
+        
+        /// <summary>
+        /// Launch an 'open file' dialog to allow the user to browse
+        /// to an image file.
+        /// </summary>
+        private void LaunchOpenFileDialog(object sender, RoutedEventArgs e)
+        {
+        	OpenImageBrowseDialog();
+        }
+        
+        #endregion
+        
+        #region Methods
+        
+        /// <summary>
+        /// Launch an 'open file' dialog to allow the user to browse
+        /// to an image file.
+        /// </summary>
+		private void OpenImageBrowseDialog()
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.ValidateNames = true;
+    		openFileDialog.DefaultExt = Filters.PICTURES_ALL;
+    		openFileDialog.Filter = Filters.PICTURES_ALL;
+			openFileDialog.Title = "Select an image file";
+			openFileDialog.Multiselect = false;
+			openFileDialog.RestoreDirectory = false;
+						
+  			bool ok = (bool)openFileDialog.ShowDialog();  				
+  			if (ok) {
+  				imageLocationTextBox.Text = openFileDialog.FileName;
+  			}
+		}
         
         #endregion
     }

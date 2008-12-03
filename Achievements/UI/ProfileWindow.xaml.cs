@@ -49,7 +49,7 @@ namespace AdventureAuthor.Achievements.UI
             ResourceManager manager = new ResourceManager("AdventureAuthor.Utils.images",
                                                           Assembly.GetAssembly(typeof(EditableTextBox)));
            
-            System.Drawing.Bitmap bitmap = (System.Drawing.Bitmap)manager.GetObject("nwn2_beholder");
+            System.Drawing.Bitmap bitmap = (System.Drawing.Bitmap)manager.GetObject("aalogo");
            	BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
 																		 bitmap.GetHbitmap(),
 					                                                     IntPtr.Zero,
