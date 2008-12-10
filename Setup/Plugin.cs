@@ -343,6 +343,7 @@ namespace AdventureAuthor.Setup
 		private void SetupRibbon()
 		{
 			ribbon = new AdventureAuthorRibbon();
+			ribbon.UserMessagePanel.SetMessage("Welcome to Adventure Author.");
 			
 			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
 			{  

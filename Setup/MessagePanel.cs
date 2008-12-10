@@ -17,33 +17,59 @@ using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Setup
 {
+	/// <summary>
+	/// A panel that cycles through messages to display to the user.
+	/// </summary>
     public partial class MessagePanel : UserControl
     {
     	#region Constants
     	
-    	private const byte OLDMESSAGESTORECALL = 3;    	
-    	private const double DEFAULTDISPLAYTIME = 5000;
+    	/// <summary>
+    	/// The number of past messages available to show the user.
+    	/// </summary>
+    	public const byte OLDMESSAGESTORECALL = 3;    	
+    	
+    	/// <summary>
+    	/// The default amount of time to display a message for, in milliseconds.
+    	/// </summary>
+    	public const double DEFAULTDISPLAYTIME = 5000;
     	
     	#endregion
     	
     	#region Properties and fields
     	
     	protected List<IMessageGenerator> messageGenerators = new List<IMessageGenerator>();
-		public List<IMessageGenerator> MessageGenerators {
+		/// <summary>
+		/// The message generators used to generate random messages.
+		/// </summary>
+    	public List<IMessageGenerator> MessageGenerators {
 			get { return messageGenerators; }
 		}
     	    	
     	
+		/// <summary>
+		/// A list of previously displayed messages.
+		/// </summary>
     	protected List<string> oldMessages = new List<string>(OLDMESSAGESTORECALL);
     	
     	
+    	/// <summary>
+    	/// Used for locking.
+    	/// </summary>
     	protected object padlock = new object();
     	
     	
+    	/// <summary>
+    	/// A timer used to decide when to display a new message.
+    	/// </summary>
     	protected Timer timer = new Timer();
     	
     	
     	protected string defaultMessage;
+    	/// <summary>
+    	/// The default message to use when
+    	/// there are no other messages to display.
+    	/// </summary>
 		public string DefaultMessage {
 			get { return defaultMessage; }
 			set { defaultMessage = value; }
@@ -53,27 +79,33 @@ namespace AdventureAuthor.Setup
     	
     	#region Constructors
     	
+    	/// <summary>
+    	/// A panel that cycles through messages to display to the user.
+    	/// </summary>
+    	/// <param name="defaultMessage">The default message to use when
+    	/// there are no other messages to display.</param>
         public MessagePanel(string defaultMessage)
-        {
-        	if (defaultMessage == null) {
-        		throw new ArgumentNullException("defaultMessage","defaultMessage cannot be null");
-        	}
-        	        	
+        {                	
+            if (defaultMessage == null) {
+            	this.defaultMessage = String.Empty;
+            }
+            else {
+            	this.defaultMessage = defaultMessage;
+            }
+        	
         	// Once you've finished displaying a message, pick another
         	// message to display at random:
         	timer.AutoReset = true;        	
         	timer.Elapsed += MessageTimerElapsed;
         	
-            InitializeComponent();            
-        	
-        	this.defaultMessage = defaultMessage;        	
+            InitializeComponent();    
             SetMessageToDefault();
-            
-            MouseDoubleClick += delegate { SetMessage("Clicked at " + DateTime.Now.ToShortTimeString() + ".", 
-                                                      DEFAULTDISPLAYTIME); };
         }
         
         
+    	/// <summary>
+    	/// A panel that cycles through messages to display to the user.
+    	/// </summary>
         public MessagePanel() : this(String.Empty)
         {        	
         }
@@ -102,13 +134,6 @@ namespace AdventureAuthor.Setup
         }
         
         
-        public delegate void SetTextDelegate(object message);
-        private void SetText(object message)
-        {
-        	messageBlock.Text = (string)message;
-        }
-        
-        
         /// <summary>
         /// Display a message for some length of time.
         /// </summary>
@@ -116,6 +141,25 @@ namespace AdventureAuthor.Setup
         public void SetMessage(string message)
         {        	
         	SetMessage(message,DEFAULTDISPLAYTIME);
+        }
+        
+        
+        /// <summary>
+        ///  Set the text to display to the user.
+        /// </summary>
+        protected delegate void SetTextDelegate(object message);
+        
+                
+        /// <summary>
+        /// Set the text to display to the user.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        protected void SetText(object message)
+        {
+        	if (!(message is string)) {
+        		throw new ArgumentException("message","message must be a string.");
+        	}
+        	messageBlock.Text = (string)message;
         }
         
         
@@ -131,7 +175,7 @@ namespace AdventureAuthor.Setup
         		if (timer.Enabled) {
         			timer.Stop();
         		}        		
-        		if (GetMessage() != DefaultMessage) {
+        		if (GetCurrentMessage() != DefaultMessage) {
 	        		Dispatcher.Invoke(DispatcherPriority.Normal,
 	        	                  	  new SetTextDelegate(SetText),DefaultMessage);
         		}
@@ -144,7 +188,7 @@ namespace AdventureAuthor.Setup
         /// </summary>
         /// <param name="displayTime">The time to display the message for in milliseconds.</param>
         public void SetMessageAtRandom(double displayTime)
-        {	                	
+        {	    
         	string message = GetRandomMessage();
         	
         	if (message == null || message == String.Empty) {
@@ -157,7 +201,7 @@ namespace AdventureAuthor.Setup
                 
         
         /// <summary>
-        /// Displays a random message from one of the message generators.
+        /// Displays a randomly chosen message from one of the message generators.
         /// </summary>
         public void SetMessageAtRandom()
         {	        
@@ -165,7 +209,11 @@ namespace AdventureAuthor.Setup
         }
                 
         
-        protected string GetRandomMessage()
+        /// <summary>
+        /// Randomly select a message generator and return a message from it.
+        /// </summary>
+        /// <returns>A randomly selected message.</returns>
+        public string GetRandomMessage()
         {
         	IMessageGenerator messageGenerator;
         	lock (padlock) {
@@ -182,7 +230,11 @@ namespace AdventureAuthor.Setup
         }
         
         
-        public string GetMessage()
+        /// <summary>
+        /// Get the current message being displayed.
+        /// </summary>
+        /// <returns>The message currently being displayed.</returns>
+        public string GetCurrentMessage()
         {
         	return messageBlock.Text;
         }
@@ -191,6 +243,10 @@ namespace AdventureAuthor.Setup
         
         #region Event handlers
         
+        /// <summary>
+        /// Once a message has been displayed for a certain amount of time,
+        /// display another message at random.
+        /// </summary>
         private void MessageTimerElapsed(object sender, ElapsedEventArgs e)
         {
         	SetMessageAtRandom();
