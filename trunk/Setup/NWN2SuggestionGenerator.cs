@@ -88,7 +88,7 @@ namespace AdventureAuthor.Setup
 				if (suggestions.Count == 0) {
 					return String.Empty;
 				}
-				int index = random.Next(0,suggestions.Count - 1);				
+				int index = random.Next(0,suggestions.Count);				
 				return suggestions[index];
 			}
 		}
