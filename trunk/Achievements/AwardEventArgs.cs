@@ -31,7 +31,7 @@ namespace AdventureAuthor.Achievements
 	/// <summary>
 	/// Arguments accompanying the event of an award being granted to the designer.
 	/// </summary>
-	public class AwardGrantedEventArgs : EventArgs
+	public class AwardEventArgs : EventArgs
 	{
 		/// <summary>
 		/// The award granted to the user.
@@ -47,7 +47,7 @@ namespace AdventureAuthor.Achievements
 		/// granted to the designer.
 		/// </summary>
 		/// <param name="award">The award granted to the user.</param>
-		public AwardGrantedEventArgs(Award award)
+		public AwardEventArgs(Award award)
 		{
 			this.award = award;
 		}
