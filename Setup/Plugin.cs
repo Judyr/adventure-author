@@ -347,13 +347,50 @@ namespace AdventureAuthor.Setup
 			
 			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
 			{  
-				ribbon.UserMessagePanel.SetMessage("You've won the " + e.Award.Name + " award! " + "" +
-				                      				   "Go to your profile screen to check it out.");
+				ribbon.UserMessagePanel.SetMessage("You've won the " + e.Award.Name + " award! " +
+				                      			   "Go to your profile screen to check it out.");
 			};			
-			
-			ribbon.UserMessagePanel.MessageGenerators.Add(new NWN2SuggestionGenerator());
+						
+			try {				 
+				string suggestionsFilePath = Path.Combine(AdventureAuthorPluginPreferences.LocalAppDataDirectory,
+				                                          "Suggestions.txt");
+				if (!File.Exists(suggestionsFilePath)) {	
+					SetupDefaultSuggestionsFile(suggestionsFilePath);
+				}
+				
+				PredefinedMessageGenerator nwn2SuggestionGenerator = new PredefinedMessageGenerator(suggestionsFilePath);
+				ribbon.UserMessagePanel.MessageGenerators.Add(nwn2SuggestionGenerator);
+			}
+			catch (Exception e) {
+				Say.Error("Failed to set up a collection of NWN2 suggestion messages for the ribbon.",e);
+			}
 			
 			ribbon.Show();
+		}
+		
+		
+		/// <summary>
+		/// Create a plain text file at the given path and populate
+		/// it with a set of suggestions relating to using various
+		/// NWN2 resources and features.
+		/// </summary>
+		/// <param name="path">The path to create the file at.</param>
+		private void SetupDefaultSuggestionsFile(string path)
+		{			
+			List<string> suggestions = new List<string>(3);			
+			suggestions.Add("Stuck for ideas? Why not add a creepy graveyard area to your game? In the blueprints " +
+			                "menus you can find skeletons, vampires, graves, crypts and other spooky stuff.");
+			suggestions.Add("Want your player to be surprised when an enemy attacks? Add an Encounter to your " +
+			                "area and the enemies will appear out of nowhere!");
+			suggestions.Add("There's a wide selection of animal blueprints you can choose from, including badgers, " +
+			                "deer, rabbits, cats and bears.");
+						
+			using (FileStream stream = File.OpenWrite(path))
+			using (StreamWriter writer = new StreamWriter(stream)) {
+				foreach (string suggestion in suggestions) {
+					writer.WriteLine(suggestion);
+				}
+			}
 		}
 		
 		#endregion

@@ -331,7 +331,7 @@
     <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
     <Compile Include="Setup\BlueprintMagnetControl.cs" />
     <Compile Include="Setup\BlueprintMagnetControlInfo.cs" />
-    <Compile Include="Setup\NWN2SuggestionGenerator.cs" />
+    <Compile Include="Setup\PredefinedMessageGenerator.cs" />
     <Compile Include="Setup\IMessageGenerator.cs" />
     <Compile Include="Setup\MessagePanel.cs">
       <DependentUpon>MessagePanel.xaml</DependentUpon>

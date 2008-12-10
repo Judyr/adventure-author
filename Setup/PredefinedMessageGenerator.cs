@@ -26,16 +26,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using AdventureAuthor.Utils;
 
 namespace AdventureAuthor.Setup
 {
 	/// <summary>
-	/// Provides a number of pre-defined messages to the user relating to 
-	/// interesting Neverwinter Nights 2 blueprints, resources and general
-	/// features that they could use in their games. 
+	/// Reads messages from a text file and provides them
+	/// to the user on request.
 	/// </summary>
-	public class NWN2SuggestionGenerator : IMessageGenerator
+	public class PredefinedMessageGenerator : IMessageGenerator
 	{
 		#region Properties and fields
 		
@@ -48,15 +48,23 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
+		/// <summary>
+		/// Used for locking.
+		/// </summary>
 		private object padlock = new object();
 		
 		#endregion
 		
 		#region Constructors
 		
-		public NWN2SuggestionGenerator()
+		/// <summary>
+		/// Reads messages from a text file and provides them
+		/// to the user on request.
+		/// </summary>
+		/// <param name="path">The path of the plain text file to read from.</param>
+		public PredefinedMessageGenerator(string path)
 		{
-			Populate();
+			Populate(path);
 		}
 		
 		#endregion
@@ -64,16 +72,21 @@ namespace AdventureAuthor.Setup
 		#region Methods
 		
 		/// <summary>
-		/// Populate the suggestions list.
+		/// Populate the suggestions list from a text file.
 		/// </summary>
-		protected virtual void Populate()
+		/// <param name="path">The path of the plain text file to draw suggestions from.</param>
+		protected virtual void Populate(string path)
 		{
-			suggestions.Add("Stuck for ideas? Why not add a creepy graveyard area to your game? In the blueprints " +
-			                "menus you can find skeletons, vampires, graves, crypts and other spooky stuff.");
-			suggestions.Add("Want your player to be surprised when an enemy attacks? Add an Encounter to your " +
-			                "area and the enemies will appear out of nowhere!");
-			suggestions.Add("There's a wide selection of animal blueprints you can choose from, including badgers, " +
-			                "deer, rabbits, cats and bears.");
+			if (!File.Exists(path)) {
+				throw new ArgumentException("path","No file exists at '" + path + "'.");
+			}
+			
+			try {
+				suggestions = new List<string>(File.ReadAllLines(path));
+			}
+			catch (Exception e) {
+				Say.Error("Failed to get suggestions from file '" + path + "'.",e);
+			}
 		}
 		
 		
