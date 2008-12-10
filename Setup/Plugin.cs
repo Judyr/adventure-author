@@ -125,6 +125,12 @@ namespace AdventureAuthor.Setup
 			get { return profile; }
 		}
 		
+		
+		private AdventureAuthorRibbon ribbon;
+		public AdventureAuthorRibbon Ribbon {
+			get { return ribbon; }
+		}
+		
 		#endregion
 		
 		#region Methods
@@ -155,6 +161,7 @@ namespace AdventureAuthor.Setup
 				
 				SetupUserProfile();
 				SetupMyAchievements();
+				SetupRibbon();
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
@@ -191,6 +198,10 @@ namespace AdventureAuthor.Setup
 		public void Unload(INWN2PluginHost cHost)
 		{			
 			lock (padlock) {
+				if (ribbon != null) {
+					ribbon.ForceClose();
+				}
+				
 				CloseSessionWindows();
 				CloseModuleWindows();
 			}
@@ -321,6 +332,27 @@ namespace AdventureAuthor.Setup
 			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Ruby)",ImagineerAward.RUBYUSAGE),true);
 			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Diamond)",ImagineerAward.DIAMONDUSAGE),true);
 			profile.AddMonitor(fridgeMagnetsMonitor);
+		}
+		
+		
+		/// <summary>
+		/// Set up a floating Adventure Author ribbon, featuring buttons to launch
+		/// all of the Adventure Author applications and a message panel
+		/// which provides helpful information and tips to the user.
+		/// </summary>
+		private void SetupRibbon()
+		{
+			ribbon = new AdventureAuthorRibbon();
+			
+			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
+			{  
+				ribbon.UserMessagePanel.SetMessage("You've won the " + e.Award.Name + " award! " + "" +
+				                      				   "Go to your profile screen to check it out.");
+			};			
+			
+			ribbon.UserMessagePanel.MessageGenerators.Add(new NWN2SuggestionGenerator());
+			
+			ribbon.Show();
 		}
 		
 		#endregion

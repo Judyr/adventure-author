@@ -144,7 +144,7 @@
   <ItemGroup>
     <Compile Include="Achievements\AchievementMonitor.cs" />
     <Compile Include="Achievements\Award.cs" />
-    <Compile Include="Achievements\AwardGrantedEventArgs.cs" />
+    <Compile Include="Achievements\AwardEventArgs.cs" />
     <Compile Include="Achievements\CustomAward.cs" />
     <Compile Include="Achievements\FridgeMagnetsMonitor.cs" />
     <Compile Include="Achievements\ImagineerAward.cs" />
@@ -331,8 +331,18 @@
     <Compile Include="Setup\AdventureAuthorPluginPreferences.cs" />
     <Compile Include="Setup\BlueprintMagnetControl.cs" />
     <Compile Include="Setup\BlueprintMagnetControlInfo.cs" />
+    <Compile Include="Setup\NWN2SuggestionGenerator.cs" />
+    <Compile Include="Setup\IMessageGenerator.cs" />
+    <Compile Include="Setup\MessagePanel.cs">
+      <DependentUpon>MessagePanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Setup\NWN2Utils.cs" />
     <Compile Include="Setup\Plugin.cs" />
+    <Compile Include="Setup\AdventureAuthorRibbon.cs">
+      <DependentUpon>AdventureAuthorRibbon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\TextBoxItem.cs" />
     <Compile Include="Setup\Toolset.cs">
@@ -402,6 +412,8 @@
     <Page Include="Scripts\UI\StringQuestionPanel.xaml" />
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
+    <Page Include="Setup\MessagePanel.xaml" />
+    <Page Include="Setup\AdventureAuthorRibbon.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />

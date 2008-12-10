@@ -133,6 +133,19 @@ namespace AdventureAuthor.Achievements
 		
 		#endregion
 		
+		#region Events
+		
+		public event EventHandler<AwardEventArgs> AwardReceived;
+		protected virtual void OnAwardReceived(AwardEventArgs e)
+		{
+			EventHandler<AwardEventArgs> handler = AwardReceived;
+			if (handler != null) {
+				handler(this, e);
+			}
+		}
+		
+		#endregion
+		
 		#region Constructors
 		
 		/// <summary>
@@ -211,7 +224,8 @@ namespace AdventureAuthor.Achievements
 		public void GiveAward(Award award)
 		{
 			if (!HasAward(award)) {
-				Awards.Add(award);	
+				Awards.Add(award);
+				OnAwardReceived(new AwardEventArgs(award));
 			}
 		}				
 		
@@ -240,7 +254,7 @@ namespace AdventureAuthor.Achievements
 		/// When a monitor indicates that an award should be granted,
 		/// add that award to the user's award collection. 
 		/// </summary>
-		private void GiveAward(object sender, AwardGrantedEventArgs e)
+		private void GiveAward(object sender, AwardEventArgs e)
 		{
 			// ObservableCollection<T> must have its contents changed via
 			// the UI thread, so use a control to get the UI thread's Dispatcher:

@@ -75,10 +75,10 @@ namespace AdventureAuthor.Achievements
 		/// <summary>
 		/// Raised when the criteria for granting a particular award have been met.
 		/// </summary>
-		public event EventHandler<AwardGrantedEventArgs> AwardGranted;
-		protected virtual void OnAwardGranted(AwardGrantedEventArgs e)
+		public event EventHandler<AwardEventArgs> AwardGranted;
+		protected virtual void OnAwardGranted(AwardEventArgs e)
 		{
-			EventHandler<AwardGrantedEventArgs> handler = AwardGranted;
+			EventHandler<AwardEventArgs> handler = AwardGranted;
 			if (handler != null) {
 				handler(this,e);
 			}
@@ -89,10 +89,10 @@ namespace AdventureAuthor.Achievements
 		/// Raised when an award is granted to the user without determining 
 		/// whether a set of criteria have been met. 
 		/// </summary>
-		public static event EventHandler<AwardGrantedEventArgs> AwardGrantedDirectly;
-		public static void OnAwardGrantedDirectly(AwardGrantedEventArgs e)
+		public static event EventHandler<AwardEventArgs> AwardGrantedDirectly;
+		public static void OnAwardGrantedDirectly(AwardEventArgs e)
 		{
-			EventHandler<AwardGrantedEventArgs> handler = AwardGrantedDirectly;
+			EventHandler<AwardEventArgs> handler = AwardGrantedDirectly;
 			if (handler != null) {
 				handler(null,e);
 			}
@@ -174,7 +174,7 @@ namespace AdventureAuthor.Achievements
 			}
 			
 			foreach (Award award in awardsToGrant) {
-				OnAwardGranted(new AwardGrantedEventArgs(award));
+				OnAwardGranted(new AwardEventArgs(award));
 			}
 		}
 		
@@ -231,7 +231,7 @@ namespace AdventureAuthor.Achievements
 		/// <param name="award">The award to give the user.</param>
 		public static void GiveAward(Award award)
 		{
-			OnAwardGrantedDirectly(new AwardGrantedEventArgs(award));
+			OnAwardGrantedDirectly(new AwardEventArgs(award));
 		}
 		
 		#endregion
