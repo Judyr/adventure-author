@@ -26,6 +26,7 @@
 
 using System;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.IO;
@@ -39,6 +40,19 @@ namespace AdventureAuthor.Utils
 	{		
 		public const double MINIMUMWINDOWWIDTH = 640;
 		public const double MINIMUMWINDOWHEIGHT = 480;
+			
+		
+		/// <summary>
+		/// Bring a window to the front and make sure it is not minimised.
+		/// </summary>
+		/// <param name="window">The window to bring to the front.</param>
+		public static void BringToFront(Window window)
+		{
+			if (window.WindowState == WindowState.Minimized) {
+				window.WindowState = WindowState.Normal;
+			}
+			window.Activate(); // bring to front
+		}
 		
 		
 		/// <summary>

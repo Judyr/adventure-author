@@ -55,8 +55,7 @@ namespace AdventureAuthor.Achievements.UI
 					                                                     IntPtr.Zero,
 			                                                             Int32Rect.Empty,
 			                                                             BitmapSizeOptions.FromEmptyOptions());	
-            rankImage.Source = source;  
-            
+            rankImage.Source = source;            
         }
         
         #endregion
