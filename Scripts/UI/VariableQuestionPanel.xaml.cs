@@ -79,7 +79,7 @@ namespace AdventureAuthor.Scripts.UI
         private void OnClick_LaunchVariableManagerButton(object sender, EventArgs ea)
         {
         	Toolset.LaunchVariableManager();
-        	Toolset.BringToFront(VariablesWindow.Instance);
+        	Tools.BringToFront(VariablesWindow.Instance);
         	PopulateVariableList(); // TODO this will only work correctly as long as VM is modeless
         }
         

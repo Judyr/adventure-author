@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Timers;
+using System.Reflection;
+using System.Resources;
 using System.Windows.Threading;
 using AdventureAuthor.Utils;
 
@@ -65,6 +67,15 @@ namespace AdventureAuthor.Setup
     	protected Timer timer = new Timer();
     	
     	
+    	/// <summary>
+    	/// The picture to display next to this message panel.
+    	/// </summary>
+    	public Image Picture {
+    		get { return picture; }
+    		set { picture = value; }
+    	}
+    	
+    	
     	protected string defaultMessage;
     	/// <summary>
     	/// The default message to use when
@@ -74,6 +85,9 @@ namespace AdventureAuthor.Setup
 			get { return defaultMessage; }
 			set { defaultMessage = value; }
 		}
+    	
+    	
+    	protected Delegate hyperlinkMethod = null;
     	
     	#endregion
     	
@@ -85,7 +99,7 @@ namespace AdventureAuthor.Setup
     	/// <param name="defaultMessage">The default message to use when
     	/// there are no other messages to display.</param>
         public MessagePanel(string defaultMessage)
-        {                	
+        {      
             if (defaultMessage == null) {
             	this.defaultMessage = String.Empty;
             }
@@ -98,8 +112,21 @@ namespace AdventureAuthor.Setup
         	timer.AutoReset = true;        	
         	timer.Elapsed += MessageTimerElapsed;
         	
-            InitializeComponent();    
-            SetMessageToDefault();
+            InitializeComponent();
+            
+            SetMessageToDefault();  
+            
+            ResourceManager manager = new ResourceManager("AdventureAuthor.Utils.images",
+                                                          Assembly.GetAssembly(typeof(EditableTextBox)));
+           
+            using (System.Drawing.Bitmap bitmap = (System.Drawing.Bitmap)manager.GetObject("aalogo")) {
+	           	BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+																			 bitmap.GetHbitmap(),
+						                                                     IntPtr.Zero,
+				                                                             Int32Rect.Empty,
+				                                                             BitmapSizeOptions.FromEmptyOptions());            	
+           		Picture.Source = source;
+            }
         }
         
         
@@ -250,6 +277,16 @@ namespace AdventureAuthor.Setup
         private void MessageTimerElapsed(object sender, ElapsedEventArgs e)
         {
         	SetMessageAtRandom();
+        }
+        
+        
+        private void RunHyperlinkMethod(object sender, MouseEventArgs e)
+        {
+        	lock (padlock) {
+	        	if (hyperlinkMethod != null) {
+	        		//hyperlinkMethod.Method.Invoke
+	        	}
+        	}
         }
         
         #endregion

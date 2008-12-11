@@ -15,20 +15,42 @@
     <Grid>
 		
     	<Grid.RowDefinitions>
-    		<RowDefinition Height="70"/>
+    		<RowDefinition Height="100"/>
+    		<RowDefinition Height="30"/>
     	</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-    		<ColumnDefinition Width="70"/>
+    		<ColumnDefinition Width="90"/>
     		<ColumnDefinition Width="300"/>
     	</Grid.ColumnDefinitions>
 	
-		<Image Grid.Row="0"
-			   Grid.Column="0"/>
+		<Image x:Name="picture"
+    	       Grid.Row="0"
+		       Grid.RowSpan="2"		       
+			   Grid.Column="0"
+    		   VerticalAlignment="Center"
+    		   HorizontalAlignment="Center"    	
+    	/>
     	
-    	<TextBlock Grid.Row="0"
+    	<TextBlock x:Name="messageBlock"
+    			   Grid.Row="0"
     	           Grid.Column="1"
-    	           x:Name="messageBlock"
-    			   TextWrapping="Wrap"/>
+	    		   VerticalAlignment="Center"
+	    		   HorizontalAlignment="Left" 
+    	           TextAlignment="Left"
+    			   TextWrapping="Wrap"
+    	/>
+    	
+    	<TextBlock x:Name="hyperlinkBlock"
+    			   Grid.Row="1"
+    	           Grid.Column="1"
+    	           MouseDown="RunHyperlinkMethod"
+	    		   VerticalAlignment="Center"
+	    		   HorizontalAlignment="Left" 
+    	           TextAlignment="Left"
+    			   TextWrapping="Wrap"
+    			   Foreground="DarkBlue"
+    			   TextDecorations="Underline"
+    	/>
 	
     </Grid>
 

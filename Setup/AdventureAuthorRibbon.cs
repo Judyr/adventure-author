@@ -10,16 +10,26 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using AdventureAuthor.Core;
+using AdventureAuthor.Conversations.UI;
+using AdventureAuthor.Variables.UI;
+using AdventureAuthor.Achievements.UI;
+using AdventureAuthor.Utils;
+using System.Resources;
 
 namespace AdventureAuthor.Setup
 {	
 	/// <summary>
-	/// A floating ribbon with links to all of the main Adventure
+	/// A floating window with links to all of the main Adventure
 	/// Author applications, and an 'Adventure Author speaks' panel
 	/// which provides helpful messages to the user.
 	/// </summary>
+	/// <remarks>Cannot be closed until CanClose
+	/// is set to True (False by default).</remarks>
     public partial class AdventureAuthorRibbon : Window
     {
+    	#region Properties and fields
+    	
     	private bool canClose = false;
 		public bool CanClose {
 			get { return canClose; }
@@ -36,19 +46,34 @@ namespace AdventureAuthor.Setup
     	
     	private object padlock = new object();
     	
+    	#endregion
+    	
+    	#region Constructors
     	
         public AdventureAuthorRibbon()
-        {
+        {       
             InitializeComponent(); 
+            
             UserMessagePanel.DefaultMessage = "Adventure Author is developed by Heriot-Watt University.";
+                        
+			ModuleHelper.ModuleOpened += delegate { 
+            	lock (padlock) {
+					conversationWriterButton.IsEnabled = true;
+					variableManagerButton.IsEnabled = true;
+            	}
+            };
+            
+			ModuleHelper.ModuleClosed += delegate {  
+            	lock (padlock) {
+					conversationWriterButton.IsEnabled = false;
+					variableManagerButton.IsEnabled = false;
+            	}
+            };
         }
         
-
-        private void CancelClose(object sender, CancelEventArgs e)
-        {
-        	e.Cancel = !CanClose;
-        }
+        #endregion
         
+        #region Methods       
         
         public void ForceClose()
         {
@@ -57,5 +82,54 @@ namespace AdventureAuthor.Setup
 	        	Close();
         	}
         }
+        
+        #endregion
+        
+        #region Event handlers
+        
+        private void CancelClose(object sender, CancelEventArgs e)
+        {
+        	e.Cancel = !CanClose;
+        }
+        
+        
+        public void RunConversationWriter(object sender, RoutedEventArgs e)
+        {
+			Toolset.LaunchConversationWriter(true);	
+			Tools.BringToFront(WriterWindow.Instance);
+        }
+        
+        
+        public void RunVariableManager(object sender, RoutedEventArgs e)
+        {
+			Toolset.LaunchVariableManager();
+			Tools.BringToFront(VariablesWindow.Instance);
+        }
+        
+        
+        public void RunFridgeMagnets(object sender, RoutedEventArgs e)
+        {
+        }
+        
+        
+        public void RunMyTasks(object sender, RoutedEventArgs e)
+        {
+        	
+        }
+        
+        
+        public void RunCommentCards(object sender, RoutedEventArgs e)
+        {
+        	
+        }
+        
+        
+        public void RunMyAchievements(object sender, RoutedEventArgs e)
+        {
+			Toolset.LaunchMyAchievements();
+			Tools.BringToFront(ProfileWindow.Instance);
+        }	
+        
+        #endregion
     }
 }

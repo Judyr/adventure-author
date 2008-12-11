@@ -59,6 +59,11 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Converters\BitmapToBitmapSourceConverter.cs" />
     <Compile Include="Converters\DoubleToDoubleConverter.cs" />
+    <Compile Include="PictureButton.cs">
+      <DependentUpon>PictureButton.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PictureButtonExtension.cs" />
     <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\DebugLogEventArgs.cs" />
     <Compile Include="Utils\DebugWriter.cs" />
@@ -100,6 +105,7 @@
     <EmbeddedResource Include="images.resx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="PictureButton.xaml" />
     <Page Include="Utils\FriendlyToolTip.xaml" />
     <Page Include="Utils\LogWindow.xaml" />
     <Page Include="Utils\RGBPicker.xaml" />

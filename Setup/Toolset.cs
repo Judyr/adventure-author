@@ -599,21 +599,21 @@ namespace AdventureAuthor.Setup
 //					}
 //				}
 				
-				else if (fi.FieldType == typeof(ToolBarContainer)) {					
-					try {
-						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
-						// plus the ToolBar i'm currently creating below.						
-						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-						if (tbc.Name == "topSandBarDock") {
-							aaToolbar = new TD.SandBar.ToolBar();
-							SetupAdventureAuthorToolBar(aaToolbar);
-							tbc.Controls.Add(aaToolbar);
-						}
-					} 
-					catch (Exception e) {
-						Say.Error(e.ToString());
-					}
-				}
+//				else if (fi.FieldType == typeof(ToolBarContainer)) {					
+//					try {
+//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
+//						// plus the ToolBar i'm currently creating below.						
+//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+//						if (tbc.Name == "topSandBarDock") {
+//							aaToolbar = new TD.SandBar.ToolBar();
+//							SetupAdventureAuthorToolBar(aaToolbar);
+//							tbc.Controls.Add(aaToolbar);
+//						}
+//					} 
+//					catch (Exception e) {
+//						Say.Error(e.ToString());
+//					}
+//				}
 			}
 			
 			ModuleHelper.ModuleSaved += new EventHandler(ModuleHelper_ModuleSaved);
@@ -965,7 +965,7 @@ namespace AdventureAuthor.Setup
 					if (Conversation.CurrentConversation == null || WriterWindow.Instance.OriginalFilename != conv.Name) {
 						WriterWindow.Instance.Open(conv.Name);
 					}						
-					Toolset.BringToFront(WriterWindow.Instance);
+					Tools.BringToFront(WriterWindow.Instance);
 				}
 				else if (viewer.ViewedResource is NWN2FactionData) {
 					NWN2FactionData factions = (NWN2FactionData)viewer.ViewedResource;
@@ -1447,16 +1447,6 @@ namespace AdventureAuthor.Setup
 				return null;
 			}
 		}	
-		
-		
-		
-		public static void BringToFront(System.Windows.Window window)
-		{
-			if (window.WindowState == System.Windows.WindowState.Minimized) {
-				window.WindowState = System.Windows.WindowState.Normal;
-			}
-			window.Activate(); // bring to front
-		}
 		
 		
 		private static void DeleteAreaDialog(NWN2GameArea area)

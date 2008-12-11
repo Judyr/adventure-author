@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:setup="clr-namespace:AdventureAuthor.Setup"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
     Title="Adventure Author ribbon"
 	Width="360"
     Height="250"
@@ -9,17 +10,20 @@
 	Background="LightBlue"
 	WindowStyle="ToolWindow"
 	Closing="CancelClose"
+	ShowInTaskbar="true"
     >
 	
 	<Window.Resources>	
 	
 		<Style TargetType="{x:Type Button}">
-			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="FontSize" Value="12"/>
 			<Setter Property="Height" Value="50"/>
 			<Setter Property="Width" Value="100"/>
 			<Setter Property="Margin" Value="4"/>
 		</Style>
+	
+		<Image x:Key="weemanImage"
+		       Source="C:\Users\Kirn\Desktop\weeman.jpg"/>
 			
 	</Window.Resources>
 	
@@ -35,12 +39,37 @@
 	    <WrapPanel Grid.Row="0"
 		           Grid.Column="0"
 	               Margin="10">
-			<Button Content="Conversation Writer"/>	
-			<Button Content="Variable Manager"/>
-			<Button Content="Fridge Magnets"/>
-			<Button Content="My Tasks"/>
-			<Button Content="Comment Cards"/>
-			<Button Content="My Achievements"/>	
+	    	
+			<Button x:Name="conversationWriterButton"
+	    	        Content="Conversation Writer"
+					Click="RunConversationWriter"
+	    			IsEnabled="false"
+	    	/>
+			<Button x:Name="variableManagerButton"
+	    	        Content="Variable Manager"
+					Click="RunVariableManager"
+	    			IsEnabled="false"
+	    	/>
+			<Button x:Name="fridgeMagnetsButton"
+	    	        Content="Fridge Magnets"
+					Click="RunFridgeMagnets"
+	    			IsEnabled="true"
+	    	/>
+			<Button x:Name="myTasksButton"
+	    	        Content="My Tasks"
+					Click="RunMyTasks"
+	    			IsEnabled="true"
+	    	/>
+			<Button x:Name="commentCardsButton"
+	    	        Content="Comment Cards"
+					Click="RunCommentCards"
+	    			IsEnabled="true"
+	    	/>
+			<Button x:Name="myAchievementsButton"
+	    	        Content="My Achievements"
+					Click="RunMyAchievements"
+	    			IsEnabled="true"
+	    	/>
 		</WrapPanel>
 	
 		<setup:MessagePanel x:Name="userMessagePanel"

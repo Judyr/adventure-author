@@ -290,25 +290,25 @@ namespace AdventureAuthor.Setup
 			aaToolbar.AllowMerge = false;							
 			aaToolbar.Text = "Adventure Author applications";			
 							
-			ButtonItem conversationButton = new ButtonItem();							
-			conversationButton.Activate += delegate { 
-				LaunchConversationWriter(true);	
-				BringToFront(WriterWindow.Instance);
-			};
-			conversationButton.ToolTipText = "Write conversations for game characters";
-			conversationButton.Enabled = false;
-			SetSandbarButtonImage(conversationButton,"speechbubblesblue","Conversations");			
-			aaToolbar.Items.Add(conversationButton);
+//			ButtonItem conversationButton = new ButtonItem();							
+//			conversationButton.Activate += delegate { 
+//				LaunchConversationWriter(true);	
+//				BringToFront(WriterWindow.Instance);
+//			};
+//			conversationButton.ToolTipText = "Write conversations for game characters";
+//			conversationButton.Enabled = false;
+//			SetSandbarButtonImage(conversationButton,"speechbubblesblue","Conversations");			
+//			aaToolbar.Items.Add(conversationButton);
 							
-			ButtonItem variableButton = new ButtonItem();
-			variableButton.Activate += delegate { 
-				LaunchVariableManager();
-				BringToFront(VariablesWindow.Instance);
-			};
-			variableButton.ToolTipText = "Manage game variables";
-			variableButton.Enabled = false;
-			SetSandbarButtonImage(variableButton,"gear","Variables");
-			aaToolbar.Items.Add(variableButton);	
+//			ButtonItem variableButton = new ButtonItem();
+//			variableButton.Activate += delegate { 
+//				LaunchVariableManager();
+//				BringToFront(VariablesWindow.Instance);
+//			};
+//			variableButton.ToolTipText = "Manage game variables";
+//			variableButton.Enabled = false;
+//			SetSandbarButtonImage(variableButton,"gear","Variables");
+//			aaToolbar.Items.Add(variableButton);	
 							
 //			ButtonItem ideasButton = new ButtonItem();
 //			ideasButton.Activate += delegate { 
@@ -364,17 +364,17 @@ namespace AdventureAuthor.Setup
 //			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
 //			aaToolbar.Items.Add(evaluationButton);
 														
-			ButtonItem achievementsButton = new ButtonItem();
-			achievementsButton.Activate += delegate 
-			{ 
-				LaunchMyAchievements();
-				BringToFront(ProfileWindow.Instance);
-			};
-			SetSandbarButtonImage(achievementsButton,"crown","My Achievements");
-			achievementsButton.Enabled = true;
-			achievementsButton.Visible = true;
-			achievementsButton.ToolTipText = "View your achievements and user profile";
-			aaToolbar.Items.Add(achievementsButton);
+//			ButtonItem achievementsButton = new ButtonItem();
+//			achievementsButton.Activate += delegate 
+//			{ 
+//				LaunchMyAchievements();
+//				BringToFront(ProfileWindow.Instance);
+//			};
+//			SetSandbarButtonImage(achievementsButton,"crown","My Achievements");
+//			achievementsButton.Enabled = true;
+//			achievementsButton.Visible = true;
+//			achievementsButton.ToolTipText = "View your achievements and user profile";
+//			aaToolbar.Items.Add(achievementsButton);
 														
 //			ButtonItem checkTransitions = new ButtonItem();
 //			SetSandbarButtonImage(checkTransitions,"clipboard","Check transitions");
@@ -414,23 +414,23 @@ namespace AdventureAuthor.Setup
 			
 			
 			
-			ModuleHelper.ModuleOpened += delegate {  
-				conversationButton.Enabled = true;
-				variableButton.Enabled = true;
-				//ideasButton.Enabled = true;
-				//analysisButton.Enabled = true;
-//				evaluationButton.Enabled = true;
-			};
-			
-			ModuleHelper.ModuleClosed += delegate {  
-				conversationButton.Enabled = false;
-				variableButton.Enabled = false;
-				//ideasButton.Enabled = true;
-				//analysisButton.Enabled = false;
-//				evaluationButton.Enabled = true;
-			};
-        	
-			aaToolbar.AddRemoveButtonsVisible = false;
+//			ModuleHelper.ModuleOpened += delegate {  
+//				conversationButton.Enabled = true;
+//				variableButton.Enabled = true;
+//				//ideasButton.Enabled = true;
+//				//analysisButton.Enabled = true;
+////				evaluationButton.Enabled = true;
+//			};
+//			
+//			ModuleHelper.ModuleClosed += delegate {  
+//				conversationButton.Enabled = false;
+//				variableButton.Enabled = false;
+//				//ideasButton.Enabled = true;
+//				//analysisButton.Enabled = false;
+////				evaluationButton.Enabled = true;
+//			};
+//        	
+//			aaToolbar.AddRemoveButtonsVisible = false;
 			return aaToolbar;
 		}
 		
