@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.ComponentModel;
 using AdventureAuthor.Core;
 using AdventureAuthor.Conversations.UI;
@@ -54,7 +55,8 @@ namespace AdventureAuthor.Setup
         {       
             InitializeComponent(); 
             
-            UserMessagePanel.DefaultMessage = "Adventure Author is developed by Heriot-Watt University.";
+            UserMessagePanel.DefaultMessage = new HyperlinkMessage("Adventure Author is developed " + 
+                                                                   "by Heriot-Watt University.");
                         
 			ModuleHelper.ModuleOpened += delegate { 
             	lock (padlock) {
@@ -93,10 +95,23 @@ namespace AdventureAuthor.Setup
         }
         
         
-        public void RunConversationWriter(object sender, RoutedEventArgs e)
+        public delegate void RunApplicationDelegate();
+        
+        public static void RunConversationWriter()
+        {
+        	
+        	(new Button()).Dispatcher.Invoke(DispatcherPriority.Normal,
+        	                  new RunApplicationDelegate(RunConversationWriter2));
+        }
+        private static void RunConversationWriter2()
         {
 			Toolset.LaunchConversationWriter(true);	
 			Tools.BringToFront(WriterWindow.Instance);
+        }
+        
+        public void RunConversationWriter(object sender, RoutedEventArgs e)
+        {
+        	RunConversationWriter();
         }
         
         
