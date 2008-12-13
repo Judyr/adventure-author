@@ -4,8 +4,8 @@
     xmlns:setup="clr-namespace:AdventureAuthor.Setup"
     xmlns:utils="clr-namespace:AdventureAuthor.Utils;assembly=AAUtils"
     Title="Adventure Author ribbon"
-	Width="360"
-    Height="250"
+	Width="410"
+    Height="300"
     ResizeMode="NoResize"
 	Background="LightBlue"
 	WindowStyle="ToolWindow"
@@ -74,7 +74,8 @@
 	
 		<setup:MessagePanel x:Name="userMessagePanel"
 							Grid.Row="1"
-							Grid.Column="0"/>
+							Grid.Column="0"
+							Margin="5"/>
 
 	</Grid>
 

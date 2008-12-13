@@ -38,6 +38,6 @@ namespace AdventureAuthor.Setup
 		/// Get a message to display to the user.
 		/// </summary>
 		/// <returns>The message to be displayed</returns>
-		string GetMessage();
+		HyperlinkMessage GetMessage();
 	}
 }

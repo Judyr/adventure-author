@@ -25,6 +25,7 @@
  */
 
 using System;
+using System.Windows;
 
 namespace AdventureAuthor.Setup
 {
@@ -33,36 +34,66 @@ namespace AdventureAuthor.Setup
 	/// </summary>
 	public class HyperlinkMessage
 	{
-		protected string messageText;
+		#region Properties and fields
+		
+		private string messageText;
 		public string MessageText {
 			get { return messageText; }
 			set { messageText = value; }
 		}
 		
 		
-		protected string hyperlinkText;
+		private string hyperlinkText;
 		public string HyperlinkText {
 			get { return hyperlinkText; }
 			set { hyperlinkText = value; }
 		}
 		
 		
+//		public string MessageText {
+//			get { return (string)GetValue(MessageTextProperty); }
+//			set { SetValue(MessageTextProperty,value); }
+//		}
+//		
+//		
+//		public string HyperlinkText {
+//			get { return (string)GetValue(HyperlinkTextProperty); }
+//			set { SetValue(HyperlinkTextProperty,value); }
+//		}
+//		
+//		
 		protected Delegate hyperlinkMethod;
 		public Delegate HyperlinkMethod {
 			get { return hyperlinkMethod; }
 		}
+//				
+//		
+//		public static readonly DependencyProperty MessageTextProperty
+//			= DependencyProperty.Register("MessageText",
+//			                              typeof(string),
+//			                              typeof(HyperlinkMessage));
+//		
+//		public static readonly DependencyProperty HyperlinkTextProperty
+//			= DependencyProperty.Register("HyperlinkText",
+//			                              typeof(string),
+//			                              typeof(HyperlinkMessage));
 		
+		#endregion
 		
-		public HyperlinkMessage(string text, string hyperlinkText, Delegate hyperlinkMethod)
+		#region Constructors		
+		
+		public HyperlinkMessage(string messageText, string hyperlinkText, Delegate hyperlinkMethod)
 		{
-			this.messageText = messageText;
-			this.hyperlinkText = hyperlinkText;
+			MessageText = messageText;
+			HyperlinkText = hyperlinkText;
 			this.hyperlinkMethod = hyperlinkMethod;
 		}
 		
 		
-		public HyperlinkMessage(string text) : this(text,null,null)
+		public HyperlinkMessage(string messageText) : this(messageText,null,null)
 		{			
 		}
+		
+		#endregion
 	}
 }

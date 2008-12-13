@@ -52,7 +52,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// A list of previously displayed messages.
 		/// </summary>
-    	protected List<string> oldMessages = new List<string>(OLDMESSAGESTORECALL);
+    	protected List<HyperlinkMessage> oldMessages = new List<HyperlinkMessage>(OLDMESSAGESTORECALL);
     	
     	
     	/// <summary>
@@ -76,18 +76,85 @@ namespace AdventureAuthor.Setup
     	}
     	
     	
-    	protected string defaultMessage;
+    	protected HyperlinkMessage defaultMessage;
     	/// <summary>
     	/// The default message to use when
     	/// there are no other messages to display.
     	/// </summary>
-		public string DefaultMessage {
+		public HyperlinkMessage DefaultMessage {
 			get { return defaultMessage; }
 			set { defaultMessage = value; }
 		}
     	
     	
-    	protected Delegate hyperlinkMethod = null;
+//    	public static readonly DependencyProperty MessageProperty
+//    		= DependencyProperty.Register("Message",
+//    		                              typeof(HyperlinkMessage),
+//    		                              typeof(MessagePanel),
+//    		                              new UIPropertyMetadata(new PropertyChangedCallback(MessageSet)));
+//    	    	
+//    	
+//    	private static void MessageSet(DependencyObject d, DependencyPropertyChangedEventArgs e)
+//    	{
+//    		Say.Information("MessageSet(), About to cast");
+//    		MessagePanel messagePanel = (MessagePanel)d;
+//    		Say.Information("Did cast, about to set DataContext");
+////    		
+////    		messagePanel.DataContext = e.NewValue;
+//    		
+//    		messagePanel.Dispatcher.Invoke(DispatcherPriority.Normal,
+//    		                               new MessagePanel.SetDataContextDelegate(messagePanel.SetDataContext),
+//    		                               e.NewValue);
+//    		Say.Information("Finished");
+//    	}
+//    	
+//    	
+//        public delegate void SetDataContextDelegate(object dc);
+//        
+//                
+//        public void SetDataContext(object dc)
+//        {
+//        	DataContext = dc;
+//        }
+//    	
+//    		
+//		public HyperlinkMessage Message {
+//    		get { return (HyperlinkMessage)GetValue(MessageProperty); }
+//    		set { Say.Information("Message set Property called."); SetValue(MessageProperty,value); }
+//		}
+
+
+		private HyperlinkMessage message;
+		public HyperlinkMessage Message {
+			get { return message; }
+			set { 
+				message = value; 
+				try {
+					Dispatcher.Invoke(DispatcherPriority.Normal,
+					                  new SetNewMessageDelegate(SetNewMessage),
+					                  value);
+				}
+				catch (Exception e) {
+					Say.Error("Failed to display the new message.",e);
+				}
+			}
+		}
+		        
+        
+        public delegate void SetNewMessageDelegate(HyperlinkMessage message);
+        
+        public void SetNewMessage(HyperlinkMessage message)
+        {
+        	try {
+	        	if (message != null) {
+	        		messageBlock.Text = message.MessageText;
+	        		hyperlinkBlock.Text = message.HyperlinkText;        		
+	        	}
+        	}
+        	catch (Exception e) {
+				Say.Error("Failed to display the new message.",e);
+        	}
+        }
     	
     	#endregion
     	
@@ -98,10 +165,10 @@ namespace AdventureAuthor.Setup
     	/// </summary>
     	/// <param name="defaultMessage">The default message to use when
     	/// there are no other messages to display.</param>
-        public MessagePanel(string defaultMessage)
-        {      
+        public MessagePanel(HyperlinkMessage defaultMessage)
+        {     
             if (defaultMessage == null) {
-            	this.defaultMessage = String.Empty;
+        		this.defaultMessage = new HyperlinkMessage(String.Empty);
             }
             else {
             	this.defaultMessage = defaultMessage;
@@ -133,29 +200,28 @@ namespace AdventureAuthor.Setup
     	/// <summary>
     	/// A panel that cycles through messages to display to the user.
     	/// </summary>
-        public MessagePanel() : this(String.Empty)
+    	public MessagePanel() : this(new HyperlinkMessage(String.Empty))
         {        	
         }
         
         #endregion
         
         #region Methods
-        
+                
         /// <summary>
         /// Display a message for some length of time.
         /// </summary>
         /// <param name="message">The message to display.</param>
         /// <param name="displayTime">The time to display the message for in milliseconds.</param>
         /// <remarks>If a new message is received, the display of this message will be cut short.</remarks>
-        public void SetMessage(string message, double displayTime)
+        public void SetMessage(HyperlinkMessage message, double displayTime)
         {        	
         	lock (padlock) {
         		if (timer.Enabled) {
         			timer.Stop();
         		}
         		timer.Interval = displayTime;
-        		Dispatcher.Invoke(DispatcherPriority.Normal,
-        	                  	  new SetTextDelegate(SetText),message);
+        		Message = message;
         		timer.Start();
         	}
         }
@@ -165,28 +231,9 @@ namespace AdventureAuthor.Setup
         /// Display a message for some length of time.
         /// </summary>
         /// <param name="message">The message to display.</param>
-        public void SetMessage(string message)
+        public void SetMessage(HyperlinkMessage message)
         {        	
         	SetMessage(message,DEFAULTDISPLAYTIME);
-        }
-        
-        
-        /// <summary>
-        ///  Set the text to display to the user.
-        /// </summary>
-        protected delegate void SetTextDelegate(object message);
-        
-                
-        /// <summary>
-        /// Set the text to display to the user.
-        /// </summary>
-        /// <param name="message">The message to display.</param>
-        protected void SetText(object message)
-        {
-        	if (!(message is string)) {
-        		throw new ArgumentException("message","message must be a string.");
-        	}
-        	messageBlock.Text = (string)message;
         }
         
         
@@ -202,9 +249,8 @@ namespace AdventureAuthor.Setup
         		if (timer.Enabled) {
         			timer.Stop();
         		}        		
-        		if (GetCurrentMessage() != DefaultMessage) {
-	        		Dispatcher.Invoke(DispatcherPriority.Normal,
-	        	                  	  new SetTextDelegate(SetText),DefaultMessage);
+        		if (Message != DefaultMessage) {
+        			Message = DefaultMessage;
         		}
         	}
         }
@@ -216,9 +262,9 @@ namespace AdventureAuthor.Setup
         /// <param name="displayTime">The time to display the message for in milliseconds.</param>
         public void SetMessageAtRandom(double displayTime)
         {	    
-        	string message = GetRandomMessage();
+        	HyperlinkMessage message = GetRandomMessage();
         	
-        	if (message == null || message == String.Empty) {
+        	if (message == null) {
         		SetMessageToDefault();
         	}
         	else {
@@ -239,13 +285,14 @@ namespace AdventureAuthor.Setup
         /// <summary>
         /// Randomly select a message generator and return a message from it.
         /// </summary>
-        /// <returns>A randomly selected message.</returns>
-        public string GetRandomMessage()
+        /// <returns>A randomly selected message, or null if no
+        /// message could be generated.</returns>
+        public HyperlinkMessage GetRandomMessage()
         {
         	IMessageGenerator messageGenerator;
         	lock (padlock) {
 	        	if (messageGenerators.Count == 0) {
-	        		return String.Empty;
+	        		return null;
 	        	}
 	        	else {
         			Random random = new Random();
@@ -254,16 +301,6 @@ namespace AdventureAuthor.Setup
 	        	}
         	}
         	return messageGenerator.GetMessage();
-        }
-        
-        
-        /// <summary>
-        /// Get the current message being displayed.
-        /// </summary>
-        /// <returns>The message currently being displayed.</returns>
-        public string GetCurrentMessage()
-        {
-        	return messageBlock.Text;
         }
         
         #endregion
@@ -283,8 +320,8 @@ namespace AdventureAuthor.Setup
         private void RunHyperlinkMethod(object sender, MouseEventArgs e)
         {
         	lock (padlock) {
-	        	if (hyperlinkMethod != null) {
-	        		//hyperlinkMethod.Method.Invoke
+	        	if (Message != null && Message.HyperlinkMethod != null) {
+        			Message.HyperlinkMethod.DynamicInvoke(null);
 	        	}
         	}
         }

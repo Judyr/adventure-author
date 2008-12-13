@@ -93,16 +93,18 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Get a message to display to the user.
 		/// </summary>
-		/// <returns>The message to be displayed</returns>
-		public string GetMessage()
+		/// <returns>The message to be displayed, or null if
+		/// no message could be generated.</returns>
+		public HyperlinkMessage GetMessage()
 		{
 			Random random = new Random();
 			lock (padlock) {
 				if (suggestions.Count == 0) {
-					return String.Empty;
+					return null;
 				}
 				int index = random.Next(0,suggestions.Count);				
-				return suggestions[index];
+				string suggestion = suggestions[index];
+				return new HyperlinkMessage(suggestion);
 			}
 		}
 		

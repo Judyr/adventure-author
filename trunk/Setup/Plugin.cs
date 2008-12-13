@@ -343,12 +343,14 @@ namespace AdventureAuthor.Setup
 		private void SetupRibbon()
 		{
 			ribbon = new AdventureAuthorRibbon();
-			ribbon.UserMessagePanel.SetMessage("Welcome to Adventure Author.");
+			ribbon.UserMessagePanel.SetMessage(new HyperlinkMessage("Welcome to Adventure Author."));
 			
 			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
 			{  
-				ribbon.UserMessagePanel.SetMessage("You've won the " + e.Award.Name + " award! " +
-				                      			   "Go to your profile screen to check it out.");
+				HyperlinkMessage message = new HyperlinkMessage("You've won the " + e.Award.Name + " award! ",
+				                                                "Visit the profile screen to check it out.",
+				                                                new AdventureAuthorRibbon.RunApplicationDelegate(AdventureAuthorRibbon.RunConversationWriter));
+				ribbon.UserMessagePanel.SetMessage(message);
 			};			
 						
 			try {				 
