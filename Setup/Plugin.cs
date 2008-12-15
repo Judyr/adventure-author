@@ -149,13 +149,12 @@ namespace AdventureAuthor.Setup
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording("toolset");
-							
-				// Modify the main user interface:
-				Toolset.SetupUI();
 				
 				SetupUserProfile();
 				SetupMyAchievements();
-				SetupRibbon();
+							
+				// Modify the main user interface:
+				Toolset.SetupUI();
 				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
@@ -322,66 +321,6 @@ namespace AdventureAuthor.Setup
 			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Ruby)",ImagineerAward.RUBYUSAGE),true);
 			fridgeMagnetsMonitor.AddAward(new ImagineerAward("Imagineer (Diamond)",ImagineerAward.DIAMONDUSAGE),true);
 			profile.AddMonitor(fridgeMagnetsMonitor);
-		}
-		
-		
-		/// <summary>
-		/// Set up a floating Adventure Author ribbon, featuring buttons to launch
-		/// all of the Adventure Author applications and a message panel
-		/// which provides helpful information and tips to the user.
-		/// </summary>
-		private void SetupRibbon()
-		{
-			MessagePanel messagePanel = new MessagePanel();
-			messagePanel.SetMessage(new HyperlinkMessage("Welcome to Adventure Author."));
-			
-			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
-			{  
-				Say.Information("AwardReceived not implemented.");
-//				HyperlinkMessage message = new HyperlinkMessage("You've won the " + e.Award.Name + " award! ",
-//				                                                "Visit the profile screen to check it out.",
-//				                                                new AdventureAuthorRibbon.RunApplicationDelegate(AdventureAuthorRibbon.RunConversationWriter));
-//				messagePanel.SetMessage(message);
-			};			
-						
-			try {				 
-				string suggestionsFilePath = Path.Combine(AdventureAuthorPluginPreferences.LocalAppDataDirectory,
-				                                          "Suggestions.txt");
-				if (!File.Exists(suggestionsFilePath)) {	
-					SetupDefaultSuggestionsFile(suggestionsFilePath);
-				}
-				
-				PredefinedMessageGenerator nwn2SuggestionGenerator = new PredefinedMessageGenerator(suggestionsFilePath);
-				messagePanel.MessageGenerators.Add(nwn2SuggestionGenerator);
-			}
-			catch (Exception e) {
-				Say.Error("Failed to set up a collection of NWN2 suggestion messages for the ribbon.",e);
-			}
-		}
-		
-		
-		/// <summary>
-		/// Create a plain text file at the given path and populate
-		/// it with a set of suggestions relating to using various
-		/// NWN2 resources and features.
-		/// </summary>
-		/// <param name="path">The path to create the file at.</param>
-		private void SetupDefaultSuggestionsFile(string path)
-		{			
-			List<string> suggestions = new List<string>(3);			
-			suggestions.Add("Stuck for ideas? Why not add a creepy graveyard area to your game? In the blueprints " +
-			                "menus you can find skeletons, vampires, graves, crypts and other spooky stuff.");
-			suggestions.Add("Want your player to be surprised when an enemy attacks? Add an Encounter to your " +
-			                "area and the enemies will appear out of nowhere!");
-			suggestions.Add("There's a wide selection of animal blueprints you can choose from, including badgers, " +
-			                "deer, rabbits, cats and bears.");
-						
-			using (FileStream stream = File.OpenWrite(path))
-			using (StreamWriter writer = new StreamWriter(stream)) {
-				foreach (string suggestion in suggestions) {
-					writer.WriteLine(suggestion);
-				}
-			}
 		}
 		
 		#endregion

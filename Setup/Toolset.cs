@@ -37,6 +37,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Xml;
 using System.Xml.Serialization;
+using AdventureAuthor.Achievements;
 using AdventureAuthor.Achievements.UI;
 using AdventureAuthor.Conversations;
 using AdventureAuthor.Conversations.UI;
@@ -147,6 +148,12 @@ namespace AdventureAuthor.Setup
 		
 		private static object padlock = new object();
 		
+		
+		private static MessagePanel userMessagePanel;
+		public static MessagePanel UserMessagePanel {
+			get { return userMessagePanel; }
+		}
+		
 		#endregion
 			
 			
@@ -170,6 +177,10 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		internal static void SetupUI()
 		{
+			// Set up the user message panel:
+			userMessagePanel = new MessagePanel();
+			SetupMessagePanel(UserMessagePanel);
+			
 			#region Mouse mode changes
 			
 			NWN2AreaViewer.MouseModeChanged += delegate
@@ -212,13 +223,18 @@ namespace AdventureAuthor.Setup
 			foreach (FieldInfo fi in fields) {	
 				
 				if (fi.FieldType == typeof(DockingManager)) {
-					dockingManager = (DockingManager)fi.GetValue(form.App);					
-										
+					dockingManager = (DockingManager)fi.GetValue(form.App);
+					
+					// Add the 'AA Speaks' message panel to the main UI:
+					ElementHost host = new ElementHost();
+					host.Child = UserMessagePanel;
+					Content content = dockingManager.Contents.Add(host,"AA Speaks");
+					
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
 					dockingManager.ShowAllContents();					
 					
-					List<Content> contents = new List<Content>(5);
+					List<Content> contents = new List<Content>(6);
 					
 					foreach (Content c in dockingManager.Contents) {
 						if (c.Control is NWN2ModuleAreaList) {
@@ -1594,6 +1610,67 @@ namespace AdventureAuthor.Setup
 		}
 		
 		#endregion Event handlers	
+						
+		private delegate void ParameterlessDelegate();
+		
+		/// <summary>
+		/// Set up a message panel
+		/// which provides helpful information and tips to the user.
+		/// </summary>
+		private static void SetupMessagePanel(MessagePanel messagePanel)
+		{
+			HyperlinkMessage defaultMessage = new HyperlinkMessage("Adventure Author is developed by Heriot-Watt University.");
+			messagePanel.DefaultMessage = defaultMessage;
+			messagePanel.SetMessage(new HyperlinkMessage("Welcome to Adventure Author."));
+			
+			Plugin.Profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
+			{  
+				HyperlinkMessage message = new HyperlinkMessage("You've won the " + e.Award.Name + " award! ",
+				                                                "Visit the profile screen to check it out.",
+				                                                new ParameterlessDelegate(LaunchMyAchievements));
+				messagePanel.SetMessage(message);
+			};			
+						
+			try {				 
+				string suggestionsFilePath = Path.Combine(AdventureAuthorPluginPreferences.LocalAppDataDirectory,
+				                                          "Suggestions.txt");
+				if (!File.Exists(suggestionsFilePath)) {	
+					SetupDefaultSuggestionsFile(suggestionsFilePath);
+				}
+				
+				PredefinedMessageGenerator nwn2SuggestionGenerator = new PredefinedMessageGenerator(suggestionsFilePath);
+				messagePanel.MessageGenerators.Add(nwn2SuggestionGenerator);
+			}
+			catch (Exception e) {
+				Say.Error("Failed to set up a collection of NWN2 suggestion messages for the ribbon.",e);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Create a plain text file at the given path and populate
+		/// it with a set of suggestions relating to using various
+		/// NWN2 resources and features.
+		/// </summary>
+		/// <param name="path">The path to create the file at.</param>
+		private static void SetupDefaultSuggestionsFile(string path)
+		{			
+			List<string> suggestions = new List<string>(3);			
+			suggestions.Add("Stuck for ideas? Why not add a creepy graveyard area to your game? In the blueprints " +
+			                "menus you can find skeletons, vampires, graves, crypts and other spooky stuff.");
+			suggestions.Add("Want your player to be surprised when an enemy attacks? Add an Encounter to your " +
+			                "area and the enemies will appear out of nowhere!");
+			suggestions.Add("There's a wide selection of animal blueprints you can choose from, including badgers, " +
+			                "deer, rabbits, cats and bears.");
+						
+			using (FileStream stream = File.OpenWrite(path))
+			using (StreamWriter writer = new StreamWriter(stream)) {
+				foreach (string suggestion in suggestions) {
+					writer.WriteLine(suggestion);
+				}
+			}
+		}
+		
 		
 		/// <summary>
 		/// Set the locked status of the interface.

@@ -34,7 +34,7 @@ namespace AdventureAuthor.Setup
     	/// <summary>
     	/// The default amount of time to display a message for, in milliseconds.
     	/// </summary>
-    	public const double DEFAULTDISPLAYTIME = 5000;
+    	public const double DEFAULTDISPLAYTIME = 20000;
     	
     	#endregion
     	
