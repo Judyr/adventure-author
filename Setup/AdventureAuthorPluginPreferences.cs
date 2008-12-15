@@ -45,7 +45,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The single instance of this class.
 		/// </summary>
-		private static AdventureAuthorPluginPreferences instance;
+		protected static AdventureAuthorPluginPreferences instance;
 		[XmlIgnore]
 		public static AdventureAuthorPluginPreferences Instance {
 			get {
@@ -63,7 +63,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Whether or not the scratchpad area should automatically load when you open a module.
 		/// </summary>
-		private bool openScratchpadByDefault;	
+		protected bool openScratchpadByDefault;	
 		[XmlElement]		
 		[Description("Whether or not the scratchpad area should automatically load when you open a module."), 
 		 Category("General"), Browsable(true)]
@@ -82,7 +82,7 @@ namespace AdventureAuthor.Setup
 		/// Whether or not the interface is unlocked (controls can be moved about the screen, resized
 		/// and closed) or locked (controls are frozen in position.)
 		/// </summary>
-		private bool lockInterface;
+		protected bool lockInterface;
 		[XmlElement]
 		[Description("True to allow interface controls to be docked, resized or closed."), 
 		 Category("General"), Browsable(true)]
@@ -100,7 +100,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The folder where local application data is kept for this application.
 		/// </summary>
-		private static string localAppDataDirectory;
+		protected static string localAppDataDirectory;
 		[XmlElement]
 		[Description("The folder where local application data is kept for this application."), 
 		 Category("General"), Browsable(false)]
@@ -112,7 +112,7 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The path of the serialised list of recently opened module filenames.
 		/// </summary>
-		private static string recentlyOpenedModulesPath;
+		protected static string recentlyOpenedModulesPath;
 		[XmlElement]
 		[Description("The path of the serialised list of recently opened module filenames."), 
 		 Category("General"), Browsable(false)]
@@ -124,12 +124,66 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// The path of the serialised user profile.
 		/// </summary>
-		private static string userProfilePath;
+		protected static string userProfilePath;
 		[XmlElement]
 		[Description("The path of the serialised user profile."), 
 		 Category("General"), Browsable(false)]
 		public static string UserProfilePath {
 			get { return userProfilePath; }
+		}
+		
+		
+		/// <summary>
+		/// The path at which the Fridge Magnets application is expected to be found.
+		/// </summary>
+		protected string fridgeMagnetsPath;
+		[XmlElement]
+		[Description("The path at which the Fridge Magnets application is expected to be found."), 
+		 Category("General"), Browsable(false)]
+		public string FridgeMagnetsPath {
+			get { return fridgeMagnetsPath; }
+			set { 
+				if (fridgeMagnetsPath != value) {
+					fridgeMagnetsPath = value;
+					NotifyPropertyChanged("FridgeMagnetsPath");
+				}
+			}
+		}
+		
+		
+		/// <summary>
+		/// The path at which the My Tasks application is expected to be found.
+		/// </summary>
+		protected string myTasksPath;
+		[XmlElement]
+		[Description("The path at which the My Tasks application is expected to be found."), 
+		 Category("General"), Browsable(false)]
+		public string MyTasksPath {
+			get { return myTasksPath; }
+			set { 
+				if (myTasksPath != value) {
+					myTasksPath = value;
+					NotifyPropertyChanged("MyTasksPath");
+				}
+			}
+		}
+		
+		
+		/// <summary>
+		/// The path at which the Comment Cards application is expected to be found.
+		/// </summary>
+		protected string commentCardsPath;
+		[XmlElement]
+		[Description("The path at which the Comment Cards application is expected to be found."), 
+		 Category("General"), Browsable(false)]
+		public string CommentCardsPath {
+			get { return commentCardsPath; }
+			set { 
+				if (commentCardsPath != value) {
+					commentCardsPath = value;
+					NotifyPropertyChanged("CommentCardsPath");
+				}
+			}
 		}
 		
 		#endregion
@@ -163,6 +217,11 @@ namespace AdventureAuthor.Setup
 			// default preferences - will only be used if there's no preferences file found:
 			this.LockInterface = lockInterface;
 			this.OpenScratchpadByDefault = openScratchpadByDefault;
+			
+			string aaAppsDir = @"C:\Program Files\Heriot-Watt University\";
+			myTasksPath = Path.Combine(aaAppsDir,"My Tasks");
+			fridgeMagnetsPath = Path.Combine(aaAppsDir,"Fridge Magnets");
+			commentCardsPath = Path.Combine(aaAppsDir,"Comment Cards");
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

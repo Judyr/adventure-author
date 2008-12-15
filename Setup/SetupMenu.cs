@@ -290,155 +290,86 @@ namespace AdventureAuthor.Setup
 			aaToolbar.AllowMerge = false;							
 			aaToolbar.Text = "Adventure Author applications";			
 							
-//			ButtonItem conversationButton = new ButtonItem();							
-//			conversationButton.Activate += delegate { 
-//				LaunchConversationWriter(true);	
-//				BringToFront(WriterWindow.Instance);
-//			};
-//			conversationButton.ToolTipText = "Write conversations for game characters";
-//			conversationButton.Enabled = false;
-//			SetSandbarButtonImage(conversationButton,"speechbubblesblue","Conversations");			
-//			aaToolbar.Items.Add(conversationButton);
+			ButtonItem conversationButton = new ButtonItem();							
+			conversationButton.Activate += delegate { 
+				LaunchConversationWriter(true);	
+				Tools.BringToFront(WriterWindow.Instance);
+			};
+			conversationButton.ToolTipText = "Write conversations for game characters";
+			conversationButton.Enabled = false;
+			SetSandbarButtonImage(conversationButton,"greenpencil","Conversations");			
+			aaToolbar.Items.Add(conversationButton);
 							
-//			ButtonItem variableButton = new ButtonItem();
-//			variableButton.Activate += delegate { 
-//				LaunchVariableManager();
-//				BringToFront(VariablesWindow.Instance);
-//			};
-//			variableButton.ToolTipText = "Manage game variables";
-//			variableButton.Enabled = false;
-//			SetSandbarButtonImage(variableButton,"gear","Variables");
-//			aaToolbar.Items.Add(variableButton);	
+			ButtonItem variableButton = new ButtonItem();
+			variableButton.Activate += delegate { 
+				LaunchVariableManager();
+				Tools.BringToFront(VariablesWindow.Instance);
+			};
+			variableButton.ToolTipText = "Manage game variables";
+			variableButton.Enabled = false;
+			SetSandbarButtonImage(variableButton,"gear","Variables");
+			aaToolbar.Items.Add(variableButton);	
 							
-//			ButtonItem ideasButton = new ButtonItem();
-//			ideasButton.Activate += delegate { 
-				// Process.Run(etc.) - not Instance.Show() anymore
-//			};
-//			ideasButton.ToolTipText = "Record and review your ideas";
-//			SetSandbarButtonImage(ideasButton,"litbulb","Ideas");
-//			aaToolbar.Items.Add(ideasButton);
+			ButtonItem ideasButton = new ButtonItem();
+			ideasButton.Activate += delegate { 
+				AttemptLaunchFridgeMagnets();
+			};
+			ideasButton.ToolTipText = "Record and review your ideas";
+			SetSandbarButtonImage(ideasButton,"unlitbulb","Ideas");
+			aaToolbar.Items.Add(ideasButton);	
 							
-//			ButtonItem addIdeaButton = new ButtonItem();
-//			addIdeaButton.Activate += delegate { 
-//				EditMagnetWindow window = new EditMagnetWindow();
-//				window.MagnetCreated += delegate(object sender, MagnetEventArgs e) { 
-//					OnMagnetSubmitted(new MagnetEventArgs(e.Magnet));
-//					Log.WriteAction(LogAction.added,"idea",e.Magnet.ToString() + " ... added from main toolset");
-//				};
-//				window.ShowDialog();
-//			};
-//			addIdeaButton.ToolTipText = "Quickly add a new idea to your Magnet Box";
-//			addIdeaButton.Text = "+";
-//			aaToolbar.Items.Add(addIdeaButton);
-							
-//			ButtonItem analysisButton = new ButtonItem();
-//			analysisButton.Activate += delegate { 
-//				if (form.App.Module.Areas.Count > 0) {
-//					CombatMap analysisWindow = LaunchAnalysis();
-//					if (analysisWindow != null) {
-//						BringToFront(analysisWindow);
-//					}
-//				}
-//				else {
-//					Say.Information("There are no areas to display in map view.");
-//				}
-//			};
-//			SetSandbarButtonImage(analysisButton,"verticalbarchart","Analysis");
-//			analysisButton.ToolTipText = "Read a useful analysis of your game";
-//			analysisButton.Enabled = false;
-//			analysisButton.Visible = false;
-//			aaToolbar.Items.Add(analysisButton);
+			ButtonItem myTasksButton = new ButtonItem();
+			myTasksButton.Activate += delegate { 
+				Say.Information("Not implemented.");
+			};
+			myTasksButton.ToolTipText = "Review your to-do list";
+			SetSandbarButtonImage(myTasksButton,"mytasks","Tasks");
+			aaToolbar.Items.Add(myTasksButton);
 						
-//			ButtonItem evaluationButton = new ButtonItem();
-//			evaluationButton.Activate += delegate { 
-//				if (CardViewer.Instance == null || !CardViewer.Instance.IsLoaded) {					
-//					SelectModeWindow selectModeWindow = new SelectModeWindow();
-//					bool cancelled = !((bool)selectModeWindow.ShowDialog());
-//					if (cancelled) {
-//						return;	
-//					}
-//				}
-//				BringToFront(CardViewer.Instance);
-//			};
-//			SetSandbarButtonImage(evaluationButton,"clipboard","Comment Cards");
-//			evaluationButton.ToolTipText = "Answer questions to evaluate a game";
-//			aaToolbar.Items.Add(evaluationButton);
+			ButtonItem evaluationButton = new ButtonItem();
+			evaluationButton.Activate += delegate { 
+				Say.Information("Not implemented.");
+			};
+			SetSandbarButtonImage(evaluationButton,"star","Evaluation");
+			evaluationButton.ToolTipText = "Evaluate your work";
+			aaToolbar.Items.Add(evaluationButton);
 														
-//			ButtonItem achievementsButton = new ButtonItem();
-//			achievementsButton.Activate += delegate 
-//			{ 
-//				LaunchMyAchievements();
-//				BringToFront(ProfileWindow.Instance);
-//			};
-//			SetSandbarButtonImage(achievementsButton,"crown","My Achievements");
-//			achievementsButton.Enabled = true;
-//			achievementsButton.Visible = true;
-//			achievementsButton.ToolTipText = "View your achievements and user profile";
-//			aaToolbar.Items.Add(achievementsButton);
-														
-//			ButtonItem checkTransitions = new ButtonItem();
-//			SetSandbarButtonImage(checkTransitions,"clipboard","Check transitions");
-//			checkTransitions.Enabled = true;
-//			checkTransitions.Visible = true;
-//			checkTransitions.ToolTipText = "Check transitions";
-//			checkTransitions.Activate += delegate 
-//			{ 
-//				// Temp test:
-//				if (ModuleHelper.ModuleIsOpen()) {
-//					bool checkBrokenAreaTransitions;
-//					bool checkAllReachable;
-//					checkBrokenAreaTransitions = System.Windows.Forms.MessageBox.Show("Check for broken area transitions?",
-//					                                                                  String.Empty,
-//					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
-//						== System.Windows.Forms.DialogResult.Yes;
-//					checkAllReachable = System.Windows.Forms.MessageBox.Show("Check that all areas are reachable?",
-//					                                                                  String.Empty,
-//					                                                                  System.Windows.Forms.MessageBoxButtons.YesNo)
-//						== System.Windows.Forms.DialogResult.Yes;
-//					
-//					List<AdventureAuthor.Tasks.Task> tasks = (new AdventureAuthor.Tasks.NWN2.AreaTasksGenerator(checkBrokenAreaTransitions,
-//					                                                                                           checkAllReachable)).GetTasks();
-//					tasks.AddRange((new AdventureAuthor.Tasks.NWN2.CreatureTasksGenerator()).GetTasks());
-//					StringBuilder message = new StringBuilder("..To do..\n\n");
-//					foreach (AdventureAuthor.Tasks.Task task in tasks) {
-//						message.Append(task.Description + "\n\n");
-//					}			
-//					Say.Information(message.ToString());					
-//				}
-//				else {
-//					Say.Information("No module is open.");
-//				}
-//			};
-//			aaToolbar.Items.Add(checkTransitions);
+			ButtonItem achievementsButton = new ButtonItem();
+			achievementsButton.Activate += delegate 
+			{ 
+				LaunchMyAchievements();
+				Tools.BringToFront(ProfileWindow.Instance);
+			};
+			SetSandbarButtonImage(achievementsButton,"crown","Achievements");
+			achievementsButton.Enabled = true;
+			achievementsButton.Visible = true;
+			achievementsButton.ToolTipText = "View your achievements and user profile";
+			aaToolbar.Items.Add(achievementsButton);
 			
+			ModuleHelper.ModuleOpened += delegate {  
+				conversationButton.Enabled = true;
+				variableButton.Enabled = true;
+			};
 			
-			
-			
-//			ModuleHelper.ModuleOpened += delegate {  
-//				conversationButton.Enabled = true;
-//				variableButton.Enabled = true;
-//				//ideasButton.Enabled = true;
-//				//analysisButton.Enabled = true;
-////				evaluationButton.Enabled = true;
-//			};
-//			
-//			ModuleHelper.ModuleClosed += delegate {  
-//				conversationButton.Enabled = false;
-//				variableButton.Enabled = false;
-//				//ideasButton.Enabled = true;
-//				//analysisButton.Enabled = false;
-////				evaluationButton.Enabled = true;
-//			};
-//        	
-//			aaToolbar.AddRemoveButtonsVisible = false;
+			ModuleHelper.ModuleClosed += delegate {  
+				conversationButton.Enabled = false;
+				variableButton.Enabled = false;
+			};
+        	
+			aaToolbar.AddRemoveButtonsVisible = false;
 			return aaToolbar;
 		}
 		
 		
 		private static void SetSandbarButtonImage(ButtonItem button, string name, string buttonText)
 		{		
-			button.Image = (System.Drawing.Bitmap)new ResourceManager("AdventureAuthor.Images",
-			                                                          Assembly.GetExecutingAssembly()).GetObject(name);
+			try {
+				button.Image = (System.Drawing.Bitmap)new ResourceManager("AdventureAuthor.Images",
+				                                                          Assembly.GetExecutingAssembly()).GetObject(name);
+			}
+			catch (Exception e) {
+				Say.Error("Couldn't set the image on button '" + name + "'.");
+			}
 	        button.Text = buttonText;
 	        button.BeginGroup = true;
 		}

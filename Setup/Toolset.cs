@@ -27,6 +27,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -599,21 +600,21 @@ namespace AdventureAuthor.Setup
 //					}
 //				}
 				
-//				else if (fi.FieldType == typeof(ToolBarContainer)) {					
-//					try {
-//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
-//						// plus the ToolBar i'm currently creating below.						
-//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-//						if (tbc.Name == "topSandBarDock") {
-//							aaToolbar = new TD.SandBar.ToolBar();
-//							SetupAdventureAuthorToolBar(aaToolbar);
-//							tbc.Controls.Add(aaToolbar);
-//						}
-//					} 
-//					catch (Exception e) {
-//						Say.Error(e.ToString());
-//					}
-//				}
+				else if (fi.FieldType == typeof(ToolBarContainer)) {					
+					try {
+						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
+						// plus the ToolBar i'm currently creating below.						
+						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+						if (tbc.Name == "topSandBarDock") {
+							aaToolbar = new TD.SandBar.ToolBar();
+							SetupAdventureAuthorToolBar(aaToolbar);
+							tbc.Controls.Add(aaToolbar);
+						}
+					} 
+					catch (Exception e) {
+						Say.Error(e.ToString());
+					}
+				}
 			}
 			
 			ModuleHelper.ModuleSaved += new EventHandler(ModuleHelper_ModuleSaved);
@@ -1421,6 +1422,92 @@ namespace AdventureAuthor.Setup
 			}
 			catch (Exception e) {
 				Say.Error("Could not open My Achievements.",e);
+			}
+		}	
+		
+		
+		/// <summary>
+		/// Try to run the application at the given location - if the path is bad,
+		/// give the user the chance to navigate to the correct location (and 
+		/// remember that value for next time).
+		/// </summary>
+		/// <param name="appName">The name of the application. This is only
+		/// used for dialog boxes.</param>
+		/// <param name="location">The location the application is expected
+		/// to be at.</param>
+		public static void AttemptToLaunch(string appName, ref string location)
+		{			
+			try {				
+				ProcessStartInfo psi = new ProcessStartInfo(location);
+				Process.Start(psi);
+				return;
+			}
+			catch (Exception e) {	
+				DialogResult result = MessageBox.Show("Couldn't find " + appName + " at the expected location.\n\n" +
+										              appName + " is usually installed separately - you can download " +
+										              "this application from our website at www.adventureauthor.org.\n\n" +
+										        	  "If the application is already installed, click OK to navigate " +
+										        	  "to its correct location.",
+										        	  appName + " not found",
+										       		  MessageBoxButtons.OKCancel,
+										       		  MessageBoxIcon.None,
+										       		  MessageBoxDefaultButton.Button1);
+				
+				if (result == DialogResult.Cancel) {
+					return;
+				}
+			}
+			
+			string newLocation = NavigateToApplication(appName);
+			if (newLocation == null) {
+				return; // user cancelled
+			}
+			else {
+				try {					 		
+					ProcessStartInfo psi = new ProcessStartInfo(newLocation);
+					Process.Start(psi);
+					location = newLocation;
+				}
+				catch (Exception e) {
+					Say.Error("Could not run " + appName + " at location " + location + ".",e);
+				}
+			}
+		}
+		
+		
+		private static string NavigateToApplication(string appName)
+		{
+			OpenFileDialog navigateDialog = new OpenFileDialog();
+			navigateDialog.CheckFileExists = true;
+			navigateDialog.CheckPathExists = true;
+			navigateDialog.DereferenceLinks = true;
+			navigateDialog.Filter = Filters.PROGRAMS;
+			navigateDialog.Multiselect = false;
+			navigateDialog.ShowHelp = false;
+			navigateDialog.ShowReadOnly = false;
+			navigateDialog.SupportMultiDottedExtensions = false;
+			navigateDialog.Title = "Locate the " + appName + " application.";
+			navigateDialog.ValidateNames = true;
+			
+			DialogResult result = navigateDialog.ShowDialog();
+			if (result == DialogResult.OK) {
+				return navigateDialog.FileName;
+			}
+			else {
+				return null;
+			}
+		}
+						
+		
+		/// <summary>
+		/// Try to load the Fridge Magnets application.
+		/// </summary>
+		public static void AttemptLaunchFridgeMagnets()
+		{
+			string location = AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath;
+			AttemptToLaunch("Fridge Magnets",ref location);
+			if (AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath != location) {
+				AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath = location;	
 			}
 		}	
 		
