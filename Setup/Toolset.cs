@@ -144,6 +144,9 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static MouseMode? previousMouseMode = null;	
 		
+		
+		private static object padlock = new object();
+		
 		#endregion
 			
 			
@@ -1433,43 +1436,49 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="appName">The name of the application. This is only
 		/// used for dialog boxes.</param>
-		/// <param name="location">The location the application is expected
+		/// <param name="expectedLocation">The location the application is expected
 		/// to be at.</param>
-		public static void AttemptToLaunch(string appName, ref string location)
+		/// <returns>A path string ONLY if an application at that path was
+		/// successfully launched; null otherwise. This may either be the
+		/// passed location or a new location navigated to by the user.</returns>
+		public static string AttemptToLaunch(string appName, string expectedLocation)
 		{			
-			try {				
-				ProcessStartInfo psi = new ProcessStartInfo(location);
+			try {		
+				ProcessStartInfo psi = new ProcessStartInfo(expectedLocation);
 				Process.Start(psi);
-				return;
+				return expectedLocation;
 			}
 			catch (Exception e) {	
 				DialogResult result = MessageBox.Show("Couldn't find " + appName + " at the expected location.\n\n" +
 										              appName + " is usually installed separately - you can download " +
 										              "this application from our website at www.adventureauthor.org.\n\n" +
 										        	  "If the application is already installed, click OK to navigate " +
-										        	  "to its correct location.",
+										        	  "to its correct location.\n\n" + "If you need to change the location " +
+										        	  "of the application later, you can do so by clicking View -> Options -> " +
+										        	  "Adventure Author and changing the path.",
 										        	  appName + " not found",
 										       		  MessageBoxButtons.OKCancel,
 										       		  MessageBoxIcon.None,
 										       		  MessageBoxDefaultButton.Button1);
 				
 				if (result == DialogResult.Cancel) {
-					return;
+					return null;
 				}
 			}
 			
 			string newLocation = NavigateToApplication(appName);
-			if (newLocation == null) {
-				return; // user cancelled
+			if (newLocation == null || newLocation == String.Empty) {
+				return null; // user cancelled
 			}
 			else {
 				try {					 		
 					ProcessStartInfo psi = new ProcessStartInfo(newLocation);
 					Process.Start(psi);
-					location = newLocation;
+					return newLocation;
 				}
 				catch (Exception e) {
-					Say.Error("Could not run " + appName + " at location " + location + ".",e);
+					Say.Error("Could not run " + appName + " at location " + newLocation + ".",e);
+					return null;
 				}
 			}
 		}
@@ -1504,12 +1513,47 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public static void AttemptLaunchFridgeMagnets()
 		{
-			string location = AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath;
-			AttemptToLaunch("Fridge Magnets",ref location);
-			if (AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath != location) {
-				AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath = location;	
+			lock (padlock) {
+				string presumedLocation = AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath;
+				string location = AttemptToLaunch("Fridge Magnets",presumedLocation);
+				
+				if (location != null && location != presumedLocation) { 
+					AdventureAuthorPluginPreferences.Instance.FridgeMagnetsPath = location;
+				}
 			}
-		}	
+		}
+						
+		
+		/// <summary>
+		/// Try to load the My Tasks application.
+		/// </summary>
+		public static void AttemptLaunchMyTasks()
+		{
+			lock (padlock) {
+				string presumedLocation = AdventureAuthorPluginPreferences.Instance.MyTasksPath;
+				string location = AttemptToLaunch("My Tasks",presumedLocation);
+				
+				if (location != null && location != presumedLocation) { 
+					AdventureAuthorPluginPreferences.Instance.MyTasksPath = location;
+				}
+			}
+		}
+						
+		
+		/// <summary>
+		/// Try to load the Comment Cards application.
+		/// </summary>
+		public static void AttemptLaunchCommentCards()
+		{
+			lock (padlock) {
+				string presumedLocation = AdventureAuthorPluginPreferences.Instance.CommentCardsPath;
+				string location = AttemptToLaunch("Comment Cards",presumedLocation);
+				
+				if (location != null && location != presumedLocation) { 
+					AdventureAuthorPluginPreferences.Instance.CommentCardsPath = location;
+				}
+			}
+		}
 		
 		
 		/// <summary>
