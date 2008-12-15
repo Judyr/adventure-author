@@ -340,10 +340,6 @@
     </Compile>
     <Compile Include="Setup\NWN2Utils.cs" />
     <Compile Include="Setup\Plugin.cs" />
-    <Compile Include="Setup\AdventureAuthorRibbon.cs">
-      <DependentUpon>AdventureAuthorRibbon.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Setup\SetupMenu.cs" />
     <Compile Include="Setup\TextBoxItem.cs" />
     <Compile Include="Setup\Toolset.cs">
@@ -414,7 +410,6 @@
     <Page Include="Scripts\UI\TagQuestionPanel.xaml" />
     <Page Include="Scripts\UI\VariableQuestionPanel.xaml" />
     <Page Include="Setup\MessagePanel.xaml" />
-    <Page Include="Setup\AdventureAuthorRibbon.xaml" />
     <Page Include="Variables\UI\CreateEditVariableWindow.xaml" />
     <Page Include="Variables\UI\VariableControl.xaml" />
     <Page Include="Variables\UI\VariablesWindow.xaml" />

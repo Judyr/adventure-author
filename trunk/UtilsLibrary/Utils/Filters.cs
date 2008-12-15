@@ -16,6 +16,7 @@ namespace AdventureAuthor.Utils
 	/// </summary>
 	public static class Filters
 	{    	    	    
+		public const string PROGRAMS = "Applications (*.exe)|*.exe";
     	public const string TXT = "Text files (*.txt)|*.txt";    	
     	public const string XML = "XML files (*.xml)|*.xml";    	
     	public const string PICTURES = "Pictures (*.jpg;*.jpeg;*.bmp;*.png;*.gif)|*.jpg;*.jpeg;*.bmp;*.png;*.gif";    	

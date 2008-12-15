@@ -125,12 +125,6 @@ namespace AdventureAuthor.Setup
 			get { return profile; }
 		}
 		
-		
-		private AdventureAuthorRibbon ribbon;
-		public AdventureAuthorRibbon Ribbon {
-			get { return ribbon; }
-		}
-		
 		#endregion
 		
 		#region Methods
@@ -198,10 +192,6 @@ namespace AdventureAuthor.Setup
 		public void Unload(INWN2PluginHost cHost)
 		{			
 			lock (padlock) {
-				if (ribbon != null) {
-					ribbon.ForceClose();
-				}
-				
 				CloseSessionWindows();
 				CloseModuleWindows();
 			}
@@ -342,15 +332,16 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private void SetupRibbon()
 		{
-			ribbon = new AdventureAuthorRibbon();
-			ribbon.UserMessagePanel.SetMessage(new HyperlinkMessage("Welcome to Adventure Author."));
+			MessagePanel messagePanel = new MessagePanel();
+			messagePanel.SetMessage(new HyperlinkMessage("Welcome to Adventure Author."));
 			
 			profile.AwardReceived += delegate(object sender, AwardEventArgs e) 
 			{  
-				HyperlinkMessage message = new HyperlinkMessage("You've won the " + e.Award.Name + " award! ",
-				                                                "Visit the profile screen to check it out.",
-				                                                new AdventureAuthorRibbon.RunApplicationDelegate(AdventureAuthorRibbon.RunConversationWriter));
-				ribbon.UserMessagePanel.SetMessage(message);
+				Say.Information("AwardReceived not implemented.");
+//				HyperlinkMessage message = new HyperlinkMessage("You've won the " + e.Award.Name + " award! ",
+//				                                                "Visit the profile screen to check it out.",
+//				                                                new AdventureAuthorRibbon.RunApplicationDelegate(AdventureAuthorRibbon.RunConversationWriter));
+//				messagePanel.SetMessage(message);
 			};			
 						
 			try {				 
@@ -361,13 +352,11 @@ namespace AdventureAuthor.Setup
 				}
 				
 				PredefinedMessageGenerator nwn2SuggestionGenerator = new PredefinedMessageGenerator(suggestionsFilePath);
-				ribbon.UserMessagePanel.MessageGenerators.Add(nwn2SuggestionGenerator);
+				messagePanel.MessageGenerators.Add(nwn2SuggestionGenerator);
 			}
 			catch (Exception e) {
 				Say.Error("Failed to set up a collection of NWN2 suggestion messages for the ribbon.",e);
 			}
-			
-			ribbon.Show();
 		}
 		
 		
