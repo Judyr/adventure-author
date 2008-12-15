@@ -139,7 +139,7 @@ namespace AdventureAuthor.Setup
 		protected string fridgeMagnetsPath;
 		[XmlElement]
 		[Description("The path at which the Fridge Magnets application is expected to be found."), 
-		 Category("General"), Browsable(false)]
+		 Category("General"), Browsable(true)]
 		public string FridgeMagnetsPath {
 			get { return fridgeMagnetsPath; }
 			set { 
@@ -157,7 +157,7 @@ namespace AdventureAuthor.Setup
 		protected string myTasksPath;
 		[XmlElement]
 		[Description("The path at which the My Tasks application is expected to be found."), 
-		 Category("General"), Browsable(false)]
+		 Category("General"), Browsable(true)]
 		public string MyTasksPath {
 			get { return myTasksPath; }
 			set { 
@@ -175,7 +175,7 @@ namespace AdventureAuthor.Setup
 		protected string commentCardsPath;
 		[XmlElement]
 		[Description("The path at which the Comment Cards application is expected to be found."), 
-		 Category("General"), Browsable(false)]
+		 Category("General"), Browsable(true)]
 		public string CommentCardsPath {
 			get { return commentCardsPath; }
 			set { 
@@ -219,9 +219,9 @@ namespace AdventureAuthor.Setup
 			this.OpenScratchpadByDefault = openScratchpadByDefault;
 			
 			string aaAppsDir = @"C:\Program Files\Heriot-Watt University\";
-			myTasksPath = Path.Combine(aaAppsDir,"My Tasks");
-			fridgeMagnetsPath = Path.Combine(aaAppsDir,"Fridge Magnets");
-			commentCardsPath = Path.Combine(aaAppsDir,"Comment Cards");
+			myTasksPath = Path.Combine(aaAppsDir,@"My Tasks\My Tasks.exe");
+			fridgeMagnetsPath = Path.Combine(aaAppsDir,@"Fridge Magnets\Fridge Magnets.exe");
+			commentCardsPath = Path.Combine(aaAppsDir,@"Comment Cards\Comment Cards.exe");
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

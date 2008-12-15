@@ -318,17 +318,17 @@ namespace AdventureAuthor.Setup
 			SetSandbarButtonImage(ideasButton,"unlitbulb","Ideas");
 			aaToolbar.Items.Add(ideasButton);	
 							
-			ButtonItem myTasksButton = new ButtonItem();
-			myTasksButton.Activate += delegate { 
-				Say.Information("Not implemented.");
-			};
-			myTasksButton.ToolTipText = "Review your to-do list";
-			SetSandbarButtonImage(myTasksButton,"mytasks","Tasks");
-			aaToolbar.Items.Add(myTasksButton);
+//			ButtonItem myTasksButton = new ButtonItem();
+//			myTasksButton.Activate += delegate { 
+//				AttemptLaunchMyTasks();
+//			};
+//			myTasksButton.ToolTipText = "Review your to-do list";
+//			SetSandbarButtonImage(myTasksButton,"mytasks","Tasks");
+//			aaToolbar.Items.Add(myTasksButton);
 						
 			ButtonItem evaluationButton = new ButtonItem();
 			evaluationButton.Activate += delegate { 
-				Say.Information("Not implemented.");
+				AttemptLaunchCommentCards();
 			};
 			SetSandbarButtonImage(evaluationButton,"star","Evaluation");
 			evaluationButton.ToolTipText = "Evaluate your work";
