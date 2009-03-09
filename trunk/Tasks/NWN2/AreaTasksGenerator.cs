@@ -47,8 +47,9 @@ namespace AdventureAuthor.Tasks.NWN2
 	/// Check the current module for any areas which are not accessible via
 	/// an area transition, player start location or (non-custom) teleportation script.
 	/// </summary>
-	/// <remarks>It's difficult to confirm that an area isn't accessible - the designer
-	/// could use custom scripts etc. - so areas are described as 'apparently' inaccessible.
+	/// <remarks>We're not currently checking whether areas are accessible through
+        /// custom scripts (though our users would not be expected to use these generally),
+        /// so areas are described as 'apparently' inaccessible.
 	/// </remarks>
 	public class AreaTasksGenerator : ITaskGenerator
 	{
