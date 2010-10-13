@@ -299,7 +299,10 @@ namespace AdventureAuthor.Setup
 			conversationButton.Enabled = false;
 			SetSandbarButtonImage(conversationButton,"greenpencil","Conversations");			
 			aaToolbar.Items.Add(conversationButton);
-							
+												
+			/*
+			 * Disabling variables for now.
+			 * 
 			ButtonItem variableButton = new ButtonItem();
 			variableButton.Activate += delegate { 
 				LaunchVariableManager();
@@ -309,6 +312,7 @@ namespace AdventureAuthor.Setup
 			variableButton.Enabled = false;
 			SetSandbarButtonImage(variableButton,"gear","Variables");
 			aaToolbar.Items.Add(variableButton);	
+			*/
 							
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate { 
@@ -333,7 +337,10 @@ namespace AdventureAuthor.Setup
 			SetSandbarButtonImage(evaluationButton,"star","Evaluation");
 			evaluationButton.ToolTipText = "Evaluate your work";
 			aaToolbar.Items.Add(evaluationButton);
-														
+									
+			/*
+			 * Disabling Achievements for now.
+			 * 
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate 
 			{ 
@@ -345,15 +352,24 @@ namespace AdventureAuthor.Setup
 			achievementsButton.Visible = true;
 			achievementsButton.ToolTipText = "View your achievements and user profile";
 			aaToolbar.Items.Add(achievementsButton);
+			*/
 			
 			ModuleHelper.ModuleOpened += delegate {  
-				conversationButton.Enabled = true;
+				conversationButton.Enabled = true;					
+				/*
+				 * Disabling variables for now.
+				 * 
 				variableButton.Enabled = true;
+				*/
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  
 				conversationButton.Enabled = false;
+				/*
+				 * Disabling variables for now.
+				 * 
 				variableButton.Enabled = false;
+				*/
 			};
         	
 			aaToolbar.AddRemoveButtonsVisible = false;
