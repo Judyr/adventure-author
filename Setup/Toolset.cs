@@ -149,10 +149,14 @@ namespace AdventureAuthor.Setup
 		private static object padlock = new object();
 		
 		
+		/*
+		 * Disabling AA Speaks window for now.
+		 * 
 		private static MessagePanel userMessagePanel;
 		public static MessagePanel UserMessagePanel {
 			get { return userMessagePanel; }
 		}
+		*/
 		
 		#endregion
 			
@@ -177,9 +181,13 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		internal static void SetupUI()
 		{
+			/*
+			 * Disabling AA Speaks window for now.
+			 * 
 			// Set up the user message panel:
 			userMessagePanel = new MessagePanel();
 			SetupMessagePanel(UserMessagePanel);
+			*/
 			
 			#region Mouse mode changes
 			
@@ -226,9 +234,14 @@ namespace AdventureAuthor.Setup
 					dockingManager = (DockingManager)fi.GetValue(form.App);
 					
 					// Add the 'AA Speaks' message panel to the main UI:
+					
+					/*
+					 * Disabling AA Speaks window for now.
+					 * 
 					ElementHost host = new ElementHost();
 					host.Child = UserMessagePanel;
 					Content content = dockingManager.Contents.Add(host,"AA Speaks");
+					*/
 					
 					// NB: Trying to hide specific objects that are already hidden (or show those
 					// that are showing) seems to lead to an InvalidOperationException.
