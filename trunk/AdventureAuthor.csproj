@@ -11,11 +11,11 @@
     <WarningLevel>0</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>False</RunCodeAnalysis>
-    <DocumentationFile>..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\AdventureAuthor.xml</DocumentationFile>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SourceAnalysisOverrideSettingsFile>\\home-fileserver\kn70\WindowsProfile\AppData\Roaming\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files (x86)\Atari\Neverwinter Nights 2\NWN2Toolset\Plugins\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -39,37 +39,27 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
     <Reference Include="DotNetMagic2005">
-      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\DotNetMagic2005.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\DotNetMagic2005.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GlacialTreeList">
-      <HintPath>..\..\..\..\Program Files\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\GlacialTreeList.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ManagedElectron">
-      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\ManagedElectron.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\ManagedElectron.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.DirectX" />
-    <Reference Include="Netron.Diagramming.Core">
-      <HintPath>..\Libraries\Netron.Diagramming.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Netron.Diagramming.Win">
-      <HintPath>..\Libraries\Netron.Diagramming.Win.dll</HintPath>
-    </Reference>
     <Reference Include="NWN2Toolset">
-      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
     </Reference>
     <Reference Include="OEILocalization">
-      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\OEILocalization.dll</HintPath>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\OEILocalization.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="OEIShared">
-      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\OEIShared.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\OEIShared.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore">
@@ -79,16 +69,14 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="QWhale.Syntax">
-      <HintPath>..\Program Files\Atari\Neverwinter Nights 2\QWhale.Syntax.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\QWhale.Syntax.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ReachFramework">
       <Private>False</Private>
     </Reference>
     <Reference Include="SandBar">
-      <HintPath>..\..\..\..\..\Program Files\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\SandBar.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -431,6 +419,14 @@
     <Folder Include="Scripts\UI" />
     <Folder Include="Setup" />
     <Folder Include="Variables\UI" />
+    <ProjectReference Include="Diagramming.Core\Netron.Diagramming.Core.csproj">
+      <Project>{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}</Project>
+      <Name>Netron.Diagramming.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="Diagramming.Win\Netron.Diagramming.Win.csproj">
+      <Project>{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}</Project>
+      <Name>Netron.Diagramming.Win</Name>
+    </ProjectReference>
     <ProjectReference Include="Magnets\Magnets.csproj">
       <Project>{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}</Project>
       <Name>Magnets</Name>

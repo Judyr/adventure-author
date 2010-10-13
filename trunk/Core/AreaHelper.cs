@@ -72,6 +72,10 @@ namespace AdventureAuthor.Core
 			                                     module.Repository);
 			area.HasTerrain = exterior;
 			area.Size = GetValidAreaSize(width,height);
+			
+			// Needs a Tag and DisplayName or Flip has nothing to work with:
+			area.Tag = name;
+			area.DisplayName = Conversations.Conversation.GetOEIStringFromString(name);
 						
 			// Apply default scripts for logging changes:
 			try {

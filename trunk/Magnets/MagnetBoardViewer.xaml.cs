@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using AdventureAuthor.Utils;
-using Microsoft.Samples.CustomControls;
+//using Microsoft.Samples.CustomControls;
 using Microsoft.Win32;
 
 namespace AdventureAuthor.Ideas
@@ -938,15 +938,17 @@ namespace AdventureAuthor.Ideas
         
         
         private void OnClick_ChangeBoardColour(object sender, EventArgs e)
-        {        	
-        	ColorPickerDialog colorPicker = new ColorPickerDialog();
-        	colorPicker.StartingColor = ActiveBoard.SurfaceColour;
-        	bool ok = (bool)colorPicker.ShowDialog();
+        {   
+        	MessageBox.Show("This feature has been switched off.");
         	
-        	if (ok) {
-        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
-    			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
-        	}
+//        	ColorPickerDialog colorPicker = new ColorPickerDialog();
+//        	colorPicker.StartingColor = ActiveBoard.SurfaceColour;
+//        	bool ok = (bool)colorPicker.ShowDialog();
+//        	
+//        	if (ok) {
+//        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
+//    			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
+//        	}
         }        
             	
     	
