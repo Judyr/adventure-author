@@ -1,0 +1,117 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AdventureAuthor.Ideas</RootNamespace>
+    <AssemblyName>Fridge Magnets</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ApplicationIcon>..\..\Libraries\Icons\lightbulb_48.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="App.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FridgeMagnetUtils.cs" />
+    <Compile Include="Ideas\Board.cs" />
+    <Compile Include="Ideas\BoardObject.cs" />
+    <Compile Include="Ideas\EditMagnetWindow.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EditMagnetWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ideas\Idea.cs" />
+    <Compile Include="Ideas\IdeaCategory.cs" />
+    <Compile Include="Ideas\IdeaEventArgs.cs" />
+    <Compile Include="Ideas\ISerializableData.cs" />
+    <Compile Include="Ideas\MagnetBoardControl.cs" />
+    <Compile Include="Ideas\MagnetBoardInfo.cs" />
+    <Compile Include="Ideas\MagnetCategoryEventArgs.cs" />
+    <Compile Include="Ideas\MagnetControl.cs" />
+    <Compile Include="Ideas\MagnetControlDataObject.cs" />
+    <Compile Include="Ideas\MagnetControlInfo.cs" />
+    <Compile Include="Ideas\MagnetDragAdorner.cs" />
+    <Compile Include="Ideas\MagnetEditedEventArgs.cs" />
+    <Compile Include="Ideas\MagnetEventArgs.cs" />
+    <Compile Include="Ideas\MagnetBox.cs" />
+    <Compile Include="Ideas\MagnetBoxInfo.cs" />
+    <Compile Include="Ideas\ShowHideCategoryCheckBox.cs" />
+    <Compile Include="Ideas\ShowHideCategoryMenuItem.cs" />
+    <Compile Include="Ideas\SortCriterion.cs" />
+    <Compile Include="Ideas\UnserializableControl.cs" />
+    <Compile Include="FridgeMagnetPreferences.cs" />
+    <Compile Include="CountdownTimer.cs" />
+    <Compile Include="MagnetBoardViewer.xaml.cs" />
+    <Compile Include="SystemTray.cs" />
+    <Page Include="Ideas\EditMagnetWindow.xaml" />
+    <Page Include="Ideas\MagnetBoardControl.xaml" />
+    <Page Include="Ideas\MagnetControl.xaml" />
+    <Page Include="Ideas\MagnetBox.xaml" />
+    <Page Include="MagnetBoardViewer.xaml" />
+    <ProjectReference Include="..\..\Libraries\ColorPickerLib\ColorPickerCustomControl\ColorPickerLib\ColorPicker.csproj">
+      <Project>{99E90579-62FC-4898-B168-24F7DBD3A34D}</Project>
+      <Name>ColorPicker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
+    <Folder Include="Ideas" />
+    <EmbeddedResource Include="Icons.resx" />
+  </ItemGroup>
+</Project>

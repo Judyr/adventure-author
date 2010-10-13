@@ -1,0 +1,207 @@
+﻿<!--
+    This file is part of Adventure Author.
+ 
+    Adventure Author is copyright Heriot-Watt University 2006-2008.
+ 
+    This copyright and licence apply to all source code, compiled code,
+    documentation, graphics and auxiliary files, except where otherwise stated.
+ 
+    Adventure Author is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    Adventure Author is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<UserControl x:Class="AdventureAuthor.Conversations.UI.Controls.LineControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="clr-namespace:AdventureAuthor.Conversations.UI"
+	xmlns:uic="clr-namespace:AdventureAuthor.Conversations.UI.Controls"
+    xmlns:utils="clr-namespace:AdventureAuthor.Utils"
+    xmlns:nwn2cd="clr-namespace:NWN2Toolset.NWN2.Data.ConversationData;assembly=NWN2Toolset"
+    xmlns:pref="clr-namespace:AdventureAuthor.Setup"
+	IsEnabled="True" Focusable="True" 
+    MouseDown="OnMouseDown" GotFocus="OnLineControlGotFocus" LostFocus="OnLineControlLostFocus"
+    Padding="6" AllowDrop="True" 
+	>
+		
+	<UserControl.Resources>
+		<ContextMenu x:Key="LineControlContextMenu">
+			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> 
+			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
+			<MenuItem Header="Add an action" Name="MenuItem_AddAction">
+			<MenuItem.Items>
+				<MenuItem Header="Player actions">
+				<MenuItem.Items>
+					<MenuItem Header="The player gains some gold" Click="OnClick_GiveGold"/>
+					<MenuItem Header="The player gains an item" Click="OnClick_GiveItem"/>
+					<MenuItem Header="The player gains a special ability" Click="OnClick_GivePlayerFeat"/>
+					<MenuItem Header="The player gains some experience" Click="OnClick_GiveExperience"/>
+					<Separator/>		
+					<MenuItem Header="The player loses some gold" Click="OnClick_TakeGold"/>
+					<MenuItem Header="The player loses an item" Click="OnClick_RemoveItem"/>
+					<MenuItem Header="The player loses a special ability" Click="OnClick_RemovePlayerFeat"/>
+					<Separator/>
+					<MenuItem Header="The player does something good" Click="OnClick_PlayerBecomesMoreGood"/>
+					<MenuItem Header="The player does something evil" Click="OnClick_PlayerBecomesMoreEvil"/>
+					<MenuItem Header="The player does something lawful" Click="OnClick_PlayerBecomesMoreLawful"/>
+					<MenuItem Header="The player does something chaotic" Click="OnClick_PlayerBecomesMoreChaotic"/>
+					<Separator/>		
+					<MenuItem Header="The player is healed" Click="OnClick_HealPlayer"/>
+					<MenuItem Header="The player is teleported somewhere" Click="OnClick_TeleportPlayer"/>				
+				</MenuItem.Items>
+				</MenuItem>
+				<MenuItem Header="Creature actions">
+				<MenuItem.Items>
+					<MenuItem Header="A creature attacks the player" Click="OnClick_Attack"/>
+					<!--<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/> doesn't really work	-->			
+					<MenuItem Header="A creature dies" Click="OnClick_Kill"/>	
+					<MenuItem Header="A creature becomes unkillable" Click="OnClick_CreatureBecomesImmortal"/>			
+					<MenuItem Header="A creature becomes killable" Click="OnClick_CreatureBecomesMortal"/>	
+					<Separator/>		
+					<MenuItem Header="A creature gains a special ability" Click="OnClick_GiveCreatureFeat"/>	
+					<MenuItem Header="A creature loses a special ability" Click="OnClick_RemoveCreatureFeat"/>
+					<MenuItem Header="A creature plays an animation" Click="OnClick_CreatureAnimation"/>	
+					<MenuItem Header="A creature walks somewhere" Click="OnClick_CreatureMoves"/>
+					<MenuItem Header="A creature is teleported somewhere" Click="OnClick_TeleportCreature"/>
+					<Separator/>		
+					<MenuItem Header="A creature becomes the player's ally" Click="OnClick_AddHenchmanForPlayer"/>
+					<MenuItem Header="A creature stops being the player's ally" Click="OnClick_RemoveHenchman"/>
+					<MenuItem Header="A creature becomes another creature's ally" Click="OnClick_AddHenchmanForCreature"/>	
+					<Separator/>		
+					<MenuItem Header="A creature becomes a commoner" Click="OnClick_CreatureJoinsCommonerFaction"/>
+					<MenuItem Header="A creature becomes a defender" Click="OnClick_CreatureJoinsDefenderFaction"/>
+					<MenuItem Header="A creature becomes a hostile" Click="OnClick_CreatureJoinsHostileFaction"/>
+				</MenuItem.Items>	
+				</MenuItem>
+				<MenuItem Header="Other actions">
+				<MenuItem.Items>
+					<MenuItem Header="A door closes" Click="OnClick_CloseDoor"/>
+					<MenuItem Header="A door opens" Click="OnClick_OpenDoor"/>
+					<MenuItem Header="A door becomes locked" Click="OnClick_LockDoor"/>
+					<MenuItem Header="A door becomes unlocked" Click="OnClick_UnlockDoor"/>
+					<Separator/>			
+					<MenuItem Header="A creature appears" Click="OnClick_CreateCreature"/>
+					<MenuItem Header="An item appears" Click="OnClick_CreateItem"/>
+					<MenuItem Header="A placeable appears" Click="OnClick_CreatePlaceable"/>
+					<!--<MenuItem Header="A store appears" Click="OnClick_CreateStore"/>-->
+					<!--<MenuItem Header="A waypoint appears" Click="OnClick_CreateWaypoint"/>-->
+					<MenuItem Header="An object disappears" Click="OnClick_DestroyObject"/>
+					<MenuItem Header="The player's allies disappear" Click="OnClick_DestroyAllHenchmen"/>
+					<MenuItem Header="An object is teleported somewhere" Click="OnClick_TeleportObject"/>
+					<Separator/>
+					<MenuItem Header="A sound clip plays" Click="OnClick_SetSound"/>
+					<MenuItem Header="Time moves forward (by some hours)" Click="OnClick_AdvanceTime"/>
+					<MenuItem Header="Time moves forward (to a set time)" Click="OnClick_SetTime"/>	
+					<MenuItem Header="A store screen is displayed" Click="OnClick_OpenStore"/>
+					<MenuItem Header="A message is displayed" Click="OnClick_DisplayMessage"/>	
+					<MenuItem Header="The screen fades in" Click="OnClick_FadeIn"/>		
+					<MenuItem Header="The screen fades out" Click="OnClick_FadeOut"/>
+					<MenuItem Header="The game ends" Click="OnClick_EndGame"/>	
+					<Separator/>
+					<!--<MenuItem Header="A float variable is set to a value" Click="OnClick_SetFloatVariable"/>-->
+					<MenuItem Header="A number variable is set to a value" Click="OnClick_SetIntVariable"/>
+					<MenuItem Header="A word(s) variable is set to a value" Click="OnClick_SetStringVariable"/>
+				</MenuItem.Items>
+				</MenuItem>
+				<Separator/>
+				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomAction"/>
+			</MenuItem.Items>
+			</MenuItem>
+			<MenuItem Header="Add a condition" Name="MenuItem_AddCondition">
+			<MenuItem.Items>
+				<MenuItem Header="If the player owns a certain amount of gold" Click="OnClick_PlayerHasGold"/>
+				<MenuItem Header="If the player owns a particular item" Click="OnClick_PlayerHasItem"/>
+				<!--<MenuItem Header="If the player owns a particular number of items" Click="OnClick_PlayerHasNumberOfItems"/> could be confusing-->
+				<MenuItem Header="If the player is using/wearing a particular item" Click="OnClick_ItemIsEquipped"/>
+				<Separator/>
+				<MenuItem Header="If the player is male" Click="OnClick_PlayerIsMale"/>
+				<MenuItem Header="If the player is female" Click="OnClick_PlayerIsFemale"/>
+				<MenuItem Header="If the player is good" Click="OnClick_PlayerIsGood"/>
+				<MenuItem Header="If the player is evil" Click="OnClick_PlayerIsEvil"/>
+				<MenuItem Header="If the player is lawful" Click="OnClick_PlayerIsLawful"/>
+				<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>				
+				<Separator/>
+				<MenuItem Header="If a particular creature is dead" Click="OnClick_CreatureIsDead"/>
+				<MenuItem Header="If a particular creature is the player's ally" Click="OnClick_PlayerHasHenchman"/>		
+				<Separator/>		
+				<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
+				<MenuItem Header="If a particular door/container is open" Click="OnClick_DoorOrContainerIsOpen"/>
+				<Separator/>		
+				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->
+				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
+				<MenuItem Header="If a word(s) variable has a certain value" Click="OnClick_StringHasValue"/>
+				<Separator/>
+				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomCondition"/>
+			</MenuItem.Items>
+			</MenuItem>
+			<MenuItem Header="Set camera angle" Click="OnClick_SetCamera" Name="MenuItem_SetCamera" IsEnabled="false" Visibility="Collapsed"/> <!--Not implemented-->
+			<MenuItem Header="Delete line" Click="OnClick_Delete" Name="MenuItem_DeleteLine"/>
+			<MenuItem Header="Make into choice" Click="OnClick_MakeIntoBranch" Name="MenuItem_MakeIntoChoice"/>
+		</ContextMenu>	
+	</UserControl.Resources>
+	
+	<UserControl.ContextMenu>		
+		<StaticResource ResourceKey="LineControlContextMenu"/>
+	</UserControl.ContextMenu>
+			
+    <Grid x:Name="LineControlGrid">
+		<Grid.RowDefinitions>
+    		<RowDefinition MinHeight="0"/> <!--Condition control-->
+    		<RowDefinition MinHeight="34" Height="*"/> <!--Speaker and dialogue-->
+    		<RowDefinition MinHeight="0"/> <!--Sound control-->
+    		<RowDefinition MinHeight="0"/> <!--Action controls-->
+    	</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="32"/> <!--Buttons-->
+    		<ColumnDefinition MinWidth="100" MaxWidth="200" Width="*"/> <!--Speaker-->
+    		<ColumnDefinition Width="10"/> <!--clickable gap-->
+    		<ColumnDefinition Width="2*"/> <!--Dialogue-->
+    	</Grid.ColumnDefinitions>
+    	    	
+    	<StackPanel Name="LineControlButtonsPanel" Grid.Column="0" Grid.Row="1" 
+    	            Focusable="true" Orientation="Horizontal" Background="Transparent">
+    		<Button x:Name="DeleteLineButton" Margin="6" Width="20" Height="20" 
+    		        IsEnabled="false" Visibility="Hidden" Click="OnClick_Delete"
+    				VerticalAlignment="Top" HorizontalAlignment="Center">
+    			<Button.ToolTip>
+    				<ToolTip>Delete this line</ToolTip>
+    			</Button.ToolTip>
+	    	</Button>   	
+    	</StackPanel>
+    	
+    	<TextBlock x:Name="SpeakerLabel" Grid.Row="1" Grid.Column="1" 
+    	           FontSize="22" 
+    	           Padding="6" TextAlignment="Right" TextWrapping="Wrap"/>
+    	
+    	<Grid x:Name="clickableGap" Grid.Row="1" Grid.Column="2" 
+    	      Width="10" Background="Transparent"/>
+    	
+    	<uic:DialogueTextBox
+    		 x:Name="Dialogue"
+	    	 Grid.Row="1" Grid.Column="3"
+    		 AllowDrop="true"
+	    	 TextWrapping="Wrap" AcceptsReturn="false"
+	    	 FontSize="22" FontWeight="4" Focusable="true"
+	    	 BorderThickness="1" IsEditable="false" Padding="4">
+	    	<uic:DialogueTextBox.Text>
+	    		<Binding Source="{StaticResource LineText}" Path="Value" Mode="OneTime"/>
+	    	</uic:DialogueTextBox.Text>    
+	    </uic:DialogueTextBox>
+    	
+	
+		<StackPanel x:Name="ActionsPanel" 
+    	            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" 
+		            Orientation="Vertical"/>
+	
+	</Grid>
+
+</UserControl>

@@ -1,0 +1,8 @@
+<UserControl x:Class="AdventureAuthor.Analysis.UI.TriggerMarker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Canvas>
+		<Polygon Name="TriggerShape" Stroke="Yellow" StrokeThickness="1"
+    	         Points="{StaticResource TriggerPoints}" Fill="Transparent"/>
+	</Canvas>
+</UserControl>

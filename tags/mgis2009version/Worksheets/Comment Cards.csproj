@@ -1,0 +1,111 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{FE28833C-EDC9-48FC-80E4-4CE168E828DD}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AdventureAuthor.Evaluation</RootNamespace>
+    <AssemblyName>Comment Cards</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ApplicationIcon>..\..\Libraries\Icons\write-document.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="ActivatableControl.cs" />
+    <Compile Include="ActivationEventArgs.cs" />
+    <Compile Include="AddReplyWindow.xaml.cs" />
+    <Compile Include="Answer.cs" />
+    <Compile Include="App.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="CommentCardUtils.cs" />
+    <Compile Include="CommentControl.cs" />
+    <Compile Include="Evidence.cs" />
+    <Compile Include="EvidenceControl.cs" />
+    <Compile Include="EvidenceControlStatus.cs" />
+    <Compile Include="ImageApp.cs" />
+    <Compile Include="IStarred.cs" />
+    <Compile Include="Mode.cs" />
+    <Compile Include="MovingEventArgs.cs" />
+    <Compile Include="CardPart.cs" />
+    <Compile Include="CardPartControl.cs" />
+    <Compile Include="CardPartControlEventArgs.cs" />
+    <Compile Include="Question.cs" />
+    <Compile Include="QuestionControl.xaml.cs" />
+    <Compile Include="Rating.cs" />
+    <Compile Include="RatingControl.xaml.cs" />
+    <Compile Include="Reply.cs" />
+    <Compile Include="ReplyControl.xaml.cs" />
+    <Compile Include="CardPartEventArgs.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="Section.cs" />
+    <Compile Include="SectionControl.cs" />
+    <Compile Include="Card.cs" />
+    <Compile Include="EvaluationPreferences.cs" />
+    <Compile Include="CardViewer.cs" />
+    <Page Include="AddReplyWindow.xaml" />
+    <Page Include="CommentControl.xaml" />
+    <Page Include="EvidenceControl.xaml" />
+    <Page Include="QuestionControl.xaml" />
+    <Page Include="RatingControl.xaml" />
+    <Page Include="ReplyControl.xaml" />
+    <Page Include="SectionControl.xaml" />
+    <Page Include="CardViewer.xaml" />
+    <ProjectReference Include="..\UtilsLibrary\AAUtils.csproj">
+      <Project>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</Project>
+      <Name>AAUtils</Name>
+    </ProjectReference>
+    <Resource Include="add.png" />
+    <Resource Include="delete.png" />
+    <Resource Include="down.png" />
+    <Resource Include="up.png" />
+    <Resource Include="speechbubblespink.png" />
+  </ItemGroup>
+</Project>
