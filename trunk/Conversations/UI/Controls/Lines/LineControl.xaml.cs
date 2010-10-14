@@ -184,6 +184,12 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Say.Debug("END Dialogue_GotFocus (" + Dialogue.Text + ")");
         }
         
+        
+        private void AddFlipScript(object sender, RoutedEventArgs e)
+        {
+        	
+        }
+        
 
         private void Dialogue_LostFocus(object sender, RoutedEventArgs e)
         {

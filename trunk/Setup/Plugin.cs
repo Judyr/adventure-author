@@ -134,35 +134,81 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		/// <param name="cHost"></param>
 		public void Load(INWN2PluginHost cHost)
-		{
+		{			
+			// Delete temp modules created during previous sessions:
+			//ClearTempModules();		
+			
+			try {
+				Toolset.Plugin = this;
+				
+				// Modify the main user interface:
+				Toolset.SetupUI();
+			}
+			catch (Exception x) {
+				Say.Error("Could not set up Adventure Author.",x);
+				return;
+			}
+			
 			try {
 				DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;		
 				Tools.EnsureDirectoryExists(AdventureAuthorPluginPreferences.LocalAppDataDirectory);
 				Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
 				Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
-								
-				Toolset.Plugin = this;
-				
-				// Delete temp modules created during previous sessions:
-				ClearTempModules();
-				
+					
 				// Start recording debug messages and user actions:
 				DebugWriter.StartRecording();
 				LogWriter.StartRecording("toolset");
 				
-				SetupUserProfile();
-				SetupMyAchievements();
-							
-				// Modify the main user interface:
-				Toolset.SetupUI();
-				
 				Log.WriteAction(LogAction.launched,"toolset");
 			}
-			catch (Exception e) {
-				Say.Error("A problem occurred when trying to set up the toolset. " + 
-				          "You may experience problems which require you to reinstall Adventure Author.",e);
+			catch (Exception x) {
+				Say.Error("There was an error setting up logging for Adventure Author - logs may not be captured.",x);
 			}
-		}	
+			
+			try {
+				SetupUserProfile();
+				SetupMyAchievements();
+			}
+			catch (Exception x) {
+				Say.Error("There was an error setting up an achievements profile for Adventure Author.",x);
+			}
+		}
+		
+		
+//		/// <summary>
+//		/// Called when the toolset starts.
+//		/// </summary>
+//		/// <param name="cHost"></param>
+//		public void Load(INWN2PluginHost cHost)
+//		{
+//			try {
+//				DebugWriter.DebugDirectory = ModuleHelper.DebugDirectory;		
+//				Tools.EnsureDirectoryExists(AdventureAuthorPluginPreferences.LocalAppDataDirectory);
+//				Tools.EnsureDirectoryExists(ModuleHelper.PublicUserDirectory);
+//				Tools.EnsureDirectoryExists(ModuleHelper.DebugDirectory);
+//								
+//				Toolset.Plugin = this;
+//				
+//				// Delete temp modules created during previous sessions:
+//				ClearTempModules();
+//				
+//				// Start recording debug messages and user actions:
+//				DebugWriter.StartRecording();
+//				LogWriter.StartRecording("toolset");
+//				
+//				SetupUserProfile();
+//				SetupMyAchievements();
+//							
+//				// Modify the main user interface:
+//				Toolset.SetupUI();
+//				
+//				Log.WriteAction(LogAction.launched,"toolset");
+//			}
+//			catch (Exception e) {
+//				Say.Error("A problem occurred when trying to set up the toolset. " + 
+//				          "You may experience problems which require you to reinstall Adventure Author.",e);
+//			}
+//		}	
 		
 		
 		/// <summary>
