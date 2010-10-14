@@ -37,7 +37,12 @@
 		<ContextMenu x:Key="LineControlContextMenu">
 			<MenuItem Header="Go back" Click="OnClick_GoBack" Name="MenuItem_GoBack" IsEnabled="false"/> 
 			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
-			<MenuItem Header="Add an action" Name="MenuItem_AddAction">
+			
+			<MenuItem Name="MenuItem_AddAction"
+					  Header="Add a Flip script"
+					  Click="AddFlipScript"/>
+			
+<!--		<MenuItem Header="Add an action" Name="MenuItem_AddAction">
 			<MenuItem.Items>
 				<MenuItem Header="Player actions">
 				<MenuItem.Items>
@@ -62,7 +67,7 @@
 				<MenuItem Header="Creature actions">
 				<MenuItem.Items>
 					<MenuItem Header="A creature attacks the player" Click="OnClick_Attack"/>
-					<!--<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/> doesn't really work	-->			
+					<MenuItem Header="A creature attacks another creature" Click="OnClick_AttackTarget"/> doesn't really work				
 					<MenuItem Header="A creature dies" Click="OnClick_Kill"/>	
 					<MenuItem Header="A creature becomes unkillable" Click="OnClick_CreatureBecomesImmortal"/>			
 					<MenuItem Header="A creature becomes killable" Click="OnClick_CreatureBecomesMortal"/>	
@@ -92,8 +97,8 @@
 					<MenuItem Header="A creature appears" Click="OnClick_CreateCreature"/>
 					<MenuItem Header="An item appears" Click="OnClick_CreateItem"/>
 					<MenuItem Header="A placeable appears" Click="OnClick_CreatePlaceable"/>
-					<!--<MenuItem Header="A store appears" Click="OnClick_CreateStore"/>-->
-					<!--<MenuItem Header="A waypoint appears" Click="OnClick_CreateWaypoint"/>-->
+					<MenuItem Header="A store appears" Click="OnClick_CreateStore"/>
+					<MenuItem Header="A waypoint appears" Click="OnClick_CreateWaypoint"/>
 					<MenuItem Header="An object disappears" Click="OnClick_DestroyObject"/>
 					<MenuItem Header="The player's allies disappear" Click="OnClick_DestroyAllHenchmen"/>
 					<MenuItem Header="An object is teleported somewhere" Click="OnClick_TeleportObject"/>
@@ -107,38 +112,38 @@
 					<MenuItem Header="The screen fades out" Click="OnClick_FadeOut"/>
 					<MenuItem Header="The game ends" Click="OnClick_EndGame"/>	
 					<Separator/>
-					<!--<MenuItem Header="A float variable is set to a value" Click="OnClick_SetFloatVariable"/>-->
+					<MenuItem Header="A float variable is set to a value" Click="OnClick_SetFloatVariable"/>
 					<MenuItem Header="A number variable is set to a value" Click="OnClick_SetIntVariable"/>
 					<MenuItem Header="A word(s) variable is set to a value" Click="OnClick_SetStringVariable"/>
 				</MenuItem.Items>
-				</MenuItem>
-				<Separator/>
+				</MenuItem>-->
+<!--				<Separator/>
 				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomAction"/>
-			</MenuItem.Items>
-			</MenuItem>
+			</MenuItem.Items>-->
+<!--			</MenuItem>-->
 			<MenuItem Header="Add a condition" Name="MenuItem_AddCondition">
 			<MenuItem.Items>
 				<MenuItem Header="If the player owns a certain amount of gold" Click="OnClick_PlayerHasGold"/>
 				<MenuItem Header="If the player owns a particular item" Click="OnClick_PlayerHasItem"/>
 				<!--<MenuItem Header="If the player owns a particular number of items" Click="OnClick_PlayerHasNumberOfItems"/> could be confusing-->
 				<MenuItem Header="If the player is using/wearing a particular item" Click="OnClick_ItemIsEquipped"/>
-				<Separator/>
+<!--				<Separator/>-->
 				<MenuItem Header="If the player is male" Click="OnClick_PlayerIsMale"/>
 				<MenuItem Header="If the player is female" Click="OnClick_PlayerIsFemale"/>
-				<MenuItem Header="If the player is good" Click="OnClick_PlayerIsGood"/>
+<!--				<MenuItem Header="If the player is good" Click="OnClick_PlayerIsGood"/>
 				<MenuItem Header="If the player is evil" Click="OnClick_PlayerIsEvil"/>
 				<MenuItem Header="If the player is lawful" Click="OnClick_PlayerIsLawful"/>
-				<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>				
-				<Separator/>
+				<MenuItem Header="If the player is chaotic" Click="OnClick_PlayerIsChaotic"/>	-->			
+<!--				<Separator/>-->
 				<MenuItem Header="If a particular creature is dead" Click="OnClick_CreatureIsDead"/>
 				<MenuItem Header="If a particular creature is the player's ally" Click="OnClick_PlayerHasHenchman"/>		
-				<Separator/>		
+<!--				<Separator/>	-->	
 				<MenuItem Header="If any enemy is nearby" Click="OnClick_EnemyIsNearPlayer"/>
 				<MenuItem Header="If a particular door/container is open" Click="OnClick_DoorOrContainerIsOpen"/>
-				<Separator/>		
+<!--				<Separator/>	-->	
 				<!--<MenuItem Header="If a float variable has a certain value" Click="OnClick_FloatHasValue"/> not something we're using just now-->
-				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
-				<MenuItem Header="If a word(s) variable has a certain value" Click="OnClick_StringHasValue"/>
+<!--				<MenuItem Header="If a number variable has a certain value" Click="OnClick_IntHasValue"/>
+				<MenuItem Header="If a word(s) variable has a certain value" Click="OnClick_StringHasValue"/>-->
 				<Separator/>
 				<MenuItem Header="Attach a custom script" Click="OnClick_AddCustomCondition"/>
 			</MenuItem.Items>

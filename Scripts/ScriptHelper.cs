@@ -790,6 +790,7 @@ namespace AdventureAuthor.Scripts
 			return GetDescriptionForCondition(condition);
 		}
 		
+		
 		public static string GetDescriptionForCondition(NWN2ConditionalFunctor condition)
 		{
 			if (condition == null) {
