@@ -39,8 +39,8 @@
 			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
 			
 			<MenuItem Name="MenuItem_AddAction"
-					  Header="Add a Flip script"
-					  Click="AddFlipScript"/>
+					  Header="Add a script"
+					  Click="AddScript"/>
 			
 <!--		<MenuItem Header="Add an action" Name="MenuItem_AddAction">
 			<MenuItem.Items>

@@ -738,7 +738,8 @@ namespace AdventureAuthor.Conversations.UI
 				this.workingFilename = CreateWorkingCopy(originalFilename);
 				conv = new NWN2GameConversation(workingFilename,
 				                                form.App.Module.Repository.DirectoryName,
-					                            form.App.Module.Repository);		
+					                            form.App.Module.Repository);
+				form.App.Module.AddResource(conv);
 				
 				conv.Demand();				
 				Conversation.CurrentConversation = new Conversation(conv);
@@ -794,7 +795,7 @@ namespace AdventureAuthor.Conversations.UI
 			DisplayPage(pages[0]);	
 			CentreGraph(true);
 			SetTitleBar();
-		}		
+		}	
 		
 		
 		/// <summary>
