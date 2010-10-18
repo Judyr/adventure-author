@@ -37,6 +37,8 @@ using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
 using AdventureAuthor.Setup;
 using AdventureAuthor.Utils;
+using NWN2Toolset;
+using NWN2Toolset.Plugins;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 
@@ -185,9 +187,34 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
-        private void AddFlipScript(object sender, RoutedEventArgs e)
+        private void AddScript(object sender, RoutedEventArgs e)
         {
+        	// If there already is a script on this line, open it (or warn that you have to edit the existing one, whatever's easier.)
+        	// Otherwise, create a new one.
         	
+        	// Calling: 'public void UseConversationLineAsTrigger(NWN2ConversationConnector line, NWN2GameConversation conversation)'
+        	
+        	try {
+        	
+	        	foreach (INWN2Plugin plugin in NWN2ToolsetMainForm.PluginHost.Plugins) {
+	        		
+	        		if (plugin.Name == "Flip") {
+	        			
+	        			MethodInfo mi = plugin.GetType().GetMethod("UseConversationLineAsTrigger",BindingFlags.Public | BindingFlags.Instance);
+	        			
+	        			object[] parameters = new object[] { nwn2Line, Conversation.CurrentConversation.NwnConv };
+	        			
+	        			if (mi != null) mi.Invoke(plugin,parameters);
+	        			
+	        			else throw new MethodAccessException("Couldn't find method UseConversationLineAsTrigger.");
+	        		}
+	        	}
+        	
+        	}
+        	
+        	catch (Exception x) {
+        		Say.Error("Couldn't add a script to this line of dialogue due to an error.",x);
+        	}
         }
         
 
