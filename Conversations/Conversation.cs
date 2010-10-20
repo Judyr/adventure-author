@@ -103,7 +103,7 @@ namespace AdventureAuthor.Conversations
 		}	
 				
 		
-		protected virtual void OnChanged(ConversationChangedEventArgs e)
+		internal virtual void OnChanged(ConversationChangedEventArgs e)
 		{
 			EventHandler<ConversationChangedEventArgs> handler = Changed;
 			if (handler != null) {
