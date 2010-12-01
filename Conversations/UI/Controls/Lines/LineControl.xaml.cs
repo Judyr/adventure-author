@@ -33,9 +33,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Win32;
 using AdventureAuthor.Conversations.UI.Graph;
 using AdventureAuthor.Core;
 using AdventureAuthor.Setup;
+using AdventureAuthor.Scripts;
 using AdventureAuthor.Utils;
 using NWN2Toolset;
 using NWN2Toolset.Plugins;
@@ -204,11 +206,16 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        			
 	        			object[] parameters = new object[] { nwn2Line, Conversation.CurrentConversation.NwnConv };
 	        			
-	        			if (mi != null) mi.Invoke(plugin,parameters);
+	        			if (mi != null) {
+	        				mi.Invoke(plugin,parameters);
+	        				return;
+	        			}
 	        			
 	        			else throw new MethodAccessException("Couldn't find method UseConversationLineAsTrigger.");
 	        		}
 	        	}
+        		
+        		AddNonFlipScriptDialog(); // if Flip has not been found
         	
         	}
         	
@@ -216,6 +223,29 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		Say.Error("Couldn't add a script to this line of dialogue due to an error.",x);
         	}
         }
+            	
+    	
+    	private void AddNonFlipScriptDialog()
+    	{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.ValidateNames = true;
+    		openFileDialog.DefaultExt = Filters.COMPILEDSCRIPTS;
+    		openFileDialog.Filter = Filters.COMPILEDSCRIPTS;
+			openFileDialog.Title = "Select a script to run";
+			openFileDialog.Multiselect = false;
+			openFileDialog.RestoreDirectory = true;
+			openFileDialog.InitialDirectory = ModuleHelper.GetCurrentModulePath();			
+									
+  			bool ok = (bool)openFileDialog.ShowDialog();  				
+  			if (ok) {
+  				string filename = openFileDialog.FileName;
+  				FileInfo fileInfo = new FileInfo(filename);  			  				
+  				NWN2ScriptFunctor action = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
+							  				                             null, // currently don't handle scripts taking parameters
+							  				                             fileInfo.DirectoryName); 	
+	    		Conversation.CurrentConversation.AddAction(nwn2Line,action);
+  			}    		
+    	}
         
 
         private void Dialogue_LostFocus(object sender, RoutedEventArgs e)

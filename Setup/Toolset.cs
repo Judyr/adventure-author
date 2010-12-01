@@ -255,12 +255,12 @@ namespace AdventureAuthor.Setup
 						}
 						else if (c.Control is NWN2ModuleConversationList) {
 							contents.Add(c);
-//							if (c.FullTitle == "Conversations") {
-//								conversationList = (NWN2ModuleConversationList)c.Control;
-//							}
-//							else { // hide "Campaign Conversations"
-//								contents.Add(c);
-//							}
+							if (c.FullTitle == "Conversations") {
+								conversationList = (NWN2ModuleConversationList)c.Control;
+							}
+							else { // hide "Campaign Conversations"
+								contents.Add(c);
+							}
 						}
 						else if (c.Control is NWN2ModuleScriptList) {
 							if (c.FullTitle == "Scripts") {
@@ -521,6 +521,7 @@ namespace AdventureAuthor.Setup
 					TD.SandBar.ToolBar toolbar = (TD.SandBar.ToolBar)fi.GetValue(form.App);
 					if (toolbar.Text == "Object Manipulation") {
 						objectsToolbar = toolbar;
+						AddButtons(objectsToolbar);
 					}
 				}
 								
@@ -612,41 +613,21 @@ namespace AdventureAuthor.Setup
 //					}
 				}
 				
-				//TODO - this is apparently the correct way to do it but nothing appears
-//				else if (fi.FieldType == typeof(TD.SandBar.SandBarManager)) {
-//					Say.Information("Found SandBarManager");
+//				else if (fi.FieldType == typeof(ToolBarContainer)) {					
 //					try {
-//						SandBarManager manager = (SandBarManager)fi.GetValue(form.App);
-//						
-//						TD.SandBar.ToolBar aaToolbar = new TD.SandBar.ToolBar();
-//						SetupAdventureAuthorToolBar(aaToolbar);
-//						
-//						TD.SandBar.ToolBar ideaToolbar = new TD.SandBar.ToolBar();
-//						SetupAddIdeaToolBar(ideaToolbar);
-//						
-//						manager.AddToolbar(aaToolbar);
-//						manager.AddToolbar(ideaToolbar);manager.
-//					}
+//						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
+//						// plus the ToolBar i'm currently creating below.						
+//						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
+//						if (tbc.Name == "topSandBarDock") {
+//							aaToolbar = new TD.SandBar.ToolBar();
+//							SetupAdventureAuthorToolBar(aaToolbar);
+//							tbc.Controls.Add(aaToolbar);
+//						}
+//					} 
 //					catch (Exception e) {
-//						Say.Error(e);
+//						Say.Error(e.ToString());
 //					}
 //				}
-				
-				else if (fi.FieldType == typeof(ToolBarContainer)) {					
-					try {
-						// Contains a MenuBar, a GraphicsPreferencesToolbar and a ToolBar, 
-						// plus the ToolBar i'm currently creating below.						
-						ToolBarContainer tbc = (ToolBarContainer)fi.GetValue(form.App);
-						if (tbc.Name == "topSandBarDock") {
-							aaToolbar = new TD.SandBar.ToolBar();
-							SetupAdventureAuthorToolBar(aaToolbar);
-							tbc.Controls.Add(aaToolbar);
-						}
-					} 
-					catch (Exception e) {
-						Say.Error(e.ToString());
-					}
-				}
 			}
 			
 			ModuleHelper.ModuleSaved += new EventHandler(ModuleHelper_ModuleSaved);
@@ -654,7 +635,7 @@ namespace AdventureAuthor.Setup
 			ModuleHelper.ModuleClosed += new EventHandler(ModuleHelper_ModuleClosed);
 			
 			// Listen for My Tasks requesting task suggestions:
-			StartListeningForMessagesFromMyTasks();
+			//StartListeningForMessagesFromMyTasks();
 			
 			// Set up the interface for initial use - update the title bar, and disable
 			// parts of the interface which require an open module to be useful.
@@ -667,7 +648,7 @@ namespace AdventureAuthor.Setup
 			SetInterfaceLock(Plugin.Options.LockInterface);
 			areaContentsView.BringToFront();
 			areaContentsView.Focus();
-		}				
+		}		
 		
 		
     	private static void StartListeningForMessagesFromMyTasks()
@@ -946,46 +927,18 @@ namespace AdventureAuthor.Setup
 					page.Text = "area";
 					
 					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
-					
-					// now handled through area contents viewer events, which picks up selection events from the area viewer as well:
-										
-//					NWN2AreaViewer areaViewer = viewer as NWN2AreaViewer;	
-//					areaViewer.ElectronPanel.SelectionChanged += delegate 
-//					{
-//						if (areaViewer.SelectedInstances.Count > 0) {							
-//							StringBuilder message = new StringBuilder("selection: ");
-//							foreach (object o in areaViewer.SelectedInstances) {
-//								INWN2Instance instance = (INWN2Instance)o;
-//								message.Append(instance.Name + " (" + instance.ObjectType + ") ");
-//							}							
-//							Log.WriteAction(LogAction.selected,"object",message.ToString());
-//						}
-//					};
 				}
+				
 				else if (viewer is NWN2ConversationViewer) {
 					NWN2GameConversation conv = (NWN2GameConversation)viewer.ViewedResource;
-										
-					//viewer.Close(false);
-//					if (viewer != null) {
-//						viewer.Dispose();
-//					}
-					
-					
+								
 					try {
-						TabPageCollection tabPages = tabbedGroupsCollection.ActiveLeaf.TabPages;
-					
+						TabPageCollection tabPages = tabbedGroupsCollection.ActiveLeaf.TabPages;					
 						tabPages.Remove(page); // close the original conversation editor
-//						if (tabPages == null) {
-//							tabPages = new TabPageCollection();
-//						}
-						//tabbedGroupsCollection.ActiveTabPage = null;
 					}
 					catch (Exception e) {
 						Say.Error("Error when closing the original conversation editor.",e);
 					}
-						
-						
-					
 					
 					if (conv.Name.StartsWith("~tmp")) {
 						return; // temp file
@@ -1077,9 +1030,9 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		private static void OnContentShown(Content c, EventArgs ea)
 		{
-			if (c.Control is NWN2ConversationViewer) {
-				dockingManager.HideContent(c);
-			}
+//			if (c.Control is NWN2ConversationViewer) {
+//				dockingManager.HideContent(c);
+//			}
 			if (form.App.VerifyContent.Visible) {
 				dockingManager.HideContent(form.App.VerifyContent);
 			}
@@ -1443,6 +1396,9 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public static void LaunchMyAchievements()
 		{
+			Say.Information("Achievements have been disabled.");
+			return;
+			
 			try {
 				if (ProfileWindow.Instance == null || !ProfileWindow.Instance.IsLoaded) {
 					ProfileWindow.Instance = new ProfileWindow();
@@ -1704,12 +1660,6 @@ namespace AdventureAuthor.Setup
 				}					
 				if (fileMenu != null && fileMenu.ToolBar != null) { 
 					SetToolbarLock(fileMenu.ToolBar,locked);
-				}
-				if (aaToolbar != null) {
-					SetToolbarLock(aaToolbar,locked);
-				}		
-				if (addIdeaToolbar != null) {
-					SetToolbarLock(addIdeaToolbar,locked);
 				}
 										
 				FieldInfo[] fields = form.App.GetType().GetFields(BindingFlags.Public |

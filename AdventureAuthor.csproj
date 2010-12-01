@@ -53,6 +53,7 @@
     <Reference Include="Microsoft.DirectX" />
     <Reference Include="NWN2Toolset">
       <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\NWN2Toolset.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="OEILocalization">
       <HintPath>..\..\Program Files %28x86%29\Atari\Neverwinter Nights 2\OEILocalization.dll</HintPath>

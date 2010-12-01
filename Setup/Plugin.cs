@@ -165,6 +165,7 @@ namespace AdventureAuthor.Setup
 				Say.Error("There was an error setting up logging for Adventure Author - logs may not be captured.",x);
 			}
 			
+			/* Disabling My Achievements for now.
 			try {
 				SetupUserProfile();
 				SetupMyAchievements();
@@ -172,6 +173,7 @@ namespace AdventureAuthor.Setup
 			catch (Exception x) {
 				Say.Error("There was an error setting up an achievements profile for Adventure Author.",x);
 			}
+			*/
 		}
 		
 		
