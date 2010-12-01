@@ -26,8 +26,6 @@ namespace AdventureAuthor.Setup
 	public static partial class Toolset
 	{			
 		private static MenuBarItem mainFileMenu;
-		private static ToolBar aaToolbar;
-		private static ToolBar addIdeaToolbar;
 		private static MenuButtonItem openRecentModule = null;
 		private static List<string> recentModulesList = null;
 		
@@ -283,12 +281,12 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		public static ToolBar SetupAdventureAuthorToolBar(ToolBar toolbar)
+		public static void AddButtons(ToolBar toolbar)
 		{
-			aaToolbar = toolbar;
-			aaToolbar.AddRemoveButtonsVisible = false;
-			aaToolbar.AllowMerge = false;							
-			aaToolbar.Text = "Adventure Author applications";			
+			if (toolbar == null) throw new NullReferenceException("Toolbar not found.");
+			
+			toolbar.AddRemoveButtonsVisible = false;
+			toolbar.AllowMerge = false;								
 							
 			ButtonItem conversationButton = new ButtonItem();							
 			conversationButton.Activate += delegate { 
@@ -298,11 +296,8 @@ namespace AdventureAuthor.Setup
 			conversationButton.ToolTipText = "Write conversations for game characters";
 			conversationButton.Enabled = false;
 			SetSandbarButtonImage(conversationButton,"greenpencil","Conversations");			
-			aaToolbar.Items.Add(conversationButton);
-												
-			/*
-			 * Disabling variables for now.
-			 * 
+			toolbar.Items.Add(conversationButton);
+			
 			ButtonItem variableButton = new ButtonItem();
 			variableButton.Activate += delegate { 
 				LaunchVariableManager();
@@ -311,8 +306,7 @@ namespace AdventureAuthor.Setup
 			variableButton.ToolTipText = "Manage game variables";
 			variableButton.Enabled = false;
 			SetSandbarButtonImage(variableButton,"gear","Variables");
-			aaToolbar.Items.Add(variableButton);	
-			*/
+			toolbar.Items.Add(variableButton);	
 							
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate { 
@@ -320,15 +314,15 @@ namespace AdventureAuthor.Setup
 			};
 			ideasButton.ToolTipText = "Record and review your ideas";
 			SetSandbarButtonImage(ideasButton,"unlitbulb","Ideas");
-			aaToolbar.Items.Add(ideasButton);	
+			toolbar.Items.Add(ideasButton);	
 							
-//			ButtonItem myTasksButton = new ButtonItem();
-//			myTasksButton.Activate += delegate { 
-//				AttemptLaunchMyTasks();
-//			};
-//			myTasksButton.ToolTipText = "Review your to-do list";
-//			SetSandbarButtonImage(myTasksButton,"mytasks","Tasks");
-//			aaToolbar.Items.Add(myTasksButton);
+			ButtonItem myTasksButton = new ButtonItem();
+			myTasksButton.Activate += delegate { 
+				AttemptLaunchMyTasks();
+			};
+			myTasksButton.ToolTipText = "Review your to-do list";
+			SetSandbarButtonImage(myTasksButton,"mytasks","Tasks");
+			toolbar.Items.Add(myTasksButton);
 						
 			ButtonItem evaluationButton = new ButtonItem();
 			evaluationButton.Activate += delegate { 
@@ -336,11 +330,9 @@ namespace AdventureAuthor.Setup
 			};
 			SetSandbarButtonImage(evaluationButton,"star","Evaluation");
 			evaluationButton.ToolTipText = "Evaluate your work";
-			aaToolbar.Items.Add(evaluationButton);
-									
-			/*
-			 * Disabling Achievements for now.
-			 * 
+			toolbar.Items.Add(evaluationButton);
+				
+			/* Disabling My Achievements.
 			ButtonItem achievementsButton = new ButtonItem();
 			achievementsButton.Activate += delegate 
 			{ 
@@ -351,29 +343,18 @@ namespace AdventureAuthor.Setup
 			achievementsButton.Enabled = true;
 			achievementsButton.Visible = true;
 			achievementsButton.ToolTipText = "View your achievements and user profile";
-			aaToolbar.Items.Add(achievementsButton);
+			toolbar.Items.Add(achievementsButton);
 			*/
 			
 			ModuleHelper.ModuleOpened += delegate {  
-				conversationButton.Enabled = true;					
-				/*
-				 * Disabling variables for now.
-				 * 
+				conversationButton.Enabled = true;	
 				variableButton.Enabled = true;
-				*/
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  
 				conversationButton.Enabled = false;
-				/*
-				 * Disabling variables for now.
-				 * 
 				variableButton.Enabled = false;
-				*/
 			};
-        	
-			aaToolbar.AddRemoveButtonsVisible = false;
-			return aaToolbar;
 		}
 		
 		

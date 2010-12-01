@@ -6,15 +6,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureAuthor", "Adventur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAUtils", "UtilsLibrary\AAUtils.csproj", "{1EEC08D2-0EDF-4A28-8C75-C49353213648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comment Cards", "Worksheets\Comment Cards.csproj", "{FE28833C-EDC9-48FC-80E4-4CE168E828DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netron.Diagramming.Win", "Diagramming.Win\Netron.Diagramming.Win.csproj", "{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netron.Diagramming.Core", "Diagramming.Core\Netron.Diagramming.Core.csproj", "{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magnets", "Magnets\Magnets.csproj", "{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "My Tasks", "My Tasks\My Tasks.csproj", "{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netron.Diagramming.Win", "Diagramming.Win\Netron.Diagramming.Win.csproj", "{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netron.Diagramming.Core", "Diagramming.Core\Netron.Diagramming.Core.csproj", "{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comment Cards", "Worksheets\Comment Cards.csproj", "{FE28833C-EDC9-48FC-80E4-4CE168E828DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,18 +30,6 @@ Global
 		{1EEC08D2-0EDF-4A28-8C75-C49353213648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1EEC08D2-0EDF-4A28-8C75-C49353213648}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1EEC08D2-0EDF-4A28-8C75-C49353213648}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D15C2A9-7D08-4BA6-B307-BDE0CA8AF1CB}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -50,5 +38,17 @@ Global
 		{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{96AEBBEE-4203-45F3-BCF5-7B73BF256BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73853CE-B0D3-4AAB-84B5-26AD41B580EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D30E62E1-B714-40F1-B1B2-EDC618DFB8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE28833C-EDC9-48FC-80E4-4CE168E828DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal
