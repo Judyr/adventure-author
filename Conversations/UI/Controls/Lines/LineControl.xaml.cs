@@ -52,6 +52,13 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	/// </summary>
     public abstract partial class LineControl : UserControl
     {    	
+    	#region Constants
+    	
+    	protected const string AddScriptHeader = "Add script";
+    	protected const string EditScriptHeader = "Edit script";
+    	
+    	#endregion
+    	
     	#region Fields
     	
     	/// <summary>
@@ -170,14 +177,25 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	Dialogue.LostFocus += new RoutedEventHandler(Dialogue_LostFocus);
         	Dialogue.GotFocus += new RoutedEventHandler(Dialogue_GotFocus);
         	
-        	// My Achievements stuff:
+        	/*
+        	 * Disabled My Achievements.
         	Dialogue.TextChanged += new TextChangedEventHandler(GetNarrativeWordsTyped);
+        	 */
+        	
+        	// Update the context menu:
+        	ContextMenuOpening += delegate(object sender, ContextMenuEventArgs e)
+        	{  
+        		ContextMenu cm = Resources["LineControlContextMenu"] as ContextMenu;
+        		foreach (MenuItem mi in cm.Items) {
+        			
+        			if (mi.Name == "MenuItem_AddAction") {        				
+		        		if (line.Actions.Count > 0) mi.Header = EditScriptHeader;
+		        		else mi.Header = AddScriptHeader;
+		        		return;
+        			}
+        		}
+        	};
         }
-
-        
-             
-        
-           
         
 
         private void Dialogue_GotFocus(object sender, RoutedEventArgs e)
