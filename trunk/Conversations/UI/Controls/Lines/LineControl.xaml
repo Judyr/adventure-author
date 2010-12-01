@@ -39,7 +39,7 @@
 			<MenuItem Header="Go to page" Click="OnClick_GoToPage" Name="MenuItem_GoToPage"/>
 			
 			<MenuItem Name="MenuItem_AddAction"
-					  Header="Add a script"
+					  Header="Add script"
 					  Click="AddScript"/>
 			
 <!--		<MenuItem Header="Add an action" Name="MenuItem_AddAction">
