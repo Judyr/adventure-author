@@ -71,7 +71,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			MenuItem MenuItem_GoToPage = (MenuItem)FindName("MenuItem_GoToPage");
 			MenuItem MenuItem_AddAction = (MenuItem)FindName("MenuItem_AddAction");
 			MenuItem MenuItem_AddCondition = (MenuItem)FindName("MenuItem_AddCondition");
-			MenuItem MenuItem_SetCamera = (MenuItem)FindName("MenuItem_SetCamera");
 			MenuItem MenuItem_DeleteLine = (MenuItem)FindName("MenuItem_DeleteLine");
 			MenuItem MenuItem_MakeIntoChoice = (MenuItem)FindName("MenuItem_MakeIntoChoice");
 			
@@ -84,9 +83,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
 			
 			MenuItem_AddCondition.IsEnabled = false;
 			MenuItem_AddCondition.Visibility = Visibility.Collapsed;
-			
-			MenuItem_SetCamera.IsEnabled = false;
-			MenuItem_SetCamera.Visibility = Visibility.Collapsed;
 			
 			MenuItem_DeleteLine.IsEnabled = false;
 			MenuItem_DeleteLine.Visibility = Visibility.Collapsed;

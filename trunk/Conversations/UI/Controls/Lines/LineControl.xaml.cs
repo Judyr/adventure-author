@@ -233,7 +233,43 @@ namespace AdventureAuthor.Conversations.UI.Controls
 	        		}
 	        	}
         		
-        		AddNonFlipScriptDialog(); // if Flip has not been found
+        		AddNWScriptActionDialog(); // if Flip has not been found
+        	
+        	}
+        	
+        	catch (Exception x) {
+        		Say.Error("Couldn't add a script to this line of dialogue due to an error.",x);
+        	}
+        }
+        
+        
+        private void AddCondition(object sender, RoutedEventArgs e)
+        {
+        	// If there already is a script on this line, open it (or warn that you have to edit the existing one, whatever's easier.)
+        	// Otherwise, create a new one.
+        	
+        	// Calling: 'public void AddConditionToConversationLine(NWN2ConversationConnector line, NWN2GameConversation conversation)'
+        	
+        	try {
+        	
+	        	foreach (INWN2Plugin plugin in NWN2ToolsetMainForm.PluginHost.Plugins) {
+	        		
+	        		if (plugin.Name == "Flip") {
+	        			
+	        			MethodInfo mi = plugin.GetType().GetMethod("AddConditionToConversationLine",BindingFlags.Public | BindingFlags.Instance);
+	        			
+	        			object[] parameters = new object[] { nwn2Line, Conversation.CurrentConversation.NwnConv };
+	        			
+	        			if (mi != null) {
+	        				mi.Invoke(plugin,parameters);
+	        				return;
+	        			}
+	        			
+	        			else throw new MethodAccessException("Couldn't find method AddConditionToConversationLine.");
+	        		}
+	        	}
+        		
+        		AddNWScriptConditionDialog(); // if Flip has not been found
         	
         	}
         	
@@ -243,7 +279,7 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
             	
     	
-    	private void AddNonFlipScriptDialog()
+    	private void AddNWScriptActionDialog()
     	{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.ValidateNames = true;
@@ -256,12 +292,47 @@ namespace AdventureAuthor.Conversations.UI.Controls
 									
   			bool ok = (bool)openFileDialog.ShowDialog();  				
   			if (ok) {
-  				string filename = openFileDialog.FileName;
-  				FileInfo fileInfo = new FileInfo(filename);  			  				
-  				NWN2ScriptFunctor action = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
-							  				                             null, // currently don't handle scripts taking parameters
-							  				                             fileInfo.DirectoryName); 	
-	    		Conversation.CurrentConversation.AddAction(nwn2Line,action);
+  				try {
+	  				string filename = openFileDialog.FileName;
+	  				FileInfo fileInfo = new FileInfo(filename);  			  				
+	  				NWN2ScriptFunctor action = ScriptHelper.GetScriptFunctor(Path.GetFileNameWithoutExtension(filename),
+								  				                             null, // currently don't handle scripts taking parameters
+								  				                             fileInfo.DirectoryName); 	
+		    		Conversation.CurrentConversation.AddAction(nwn2Line,action);
+  				}
+  				catch (Exception x) {
+  					Say.Error("Could not add script.",x);
+  				}
+  			}    		
+    	}
+            	
+    	
+    	private void AddNWScriptConditionDialog()
+    	{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.ValidateNames = true;
+    		openFileDialog.DefaultExt = Filters.COMPILEDSCRIPTS;
+    		openFileDialog.Filter = Filters.COMPILEDSCRIPTS;
+			openFileDialog.Title = "Select a script to use as condition";
+			openFileDialog.Multiselect = false;
+			openFileDialog.RestoreDirectory = true;
+			openFileDialog.InitialDirectory = ModuleHelper.GetCurrentModulePath();			
+									
+  			bool ok = (bool)openFileDialog.ShowDialog();  				
+  			if (ok) {
+  				try {
+	  				string filename = openFileDialog.FileName;
+	  				FileInfo fileInfo = new FileInfo(filename);  	
+	  				
+	  				NWN2ConditionalFunctor condition = ScriptHelper.GetConditionalFunctor(Path.GetFileNameWithoutExtension(filename),
+	  				                                                                      null, // currently don't handle scripts taking parameters
+	  				                                                                      fileInfo.DirectoryName);
+	  				
+	  				Conversation.CurrentConversation.AddCondition(nwn2Line,condition);
+  				}
+  				catch (Exception x) {
+  					Say.Error("Could not add script as condition.",x);
+  				}
   			}    		
     	}
         
