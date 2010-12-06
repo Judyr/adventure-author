@@ -441,6 +441,23 @@ namespace AdventureAuthor.Conversations
 				OnChanged(new ConversationChangedEventArgs(false));
 			}
 		}
+				
+		
+		/// <summary>
+		/// Delete all actions on a line of dialogue.
+		/// </summary>
+		/// <param name="line">The line of dialogue</param>
+		public void DeleteAllActions(NWN2ConversationConnector line)
+		{
+			if (line == null) {
+				Say.Error("Can't operate on a null line.");
+			}
+			else {
+				Log.WriteMessage("deleted all actions on line");
+				line.Actions.Clear();
+				OnChanged(new ConversationChangedEventArgs(false));
+			}
+		}
 		
 		
 		/// <summary>

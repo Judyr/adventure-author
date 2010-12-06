@@ -38,9 +38,15 @@ namespace AdventureAuthor.Conversations.UI.Controls
 {
     public partial class LineControl : UserControl
     {    
-    	private bool HasCondition()
+    	public bool HasCondition()
     	{
-    		return nwn2Line.Conditions.Count > 0;
+    		return nwn2Line != null && nwn2Line.Conditions != null && nwn2Line.Conditions.Count > 0;
+    	}
+    	
+    	
+    	public bool HasAction()
+    	{
+    		return nwn2Line != null && nwn2Line.Actions != null && nwn2Line.Actions.Count > 0;
     	}
     	
     	

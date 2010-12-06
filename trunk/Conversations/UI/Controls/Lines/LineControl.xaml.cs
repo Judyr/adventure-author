@@ -56,6 +56,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
     	
     	protected const string AddScriptHeader = "Add script";
     	protected const string EditScriptHeader = "Edit script";
+    	protected const string AddConditionHeader = "Add condition";
+    	protected const string EditConditionHeader = "Edit condition";
     	
     	#endregion
     	
@@ -150,8 +152,8 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		foreach (NWN2ScriptFunctor action in line.Actions) {
         			ActionControl actionControl = new ActionControl(action,this);
         			actionControls.Add(actionControl);
-        			actionControl.moveUpMenuItem.IsEnabled = lineHasSeveralActions;
-        			actionControl.moveDownMenuItem.IsEnabled = lineHasSeveralActions;
+        			//actionControl.moveUpMenuItem.IsEnabled = lineHasSeveralActions;
+        			//actionControl.moveDownMenuItem.IsEnabled = lineHasSeveralActions;
         			ActionsPanel.Children.Add(actionControl);
         		}
         	}   
@@ -189,12 +191,32 @@ namespace AdventureAuthor.Conversations.UI.Controls
         		foreach (MenuItem mi in cm.Items) {
         			
         			if (mi.Name == "MenuItem_AddAction") {        				
-		        		if (line.Actions.Count > 0) mi.Header = EditScriptHeader;
+        				if (HasAction()) mi.Header = EditScriptHeader;
 		        		else mi.Header = AddScriptHeader;
-		        		return;
+        			}
+        			
+        			else if (mi.Name == "MenuItem_AddCondition") {      				
+        				if (HasCondition()) mi.Header = EditConditionHeader;
+		        		else mi.Header = AddConditionHeader;
         			}
         		}
         	};
+        	
+        	// Usually Changed events are only raised when changes are made through the
+        	// Conversation class, but Flip makes changes to Actions and Conditions directly.
+        	line.Actions.Changed += UpdateViewWhenScriptsChange;
+        	line.Conditions.Changed += UpdateViewWhenScriptsChange;
+        }
+
+        
+        protected void UpdateViewWhenScriptsChange(OEIShared.Utils.OEICollectionWithEvents cList)
+        {
+        	try {
+        		Conversation.CurrentConversation.OnChanged(new ConversationChangedEventArgs(false));
+        	}
+        	catch (Exception x) {
+        		Say.Error(x);
+        	}
         }
         
 
@@ -243,6 +265,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
         }
         
         
+        private void DeleteScript(object sender, RoutedEventArgs e)
+        {
+        	if (!HasAction()) return;
+        	
+	 		MessageBoxResult result = MessageBox.Show("Delete the script on this line?","Delete?", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes) {
+	 			Conversation.CurrentConversation.DeleteAllActions(Nwn2Line);	 			
+			}	
+        }
+        
+        
         private void AddCondition(object sender, RoutedEventArgs e)
         {
         	// If there already is a script on this line, open it (or warn that you have to edit the existing one, whatever's easier.)
@@ -276,6 +309,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	catch (Exception x) {
         		Say.Error("Couldn't add a script to this line of dialogue due to an error.",x);
         	}
+        }
+        
+        
+        private void DeleteCondition(object sender, RoutedEventArgs e)
+        {
+        	if (!HasCondition()) return;
+        	
+	 		MessageBoxResult result = MessageBox.Show("Delete the condition on this line?","Delete?", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes) {
+	 			Conversation.CurrentConversation.DeleteAllConditions(Nwn2Line);	 			
+			}	
         }
             	
     	
