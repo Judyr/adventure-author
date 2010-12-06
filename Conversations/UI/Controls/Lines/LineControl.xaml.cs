@@ -201,22 +201,6 @@ namespace AdventureAuthor.Conversations.UI.Controls
         			}
         		}
         	};
-        	
-        	// Usually Changed events are only raised when changes are made through the
-        	// Conversation class, but Flip makes changes to Actions and Conditions directly.
-        	line.Actions.Changed += UpdateViewWhenScriptsChange;
-        	line.Conditions.Changed += UpdateViewWhenScriptsChange;
-        }
-
-        
-        protected void UpdateViewWhenScriptsChange(OEIShared.Utils.OEICollectionWithEvents cList)
-        {
-        	try {
-        		Conversation.CurrentConversation.OnChanged(new ConversationChangedEventArgs(false));
-        	}
-        	catch (Exception x) {
-        		Say.Error(x);
-        	}
         }
         
 

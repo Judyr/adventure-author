@@ -27,9 +27,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using AdventureAuthor.Core;
 using AdventureAuthor.Utils;
+using NWN2Toolset.Plugins;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.Blueprints;
 using NWN2Toolset.NWN2.Data.Instances;
@@ -50,7 +52,7 @@ namespace AdventureAuthor.Scripts
 	{		
 		#region Constants
 		
-		private static string ownerName = "[OWNER]";		
+		private static string ownerName = "[OWNER]";	
 					
 		#endregion
 		
@@ -405,6 +407,44 @@ namespace AdventureAuthor.Scripts
 		#region Describing scripts
 		
 		public static string GetDescriptionForAction(NWN2ScriptFunctor action)
+		{
+        	try {
+	        	foreach (INWN2Plugin plugin in form.PluginHost.Plugins) {
+	        		
+	        		if (plugin.Name == "Flip") {
+	        			
+	        			MethodInfo mi = plugin.GetType().GetMethod("GetNaturalLanguage",BindingFlags.Public | BindingFlags.Instance);
+	        				        			
+	        			if (mi != null) {
+	        				
+					        NWN2GameScript script = new NWN2GameScript(action.Script);
+		        			script.Demand();
+		        			
+		        			object[] parameters = new object[] { script.Data };
+	        				
+		        			string nl = (string)mi.Invoke(plugin,parameters);
+		        			
+		        			if (!String.IsNullOrEmpty(nl)) return nl;
+	        			}
+	        			
+	        			else throw new MethodAccessException("Couldn't find method GetNaturalLanguage.");
+	        		}
+	        	}        	
+        	}
+			
+			catch (Exception) {}
+			
+			return GetDescriptionForScriptWizardAction(action);
+		}
+		
+		
+		public static string GetDescriptionForCondition(NWN2ConditionalFunctorCollection conditions)
+		{
+			 return GetDescriptionForScriptWizardCondition(conditions);
+		}
+		
+		
+		public static string GetDescriptionForScriptWizardAction(NWN2ScriptFunctor action)
 		{
 			if (action == null) {
 				return "Was given a blank action.";
@@ -777,14 +817,14 @@ namespace AdventureAuthor.Scripts
 		}
 			 	
 		
-		public static string GetDescriptionForCondition(NWN2ConditionalFunctorCollection conditions)
+		public static string GetDescriptionForScriptWizardCondition(NWN2ConditionalFunctorCollection conditions)
 		{
 			if (conditions == null || conditions.Count == 0) {
 				return "Was given a blank set of conditions.";
 			}
-			if (conditions.Count > 1) {
-				Say.Warning("Tried to describe a line with more than one condition attached to it - only the first will be described.");
-			}
+//			if (conditions.Count > 1) {
+//				Say.Warning("Tried to describe a line with more than one condition attached to it - only the first will be described.");
+//			}
 			
 			NWN2ConditionalFunctor condition = conditions[0];
 			return GetDescriptionForCondition(condition);
