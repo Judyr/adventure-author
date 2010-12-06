@@ -42,18 +42,24 @@
 			<MenuItem Name="MenuItem_GoToPage"
 					  Header="Go to page"
 			          Click="OnClick_GoToPage"/>
-			<MenuItem Name="MenuItem_AddAction"
-					  Header="Add script"
-					  Click="AddScript"/>			
-			<MenuItem Name="MenuItem_AddCondition"
-					  Header="Add condition"
-					  Click="AddCondition"/>
 			<MenuItem Name="MenuItem_DeleteLine"
 					  Header="Delete line"
 			          Click="OnClick_Delete"/>
 			<MenuItem Name="MenuItem_MakeIntoChoice"
 					  Header="Make into choice"
-			          Click="OnClick_MakeIntoBranch"/>		
+			          Click="OnClick_MakeIntoBranch"/>	
+			<MenuItem Name="MenuItem_AddAction"
+					  Header="Add script"
+					  Click="AddScript"/>				
+			<MenuItem Name="MenuItem_DeleteAction"
+					  Header="Delete script"
+					  Click="DeleteScript"/>
+			<MenuItem Name="MenuItem_AddCondition"
+					  Header="Add condition"
+					  Click="AddCondition"/>			
+			<MenuItem Name="MenuItem_DeleteCondition"
+					  Header="Delete condition"
+					  Click="DeleteCondition"/>		
 		</ContextMenu>	
 	</UserControl.Resources>
 	
