@@ -378,13 +378,11 @@ namespace AdventureAuthor.Setup
 		/// <summary>
 		/// Called by Flip when it adds a script to a conversation.
 		/// </summary>
-		public void NotifyConversationWriterOfChange(string conversationName)
+		public void NotifyConversationWriterOfChange()
 		{
 			if (Conversations.Conversation.CurrentConversation == null) return;
 			
-			if (WriterWindow.Instance.WorkingFilename == conversationName) {
-				Conversations.Conversation.CurrentConversation.OnChanged(new Conversations.ConversationChangedEventArgs(false));
-			}
+			Conversations.Conversation.CurrentConversation.OnChanged(new Conversations.ConversationChangedEventArgs(false));
 		}
 		
 		#endregion
