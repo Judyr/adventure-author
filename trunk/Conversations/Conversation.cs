@@ -1088,8 +1088,7 @@ namespace AdventureAuthor.Conversations
 			foreach (Page childPage in page.Children) {
 				string text = ("(" + page.Children.IndexOf(page) + 1).ToString() + ")";
 				if (childPage.LeadLine.Conditions.Count > 0) {
-					text += " - only appears if " + 
-						ScriptHelper.GetDescriptionForCondition(childPage.LeadLine.Conditions).ToLower() + ")";
+					text += ScriptHelper.GetDescriptionForCondition(childPage.LeadLine.Conditions[0]).ToLower() + ")";
 				}
 				sw.WriteLine(text);
 				string indent = "  ";
@@ -1147,8 +1146,8 @@ namespace AdventureAuthor.Conversations
 			foreach (NWN2ConversationConnector line in siblings) {
 				int branchNumber = siblings.IndexOf(line) + 1;
 				if (line.Conditions.Count > 0) {
-					sw.WriteLine(indent + "(Branch " + branchNumber + ") <ONLY APPEARS IF " + 
-					             ScriptHelper.GetDescriptionForCondition(line.Conditions) + ">:");
+					sw.WriteLine(indent + "(Branch " + branchNumber + ") <" + 
+					             ScriptHelper.GetDescriptionForCondition(line.Conditions[0]) + ">:");
 				}
 				else {
 					sw.WriteLine(indent + "(Branch " + branchNumber + "):");

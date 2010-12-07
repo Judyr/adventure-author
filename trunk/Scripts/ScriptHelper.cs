@@ -438,9 +438,35 @@ namespace AdventureAuthor.Scripts
 		}
 		
 		
-		public static string GetDescriptionForCondition(NWN2ConditionalFunctorCollection conditions)
+		public static string GetDescriptionForCondition(NWN2ConditionalFunctor condition)
 		{
-			 return GetDescriptionForScriptWizardCondition(conditions);
+        	try {
+	        	foreach (INWN2Plugin plugin in form.PluginHost.Plugins) {
+	        		
+	        		if (plugin.Name == "Flip") {
+	        			
+	        			MethodInfo mi = plugin.GetType().GetMethod("GetNaturalLanguage",BindingFlags.Public | BindingFlags.Instance);
+	        				        			
+	        			if (mi != null) {
+	        				
+					        NWN2GameScript script = new NWN2GameScript(condition.Script);
+		        			script.Demand();
+		        			
+		        			object[] parameters = new object[] { script.Data };
+	        				
+		        			string nl = (string)mi.Invoke(plugin,parameters);
+		        			
+		        			if (!String.IsNullOrEmpty(nl)) return nl;
+	        			}
+	        			
+	        			else throw new MethodAccessException("Couldn't find method GetNaturalLanguage.");
+	        		}
+	        	}        	
+        	}
+			
+			catch (Exception) {}
+			
+			return GetDescriptionForScriptWizardCondition(condition);
 		}
 		
 		
@@ -815,23 +841,9 @@ namespace AdventureAuthor.Scripts
 					return "RUN SCRIPT: '" + Path.GetFileNameWithoutExtension(action.Script.FullName) + "'";
 			}
 		}
-			 	
-		
-		public static string GetDescriptionForScriptWizardCondition(NWN2ConditionalFunctorCollection conditions)
-		{
-			if (conditions == null || conditions.Count == 0) {
-				return "Was given a blank set of conditions.";
-			}
-//			if (conditions.Count > 1) {
-//				Say.Warning("Tried to describe a line with more than one condition attached to it - only the first will be described.");
-//			}
-			
-			NWN2ConditionalFunctor condition = conditions[0];
-			return GetDescriptionForCondition(condition);
-		}
 		
 		
-		public static string GetDescriptionForCondition(NWN2ConditionalFunctor condition)
+		private static string GetDescriptionForScriptWizardCondition(NWN2ConditionalFunctor condition)
 		{
 			if (condition == null) {
 				return "Was given a blank condition.";
