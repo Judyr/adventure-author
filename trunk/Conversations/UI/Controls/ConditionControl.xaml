@@ -24,12 +24,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	MouseDown="OnMouseDown">
-	<UserControl.ContextMenu>
+	<!--<UserControl.ContextMenu>
 		<ContextMenu>
 			<MenuItem Header="Edit condition" IsEnabled="false" Visibility="Collapsed"/>
 			<MenuItem Header="Delete condition" IsEnabled="true" Click="OnClick_DeleteConditions"/>
 		</ContextMenu>
-	</UserControl.ContextMenu>
+	</UserControl.ContextMenu>-->
     <Grid>
 		<Grid.RowDefinitions>
     		<RowDefinition/>
