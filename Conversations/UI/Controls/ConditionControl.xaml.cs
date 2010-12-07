@@ -58,7 +58,14 @@ namespace AdventureAuthor.Conversations.UI.Controls
         {
         	InitializeComponent();
             this.attachedTo = attachedTo;
-            this.Description.Text = "IF " + ScriptHelper.GetDescriptionForCondition(attachedTo.Nwn2Line.Conditions) + " THEN";
+            try {
+            	string description = ScriptHelper.GetDescriptionForCondition(attachedTo.Nwn2Line.Conditions[0]);
+            	if (description.EndsWith(".")) description = description.Substring(0,description.Length-1) + ":";
+            	this.Description.Text = description;
+            }
+            catch (Exception) {
+            	this.Description.Text = "IF SCRIPT RETURNS TRUE THEN";
+            }
         }
 
                 
