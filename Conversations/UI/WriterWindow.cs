@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
@@ -44,6 +45,7 @@ using Microsoft.Win32;
 using NWN2Toolset.NWN2.Data;
 using NWN2Toolset.NWN2.Data.ConversationData;
 using NWN2Toolset.NWN2.IO;
+using NWN2Toolset.Plugins;
 using form = NWN2Toolset.NWN2ToolsetMainForm;
 using System.Windows.Input;
 using OEIShared.Utils;
@@ -183,6 +185,16 @@ namespace AdventureAuthor.Conversations.UI
 			}
 		}
 		
+		
+		public event EventHandler ConversationClosed;		
+		protected void OnConversationClosed(EventArgs e)
+		{
+			EventHandler handler = ConversationClosed;
+			if (handler != null) {
+				handler(this,e);
+			}
+		}		
+		
 		#endregion
 		    	      	
     	#region Constructors 
@@ -211,6 +223,7 @@ namespace AdventureAuthor.Conversations.UI
     		};
     		
             Closing += delegate { 
+    			
             	try {
             		Log.WriteAction(LogAction.exited,"conversationwriter");
             	}
@@ -219,8 +232,27 @@ namespace AdventureAuthor.Conversations.UI
             	}
             };
     		
-    		this.PreviewDrop += delegate(object sender, DragEventArgs e) { 
-    			Say.Debug("Source: " + e.Source + "  \n\nOriginal source: " + e.OriginalSource);
+    		ConversationClosed += delegate 
+    		{      				        	
+	        	// Calling: 'public void ConversationClosing()'	        	
+	        	try {	        	
+		        	foreach (INWN2Plugin plugin in form.PluginHost.Plugins) {
+		        		
+		        		if (plugin.Name == "Flip") {
+		        			
+		        			MethodInfo mi = plugin.GetType().GetMethod("ConversationClosing",BindingFlags.Public | BindingFlags.Instance);
+		        			
+		        			if (mi != null) {
+		        				mi.Invoke(plugin,null);
+		        				return;
+		        			}
+		        			
+		        			else throw new MethodAccessException("Couldn't find method ConversationClosing.");
+		        		}
+		        	}	        	
+	        	}
+	        	
+	        	catch (Exception) {}
     		};
 
 			MinWidth = AdventureAuthor.Utils.Tools.MINIMUMWINDOWWIDTH;
@@ -1030,6 +1062,7 @@ namespace AdventureAuthor.Conversations.UI
 		// TODO: Write an OnClosing method for form.App, attach it, and see if it gets called by ShutdownToolset
 		
 		
+		
 		/// <summary>
 		/// Close the current conversation.
 		/// </summary>
@@ -1064,6 +1097,8 @@ namespace AdventureAuthor.Conversations.UI
 				SetUI_ConversationIsNotOpen();
 				
 				this.LinesPanel.Children.Clear();	
+				
+				OnConversationClosed(new EventArgs());				
 			}
 			catch (Exception e) {
 				Say.Error(e);
