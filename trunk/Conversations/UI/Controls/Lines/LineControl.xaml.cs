@@ -255,7 +255,9 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	
 	 		MessageBoxResult result = MessageBox.Show("Delete the script on this line?","Delete?", MessageBoxButton.YesNo);
 			if (result == MessageBoxResult.Yes) {
-	 			Conversation.CurrentConversation.DeleteAllActions(Nwn2Line);	 			
+	 			string scriptName = nwn2Line.Actions[0].Script.FullName;
+	 			Conversation.CurrentConversation.DeleteAllActions(Nwn2Line);	
+	 			Log.WriteAction(LogAction.deleted,"script",scriptName + " (was attached to line '" + nwn2Line.Text.GetSafeString(OEIShared.Utils.BWLanguages.CurrentLanguage) + "')");
 			}	
         }
         
@@ -301,8 +303,10 @@ namespace AdventureAuthor.Conversations.UI.Controls
         	if (!HasCondition()) return;
         	
 	 		MessageBoxResult result = MessageBox.Show("Delete the condition on this line?","Delete?", MessageBoxButton.YesNo);
-			if (result == MessageBoxResult.Yes) {
-	 			Conversation.CurrentConversation.DeleteAllConditions(Nwn2Line);	 			
+			if (result == MessageBoxResult.Yes) {	
+	 			string scriptName = nwn2Line.Conditions[0].Script.FullName;
+	 			Conversation.CurrentConversation.DeleteAllConditions(Nwn2Line);	 
+	 			Log.WriteAction(LogAction.deleted,"script",scriptName + " (was attached as condition to line '" + nwn2Line.Text.GetSafeString(OEIShared.Utils.BWLanguages.CurrentLanguage) + "')");		
 			}	
         }
             	
