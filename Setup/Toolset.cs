@@ -1372,6 +1372,8 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public static void LaunchVariableManager()
 		{
+			return;
+			
 			if (!ModuleHelper.ModuleIsOpen()) {
 				Say.Debug("Tried to run variable manager when no module was open.");
 				return;
@@ -1396,7 +1398,6 @@ namespace AdventureAuthor.Setup
 		/// </summary>
 		public static void LaunchMyAchievements()
 		{
-			Say.Information("Achievements have been disabled.");
 			return;
 			
 			try {
