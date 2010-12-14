@@ -298,15 +298,15 @@ namespace AdventureAuthor.Setup
 			SetSandbarButtonImage(conversationButton,"greenpencil","Conversations");			
 			toolbar.Items.Add(conversationButton);
 			
-			ButtonItem variableButton = new ButtonItem();
-			variableButton.Activate += delegate { 
-				LaunchVariableManager();
-				Tools.BringToFront(VariablesWindow.Instance);
-			};
-			variableButton.ToolTipText = "Manage game variables";
-			variableButton.Enabled = false;
-			SetSandbarButtonImage(variableButton,"gear","Variables");
-			toolbar.Items.Add(variableButton);	
+//			ButtonItem variableButton = new ButtonItem();
+//			variableButton.Activate += delegate { 
+//				LaunchVariableManager();
+//				Tools.BringToFront(VariablesWindow.Instance);
+//			};
+//			variableButton.ToolTipText = "Manage game variables";
+//			variableButton.Enabled = false;
+//			SetSandbarButtonImage(variableButton,"gear","Variables");
+//			toolbar.Items.Add(variableButton);	
 							
 			ButtonItem ideasButton = new ButtonItem();
 			ideasButton.Activate += delegate { 
@@ -348,12 +348,12 @@ namespace AdventureAuthor.Setup
 			
 			ModuleHelper.ModuleOpened += delegate {  
 				conversationButton.Enabled = true;	
-				variableButton.Enabled = true;
+//				variableButton.Enabled = true;
 			};
 			
 			ModuleHelper.ModuleClosed += delegate {  
 				conversationButton.Enabled = false;
-				variableButton.Enabled = false;
+//				variableButton.Enabled = false;
 			};
 		}
 		
