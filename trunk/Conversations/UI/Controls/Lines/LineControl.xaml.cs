@@ -201,6 +201,17 @@ namespace AdventureAuthor.Conversations.UI.Controls
         			}
         		}
         	};
+        	
+			try {
+        		System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)new ResourceManager("AdventureAuthor.Images",
+				                                                          			   Assembly.GetExecutingAssembly()).GetObject("delete");
+        		System.Windows.Controls.Image image = new Image();
+        		image.Source = Tools.GetBitmapSource(bmp);
+        		DeleteLineButton.Content = image;
+			}
+        	catch (Exception) {
+				if (DeleteLineButton != null) DeleteLineButton.Content = "x";
+			}
         }
         
 

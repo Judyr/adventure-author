@@ -361,6 +361,7 @@
       <DependentUpon>RunAdventure_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Images.resx" />
+    <EmbeddedResource Include="Conversations\UI\Controls\Lines\delete.png" />
     <None Include="EULA.txt" />
     <None Include="gpl.txt" />
     <EmbeddedResource Include="Variables\UI\delete.png" />
