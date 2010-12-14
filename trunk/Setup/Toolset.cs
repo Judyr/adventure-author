@@ -1332,7 +1332,7 @@ namespace AdventureAuthor.Setup
 			NWN2NewAreaWizard wizard = new NWN2NewAreaWizard(form.App.Module.GetTemporaryName(ModuleResourceType.Area));
 			wizard.cWizardCompleteHandler += delegate(string sName, Size cSize, bool bInterior) 
 			{  
-				AreaHelper.CreateArea(form.App.Module,sName,!bInterior,cSize.Width,cSize.Height);
+				AreaHelper.CreateArea(form.App.Module,sName.ToLower(),!bInterior,cSize.Width,cSize.Height);
 			};
 			wizard.ShowDialog(form.App);
 		}
