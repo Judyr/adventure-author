@@ -61,7 +61,7 @@ namespace AdventureAuthor.Core
 		public const int MIN_AREA_LENGTH = 8;  // equates to 4 red gridbox lengths on the map grid
 		public const int DEFAULT_AREA_LENGTH = 12; // equates to 6 red gridbox lengths on the map grid
 		public const int MAX_AREA_LENGTH = 16; // equates to 8 red gridbox lengths on the map grid
-		public const string NAME_OF_SCRATCHPAD_AREA = "Scratchpad";
+		public const string NAME_OF_SCRATCHPAD_AREA = "scratchpad";
 		
 		#endregion
 			
