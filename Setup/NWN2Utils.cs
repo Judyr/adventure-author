@@ -210,29 +210,29 @@ namespace AdventureAuthor.Setup
 		}
 		
 		
-		public static void WriteTotalWordCountForAllModulesToFile()
-		{
-			FileInfo fi = new FileInfo(@"C:\To burn\totalwordcounts.txt");
-			using (StreamWriter sw = fi.CreateText())
-			{				
-				sw.AutoFlush = true;
-				DirectoryInfo modulesDirectory = new DirectoryInfo(form.ModulesDirectory);
-				foreach (DirectoryInfo module in modulesDirectory.GetDirectories()) {
-					if (module.Name.StartsWith("temp")) {
-						continue;
-					}
-					form.App.Module.OpenModuleDirectory(module.Name);
-					int conversations = GetTotalWordCountOfConversations(form.App.Module);
-					int narrativeVehicles = GetApproximateTotalWordCountOfNarrativeVehicles(form.App.Module,true);
-					int total = conversations + narrativeVehicles;
-					sw.WriteLine();
-					sw.WriteLine(" ** " + form.App.Module.Name + " ** ");
-					sw.WriteLine("Word count (conversations): " + conversations);
-					sw.WriteLine("Word count (descriptive text): " + narrativeVehicles);
-					sw.WriteLine("Total: " + total);
-				}
-			}
-		}
+//		public static void WriteTotalWordCountForAllModulesToFile()
+//		{
+//			FileInfo fi = new FileInfo(@"C:\To burn\totalwordcounts.txt");
+//			using (StreamWriter sw = fi.CreateText())
+//			{				
+//				sw.AutoFlush = true;
+//				DirectoryInfo modulesDirectory = new DirectoryInfo(form.ModulesDirectory);
+//				foreach (DirectoryInfo module in modulesDirectory.GetDirectories()) {
+//					if (module.Name.StartsWith("temp")) {
+//						continue;
+//					}
+//					form.App.Module.OpenModuleDirectory(module.Name);
+//					int conversations = GetTotalWordCountOfConversations(form.App.Module);
+//					int narrativeVehicles = GetApproximateTotalWordCountOfNarrativeVehicles(form.App.Module,true);
+//					int total = conversations + narrativeVehicles;
+//					sw.WriteLine();
+//					sw.WriteLine(" ** " + form.App.Module.Name + " ** ");
+//					sw.WriteLine("Word count (conversations): " + conversations);
+//					sw.WriteLine("Word count (descriptive text): " + narrativeVehicles);
+//					sw.WriteLine("Total: " + total);
+//				}
+//			}
+//		}
 		
 		
 		public static void WritePropertyChangeToLog(NWN2PropertyValueChangedEventArgs e)

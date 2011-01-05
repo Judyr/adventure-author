@@ -70,13 +70,9 @@ namespace AdventureAuthor.Core
 		static ModuleHelper() {
 			FileInfo nwn2ExeFile = new FileInfo(Application.ExecutablePath);
 			nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
-			string localApplicationDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			string myDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			modulesDirectory = Path.Combine(myDocumentsFolder,@"Neverwinter Nights 2\modules");
 			publicUserDirectory = Path.Combine(myDocumentsFolder,"Adventure Author");
-			
-			// TODO: get this value from the registry
-			adventureAuthorInstallDirectory = @"C:\Program Files\Heriot-Watt University\Adventure Author";
 		}
 		
 		
@@ -91,13 +87,6 @@ namespace AdventureAuthor.Core
 		public static string ModulesDirectory {
 			get { return modulesDirectory; }
 			set { modulesDirectory = value; }
-		}
-		
-		
-		private static string adventureAuthorInstallDirectory;		
-		public static string AdventureAuthorInstallDirectory {
-			get { return adventureAuthorInstallDirectory; }
-			set { adventureAuthorInstallDirectory = value; }
 		}
 		
 		
@@ -386,51 +375,52 @@ namespace AdventureAuthor.Core
 			}
 		}
 			
+		// Not used.
+//		/// <summary>
+//		/// Create a date-stamped backup copy of this Adventure.
+//		/// </summary>
+//		/// <param name="reason">The reason that the backup was created.</param>
+//		public static void Backup(string reason)
+//		{
+//			string backupPath = GetDirectoryPathForBackup();
+//			string originalPath = Path.Combine(form.ModulesDirectory,form.App.Module.FileName);
+//			
+//			try {
+//				// Copy the module files to the backup directory:
+//				DirectoryInfo di = new DirectoryInfo(backupPath);
+//				di.Create();
+//				CopyFilesAndSubfolders(originalPath,backupPath);	
+//								
+//				// If given a justification for the backup, write it to a file in the backup directory:
+//				if (reason != string.Empty) {
+//					FileInfo reasonForBackup = new FileInfo(Path.Combine(backupPath,"Reason for backup.txt"));
+//					StreamWriter sw = new StreamWriter(reasonForBackup.OpenWrite());					
+//					sw.WriteLine("Reason for backup:  " + reason);
+//					sw.WriteLine();					
+//					sw.WriteLine("Created " + Tools.GetDateStamp(false));	
+//					sw.Flush();
+//					sw.Close();
+//				}
+//			}
+//			catch (IOException e) {
+//				Say.Error("Problem with writing to disk when trying to back up a module.",e);
+//			}
+//		}
 		
-		/// <summary>
-		/// Create a date-stamped backup copy of this Adventure.
-		/// </summary>
-		/// <param name="reason">The reason that the backup was created.</param>
-		public static void Backup(string reason)
-		{
-			string backupPath = GetDirectoryPathForBackup();
-			string originalPath = Path.Combine(form.ModulesDirectory,form.App.Module.FileName);
-			
-			try {
-				// Copy the module files to the backup directory:
-				DirectoryInfo di = new DirectoryInfo(backupPath);
-				di.Create();
-				CopyFilesAndSubfolders(originalPath,backupPath);	
-								
-				// If given a justification for the backup, write it to a file in the backup directory:
-				if (reason != string.Empty) {
-					FileInfo reasonForBackup = new FileInfo(Path.Combine(backupPath,"Reason for backup.txt"));
-					StreamWriter sw = new StreamWriter(reasonForBackup.OpenWrite());					
-					sw.WriteLine("Reason for backup:  " + reason);
-					sw.WriteLine();					
-					sw.WriteLine("Created " + Tools.GetDateStamp(false));	
-					sw.Flush();
-					sw.Close();
-				}
-			}
-			catch (IOException e) {
-				Say.Error("Problem with writing to disk when trying to back up a module.",e);
-			}
-		}
 		
-		
-		private static string GetDirectoryPathForBackup()
-		{
-			string backupDirectory = Path.Combine(ModuleHelper.PublicUserDirectory,"backups");//ModuleHelper.BackupDir;
-			string path = Path.Combine(backupDirectory,form.App.Module.Name+"_"+Tools.GetDateStamp(true)+"___");			
-			int count = 1;	
-			string newpath = path;
-			while (Directory.Exists(newpath)) { // keep trying directory names until one is not taken
-				count++;
-				newpath = path + count.ToString();
-			}			
-			return newpath;
-		}	
+		// Not used
+//		private static string GetDirectoryPathForBackup()
+//		{
+//			string backupDirectory = Path.Combine(ModuleHelper.PublicUserDirectory,"backups");//ModuleHelper.BackupDir;
+//			string path = Path.Combine(backupDirectory,form.App.Module.Name+"_"+Tools.GetDateStamp(true)+"___");			
+//			int count = 1;	
+//			string newpath = path;
+//			while (Directory.Exists(newpath)) { // keep trying directory names until one is not taken
+//				count++;
+//				newpath = path + count.ToString();
+//			}			
+//			return newpath;
+//		}	
 		
 		
 		private static void CopyFilesAndSubfolders(string source, string destination)
