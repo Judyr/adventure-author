@@ -77,13 +77,13 @@ namespace AdventureAuthor.Core
 			area.Tag = name;
 			area.DisplayName = Conversations.Conversation.GetOEIStringFromString(name);
 						
-			// Apply default scripts for logging changes:
-			try {
-				ScriptHelper.ApplyDefaultScripts(area);
-			}
-			catch (IOException e) {
-				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
-			}
+//			// Apply default scripts for logging changes:
+//			try {
+//				ScriptHelper.ApplyDefaultScripts(area);
+//			}
+//			catch (IOException e) {
+//				Say.Error("Could not find Adventure Author logging scripts to assign to this resource.",e);
+//			}
 			
 			// Log when objects in this area are added and deleted:
 			ApplyLogging(area);
