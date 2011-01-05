@@ -246,17 +246,17 @@ namespace AdventureAuthor.Scripts
 			
 			DirectoryResourceRepository repository = OverrideRepository;
 			
-			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",repository);
-			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",repository);
-			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",repository);
-			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",repository);
-			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",repository);
-			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",repository);
-			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",repository);
-			//module.ModuleInfo.OnPlayerRespawn = ScriptHelper.GetScriptResource("module_onplayerrespawn",loc); doesn't work
-			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",repository);
-			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",repository);
-			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",repository);
+//			module.ModuleInfo.OnAcquireItem = ScriptHelper.GetScriptResource("module_onacquireitem",repository);
+//			module.ModuleInfo.OnActivateItem = ScriptHelper.GetScriptResource("module_onactivateitem",repository);
+//			module.ModuleInfo.OnClientLeave = ScriptHelper.GetScriptResource("module_onclientexit",repository);
+//			module.ModuleInfo.OnPCLoaded = ScriptHelper.GetScriptResource("module_onpcloaded",repository);
+//			module.ModuleInfo.OnPlayerDeath = ScriptHelper.GetScriptResource("module_onplayerdeath",repository);
+//			module.ModuleInfo.OnPlayerEquipItem = ScriptHelper.GetScriptResource("module_onplayerequipitem",repository);
+//			module.ModuleInfo.OnPlayerLevelUp = ScriptHelper.GetScriptResource("module_onplayerlevelup",repository);
+//			//module.ModuleInfo.OnPlayerRespawn = ScriptHelper.GetScriptResource("module_onplayerrespawn",loc); doesn't work
+//			module.ModuleInfo.OnPlayerRest = ScriptHelper.GetScriptResource("module_onplayerrest",repository);
+//			module.ModuleInfo.OnPlayerUnequipItem = ScriptHelper.GetScriptResource("module_onplayerunequipitem",repository);
+//			module.ModuleInfo.OnUnacquireItem = ScriptHelper.GetScriptResource("module_onunacquireitem",repository);
 			
 			// allow player to use (almost) all items by default:
 			module.ModuleInfo.OnClientEnter = ScriptHelper.GetScriptResource("playercanuseallitems",repository);
@@ -274,9 +274,9 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("area","Area to attach scripts to cannot be null.");
 			}
 			
-			DirectoryResourceRepository repository = OverrideRepository;
-			
-			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
+//			DirectoryResourceRepository repository = OverrideRepository;
+//			
+//			area.OnEnterScript = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
 		}
 		
 		
@@ -291,64 +291,65 @@ namespace AdventureAuthor.Scripts
 				throw new ArgumentNullException("instance","Instance to attach scripts to cannot be null.");
 			}
 			
-			DirectoryResourceRepository repository = OverrideRepository;
-			
-			if (instance is NWN2CreatureInstance) {
-				NWN2CreatureInstance creature = (NWN2CreatureInstance)instance;
-				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",repository);
-				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",repository);
-				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",repository);
-				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",repository);
-				//creature.FactionID = 2;
-				// So that when a creature has a conversation, it was definitely added by the user:
-				//creature.Conversation = null;//new OEIShared.IO.MissingResourceEntry();
-			}
-			else if (instance is NWN2DoorInstance) {
-				NWN2DoorInstance door = (NWN2DoorInstance)instance; 
-				door.OnOpen = ScriptHelper.GetScriptResource("onopen",repository);
-				door.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
-				door.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
-				door.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
-				door.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
-				door.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
-				door.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
-				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
-				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
-			}
-			else if (instance is NWN2ItemInstance) {
+			if (instance is NWN2ItemInstance) {
 				NWN2ItemInstance item = (NWN2ItemInstance)instance;
 				item.Identified = true;
 			}
-			else if (instance is NWN2EncounterInstance) {
-				NWN2EncounterInstance encounter = (NWN2EncounterInstance)instance;
-				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",repository);
-				encounter.OnExhausted = ScriptHelper.GetScriptResource("encounter_onexhausted",repository);
-			}
-			else if (instance is NWN2PlaceableInstance) {
-				NWN2PlaceableInstance placeable = (NWN2PlaceableInstance)instance;
-				placeable.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
-				placeable.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
-				placeable.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
-				placeable.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
-				placeable.OnLeftClick = ScriptHelper.GetScriptResource("onleftclick",repository);
-				placeable.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
-				placeable.OnOpen = ScriptHelper.GetScriptResource("onopened",repository);
-				placeable.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
-				placeable.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
-				placeable.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
-			}
-			else if (instance is NWN2StoreInstance) {
-				NWN2StoreInstance store = (NWN2StoreInstance)instance;
-				store.OnOpenStore = ScriptHelper.GetScriptResource("store_onopenstore",repository);
-				store.OnCloseStore = ScriptHelper.GetScriptResource("store_onclosestore",repository);
-			}
-			else if (instance is NWN2TriggerInstance) {
-				NWN2TriggerInstance trigger = (NWN2TriggerInstance)instance;
-				trigger.OnEnter = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
-				trigger.OnExit = ScriptHelper.GetScriptResource("trigger_onexit",repository);
-				trigger.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
-				trigger.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
-			}
+			
+//			DirectoryResourceRepository repository = OverrideRepository;
+			
+//			if (instance is NWN2CreatureInstance) {
+//				NWN2CreatureInstance creature = (NWN2CreatureInstance)instance;
+//				creature.OnConversation = ScriptHelper.GetScriptResource("creature_onconversation",repository);
+//				creature.OnDeath = ScriptHelper.GetScriptResource("creature_ondeath",repository);
+//				creature.OnPhysicalAttacked = ScriptHelper.GetScriptResource("creature_onphysicallyattacked",repository);
+//				creature.OnSpellCastAt = ScriptHelper.GetScriptResource("creature_onspellcastat",repository);
+//				//creature.FactionID = 2;
+//				// So that when a creature has a conversation, it was definitely added by the user:
+//				//creature.Conversation = null;//new OEIShared.IO.MissingResourceEntry();
+//			}
+//			else if (instance is NWN2DoorInstance) {
+//				NWN2DoorInstance door = (NWN2DoorInstance)instance; 
+//				door.OnOpen = ScriptHelper.GetScriptResource("onopen",repository);
+//				door.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
+//				door.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
+//				door.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
+//				door.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
+//				door.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
+//				door.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
+//				door.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+//				door.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
+//			}
+//			else if (instance is NWN2EncounterInstance) {
+//				NWN2EncounterInstance encounter = (NWN2EncounterInstance)instance;
+//				encounter.OnEntered = ScriptHelper.GetScriptResource("encounter_onentered",repository);
+//				encounter.OnExhausted = ScriptHelper.GetScriptResource("encounter_onexhausted",repository);
+//			}
+//			else if (instance is NWN2PlaceableInstance) {
+//				NWN2PlaceableInstance placeable = (NWN2PlaceableInstance)instance;
+//				placeable.OnClosed = ScriptHelper.GetScriptResource("onclosed",repository);
+//				placeable.OnConversation = ScriptHelper.GetScriptResource("door_placeable_onconversation",repository);
+//				placeable.OnDeath = ScriptHelper.GetScriptResource("door_placeable_ondeath",repository);
+//				placeable.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
+//				placeable.OnLeftClick = ScriptHelper.GetScriptResource("onleftclick",repository);
+//				placeable.OnLock = ScriptHelper.GetScriptResource("onlock",repository);
+//				placeable.OnOpen = ScriptHelper.GetScriptResource("onopened",repository);
+//				placeable.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+//				placeable.OnUnlock = ScriptHelper.GetScriptResource("onunlock",repository);
+//				placeable.OnUsed = ScriptHelper.GetScriptResource("door_placeable_onused",repository);
+//			}
+//			else if (instance is NWN2StoreInstance) {
+//				NWN2StoreInstance store = (NWN2StoreInstance)instance;
+//				store.OnOpenStore = ScriptHelper.GetScriptResource("store_onopenstore",repository);
+//				store.OnCloseStore = ScriptHelper.GetScriptResource("store_onclosestore",repository);
+//			}
+//			else if (instance is NWN2TriggerInstance) {
+//				NWN2TriggerInstance trigger = (NWN2TriggerInstance)instance;
+//				trigger.OnEnter = ScriptHelper.GetScriptResource("area_trigger_onenter",repository);
+//				trigger.OnExit = ScriptHelper.GetScriptResource("trigger_onexit",repository);
+//				trigger.OnTrapTriggered = ScriptHelper.GetScriptResource("ontraptriggered",repository);
+//				trigger.OnDisarm = ScriptHelper.GetScriptResource("ondisarm",repository);
+//			}
 		}
 		
 		
