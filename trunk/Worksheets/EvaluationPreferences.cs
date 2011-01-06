@@ -148,9 +148,8 @@ namespace AdventureAuthor.Evaluation
 			this.ImageViewer = ImageApp.Default;
 			string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			this.SavedCommentCardsDirectory = Path.Combine(myDocumentsPath,"Comment Cards");		
-			
-			// TODO get the install directory from the registry:
-			installDirectory = @"C:\Program Files\Heriot-Watt University\Comment Cards";			
+									
+			installDirectory = String.Empty; // deprecated	
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

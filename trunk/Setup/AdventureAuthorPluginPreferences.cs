@@ -216,12 +216,16 @@ namespace AdventureAuthor.Setup
 		{			
 			// default preferences - will only be used if there's no preferences file found:
 			this.LockInterface = lockInterface;
-			this.OpenScratchpadByDefault = openScratchpadByDefault;
+			this.OpenScratchpadByDefault = openScratchpadByDefault;			
 			
-			string aaAppsDir = @"C:\Program Files\Heriot-Watt University\";
-			myTasksPath = Path.Combine(aaAppsDir,@"My Tasks\My Tasks.exe");
-			fridgeMagnetsPath = Path.Combine(aaAppsDir,@"Fridge Magnets\Fridge Magnets.exe");
-			commentCardsPath = Path.Combine(aaAppsDir,@"Comment Cards\Comment Cards.exe");
+			FileInfo nwn2ExeFile = new FileInfo(System.Windows.Forms.Application.ExecutablePath);
+			string nwn2InstallDirectory = nwn2ExeFile.DirectoryName;
+			
+			string aaAppsDir = Path.Combine(nwn2InstallDirectory,@"NWN2Toolset\Plugins");
+			
+			myTasksPath = Path.Combine(aaAppsDir,"My Tasks.exe");
+			fridgeMagnetsPath = Path.Combine(aaAppsDir,"Fridge Magnets.exe");
+			commentCardsPath = Path.Combine(aaAppsDir,"Comment Cards.exe");
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

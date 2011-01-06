@@ -218,8 +218,7 @@ namespace AdventureAuthor.Ideas
 			useWonkyMagnets = true;
 			magnetBoxAppearsAtSide = true;
 						
-			// TODO get the install directory from the registry:
-			installDirectory = @"C:\Program Files\Heriot-Watt University\Fridge Magnets";			
+			installDirectory = String.Empty; // deprecated
 			
 			PropertyChanged += new PropertyChangedEventHandler(logPropertyChange);
 		}

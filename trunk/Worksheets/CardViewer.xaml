@@ -150,11 +150,6 @@
 					</MenuItem>
 					
 					<MenuItem Name="HelpMenu" Header="Help" FontSize="14">
-						<MenuItem Name="HelpMenuItem" 
-						          Header="Help" 
-						          Click="OnChecked_OpenHelpFile"
-						          FontSize="14"/>
-						<Separator/>
 						<MenuItem Name="AboutMenuItem" 
 						          Header="About..."
 						          Click="OnClick_DisplayAboutWindow"

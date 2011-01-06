@@ -937,10 +937,10 @@ namespace AdventureAuthor.Ideas
         }
         
         
-        private void OnClick_ChangeBoardColour(object sender, EventArgs e)
-        {   
-        	MessageBox.Show("This feature has been switched off.");
-        	
+//        private void OnClick_ChangeBoardColour(object sender, EventArgs e)
+//        {   
+//        	MessageBox.Show("This feature has been switched off.");
+//        	
 //        	ColorPickerDialog colorPicker = new ColorPickerDialog();
 //        	colorPicker.StartingColor = ActiveBoard.SurfaceColour;
 //        	bool ok = (bool)colorPicker.ShowDialog();
@@ -949,19 +949,19 @@ namespace AdventureAuthor.Ideas
 //        		ActiveBoard.SurfaceColour = colorPicker.SelectedColor;        		
 //    			Log.WriteAction(LogAction.set,"magnetboardcolour",ActiveBoard.SurfaceColour.ToString());
 //        	}
-        }        
+//        }        
             	
     	
-    	private void OpenHelpFile(object sender, EventArgs e)
-    	{
-    		string filename = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"Readme.rtf");    		
-    		if (File.Exists(filename)) {
-    			Process.Start(filename);
-    		}
-    		else {
-    			Say.Warning("Couldn't find help file (" + filename + ").");
-    		}
-    	}
+//    	private void OpenHelpFile(object sender, EventArgs e)
+//    	{
+//    		string filename = Path.Combine(FridgeMagnetPreferences.Instance.InstallDirectory,"Readme.rtf");    		
+//    		if (File.Exists(filename)) {
+//    			Process.Start(filename);
+//    		}
+//    		else {
+//    			Say.Warning("Couldn't find help file (" + filename + ").");
+//    		}
+//    	}
         
         
         private void OnClick_About(object sender, EventArgs e)
