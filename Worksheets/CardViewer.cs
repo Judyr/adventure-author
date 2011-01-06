@@ -1169,16 +1169,16 @@ namespace AdventureAuthor.Evaluation
     	}
     	
     	
-    	private void OnChecked_OpenHelpFile(object sender, EventArgs e)
-    	{
-    		string filename = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"Readme.rtf");    		
-    		if (File.Exists(filename)) {
-    			Process.Start(filename);
-    		}
-    		else {
-    			Say.Warning("Couldn't find help file (" + filename + ").");
-    		}
-    	}
+//    	private void OnChecked_OpenHelpFile(object sender, EventArgs e)
+//    	{
+//    		string filename = Path.Combine(EvaluationPreferences.Instance.InstallDirectory,"Readme.rtf");    		
+//    		if (File.Exists(filename)) {
+//    			Process.Start(filename);
+//    		}
+//    		else {
+//    			Say.Warning("Couldn't find help file (" + filename + ").");
+//    		}
+//    	}
     	
     	
     	private void OnClick_DisplayAboutWindow(object sender, EventArgs e)

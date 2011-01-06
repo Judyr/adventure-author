@@ -223,9 +223,8 @@ namespace AdventureAuthor.Tasks
 			this.userFilesDirectory = Path.Combine(myDocumentsPath,"My Tasks");
 			this.activeFilePath = null;
 			this.previousFilePath = null;
-			
-			// TODO get the install directory from the registry:			
-			this.installDirectory = @"C:\Program Files\Heriot-Watt University\My Tasks";
+									
+			installDirectory = String.Empty; // deprecated
 			
 			preDefinedTags = tags;
 			

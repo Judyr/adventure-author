@@ -59,11 +59,8 @@
 				</MenuItem>
 		    	<MenuItem x:Name="boardMenu" Header="Board">
 					<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
-					<Separator/>
-		    		<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
 				</MenuItem>
 				<MenuItem x:Name="helpMenu" Header="Help">
-					<MenuItem Header="Help" Click="OpenHelpFile"/>
 					<MenuItem Header="About" Click="OnClick_About"/>
 				</MenuItem>
 			</Menu>	
@@ -87,8 +84,6 @@
 				<local:MagnetBoardControl.ContextMenu>
 					<ContextMenu>				
 				    	<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
-						<Separator/>
-				    	<MenuItem Header="Change board colour" Click="OnClick_ChangeBoardColour"/>
 					</ContextMenu>
 				</local:MagnetBoardControl.ContextMenu>
 			</local:MagnetBoardControl>
