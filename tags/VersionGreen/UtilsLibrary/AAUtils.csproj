@@ -1,0 +1,116 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{1EEC08D2-0EDF-4A28-8C75-C49353213648}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AdventureAuthor.Utils</RootNamespace>
+    <AssemblyName>AAUtils</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="Microsoft.DirectX" />
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Converters\BitmapToBitmapSourceConverter.cs" />
+    <Compile Include="Converters\DoubleToDoubleConverter.cs" />
+    <Compile Include="PictureButton.cs">
+      <DependentUpon>PictureButton.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PictureButtonExtension.cs" />
+    <Compile Include="Utils\Debug.cs" />
+    <Compile Include="Utils\DebugLogEventArgs.cs" />
+    <Compile Include="Utils\DebugWriter.cs" />
+    <Compile Include="Utils\EditableTextBox.cs" />
+    <Compile Include="Utils\Filters.cs" />
+    <Compile Include="Utils\FriendlyToolTip.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>FriendlyToolTip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\LogAction.cs" />
+    <Compile Include="Utils\LogEventArgs.cs" />
+    <Compile Include="Utils\LogWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\LogWriter.cs" />
+    <Compile Include="Utils\Measurement.cs" />
+    <Compile Include="Utils\MessageReceivedEventArgs.cs" />
+    <Compile Include="Utils\Messages.cs" />
+    <Compile Include="Utils\PipeCommunication.cs" />
+    <Compile Include="Utils\PipeNames.cs" />
+    <Compile Include="Utils\ReportingTextBox.cs" />
+    <Compile Include="Utils\RGBPicker.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>RGBPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\Say.cs" />
+    <Compile Include="Utils\SerializableDictionary.cs" />
+    <Compile Include="Utils\Serialization.cs" />
+    <Compile Include="Utils\SwitchableTextBox.cs" />
+    <Compile Include="Utils\TeacherPasswordDialog.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TeacherPasswordDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\TextEditedEventArgs.cs" />
+    <Compile Include="Utils\Tools.cs" />
+    <Compile Include="Utils\User.cs" />
+    <EmbeddedResource Include="images.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="PictureButton.xaml" />
+    <Page Include="Utils\FriendlyToolTip.xaml" />
+    <Page Include="Utils\LogWindow.xaml" />
+    <Page Include="Utils\RGBPicker.xaml" />
+    <Page Include="Utils\TeacherPasswordDialog.xaml" />
+    <Folder Include="Converters" />
+    <Folder Include="Utils" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,128 @@
+<local:UnserializableControl x:Class="AdventureAuthor.Ideas.MagnetBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.ZIndex="1"
+    xmlns:local="clr-namespace:AdventureAuthor.Ideas"
+	AllowDrop="true" Background="DarkGray"
+	PreviewMouseWheel="magnetListPreviewMouseWheel"
+	>
+		<Grid>
+		
+			<Grid.Resources>
+				<Style x:Key="toolTipStyle" TargetType="UIElement">
+					<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
+					<Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+				</Style>
+			</Grid.Resources>
+		
+			<Grid.RowDefinitions>
+				<RowDefinition x:Name="row0"/>
+				<RowDefinition x:Name="row1"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition x:Name="column0" />
+				<ColumnDefinition x:Name="column1" />
+			</Grid.ColumnDefinitions>
+		
+			<!--Border surrounding the control panel-->
+			<Border x:Name="controlPanel" Grid.Row="1" Grid.Column="0" 
+			        BorderBrush="#00005B" BorderThickness="2">
+			    <Grid Background="#00008B">      
+				    <Grid.RowDefinitions>
+					    <RowDefinition Height="30"/>
+					    <RowDefinition Height="35"/>
+					    <RowDefinition Height="35"/>
+					    <RowDefinition Height="0"/>
+					    <RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>	
+			    	
+			    	<Grid.Resources>
+			    		<Style TargetType="Button">
+			    			<Setter Property="Width" Value="140"/>
+			    			<Setter Property="Height" Value="25"/>
+			    			<Setter Property="Margin" Value="5"/>
+			    			<Setter Property="HorizontalAlignment" Value="Center"/>
+			    		</Style>
+			    	</Grid.Resources>
+			    	
+			    	<Grid Grid.Row="0" Background="#00005B" Margin="0,6,0,6">			    	
+				    	<StackPanel Name="titleStackPanel" Grid.Row="0" Orientation="Horizontal" 
+				    	            HorizontalAlignment="Center"
+				    	            Background="#00005B">
+				    		<StackPanel.Resources>
+				    			<Style TargetType="TextBlock">
+				    				<Setter Property="Foreground" Value="White"/>
+				    				<Setter Property="Background" Value="Transparent"/>
+				    				<Setter Property="FontSize" Value="10"/>
+				    				<Setter Property="VerticalAlignment" Value="Center"/>
+				    				<Setter Property="HorizontalAlignment" Value="Center"/>
+				    			</Style>
+				    		</StackPanel.Resources>
+				    		<TextBlock TextAlignment="Right">
+					    		<Bold>MAGNET BOX</Bold> (
+					    	</TextBlock>	
+					    	<TextBlock Name="magnetCountTextBlock"
+				    		           TextAlignment="Left">
+					    		<TextBlock.Text>
+					    			<Binding ElementName="magnetsPanel" Path="Children.Count" Mode="OneWay"/>
+					    		</TextBlock.Text>
+					    	</TextBlock>
+					    	<TextBlock TextAlignment="Left">
+				    			)
+					    	</TextBlock>
+			    		
+			    			<StackPanel.ToolTip>
+				    			<ToolTip DataContext="{Binding ElementName=magnetCountTextBlock}">
+			    					<TextBlock>
+				    					The <Bold>Magnet Box</Bold> is where you keep all your magnets.
+				    					<LineBreak/>
+				    					(The number in brackets is how many magnets you've collected.)
+				    					<!--You currently have
+										<TextBlock x:Name="numberOfMagnetsTextBlock" FontWeight="Bold">
+				    						<TextBlock.Text>
+								    			<Binding Path="Text"/>
+								    		</TextBlock.Text>
+				    					</TextBlock>
+				    					<Bold> magnets</Bold> in your <Bold>Magnet Box</Bold>.-->
+				    				</TextBlock>
+			    				</ToolTip>
+				    		</StackPanel.ToolTip>
+				    	</StackPanel>			    	
+			    	</Grid>				    
+				    
+					<Button Name="createMagnetButton" Grid.Row="1" Click="OnClick_CreateMagnet">
+					    <Bold>Create magnet</Bold>
+			    		<Button.ToolTip>
+							Create a new magnet and add it to your Magnet Box.
+						</Button.ToolTip>
+					</Button>		    	
+					<Button Name="scatterMagnetsButton" Grid.Row="2" Click="OnClick_Scatter">
+					 	<Bold>Scatter magnets</Bold>
+			    		<Button.ToolTip>
+							Randomly scatter the unused visible magnets in your Magnet Box onto the board.
+						</Button.ToolTip>
+					</Button>
+					<!--<Button Grid.Row="3" Click="OnClick_LuckyDip">
+					    	<Bold>Lucky dip</Bold>
+					</Button>	-->	    
+					<StackPanel Name="showHideCategoriesPanel" Grid.Row="4" Margin="3"
+					            Width="130" Orientation="Vertical"/>
+				</Grid>
+			</Border>			
+			
+			<Border x:Name="ideaBox" Grid.Row="1" Grid.Column="1" 
+			        BorderBrush="#00005B" BorderThickness="2">
+				<ScrollViewer Name="scroller"
+						      HorizontalScrollBarVisibility="Visible" 
+				              VerticalScrollBarVisibility="Disabled"
+						      Focusable="false">
+					<StackPanel Name="magnetsPanel" Orientation="Horizontal" Background="LightGray"
+								MinHeight="250"/>
+				</ScrollViewer>	
+			</Border>	
+	
+		</Grid>  
+
+</local:UnserializableControl>

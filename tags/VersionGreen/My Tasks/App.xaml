@@ -1,0 +1,9 @@
+﻿<Application x:Class="AdventureAuthor.Tasks.App"
+    xmlns="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    StartupUri="MyTasksWindow.xaml"
+    >
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

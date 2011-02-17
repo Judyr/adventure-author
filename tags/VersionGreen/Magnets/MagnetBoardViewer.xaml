@@ -1,0 +1,94 @@
+<Window x:Class="AdventureAuthor.Ideas.MagnetBoardViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AdventureAuthor.Ideas"
+	PreviewKeyDown="previewKeyDown"
+    MouseWheel="magnetBoardViewerMouseWheel"
+	Title="Fridge Magnets"
+	WindowState="Maximized"
+    >
+		
+	<DockPanel>		
+		
+		<StackPanel DockPanel.Dock="Top" Background="{Binding ElementName=MainMenu, Path=Background, Mode=OneWay}">
+			<Menu Name="MainMenu">
+				<Menu.Style>
+					<Style TargetType="Control">
+						<Setter Property="FontSize" Value="14"/>
+					</Style>
+				</Menu.Style>
+				<MenuItem Header="File">
+					<MenuItem Name="NewMenuItem" Header="New" 
+					          Click="OnClick_New"/>
+					<MenuItem Name="OpenMenuItem" Header="Open" 
+					          Click="OnClick_Open"/>
+					<MenuItem Name="SaveMenuItem" Header="Save" 
+					          Click="OnClick_Save"/>
+					<MenuItem Name="SaveAsMenuItem" Header="Save as" 
+					          Click="OnClick_SaveAs"/>
+					<MenuItem Name="CloseMenuItem" Header="Close" 
+					          Click="OnClick_Close"/>
+					<Separator/>
+					<MenuItem Name="ExitMenuItem" Header="Exit" 
+					          Click="OnClick_Exit"/>
+				</MenuItem>
+		    	<MenuItem x:Name="boxMenu" Header="Box">
+					<MenuItem Header="Create magnet" Click="OnClick_CreateMagnet"
+		    				 />
+					<MenuItem Header="Scatter magnets" Click="OnClick_Scatter"
+		    				 />
+		    		<Separator/>
+					<MenuItem Name="ShowHideCategoriesMenu" Header="Show/hide idea categories"
+		    				 />
+		    		<Separator/>
+					<MenuItem Name="wonkyMagnetsMenuItem" Header="Display wonky magnets"
+		    				  IsCheckable="true" 
+					          Checked="useWonkyMagnetsCheckedOrUnchecked"
+		    				  Unchecked="useWonkyMagnetsCheckedOrUnchecked"
+		    		         />
+					<MenuItem Name="appearsAtSideMenuItem" Header="Magnet box appears at side" 
+		    		          IsCheckable="true"
+		    		          Checked="appearsAtSideCheckedOrUnchecked" 
+					          Unchecked="appearsAtSideCheckedOrUnchecked"
+		    				 />
+		    		<Separator/>
+					<MenuItem Name="ExportMenuItem" Header="Export Magnet Box to plain text" 
+					          Click="OnClick_Export"/>
+					<MenuItem Name="ExportMultipleMenuItem" Header="Export a collection of Magnet Boxes to plain text" 
+					          Click="OnClick_ExportMultiple"/>
+				</MenuItem>
+		    	<MenuItem x:Name="boardMenu" Header="Board">
+					<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+				</MenuItem>
+				<MenuItem x:Name="helpMenu" Header="Help">
+					<MenuItem Header="About" Click="OnClick_About"/>
+				</MenuItem>
+			</Menu>	
+		</StackPanel>
+	
+		<Grid DockPanel.Dock="Bottom">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/> 
+				<ColumnDefinition Width="180"/> 
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="250"/>
+			</Grid.RowDefinitions>
+				
+			<local:MagnetBox x:Name="magnetList" 
+							  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+			
+			<local:MagnetBoardControl x:Name="magneticSurface" 
+									  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+				<local:MagnetBoardControl.ContextMenu>
+					<ContextMenu>				
+				    	<MenuItem Header="Clear board" Click="OnClick_ClearBoard"/>
+					</ContextMenu>
+				</local:MagnetBoardControl.ContextMenu>
+			</local:MagnetBoardControl>
+		</Grid>
+	
+	</DockPanel>	
+
+</Window>

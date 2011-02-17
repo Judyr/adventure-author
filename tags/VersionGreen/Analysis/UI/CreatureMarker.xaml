@@ -1,0 +1,17 @@
+<UserControl x:Class="AdventureAuthor.Analysis.UI.CreatureMarker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<UserControl.Resources>
+		<ControlTemplate x:Key="CreatureMarkerTemplate">
+			<Grid>
+				<Ellipse
+					StrokeThickness="0"
+					Width="{StaticResource Radius}" Height="{StaticResource Radius}"
+					Fill="{StaticResource MarkerBrush}"/>
+			</Grid>
+		</ControlTemplate>
+	</UserControl.Resources>
+    <Grid>
+    	 <Button Template="{StaticResource CreatureMarkerTemplate}"/>
+    </Grid>
+</UserControl>
