@@ -55,7 +55,7 @@ namespace AdventureAuthor.Setup
 			MenuButtonItem closeModule = new MenuButtonItem("Close module");
 			closeModule.Activate += delegate { CloseModuleDialog(); };
 			
-			openRecentModule = new MenuButtonItem("Recently opened modules");
+			openRecentModule = new MenuButtonItem("Recent modules");
 			openRecentModule.BeginGroup = true;
 			SetUpRecentlyOpenedModulesMenu();
 							
@@ -64,8 +64,8 @@ namespace AdventureAuthor.Setup
 			newArea.Activate += delegate { NewAreaDialog(); };
 			
 			
-			MenuButtonItem programmerFunctions = new MenuButtonItem("Programmer functions");
-			programmerFunctions.BeginGroup = true;
+//			MenuButtonItem programmerFunctions = new MenuButtonItem("Programmer functions");
+//			programmerFunctions.BeginGroup = true;
 			
 			/*
 			MenuButtonItem colourPicker = new MenuButtonItem("Colour picker");
@@ -77,13 +77,13 @@ namespace AdventureAuthor.Setup
 			programmerFunctions.Items.Add(colourPicker);
 			*/
 			
-			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
-			logWindow.Activate += delegate 
-			{ 
-				LogWindow window = new LogWindow(); 
-				window.Show(); 
-			};
-			programmerFunctions.Items.Add(logWindow);	
+//			MenuButtonItem logWindow = new MenuButtonItem("Display log output");
+//			logWindow.Activate += delegate 
+//			{ 
+//				LogWindow window = new LogWindow(); 
+//				window.Show(); 
+//			};
+//			programmerFunctions.Items.Add(logWindow);	
 			
 			/*
 			MenuButtonItem selectTagWindow = new MenuButtonItem("Select tag window");
@@ -158,8 +158,7 @@ namespace AdventureAuthor.Setup
 			                           	closeModule,
 			                           	openRecentModule,
 			                           	newArea,
-			                           	exitAdventureAuthor,
-			                           	programmerFunctions
+			                           	exitAdventureAuthor
 			                           });	
 			
 			return fileMenu;

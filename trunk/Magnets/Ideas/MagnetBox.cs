@@ -948,7 +948,7 @@ namespace AdventureAuthor.Ideas
     	
         internal void OnClick_LuckyDip(object sender, RoutedEventArgs e)
         {        	
-        	MessageBox.Show("Method commented out due to programmer laziness.");
+        	//MessageBox.Show("Method commented out due to programmer laziness.");
 //        	Window window = new Window();
 //        	window.SizeToContent = SizeToContent.WidthAndHeight;
 //        	window.Background = Brushes.DarkBlue;
