@@ -1,0 +1,1 @@
+A set of plugins for the Neverwinter Nights 2 toolset that make it more usable by children aged 10-14, collectively referred to as Adventure Author. This project is in development at Heriot-Watt University from a grant by the Engineering and Physical Sciences Research Council (EPSRC).
